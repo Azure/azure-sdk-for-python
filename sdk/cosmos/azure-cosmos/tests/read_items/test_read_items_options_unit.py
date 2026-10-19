@@ -81,7 +81,7 @@ def _make_async_proxy():
 @pytest.mark.asyncio
 @pytest.mark.parametrize("is_async", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("diagnosed_ids", [(), ("b",), ("b", "a", "missing")])
-async def test_read_items_retains_available_chunk_diagnostics(is_async, diagnosed_ids):
+async def test_read_items_retains_available_chunk_diagnostics_rust(is_async, diagnosed_ids):
     """Diagnostics are collected from whichever legs reported them, and never faked.
 
     Three items are read as three separate point reads, and the parameters
@@ -130,7 +130,7 @@ async def test_read_items_retains_available_chunk_diagnostics(is_async, diagnose
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("is_async", [False, True], ids=["sync", "async"])
-async def test_empty_read_items_does_not_invent_diagnostics(is_async):
+async def test_empty_read_items_does_not_invent_diagnostics_rust(is_async):
     """An empty batch reports empty headers rather than a zero charge.
 
     Nothing was sent, so there is no charge and no diagnostics to report. The
@@ -145,19 +145,19 @@ async def test_empty_read_items_does_not_invent_diagnostics(is_async):
     assert not result.get_response_headers()
 
 
-def test_consistency_level_has_no_common_options_entry():
+def test_consistency_level_has_no_common_options_entry_rust():
     """Request preparation must set consistency through its dedicated path."""
     assert "consistency_level" not in COMMON_OPTIONS
 
 
-def test_excluded_locations_is_translated_from_its_snake_case_name():
+def test_excluded_locations_is_translated_from_its_snake_case_name_rust():
     """The public excluded-locations name maps to the routing option."""
     assert COMMON_OPTIONS["excluded_locations"] == Constants.Kwargs.EXCLUDED_LOCATIONS
     assert Constants.Kwargs.EXCLUDED_LOCATIONS == "excludedLocations"
 
 
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
-def test_consistency_level_header_comes_from_the_options_dict(level):
+def test_consistency_level_header_comes_from_the_options_dict_rust(level):
     """Prepared consistency becomes the header sent for the request."""
     connection = MagicMock()
     connection.default_headers = {}
@@ -179,7 +179,7 @@ def test_consistency_level_header_comes_from_the_options_dict(level):
 
 
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
-def test_sync_read_items_puts_consistency_level_in_the_options(level):
+def test_sync_read_items_puts_consistency_level_in_the_options_rust(level):
     """Sync requests preserve the customer's consistency level."""
     proxy, captured = _make_sync_proxy()
 
@@ -190,7 +190,7 @@ def test_sync_read_items_puts_consistency_level_in_the_options(level):
     assert "consistency_level" not in captured["kwargs"]
 
 
-def test_sync_read_items_keeps_consistency_level_out_of_the_transport_kwargs():
+def test_sync_read_items_keeps_consistency_level_out_of_the_transport_kwargs_rust():
     """Sync requests do not expose consistency as an unknown transport option."""
     proxy, captured = _make_sync_proxy()
 
@@ -200,7 +200,7 @@ def test_sync_read_items_keeps_consistency_level_out_of_the_transport_kwargs():
     assert "consistency_level" not in captured["kwargs"]
 
 
-def test_sync_read_items_translates_excluded_locations_into_the_options():
+def test_sync_read_items_translates_excluded_locations_into_the_options_rust():
     """Sync requests send the customer's excluded locations for routing."""
     proxy, captured = _make_sync_proxy()
 
@@ -211,7 +211,7 @@ def test_sync_read_items_translates_excluded_locations_into_the_options():
     assert "excludedLocations" not in captured["kwargs"]
 
 
-def test_sync_read_items_omits_both_keys_when_the_caller_omits_them():
+def test_sync_read_items_omits_both_keys_when_the_caller_omits_them_rust():
     """Sync requests do not invent consistency or routing choices."""
     proxy, captured = _make_sync_proxy()
 
@@ -221,7 +221,7 @@ def test_sync_read_items_omits_both_keys_when_the_caller_omits_them():
     assert "excludedLocations" not in captured["options"]
 
 
-def test_sync_read_items_carries_both_new_keys_alongside_the_existing_ones():
+def test_sync_read_items_carries_both_new_keys_alongside_the_existing_ones_rust():
     """Sync request preparation preserves all customer options together."""
     proxy, captured = _make_sync_proxy()
 
@@ -244,7 +244,7 @@ def test_sync_read_items_carries_both_new_keys_alongside_the_existing_ones():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
-async def test_async_read_items_puts_consistency_level_in_the_options(level):
+async def test_async_read_items_puts_consistency_level_in_the_options_rust(level):
     """Async requests preserve the customer's consistency level."""
     proxy, captured = _make_async_proxy()
 
@@ -256,7 +256,7 @@ async def test_async_read_items_puts_consistency_level_in_the_options(level):
 
 
 @pytest.mark.asyncio
-async def test_async_read_items_keeps_consistency_level_out_of_the_transport_kwargs():
+async def test_async_read_items_keeps_consistency_level_out_of_the_transport_kwargs_rust():
     """Async requests do not expose consistency as an unknown transport option."""
     proxy, captured = _make_async_proxy()
 
@@ -267,7 +267,7 @@ async def test_async_read_items_keeps_consistency_level_out_of_the_transport_kwa
 
 
 @pytest.mark.asyncio
-async def test_async_read_items_translates_excluded_locations_into_the_options():
+async def test_async_read_items_translates_excluded_locations_into_the_options_rust():
     """Async requests send the customer's excluded locations for routing."""
     proxy, captured = _make_async_proxy()
 
@@ -279,7 +279,7 @@ async def test_async_read_items_translates_excluded_locations_into_the_options()
 
 
 @pytest.mark.asyncio
-async def test_async_read_items_omits_both_keys_when_the_caller_omits_them():
+async def test_async_read_items_omits_both_keys_when_the_caller_omits_them_rust():
     """Async requests do not invent consistency or routing choices."""
     proxy, captured = _make_async_proxy()
 
@@ -290,7 +290,7 @@ async def test_async_read_items_omits_both_keys_when_the_caller_omits_them():
 
 
 @pytest.mark.asyncio
-async def test_async_read_items_carries_both_new_keys_alongside_the_existing_ones():
+async def test_async_read_items_carries_both_new_keys_alongside_the_existing_ones_rust():
     """Async request preparation preserves all customer options together."""
     proxy, captured = _make_async_proxy()
 

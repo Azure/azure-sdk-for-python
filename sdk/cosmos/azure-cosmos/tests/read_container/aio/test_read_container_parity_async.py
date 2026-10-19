@@ -84,7 +84,7 @@ def container_id(database_id):
         client.close()
 
 
-async def test_read_container_properties_async(database_id, container_id):
+async def test_read_container_properties_async_rust(database_id, container_id):
     """Async read returns the same partition key and indexing policy on both engines."""
 
     async def _do(client):
@@ -102,7 +102,7 @@ async def test_read_container_properties_async(database_id, container_id):
 
 
 @pytest.mark.parametrize("quota,statistics", [(True, False), (False, True), (True, True), (False, False), (None, None)])
-async def test_read_container_quota_and_statistics_use_selected_backend_async(
+async def test_read_container_quota_and_statistics_use_selected_backend_async_rust(
     database_id, container_id, quota, statistics
 ):
     """Requested statistics and quota values match, with no Rust-to-Python fallback."""
@@ -131,7 +131,7 @@ async def test_read_container_quota_and_statistics_use_selected_backend_async(
 
 
 @pytest.mark.parametrize("condition", [MatchConditions.IfPresent, MatchConditions.IfNotModified])
-async def test_read_container_conditions_async(database_id, container_id, condition):
+async def test_read_container_conditions_async_rust(database_id, container_id, condition):
     async def read_conditionally(client):
         container = client.get_database_client(database_id).get_container_client(container_id)
         etag = (await container.read())["_etag"] if condition == MatchConditions.IfNotModified else '"unused"'
@@ -143,7 +143,7 @@ async def test_read_container_conditions_async(database_id, container_id, condit
     comparison.assert_functional_parity()
 
 
-async def test_read_container_response_hook_cannot_change_cached_partition_key_async(database_id, container_id):
+async def test_read_container_response_hook_cannot_change_cached_partition_key_async_rust(database_id, container_id):
     async def read_with_hook(client):
         container = client.get_database_client(database_id).get_container_client(container_id)
         calls = []
@@ -167,7 +167,7 @@ async def test_read_container_response_hook_cannot_change_cached_partition_key_a
     comparison.assert_functional_parity()
 
 
-async def test_read_missing_container_raises_404_async(database_id):
+async def test_read_missing_container_raises_404_async_rust(database_id):
     """Reading a container that is not there raises the same typed 404 on both engines."""
     missing_id = "never_created_" + uuid.uuid4().hex[:8]
 

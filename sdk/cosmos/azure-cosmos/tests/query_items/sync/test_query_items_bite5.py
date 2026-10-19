@@ -19,7 +19,7 @@ from common._parity_helpers import (
 @skip_unless_emulator()
 @skip_unless_rust_binding()
 class TestQueryTopAndPageSize:
-    def test_top_limit_and_page_size(self):
+    def test_top_limit_and_page_size_rust(self):
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite5_" + uuid.uuid4().hex
         with CosmosClient(

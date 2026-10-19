@@ -17,7 +17,7 @@ from fault_injection._regional_routing import assert_fields
 
 
 @pytest.mark.parametrize("endpoint", ["https://localhost:8081/", "https://127.0.0.1:8081"])
-def test_local_runner_accepts_only_loopback(endpoint):
+def test_local_runner_accepts_only_loopback_rust(endpoint):
     validate_endpoint(endpoint)
 
 
@@ -33,13 +33,13 @@ def test_local_runner_accepts_only_loopback(endpoint):
         "https://localhost:0/",
     ],
 )
-def test_local_runner_rejects_unsafe_endpoint(endpoint):
+def test_local_runner_rejects_unsafe_endpoint_rust(endpoint):
     with pytest.raises(ValueError):
         validate_endpoint(endpoint)
 
 
 @pytest.mark.parametrize("counter", [0, 2])
-def test_stored_increment_rejects_missing_or_duplicate_application(counter):
+def test_stored_increment_rejects_missing_or_duplicate_application_rust(counter):
     with pytest.raises(AssertionError):
         assert_fields(
             {"refund_attempts": counter, "receipt": "full"},
@@ -47,7 +47,7 @@ def test_stored_increment_rejects_missing_or_duplicate_application(counter):
         )
 
 
-def test_stored_write_rejects_partial_receipt():
+def test_stored_write_rejects_partial_receipt_rust():
     with pytest.raises(AssertionError):
         assert_fields(
             {"refund_attempts": 1, "receipt": "par"},
@@ -98,7 +98,7 @@ def gated_worker(tmp_path):
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")
 @pytest.mark.parametrize("outcome", ["0", "7", "timeout"], ids=["success", "failure", "timeout"])
-def test_worker_cleanup_reaps_descendants_but_not_unrelated_processes(tmp_path, gated_worker, outcome):
+def test_worker_cleanup_reaps_descendants_but_not_unrelated_processes_rust(tmp_path, gated_worker, outcome):
     marker = tmp_path / "child.json"
     state = {}
     control = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
@@ -125,7 +125,7 @@ def test_worker_cleanup_reaps_descendants_but_not_unrelated_processes(tmp_path, 
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")
-def test_assignment_failure_never_releases_worker(tmp_path, gated_worker, monkeypatch):
+def test_assignment_failure_never_releases_worker_rust(tmp_path, gated_worker, monkeypatch):
     processes, state = [], {}
     popen = subprocess.Popen
 
@@ -155,7 +155,7 @@ def test_assignment_failure_never_releases_worker(tmp_path, gated_worker, monkey
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")
-def test_cleanup_failure_preserves_timeout_and_does_not_report_success(tmp_path, gated_worker, monkeypatch):
+def test_cleanup_failure_preserves_timeout_and_does_not_report_success_rust(tmp_path, gated_worker, monkeypatch):
     close = OwnedProcessTree.close
 
     def fail_close(self):
@@ -183,7 +183,7 @@ def test_cleanup_failure_preserves_timeout_and_does_not_report_success(tmp_path,
         assert probe.connect_ex(("127.0.0.1", child["port"])) != 0
 
 
-def test_worker_rejects_missing_ownership_release():
+def test_worker_rejects_missing_ownership_release_rust():
     result = subprocess.run(
         [sys.executable, str(Path(run_toxiproxy.__file__)), "--worker"],
         input=b"",
@@ -194,7 +194,7 @@ def test_worker_rejects_missing_ownership_release():
     assert b"did not establish process-tree ownership" in result.stderr
 
 
-def test_runner_records_timeout_without_success_fallback(tmp_path, monkeypatch):
+def test_runner_records_timeout_without_success_fallback_rust(tmp_path, monkeypatch):
     root, base = tmp_path / "package", tmp_path / "snapshot"
     for directory in (root, base):
         binary = directory / "azure" / "cosmos" / "_rust.pyd"

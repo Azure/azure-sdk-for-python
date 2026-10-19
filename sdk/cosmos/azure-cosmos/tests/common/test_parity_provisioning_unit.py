@@ -21,7 +21,7 @@ def no_sleep(monkeypatch):
     return sleep
 
 
-def test_success_does_not_read_or_retry():
+def test_success_does_not_read_or_retry_rust():
     resource = object()
     create = Mock(return_value=resource)
     read = Mock()
@@ -31,7 +31,7 @@ def test_success_does_not_read_or_retry():
 
 
 @pytest.mark.parametrize("error_type", [ServiceRequestError, ServiceResponseError])
-def test_lost_response_recovers_without_repeating_create(error_type, caplog, no_sleep):
+def test_lost_response_recovers_without_repeating_create_rust(error_type, caplog, no_sleep):
     resource = object()
     create = Mock(side_effect=error_type("lost response"))
     read = Mock(return_value=resource)
@@ -43,7 +43,7 @@ def test_lost_response_recovers_without_repeating_create(error_type, caplog, no_
     assert "recovered verified resource" in caplog.text
 
 
-def test_only_confirmed_absence_allows_create_retry():
+def test_only_confirmed_absence_allows_create_retry_rust():
     resource = object()
     create = Mock(side_effect=[ServiceResponseError("reset"), resource])
     read = Mock(side_effect=exceptions.CosmosResourceNotFoundError(status_code=404))
@@ -52,7 +52,7 @@ def test_only_confirmed_absence_allows_create_retry():
     read.assert_called_once_with()
 
 
-def test_read_transport_failure_never_replays_create():
+def test_read_transport_failure_never_replays_create_rust():
     resource = object()
     create = Mock(side_effect=ServiceResponseError("lost create response"))
     read = Mock(side_effect=[ServiceResponseError("lost read response"), resource])
@@ -61,7 +61,7 @@ def test_read_transport_failure_never_replays_create():
     assert read.call_count == 2
 
 
-def test_repeated_read_failures_exhaust_budget_and_propagate(no_sleep, caplog):
+def test_repeated_read_failures_exhaust_budget_and_propagate_rust(no_sleep, caplog):
     error = ServiceResponseError("read failed")
     create = Mock(side_effect=ServiceResponseError("create failed"))
     read = Mock(side_effect=error)
@@ -74,7 +74,7 @@ def test_repeated_read_failures_exhaust_budget_and_propagate(no_sleep, caplog):
     assert "exhausted three attempts" in caplog.text
 
 
-def test_repeated_uncommitted_creates_are_bounded():
+def test_repeated_uncommitted_creates_are_bounded_rust():
     error = ServiceResponseError("create failed")
     create = Mock(side_effect=error)
     read = Mock(side_effect=exceptions.CosmosResourceNotFoundError(status_code=404))
@@ -90,7 +90,7 @@ def test_repeated_uncommitted_creates_are_bounded():
     exceptions.CosmosHttpResponseError(status_code=403),
     ValueError("invalid setup"),
 ])
-def test_non_transport_create_failures_are_not_adopted_or_retried(error):
+def test_non_transport_create_failures_are_not_adopted_or_retried_rust(error):
     create = Mock(side_effect=error)
     read = Mock()
     with pytest.raises(type(error)) as caught:
@@ -105,7 +105,7 @@ def test_non_transport_create_failures_are_not_adopted_or_retried(error):
     1000,
     ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=2),
 ])
-def test_database_recovery_verifies_id_and_requested_throughput(expected):
+def test_database_recovery_verifies_id_and_requested_throughput_rust(expected):
     throughput = ThroughputProperties(offer_throughput=expected) if isinstance(expected, int) else expected
     database = SimpleNamespace(
         read=Mock(return_value={"id": "owned"}),
@@ -125,7 +125,7 @@ def test_database_recovery_verifies_id_and_requested_throughput(expected):
 
 
 @pytest.mark.parametrize("mismatch", ["id", "fixed", "mode", "missing", "unexpected", "autoscale"])
-def test_database_mismatch_is_not_treated_as_recoverable_absence(mismatch):
+def test_database_mismatch_is_not_treated_as_recoverable_absence_rust(mismatch):
     expected = 1000
     actual = ThroughputProperties(offer_throughput=1000)
     if mismatch == "fixed":
@@ -153,7 +153,7 @@ def test_database_mismatch_is_not_treated_as_recoverable_absence(mismatch):
 
 
 @pytest.mark.parametrize("mismatch", [None, "id", "paths", "kind", "version"])
-def test_container_recovery_verifies_requested_partition_definition(mismatch):
+def test_container_recovery_verifies_requested_partition_definition_rust(mismatch):
     key = PartitionKey(path="/pk")
     properties = {"id": "owned", "partitionKey": dict(key)}
     if mismatch == "id":

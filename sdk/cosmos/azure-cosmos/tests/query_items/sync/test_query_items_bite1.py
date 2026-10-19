@@ -26,7 +26,7 @@ from common._parity_helpers import (
 class TestQueryPartitionScope:
     """Keep class-based node IDs compatible with the legacy parity reporter."""
 
-    def test_query_one_customers_order_ids(self):
+    def test_query_one_customers_order_ids_rust(self):
         """Return exactly customer-501's two order IDs, excluding customer-502."""
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite1_" + uuid.uuid4().hex

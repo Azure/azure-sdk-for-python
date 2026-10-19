@@ -59,7 +59,7 @@ def comparison_for(asynchronous, sync_call, async_call, description):
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("kind", ["manual", "autoscale"])
 @pytest.mark.parametrize("warm", [False, True], ids=["cold", "warm"])
-def test_same_container_fields_headers_and_ownership(resources, asynchronous, kind, warm):
+def test_same_container_fields_headers_and_ownership_rust(resources, asynchronous, kind, warm):
     def prepare(client):
         container = client.get_database_client(resources.id).get_container_client(kind)
         options = {"initialHeaders": {"x-ms-client-request-id": "container-throughput-parity"}}
@@ -108,7 +108,7 @@ def test_same_container_fields_headers_and_ownership(resources, asynchronous, ki
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-def test_shared_database_throughput_is_not_a_container_offer(resources, asynchronous):
+def test_shared_database_throughput_is_not_a_container_offer_rust(resources, asynchronous):
     def sync_call(client):
         container = client.get_database_client(resources.id).get_container_client("shared")
         return run_target_operation(client, container.get_throughput)
@@ -125,7 +125,7 @@ def test_shared_database_throughput_is_not_a_container_offer(resources, asynchro
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-def test_recreated_container_uses_new_offer(resources, asynchronous):
+def test_recreated_container_uses_new_offer_rust(resources, asynchronous):
     name = "recreated_" + uuid.uuid4().hex
     resources.create_container(name, partition_key=PartitionKey(path="/pk"), offer_throughput=400)
     try:
@@ -170,7 +170,7 @@ def test_recreated_container_uses_new_offer(resources, asynchronous):
 @pytest.mark.parametrize("options", [
     {"availability_strategy": True}, {"initial_headers": {"Accept": "unsupported"}},
 ])
-def test_unsupported_input_never_enters_binding_or_legacy(monkeypatch, asynchronous, options):
+def test_unsupported_input_never_enters_binding_or_legacy_rust(monkeypatch, asynchronous, options):
     def configure(client):
         container = client.get_database_client("not-requested").get_container_client("not-requested")
 

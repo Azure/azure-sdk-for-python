@@ -45,7 +45,7 @@ def _bridge_thread_count() -> int:
     return sum(1 for t in threading.enumerate() if t.name == _BRIDGE_THREAD_NAME)
 
 
-def test_shared_async_credential_uses_one_bridge_and_thread():
+def test_shared_async_credential_uses_one_bridge_and_thread_rust():
     """Clients sharing one async credential share one bridge and loop thread, all
     read, and the thread is gone after the last close."""
 
@@ -103,7 +103,7 @@ def test_shared_async_credential_uses_one_bridge_and_thread():
     asyncio.run(main())
 
 
-def test_distinct_async_credentials_do_not_share_a_bridge():
+def test_distinct_async_credentials_do_not_share_a_bridge_rust():
     """Two different async credentials must not share a bridge or loop thread,
     even against the same account."""
 

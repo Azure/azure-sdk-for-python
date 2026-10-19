@@ -46,7 +46,7 @@ def _feed_range(range_min, range_max, is_min_inclusive=True, is_max_inclusive=Fa
 # ---------------------------------------------------------------------------
 
 
-def test_gate_requires_backend():
+def test_gate_requires_backend_rust():
     """Python handles the check when Rust is unavailable."""
     assert (
         can_use_rust_backend_for_is_feed_range_subset(
@@ -58,7 +58,7 @@ def test_gate_requires_backend():
     )
 
 
-def test_gate_allows_backend():
+def test_gate_allows_backend_rust():
     """Rust handles a supported subset check."""
     assert (
         can_use_rust_backend_for_is_feed_range_subset(
@@ -82,7 +82,7 @@ def test_gate_allows_backend():
 )
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("invalid_side", ["parent", "child"])
-def test_unsupported_ranges_are_rejected_without_fallback(parent, async_mode, invalid_side, monkeypatch):
+def test_unsupported_ranges_are_rejected_without_fallback_rust(parent, async_mode, invalid_side, monkeypatch):
     """The approved strict contract rejects unsupported inputs before either execution path."""
     import asyncio
     from azure.cosmos._backend.cosmos_backend import CosmosBackend
@@ -130,7 +130,7 @@ def test_unsupported_ranges_are_rejected_without_fallback(parent, async_mode, in
 # ---------------------------------------------------------------------------
 
 
-def test_builds_prepared_request_with_both_feed_ranges_in_body():
+def test_builds_prepared_request_with_both_feed_ranges_in_body_rust():
     """The Rust request contains the correct parent and child feed ranges."""
     parent = _feed_range("", "FF")
     child = _feed_range("3F", "7F")
@@ -152,18 +152,18 @@ def test_builds_prepared_request_with_both_feed_ranges_in_body():
 
 
 @pytest.mark.parametrize("value", [True, False])
-def test_parses_boolean_answer(value):
+def test_parses_boolean_answer_rust(value):
     """Rust Boolean results preserve the Python public result."""
     assert parse_is_feed_range_subset_payload({"IsSubset": value}) is value
 
 
-def test_parser_rejects_missing_is_subset():
+def test_parser_rejects_missing_is_subset_rust():
     """A missing result raises the expected public parsing error."""
     with pytest.raises(ValueError):
         parse_is_feed_range_subset_payload({})
 
 
-def test_parser_rejects_non_boolean_is_subset():
+def test_parser_rejects_non_boolean_is_subset_rust():
     """A non-Boolean result raises the expected public parsing error."""
     with pytest.raises(ValueError):
         parse_is_feed_range_subset_payload({"IsSubset": "true"})

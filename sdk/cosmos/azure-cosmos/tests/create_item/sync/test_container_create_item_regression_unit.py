@@ -93,7 +93,7 @@ class TestContainerCreateItemPreservesLegacyCacheBehaviour(unittest.TestCase):
     cache-refresh read, and lock acquisition during cache populate.
     """
 
-    def test_cached_container_resource_id_is_added_to_options(self):
+    def test_cached_container_resource_id_is_added_to_options_rust(self):
         """Cache hit: the cached ``_rid`` ends up in the options dict sent to ``CreateItem``.
 
         The rid tells the service which container the caller believed it was
@@ -108,7 +108,7 @@ class TestContainerCreateItemPreservesLegacyCacheBehaviour(unittest.TestCase):
         forwarded_options = cc.CreateItem.call_args.kwargs["options"]
         self.assertEqual(forwarded_options[Constants.ContainerRID], "rid-hot")
 
-    def test_cache_miss_forwards_excluded_locations_into_cache_fetch(self):
+    def test_cache_miss_forwards_excluded_locations_into_cache_fetch_rust(self):
         """Cache miss: ``excluded_locations`` from the call reaches the cache-refresh ``read``.
 
         A customer who passes ``excluded_locations=["West US"]`` to
@@ -130,7 +130,7 @@ class TestContainerCreateItemPreservesLegacyCacheBehaviour(unittest.TestCase):
         # Sanity: the cache was actually populated by the fake read.
         self.assertIn("dbs/db/colls/c", cache)
 
-    def test_cache_miss_forwards_timeout_kwargs_into_cache_fetch(self):
+    def test_cache_miss_forwards_timeout_kwargs_into_cache_fetch_rust(self):
         """Cache miss: the remaining ``timeout`` reaches the cache-refresh ``read``.
 
         The customer's overall budget must not restart during cache refresh.
@@ -147,7 +147,7 @@ class TestContainerCreateItemPreservesLegacyCacheBehaviour(unittest.TestCase):
         self.assertGreater(read_kwargs[Constants.Kwargs.TIMEOUT], 0)
         self.assertLessEqual(read_kwargs[Constants.Kwargs.TIMEOUT], 10)
 
-    def test_cache_populate_step_takes_container_cache_lock(self):
+    def test_cache_populate_step_takes_container_cache_lock_rust(self):
         """Cache populate runs under ``container_cache_lock`` (thread-safety invariant).
 
         The legacy ``_get_properties`` used double-checked locking

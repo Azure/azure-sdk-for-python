@@ -24,8 +24,9 @@ call on both engines and diff the results. This file runs on Rust only and
 reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
-with any other test. The class name and method names match the source, so the
-two test IDs differ only by path. The file name drops the ``_async`` suffix
+with any other test. The class name and method names match the source (apart from the
+method's ``_rust`` suffix), so the
+two test IDs differ by path and method suffix. The file name drops the ``_async`` suffix
 because the audit reporter pairs sync and async copies by stripping it.
 
 Run with::
@@ -64,7 +65,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.client.close()
 
-    async def test_create_container_headers_async(self):
+    async def test_create_container_headers_async_rust(self):
         """With ``return_properties=True``, the response headers come back populated.
 
         The second half of the returned pair is what a customer reads the
@@ -76,7 +77,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
                                                                    return_properties=True)
         assert len(first_response[1].get_response_headers()) > 0
 
-    async def test_create_container_returns_container_proxy_async(self):
+    async def test_create_container_returns_container_proxy_async_rust(self):
         """Without ``return_properties``, the plain ``ContainerProxy`` comes back.
 
         This is the default and by far the common case: callers chain straight

@@ -51,7 +51,7 @@ from common.request_preparation import (
 # ---------------------------------------------------------------------------
 
 
-def test_baseline_is_write_with_body_not_bodiless():
+def test_baseline_is_write_with_body_not_bodiless_rust():
     """An upsert carries the id inside the body, so the prep serialises the
     body to JSON bytes -- unlike the delete / read prep, which sends no body. It also copies
     the body's id onto ``item_id`` as a fast-path hint so the binding can skip
@@ -75,7 +75,7 @@ def test_baseline_is_write_with_body_not_bodiless():
     assert wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"] == "RID=="
 
 
-def test_body_bytes_round_trip_to_the_same_dict():
+def test_body_bytes_round_trip_to_the_same_dict_rust():
     """The serialised bytes parse back to the body the customer passed --
     upsert never rewrites the body."""
     body = {"id": "order-42", "pk": "customerA"}
@@ -94,7 +94,7 @@ def test_body_bytes_round_trip_to_the_same_dict():
 # ---------------------------------------------------------------------------
 
 
-def test_missing_id_is_not_generated_or_added_to_input_body():
+def test_missing_id_is_not_generated_or_added_to_input_body_rust():
     """The input body and encoded upsert body both remain without an id.
 
     This preparation-only test does not check the service's response.
@@ -111,7 +111,7 @@ def test_missing_id_is_not_generated_or_added_to_input_body():
     assert b'"id"' not in prepared.body_bytes
 
 
-def test_options_build_always_disables_id_generation():
+def test_options_build_always_disables_id_generation_rust():
     """``build_upsert_item_request_options`` always sets
     ``disableAutomaticIdGeneration=True`` -- the same value the legacy
     ``upsert_item`` wrote every time."""
@@ -125,7 +125,7 @@ def test_options_build_always_disables_id_generation():
 # ---------------------------------------------------------------------------
 
 
-def test_if_missing_translates_to_if_none_match_wildcard_insert_only():
+def test_if_missing_translates_to_if_none_match_wildcard_insert_only_rust():
     """``match_condition=IfMissing`` (no etag) narrows insert-or-replace to
     insert-only: ``If-None-Match: *``. This is the classic upsert
     precondition -- a redelivered write fails instead of overwriting."""
@@ -144,7 +144,7 @@ def test_if_missing_translates_to_if_none_match_wildcard_insert_only():
     assert "if-match" not in wire_headers(prepared)
 
 
-def test_etag_if_not_modified_translates_to_if_match_guarded_replace():
+def test_etag_if_not_modified_translates_to_if_match_guarded_replace_rust():
     """``etag=<v>`` + ``IfNotModified`` narrows it to a version-guarded
     replace: ``If-Match: <v>``."""
     options = build_upsert_item_request_options({
@@ -165,7 +165,7 @@ def test_etag_if_not_modified_translates_to_if_match_guarded_replace():
     assert "if-none-match" not in wire_headers(prepared)
 
 
-def test_if_present_translates_to_if_match_wildcard():
+def test_if_present_translates_to_if_match_wildcard_rust():
     """``match_condition=IfPresent`` (no etag) -> ``If-Match: *`` (replace
     only if it exists at all)."""
     options = build_upsert_item_request_options({"match_condition": MatchConditions.IfPresent})
@@ -180,7 +180,7 @@ def test_if_present_translates_to_if_match_wildcard():
     assert wire_headers(prepared)["if-match"] == "*"
 
 
-def test_no_access_condition_emits_no_precondition_headers():
+def test_no_access_condition_emits_no_precondition_headers_rust():
     """A plain upsert (no etag / match_condition) carries neither
     ``If-Match`` nor ``If-None-Match``."""
     prepared = prepare_upsert_item_request(
@@ -197,7 +197,7 @@ def test_no_access_condition_emits_no_precondition_headers():
     assert "accessCondition" not in wire_headers(prepared)
 
 
-def test_etag_without_match_condition_raises_value_error_up_front():
+def test_etag_without_match_condition_raises_value_error_up_front_rust():
     """``etag`` without ``match_condition`` is an application bug; the SDK
     refuses to guess and raises before any network round trip, on the
     caller's own frame -- the same gate delete / read enforce."""
@@ -210,7 +210,7 @@ def test_etag_without_match_condition_raises_value_error_up_front():
 # ---------------------------------------------------------------------------
 
 
-def test_initial_headers_are_flattened_into_outer_headers():
+def test_initial_headers_are_flattened_into_outer_headers_rust():
     """``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
     ``initialHeaders`` dict so the binding forwards each entry verbatim."""
     prepared = prepare_upsert_item_request(
@@ -225,7 +225,7 @@ def test_initial_headers_are_flattened_into_outer_headers():
     assert "initial_headers" not in wire_headers(prepared)
 
 
-def test_trigger_priority_bucket_no_response_land_as_option_keys():
+def test_trigger_priority_bucket_no_response_land_as_option_keys_rust():
     """The body-carrying option set reaches the headers map under the
     internal option-key names (the binding then renders each on the wire).
     ``no_response`` is kept on upsert, unlike delete / read."""
@@ -245,7 +245,7 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
     assert settings_options(prepared)["responsePayloadOnWriteDisabled"] is True
 
 
-def test_timeout_kwarg_is_forwarded_under_sentinel_header():
+def test_timeout_kwarg_is_forwarded_under_sentinel_header_rust():
     """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30`` so
     the binding can turn it into the driver's own timeout setting -- the
     same mechanism as create / delete / read prep."""
@@ -259,7 +259,7 @@ def test_timeout_kwarg_is_forwarded_under_sentinel_header():
     assert settings_options(prepared)["timeout_seconds"] == 30
 
 
-def test_compose_consumes_recognised_kwargs():
+def test_compose_consumes_recognised_kwargs_rust():
     """The option-shortcut keyword arguments the prep recognises are removed
     from the input dict, so the caller doesn't forward them again to the
     legacy path."""
@@ -279,7 +279,7 @@ def test_compose_consumes_recognised_kwargs():
 # ---------------------------------------------------------------------------
 
 
-def test_merge_omits_none_entries():
+def test_merge_omits_none_entries_rust():
     """Only the explicit keyword arguments that aren't None land in the
     merged dict -- None means "not supplied" and must not be set."""
     kwargs: dict = {}
@@ -301,7 +301,7 @@ def test_merge_omits_none_entries():
     assert kwargs == {"session_token": "0:1#42"}
 
 
-def test_merge_keeps_etag_match_condition_and_no_response():
+def test_merge_keeps_etag_match_condition_and_no_response_rust():
     """Upsert is the one operation that keeps both the body-carrying
     ``no_response`` (unlike delete / read) and the
     ``etag`` / ``match_condition`` precondition pair (unlike create, which
@@ -318,7 +318,7 @@ def test_merge_keeps_etag_match_condition_and_no_response():
     assert kwargs["no_response"] is True
 
 
-def test_merge_does_not_accept_create_only_kwargs():
+def test_merge_does_not_accept_create_only_kwargs_rust():
     """``indexing_directive`` / ``enable_automatic_id_generation`` are not
     on the public ``upsert_item`` signature, so the merge helper must not
     even accept those parameter names."""
@@ -336,7 +336,7 @@ def test_merge_does_not_accept_create_only_kwargs():
 # ---------------------------------------------------------------------------
 
 
-def test_populate_query_metrics_warns_and_writes_for_any_explicit_value():
+def test_populate_query_metrics_warns_and_writes_for_any_explicit_value_rust():
     """The legacy ``upsert_item`` warned (and still wrote the option) for any
     explicit ``populate_query_metrics`` value, ``False`` included. The
     migrated options build keeps that exact behaviour so nothing regresses
@@ -350,7 +350,7 @@ def test_populate_query_metrics_warns_and_writes_for_any_explicit_value():
     assert opts_false["populateQueryMetrics"] is False
 
 
-def test_populate_query_metrics_none_is_silent():
+def test_populate_query_metrics_none_is_silent_rust():
     """``None`` (the default, and what the async sibling always passes)
     emits no warning and writes no option."""
     import warnings as _warnings

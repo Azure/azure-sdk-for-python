@@ -39,7 +39,7 @@ def database_ids():
 
 
 @pytest.mark.asyncio
-async def test_query_databases_parameterized_filter_async(database_ids):
+async def test_query_databases_parameterized_filter_async_rust(database_ids):
     """A parameterized filter returns exactly the one database it names."""
     target_id = database_ids[0]
 
@@ -73,7 +73,7 @@ async def test_query_databases_parameterized_filter_async(database_ids):
 
 
 @pytest.mark.asyncio
-async def test_query_databases_no_match_returns_empty_async(database_ids):
+async def test_query_databases_no_match_returns_empty_async_rust(database_ids):
     """A filter that matches nothing returns an empty result on both backends."""
 
     async def _do(client):
@@ -102,7 +102,7 @@ async def test_query_databases_no_match_returns_empty_async(database_ids):
 
 
 @pytest.mark.asyncio
-async def test_query_databases_continuation_replay_async(database_ids):
+async def test_query_databases_continuation_replay_async_rust(database_ids):
     """Async one-item paging exposes a continuation token that can be replayed."""
     assert len(database_ids) == 3
 
@@ -141,7 +141,7 @@ async def test_query_databases_continuation_replay_async(database_ids):
 
 
 @pytest.mark.asyncio
-async def test_query_databases_options_and_page_hooks_async(database_ids):
+async def test_query_databases_options_and_page_hooks_async_rust(database_ids):
     """Supported options and hooks apply to each fetched async query page."""
 
     async def _do(client):

@@ -89,7 +89,7 @@ class TestComputedPropertiesQuery(SyncReplacementCase):
             created_collection.query_items(query='Select * from c Where c.cp_str_len = 3', partition_key="test"))
         self.assertEqual(len(queried_items), 0)
 
-    def test_replace_with_same_computed_properties(self):
+    def test_replace_with_same_computed_properties_rust(self):
         """Replacing a container with the identical computed properties leaves them working.
 
         The container is created with three computed properties, items are
@@ -125,7 +125,7 @@ class TestComputedPropertiesQuery(SyncReplacementCase):
         self.computedPropertiesTestCases(replaced_collection)
         self.key_db.delete_container(replaced_collection.id)
 
-    def test_replace_without_computed_properties(self):
+    def test_replace_without_computed_properties_rust(self):
         """Replace can add computed properties to a container created without any.
 
         The container starts with none, items are written, then a replace
@@ -155,7 +155,7 @@ class TestComputedPropertiesQuery(SyncReplacementCase):
         self.computedPropertiesTestCases(replaced_collection)
         self.key_db.delete_container(replaced_collection.id)
 
-    def test_replace_with_new_computed_properties(self):
+    def test_replace_with_new_computed_properties_rust(self):
         """Replace swaps one set of computed properties for a different set.
 
         The container starts with ``cp_lower``, ``cp_power`` and
@@ -221,7 +221,7 @@ class TestComputedPropertiesQuery(SyncReplacementCase):
             expected_count=0)
         self.key_db.delete_container(created_collection.id)
 
-    def test_replace_with_incorrect_computed_properties(self):
+    def test_replace_with_incorrect_computed_properties_rust(self):
         """A single dict instead of a list of them is rejected by the service.
 
         Computed properties must be a list. Passing one bare dict is an easy
@@ -253,7 +253,7 @@ class TestComputedPropertiesQuery(SyncReplacementCase):
             assert e.status_code == 400
             assert "One of the specified inputs is invalid" in e.http_error_message
 
-    def test_replace_with_remove_computed_properties_(self):
+    def test_replace_with_remove_computed_properties__rust(self):
         """Replacing without mentioning computed properties removes them entirely.
 
         The container is created with three, then replaced with no

@@ -237,13 +237,13 @@ def attempt_spans(recording):
     "operation", ["create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item"]
 )
 @pytest.mark.usefixtures("recording")
-def test_non_rust_calls_do_not_create_rust_telemetry_state(backend, operation):
+def test_non_rust_calls_do_not_create_rust_telemetry_state_rust(backend, operation):
     container = SimpleNamespace(_item_context=SimpleNamespace(adapter=backend))
     assert telemetry._new_operation(container, operation, {}) is None
     assert telemetry._OPERATION.get() is None
 
 
-def test_create_preserves_result_and_records_exact_sibling_attempts(create, recording):
+def test_create_preserves_result_and_records_exact_sibling_attempts_rust(create, recording):
     hooks = []
     body = deepcopy(ORDER)
 
@@ -290,7 +290,7 @@ def test_create_preserves_result_and_records_exact_sibling_attempts(create, reco
 
 @pytest.mark.parametrize("mode", ["disabled", "global-disabled", "merged", "nested", "sampled-out"])
 @pytest.mark.parametrize("response_status", [201, 409, 408])
-def test_no_attempts_without_a_new_recording_operation(create, recording, mode, response_status):
+def test_no_attempts_without_a_new_recording_operation_rust(create, recording, mode, response_status):
     create.response_status = response_status
 
     async def run():
@@ -350,7 +350,7 @@ def test_no_attempts_without_a_new_recording_operation(create, recording, mode, 
     ],
 )
 @pytest.mark.parametrize("response_status", [201, 409, 408])
-def test_invalid_detail_reports_without_changing_the_write(create, recording, caplog, defect, response_status):
+def test_invalid_detail_reports_without_changing_the_write_rust(create, recording, caplog, defect, response_status):
     create.response_status = response_status
 
     def corrupt(result):
@@ -399,7 +399,7 @@ def test_invalid_detail_reports_without_changing_the_write(create, recording, ca
 
 
 @pytest.mark.parametrize("shape", ["four", "five", "one", "three"])
-def test_recoverable_envelope_preserves_the_response(create, recording, caplog, shape):
+def test_recoverable_envelope_preserves_the_response_rust(create, recording, caplog, shape):
     def reshape(result):
         response, payload = result
         return {"four": response[:4], "five": response, "one": (response,), "three": (response, payload, "PRIVATE")}[
@@ -416,7 +416,7 @@ def test_recoverable_envelope_preserves_the_response(create, recording, caplog, 
     assert "PRIVATE" not in caplog.text
 
 
-def test_missing_database_response_is_not_reported_as_success(create):
+def test_missing_database_response_is_not_reported_as_success_rust(create):
     create.transform = lambda _: ("invalid", None)
     with pytest.raises(BindingProtocolError):
         asyncio.run(create.container.create_item(ORDER))
@@ -424,7 +424,7 @@ def test_missing_database_response_is_not_reported_as_success(create):
 
 
 @pytest.mark.parametrize("response_status", [201, 408])
-def test_incomplete_attempt_keeps_counts_without_inventing_end_time(create, recording, caplog, response_status):
+def test_incomplete_attempt_keeps_counts_without_inventing_end_time_rust(create, recording, caplog, response_status):
     create.response_status = response_status
 
     def incomplete(result):
@@ -448,7 +448,7 @@ def test_incomplete_attempt_keeps_counts_without_inventing_end_time(create, reco
 
 @pytest.mark.parametrize("failure", ["tracer", "start", "end", "attribute"])
 @pytest.mark.parametrize("response_status", [201, 409, 408])
-def test_instrumentation_exception_does_not_replace_write_result(
+def test_instrumentation_exception_does_not_replace_write_result_rust(
     create, recording, monkeypatch, caplog, failure, response_status
 ):
     create.response_status = response_status
@@ -513,7 +513,7 @@ def test_instrumentation_exception_does_not_replace_write_result(
     assert operation_spans(recording)[0].status.status_code is expected_status
 
 
-def test_response_hook_error_remains_the_public_failure(create, recording):
+def test_response_hook_error_remains_the_public_failure_rust(create, recording):
     def hook(_headers, _item):
         raise ValueError("hook failed")
 
@@ -526,7 +526,7 @@ def test_response_hook_error_remains_the_public_failure(create, recording):
 
 @pytest.mark.parametrize("has_diagnostics", [True, False])
 @pytest.mark.parametrize("response_status", [409, 408])
-def test_failed_create_preserves_exception_and_diagnostics(create, recording, has_diagnostics, response_status):
+def test_failed_create_preserves_exception_and_diagnostics_rust(create, recording, has_diagnostics, response_status):
     create.response_status = response_status
     exception_type = CosmosResourceExistsError if response_status == 409 else ServiceResponseError
     message = "conflict" if response_status == 409 else "driver failure"
@@ -575,7 +575,7 @@ def test_failed_create_preserves_exception_and_diagnostics(create, recording, ha
     assert telemetry._OPERATION.get() is None
 
 
-def test_unreadable_error_diagnostics_preserve_exception(create, recording, caplog):
+def test_unreadable_error_diagnostics_preserve_exception_rust(create, recording, caplog):
     class UnreadableDiagnostics(DriverTransportError):
         @property
         def _cosmos_attempt_payload(self):
@@ -593,7 +593,7 @@ def test_unreadable_error_diagnostics_preserve_exception(create, recording, capl
     assert telemetry._OPERATION.get() is None
 
 
-def test_disabled_error_never_reads_private_diagnostics(create, recording):
+def test_disabled_error_never_reads_private_diagnostics_rust(create, recording):
     class UnreadableDiagnostics(DriverTransportError):
         @property
         def _cosmos_attempt_payload(self):
@@ -607,7 +607,7 @@ def test_disabled_error_never_reads_private_diagnostics(create, recording):
     assert not attempt_spans(recording)
 
 
-def test_timeout_preserves_exception_without_replaying(create, recording):
+def test_timeout_preserves_exception_without_replaying_rust(create, recording):
     create.error = TimeoutError("driver timeout")
     with pytest.raises(CosmosClientTimeoutError):
         asyncio.run(create.container.create_item(ORDER, timeout=10))
@@ -616,7 +616,7 @@ def test_timeout_preserves_exception_without_replaying(create, recording):
     assert telemetry._OPERATION.get() is None
 
 
-def test_cancellation_is_not_swallowed(create, recording):
+def test_cancellation_is_not_swallowed_rust(create, recording):
     async def run():
         create.gate = asyncio.Event()
         task = asyncio.create_task(create.container.create_item(ORDER))
@@ -631,7 +631,7 @@ def test_cancellation_is_not_swallowed(create, recording):
     assert not attempt_spans(recording)
 
 
-def test_concurrent_calls_keep_their_own_parents(create, recording):
+def test_concurrent_calls_keep_their_own_parents_rust(create, recording):
     async def write(index):
         with trace.get_tracer("customer").start_as_current_span(f"checkout-{index}"):
             await create.container.create_item(dict(ORDER, id=f"order-{index}"))
@@ -650,7 +650,7 @@ def test_concurrent_calls_keep_their_own_parents(create, recording):
         assert all(child.context.trace_id == operation.context.trace_id for child in children)
 
 
-def test_child_task_has_its_own_public_operation(create, recording):
+def test_child_task_has_its_own_public_operation_rust(create, recording):
     async def run():
         with telemetry._operation_scope(create.container, "create_item", {}):
             state = telemetry._OPERATION.get()
@@ -664,7 +664,7 @@ def test_child_task_has_its_own_public_operation(create, recording):
     assert len(attempt_spans(recording)) == 2
 
 
-def test_ordinary_create_needs_no_opentelemetry_import(create, monkeypatch):
+def test_ordinary_create_needs_no_opentelemetry_import_rust(create, monkeypatch):
     original_import = builtins.__import__
 
     def import_without_opentelemetry(name, *args, **kwargs):
@@ -678,7 +678,7 @@ def test_ordinary_create_needs_no_opentelemetry_import(create, monkeypatch):
     assert create.calls[0][0] is False
 
 
-def test_span_capture_failure_skips_only_attempt_detail(create, recording, monkeypatch, caplog):
+def test_span_capture_failure_skips_only_attempt_detail_rust(create, recording, monkeypatch, caplog):
     original_record = telemetry._record_operation
     original_current = trace.get_current_span
 
@@ -702,7 +702,7 @@ def test_span_capture_failure_skips_only_attempt_detail(create, recording, monke
     assert "PRIVATE" not in caplog.text
 
 
-def test_empty_success_body_keeps_diagnostics_and_attempts(create, recording):
+def test_empty_success_body_keeps_diagnostics_and_attempts_rust(create, recording):
     def empty_body(result):
         response, payload = result
         return (*response[:3], b"", response[4]), payload
@@ -714,7 +714,7 @@ def test_empty_success_body_keeps_diagnostics_and_attempts(create, recording):
     assert len(attempt_spans(recording)) == 2
 
 
-def test_instrumentation_does_not_swallow_cancellation(create, monkeypatch):
+def test_instrumentation_does_not_swallow_cancellation_rust(create, monkeypatch):
     original_get = trace.get_tracer
 
     def get_tracer(instrumenting_module_name, *args, **kwargs):
@@ -734,7 +734,7 @@ def traced_read(harness, **kwargs):
 
 
 @pytest.mark.parametrize("status", [200, 304, 404, 408])
-def test_read_preserves_outcome_and_exact_attempts(create, recording, status):
+def test_read_preserves_outcome_and_exact_attempts_rust(create, recording, status):
     create.response_status = status
     hooks = []
 
@@ -787,7 +787,7 @@ def test_read_preserves_outcome_and_exact_attempts(create, recording, status):
 
 
 @pytest.mark.parametrize("mode", ["disabled", "global-disabled", "sampled-out", "merged", "nested"])
-def test_read_does_not_opt_in_without_recording(create, recording, mode):
+def test_read_does_not_opt_in_without_recording_rust(create, recording, mode):
     create.response_status = 200
     if mode == "global-disabled":
         settings.tracing_enabled = False
@@ -811,7 +811,7 @@ def test_read_does_not_opt_in_without_recording(create, recording, mode):
 
 
 @pytest.mark.parametrize("status", [200, 404, 408])
-def test_bad_read_diagnostics_preserve_outcome(create, recording, caplog, status):
+def test_bad_read_diagnostics_preserve_outcome_rust(create, recording, caplog, status):
     create.response_status = status
     create.transform = lambda result: (result[0], "PRIVATE")
     with caplog.at_level(logging.WARNING):
@@ -827,7 +827,7 @@ def test_bad_read_diagnostics_preserve_outcome(create, recording, caplog, status
     assert telemetry._OPERATION.get() is None
 
 
-def test_read_hook_failure_preserves_attempts_and_exception(create, recording):
+def test_read_hook_failure_preserves_attempts_and_exception_rust(create, recording):
     create.response_status = 200
 
     def hook(_headers, _item):
@@ -840,7 +840,7 @@ def test_read_hook_failure_preserves_attempts_and_exception(create, recording):
     assert telemetry._OPERATION.get() is None
 
 
-def test_read_operation_timeout_and_cancellation_reset_opt_in(create, recording):
+def test_read_operation_timeout_and_cancellation_reset_opt_in_rust(create, recording):
     create.error = TimeoutError("binding deadline")
     with pytest.raises(CosmosClientTimeoutError):
         asyncio.run(traced_read(create, timeout=10))
@@ -862,7 +862,7 @@ def test_read_operation_timeout_and_cancellation_reset_opt_in(create, recording)
 
 
 @pytest.mark.parametrize("selected", ["create_item", "read_item"])
-def test_other_public_operation_does_not_use_inherited_state(create, recording, selected):
+def test_other_public_operation_does_not_use_inherited_state_rust(create, recording, selected):
     async def run():
         with telemetry._operation_scope(create.container, selected, {}):
             state = telemetry._OPERATION.get()
@@ -880,7 +880,7 @@ def test_other_public_operation_does_not_use_inherited_state(create, recording, 
     assert len(attempt_spans(recording)) == 2
 
 
-def test_concurrent_read_and_create_keep_separate_parents(create, recording):
+def test_concurrent_read_and_create_keep_separate_parents_rust(create, recording):
     # The fake binding can return the same successful body for either operation.
     create.response_status = 200
 
@@ -906,7 +906,7 @@ def test_concurrent_read_and_create_keep_separate_parents(create, recording):
         assert all(s.context.trace_id == operation.context.trace_id for s in children)
 
 
-def test_ordinary_read_does_not_import_optional_telemetry(create, monkeypatch):
+def test_ordinary_read_does_not_import_optional_telemetry_rust(create, monkeypatch):
     create.response_status = 200
     settings.tracing_enabled = False
     original_import = builtins.__import__
@@ -921,7 +921,7 @@ def test_ordinary_read_does_not_import_optional_telemetry(create, monkeypatch):
     assert create.calls[0][0] is False
 
 
-def test_read_mapping_target_is_preserved(create, recording):
+def test_read_mapping_target_is_preserved_rust(create, recording):
     create.response_status = 200
     target = {"_self": "dbs/sales/colls/orders/docs/order-17/"}
     original = dict(target)
@@ -933,7 +933,7 @@ def test_read_mapping_target_is_preserved(create, recording):
     assert len(attempt_spans(recording)) == 2
 
 
-def test_child_task_read_has_its_own_public_operation(create, recording):
+def test_child_task_read_has_its_own_public_operation_rust(create, recording):
     create.response_status = 200
 
     async def run():
@@ -1053,7 +1053,7 @@ def sync_call(harness, operation, **kwargs):
 
 
 @pytest.mark.parametrize("operation,status", [("create_item", 201), ("read_item", 200), ("read_item", 304)])
-def test_sync_public_success_preserves_hook_snapshots_and_span_lifetime(sync_create, recording, operation, status):
+def test_sync_public_success_preserves_hook_snapshots_and_span_lifetime_rust(sync_create, recording, operation, status):
     sync_create.response_status = status
     seen = []
 
@@ -1098,7 +1098,7 @@ def test_sync_public_success_preserves_hook_snapshots_and_span_lifetime(sync_cre
         ("read_item", 408, ServiceResponseError),
     ],
 )
-def test_sync_public_failures_preserve_errors_and_do_not_invoke_hook(
+def test_sync_public_failures_preserve_errors_and_do_not_invoke_hook_rust(
     sync_create, recording, operation, status, exception
 ):
     sync_create.response_status = status
@@ -1120,7 +1120,7 @@ def test_sync_public_failures_preserve_errors_and_do_not_invoke_hook(
 
 
 @pytest.mark.parametrize("operation", ["create_item", "read_item"])
-def test_sync_response_hook_exception_is_not_replayed_or_replaced(sync_create, recording, operation):
+def test_sync_response_hook_exception_is_not_replayed_or_replaced_rust(sync_create, recording, operation):
     sync_create.response_status = 201 if operation == "create_item" else 200
     failure = ValueError("response hook failure")
     hook = Mock(side_effect=failure)
@@ -1136,7 +1136,7 @@ def test_sync_response_hook_exception_is_not_replayed_or_replaced(sync_create, r
 
 @pytest.mark.parametrize("operation", ["create_item", "read_item"])
 @pytest.mark.parametrize("mode", ["disabled", "global-disabled", "sampled-out", "merged", "nested"])
-def test_sync_calls_without_owned_recording_span_do_not_collect_attempts(sync_create, recording, operation, mode):
+def test_sync_calls_without_owned_recording_span_do_not_collect_attempts_rust(sync_create, recording, operation, mode):
     sync_create.response_status = 201 if operation == "create_item" else 200
     if mode == "global-disabled":
         settings.tracing_enabled = False
@@ -1161,7 +1161,7 @@ def test_sync_calls_without_owned_recording_span_do_not_collect_attempts(sync_cr
 
 
 @pytest.mark.parametrize("operation", ["create_item", "read_item"])
-def test_sync_timeout_preserves_exception_and_cleans_state(sync_create, recording, operation):
+def test_sync_timeout_preserves_exception_and_cleans_state_rust(sync_create, recording, operation):
     sync_create.error = TimeoutError("binding timeout")
     with pytest.raises(CosmosClientTimeoutError) as error:
         sync_call(sync_create, operation, timeout=10)
@@ -1173,7 +1173,7 @@ def test_sync_timeout_preserves_exception_and_cleans_state(sync_create, recordin
 
 
 @pytest.mark.parametrize("operation", ["create_item", "read_item"])
-def test_sync_disabled_calls_do_not_import_opentelemetry(sync_create, monkeypatch, operation):
+def test_sync_disabled_calls_do_not_import_opentelemetry_rust(sync_create, monkeypatch, operation):
     settings.tracing_enabled = False
     sync_create.response_status = 201 if operation == "create_item" else 200
     original_import = builtins.__import__
@@ -1188,7 +1188,7 @@ def test_sync_disabled_calls_do_not_import_opentelemetry(sync_create, monkeypatc
     assert sync_create.calls[0][0] is False
 
 
-def test_sync_threads_have_independent_operation_state(sync_create, recording):
+def test_sync_threads_have_independent_operation_state_rust(sync_create, recording):
     sync_create.barrier = Barrier(4)
 
     def save(index):
@@ -1207,7 +1207,7 @@ def test_sync_threads_have_independent_operation_state(sync_create, recording):
     assert all(state.closed and state.collector.diagnostics is None for state in sync_create.states)
 
 
-def test_operation_state_rejects_wrong_backend_task_thread_and_completed_work(sync_create):
+def test_operation_state_rejects_wrong_backend_task_thread_and_completed_work_rust(sync_create):
     with trace.get_tracer("customer").start_as_current_span("owner") as span:
         state = telemetry._Operation(
             "create_item",
@@ -1242,7 +1242,7 @@ def test_operation_state_rejects_wrong_backend_task_thread_and_completed_work(sy
 
 @pytest.mark.parametrize("runtime", ["sync", "async"])
 @pytest.mark.parametrize("operation", ["create_item", "read_item"])
-def test_per_call_enablement_overrides_global_disable(create, sync_create, recording, runtime, operation):
+def test_per_call_enablement_overrides_global_disable_rust(create, sync_create, recording, runtime, operation):
     settings.tracing_enabled = False
     harness = sync_create if runtime == "sync" else create
     harness.response_status = 201 if operation == "create_item" else 200
@@ -1259,7 +1259,7 @@ def test_per_call_enablement_overrides_global_disable(create, sync_create, recor
     assert telemetry._OPERATION.get() is None
 
 
-def test_nested_response_hook_call_does_not_consume_outer_state(sync_create, recording):
+def test_nested_response_hook_call_does_not_consume_outer_state_rust(sync_create, recording):
     states = []
 
     def response_hook(_headers, _item):
@@ -1283,7 +1283,7 @@ class FailingTelemetryLogHandler(logging.Handler):
 
 @pytest.mark.parametrize("runtime", ["sync", "async"])
 @pytest.mark.parametrize("status", [201, 409])
-def test_telemetry_reporting_failure_preserves_public_outcome(create, sync_create, runtime, status, monkeypatch, capfd):
+def test_telemetry_reporting_failure_preserves_public_outcome_rust(create, sync_create, runtime, status, monkeypatch, capfd):
     harness = sync_create if runtime == "sync" else create
     harness.response_status = status
     harness.transform = lambda result: (result[0], {"schema_version": 999})
@@ -1315,7 +1315,7 @@ def test_telemetry_reporting_failure_preserves_public_outcome(create, sync_creat
         logger.removeHandler(handler)
 
 
-def test_failed_logging_and_stderr_leave_a_reporting_failure_count(monkeypatch):
+def test_failed_logging_and_stderr_leave_a_reporting_failure_count_rust(monkeypatch):
     logger = telemetry._LOGGER
     handler = FailingTelemetryLogHandler()
     monkeypatch.setattr(logger, "level", logging.WARNING)
@@ -1348,7 +1348,7 @@ def contribution_response(total, start, count=2):
     return (200, 0, {}, b"{}", None), payload
 
 
-def test_aggregation_counts_once_bounds_detail_and_rejects_late_delivery(recording, caplog):
+def test_aggregation_counts_once_bounds_detail_and_rejects_late_delivery_rust(recording, caplog):
     received = []
     with trace.get_tracer("test").start_as_current_span("combined") as parent:
         state = telemetry._Operation(
@@ -1390,7 +1390,7 @@ def test_aggregation_counts_once_bounds_detail_and_rejects_late_delivery(recordi
 
 
 @pytest.mark.parametrize("defect", ["missing", "invalid", "unfinished", "unbounded"])
-def test_incomplete_contributions_do_not_publish_partial_counts_as_totals(recording, defect, caplog):
+def test_incomplete_contributions_do_not_publish_partial_counts_as_totals_rust(recording, defect, caplog):
     received = []
     with trace.get_tracer("test").start_as_current_span("combined") as parent:
         state = telemetry._Operation(
@@ -1423,7 +1423,7 @@ def test_incomplete_contributions_do_not_publish_partial_counts_as_totals(record
     assert "operation totals are unavailable" in caplog.text
 
 
-def test_explicit_contributions_can_complete_on_other_threads_without_sharing_span_state():
+def test_explicit_contributions_can_complete_on_other_threads_without_sharing_span_state_rust():
     collector = telemetry._DiagnosticCollector(retained_limit=3)
     contributions = [collector.reserve() for _ in range(8)]
     gate = Barrier(4)
@@ -1444,7 +1444,7 @@ def test_explicit_contributions_can_complete_on_other_threads_without_sharing_sp
 
 
 @pytest.mark.parametrize("limit", [-1, True, "3"])
-def test_invalid_aggregate_limits_fail_at_internal_configuration(limit):
+def test_invalid_aggregate_limits_fail_at_internal_configuration_rust(limit):
     with pytest.raises(ValueError):
         telemetry._DiagnosticCollector(retained_limit=limit)
 
@@ -1453,7 +1453,7 @@ def test_invalid_aggregate_limits_fail_at_internal_configuration(limit):
 @pytest.mark.parametrize("mode", ["disabled", "sampled-out"])
 @pytest.mark.parametrize("collect", [False, True])
 @pytest.mark.parametrize("status", [201, 409])
-def test_completion_handlers_are_independent_of_trace_recording(
+def test_completion_handlers_are_independent_of_trace_recording_rust(
     create, sync_create, recording, runtime, mode, collect, status
 ):
     harness = sync_create if runtime == "sync" else create
@@ -1488,7 +1488,7 @@ def test_completion_handlers_are_independent_of_trace_recording(
 
 
 @pytest.mark.parametrize("options", [{}, {"tracing_options": {"enabled": False}}])
-def test_disabled_recording_does_not_inspect_backend(sync_create, monkeypatch, options):
+def test_disabled_recording_does_not_inspect_backend_rust(sync_create, monkeypatch, options):
     settings.tracing_enabled = bool(options)
 
     def unexpected_selection(_backend):
@@ -1498,7 +1498,7 @@ def test_disabled_recording_does_not_inspect_backend(sync_create, monkeypatch, o
     assert telemetry._new_operation(sync_create.container, "create_item", options) is None
 
 
-def test_handler_only_completion_does_not_import_opentelemetry(sync_create, monkeypatch):
+def test_handler_only_completion_does_not_import_opentelemetry_rust(sync_create, monkeypatch):
     settings.tracing_enabled = False
     seen = []
     sync_create.container._item_context = replace(
@@ -1517,7 +1517,7 @@ def test_handler_only_completion_does_not_import_opentelemetry(sync_create, monk
     assert seen[0].diagnostics.request_count == 1
 
 
-def test_handler_failure_does_not_replace_hook_failure_or_stop_other_handlers(sync_create, monkeypatch, caplog):
+def test_handler_failure_does_not_replace_hook_failure_or_stop_other_handlers_rust(sync_create, monkeypatch, caplog):
     seen = []
     hook_failure = ValueError("response hook failure")
     clock = [100]
@@ -1548,7 +1548,7 @@ def test_handler_failure_does_not_replace_hook_failure_or_stop_other_handlers(sy
     assert "PRIVATE" not in caplog.text
 
 
-def test_cancelled_public_call_notifies_independent_handlers(create):
+def test_cancelled_public_call_notifies_independent_handlers_rust(create):
     seen = []
     create.container._item_context = replace(
         create.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
@@ -1570,7 +1570,7 @@ def test_cancelled_public_call_notifies_independent_handlers(create):
     assert completion.diagnostics is None
 
 
-def test_public_identity_can_differ_from_binding_operation(sync_create, recording):
+def test_public_identity_can_differ_from_binding_operation_rust(sync_create, recording):
     sync_call(sync_create, "create_item", tracing_options={"enabled": False})
     prepared = sync_create.calls[0][2]
     seen = []
@@ -1592,7 +1592,7 @@ def test_public_identity_can_differ_from_binding_operation(sync_create, recordin
 
 
 @pytest.mark.parametrize("limit", [0, 1, 3])
-def test_collector_snapshots_input_and_honors_zero_or_small_limits(limit):
+def test_collector_snapshots_input_and_honors_zero_or_small_limits_rust(limit):
     collector = telemetry._DiagnosticCollector(retained_limit=limit)
     payload = contribution_response(5, time.time_ns(), count=4)
     contribution = collector.reserve()
@@ -1604,7 +1604,7 @@ def test_collector_snapshots_input_and_honors_zero_or_small_limits(limit):
     assert len(diagnostics.attempts) == limit
 
 
-def test_contribution_cannot_be_completed_by_an_unrelated_collector(caplog):
+def test_contribution_cannot_be_completed_by_an_unrelated_collector_rust(caplog):
     owner = telemetry._DiagnosticCollector()
     other = telemetry._DiagnosticCollector()
     contribution = owner.reserve()
@@ -1616,7 +1616,7 @@ def test_contribution_cannot_be_completed_by_an_unrelated_collector(caplog):
     assert "different owner" in caplog.text
 
 
-def test_completion_reporting_failure_preserves_original_response_hook_error(sync_create, monkeypatch, capfd):
+def test_completion_reporting_failure_preserves_original_response_hook_error_rust(sync_create, monkeypatch, capfd):
     failure = ValueError("customer response hook failure")
     logger = telemetry._LOGGER
     monkeypatch.setattr(logger, "level", logging.WARNING)
@@ -1832,7 +1832,7 @@ def database_throughput_replace_harness(database_throughput):
         "enable-call",
     ],
 )
-def test_database_throughput_replace_owns_all_executed_steps(  # pylint: disable=too-many-statements,too-many-branches
+def test_database_throughput_replace_owns_all_executed_steps_rust(  # pylint: disable=too-many-statements,too-many-branches
     database_throughput_replace, recording, cached, outcome, mode
 ):
     from azure.cosmos import ThroughputProperties
@@ -1950,7 +1950,7 @@ def test_database_throughput_replace_owns_all_executed_steps(  # pylint: disable
 @pytest.mark.parametrize("stage", ["read_database", "get_throughput", "replace_throughput"])
 @pytest.mark.parametrize("returned", [False, True])
 @pytest.mark.parametrize("failure", ["timeout", "transport"])
-def test_database_throughput_replace_keeps_error_and_prior_attempts(
+def test_database_throughput_replace_keeps_error_and_prior_attempts_rust(
     database_throughput_replace, recording, stage, returned, failure
 ):
     harness = database_throughput_replace
@@ -1982,7 +1982,7 @@ def test_database_throughput_replace_keeps_error_and_prior_attempts(
 
 @pytest.mark.parametrize("failure", ["partial", "missing", "invalid", "emitter", "handler", "body", "write-body"])
 @pytest.mark.parametrize("hook_error", [False, True])
-def test_database_throughput_replace_reporting_never_replays(
+def test_database_throughput_replace_reporting_never_replays_rust(
     database_throughput_replace, recording, monkeypatch, failure, hook_error
 ):
     harness = database_throughput_replace
@@ -2052,7 +2052,7 @@ def test_database_throughput_replace_reporting_never_replays(
 
 @pytest.mark.parametrize("stage", ["read_database", "get_throughput", "replace_throughput"])
 @pytest.mark.parametrize("cancel", [False, True])
-def test_async_database_throughput_replace_drains_interrupted_step(
+def test_async_database_throughput_replace_drains_interrupted_step_rust(
     database_throughput_replace, recording, stage, cancel
 ):
     harness = database_throughput_replace
@@ -2093,7 +2093,7 @@ def test_async_database_throughput_replace_drains_interrupted_step(
 
 
 @pytest.mark.parametrize("expire_stage", [None, 0, 1, 2, 3])
-def test_database_throughput_replace_preserves_shared_budget(
+def test_database_throughput_replace_preserves_shared_budget_rust(
     database_throughput_replace, recording, monkeypatch, expire_stage
 ):
     from azure.cosmos._backend import _binding_adapter_shared
@@ -2150,7 +2150,7 @@ def test_database_throughput_replace_preserves_shared_budget(
 
 @pytest.mark.parametrize("cached", [False, True])
 @pytest.mark.parametrize("with_timeout", [False, True])
-def test_database_throughput_replace_keeps_overrides(
+def test_database_throughput_replace_keeps_overrides_rust(
     database_throughput_replace, recording, monkeypatch, cached, with_timeout
 ):
     harness = database_throughput_replace
@@ -2172,7 +2172,7 @@ def test_database_throughput_replace_keeps_overrides(
 
 
 @pytest.mark.parametrize("cached", [False, True])
-def test_database_throughput_replace_disabled_masks_internal_read(database_throughput_replace, recording, cached):
+def test_database_throughput_replace_disabled_masks_internal_read_rust(database_throughput_replace, recording, cached):
     harness = database_throughput_replace
     if cached:
         harness.database._properties = harness.properties
@@ -2189,14 +2189,14 @@ def test_database_throughput_replace_disabled_masks_internal_read(database_throu
         (800, {"unsupported": True}),
     ],
 )
-def test_database_throughput_replace_preflight_precedes_metadata(database_throughput_replace, throughput, kwargs):
+def test_database_throughput_replace_preflight_precedes_metadata_rust(database_throughput_replace, throughput, kwargs):
     with pytest.raises((TypeError, ValueError, NotImplementedError)):
         database_throughput_replace.replace_throughput(throughput, **kwargs)
     assert not database_throughput_replace.calls
 
 
 @pytest.mark.parametrize("cached", [False, True])
-def test_database_throughput_replace_sequence_is_bounded_and_owned(database_throughput_replace, cached):
+def test_database_throughput_replace_sequence_is_bounded_and_owned_rust(database_throughput_replace, cached):
     harness = database_throughput_replace
     alternatives = telemetry.BindingAlternatives(
         (
@@ -2424,7 +2424,7 @@ def configure_container_offer_lookup(harness, cached, flow):
         "enable-call",
     ],
 )
-def test_container_throughput_owns_lookup_and_recovery(  # pylint: disable=too-many-statements,too-many-branches
+def test_container_throughput_owns_lookup_and_recovery_rust(  # pylint: disable=too-many-statements,too-many-branches
     container_throughput, recording, cached, flow, mode
 ):
     harness = container_throughput
@@ -2522,7 +2522,7 @@ def test_container_throughput_owns_lookup_and_recovery(  # pylint: disable=too-m
 @pytest.mark.parametrize("stage", [0, 1, 2, 3, 4])
 @pytest.mark.parametrize("returned", [False, True])
 @pytest.mark.parametrize("failure", ["timeout", "transport"])
-def test_container_throughput_failure_preserves_prior_attempts(
+def test_container_throughput_failure_preserves_prior_attempts_rust(
     container_throughput, recording, stage, returned, failure
 ):
     harness = container_throughput
@@ -2551,7 +2551,7 @@ def test_container_throughput_failure_preserves_prior_attempts(
 
 
 @pytest.mark.parametrize("failure", ["partial", "missing", "invalid", "emitter", "handler", "cache"])
-def test_container_throughput_reporting_does_not_replay(container_throughput, recording, monkeypatch, failure):
+def test_container_throughput_reporting_does_not_replay_rust(container_throughput, recording, monkeypatch, failure):
     harness = container_throughput
     configure_container_throughput(harness, flow="recreated")
     seen = []
@@ -2590,7 +2590,7 @@ def test_container_throughput_reporting_does_not_replay(container_throughput, re
 
 @pytest.mark.parametrize("stage", [0, 1, 2, 3, 4])
 @pytest.mark.parametrize("cancel", [False, True])
-def test_async_container_throughput_drains_interruption(container_throughput, recording, stage, cancel):
+def test_async_container_throughput_drains_interruption_rust(container_throughput, recording, stage, cancel):
     harness = container_throughput
     if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
         pytest.skip("Async interruption")
@@ -2636,7 +2636,7 @@ def test_async_container_throughput_drains_interruption(container_throughput, re
 
 
 @pytest.mark.parametrize("cached", [False, True])
-def test_container_throughput_disabled_masks_internal_reads(container_throughput, recording, cached):
+def test_container_throughput_disabled_masks_internal_reads_rust(container_throughput, recording, cached):
     harness = container_throughput
     configure_container_throughput(harness, cached, "recreated")
     assert harness.run_throughput(tracing_options={"enabled": False}).offer_throughput == harness.expected_throughput
@@ -2644,14 +2644,14 @@ def test_container_throughput_disabled_masks_internal_reads(container_throughput
 
 
 @pytest.mark.parametrize("kwargs", [{"unsupported": True}, {"timeout": 0.5}, {"response_hook": 17}])
-def test_container_throughput_preflight_precedes_lookup(container_throughput, kwargs):
+def test_container_throughput_preflight_precedes_lookup_rust(container_throughput, kwargs):
     with pytest.raises((TypeError, ValueError, NotImplementedError)):
         container_throughput.run_throughput(**kwargs)
     assert not container_throughput.calls
 
 
 @pytest.mark.parametrize("expire_stage", [None, 0, 1, 2, 3, 4, "after-result"])
-def test_container_throughput_preserves_shared_budget(container_throughput, recording, monkeypatch, expire_stage):
+def test_container_throughput_preserves_shared_budget_rust(container_throughput, recording, monkeypatch, expire_stage):
     from azure.cosmos._backend import _binding_adapter_shared
     from azure.cosmos._helpers import _container_throughput
 
@@ -2717,7 +2717,7 @@ def test_container_throughput_preserves_shared_budget(container_throughput, reco
 
 @pytest.mark.parametrize("cached", [False, True])
 @pytest.mark.parametrize("with_timeout", [False, True])
-def test_container_throughput_preserves_public_overrides(
+def test_container_throughput_preserves_public_overrides_rust(
     container_throughput, recording, monkeypatch, cached, with_timeout
 ):
     harness = container_throughput
@@ -2746,7 +2746,7 @@ def test_container_throughput_preserves_public_overrides(
 
 @pytest.mark.parametrize("cached", [False, True])
 @pytest.mark.parametrize("recovered", [False, True])
-def test_container_throughput_sequence_rejects_unrelated_execution(container_throughput, cached, recovered):
+def test_container_throughput_sequence_rejects_unrelated_execution_rust(container_throughput, cached, recovered):
     harness = container_throughput
     paths = (
         ("read_container", "get_throughput", "read_container", "get_throughput"),
@@ -2797,7 +2797,7 @@ def test_container_throughput_sequence_rejects_unrelated_execution(container_thr
 @pytest.mark.parametrize("cached", [False, True])
 @pytest.mark.parametrize("recovered", [False, True])
 @pytest.mark.parametrize("failure", ["forbidden", "rid-mismatch", "body", "deserialize"])
-def test_container_throughput_write_failure_never_replays(
+def test_container_throughput_write_failure_never_replays_rust(
     container_throughput, recording, monkeypatch, cached, recovered, failure
 ):
     from azure.cosmos._helpers import _throughput_replace
@@ -2854,7 +2854,7 @@ def test_container_throughput_write_failure_never_replays(
 
 
 @pytest.mark.parametrize("invalid", ["bad", None, "mixed-settings"])
-def test_container_throughput_replacement_validation_precedes_requests(container_throughput, invalid):
+def test_container_throughput_replacement_validation_precedes_requests_rust(container_throughput, invalid):
     from azure.cosmos import ThroughputProperties
 
     harness = container_throughput
@@ -2871,7 +2871,7 @@ def test_container_throughput_replacement_validation_precedes_requests(container
 
 
 @pytest.mark.parametrize("path", [("a",), ("a", "b", "c"), ("a", "b", "d"), ("a", "a", "c")])
-def test_binding_alternatives_shared_prefix_is_bounded_and_not_speculative(item_runtime, path):
+def test_binding_alternatives_shared_prefix_is_bounded_and_not_speculative_rust(item_runtime, path):
     harness = item_runtime
     paths = (("a",), ("a", "b", "c"), ("a", "b", "d"), ("a", "a", "c"))
     alternatives = telemetry.BindingAlternatives(paths)
@@ -2908,7 +2908,7 @@ def test_binding_alternatives_shared_prefix_is_bounded_and_not_speculative(item_
     "mode",
     ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
 )
-def test_database_throughput_owns_only_executed_steps(  # pylint: disable=too-many-branches,too-many-statements
+def test_database_throughput_owns_only_executed_steps_rust(  # pylint: disable=too-many-branches,too-many-statements
     database_throughput, recording, cached, outcome, mode
 ):
     harness = database_throughput
@@ -3006,7 +3006,7 @@ def test_database_throughput_owns_only_executed_steps(  # pylint: disable=too-ma
 
 @pytest.mark.parametrize("stage", ["read_database", "get_throughput"])
 @pytest.mark.parametrize("failure", ["binding-timeout", "returned-timeout", "transport", "forbidden"])
-def test_database_throughput_failure_preserves_cause_and_prior_attempts(database_throughput, recording, stage, failure):
+def test_database_throughput_failure_preserves_cause_and_prior_attempts_rust(database_throughput, recording, stage, failure):
     harness = database_throughput
     original = None
     if failure == "forbidden":
@@ -3044,7 +3044,7 @@ def test_database_throughput_failure_preserves_cause_and_prior_attempts(database
 
 
 @pytest.mark.parametrize("failure", ["partial", "missing", "invalid", "emitter", "handler", "malformed-body"])
-def test_database_throughput_reporting_never_replays(database_throughput, recording, monkeypatch, failure):
+def test_database_throughput_reporting_never_replays_rust(database_throughput, recording, monkeypatch, failure):
     harness = database_throughput
     seen = []
     handlers = (telemetry.CompletionHandler(seen.append),)
@@ -3082,7 +3082,7 @@ def test_database_throughput_reporting_never_replays(database_throughput, record
 
 
 @pytest.mark.parametrize("kwargs", [{"unsupported": True}, {"timeout": 0.5}, {"response_hook": 17}])
-def test_database_throughput_preflight_precedes_metadata(database_throughput, kwargs):
+def test_database_throughput_preflight_precedes_metadata_rust(database_throughput, kwargs):
     harness = database_throughput
     with pytest.raises((TypeError, ValueError, NotImplementedError)):
         harness.get_throughput(**kwargs)
@@ -3091,7 +3091,7 @@ def test_database_throughput_preflight_precedes_metadata(database_throughput, kw
 
 
 @pytest.mark.parametrize("cached", [False, True])
-def test_database_throughput_disabled_without_handlers_has_no_nested_recording(database_throughput, recording, cached):
+def test_database_throughput_disabled_without_handlers_has_no_nested_recording_rust(database_throughput, recording, cached):
     harness = database_throughput
     if cached:
         harness.database._properties = harness.properties
@@ -3102,7 +3102,7 @@ def test_database_throughput_disabled_without_handlers_has_no_nested_recording(d
 
 
 @pytest.mark.parametrize("cached", [False, True])
-def test_database_throughput_retains_property_override(database_throughput, recording, monkeypatch, cached):
+def test_database_throughput_retains_property_override_rust(database_throughput, recording, monkeypatch, cached):
     harness = database_throughput
     if cached:
         harness.database._properties = harness.properties
@@ -3117,7 +3117,7 @@ def test_database_throughput_retains_property_override(database_throughput, reco
 
 @pytest.mark.parametrize("stage", ["read_database", "get_throughput"])
 @pytest.mark.parametrize("cancel", [False, True])
-def test_async_database_throughput_drains_interrupted_step(database_throughput, recording, stage, cancel):
+def test_async_database_throughput_drains_interrupted_step_rust(database_throughput, recording, stage, cancel):
     harness = database_throughput
     if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
         pytest.skip("Async interruption")
@@ -3159,7 +3159,7 @@ def test_async_database_throughput_drains_interrupted_step(database_throughput, 
 
 
 @pytest.mark.parametrize("path", [("read_database", "get_throughput"), ("get_throughput",)])
-def test_database_throughput_alternatives_are_bounded_and_owned(database_throughput, path):
+def test_database_throughput_alternatives_are_bounded_and_owned_rust(database_throughput, path):
     harness = database_throughput
     harness.database._item_context = replace(
         harness.database._item_context, telemetry_handlers=(telemetry.CompletionHandler(Mock(), collect_attempts=True),)
@@ -3194,7 +3194,7 @@ def test_database_throughput_alternatives_are_bounded_and_owned(database_through
 
 
 @pytest.mark.parametrize("expire_stage", [None, 0, 1])
-def test_database_throughput_keeps_distinct_metadata_and_offer_budgets(database_throughput, monkeypatch, expire_stage):
+def test_database_throughput_keeps_distinct_metadata_and_offer_budgets_rust(database_throughput, monkeypatch, expire_stage):
     from azure.cosmos._backend import _binding_adapter_shared
 
     harness = database_throughput
@@ -3240,7 +3240,7 @@ def test_database_throughput_keeps_distinct_metadata_and_offer_budgets(database_
     assert telemetry._OPERATION.get() is None
 
 
-def test_database_throughput_repeated_calls_select_actual_cache_path(database_throughput, recording):
+def test_database_throughput_repeated_calls_select_actual_cache_path_rust(database_throughput, recording):
     harness = database_throughput
     assert harness.get_throughput().offer_throughput == 400
     assert harness.get_throughput().offer_throughput == 400
@@ -3251,7 +3251,7 @@ def test_database_throughput_repeated_calls_select_actual_cache_path(database_th
 
 
 @pytest.mark.parametrize("value", [None, 0, 1, "false"])
-def test_invalid_completeness_rejects_payload(value, caplog):
+def test_invalid_completeness_rejects_payload_rust(value, caplog):
     collector = telemetry._DiagnosticCollector()
     response, payload = contribution_response(5, time.time_ns())
     payload["complete"] = value
@@ -3261,7 +3261,7 @@ def test_invalid_completeness_rejects_payload(value, caplog):
 
 
 @pytest.mark.parametrize("partial_first", [False, True])
-def test_completeness_stays_partial_after_aggregation(partial_first):
+def test_completeness_stays_partial_after_aggregation_rust(partial_first):
     collector = telemetry._DiagnosticCollector(contribution_limit=2)
     for partial in (partial_first, not partial_first):
         response, payload = contribution_response(5, time.time_ns())
@@ -3273,7 +3273,7 @@ def test_completeness_stays_partial_after_aggregation(partial_first):
 
 
 @pytest.mark.parametrize("paths", [(), ((),), (("get_throughput",), ("get_throughput",))])
-def test_binding_alternatives_reject_duplicate_or_empty_paths(paths):
+def test_binding_alternatives_reject_duplicate_or_empty_paths_rust(paths):
     with pytest.raises(ValueError):
         telemetry.BindingAlternatives(paths)
 
@@ -3499,7 +3499,7 @@ def assert_item_attempts(harness, recording, parent, status, name, owner="Contai
     "mode",
     ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
 )
-def test_container_create_owns_returned_proxy_and_properties(  # pylint: disable=too-many-statements
+def test_container_create_owns_returned_proxy_and_properties_rust(  # pylint: disable=too-many-statements
     container_create, recording, status, return_properties, mode
 ):
     harness = container_create
@@ -3593,7 +3593,7 @@ def test_container_create_owns_returned_proxy_and_properties(  # pylint: disable
     "mode",
     ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
 )
-def test_container_replace_owns_hook_snapshots_and_proxy_completion(  # pylint: disable=too-many-statements
+def test_container_replace_owns_hook_snapshots_and_proxy_completion_rust(  # pylint: disable=too-many-statements
     container_replace, recording, status, return_properties, mode
 ):
     harness = container_replace
@@ -3693,7 +3693,7 @@ def test_container_replace_owns_hook_snapshots_and_proxy_completion(  # pylint: 
     assert telemetry._OPERATION.get() is None
 
 
-def test_container_replace_metadata_is_not_an_extra_contribution(container_replace, recording, monkeypatch):
+def test_container_replace_metadata_is_not_an_extra_contribution_rust(container_replace, recording, monkeypatch):
     harness = container_replace
     is_async = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
     module = binding_adapter if is_async else sync_binding_adapter
@@ -3722,7 +3722,7 @@ def test_container_replace_metadata_is_not_an_extra_contribution(container_repla
 @pytest.mark.parametrize("mode", ["enabled", "disabled", "global-disabled"])
 @pytest.mark.parametrize("failure", ["none", "diagnostics", "emitter", "handler"])
 @pytest.mark.parametrize("outcome", ["success", "hook-error", "cache-error", "timeout"])
-def test_container_write_preserves_errors_when_reporting_fails(
+def test_container_write_preserves_errors_when_reporting_fails_rust(
     container_write, recording, monkeypatch, mode, failure, outcome
 ):
     harness = container_write
@@ -3771,7 +3771,7 @@ def test_container_write_preserves_errors_when_reporting_fails(
 
 
 @pytest.mark.parametrize("operation", ["create_container", "replace_container"])
-def test_async_container_write_cancellation_closes_database_operation(create, recording, operation):
+def test_async_container_write_cancellation_closes_database_operation_rust(create, recording, operation):
     harness = create
     connection = SimpleNamespace(
         _backend=harness.backend,
@@ -3814,7 +3814,7 @@ def test_async_container_write_cancellation_closes_database_operation(create, re
     "mode",
     ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
 )
-def test_container_delete_owns_database_context_until_completion(  # pylint: disable=too-many-statements
+def test_container_delete_owns_database_context_until_completion_rust(  # pylint: disable=too-many-statements
     container_delete, recording, status, mode
 ):
     harness = container_delete
@@ -3897,7 +3897,7 @@ def test_container_delete_owns_database_context_until_completion(  # pylint: dis
 @pytest.mark.parametrize("mode", ["enabled", "disabled", "global-disabled"])
 @pytest.mark.parametrize("failure", ["none", "diagnostics", "emitter", "handler"])
 @pytest.mark.parametrize("outcome", ["success", "hook-error", "timeout"])
-def test_container_delete_preserves_errors_when_reporting_fails(
+def test_container_delete_preserves_errors_when_reporting_fails_rust(
     container_delete, recording, monkeypatch, mode, failure, outcome
 ):
     harness = container_delete
@@ -3943,7 +3943,7 @@ def test_container_delete_preserves_errors_when_reporting_fails(
     assert telemetry._OPERATION.get() is None
 
 
-def test_container_delete_internal_metadata_is_not_a_second_contribution(container_delete, recording, monkeypatch):
+def test_container_delete_internal_metadata_is_not_a_second_contribution_rust(container_delete, recording, monkeypatch):
     harness = container_delete
     is_async = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
     module = binding_adapter if is_async else sync_binding_adapter
@@ -3969,7 +3969,7 @@ def test_container_delete_internal_metadata_is_not_a_second_contribution(contain
     assert_item_attempts(harness, recording, parent, 204, "delete_container", owner="DatabaseProxy")
 
 
-def test_async_container_delete_cancellation_closes_database_operation(create, recording):
+def test_async_container_delete_cancellation_closes_database_operation_rust(create, recording):
     harness = create
     harness.connection = SimpleNamespace(
         _backend=harness.backend, DeleteContainer=Mock(side_effect=AssertionError("Unexpected legacy delete"))
@@ -4005,7 +4005,7 @@ def test_async_container_delete_cancellation_closes_database_operation(create, r
     "mode",
     ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
 )
-def test_container_read_owns_diagnostics_through_hook_and_cache(  # pylint: disable=too-many-statements
+def test_container_read_owns_diagnostics_through_hook_and_cache_rust(  # pylint: disable=too-many-statements
     container_read, recording, status, mode
 ):
     harness = container_read
@@ -4093,7 +4093,7 @@ def test_container_read_owns_diagnostics_through_hook_and_cache(  # pylint: disa
 
 @pytest.mark.parametrize("failure", ["diagnostics", "emitter", "handler"])
 @pytest.mark.parametrize("outcome", ["success", "hook-error", "timeout"])
-def test_metadata_read_reporting_failures_preserve_execution(metadata_read, monkeypatch, failure, outcome):
+def test_metadata_read_reporting_failures_preserve_execution_rust(metadata_read, monkeypatch, failure, outcome):
     harness = metadata_read
     previous = getattr(harness.read_proxy, "_properties", None)
     hook_error = ValueError("customer hook failure")
@@ -4126,7 +4126,7 @@ def test_metadata_read_reporting_failures_preserve_execution(metadata_read, monk
     assert telemetry._OPERATION.get() is None
 
 
-def test_internal_metadata_does_not_contribute_to_public_container_read(container_read, recording, monkeypatch):
+def test_internal_metadata_does_not_contribute_to_public_container_read_rust(container_read, recording, monkeypatch):
     harness = container_read
     is_async = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
     module = binding_adapter if is_async else sync_binding_adapter
@@ -4156,7 +4156,7 @@ def test_internal_metadata_does_not_contribute_to_public_container_read(containe
 
 
 @pytest.mark.parametrize("owner", ["container", "database"])
-def test_async_metadata_read_cancellation_completes_without_diagnostics(create, recording, owner):
+def test_async_metadata_read_cancellation_completes_without_diagnostics_rust(create, recording, owner):
     create.response_status = 200
     create.container.client_connection = SimpleNamespace(
         _backend=create.backend,
@@ -4198,7 +4198,7 @@ def test_async_metadata_read_cancellation_completes_without_diagnostics(create, 
     "mode",
     ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
 )
-def test_database_read_owns_diagnostics_through_hook_and_properties(  # pylint: disable=too-many-statements
+def test_database_read_owns_diagnostics_through_hook_and_properties_rust(  # pylint: disable=too-many-statements
     database_read, recording, status, mode
 ):
     harness = database_read
@@ -4286,7 +4286,7 @@ def test_database_read_owns_diagnostics_through_hook_and_properties(  # pylint: 
 
 
 @pytest.mark.parametrize("returned_diagnostics", [False, True])
-def test_database_read_timeout_keeps_cause_and_only_available_diagnostics(
+def test_database_read_timeout_keeps_cause_and_only_available_diagnostics_rust(
     database_read, recording, returned_diagnostics
 ):
     harness = database_read
@@ -4320,7 +4320,7 @@ def test_database_read_timeout_keeps_cause_and_only_available_diagnostics(
     "mode",
     ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
 )
-def test_database_create_owns_diagnostics_through_hook_and_proxy(  # pylint: disable=too-many-statements
+def test_database_create_owns_diagnostics_through_hook_and_proxy_rust(  # pylint: disable=too-many-statements
     database_create, recording, status, return_properties, mode
 ):
     harness = database_create
@@ -4401,7 +4401,7 @@ def test_database_create_owns_diagnostics_through_hook_and_proxy(  # pylint: dis
 
 @pytest.mark.parametrize("failure", ["none", "diagnostics", "emitter", "handler"])
 @pytest.mark.parametrize("outcome", ["success", "hook-error", "proxy-error", "returned-timeout", "binding-timeout"])
-def test_database_create_reporting_preserves_public_outcome(database_create, recording, monkeypatch, failure, outcome):
+def test_database_create_reporting_preserves_public_outcome_rust(database_create, recording, monkeypatch, failure, outcome):
     harness = database_create
     original_error = ValueError("customer hook or proxy construction failure")
     hook = Mock(side_effect=original_error if outcome == "hook-error" else None)
@@ -4488,7 +4488,7 @@ def assert_composed_attempts(
     "mode",
     ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
 )
-def test_database_get_or_create_collects_each_executed_step_once(  # pylint: disable=too-many-statements
+def test_database_get_or_create_collects_each_executed_step_once_rust(  # pylint: disable=too-many-statements
     database_get_or_create, recording, statuses, return_properties, mode
 ):
     harness = database_get_or_create
@@ -4574,7 +4574,7 @@ def test_database_get_or_create_collects_each_executed_step_once(  # pylint: dis
 
 @pytest.mark.parametrize("stage", [0, 1, 2])
 @pytest.mark.parametrize("failure", ["returned-timeout", "binding-timeout", "transport"])
-def test_database_get_or_create_failure_keeps_earlier_diagnostics(database_get_or_create, recording, stage, failure):
+def test_database_get_or_create_failure_keeps_earlier_diagnostics_rust(database_get_or_create, recording, stage, failure):
     harness = database_get_or_create
     harness.statuses = [404, 409, 200][:stage] + [408]
     if failure == "binding-timeout":
@@ -4607,7 +4607,7 @@ def test_database_get_or_create_failure_keeps_earlier_diagnostics(database_get_o
 @pytest.mark.parametrize("statuses", [[200], [404, 201], [404, 409, 200]])
 @pytest.mark.parametrize("outcome", ["success", "hook-error", "proxy-error"])
 @pytest.mark.parametrize("failure", ["none", "diagnostics", "emitter", "handler"])
-def test_database_get_or_create_reporting_never_replays_work(
+def test_database_get_or_create_reporting_never_replays_work_rust(
     database_get_or_create, recording, monkeypatch, statuses, outcome, failure
 ):
     harness = database_get_or_create
@@ -4652,7 +4652,7 @@ def test_database_get_or_create_reporting_never_replays_work(
 
 
 @pytest.mark.parametrize("expire_after", [None, 1, 2, 3])
-def test_database_get_or_create_telemetry_preserves_one_budget(
+def test_database_get_or_create_telemetry_preserves_one_budget_rust(
     database_get_or_create, recording, monkeypatch, expire_after
 ):
     harness = database_get_or_create
@@ -4707,7 +4707,7 @@ def test_database_get_or_create_telemetry_preserves_one_budget(
 
 @pytest.mark.parametrize("stage", [0, 1, 2])
 @pytest.mark.parametrize("cancel,deadline", [(True, False), (True, True), (False, True)])
-def test_async_database_get_or_create_drains_interrupted_step(
+def test_async_database_get_or_create_drains_interrupted_step_rust(
     database_get_or_create, recording, monkeypatch, stage, cancel, deadline
 ):
     harness = database_get_or_create
@@ -4764,7 +4764,7 @@ def test_async_database_get_or_create_drains_interrupted_step(
     harness.connection.ReadDatabase.assert_not_called()
 
 
-def test_composed_binding_sequence_is_bounded_and_owned(database_get_or_create):
+def test_composed_binding_sequence_is_bounded_and_owned_rust(database_get_or_create):
     harness = database_get_or_create
     sequence = ("read_database", "create_database", "read_database")
     harness.client._item_context = replace(
@@ -4791,7 +4791,7 @@ def test_composed_binding_sequence_is_bounded_and_owned(database_get_or_create):
     assert telemetry._OPERATION.get() is None
 
 
-def test_composed_sequence_rejects_inherited_tasks_and_masks_nested_calls(database_get_or_create):
+def test_composed_sequence_rejects_inherited_tasks_and_masks_nested_calls_rust(database_get_or_create):
     harness = database_get_or_create
     sequence = ("read_database", "create_database", "read_database")
     harness.client._item_context = replace(
@@ -4820,7 +4820,7 @@ def test_composed_sequence_rejects_inherited_tasks_and_masks_nested_calls(databa
     assert telemetry._OPERATION.get() is None
 
 
-def test_composed_collector_rejects_excess_and_duplicate_results(caplog):
+def test_composed_collector_rejects_excess_and_duplicate_results_rust(caplog):
     collector = telemetry._DiagnosticCollector(contribution_limit=3)
     payload = contribution_response(5, time.time_ns())
     for _ in range(3):
@@ -4840,7 +4840,7 @@ def test_composed_collector_rejects_excess_and_duplicate_results(caplog):
     "mode",
     ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
 )
-def test_container_get_or_create_owns_read_and_delegated_creation(  # pylint: disable=too-many-statements
+def test_container_get_or_create_owns_read_and_delegated_creation_rust(  # pylint: disable=too-many-statements
     container_get_or_create, recording, statuses, return_properties, mode
 ):
     harness = container_get_or_create
@@ -4934,7 +4934,7 @@ def test_container_get_or_create_owns_read_and_delegated_creation(  # pylint: di
 @pytest.mark.parametrize("statuses", [[200], [404, 201]])
 @pytest.mark.parametrize("outcome", ["success", "hook-error", "cache-error", "proxy-error"])
 @pytest.mark.parametrize("failure", ["none", "diagnostics", "emitter", "handler"])
-def test_container_get_or_create_reporting_preserves_completion(
+def test_container_get_or_create_reporting_preserves_completion_rust(
     container_get_or_create, recording, monkeypatch, statuses, outcome, failure
 ):
     harness = container_get_or_create
@@ -5000,7 +5000,7 @@ def test_container_get_or_create_reporting_preserves_completion(
 
 @pytest.mark.parametrize("stage", [0, 1])
 @pytest.mark.parametrize("failure", ["returned-timeout", "binding-timeout", "transport"])
-def test_container_get_or_create_failure_retains_available_diagnostics(
+def test_container_get_or_create_failure_retains_available_diagnostics_rust(
     container_get_or_create, recording, stage, failure
 ):
     harness = container_get_or_create
@@ -5038,7 +5038,7 @@ def test_container_get_or_create_failure_retains_available_diagnostics(
 
 
 @pytest.mark.parametrize("expire_stage", [None, 0, 1])
-def test_container_get_or_create_preserves_per_step_budget(
+def test_container_get_or_create_preserves_per_step_budget_rust(
     container_get_or_create, recording, monkeypatch, expire_stage
 ):
     from azure.cosmos._backend import _binding_adapter_shared
@@ -5098,7 +5098,7 @@ def test_container_get_or_create_preserves_per_step_budget(
     assert telemetry._OPERATION.get() is None and telemetry._DELEGATED_CALL.get() is None
 
 
-def test_container_get_or_create_keeps_public_create_override(container_get_or_create, monkeypatch):
+def test_container_get_or_create_keeps_public_create_override_rust(container_get_or_create, monkeypatch):
     harness = container_get_or_create
     create = harness.database.create_container
     seen = []
@@ -5115,7 +5115,7 @@ def test_container_get_or_create_keeps_public_create_override(container_get_or_c
 
 
 @pytest.mark.parametrize("stage", [0, 1])
-def test_async_container_get_or_create_cancellation_closes_outer_operation(
+def test_async_container_get_or_create_cancellation_closes_outer_operation_rust(
     container_get_or_create, recording, monkeypatch, stage
 ):
     harness = container_get_or_create
@@ -5178,7 +5178,7 @@ def test_async_container_get_or_create_cancellation_closes_outer_operation(
     assert telemetry._OPERATION.get() is None and telemetry._DELEGATED_CALL.get() is None
 
 
-def test_delegation_is_scoped_to_one_owner_method_thread_and_task(container_get_or_create):
+def test_delegation_is_scoped_to_one_owner_method_thread_and_task_rust(container_get_or_create):
     harness = container_get_or_create
     sequence = ("read_container", "create_container")
     owner = harness.database
@@ -5212,7 +5212,7 @@ def test_delegation_is_scoped_to_one_owner_method_thread_and_task(container_get_
 
 
 @pytest.mark.parametrize("operation", ["create_database", "delete_database"])
-def test_async_database_mutation_cancellation_closes_operation(create, recording, operation):
+def test_async_database_mutation_cancellation_closes_operation_rust(create, recording, operation):
     client = object.__new__(AsyncCosmosClient)
     client._adapter = create.backend
     seen = []
@@ -5251,7 +5251,7 @@ def test_async_database_mutation_cancellation_closes_operation(create, recording
     "mode",
     ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
 )
-def test_database_delete_owns_diagnostics_through_headers_only_hook(  # pylint: disable=too-many-statements
+def test_database_delete_owns_diagnostics_through_headers_only_hook_rust(  # pylint: disable=too-many-statements
     database_delete, recording, status, mode
 ):
     harness = database_delete
@@ -5333,7 +5333,7 @@ def test_database_delete_owns_diagnostics_through_headers_only_hook(  # pylint: 
 
 @pytest.mark.parametrize("failure", ["none", "diagnostics", "emitter", "handler"])
 @pytest.mark.parametrize("outcome", ["success", "hook-error", "returned-timeout", "binding-timeout"])
-def test_database_delete_reporting_preserves_public_outcome(database_delete, recording, monkeypatch, failure, outcome):
+def test_database_delete_reporting_preserves_public_outcome_rust(database_delete, recording, monkeypatch, failure, outcome):
     harness = database_delete
     original_error = ValueError("customer deletion hook failure")
     hook = Mock(side_effect=original_error if outcome == "hook-error" else None)
@@ -5376,7 +5376,7 @@ def test_database_delete_reporting_preserves_public_outcome(database_delete, rec
 
 @pytest.mark.parametrize("status", [204, 404, 408])
 @pytest.mark.parametrize("mode", ["enabled", "disabled", "global-disabled", "sampled-out", "merged"])
-def test_delete_preserves_outcome_and_records_only_its_owned_attempts(delete, recording, status, mode):
+def test_delete_preserves_outcome_and_records_only_its_owned_attempts_rust(delete, recording, status, mode):
     delete.response_status = status
     hooks = []
     kwargs = {}
@@ -5432,7 +5432,7 @@ def test_delete_preserves_outcome_and_records_only_its_owned_attempts(delete, re
 
 @pytest.mark.parametrize("outcome", ["success", "service-error", "response-hook", "driver-timeout"])
 @pytest.mark.parametrize("failure", ["diagnostics", "emitter", "handler"])
-def test_point_write_telemetry_failures_cannot_replace_public_execution(
+def test_point_write_telemetry_failures_cannot_replace_public_execution_rust(
     point_write, monkeypatch, capfd, outcome, failure
 ):
     seen = []
@@ -5486,7 +5486,7 @@ def test_point_write_telemetry_failures_cannot_replace_public_execution(
 
 
 @pytest.mark.parametrize("collect", [False, True])
-def test_point_write_completion_handler_does_not_require_tracing(point_write, collect):
+def test_point_write_completion_handler_does_not_require_tracing_rust(point_write, collect):
     settings.tracing_enabled = False
     seen = []
     point_write.container._item_context = replace(
@@ -5501,7 +5501,7 @@ def test_point_write_completion_handler_does_not_require_tracing(point_write, co
     assert (seen[0].diagnostics is not None) is collect
 
 
-def test_point_write_without_tracing_does_not_import_opentelemetry(point_write, monkeypatch):
+def test_point_write_without_tracing_does_not_import_opentelemetry_rust(point_write, monkeypatch):
     settings.tracing_enabled = False
     original_import = builtins.__import__
 
@@ -5519,7 +5519,7 @@ def test_point_write_without_tracing_does_not_import_opentelemetry(point_write, 
     "operation,timeout",
     [("delete_item", None), ("upsert_item", None), ("replace_item", None), ("patch_item", None), ("patch_item", 10)],
 )
-def test_point_write_cancellation_completes_once_without_inventing_attempts(create, recording, operation, timeout):
+def test_point_write_cancellation_completes_once_without_inventing_attempts_rust(create, recording, operation, timeout):
     seen = []
     hook = Mock()
     create.container._item_context = replace(
@@ -5560,7 +5560,7 @@ def test_point_write_cancellation_completes_once_without_inventing_attempts(crea
 
 
 @pytest.mark.parametrize("operation", ["delete_item", "upsert_item", "replace_item", "patch_item"])
-def test_overlapping_point_writes_keep_their_own_attempts(create, recording, operation):
+def test_overlapping_point_writes_keep_their_own_attempts_rust(create, recording, operation):
     create.response_status = {"delete_item": 204, "upsert_item": 201, "replace_item": 200, "patch_item": 200}[operation]
 
     async def write(item_id):
@@ -5615,7 +5615,7 @@ def test_overlapping_point_writes_keep_their_own_attempts(create, recording, ope
     ],
 )
 @pytest.mark.parametrize("mode", ["enabled", "disabled", "global-disabled", "sampled-out", "merged"])
-def test_body_write_preserves_result_and_error_outcomes(
+def test_body_write_preserves_result_and_error_outcomes_rust(
     item_runtime, request, recording, method, status, mode
 ):  # pylint: disable=unused-argument
     harness = request.getfixturevalue(method)
@@ -5677,7 +5677,7 @@ def test_body_write_preserves_result_and_error_outcomes(
 
 @pytest.mark.parametrize("method,status", [("upsert", 201), ("upsert", 200), ("replacement", 200), ("patch", 200)])
 @pytest.mark.parametrize("enabled", [False, True])
-def test_body_write_empty_response_keeps_headers_and_completion(
+def test_body_write_empty_response_keeps_headers_and_completion_rust(
     item_runtime, request, recording, method, status, enabled
 ):  # pylint: disable=unused-argument
     harness = request.getfixturevalue(method)
@@ -5694,7 +5694,7 @@ def test_body_write_empty_response_keeps_headers_and_completion(
     assert telemetry._OPERATION.get() is None
 
 
-def test_upsert_invalid_body_finishes_without_binding_execution(upsert, recording):
+def test_upsert_invalid_body_finishes_without_binding_execution_rust(upsert, recording):
     seen = []
     upsert.container._item_context = replace(
         upsert.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
@@ -5709,7 +5709,7 @@ def test_upsert_invalid_body_finishes_without_binding_execution(upsert, recordin
 
 
 @pytest.mark.parametrize("mapping", [False, True])
-def test_replace_telemetry_preserves_target_and_body(replacement, mapping):
+def test_replace_telemetry_preserves_target_and_body_rust(replacement, mapping):
     target = {"id": "order-17", "_self": "dbs/sales/colls/orders/docs/order-17/"} if mapping else "order-17"
     body = dict(ORDER, id="different-body-id")
     original_target, original_body = deepcopy(target), deepcopy(body)
@@ -5724,7 +5724,7 @@ def test_replace_telemetry_preserves_target_and_body(replacement, mapping):
 
 
 @pytest.mark.parametrize("defect", ["body-id", "target-link", "target-id"])
-def test_replace_invalid_input_completes_before_binding(replacement, defect):
+def test_replace_invalid_input_completes_before_binding_rust(replacement, defect):
     seen = []
     replacement.container._item_context = replace(
         replacement.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
@@ -5744,7 +5744,7 @@ def test_replace_invalid_input_completes_before_binding(replacement, defect):
 
 @pytest.mark.parametrize("stage", ["within-budget", "acquisition-expired", "binding-timeout", "response-expired"])
 @pytest.mark.parametrize("method", ["replacement", "patch"])
-def test_point_write_telemetry_preserves_deadline_and_hook_boundary(
+def test_point_write_telemetry_preserves_deadline_and_hook_boundary_rust(
     item_runtime, request, recording, monkeypatch, stage, method
 ):  # pylint: disable=unused-argument
     harness = request.getfixturevalue(method)
@@ -5790,7 +5790,7 @@ def test_point_write_telemetry_preserves_deadline_and_hook_boundary(
 
 
 @pytest.mark.parametrize("mapping", [False, True])
-def test_patch_telemetry_preserves_target_guard_filter_and_snapshot(patch, monkeypatch, mapping):
+def test_patch_telemetry_preserves_target_guard_filter_and_snapshot_rust(patch, monkeypatch, mapping):
     target = {"_self": "dbs/sales/colls/orders/docs/order-17/"} if mapping else ORDER["id"]
     operations = [{"op": "increment", "path": "/total", "value": 1}]
     options = {"filterPredicate": "FROM c WHERE c.total = 200"}
@@ -5827,7 +5827,7 @@ def test_patch_telemetry_preserves_target_guard_filter_and_snapshot(patch, monke
         ({"filter_predicate": 7}, TypeError),
     ],
 )
-def test_patch_invalid_input_completes_without_binding(patch, kwargs, error):
+def test_patch_invalid_input_completes_without_binding_rust(patch, kwargs, error):
     seen = []
     patch.container._item_context = replace(
         patch.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
@@ -5840,7 +5840,7 @@ def test_patch_invalid_input_completes_without_binding(patch, kwargs, error):
     assert telemetry._OPERATION.get() is None
 
 
-def test_patch_without_deadline_records_the_same_operation(patch, recording):
+def test_patch_without_deadline_records_the_same_operation_rust(patch, recording):
     patch.patch_timeout = None
     with trace.get_tracer("customer").start_as_current_span("change_order") as parent:
         assert patch.patch() == ORDER
@@ -5849,7 +5849,7 @@ def test_patch_without_deadline_records_the_same_operation(patch, recording):
 
 
 @pytest.mark.parametrize("eager", [False, True])
-def test_patch_deadline_authorizes_only_its_worker(create, monkeypatch, eager):
+def test_patch_deadline_authorizes_only_its_worker_rust(create, monkeypatch, eager):
     states = []
 
     async def unowned():
@@ -5899,7 +5899,7 @@ def test_patch_deadline_authorizes_only_its_worker(create, monkeypatch, eager):
 
 
 @pytest.mark.parametrize("outcome", ["success", "error", "timeout", "cancelled"])
-def test_deadline_worker_releases_authorization_before_public_completion(create, monkeypatch, outcome):
+def test_deadline_worker_releases_authorization_before_public_completion_rust(create, monkeypatch, outcome):
     # Exercise the actual wait/drain path without spending a full operation timeout.
     monkeypatch.setattr(_operation_deadline, "remaining_timeout", lambda _: 0.02 if outcome == "timeout" else 10)
     failure = TimeoutError("customer response hook")
@@ -5939,7 +5939,7 @@ def test_deadline_worker_releases_authorization_before_public_completion(create,
     assert telemetry._OPERATION.get() is None
 
 
-def test_worker_authorization_is_single_use_and_does_not_restore_masked_state(create):
+def test_worker_authorization_is_single_use_and_does_not_restore_masked_state_rust(create):
     @telemetry.trace_operation_async(binding_operation="patch_item")
     async def public(owner):  # pylint: disable=unused-argument
         state = telemetry.get_operation(create.backend, "patch_item")
@@ -5986,7 +5986,7 @@ def timeout_item_harness(request, item_runtime):
 
 @pytest.mark.parametrize("budget", [False, True])
 @pytest.mark.parametrize("mode", ["enabled", "disabled", "global-disabled", "sampled-out", "handler-only"])
-def test_driver_returned_timeout_keeps_diagnostics_and_original_exception(timeout_item, recording, budget, mode):
+def test_driver_returned_timeout_keeps_diagnostics_and_original_exception_rust(timeout_item, recording, budget, mode):
     seen = []
     hook = Mock()
     timeout_item.container._item_context = replace(
@@ -6027,7 +6027,7 @@ def test_driver_returned_timeout_keeps_diagnostics_and_original_exception(timeou
 
 
 @pytest.mark.parametrize("enabled", [False, True])
-def test_timeout_diagnostic_lookup_failure_never_replaces_timeout(timeout_item, recording, caplog, enabled):
+def test_timeout_diagnostic_lookup_failure_never_replaces_timeout_rust(timeout_item, recording, caplog, enabled):
     accesses = []
 
     class UnreadableTimeout(TimeoutError):

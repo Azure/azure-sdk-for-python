@@ -77,7 +77,7 @@ def _normalize_throughput(throughput_properties):
     }
 
 
-def test_get_throughput_baseline(container_for):
+def test_get_throughput_baseline_rust(container_for):
     """Baseline get_throughput returns the same RU/s on both backends."""
     # Without this, a basic divergence in the reported RU/s would go unnoticed.
 

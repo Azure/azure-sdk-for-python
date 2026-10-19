@@ -5,8 +5,8 @@
 
 Self-contained: builds its own database + container in ``setUp`` and
 deletes them in ``tearDown``. The class name and method name match the
-source at ``tests/test_none_options.py`` so test IDs differ only by
-path.
+source (apart from the method's ``_rust`` suffix) at ``tests/test_none_options.py`` so
+test IDs differ by path and method suffix.
 
 Run with::
 
@@ -47,7 +47,7 @@ class TestNoneOptions(unittest.TestCase):
         except Exception:  # pylint: disable=broad-except
             pass
 
-    def test_container_query_items_none_options_partition(self):
+    def test_container_query_items_none_options_partition_rust(self):
         """query_items accepts None for every optional argument.
 
         None means "not supplied". Customers commonly build one call site that

@@ -44,7 +44,7 @@ def _connection_with_cache(rid="rid"):
 class TestAsyncUpsertItem(unittest.TestCase):
     """The explicit legacy backend is the async fallback upsert path."""
 
-    def test_async_dispatch_falls_through_to_upsert_item(self):
+    def test_async_dispatch_falls_through_to_upsert_item_rust(self):
         """The explicit legacy backend awaits ``UpsertItem`` and returns
         its value; the body and link are forwarded unchanged and id
         generation is disabled (an upsert never generates an id)."""
@@ -65,7 +65,7 @@ class TestAsyncUpsertItem(unittest.TestCase):
         self.assertEqual(call.kwargs["document"], body)
         self.assertIs(call.kwargs["options"]["disableAutomaticIdGeneration"], True)
 
-    def test_async_upsert_threads_insert_only_access_condition(self):
+    def test_async_upsert_threads_insert_only_access_condition_rust(self):
         """``match_condition=IfMissing`` (insert-only) reaches the legacy
         options as the ``If-None-Match: *`` access condition on the async
         path too."""
@@ -82,7 +82,7 @@ class TestAsyncUpsertItem(unittest.TestCase):
         options = cc.UpsertItem.call_args.kwargs["options"]
         self.assertEqual(options["accessCondition"], {"type": "IfNoneMatch", "condition": "*"})
 
-    def test_async_cache_miss_awaits_refresh_and_adds_container_resource_id(self):
+    def test_async_cache_miss_awaits_refresh_and_adds_container_resource_id_rust(self):
         """Async cache miss: ``_refresh_container_properties_cache`` is
         awaited and the refreshed rid is written into the options."""
         cc = MagicMock()

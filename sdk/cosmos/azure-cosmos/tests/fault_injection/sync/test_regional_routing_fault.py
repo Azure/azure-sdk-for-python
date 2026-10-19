@@ -29,7 +29,7 @@ pytestmark = pytest.mark.cosmosEmulator
 @pytest.mark.timeout(180)
 @pytest.mark.parametrize("backend", ["core-python", "rust"])
 @pytest.mark.parametrize("case", ["routing", "guard", "guard-disabled"])
-def test_swr_mrr_succeeds(request, regional_target, monkeypatch, backend, case):
+def test_swr_mrr_succeeds_rust(request, regional_target, monkeypatch, backend, case):
     if isolate(request, regional_target):
         return
     database_id, observer = regional_target

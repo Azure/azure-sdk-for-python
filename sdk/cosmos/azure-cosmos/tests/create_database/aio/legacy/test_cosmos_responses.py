@@ -28,7 +28,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         self.client = CosmosClient(HOST, KEY, _backend="rust")
         self.addAsyncCleanup(self.client.close)
 
-    async def test_create_database_headers_async(self):
+    async def test_create_database_headers_async_rust(self):
         """With ``return_properties=True``, the response headers come back populated.
 
         The second half of the returned pair is what a customer reads the
@@ -41,7 +41,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
 
         assert len(first_response[1].get_response_headers()) > 0
 
-    async def test_create_database_returns_database_proxy_async(self):
+    async def test_create_database_returns_database_proxy_async_rust(self):
         """Without ``return_properties``, the plain ``DatabaseProxy`` comes back.
 
         This is the default and by far the common case: callers chain straight

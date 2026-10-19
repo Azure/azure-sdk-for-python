@@ -138,7 +138,7 @@ def _assert_no_dispatch(case):
 
 @pytest.mark.parametrize("legacy", [False, True])
 @pytest.mark.parametrize("target_kind", ["name", "dict", "mapping", "proxy", "other_database_proxy"])
-def test_delete_accepts_target_forms_and_returns_none(delete_case, legacy, target_kind):
+def test_delete_accepts_target_forms_and_returns_none_rust(delete_case, legacy, target_kind):
     """However the container is named, the same one is deleted and nothing is returned.
 
     The target is given five ways: a name, a dictionary, a dictionary-like
@@ -190,7 +190,7 @@ def test_delete_accepts_target_forms_and_returns_none(delete_case, legacy, targe
         assert "x-ms-cosmos-sdk-diagnostics" in hook.call_args.args[0]
 
 
-def test_delete_dispatch_is_registered():
+def test_delete_dispatch_is_registered_rust():
     """Delete is wired to the engine's delete entry point.
 
     If this mapping were missing or pointed elsewhere, the call would either
@@ -202,7 +202,7 @@ def test_delete_dispatch_is_registered():
 @pytest.mark.parametrize("legacy", [False, True])
 @pytest.mark.parametrize("option", ["session_token", "populate_query_metrics"])
 @pytest.mark.parametrize("value", [None, False, True, "unused"])
-def test_delete_rejects_obsolete_options(delete_case, legacy, option, value):
+def test_delete_rejects_obsolete_options_rust(delete_case, legacy, option, value):
     """Retired options are refused on both engines, whatever their value.
 
     Session token and query metrics raise ``TypeError`` naming the option, even
@@ -223,7 +223,7 @@ def test_delete_rejects_obsolete_options(delete_case, legacy, option, value):
 @pytest.mark.parametrize("args, kwargs", [
     ((), {}), (("c1", None), {}), (("c1",), {"container": "c2"}),
 ])
-def test_delete_has_matching_argument_binding(delete_case, legacy, args, kwargs):
+def test_delete_has_matching_argument_binding_rust(delete_case, legacy, args, kwargs):
     """Calls that do not match the signature fail before anything is deleted, and the
     published signature stays as intended.
 
@@ -256,7 +256,7 @@ def test_delete_has_matching_argument_binding(delete_case, legacy, args, kwargs)
     {"request_options": {"timeout": 10}},
     {"request_options": {Constants.ContainerRID: "unexpected"}},
 ])
-def test_delete_unsupported_rust_settings_never_reach_legacy(delete_case, kwargs):
+def test_delete_unsupported_rust_settings_never_reach_legacy_rust(delete_case, kwargs):
     """Options the Rust path cannot honor stop the delete instead of moving it to the
     legacy transport.
 
@@ -280,7 +280,7 @@ def test_delete_unsupported_rust_settings_never_reach_legacy(delete_case, kwargs
 
 
 @pytest.mark.parametrize("timeout", [None, 1, 1.5, 10])
-def test_delete_forwards_supported_timeout_and_application_headers(delete_case, timeout):
+def test_delete_forwards_supported_timeout_and_application_headers_rust(delete_case, timeout):
     """A supported deadline and the customer's own header reach the request, and no
     deadline means none is invented.
 
@@ -310,7 +310,7 @@ def test_delete_forwards_supported_timeout_and_application_headers(delete_case, 
     ({"etag": "unused", "match_condition": MatchConditions.IfPresent}, ("IfMatch", "*")),
     ({"etag": "unused", "match_condition": MatchConditions.IfMissing}, ("IfNoneMatch", "*")),
 ])
-def test_delete_conditions_are_forwarded_without_ignored_warnings(delete_case, legacy, kwargs, expected):
+def test_delete_conditions_are_forwarded_without_ignored_warnings_rust(delete_case, legacy, kwargs, expected):
     """A conditional delete carries its condition on both engines, and an
     unconditional one carries none.
 
@@ -358,7 +358,7 @@ def test_delete_conditions_are_forwarded_without_ignored_warnings(delete_case, l
     ({"match_condition": MatchConditions.IfModified}, ValueError),
     ({"match_condition": "invalid"}, TypeError),
 ])
-def test_delete_invalid_conditions_fail_before_dispatch(delete_case, legacy, kwargs, error):
+def test_delete_invalid_conditions_fail_before_dispatch_rust(delete_case, legacy, kwargs, error):
     """An incomplete or malformed condition stops the delete.
 
     An etag with no condition and a condition with no etag are ``ValueError``; a
@@ -375,7 +375,7 @@ def test_delete_invalid_conditions_fail_before_dispatch(delete_case, legacy, kwa
 
 @pytest.mark.parametrize("legacy", [False, True])
 @pytest.mark.parametrize("falsey", [False, True])
-def test_delete_hook_runs_once_with_isolated_headers_and_none(delete_case, legacy, falsey):
+def test_delete_hook_runs_once_with_isolated_headers_and_none_rust(delete_case, legacy, falsey):
     """The hook runs once, is handed ``None`` for the body, and cannot change what the
     client records.
 
@@ -411,7 +411,7 @@ def test_delete_hook_runs_once_with_isolated_headers_and_none(delete_case, legac
 
 @pytest.mark.parametrize("legacy", [False, True])
 @pytest.mark.parametrize("error", [ValueError("hook"), CosmosResourceNotFoundError(status_code=404)])
-def test_delete_hook_errors_do_not_replay_the_delete(delete_case, legacy, error):
+def test_delete_hook_errors_do_not_replay_the_delete_rust(delete_case, legacy, error):
     """An error from the customer's hook never causes a second delete.
 
     The exact exception reaches the caller, the hook ran once, and exactly one
@@ -435,7 +435,7 @@ def test_delete_hook_errors_do_not_replay_the_delete(delete_case, legacy, error)
 
 
 @pytest.mark.parametrize("status", [400, 401, 403, 404, 409, 412, 429, 500])
-def test_delete_service_errors_preserve_headers_and_never_fall_back(delete_case, status):
+def test_delete_service_errors_preserve_headers_and_never_fall_back_rust(delete_case, status):
     """Every failure status from the service arrives intact and is not retried on
     legacy.
 
@@ -465,7 +465,7 @@ def test_delete_service_errors_preserve_headers_and_never_fall_back(delete_case,
 
 
 @pytest.mark.parametrize("error", [ValueError("binding"), NotImplementedError("binding"), asyncio.CancelledError()])
-def test_delete_binding_errors_and_cancellation_are_not_replayed(delete_case, error):
+def test_delete_binding_errors_and_cancellation_are_not_replayed_rust(delete_case, error):
     """A failure inside the Rust engine, including cancellation, is raised as-is and
     not retried on legacy.
 
@@ -490,7 +490,7 @@ def test_delete_binding_errors_and_cancellation_are_not_replayed(delete_case, er
     case.backend.execute.assert_called_once()
 
 
-def test_explicit_legacy_delete_retains_legacy_transport_options(delete_case):
+def test_explicit_legacy_delete_retains_legacy_transport_options_rust(delete_case):
     """A customer who chose legacy on purpose keeps the transport options only legacy
     supports.
 
@@ -509,7 +509,7 @@ def test_explicit_legacy_delete_retains_legacy_transport_options(delete_case):
 
 
 @pytest.mark.parametrize("link", ["", "dbs/db1", "dbs/db1/colls/", "dbs/db1/colls/c1/docs/i1"])
-def test_delete_builder_rejects_malformed_targets(link):
+def test_delete_builder_rejects_malformed_targets_rust(link):
     """A link that does not name a container is refused rather than guessed at.
 
     The four shapes are the dangerous ones: empty, a database with no container,
@@ -521,7 +521,7 @@ def test_delete_builder_rejects_malformed_targets(link):
         build_delete_container_prepared(link, {})
 
 
-def test_delete_builder_does_not_mutate_options_or_forward_session_token():
+def test_delete_builder_does_not_mutate_options_or_forward_session_token_rust():
     """Building the request tidies the link, leaves out the retired session token, and
     does not edit the caller's options.
 
@@ -539,7 +539,7 @@ def test_delete_builder_does_not_mutate_options_or_forward_session_token():
     assert options["sessionToken"] == "unused"
 
 
-def test_delete_parser_returns_none_and_does_not_expose_empty_properties():
+def test_delete_parser_returns_none_and_does_not_expose_empty_properties_rust():
     """Reading a delete reply yields ``None``, never an empty set of properties.
 
     A "204 No Content" has no body. The parser could easily turn that into an

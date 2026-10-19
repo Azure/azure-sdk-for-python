@@ -125,7 +125,7 @@ def point_patch(point_read, monkeypatch):
 
 
 @pytest.mark.parametrize("id_fields", [{}, {"id": "item"}, {"id": "other"}, {"id": None}, {"id": 42}])
-def test_dictionary_patch_preserves_resource_address(point_patch, id_fields):
+def test_dictionary_patch_preserves_resource_address_rust(point_patch, id_fields):
     item = {
         **id_fields,
         "_self": "dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
@@ -142,7 +142,7 @@ def test_dictionary_patch_preserves_resource_address(point_patch, id_fields):
 
 
 @pytest.mark.parametrize("self_link", [None, 42])
-def test_dictionary_patch_rejects_invalid_address_before_binding(point_patch, self_link):
+def test_dictionary_patch_rejects_invalid_address_before_binding_rust(point_patch, self_link):
     with pytest.raises(TypeError, match="_self"):
         result = point_patch.proxy.patch_item(
             {"id": "item", "_self": self_link}, "pk",
@@ -153,7 +153,7 @@ def test_dictionary_patch_rejects_invalid_address_before_binding(point_patch, se
     assert point_patch.events == []
 
 
-def test_dictionary_patch_requires_resource_address(point_patch):
+def test_dictionary_patch_requires_resource_address_rust(point_patch):
     with pytest.raises(KeyError, match="_self"):
         result = point_patch.proxy.patch_item(
             {"id": "item"}, "pk", [{"op": "set", "path": "/n", "value": 2}],
@@ -172,7 +172,7 @@ def test_dictionary_patch_requires_resource_address(point_patch):
     ("dbs/db/colls/c", ValueError, "target _self"),
     (42, TypeError, None),
 ])
-def test_binding_patch_validates_resource_target(point_read, method, self_link, error, message):
+def test_binding_patch_validates_resource_target_rust(point_read, method, self_link, error, message):
     from azure.cosmos._helpers._request_item import build_patch_item_request
 
     binding = pytest.importorskip("azure.cosmos._rust")
@@ -214,7 +214,7 @@ def rust_patch(point_patch):
         ({"request_options": {"If-Match": '"v1"'}}, '"v1"'),
     ],
 )
-def test_if_match_reaches_patch_without_replay(rust_patch, kwargs, etag):
+def test_if_match_reaches_patch_without_replay_rust(rust_patch, kwargs, etag):
     """Inspect equivalent If-Match settings through the test's header-view helper.
 
     The fake binding records one patch phase and legacy PatchItem is untouched.
@@ -227,7 +227,7 @@ def test_if_match_reaches_patch_without_replay(rust_patch, kwargs, etag):
 
 @pytest.mark.parametrize("nested", [False, True])
 @pytest.mark.parametrize("condition", ["FROM c WHERE c.n = 1", "FROM c WHERE c.label = 'caf\u00e9'", ""])
-def test_filter_condition_is_in_patch_body_without_replay(rust_patch, nested, condition):
+def test_filter_condition_is_in_patch_body_without_replay_rust(rust_patch, nested, condition):
     options = {"filterPredicate": condition}
     kwargs = {"request_options": options} if nested else {"filter_predicate": condition}
     rust_patch.call(**kwargs)
@@ -240,7 +240,7 @@ def test_filter_condition_is_in_patch_body_without_replay(rust_patch, nested, co
     assert "filterpredicate" not in wire_headers(rust_patch.prepared)
 
 
-def test_filter_and_operations_are_snapshotted_before_metadata(rust_patch):
+def test_filter_and_operations_are_snapshotted_before_metadata_rust(rust_patch):
     operations = [{"op": "incr", "path": "/n", "value": 1}]
     options = {"filterPredicate": "FROM c WHERE c.n = 1"}
 
@@ -282,7 +282,7 @@ def test_filter_and_operations_are_snapshotted_before_metadata(rust_patch):
         ({"retry_write": 0}, NotImplementedError),
     ],
 )
-def test_invalid_or_unsupported_options_fail_before_io(rust_patch, kwargs, error):
+def test_invalid_or_unsupported_options_fail_before_io_rust(rust_patch, kwargs, error):
     """Bad and not-yet-supported options raise before any request is sent.
 
     Two kinds of failure, deliberately given different types:
@@ -308,7 +308,7 @@ def test_invalid_or_unsupported_options_fail_before_io(rust_patch, kwargs, error
     "timeout", [0, -1, 0.5, float("nan"), float("inf"), "1", True, 2**64]
 )
 @pytest.mark.parametrize("nested", [False, True])
-def test_invalid_timeout_fails_before_io(rust_patch, timeout, nested):
+def test_invalid_timeout_fails_before_io_rust(rust_patch, timeout, nested):
     """An unusable ``timeout`` is rejected up front, whether passed directly or nested.
 
     Covers zero and negative values, a value too small to be meaningful,
@@ -328,7 +328,7 @@ def test_invalid_timeout_fails_before_io(rust_patch, timeout, nested):
 
 
 @pytest.mark.parametrize("metadata_delay,write_delay", [(2, 0), (1, 0), (0.75, 0.5)])
-def test_one_deadline_covers_metadata_and_patch(
+def test_one_deadline_covers_metadata_and_patch_rust(
     rust_patch, metadata_delay, write_delay
 ):
     """``timeout`` covers metadata and the patch together, and expiry skips the hook.
@@ -346,7 +346,7 @@ def test_one_deadline_covers_metadata_and_patch(
     hook.assert_not_called()
 
 
-def test_subsecond_remaining_budget_reaches_binding(rust_patch):
+def test_subsecond_remaining_budget_reaches_binding_rust(rust_patch):
     """Time spent on metadata is deducted, and the fraction left is handed to the patch.
 
     A one second budget less a 0.75 second lookup leaves 0.25 seconds, which
@@ -363,7 +363,7 @@ def test_subsecond_remaining_budget_reaches_binding(rust_patch):
     assert not hasattr(rust_patch.prepared, "deadline")
 
 
-def test_lazy_initialization_uses_the_same_budget(rust_patch):
+def test_lazy_initialization_uses_the_same_budget_rust(rust_patch):
     """Starting the Rust driver counts against the caller's timeout.
 
     The driver is built on first use. If that setup were not charged to the
@@ -377,7 +377,7 @@ def test_lazy_initialization_uses_the_same_budget(rust_patch):
     assert rust_patch.events == []
 
 
-def test_inputs_are_snapshotted_before_metadata(rust_patch):
+def test_inputs_are_snapshotted_before_metadata_rust(rust_patch):
     """Everything the caller passes is copied up front, so later edits cannot change the request.
 
     While the metadata lookup is in flight, the caller mutates all three
@@ -421,7 +421,7 @@ def test_inputs_are_snapshotted_before_metadata(rust_patch):
         ([{"op": "set", "path": "/n", "value": object()}], TypeError),
     ],
 )
-def test_invalid_payload_fails_before_io(rust_patch, operations, error):
+def test_invalid_payload_fails_before_io_rust(rust_patch, operations, error):
     """A malformed operations list is rejected locally, not by the service.
 
     An empty list has nothing to do, a mapping is the wrong container, a list
@@ -437,7 +437,7 @@ def test_invalid_payload_fails_before_io(rust_patch, operations, error):
 
 
 @pytest.mark.parametrize("no_response", [False, True])
-def test_hooks_get_independent_snapshots(rust_patch, no_response):
+def test_hooks_get_independent_snapshots_rust(rust_patch, no_response):
     """A falsey response hook still runs, and its edits stay inside its own copy.
 
     ``Hook.__bool__`` returns ``False``, so any layer testing the hook with a
@@ -470,7 +470,7 @@ def test_hooks_get_independent_snapshots(rust_patch, no_response):
     assert len(seen) == 1
 
 
-def test_hook_failure_does_not_replay_write(rust_patch):
+def test_hook_failure_does_not_replay_write_rust(rust_patch):
     """If the customer's hook raises, the patch is not applied a second time.
 
     The hook runs after the patch has already succeeded. The exception it
@@ -492,7 +492,7 @@ def test_hook_failure_does_not_replay_write(rust_patch):
     "status,error",
     [(400, CosmosHttpResponseError), (412, CosmosAccessConditionFailedError)],
 )
-def test_error_tuple_stays_typed_and_never_invokes_success_hook(
+def test_error_tuple_stays_typed_and_never_invokes_success_hook_rust(
     rust_patch, status, error
 ):
     """Service errors keep their specific type and status, and skip the hook.
@@ -510,7 +510,7 @@ def test_error_tuple_stays_typed_and_never_invokes_success_hook(
     hook.assert_not_called()
 
 
-def test_client_defaults_and_per_call_overrides(rust_patch):
+def test_client_defaults_and_per_call_overrides_rust(rust_patch):
     """Client-level defaults apply to a patch, and per-call arguments override them.
 
     The client is configured to suppress response bodies and to send a
@@ -537,7 +537,7 @@ def test_client_defaults_and_per_call_overrides(rust_patch):
     assert wire_headers(rust_patch.prepared)["x-ms-cosmos-throughput-bucket"] == "3"
 
 
-def test_async_cancellation_drains_single_native_call(rust_patch):
+def test_async_cancellation_drains_single_native_call_rust(rust_patch):
     """Cancellation unwinds the fake async binding coroutine and skips the hook.
 
     Assert one patch await, no metadata-entry call, and the coroutine's finally

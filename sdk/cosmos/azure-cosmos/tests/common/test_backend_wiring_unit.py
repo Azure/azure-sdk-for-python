@@ -91,7 +91,7 @@ from azure.cosmos.partition_key import NonePartitionKeyValue
 
 
 @pytest.mark.parametrize("factory", [make_backend, make_async_backend])
-def test_client_headers_are_snapshotted_and_overridden_per_call(factory):
+def test_client_headers_are_snapshotted_and_overridden_per_call_rust(factory):
     from azure.core.utils import CaseInsensitiveDict
 
     supplied = {"X-Application": "client", "x-default-only": "retained"}
@@ -122,12 +122,12 @@ def test_client_headers_are_snapshotted_and_overridden_per_call(factory):
 
 
 @pytest.mark.parametrize("headers", [[], "", {"x-app": 1}, {1: "value"}])
-def test_client_headers_reject_invalid_mappings(headers):
+def test_client_headers_reject_invalid_mappings_rust(headers):
     with pytest.raises(TypeError):
         build_client_config(headers=headers)
 
 
-def test_client_header_configuration_does_not_expose_values_in_repr():
+def test_client_header_configuration_does_not_expose_values_in_repr_rust():
     config = build_client_config(headers={"x-application": "private-value"})
     assert config is not None and "private-value" not in repr(config)
     assert build_client_config(headers={}) is None
@@ -135,7 +135,7 @@ def test_client_header_configuration_does_not_expose_values_in_repr():
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("paged", [False, True], ids=["point", "page"])
-def test_client_headers_reach_point_and_page_binding_calls(monkeypatch, asynchronous, paged):
+def test_client_headers_reach_point_and_page_binding_calls_rust(monkeypatch, asynchronous, paged):
     from azure.core.utils import CaseInsensitiveDict
 
     factory = make_async_backend if asynchronous else make_backend
@@ -214,7 +214,7 @@ def test_client_headers_reach_point_and_page_binding_calls(monkeypatch, asynchro
         }
     ),
 )
-def test_native_registry_binding_uses_driver_handle_parameter(method):
+def test_native_registry_binding_uses_driver_handle_parameter_rust(method):
     """Every native entry point takes its driver as a first argument with one agreed name.
 
     Each of these is called from Python by name, and the names live in two places that
@@ -240,7 +240,7 @@ def test_native_registry_binding_uses_driver_handle_parameter(method):
     assert "_handle" not in signature.parameters
 
 
-def test_native_close_accepts_driver_handle_keyword():
+def test_native_close_accepts_driver_handle_keyword_rust():
     """Releasing a driver takes the agreed name, ignores one it never registered, and
     refuses the old name.
 
@@ -260,7 +260,7 @@ def test_native_close_accepts_driver_handle_keyword():
         binding.release_driver_handle(handle="unregistered-test-driver")
 
 
-def test_configure_packaged_query_plan_interop_uses_package_libs(tmp_path, monkeypatch):
+def test_configure_packaged_query_plan_interop_uses_package_libs_rust(tmp_path, monkeypatch):
     """An existing package .libs directory is selected for native-library lookup.
 
     This checks environment configuration, not loading the library or the
@@ -280,7 +280,7 @@ def test_configure_packaged_query_plan_interop_uses_package_libs(tmp_path, monke
     )
 
 
-def test_configure_packaged_query_plan_interop_skips_missing_directory(tmp_path, monkeypatch):
+def test_configure_packaged_query_plan_interop_skips_missing_directory_rust(tmp_path, monkeypatch):
     """A missing package .libs directory leaves the lookup override unset."""
     rust_module = MagicMock()
     rust_module.__file__ = str(tmp_path / "azure" / "cosmos" / "_rust.pyd")
@@ -291,7 +291,7 @@ def test_configure_packaged_query_plan_interop_skips_missing_directory(tmp_path,
     assert "AZURE_COSMOS_QUERYPLANINTEROP_DIR" not in os.environ
 
 
-def test_configure_packaged_query_plan_interop_preserves_explicit_directory(
+def test_configure_packaged_query_plan_interop_preserves_explicit_directory_rust(
     tmp_path, monkeypatch
 ):
     """A caller-provided native-library directory has priority over the wheel."""
@@ -315,7 +315,7 @@ def test_configure_packaged_query_plan_interop_preserves_explicit_directory(
     "resolver",
     [driver_transport_error_type, driver_unsupported_query_error_type],
 )
-def test_binding_error_type_matches_nothing_without_extension(resolver):
+def test_binding_error_type_matches_nothing_without_extension_rust(resolver):
     """Prove a missing Rust error type cannot match unrelated exceptions."""
     assert resolver(None) == ()
 
@@ -327,7 +327,7 @@ def test_binding_error_type_matches_nothing_without_extension(resolver):
         (driver_unsupported_query_error_type, "_UnsupportedQueryFeatureError"),
     ],
 )
-def test_binding_error_type_rejects_stale_extension(resolver, error_name):
+def test_binding_error_type_rejects_stale_extension_rust(resolver, error_name):
     """Prove stale Rust error types are not reused after a module change."""
     with pytest.raises(RuntimeError, match=error_name):
         resolver(object())
@@ -340,7 +340,7 @@ def test_binding_error_type_rejects_stale_extension(resolver, error_name):
         "azure.cosmos.aio._backend.binding_adapter",
     ],
 )
-def test_backend_import_does_not_configure_process_query_plan_path(module_name, tmp_path):
+def test_backend_import_does_not_configure_process_query_plan_path_rust(module_name, tmp_path):
     """Native-library discovery is configured at driver startup, not import."""
     script = textwrap.dedent(
         f"""
@@ -385,7 +385,7 @@ def test_backend_import_does_not_configure_process_query_plan_path(module_name, 
 
 
 @pytest.mark.parametrize("backend_type", [BindingAdapter, AsyncBindingAdapter])
-def test_driver_initialization_configures_query_plan_path_before_acquisition(
+def test_driver_initialization_configures_query_plan_path_before_acquisition_rust(
     backend_type, tmp_path, monkeypatch
 ):
     package = tmp_path / "azure" / "cosmos"
@@ -408,7 +408,7 @@ def test_driver_initialization_configures_query_plan_path_before_acquisition(
         backend.abort_construction()
 
 
-def test_query_plan_configuration_preserves_override_added_during_discovery(tmp_path, monkeypatch):
+def test_query_plan_configuration_preserves_override_added_during_discovery_rust(tmp_path, monkeypatch):
     sidecar = tmp_path / ".libs"
     sidecar.mkdir()
     binding = MagicMock()
@@ -510,7 +510,7 @@ _IMPORT_LINE_CACHE = _collect_import_lines()
         (AsyncContainerProxy, "is_feed_range_subset"),
     ],
 )
-def test_public_throughput_and_feed_range_methods_do_not_select_backends(
+def test_public_throughput_and_feed_range_methods_do_not_select_backends_rust(
     proxy_type, method_name
 ):
     """Public methods delegate to family helpers instead of selecting an engine."""
@@ -528,7 +528,7 @@ def test_public_throughput_and_feed_range_methods_do_not_select_backends(
 
 
 @pytest.mark.parametrize("guarded_name,allowed_files", list(_ALLOWED.items()))
-def test_import_guard(guarded_name, allowed_files):
+def test_import_guard_rust(guarded_name, allowed_files):
     """Only the listed files may import the guarded name."""
     offenders = []
     name_re = re.compile(r"\b" + re.escape(guarded_name) + r"\b")
@@ -553,7 +553,7 @@ def test_import_guard(guarded_name, allowed_files):
 # "core-python" or "rust"; anything else fails at construction so a typo does
 # not quietly fall back to the default.
 
-def test_factory_default_returns_legacy_backend(monkeypatch):
+def test_factory_default_returns_legacy_backend_rust(monkeypatch):
     """With nothing set, the factory returns the concrete default backend."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     backend = make_backend(None)
@@ -571,35 +571,35 @@ def test_factory_env_var_picks_rust(monkeypatch):
     assert backend.name == BACKEND_NAME_RUST
 
 
-def test_factory_kwarg_overrides_env(monkeypatch):
+def test_factory_kwarg_overrides_env_rust(monkeypatch):
     """The constructor argument wins over the environment variable."""
     monkeypatch.setenv(BACKEND_ENV_VAR, BACKEND_NAME_RUST)
     backend = make_backend(BACKEND_NAME_CORE_PYTHON)
     assert backend is LEGACY_BACKEND
 
 
-def test_factory_invalid_value_fails_loud(monkeypatch):
+def test_factory_invalid_value_fails_loud_rust(monkeypatch):
     """An unknown constructor value fails at construction."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     with pytest.raises(ValueError, match="Invalid backend"):
         make_backend("turbo")
 
 
-def test_factory_invalid_env_var_fails_loud(monkeypatch):
+def test_factory_invalid_env_var_fails_loud_rust(monkeypatch):
     """An unknown environment-variable value fails at construction."""
     monkeypatch.setenv(BACKEND_ENV_VAR, "turbo")
     with pytest.raises(ValueError, match="Invalid backend"):
         make_backend(None)
 
 
-def test_factory_rust_without_master_key_fails_loud(monkeypatch):
+def test_factory_rust_without_master_key_fails_loud_rust(monkeypatch):
     """A missing credential raises; this case does not reject token credentials."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     with pytest.raises(ValueError, match="master-key credential"):
         make_backend(BACKEND_NAME_RUST, url="https://x.documents.azure.com", credential=None)
 
 
-def test_async_factory_returns_async_backends(monkeypatch):
+def test_async_factory_returns_async_backends_rust(monkeypatch):
     """The async factory returns concrete legacy and Rust backends."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     assert make_async_backend(None) is ASYNC_LEGACY_BACKEND
@@ -613,7 +613,7 @@ def test_async_factory_returns_async_backends(monkeypatch):
     )
 
 
-def test_async_factory_invalid_value_fails_loud(monkeypatch):
+def test_async_factory_invalid_value_fails_loud_rust(monkeypatch):
     """The async factory rejects bad input the same way the sync one does."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     with pytest.raises(ValueError, match="Invalid backend"):
@@ -630,14 +630,14 @@ def test_async_factory_invalid_value_fails_loud(monkeypatch):
 # tests fake the compiled module so they run without a real account. The async
 # backend behaves the same way.
 
-def test_rust_backend_rejects_no_prepared_request():
+def test_rust_backend_rejects_no_prepared_request_rust():
     """Missing requests are caller errors, not fallback signals."""
     backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
     with pytest.raises(TypeError, match="PreparedRequest"):
         backend.execute(prepared=None)
 
 
-def test_rust_backend_dispatches_to_binding(monkeypatch):
+def test_rust_backend_dispatches_to_binding_rust(monkeypatch):
     """With a request and the compiled module loaded, the backend calls into
     the module and wraps what it returns."""
     fake_module = MagicMock()
@@ -663,7 +663,7 @@ def test_rust_backend_dispatches_to_binding(monkeypatch):
     assert resp.body == b'{"id":"x"}'
 
 
-def test_rust_backend_resolves_container_metadata_through_binding(monkeypatch):
+def test_rust_backend_resolves_container_metadata_through_binding_rust(monkeypatch):
     """Prove sync Rust requests resolve container metadata through Rust."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -683,7 +683,7 @@ def test_rust_backend_resolves_container_metadata_through_binding(monkeypatch):
     assert response.partition_key_kind == "Hash"
 
 
-def test_rust_backend_metadata_resolution_rejects_older_binding(monkeypatch):
+def test_rust_backend_metadata_resolution_rejects_older_binding_rust(monkeypatch):
     """Missing metadata capability must fail instead of consulting Python."""
     class OlderBinding:
         """Provide only the entry point available in an older extension."""
@@ -706,7 +706,7 @@ def test_rust_backend_metadata_resolution_rejects_older_binding(monkeypatch):
 # binding entry point and the binding's reply is returned unchanged. Without them a
 # wiring mistake -- a wrong op-to-binding name, or a dropped reply -- could send
 # these operations nowhere and no test would catch it.
-def test_rust_backend_dispatches_query_items_to_binding(monkeypatch):
+def test_rust_backend_dispatches_query_items_to_binding_rust(monkeypatch):
     """A prepared query routes through execute_pages to query_items."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -736,7 +736,7 @@ def test_rust_backend_dispatches_query_items_to_binding(monkeypatch):
     assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
 
 
-def test_paged_operations_are_not_single_response_operations():
+def test_paged_operations_are_not_single_response_operations_rust():
     """Feed operations live only in the paged dispatch map.
 
     This keeps query, read-all, and database-list pages out of the single-reply
@@ -765,7 +765,7 @@ def test_paged_operations_are_not_single_response_operations():
     }
 
 
-def test_rust_backend_surfaces_driver_query_capability_rejection(monkeypatch):
+def test_rust_backend_surfaces_driver_query_capability_rejection_rust(monkeypatch):
     """Translate the fake binding's query rejection to UnsupportedQueryError.
 
     The test checks error translation, not automatic replay through legacy.
@@ -797,7 +797,7 @@ def test_rust_backend_surfaces_driver_query_capability_rejection(monkeypatch):
         list(backend.execute_pages(prepared))
 
 
-def test_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
+def test_rust_backend_dispatches_read_all_items_to_binding_rust(monkeypatch):
     """A read_all_items prepared request routes to the binding's read_all_items entry point."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -826,7 +826,7 @@ def test_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
     assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
 
 
-def test_rust_backend_dispatches_get_throughput_to_binding(monkeypatch):
+def test_rust_backend_dispatches_get_throughput_to_binding_rust(monkeypatch):
     """A get_throughput prepared request routes to the binding's get_throughput entry point."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -853,7 +853,7 @@ def test_rust_backend_dispatches_get_throughput_to_binding(monkeypatch):
     assert b'"Offers"' in resp.body
 
 
-def test_rust_backend_dispatches_read_feed_ranges_to_binding(monkeypatch):
+def test_rust_backend_dispatches_read_feed_ranges_to_binding_rust(monkeypatch):
     """A read_feed_ranges prepared request routes to binding read_feed_ranges."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -880,7 +880,7 @@ def test_rust_backend_dispatches_read_feed_ranges_to_binding(monkeypatch):
     assert b"PartitionKeyRanges" in resp.body
 
 
-def test_rust_backend_dispatches_feed_range_from_partition_key_to_binding(monkeypatch):
+def test_rust_backend_dispatches_feed_range_from_partition_key_to_binding_rust(monkeypatch):
     """A feed_range_from_partition_key prepared request routes to the matching binding entry point."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -907,7 +907,7 @@ def test_rust_backend_dispatches_feed_range_from_partition_key_to_binding(monkey
     assert b'"Range"' in resp.body
 
 
-def test_rust_backend_accepts_optional_diagnostics_from_binding(monkeypatch):
+def test_rust_backend_accepts_optional_diagnostics_from_binding_rust(monkeypatch):
     """The backend accepts diagnostics returned by the binding."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -934,7 +934,7 @@ def test_rust_backend_accepts_optional_diagnostics_from_binding(monkeypatch):
     assert resp.diagnostics == "activity=abc duration=8ms requests=1 charge=1RU status=201"
 
 
-def test_rust_backend_returns_structured_http_failure_tuple(monkeypatch):
+def test_rust_backend_returns_structured_http_failure_tuple_rust(monkeypatch):
     """A failed request (like a 409) comes back as a normal response with its
     status, sub-status, headers, and body -- not as an error."""
     fake_module = MagicMock()
@@ -969,7 +969,7 @@ def test_rust_backend_returns_structured_http_failure_tuple(monkeypatch):
     assert resp.body == b'{"code":"Conflict","message":"already exists"}'
 
 
-def test_rust_backend_logs_per_op_backend_telemetry(monkeypatch, caplog):
+def test_rust_backend_logs_per_op_backend_telemetry_rust(monkeypatch, caplog):
     """Dispatch logs name the backend and operation without exposing the handle.
 
     A fake binding serves the call. The log is a selection/dispatch record,
@@ -1000,7 +1000,7 @@ def test_rust_backend_logs_per_op_backend_telemetry(monkeypatch, caplog):
     assert all("handle-secret-fp" not in m for m in messages)
 
 
-def test_async_rust_backend_logs_per_op_backend_telemetry(monkeypatch, caplog):
+def test_async_rust_backend_logs_per_op_backend_telemetry_rust(monkeypatch, caplog):
     """Async version: the async backend emits the same per-op backend telemetry."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-secret-fp"
@@ -1029,7 +1029,7 @@ def test_async_rust_backend_logs_per_op_backend_telemetry(monkeypatch, caplog):
     assert all("handle-secret-fp" not in m for m in messages)
 
 
-def test_rust_backend_propagates_transport_runtime_error(monkeypatch):
+def test_rust_backend_propagates_transport_runtime_error_rust(monkeypatch):
     """A real driver failure (not an HTTP response) is raised as an error."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -1049,7 +1049,7 @@ def test_rust_backend_propagates_transport_runtime_error(monkeypatch):
         backend.execute(prepared)
 
 
-def test_rust_backend_raises_when_binding_not_built(monkeypatch):
+def test_rust_backend_raises_when_binding_not_built_rust(monkeypatch):
     """When the compiled module is missing, the backend raises a clear error
     pointing at the build step instead of failing in a confusing way later."""
     monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", None)
@@ -1065,7 +1065,7 @@ def test_rust_backend_raises_when_binding_not_built(monkeypatch):
         backend.execute(prepared)
 
 
-def test_async_rust_backend_rejects_no_prepared_request():
+def test_async_rust_backend_rejects_no_prepared_request_rust():
     """Async execution has the same non-optional request contract."""
     async def _run():
         backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
@@ -1074,7 +1074,7 @@ def test_async_rust_backend_rejects_no_prepared_request():
     asyncio.run(_run())
 
 
-def test_async_rust_backend_dispatches_to_binding(monkeypatch):
+def test_async_rust_backend_dispatches_to_binding_rust(monkeypatch):
     """Await the fake async create entry point and convert its response tuple.
 
     This checks dispatch, not thread counts or native executor behavior.
@@ -1101,7 +1101,7 @@ def test_async_rust_backend_dispatches_to_binding(monkeypatch):
     asyncio.run(_run())
 
 
-def test_async_rust_backend_resolves_container_metadata_through_binding(monkeypatch):
+def test_async_rust_backend_resolves_container_metadata_through_binding_rust(monkeypatch):
     """Prove async Rust requests resolve container metadata through Rust."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -1127,7 +1127,7 @@ def test_async_rust_backend_resolves_container_metadata_through_binding(monkeypa
     )
 
 
-def test_async_rust_backend_metadata_resolution_rejects_older_binding(monkeypatch):
+def test_async_rust_backend_metadata_resolution_rejects_older_binding_rust(monkeypatch):
     """An extension missing the typed metadata entry point fails explicitly."""
     class OlderBinding:
         """Provide only the entry point available in an older extension."""
@@ -1152,7 +1152,7 @@ def test_async_rust_backend_metadata_resolution_rejects_older_binding(monkeypatc
 
 # Async twins of the two dispatch tests above: the same check for query_items_async
 # and read_feed_ranges_async, so the async path can't silently diverge from the sync one.
-def test_async_rust_backend_dispatches_query_items_to_binding(monkeypatch):
+def test_async_rust_backend_dispatches_query_items_to_binding_rust(monkeypatch):
     """Async prepared queries route through execute_pages to query_items_async."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -1181,7 +1181,7 @@ def test_async_rust_backend_dispatches_query_items_to_binding(monkeypatch):
     asyncio.run(_run())
 
 
-def test_async_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
+def test_async_rust_backend_dispatches_read_all_items_to_binding_rust(monkeypatch):
     """Async read_all_items prepared requests route to read_all_items_async."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -1209,7 +1209,7 @@ def test_async_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
     asyncio.run(_run())
 
 
-def test_async_rust_backend_surfaces_driver_query_capability_rejection(monkeypatch):
+def test_async_rust_backend_surfaces_driver_query_capability_rejection_rust(monkeypatch):
     """Translate an async fake-binding query rejection without testing legacy replay."""
     class _UnsupportedQueryFeatureError(RuntimeError):
         """Represent an async query feature rejected by the Rust driver."""
@@ -1242,7 +1242,7 @@ def test_async_rust_backend_surfaces_driver_query_capability_rejection(monkeypat
     asyncio.run(_run())
 
 
-def test_async_rust_backend_dispatches_get_throughput_to_binding(monkeypatch):
+def test_async_rust_backend_dispatches_get_throughput_to_binding_rust(monkeypatch):
     """Async get_throughput prepared requests route to get_throughput_async."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -1268,7 +1268,7 @@ def test_async_rust_backend_dispatches_get_throughput_to_binding(monkeypatch):
     asyncio.run(_run())
 
 
-def test_async_rust_backend_dispatches_read_feed_ranges_to_binding(monkeypatch):
+def test_async_rust_backend_dispatches_read_feed_ranges_to_binding_rust(monkeypatch):
     """Async read_feed_ranges prepared requests route to read_feed_ranges_async."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -1299,7 +1299,7 @@ def test_async_rust_backend_dispatches_read_feed_ranges_to_binding(monkeypatch):
     asyncio.run(_run())
 
 
-def test_async_rust_backend_dispatches_feed_range_from_partition_key_to_binding(monkeypatch):
+def test_async_rust_backend_dispatches_feed_range_from_partition_key_to_binding_rust(monkeypatch):
     """Async feed_range_from_partition_key prepared requests route to the async binding entry point."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -1330,7 +1330,7 @@ def test_async_rust_backend_dispatches_feed_range_from_partition_key_to_binding(
     asyncio.run(_run())
 
 
-def test_async_rust_backend_accepts_optional_diagnostics_from_binding(monkeypatch):
+def test_async_rust_backend_accepts_optional_diagnostics_from_binding_rust(monkeypatch):
     """Async version: diagnostics returned by the binding are preserved."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -1361,7 +1361,7 @@ def test_async_rust_backend_accepts_optional_diagnostics_from_binding(monkeypatc
     asyncio.run(_run())
 
 
-def test_async_rust_backend_returns_structured_http_failure_tuple(monkeypatch):
+def test_async_rust_backend_returns_structured_http_failure_tuple_rust(monkeypatch):
     """Async version: a failed request comes back as a normal response, not an
     error."""
     fake_module = MagicMock()
@@ -1393,7 +1393,7 @@ def test_async_rust_backend_returns_structured_http_failure_tuple(monkeypatch):
     asyncio.run(_run())
 
 
-def test_async_rust_backend_propagates_transport_runtime_error(monkeypatch):
+def test_async_rust_backend_propagates_transport_runtime_error_rust(monkeypatch):
     """Async version: a real driver failure is raised as an error."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -1415,7 +1415,7 @@ def test_async_rust_backend_propagates_transport_runtime_error(monkeypatch):
     asyncio.run(_run())
 
 
-def test_async_rust_backend_raises_when_binding_not_built(monkeypatch):
+def test_async_rust_backend_raises_when_binding_not_built_rust(monkeypatch):
     """Async version: a missing compiled module raises a clear error."""
     monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", None)
 
@@ -1433,7 +1433,7 @@ def test_async_rust_backend_raises_when_binding_not_built(monkeypatch):
     asyncio.run(_run())
 
 
-def test_async_backend_coalesces_concurrent_first_init_to_one_call(monkeypatch):
+def test_async_backend_coalesces_concurrent_first_init_to_one_call_rust(monkeypatch):
     """A burst of concurrent first-operations builds the client handle exactly
     once: every first-caller awaits one shared init future instead of each
     scheduling its own ``acquire_driver_handle`` build on a background thread."""
@@ -1470,7 +1470,7 @@ def test_async_backend_coalesces_concurrent_first_init_to_one_call(monkeypatch):
     assert fake_module.read_item_async.await_count == 50
 
 
-def test_async_backend_retries_init_after_failure(monkeypatch):
+def test_async_backend_retries_init_after_failure_rust(monkeypatch):
     """A failed init is not cached on the shared future: the next operation retries
     ``acquire_driver_handle`` rather than handing back the first failure forever."""
     attempts = []
@@ -1509,7 +1509,7 @@ def test_async_backend_retries_init_after_failure(monkeypatch):
     assert len(attempts) == 2, f"init should be retried after failure, attempts={len(attempts)}"
 
 
-def test_async_backend_close_during_init_closes_built_driver_handle(monkeypatch):
+def test_async_backend_close_during_init_closes_built_driver_handle_rust(monkeypatch):
     """If close() runs while the first acquire_driver_handle is still building, the handle the
     build produces is closed (not left open), close() does not wait for the build to
     finish, and the operation that triggered the build fails with a closed-client
@@ -1557,7 +1557,7 @@ def test_async_backend_close_during_init_closes_built_driver_handle(monkeypatch)
     fake_module.acquire_driver_handle.assert_called_once()
 
 
-def test_async_backend_propagates_cancellation_into_binding(monkeypatch):
+def test_async_backend_propagates_cancellation_into_binding_rust(monkeypatch):
     """Cancelling execute propagates into the fake binding coroutine.
 
     The coroutine records CancelledError and the caller receives cancellation.
@@ -1603,7 +1603,7 @@ def test_async_backend_propagates_cancellation_into_binding(monkeypatch):
     )
 
 
-def test_async_backend_finalizer_does_not_block_event_loop(monkeypatch):
+def test_async_backend_finalizer_does_not_block_event_loop_rust(monkeypatch):
     """If the finalizer fires while an event loop is running on this thread (GC
     collecting the client mid-run), the blocking driver close must be offloaded to
     a daemon thread, not run inline on the loop thread -- otherwise release_driver_handle
@@ -1661,7 +1661,7 @@ def test_async_backend_finalizer_does_not_block_event_loop(monkeypatch):
     assert close_thread_names[0] == "cosmos-rust-finalizer"
 
 
-def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
+def test_helper_parses_backend_response_into_cosmos_dict_rust(monkeypatch):
     """A successful backend response is turned into a dict the caller can read
     by key (like ``result["_etag"]``), the same shape the existing path
     returns.
@@ -1723,7 +1723,7 @@ def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
 # by the fall-through tests in test_item_helper_unit.py.
 
 
-def test_dataclasses_are_frozen():
+def test_dataclasses_are_frozen_rust():
     """Assignments to the tested request/response dataclass fields raise."""
     p = PreparedRequest(
         op="create_item",
@@ -1749,7 +1749,7 @@ def test_dataclasses_are_frozen():
 # argument. With nothing to carry, that third argument is None.
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_unsupported_operation_does_not_acquire_driver(monkeypatch, async_mode):
+def test_unsupported_operation_does_not_acquire_driver_rust(monkeypatch, async_mode):
     module = "azure.cosmos.aio._backend.binding_adapter" if async_mode else "azure.cosmos._backend.binding_adapter"
     native = MagicMock()
     monkeypatch.setattr(module + "._rust_module", native)
@@ -1774,7 +1774,7 @@ def test_unsupported_operation_does_not_acquire_driver(monkeypatch, async_mode):
 
 @pytest.mark.parametrize("backend_type", [BindingAdapter, AsyncBindingAdapter])
 @pytest.mark.parametrize("reverse", [False, True])
-def test_different_client_settings_are_allowed_in_either_construction_order(backend_type, reverse):
+def test_different_client_settings_are_allowed_in_either_construction_order_rust(backend_type, reverse):
     configs = [
         PreparedClientConfig(preferred_locations=("West US",)),
         PreparedClientConfig(preferred_locations=("East US",)),
@@ -1792,14 +1792,14 @@ def test_different_client_settings_are_allowed_in_either_construction_order(back
             client.abort_construction()
 
 
-def test_build_client_config_returns_none_when_nothing_to_carry():
+def test_build_client_config_returns_none_when_nothing_to_carry_rust():
     """Absent or empty preferred locations alone produce no client config."""
     assert build_client_config(None) is None
     assert build_client_config([]) is None
     assert build_client_config(()) is None
 
 
-def test_build_client_config_carries_preferred_locations():
+def test_build_client_config_carries_preferred_locations_rust():
     """A non-empty preferred_locations is captured, in order, as an immutable
     tuple on the config."""
     config = build_client_config(["West US", "East US"])
@@ -1807,14 +1807,14 @@ def test_build_client_config_carries_preferred_locations():
     assert config.preferred_locations == ("West US", "East US")
 
 
-def test_prepared_client_config_is_frozen():
+def test_prepared_client_config_is_frozen_rust():
     """Assigning a prepared configuration field raises FrozenInstanceError."""
     config = PreparedClientConfig(preferred_locations=("West US",))
     with pytest.raises(Exception):  # FrozenInstanceError
         setattr(config, "preferred_locations", ("East US",))
 
 
-def test_factory_carries_preferred_locations_into_rust_backend(monkeypatch):
+def test_factory_carries_preferred_locations_into_rust_backend_rust(monkeypatch):
     """make_backend folds preferred_locations into the backend's client config;
     with none passed, the config is None (unchanged behavior)."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
@@ -1836,7 +1836,7 @@ def test_factory_carries_preferred_locations_into_rust_backend(monkeypatch):
     assert without._client_config is None
 
 
-def test_async_factory_carries_preferred_locations_into_rust_backend(monkeypatch):
+def test_async_factory_carries_preferred_locations_into_rust_backend_rust(monkeypatch):
     """The async factory carries preferred_locations the same way."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     backend = make_async_backend(
@@ -1851,7 +1851,7 @@ def test_async_factory_carries_preferred_locations_into_rust_backend(monkeypatch
     )
 
 
-def test_sync_factory_carries_explicit_runtime_into_rust_backend(monkeypatch):
+def test_sync_factory_carries_explicit_runtime_into_rust_backend_rust(monkeypatch):
     """Connection settings belong to the selected runtime."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
@@ -1868,7 +1868,7 @@ def test_sync_factory_carries_explicit_runtime_into_rust_backend(monkeypatch):
     backend.close()
 
 
-def test_async_factory_carries_explicit_runtime_into_rust_backend(monkeypatch):
+def test_async_factory_carries_explicit_runtime_into_rust_backend_rust(monkeypatch):
     """The async adapter retains an initialized runtime."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
@@ -1888,7 +1888,7 @@ def test_async_factory_carries_explicit_runtime_into_rust_backend(monkeypatch):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("asynchronous", [False, True])
 @pytest.mark.parametrize("log_level", [logging.INFO, logging.DEBUG])
-async def test_client_construction_logs_only_at_debug(monkeypatch, caplog, asynchronous, log_level):
+async def test_client_construction_logs_only_at_debug_rust(monkeypatch, caplog, asynchronous, log_level):
     module = async_cosmos_client_module if asynchronous else sync_cosmos_client_module
     monkeypatch.setattr(module, "CosmosClientConnection", MagicMock())
     with caplog.at_level(log_level, logger=module.__name__):
@@ -1918,7 +1918,7 @@ async def test_client_construction_logs_only_at_debug(monkeypatch, caplog, async
             client._adapter.close()
 
 
-def test_untuned_sync_client_carries_no_transport_timeouts(monkeypatch):
+def test_untuned_sync_client_carries_no_transport_timeouts_rust(monkeypatch):
     """The untuned Python client carries no explicit native configuration.
 
     This does not initialize the native runtime. An untuned client that later
@@ -1937,7 +1937,7 @@ def test_untuned_sync_client_carries_no_transport_timeouts(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_async_client_carries_explicit_transport_timeouts(monkeypatch):
+async def test_async_client_carries_explicit_transport_timeouts_rust(monkeypatch):
     """Async clients select an explicitly configured runtime."""
     monkeypatch.setattr(
         async_cosmos_client_module, "CosmosClientConnection", MagicMock()
@@ -1955,7 +1955,7 @@ async def test_async_client_carries_explicit_transport_timeouts(monkeypatch):
     await client._adapter.close()
 
 
-def test_rust_backend_passes_client_config_to_acquire_driver_handle(monkeypatch):
+def test_rust_backend_passes_client_config_to_acquire_driver_handle_rust(monkeypatch):
     """The backend hands the client config to acquire_driver_handle as the third argument
     so the binding can apply it when it builds the driver."""
     fake_module = MagicMock()
@@ -1975,7 +1975,7 @@ def test_rust_backend_passes_client_config_to_acquire_driver_handle(monkeypatch)
     )
 
 
-def test_async_rust_backend_passes_client_config_to_acquire_driver_handle(monkeypatch):
+def test_async_rust_backend_passes_client_config_to_acquire_driver_handle_rust(monkeypatch):
     """Async version: the config rides on the acquire_driver_handle call the same way."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -1999,7 +1999,7 @@ def test_async_rust_backend_passes_client_config_to_acquire_driver_handle(monkey
 
 
 @pytest.mark.parametrize("first_proxy,initialize_second", [(None, False), (True, False), (True, True)])
-def test_rust_backend_selection_is_independent_of_acquisition_order(monkeypatch, first_proxy, initialize_second):
+def test_rust_backend_selection_is_independent_of_acquisition_order_rust(monkeypatch, first_proxy, initialize_second):
     """Forward the selected runtime, not another client's previously selected settings."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.side_effect = ["first", "second"]
@@ -2028,7 +2028,7 @@ def test_rust_backend_selection_is_independent_of_acquisition_order(monkeypatch,
         second.close()
 
 
-def test_rust_backend_client_proxy_override_is_rejected(monkeypatch):
+def test_rust_backend_client_proxy_override_is_rejected_rust(monkeypatch):
     """A direct adapter cannot bypass the runtime-only settings contract."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "driver"
@@ -2051,7 +2051,7 @@ def test_rust_backend_client_proxy_override_is_rejected(monkeypatch):
 
 
 @pytest.mark.parametrize("first_proxy,initialize_second", [(None, False), (True, False), (True, True)])
-def test_async_rust_backend_selection_is_independent_of_acquisition_order(monkeypatch, first_proxy, initialize_second):
+def test_async_rust_backend_selection_is_independent_of_acquisition_order_rust(monkeypatch, first_proxy, initialize_second):
     """The async worker forwards its client's runtime regardless of acquisition order."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.side_effect = ["first", "second"]
@@ -2094,7 +2094,7 @@ def test_async_rust_backend_selection_is_independent_of_acquisition_order(monkey
 # client still produces no config; the binding receives None as its third argument.
 
 
-def test_build_client_config_carries_excluded_locations():
+def test_build_client_config_carries_excluded_locations_rust():
     """excluded_locations is captured as an immutable tuple, like preferred."""
     config = build_client_config(None, excluded_locations=["Central US"])
     assert isinstance(config, PreparedClientConfig)
@@ -2102,12 +2102,12 @@ def test_build_client_config_carries_excluded_locations():
     assert config.preferred_locations == ()
 
 
-def test_build_client_config_empty_excluded_locations_is_none():
+def test_build_client_config_empty_excluded_locations_is_none_rust():
     """Empty excluded_locations alone carries nothing."""
     assert build_client_config(None, excluded_locations=[]) is None
 
 
-def test_build_client_config_carries_throttling_retry():
+def test_build_client_config_carries_throttling_retry_rust():
     """Both throttle dials are captured when tuned."""
     config = build_client_config(
         None,
@@ -2118,20 +2118,20 @@ def test_build_client_config_carries_throttling_retry():
     assert config.throttling_max_retry_wait_time_seconds == 30
 
 
-def test_build_client_config_partial_throttling_retry_leaves_other_none():
+def test_build_client_config_partial_throttling_retry_leaves_other_none_rust():
     """Tuning only the count leaves the wait at None (driver keeps its default)."""
     config = build_client_config(None, throttling_max_retry_count=3)
     assert config.throttling_max_retry_count == 3
     assert config.throttling_max_retry_wait_time_seconds is None
 
 
-def test_build_client_config_hedging_true_uses_default_threshold():
+def test_build_client_config_hedging_true_uses_default_threshold_rust():
     """availability_strategy=True carries the default threshold (500 ms)."""
     config = build_client_config(None, availability_strategy=True)
     assert config.hedging_threshold_ms == 500
 
 
-def test_build_client_config_hedging_dict_uses_threshold_ms_and_rejects_steps():
+def test_build_client_config_hedging_dict_uses_threshold_ms_and_rejects_steps_rust():
     config = build_client_config(None, availability_strategy={"threshold_ms": 20})
     assert config.hedging_threshold_ms == 20
     with pytest.raises(TypeError, match="threshold_steps_ms"):
@@ -2140,12 +2140,12 @@ def test_build_client_config_hedging_dict_uses_threshold_ms_and_rejects_steps():
         )
 
 
-def test_build_client_config_hedging_false_carries_nothing():
+def test_build_client_config_hedging_false_carries_nothing_rust():
     """No threshold/config tells the binding to explicitly disable hedging."""
     assert build_client_config(None, availability_strategy=False) is None
 
 
-def test_build_client_config_hedging_none_carries_nothing():
+def test_build_client_config_hedging_none_carries_nothing_rust():
     """An absent strategy uses the binding's disabled Python-client default."""
     assert build_client_config(None, availability_strategy=None) is None
 
@@ -2160,7 +2160,7 @@ def test_build_client_config_hedging_none_carries_nothing():
     ({"availability_strategy": True}, 500),
     ({"availability_strategy": {"threshold_ms": 25}}, 25),
 ])
-def test_public_constructor_preserves_hedging_choice(module, extra_options, options, threshold, monkeypatch):
+def test_public_constructor_preserves_hedging_choice_rust(module, extra_options, options, threshold, monkeypatch):
     """The hedging choice survives the trip through the real client constructor, on both
     clients and alongside other settings.
 
@@ -2194,14 +2194,14 @@ def test_public_constructor_preserves_hedging_choice(module, extra_options, opti
             asyncio.run(result)
 
 
-def test_build_client_config_hedging_invalid_threshold_raises():
+def test_build_client_config_hedging_invalid_threshold_raises_rust():
     """A non-positive threshold_ms raises the same ValueError as the legacy path
     (validation reused from CrossRegionHedgingStrategy)."""
     with pytest.raises(ValueError, match="threshold_ms must be positive"):
         build_client_config(None, availability_strategy={"threshold_ms": 0})
 
 
-def test_build_client_config_combines_all_settings():
+def test_build_client_config_combines_all_settings_rust():
     """All settings fold into one config object together."""
     config = build_client_config(
         ["West US"],
@@ -2225,7 +2225,7 @@ def test_build_client_config_combines_all_settings():
     )
 
 
-def test_resolve_client_connection_timeout_reports_only_explicit_values():
+def test_resolve_client_connection_timeout_reports_only_explicit_values_rust():
     """A customer who named no timeout gets None, not the legacy defaults.
 
     The legacy resolver reports only the requested connection setting; it does
@@ -2235,7 +2235,7 @@ def test_resolve_client_connection_timeout_reports_only_explicit_values():
     assert resolve_client_connection_timeout({"connection_timeout": 2}) == 2
 
 
-def test_resolve_client_connection_timeout_ignores_a_stock_connection_policy():
+def test_resolve_client_connection_timeout_ignores_a_stock_connection_policy_rust():
     """The public clients build a default ConnectionPolicy for every client, so a
     policy that still holds the stock values is not a customer choice."""
     assert resolve_client_connection_timeout(
@@ -2243,7 +2243,7 @@ def test_resolve_client_connection_timeout_ignores_a_stock_connection_policy():
     ) is None
 
 
-def test_resolve_client_connection_timeout_honors_alias_and_custom_policy():
+def test_resolve_client_connection_timeout_honors_alias_and_custom_policy_rust():
     """The legacy millisecond alias keeps precedence and policy defaults still apply."""
     policy = ConnectionPolicy()
     policy.RequestTimeout = 3
@@ -2256,7 +2256,7 @@ def test_resolve_client_connection_timeout_honors_alias_and_custom_policy():
     ) == 0.75
 
 
-def test_build_client_config_carries_transport_timeouts():
+def test_build_client_config_carries_transport_timeouts_rust():
     """Prove Rust client configuration includes transport timeouts."""
     config = build_client_config(
         None,
@@ -2272,7 +2272,7 @@ def test_build_client_config_carries_transport_timeouts():
         ({"connection_timeout_seconds": 7}, "at most 6.0"),
     ],
 )
-def test_build_client_config_rejects_driver_unsupported_transport_timeouts(
+def test_build_client_config_rejects_driver_unsupported_transport_timeouts_rust(
     kwargs, message
 ):
     """Prove unsupported timeout values fail instead of changing silently."""
@@ -2280,20 +2280,20 @@ def test_build_client_config_rejects_driver_unsupported_transport_timeouts(
         build_client_config(None, **kwargs)
 
 
-def test_build_client_config_carries_user_agent_suffix():
+def test_build_client_config_carries_user_agent_suffix_rust():
     """The prepared config retains the supplied suffix; no HTTP header is inspected."""
     config = build_client_config(None, user_agent_suffix="checkout-westus2")
     assert isinstance(config, PreparedClientConfig)
     assert config.user_agent_suffix == "checkout-westus2"
 
 
-def test_build_client_config_only_user_agent_suffix_still_builds_config():
+def test_build_client_config_only_user_agent_suffix_still_builds_config_rust():
     """A suffix alone produces a config rather than None."""
     config = build_client_config(None, user_agent_suffix="order-service")
     assert config == PreparedClientConfig(user_agent_suffix="order-service")
 
 
-def test_build_client_config_empty_user_agent_suffix_is_none():
+def test_build_client_config_empty_user_agent_suffix_is_none_rust():
     """An empty string (or absent) suffix carries nothing, like an empty location
     list, so an untuned client still produces no config."""
     assert build_client_config(None, user_agent_suffix="") is None
@@ -2301,27 +2301,27 @@ def test_build_client_config_empty_user_agent_suffix_is_none():
 
 
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
-def test_build_client_config_carries_supported_consistency_level(level):
+def test_build_client_config_carries_supported_consistency_level_rust(level):
     """Each listed consistency name is retained in the prepared config."""
     config = build_client_config(None, consistency_level=level)
     assert config == PreparedClientConfig(consistency_level=level)
 
 
-def test_build_client_config_only_consistency_still_builds_config():
+def test_build_client_config_only_consistency_still_builds_config_rust():
     """A consistency setting alone produces a config rather than None."""
     config = build_client_config(None, consistency_level="Session")
     assert isinstance(config, PreparedClientConfig)
     assert config.consistency_level == "Session"
 
 
-def test_build_client_config_no_consistency_carries_nothing():
+def test_build_client_config_no_consistency_carries_nothing_rust():
     """An absent or empty consistency value leaves the config field unset."""
     assert build_client_config(None, consistency_level=None) is None
     assert build_client_config(None, consistency_level="") is None
 
 
 @pytest.mark.parametrize("proxy_allowed", [True, False])
-def test_build_client_config_only_proxy_allowed_still_builds_config(proxy_allowed):
+def test_build_client_config_only_proxy_allowed_still_builds_config_rust(proxy_allowed):
     """Proxy allowance is a runtime-level Rust switch; an explicit value must
     still produce a config even when no other startup setting is tuned."""
     config = build_client_config(None, proxy_allowed=proxy_allowed)
@@ -2329,7 +2329,7 @@ def test_build_client_config_only_proxy_allowed_still_builds_config(proxy_allowe
     assert config.proxy_allowed is proxy_allowed
 
 
-def test_build_client_config_rejects_non_bool_proxy_allowed():
+def test_build_client_config_rejects_non_bool_proxy_allowed_rust():
     """proxy_allowed is a boolean contract; reject non-bool values at client
     construction instead of failing later at first operation."""
     with pytest.raises(ValueError, match="proxy_allowed must be a bool"):
@@ -2346,7 +2346,7 @@ def test_build_client_config_rejects_non_bool_proxy_allowed():
         (PreparedClientConfig(connection_timeout_seconds=2), PreparedClientConfig(connection_timeout_seconds=5)),
     ],
 )
-def test_retired_client_settings_are_rejected_even_before_first_use(first, second):
+def test_retired_client_settings_are_rejected_even_before_first_use_rust(first, second):
     """Direct adapters cannot select runtime settings through client configuration."""
     endpoint = "https://unused-clients.documents.azure.com"
     for config in (first, second):
@@ -2359,14 +2359,14 @@ def test_retired_client_settings_are_rejected_even_before_first_use(first, secon
                 BindingAdapter(endpoint, master_key="key", client_config=config)
 
 
-def test_construction_requires_native_runtime_validation(monkeypatch):
+def test_construction_requires_native_runtime_validation_rust(monkeypatch):
     monkeypatch.delattr("azure.cosmos._rust._validate_runtime_configuration")
     endpoint = "https://outdated-extension.documents.azure.com"
     with pytest.raises(RuntimeError, match="_validate_runtime_configuration; rebuild"):
         BindingAdapter(endpoint, master_key="key")
 
 
-def test_native_validation_failure_does_not_record_a_client(monkeypatch):
+def test_native_validation_failure_does_not_record_a_client_rust(monkeypatch):
     error = RuntimeError("cached runtime initialization failure")
     validator = MagicMock(side_effect=error)
     monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
@@ -2379,7 +2379,7 @@ def test_native_validation_failure_does_not_record_a_client(monkeypatch):
 
 
 @pytest.mark.parametrize("level", ["Nonsense", "LatestCommitted", "GlobalStrong", "Default", "eventual"])
-def test_build_client_config_rejects_unknown_consistency_level(level):
+def test_build_client_config_rejects_unknown_consistency_level_rust(level):
     """An unrecognized consistency-level string is rejected, not dropped."""
     with pytest.raises(ValueError, match="not a recognized Cosmos consistency level"):
         build_client_config(None, consistency_level=level)
@@ -2387,7 +2387,7 @@ def test_build_client_config_rejects_unknown_consistency_level(level):
 
 @pytest.mark.parametrize("factory", [make_backend, make_async_backend])
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
-def test_factories_preserve_consistency_names(factory, level):
+def test_factories_preserve_consistency_names_rust(factory, level):
     backend = factory(
         BACKEND_NAME_RUST,
         url="https://consistency.documents.azure.com",
@@ -2398,7 +2398,7 @@ def test_factories_preserve_consistency_names(factory, level):
     assert backend._driver_handle is None
 
 
-def test_factory_carries_all_startup_settings_into_rust_backend(monkeypatch):
+def test_factory_carries_all_startup_settings_into_rust_backend_rust(monkeypatch):
     """make_backend folds every supported startup setting into the backend's
     client config."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
@@ -2424,7 +2424,7 @@ def test_factory_carries_all_startup_settings_into_rust_backend(monkeypatch):
     )
 
 
-def test_async_factory_carries_all_startup_settings_into_rust_backend(monkeypatch):
+def test_async_factory_carries_all_startup_settings_into_rust_backend_rust(monkeypatch):
     """The async factory carries the same settings the same way."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     backend = make_async_backend(
@@ -2454,12 +2454,12 @@ def test_async_factory_carries_all_startup_settings_into_rust_backend(monkeypatc
 # instead of silently borrowing the legacy core-python connection.
 
 
-def test_account_read_guard_is_noop_for_core_python():
+def test_account_read_guard_is_noop_for_core_python_rust():
     """The explicit legacy backend leaves the core-python path unchanged."""
     assert raise_account_read_unsupported(LEGACY_BACKEND) is None
 
 
-def test_account_read_guard_raises_for_rust_backend():
+def test_account_read_guard_raises_for_rust_backend_rust():
     """The Rust backend gets a clear not-yet-available error."""
     backend = MagicMock(name=BACKEND_NAME_RUST)
     backend.name = BACKEND_NAME_RUST
@@ -2534,17 +2534,17 @@ class _AsyncContextManagerCredential:
         return ("token-value", 9999999999)
 
 
-def test_resolve_credential_master_key_string():
+def test_resolve_credential_master_key_string_rust():
     """A plain string credential is read as a master key, with no token credential."""
     assert resolve_credential("the-key") == ("the-key", None)
 
 
-def test_resolve_credential_master_key_dict():
+def test_resolve_credential_master_key_dict_rust():
     """A ``{"masterKey": ...}`` dict is read as a master key, with no token credential."""
     assert resolve_credential({"masterKey": "the-key"}) == ("the-key", None)
 
 
-def test_resolve_credential_sync_token_credential():
+def test_resolve_credential_sync_token_credential_rust():
     """A sync token credential passes through as the token credential (no master key)."""
     cred = _SyncTokenCredential()
     master_key, token_credential = resolve_credential(cred)
@@ -2552,7 +2552,7 @@ def test_resolve_credential_sync_token_credential():
     assert token_credential is cred
 
 
-def test_resolve_credential_async_token_credential_wrapped():
+def test_resolve_credential_async_token_credential_wrapped_rust():
     """An async credential is accepted: it is wrapped in a bridge that
     drives its coroutine and exposes a synchronous get_token."""
     cred = _AsyncTokenCredential()
@@ -2570,7 +2570,7 @@ def test_resolve_credential_async_token_credential_wrapped():
         token_credential._close_cosmos_async_bridge()
 
 
-def test_resolve_credential_async_get_token_info_only_wrapped():
+def test_resolve_credential_async_get_token_info_only_wrapped_rust():
     """An async credential exposing only get_token_info (no get_token) is wrapped
     too; the bridge drives get_token_info."""
     cred = _AsyncTokenInfoCredential()
@@ -2586,7 +2586,7 @@ def test_resolve_credential_async_get_token_info_only_wrapped():
         token_credential._close_cosmos_async_bridge()
 
 
-def test_resolve_credential_async_context_manager_credential_wrapped():
+def test_resolve_credential_async_context_manager_credential_wrapped_rust():
     """The azure.identity.aio shape (async context manager + async get_token) is
     wrapped via the async detector."""
     cred = _AsyncContextManagerCredential()
@@ -2596,7 +2596,7 @@ def test_resolve_credential_async_context_manager_credential_wrapped():
     token_credential._close_cosmos_async_bridge()
 
 
-def test_async_credential_bridge_close_is_idempotent():
+def test_async_credential_bridge_close_is_idempotent_rust():
     """A directly constructed, unshared bridge tolerates repeated close calls.
 
     Close before first use is also exercised. This does not test duplicate
@@ -2635,7 +2635,7 @@ class _HangingAsyncCredential:
         return ("never", 0)  # pragma: no cover - unreachable
 
 
-def test_async_credential_bridge_close_unblocks_in_flight_get_token():
+def test_async_credential_bridge_close_unblocks_in_flight_get_token_rust():
     """Closing the bridge while a get_token is waiting must release the caller,
     not hang it forever."""
     cred = _HangingAsyncCredential()
@@ -2661,7 +2661,7 @@ def test_async_credential_bridge_close_unblocks_in_flight_get_token():
     assert "closed" in result[0][2].lower()
 
 
-def test_async_credential_bridge_token_timeout_bounds_the_wait():
+def test_async_credential_bridge_token_timeout_bounds_the_wait_rust():
     """A finite token_timeout caps the wait and raises TimeoutError instead of
     blocking forever on a hung credential."""
 
@@ -2676,7 +2676,7 @@ def test_async_credential_bridge_token_timeout_bounds_the_wait():
         bridge._close_cosmos_async_bridge()
 
 
-def test_async_credential_bridge_rejects_call_from_loop_thread():
+def test_async_credential_bridge_rejects_call_from_loop_thread_rust():
     """Calling get_token from the bridge's own background thread must raise instead of
     deadlocking."""
     cred = _AsyncTokenCredential()
@@ -2721,7 +2721,7 @@ class _SlowAsyncCredential:
         return ("token-value", 9999999999)
 
 
-def test_async_credential_bridge_dedups_same_credential_with_refcount():
+def test_async_credential_bridge_dedups_same_credential_with_refcount_rust():
     """The same async credential reused across clients yields one shared bridge,
     refcounted so only the last close tears the loop down."""
     cred = _AsyncTokenCredential()
@@ -2748,7 +2748,7 @@ def test_async_credential_bridge_dedups_same_credential_with_refcount():
         b1._close_cosmos_async_bridge()
 
 
-def test_async_credential_bridge_distinct_credentials_get_distinct_bridges():
+def test_async_credential_bridge_distinct_credentials_get_distinct_bridges_rust():
     """Two credential objects produce distinct Python bridges; no drivers are built."""
     c1 = _AsyncTokenCredential()
     c2 = _AsyncTokenCredential()
@@ -2761,7 +2761,7 @@ def test_async_credential_bridge_distinct_credentials_get_distinct_bridges():
         b2._close_cosmos_async_bridge()
 
 
-def test_async_credential_bridge_concurrent_get_token_and_close_race():
+def test_async_credential_bridge_concurrent_get_token_and_close_race_rust():
     """Many threads calling get_token while another closes must all finish; calls
     after the close fail cleanly instead of hanging."""
     cred = _SlowAsyncCredential()
@@ -2795,7 +2795,7 @@ def test_async_credential_bridge_concurrent_get_token_and_close_race():
     assert len(outcomes) == len(threads)
 
 
-def test_async_credential_bridge_join_timeout_is_configurable(monkeypatch):
+def test_async_credential_bridge_join_timeout_is_configurable_rust(monkeypatch):
     """The loop-thread join timeout honors the env var, and a constructor arg wins."""
     monkeypatch.setenv("COSMOS_ASYNC_CREDENTIAL_CLOSE_TIMEOUT", "0.25")
     b = AsyncTokenCredentialBridge(_AsyncTokenCredential())
@@ -2812,7 +2812,7 @@ def test_async_credential_bridge_join_timeout_is_configurable(monkeypatch):
     b3._close_cosmos_async_bridge()
 
 
-def test_resolve_credential_sync_credential_not_misclassified():
+def test_resolve_credential_sync_credential_not_misclassified_rust():
     """A plain synchronous credential must NOT be misread as async by the broader
     detector -- it is accepted as a token credential."""
     cred = _SyncTokenCredential()
@@ -2821,7 +2821,7 @@ def test_resolve_credential_sync_credential_not_misclassified():
     assert token_credential is cred
 
 
-def test_resolve_credential_resource_token_map_rejected_with_specific_message():
+def test_resolve_credential_resource_token_map_rejected_with_specific_message_rust():
     """A {resource-link: token} map (per-user scoped tokens) is rejected with the
     resource-token message, not the generic one."""
     with pytest.raises(ValueError, match="resource-token") as error:
@@ -2830,7 +2830,7 @@ def test_resolve_credential_resource_token_map_rejected_with_specific_message():
     assert "Microsoft Entra" in str(error.value)
 
 
-def test_resolve_credential_permission_feed_rejected_with_specific_message():
+def test_resolve_credential_permission_feed_rejected_with_specific_message_rust():
     """A permission feed (iterable of permission mappings) is rejected as a
     resource-token credential."""
     with pytest.raises(ValueError, match="resource-token") as error:
@@ -2838,14 +2838,14 @@ def test_resolve_credential_permission_feed_rejected_with_specific_message():
     assert "intentionally excluded" in str(error.value)
 
 
-def test_resolve_credential_none_rejected():
+def test_resolve_credential_none_rejected_rust():
     """No credential is rejected: the Rust backend requires a master key or a token
     credential."""
     with pytest.raises(ValueError, match="master-key credential"):
         resolve_credential(None)
 
 
-def test_make_backend_carries_sync_token_credential(monkeypatch):
+def test_make_backend_carries_sync_token_credential_rust(monkeypatch):
     """A sync token credential lands on the backend as token_credential, with no
     master key."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
@@ -2860,7 +2860,7 @@ def test_make_backend_carries_sync_token_credential(monkeypatch):
     assert backend._token_credential is cred
 
 
-def test_async_make_backend_carries_sync_token_credential(monkeypatch):
+def test_async_make_backend_carries_sync_token_credential_rust(monkeypatch):
     """The async factory carries a sync token credential the same way."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     cred = _SyncTokenCredential()
@@ -2874,7 +2874,7 @@ def test_async_make_backend_carries_sync_token_credential(monkeypatch):
     assert backend._token_credential is cred
 
 
-def test_make_backend_wraps_async_token_credential(monkeypatch):
+def test_make_backend_wraps_async_token_credential_rust(monkeypatch):
     """The factory stores a bridge and no master key for an async credential.
 
     Constructing the backend does not prove that the credential can authenticate.
@@ -2891,7 +2891,7 @@ def test_make_backend_wraps_async_token_credential(monkeypatch):
     assert isinstance(backend._token_credential, AsyncTokenCredentialBridge)
 
 
-def test_async_make_backend_wraps_async_token_credential(monkeypatch):
+def test_async_make_backend_wraps_async_token_credential_rust(monkeypatch):
     """The async factory wraps an async credential the same way."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     cred = _AsyncTokenCredential()
@@ -2905,7 +2905,7 @@ def test_async_make_backend_wraps_async_token_credential(monkeypatch):
     assert isinstance(backend._token_credential, AsyncTokenCredentialBridge)
 
 
-def test_rust_backend_passes_token_credential_to_acquire_driver_handle(monkeypatch):
+def test_rust_backend_passes_token_credential_to_acquire_driver_handle_rust(monkeypatch):
     """With a token credential, acquire_driver_handle is called as (endpoint, None, config,
     credential) -- master key None, credential as the 4th argument."""
     fake_module = MagicMock()
@@ -2924,7 +2924,7 @@ def test_rust_backend_passes_token_credential_to_acquire_driver_handle(monkeypat
     )
 
 
-def test_async_rust_backend_passes_token_credential_to_acquire_driver_handle(monkeypatch):
+def test_async_rust_backend_passes_token_credential_to_acquire_driver_handle_rust(monkeypatch):
     """Async version: the token credential rides as the 4th acquire_driver_handle arg."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -2972,7 +2972,7 @@ def _new_async_rust_backend():
     return AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
 
 
-def test_container_dispatch_routes_to_rust_backend(monkeypatch):
+def test_container_dispatch_routes_to_rust_backend_rust(monkeypatch):
     """A call on a Rust client reaches the Rust backend, shown by the faked
     module being called."""
     fake_module = MagicMock()
@@ -2989,7 +2989,7 @@ def test_container_dispatch_routes_to_rust_backend(monkeypatch):
         container._item_context.adapter.close()
 
 
-def test_container_dispatch_rejects_missing_backend():
+def test_container_dispatch_rejects_missing_backend_rust():
     """A connection without the required concrete backend fails explicitly."""
     bare_cc = MagicMock(spec=[])  # a connection with no backend set at all
     container = ContainerProxy(bare_cc, "dbs/test", "test")
@@ -2997,7 +2997,7 @@ def test_container_dispatch_rejects_missing_backend():
         container.create_item(body={"id": "x", "pk": "a"})
 
 
-def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
+def test_async_container_dispatch_routes_to_async_rust_backend_rust(monkeypatch):
     """Async version: a call on a Rust client reaches the Rust backend."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3025,7 +3025,7 @@ def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
 # Exercise read_feed_ranges through the public methods with fake bindings,
 # including force_refresh and malformed payloads. Backend eligibility depends
 # on the particular option, not merely whether any keyword was supplied.
-def test_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
+def test_container_read_feed_ranges_routes_to_rust_backend_rust(monkeypatch):
     """The force_refresh call reaches the fake Rust binding, not the legacy map."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3055,7 +3055,7 @@ def test_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
         container._item_context.adapter.close()
 
 
-def test_container_read_feed_ranges_with_kwargs_rejects_legacy_fallback(monkeypatch):
+def test_container_read_feed_ranges_with_kwargs_rejects_legacy_fallback_rust(monkeypatch):
     """Unsupported options fail without executing the legacy routing-map lookup."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3090,7 +3090,7 @@ def test_container_read_feed_ranges_with_kwargs_rejects_legacy_fallback(monkeypa
         container._item_context.adapter.close()
 
 
-def test_container_read_feed_ranges_rust_payload_must_include_partition_key_ranges(monkeypatch):
+def test_container_read_feed_ranges_rust_payload_must_include_partition_key_ranges_rust(monkeypatch):
     """Malformed Rust payload is rejected loudly instead of returning silent empty data."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3105,7 +3105,7 @@ def test_container_read_feed_ranges_rust_payload_must_include_partition_key_rang
         container._item_context.adapter.close()
 
 
-def test_async_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
+def test_async_container_read_feed_ranges_routes_to_rust_backend_rust(monkeypatch):
     """Async read_feed_ranges uses Rust backend when available and kwargs are empty."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3147,7 +3147,7 @@ def test_async_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
         asyncio.run(mock_cc._backend.close())
 
 
-def test_async_container_read_feed_ranges_with_kwargs_rejects_legacy_fallback(monkeypatch):
+def test_async_container_read_feed_ranges_with_kwargs_rejects_legacy_fallback_rust(monkeypatch):
     """Async unsupported options fail without executing legacy metadata work."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3199,7 +3199,7 @@ def test_async_container_read_feed_ranges_with_kwargs_rejects_legacy_fallback(mo
         asyncio.run(mock_cc._backend.close())
 
 
-def test_async_container_read_feed_ranges_rust_payload_must_include_partition_key_ranges(monkeypatch):
+def test_async_container_read_feed_ranges_rust_payload_must_include_partition_key_ranges_rust(monkeypatch):
     """Async malformed Rust payload is rejected loudly."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3224,7 +3224,7 @@ def test_async_container_read_feed_ranges_rust_payload_must_include_partition_ke
         asyncio.run(mock_cc._backend.close())
 
 
-def test_container_feed_range_from_partition_key_routes_to_rust_backend(monkeypatch):
+def test_container_feed_range_from_partition_key_routes_to_rust_backend_rust(monkeypatch):
     """feed_range_from_partition_key uses Rust backend when available."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3254,7 +3254,7 @@ def test_container_feed_range_from_partition_key_routes_to_rust_backend(monkeypa
         container._item_context.adapter.close()
 
 
-def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload(monkeypatch):
+def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload_rust(monkeypatch):
     """A malformed Rust feed-range payload (missing the ``Range`` envelope) raises
     rather than handing back a broken feed range."""
     fake_module = MagicMock()
@@ -3270,7 +3270,7 @@ def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload(
         container._item_context.adapter.close()
 
 
-def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend(monkeypatch):
+def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend_rust(monkeypatch):
     """The empty-partition-key sentinel (``NonePartitionKeyValue``) routes to the Rust
     backend with a cross-partition header (``"[]"``) and returns the full-range feed
     range the driver reports."""
@@ -3303,7 +3303,7 @@ def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_b
         container._item_context.adapter.close()
 
 
-def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend(monkeypatch):
+def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend_rust(monkeypatch):
     """An explicit empty partition-key sequence (``[]``) also routes to the Rust
     backend and returns the driver's feed range."""
     fake_module = MagicMock()
@@ -3337,7 +3337,7 @@ def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_b
         container._item_context.adapter.close()
 
 
-def test_async_container_feed_range_from_partition_key_routes_to_rust_backend(monkeypatch):
+def test_async_container_feed_range_from_partition_key_routes_to_rust_backend_rust(monkeypatch):
     """Async feed_range_from_partition_key uses Rust backend when available."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3377,7 +3377,7 @@ def test_async_container_feed_range_from_partition_key_routes_to_rust_backend(mo
         asyncio.run(mock_cc._backend.close())
 
 
-def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_payload(monkeypatch):
+def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_payload_rust(monkeypatch):
     """Async twin: a malformed async Rust feed-range payload raises."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3404,7 +3404,7 @@ def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_pa
         asyncio.run(mock_cc._backend.close())
 
 
-def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend(monkeypatch):
+def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend_rust(monkeypatch):
     """Async twin: the empty-partition-key sentinel routes to the async Rust backend
     with a cross-partition header."""
     fake_module = MagicMock()
@@ -3446,7 +3446,7 @@ def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_
         asyncio.run(mock_cc._backend.close())
 
 
-def test_async_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend(monkeypatch):
+def test_async_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend_rust(monkeypatch):
     """Async twin: an explicit empty partition-key sequence routes to the async Rust
     backend."""
     fake_module = MagicMock()
@@ -3511,7 +3511,7 @@ class _SlotsConnection:
     __slots__ = ("_backend",)
 
 
-def test_pick_backend_returns_backend_when_set():
+def test_pick_backend_returns_backend_when_set_rust():
     """With ``_backend`` set, it is returned."""
     conn = _PlainConnection()
     backend = object()
@@ -3519,13 +3519,13 @@ def test_pick_backend_returns_backend_when_set():
     assert get_selected_backend(conn) is backend
 
 
-def test_pick_backend_rejects_unset_backend():
+def test_pick_backend_rejects_unset_backend_rust():
     """A connection without ``_backend`` violates the invariant."""
     with pytest.raises(RuntimeError, match="concrete Cosmos backend"):
         get_selected_backend(_PlainConnection())
 
 
-def test_pick_backend_uses_getattr_fallback_for_slots_connection():
+def test_pick_backend_uses_getattr_fallback_for_slots_connection_rust():
     """A connection without ``__dict__`` (``__slots__``) is read via getattr."""
     conn = _SlotsConnection()
     backend = object()
@@ -3543,7 +3543,7 @@ def test_pick_backend_uses_getattr_fallback_for_slots_connection():
 
 
 @pytest.mark.parametrize("first_attempt_fails", [False, True], ids=["reuse", "retry-after-failure"])
-def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads(monkeypatch, first_attempt_fails):
+def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads_rust(monkeypatch, first_attempt_fails):
     """A caller that already saw None rechecks after the first attempt finishes."""
     first_started = threading.Event()
     finish_first = threading.Event()
@@ -3619,7 +3619,7 @@ def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads(mon
     fake_module.release_driver_handle.assert_called_once_with("handle-1")
 
 
-def test_async_rust_backend_init_driver_handle_serialised_under_concurrent_tasks(monkeypatch):
+def test_async_rust_backend_init_driver_handle_serialised_under_concurrent_tasks_rust(monkeypatch):
     """Eight coroutines starting at once build the handle only once."""
     count_lock = threading.Lock()
     calls = {"n": 0}
@@ -3646,7 +3646,7 @@ def test_async_rust_backend_init_driver_handle_serialised_under_concurrent_tasks
     assert results == ["handle-1"] * 8
 
 
-def test_async_rust_backend_init_driver_handle_serialised_across_event_loops(monkeypatch):
+def test_async_rust_backend_init_driver_handle_serialised_across_event_loops_rust(monkeypatch):
     """Two loops on different threads still build the handle only once."""
     count_lock = threading.Lock()
     calls = {"n": 0}
@@ -3683,7 +3683,7 @@ def test_async_rust_backend_init_driver_handle_serialised_across_event_loops(mon
     assert results == ["handle-1", "handle-1"]
 
 
-def test_rust_backend_close_releases_driver_handle_once(monkeypatch):
+def test_rust_backend_close_releases_driver_handle_once_rust(monkeypatch):
     """close() removes a built handle once and is idempotent."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -3697,7 +3697,7 @@ def test_rust_backend_close_releases_driver_handle_once(monkeypatch):
     fake_module.release_driver_handle.assert_called_once_with("handle-1")
 
 
-def test_async_rust_backend_close_releases_driver_handle_once(monkeypatch):
+def test_async_rust_backend_close_releases_driver_handle_once_rust(monkeypatch):
     """Async close() removes a built handle once and is idempotent."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -3722,7 +3722,7 @@ def test_async_rust_backend_close_releases_driver_handle_once(monkeypatch):
 
 
 @pytest.mark.parametrize("bad", [123, 1.5, True, ["rust"], {"name": "rust"}, object()])
-def test_resolve_backend_name_non_string_raises_valueerror(monkeypatch, bad):
+def test_resolve_backend_name_non_string_raises_valueerror_rust(monkeypatch, bad):
     """A non-string _backend= must raise a clear ValueError, not an opaque
     AttributeError from calling .strip() on a non-string."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
@@ -3731,7 +3731,7 @@ def test_resolve_backend_name_non_string_raises_valueerror(monkeypatch, bad):
 
 
 @pytest.mark.parametrize("arg_name", ["preferred_locations", "excluded_locations"])
-def test_build_client_config_rejects_bare_string_locations(arg_name):
+def test_build_client_config_rejects_bare_string_locations_rust(arg_name):
     """A bare string region is rejected: tuple('West US') would silently become
     seven one-character 'regions', which is never what the customer meant."""
     with pytest.raises(ValueError, match="sequence of region-name strings"):
@@ -3739,13 +3739,13 @@ def test_build_client_config_rejects_bare_string_locations(arg_name):
 
 
 @pytest.mark.parametrize("arg_name", ["preferred_locations", "excluded_locations"])
-def test_build_client_config_rejects_bytes_locations(arg_name):
+def test_build_client_config_rejects_bytes_locations_rust(arg_name):
     """Bytes are rejected for the same reason a bare string is."""
     with pytest.raises(ValueError, match="sequence of region-name strings"):
         build_client_config(**{arg_name: b"West US"})
 
 
-def test_build_client_config_accepts_single_region_in_a_list():
+def test_build_client_config_accepts_single_region_in_a_list_rust():
     """The correct shape -- a one-element list -- carries exactly that one region,
     proving the guard does not over-reject real sequences."""
     config = build_client_config(["West US"])
@@ -3753,7 +3753,7 @@ def test_build_client_config_accepts_single_region_in_a_list():
 
 
 @pytest.mark.parametrize("bad_master_key", [None, 123, b"key", {"k": "v"}, ""])
-def test_resolve_credential_rejects_non_string_master_key_in_dict(bad_master_key):
+def test_resolve_credential_rejects_non_string_master_key_in_dict_rust(bad_master_key):
     """A {'masterKey': <non-string or empty>} dict is rejected at construction with
     a clear message, instead of being accepted and failing later in a murkier
     place."""
@@ -3761,14 +3761,14 @@ def test_resolve_credential_rejects_non_string_master_key_in_dict(bad_master_key
         resolve_credential({"masterKey": bad_master_key})
 
 
-def test_resolve_credential_rejects_empty_master_key_string():
+def test_resolve_credential_rejects_empty_master_key_string_rust():
     """An empty master-key string is rejected up front rather than accepted and
     failing later."""
     with pytest.raises(ValueError, match=r"^The account key must be a non-empty string\.$"):
         resolve_credential("")
 
 
-def test_resolve_credential_iterable_non_sequence_gets_generic_message():
+def test_resolve_credential_iterable_non_sequence_gets_generic_message_rust():
     """An unusual custom credential object that merely happens to be iterable (a
     generator, here) but is not a concrete sequence is NOT mislabeled a
     resource-token credential; it falls through to the generic message."""
@@ -3779,7 +3779,7 @@ def test_resolve_credential_iterable_non_sequence_gets_generic_message():
         resolve_credential(_gen())
 
 
-def test_resolve_backend_name_normalizes_case_and_whitespace(monkeypatch):
+def test_resolve_backend_name_normalizes_case_and_whitespace_rust(monkeypatch):
     """Case and surrounding whitespace are tolerated (env vars and copy-paste
     routinely add a trailing newline or odd case); the canonical name comes back."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
@@ -3792,7 +3792,7 @@ def test_resolve_backend_name_normalizes_case_and_whitespace(monkeypatch):
     assert resolve_backend_name(None) == BACKEND_NAME_RUST
 
 
-def test_resolve_backend_name_empty_means_default(monkeypatch):
+def test_resolve_backend_name_empty_means_default_rust(monkeypatch):
     """An empty or whitespace-only value counts as 'not specified' and uses the
     default rather than raising."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
@@ -3805,7 +3805,7 @@ def test_resolve_backend_name_empty_means_default(monkeypatch):
     assert resolve_backend_name(None) == BACKEND_NAME_CORE_PYTHON
 
 
-def test_resolve_backend_name_still_rejects_genuine_typos(monkeypatch):
+def test_resolve_backend_name_still_rejects_genuine_typos_rust(monkeypatch):
     """Normalization is only case/whitespace -- a real typo (and underscore
     spelling, which is not an alias) still fails loud."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
@@ -3840,7 +3840,7 @@ class _FakeDriverTransportError(RuntimeError):
     pass
 
 
-def test_sync_backend_maps_transport_error_to_service_response_error(monkeypatch):
+def test_sync_backend_maps_transport_error_to_service_response_error_rust(monkeypatch):
     """A _DriverTransportError from the sync dispatch surfaces as ServiceResponseError,
     preserving the driver's status/message in the new exception."""
     from azure.core.exceptions import ServiceResponseError
@@ -3870,7 +3870,7 @@ def test_sync_backend_maps_transport_error_to_service_response_error(monkeypatch
         backend.close()
 
 
-def test_async_backend_maps_transport_error_to_service_response_error(monkeypatch):
+def test_async_backend_maps_transport_error_to_service_response_error_rust(monkeypatch):
     """The async backend performs the same translation on its await path."""
     from azure.core.exceptions import ServiceResponseError
     import azure.cosmos.aio._backend.binding_adapter as async_rust_mod
@@ -3902,7 +3902,7 @@ def test_async_backend_maps_transport_error_to_service_response_error(monkeypatc
     asyncio.run(run())
 
 
-def test_sync_list_databases_transport_error_does_not_replay_legacy(monkeypatch):
+def test_sync_list_databases_transport_error_does_not_replay_legacy_rust(monkeypatch):
     """A response-less list_databases failure is translated, not replayed."""
     from azure.core.exceptions import ServiceResponseError
     import azure.cosmos._backend.binding_adapter as rust_mod
@@ -3936,7 +3936,7 @@ def test_sync_list_databases_transport_error_does_not_replay_legacy(monkeypatch)
         backend.close()
 
 
-def test_async_list_databases_transport_error_does_not_replay_legacy(monkeypatch):
+def test_async_list_databases_transport_error_does_not_replay_legacy_rust(monkeypatch):
     """The async list_databases transport mapping also avoids legacy replay."""
     from azure.core.exceptions import ServiceResponseError
     import azure.cosmos.aio._backend.binding_adapter as async_rust_mod
@@ -3977,7 +3977,7 @@ def test_async_list_databases_transport_error_does_not_replay_legacy(monkeypatch
 # --- Regressions for the Rust client lifecycle and process-wide runtime policy ---
 
 
-def test_untuned_and_tuned_rust_clients_can_both_be_constructed(monkeypatch):
+def test_untuned_and_tuned_rust_clients_can_both_be_constructed_rust(monkeypatch):
     """Default and explicit runtimes can coexist without reconfiguring each other."""
     monkeypatch.setattr(
         sync_cosmos_client_module, "CosmosClientConnection", MagicMock()
@@ -4015,7 +4015,7 @@ def _make_closed_rust_backend(monkeypatch, endpoint):
     return backend, fake_module
 
 
-def test_sync_backend_refuses_to_reopen_after_close(monkeypatch):
+def test_sync_backend_refuses_to_reopen_after_close_rust(monkeypatch):
     """A closed sync client must refuse work, not silently reopen.
 
     close() clears the handle, so without a closed flag the next operation saw a
@@ -4031,7 +4031,7 @@ def test_sync_backend_refuses_to_reopen_after_close(monkeypatch):
     assert fake_module.acquire_driver_handle.call_count == 1
 
 
-def test_sync_backend_close_is_idempotent(monkeypatch):
+def test_sync_backend_close_is_idempotent_rust(monkeypatch):
     """Closing twice must release the shared driver exactly once.
 
     release_driver_handle drops one reference per call, so a second close would decrement a
@@ -4061,7 +4061,7 @@ class _FakeAsyncCredential:
         {"preferred_locations": "West US"},
     ],
 )
-def test_failed_construction_releases_the_async_credential_bridge(bad_kwargs):
+def test_failed_construction_releases_the_async_credential_bridge_rust(bad_kwargs):
     """Invalid constructor options leave no bridge registration for this credential.
 
     Wrapping/acquiring a bridge is lazy and need not start its loop thread.

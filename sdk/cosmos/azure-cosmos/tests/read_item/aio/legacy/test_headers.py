@@ -59,7 +59,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             partition_key=PartitionKey(path="/pk"),
         )
 
-    async def test_container_read_item_throughput_bucket_async(self):
+    async def test_container_read_item_throughput_bucket_async_rust(self):
         """Verify the operation prepares the requested throughput bucket."""
         # Source: tests/test_headers_async.py::TestHeadersAsync.test_container_read_item_throughput_bucket_async
         created_document = await self.container.create_item(

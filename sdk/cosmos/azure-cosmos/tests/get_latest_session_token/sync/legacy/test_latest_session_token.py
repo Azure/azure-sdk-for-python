@@ -3,8 +3,8 @@
 """Owned fixture for the original non-split live token tests.
 
 The two test methods are copied from tests/test_partition_split_scenarios.py.
-Their original 100-write helpers are reused unchanged. The forced 11000-RU
-split test is deliberately not included in this ordinary-account run.
+Their original 100-write helpers are owned by the retained suite. The forced
+11000-RU split test is in a separate opt-in file, not the ordinary-account run.
 """
 
 import os
@@ -12,10 +12,13 @@ import random
 import unittest
 import uuid
 
+import pytest
+
 from azure.cosmos import CosmosClient, PartitionKey
-import test_partition_split_scenarios as original_tests
+from get_latest_session_token._fixtures import create_items_logical_pk, create_items_physical_pk
 
 
+@pytest.mark.cosmosEmulator
 class TestLatestSessionToken(unittest.TestCase):
     def setUp(self):
         state = random.getstate()
@@ -28,10 +31,11 @@ class TestLatestSessionToken(unittest.TestCase):
         self.key_database = self.database
         print(f"\nOwned token-test database: {self.database.id}")
 
-    create_items_logical_pk = staticmethod(original_tests.TestPartitionSplitScenarios.create_items_logical_pk)
-    create_items_physical_pk = staticmethod(original_tests.TestPartitionSplitScenarios.create_items_physical_pk)
+    create_items_logical_pk = staticmethod(create_items_logical_pk)
+    create_items_physical_pk = staticmethod(create_items_physical_pk)
 
-    def test_latest_session_token_hpk(self):
+    def test_latest_session_token_hpk_rust(self):
+        # Source: tests/test_partition_split_scenarios.py::TestPartitionSplitScenarios.test_latest_session_token_hpk
         container_ref = self.key_database.create_container(
             "test_updated_session_token_hpk" + str(uuid.uuid4()),
             PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"),
@@ -50,7 +54,8 @@ class TestLatestSessionToken(unittest.TestCase):
         assert session_token == target_session_token
         self.key_database.delete_container(container.id)
 
-    def test_latest_session_token_logical_hpk(self):
+    def test_latest_session_token_logical_hpk_rust(self):
+        # Source: tests/test_partition_split_scenarios.py::TestPartitionSplitScenarios.test_latest_session_token_logical_hpk
         container_ref = self.key_database.create_container(
             "test_updated_session_token_from_logical_hpk" + str(uuid.uuid4()),
             PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"),

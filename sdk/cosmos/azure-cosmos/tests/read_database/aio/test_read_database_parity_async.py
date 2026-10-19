@@ -45,7 +45,7 @@ def readable_database_id():
 
 
 @pytest.mark.asyncio
-async def test_read_database_baseline_properties_async(readable_database_id):
+async def test_read_database_baseline_properties_async_rust(readable_database_id):
     """Both async backends return the same stable database properties."""
 
     async def _call(client):
@@ -66,7 +66,7 @@ async def test_read_database_baseline_properties_async(readable_database_id):
 
 
 @pytest.mark.asyncio
-async def test_read_database_options_and_response_hook_async(readable_database_id):
+async def test_read_database_options_and_response_hook_async_rust(readable_database_id):
     """Async supported options and isolated hooks retain parity."""
 
     async def _call(client):
@@ -117,7 +117,7 @@ async def test_read_database_options_and_response_hook_async(readable_database_i
     [(MatchConditions.IfNotModified, False), (MatchConditions.IfModified, True),
      (MatchConditions.IfPresent, False)],
 )
-async def test_read_database_conditional_read_async(readable_database_id, condition, empty_body):
+async def test_read_database_conditional_read_async_rust(readable_database_id, condition, empty_body):
     async def _call(client):
         database = client.get_database_client(readable_database_id)
         original = await database.read()
@@ -142,7 +142,7 @@ async def test_read_database_conditional_read_async(readable_database_id, condit
 
 
 @pytest.mark.asyncio
-async def test_read_database_preserves_service_behavior_for_stale_if_match_async(readable_database_id):
+async def test_read_database_preserves_service_behavior_for_stale_if_match_async_rust(readable_database_id):
     """The service does not enforce If-Match on this GET; do not invent a 412."""
     async def _call(client):
         database = client.get_database_client(readable_database_id)
@@ -159,7 +159,7 @@ async def test_read_database_preserves_service_behavior_for_stale_if_match_async
 
 
 @pytest.mark.asyncio
-async def test_read_database_missing_maps_404_async():
+async def test_read_database_missing_maps_404_async_rust():
     """An async missing database raises the same typed 404 exception."""
     database_id = "parity_missing_read_db_async_" + uuid.uuid4().hex
 

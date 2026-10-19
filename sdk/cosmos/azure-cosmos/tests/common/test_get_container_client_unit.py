@@ -63,7 +63,7 @@ def backend_name(request):
 
 @pytest.mark.parametrize("mapping_type", [dict, UserDict])
 @pytest.mark.parametrize("container_id", ["orders", 123, 0, None, False, 1.5, "00123"])
-def test_properties_id_is_converted_to_string(database_and_proxy_type, mapping_type, container_id):
+def test_properties_id_is_converted_to_string_rust(database_and_proxy_type, mapping_type, container_id):
     """A container described by its properties yields a client named by the string form
     of its id, without editing what the caller passed.
 
@@ -94,7 +94,7 @@ def test_properties_id_is_converted_to_string(database_and_proxy_type, mapping_t
 
 
 @pytest.mark.parametrize("name", ["Orders", "00123", "does-not-exist"])
-def test_string_name_is_preserved_without_checking_existence(database_and_proxy_type, name):
+def test_string_name_is_preserved_without_checking_existence_rust(database_and_proxy_type, name):
     """A container name is used exactly as given, and existence is never checked.
 
     One of the names is deliberately a container that does not exist, and the
@@ -118,7 +118,7 @@ def test_string_name_is_preserved_without_checking_existence(database_and_proxy_
     assert not inspect.iscoroutinefunction(database.get_container_client)
 
 
-def test_existing_proxy_creates_new_proxy_under_current_database(database_and_proxy_type):
+def test_existing_proxy_creates_new_proxy_under_current_database_rust(database_and_proxy_type):
     """A container client from another database is re-homed under this one, and the
     original keeps pointing where it did.
 
@@ -152,7 +152,7 @@ def test_existing_proxy_creates_new_proxy_under_current_database(database_and_pr
 
 
 @pytest.mark.parametrize("mapping_type", [dict, UserDict])
-def test_missing_id_still_raises_key_error(database_and_proxy_type, mapping_type):
+def test_missing_id_still_raises_key_error_rust(database_and_proxy_type, mapping_type):
     """Properties with no id raise ``KeyError`` naming the missing key, for both a
     plain dictionary and a dictionary-like mapping.
 
@@ -165,7 +165,7 @@ def test_missing_id_still_raises_key_error(database_and_proxy_type, mapping_type
         database.get_container_client(mapping_type())
 
 
-def test_id_conversion_errors_propagate(database_and_proxy_type):
+def test_id_conversion_errors_propagate_rust(database_and_proxy_type):
     """An error raised while converting the id reaches the caller unchanged.
 
     The id is an object that fails when turned into text. That exact exception
@@ -194,7 +194,7 @@ def test_id_conversion_errors_propagate(database_and_proxy_type):
     (("orders",), {"response_hook": None}),
     (("orders",), {"session_token": None}),
 ])
-def test_invalid_arguments_fail_without_io(database_and_proxy_type, args, kwargs):
+def test_invalid_arguments_fail_without_io_rust(database_and_proxy_type, args, kwargs):
     """Calls that do not match the signature fail, and request options are not
     accepted at all.
 
@@ -212,7 +212,7 @@ def test_invalid_arguments_fail_without_io(database_and_proxy_type, args, kwargs
         database.get_container_client(*args, **kwargs)
 
 
-def test_annotation_accepts_general_properties_mappings(database_and_proxy_type):
+def test_annotation_accepts_general_properties_mappings_rust(database_and_proxy_type):
     """The declared type allows any mapping of properties, not only a plain dictionary.
 
     Customers pass dictionary-like objects -- results from other calls, custom

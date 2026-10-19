@@ -11,7 +11,7 @@ from fault_injection._throttle_retry import (
 
 
 @pytest.mark.parametrize("inject", [True, False])
-def test_throttle_rule_preserves_scope_and_persistent_failure(inject):
+def test_throttle_rule_preserves_scope_and_persistent_failure_rust(inject):
     prepared, = _prepare_fault_injection_rules([throttle_rule("rule", "owned-container", inject)])
     assert prepared.id == "rule"
     assert prepared.container_id == "owned-container"
@@ -29,13 +29,13 @@ def test_throttle_rule_preserves_scope_and_persistent_failure(inject):
     exceptions.CosmosHttpResponseError(408), exceptions.CosmosHttpResponseError(503),
     ServiceResponseError("response failure"),
 ])
-def test_throttle_failure_rejects_success_deadline_transport_and_wrong_http_status(error):
+def test_throttle_failure_rejects_success_deadline_transport_and_wrong_http_status_rust(error):
     with pytest.raises(AssertionError):
         assert_throttle_failure(error, 1.0, 6, 5)
 
 
 @pytest.mark.parametrize("retry_limit,hits", [(0, 1), (2, 3), (3, 4), (5, 6)])
-def test_throttle_count_includes_initial_attempt(retry_limit, hits):
+def test_throttle_count_includes_initial_attempt_rust(retry_limit, hits):
     assert_throttle_failure(exceptions.CosmosHttpResponseError(429), 1.0, hits, retry_limit)
 
 
@@ -43,19 +43,19 @@ def test_throttle_count_includes_initial_attempt(retry_limit, hits):
     (0, 0), (0, 2), (0, 6), (0, 10), (2, 1), (2, 2), (2, 4), (2, 6),
     (5, 0), (5, 1), (5, 5), (5, 7), (5, 10),
 ])
-def test_throttle_failure_rejects_missing_extra_and_off_by_one_attempts(retry_limit, hits):
+def test_throttle_failure_rejects_missing_extra_and_off_by_one_attempts_rust(retry_limit, hits):
     with pytest.raises(AssertionError, match="exactly the configured"):
         assert_throttle_failure(exceptions.CosmosHttpResponseError(429), 1.0, hits, retry_limit)
 
 
 @pytest.mark.parametrize("elapsed", [-1, OPERATION_TIMEOUT, OPERATION_TIMEOUT + 1, float("nan"), float("inf")])
-def test_throttle_failure_rejects_operation_expiry_or_invalid_elapsed(elapsed):
+def test_throttle_failure_rejects_operation_expiry_or_invalid_elapsed_rust(elapsed):
     with pytest.raises(AssertionError, match="before the operation budget"):
         assert_throttle_failure(exceptions.CosmosHttpResponseError(429), elapsed, 6, 5)
 
 
 @pytest.mark.parametrize("inject", [True, False])
-def test_wait_rule_uses_response_header_not_injected_delay(inject):
+def test_wait_rule_uses_response_header_not_injected_delay_rust(inject):
     prepared, = _prepare_fault_injection_rules([throttle_rule("rule", "owned", inject, wait_budget=True)])
     assert dict(prepared.response_headers) == {"x-ms-retry-after-ms": "1000"}
     assert prepared.delay_ms == 0
@@ -64,7 +64,7 @@ def test_wait_rule_uses_response_header_not_injected_delay(inject):
 
 
 @pytest.mark.parametrize("retries", [3, 5])
-def test_throttle_wait_accepts_expected_count_and_wait(retries):
+def test_throttle_wait_accepts_expected_count_and_wait_rust(retries):
     assert_throttle_wait_failure(exceptions.CosmosHttpResponseError(429), retries + 0.02, retries + 1, retries)
 
 
@@ -72,12 +72,12 @@ def test_throttle_wait_accepts_expected_count_and_wait(retries):
     (3, 0.002, 4), (3, 2.0, 3), (3, 2.5, 4), (3, 4.0, 5), (3, 16.0, 4),
     (5, 0.005, 6), (5, 2.0, 3), (5, 10.0, 6), (5, float("nan"), 6),
 ])
-def test_throttle_wait_rejects_wrong_count_skipped_wait_and_budget_filling(retries, elapsed, hits):
+def test_throttle_wait_rejects_wrong_count_skipped_wait_and_budget_filling_rust(retries, elapsed, hits):
     with pytest.raises(AssertionError):
         assert_throttle_wait_failure(exceptions.CosmosHttpResponseError(429), elapsed, hits, retries)
 
 
-def test_wait_expectation_matches_unmodified_legacy_policy():
+def test_wait_expectation_matches_unmodified_legacy_policy_rust():
     from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
 
     policy = ResourceThrottleRetryPolicy(5, 0, 2.5)

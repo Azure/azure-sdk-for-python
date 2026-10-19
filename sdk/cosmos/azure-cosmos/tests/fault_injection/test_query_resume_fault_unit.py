@@ -16,7 +16,7 @@ from fault_injection._query_resume import (
 
 
 @pytest.mark.parametrize("inject", [True, False])
-def test_resume_rule_is_disabled_until_after_delivery(inject):
+def test_resume_rule_is_disabled_until_after_delivery_rust(inject):
     (rule,) = _prepare_fault_injection_rules([resume_rule("unique", "owned", inject)])
     assert rule.operation_type == "QueryItem" and rule.container_id == "owned"
     assert rule.enabled is False and rule.hit_limit is None
@@ -52,25 +52,25 @@ def failure(token="service-saved", status=FAULT_STATUS, substatus=FAULT_SUBSTATU
         (failure(), 1, float("nan")),
     ],
 )
-def test_resume_failure_rejects_wrong_error_progress_or_fault_count(
+def test_resume_failure_rejects_wrong_error_progress_or_fault_count_rust(
     error, hits, elapsed
 ):
     with pytest.raises(AssertionError):
         assert_failure(error, "service-saved", hits, elapsed)
 
 
-def test_resume_failure_accepts_exact_public_bookmark():
+def test_resume_failure_accepts_exact_public_bookmark_rust():
     assert_failure(failure(), "service-saved", 1, 0.1)
 
 
 @pytest.mark.parametrize("ids", [[0, 1, 2], [1], [2], [1, 1, 2], [2, 1]])
-def test_resume_result_rejects_replay_gaps_duplicates_or_reordering(ids):
+def test_resume_result_rejects_replay_gaps_duplicates_or_reordering_rust(ids):
     expected = [{"id": i, "state": "confirmed"} for i in range(3)]
     with pytest.raises(AssertionError):
         assert_complete(expected[:1], [expected[i] for i in ids], expected)
 
 
-def test_resume_result_accepts_exact_rows_and_rejects_changed_fields():
+def test_resume_result_accepts_exact_rows_and_rejects_changed_fields_rust():
     expected = [{"id": i, "state": "confirmed"} for i in range(3)]
     assert_complete(expected[:1], expected[1:], expected)
     with pytest.raises(AssertionError):

@@ -38,7 +38,7 @@ def _have_account() -> bool:
 
 @pytest.mark.skipif(not _SMOKE, reason="no smoke scripts found")
 @pytest.mark.parametrize("script", _SMOKE, ids=lambda p: p.parent.name)
-def test_smoke_round_trip(script):
+def test_smoke_round_trip_rust(script):
     """Run one operation's smoke script; 0 = pass, 2 = skip (not built), 1 = fail."""
     if not _have_binding():
         pytest.skip("rust binding not built (maturin develop)")

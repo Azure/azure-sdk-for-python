@@ -90,7 +90,7 @@ def read(request):
     response(status=400, substatus=SubStatusCodes.COLLECTION_RID_MISMATCH),
     response(status=404, substatus=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND),
 ])
-def test_recreated_container_rebuilds_query_once(read, first):
+def test_recreated_container_rebuilds_query_once_rust(read, first):
     read.responses = [first, response([OFFER])]
     hook = Mock()
     result = read.invoke(response_hook=hook)
@@ -110,7 +110,7 @@ def test_recreated_container_rebuilds_query_once(read, first):
 
 
 @pytest.mark.parametrize("changed", [False, True])
-def test_missing_dedicated_offer_is_typed_and_bounded(read, changed):
+def test_missing_dedicated_offer_is_typed_and_bounded_rust(read, changed):
     if not changed:
         read.container.read.return_value = read.container._get_properties.return_value
     read.responses = [response(), response()]
@@ -125,7 +125,7 @@ def test_missing_dedicated_offer_is_typed_and_bounded(read, changed):
     assert read.writes == []
 
 
-def test_failed_retry_does_not_return_partial_success(read):
+def test_failed_retry_does_not_return_partial_success_rust(read):
     read.responses = [response(), response(status=403)]
     with pytest.raises(exceptions.CosmosHttpResponseError) as caught:
         read.invoke()
@@ -135,14 +135,14 @@ def test_failed_retry_does_not_return_partial_success(read):
     read.container.read.assert_called_once()
 
 
-def test_no_refresh_on_access_error(read):
+def test_no_refresh_on_access_error_rust(read):
     read.responses = [response(status=403)]
     with pytest.raises(exceptions.CosmosHttpResponseError):
         read.invoke()
     read.container.read.assert_not_called()
 
 
-def test_refresh_failure_propagates_without_retry(read):
+def test_refresh_failure_propagates_without_retry_rust(read):
     error = exceptions.CosmosResourceNotFoundError(status_code=404, message="container deleted")
     read.responses = [response()]
     read.container.read.side_effect = error
@@ -152,7 +152,7 @@ def test_refresh_failure_propagates_without_retry(read):
     assert len(read.requests) == 1
 
 
-def test_callback_error_is_not_a_recovery_signal(read):
+def test_callback_error_is_not_a_recovery_signal_rust(read):
     error = exceptions.CosmosResourceNotFoundError(
         status_code=404, sub_status=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND,
     )
@@ -162,7 +162,7 @@ def test_callback_error_is_not_a_recovery_signal(read):
     read.container.read.assert_not_called()
 
 
-def test_recovery_error_with_unchanged_metadata_is_not_replayed(read):
+def test_recovery_error_with_unchanged_metadata_is_not_replayed_rust(read):
     read.responses = [response(status=400, substatus=SubStatusCodes.COLLECTION_RID_MISMATCH)]
     read.container.read.return_value = read.container._get_properties.return_value
     with pytest.raises(exceptions.CosmosHttpResponseError) as caught:
@@ -172,7 +172,7 @@ def test_recovery_error_with_unchanged_metadata_is_not_replayed(read):
     assert len(read.requests) == 1
 
 
-def test_write_failure_is_never_a_recovery_signal(read):
+def test_write_failure_is_never_a_recovery_signal_rust(read):
     if not read.replacement:
         return
     read.write_response = response(status=400, substatus=SubStatusCodes.COLLECTION_RID_MISMATCH)
@@ -184,7 +184,7 @@ def test_write_failure_is_never_a_recovery_signal(read):
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-def test_outer_legacy_retry_preserves_inner_missing_offer(asynchronous):
+def test_outer_legacy_retry_preserves_inner_missing_offer_rust(asynchronous):
     from azure.cosmos import _retry_utility
     from azure.cosmos.aio import _retry_utility_async
     from azure.cosmos.documents import ConnectionPolicy
@@ -207,7 +207,7 @@ def test_outer_legacy_retry_preserves_inner_missing_offer(asynchronous):
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-def test_empty_legacy_container_page_with_continuation_is_not_not_found(monkeypatch, asynchronous):
+def test_empty_legacy_container_page_with_continuation_is_not_not_found_rust(monkeypatch, asynchronous):
     from azure.cosmos import _retry_utility, _container_recreate_retry_policy
     from azure.cosmos.aio import _retry_utility_async
     from azure.cosmos.documents import ConnectionPolicy

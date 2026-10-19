@@ -47,7 +47,7 @@ def recorded_spans(request):
     provider.shutdown()
 
 
-def test_export_boundary_preserves_identity_but_removes_sensitive_fields(spans):
+def test_export_boundary_preserves_identity_but_removes_sensitive_fields_rust(spans):
     originals, trace_id = spans
     delegate = Mock()
     delegate.export.return_value = SpanExportResult.SUCCESS
@@ -79,7 +79,7 @@ def test_export_boundary_preserves_identity_but_removes_sensitive_fields(spans):
     delegate.shutdown.assert_called_once()
 
 
-def test_unselected_trace_never_reaches_azure(spans):
+def test_unselected_trace_never_reaches_azure_rust(spans):
     delegate = Mock()
     exporter = proof.MeasuredTraceExporter(delegate)
     assert exporter.export(spans[0]) == SpanExportResult.SUCCESS
@@ -89,7 +89,7 @@ def test_unselected_trace_never_reaches_azure(spans):
 
 
 @pytest.mark.parametrize("raises", [False, True])
-def test_export_failure_cannot_be_mistaken_for_success(spans, caplog, raises):
+def test_export_failure_cannot_be_mistaken_for_success_rust(spans, caplog, raises):
     delegate = Mock()
     if raises:
         delegate.export.side_effect = ValueError("PRIVATE-CONNECTION-STRING")
@@ -104,7 +104,7 @@ def test_export_failure_cannot_be_mistaken_for_success(spans, caplog, raises):
     assert "PRIVATE" not in caplog.text
 
 
-def test_local_default_does_not_require_azure_configuration(monkeypatch):
+def test_local_default_does_not_require_azure_configuration_rust(monkeypatch):
     monkeypatch.delenv("APPLICATIONINSIGHTS_CONNECTION_STRING", raising=False)
     provider, local, azure = proof.configure_recording()
     try:
@@ -118,7 +118,7 @@ def test_local_default_does_not_require_azure_configuration(monkeypatch):
 
 
 @pytest.mark.parametrize("value", [None, "", "   "])
-def test_missing_azure_configuration_fails_before_database_work(monkeypatch, value):
+def test_missing_azure_configuration_fails_before_database_work_rust(monkeypatch, value):
     if value is None:
         monkeypatch.delenv("APPLICATIONINSIGHTS_CONNECTION_STRING", raising=False)
     else:
@@ -127,7 +127,7 @@ def test_missing_azure_configuration_fails_before_database_work(monkeypatch, val
         proof.configure_recording(True)
 
 
-def test_invalid_azure_configuration_does_not_expose_value(monkeypatch):
+def test_invalid_azure_configuration_does_not_expose_value_rust(monkeypatch):
     pytest.importorskip("azure.monitor.opentelemetry.exporter")
     monkeypatch.setenv("APPLICATIONINSIGHTS_CONNECTION_STRING", "PRIVATE-INVALID-CONNECTION-STRING")
     for name in (
@@ -143,7 +143,7 @@ def test_invalid_azure_configuration_does_not_expose_value(monkeypatch):
     assert error.value.__suppress_context__
 
 
-def test_real_azure_conversion_and_batch_flush_without_network(monkeypatch, spans):
+def test_real_azure_conversion_and_batch_flush_without_network_rust(monkeypatch, spans):
     azure = pytest.importorskip("azure.monitor.opentelemetry.exporter")
     from azure.monitor.opentelemetry.exporter.export._base import ExportResult
     from azure.monitor.opentelemetry.exporter import _utils

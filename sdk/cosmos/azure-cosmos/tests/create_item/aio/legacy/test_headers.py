@@ -7,9 +7,8 @@ The other methods in the source ``TestHeadersAsync`` class cover other
 operations; they belong to their own operations' ``legacy/`` folders.
 
 Self-contained: builds its own database + container in ``asyncSetUp``
-and deletes them in ``asyncTearDown``. The class name and method name
-match the source at ``tests/test_headers_async.py`` so test IDs differ
-only by path.
+and deletes them in ``asyncTearDown``. The class name matches
+``tests/test_headers_async.py``; copied method names add ``_rust``.
 
 Run with::
 
@@ -61,7 +60,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.client.close()
 
-    async def test_container_create_item_throughput_bucket_async(self):
+    async def test_container_create_item_throughput_bucket_async_rust(self):
         # Source: tests/test_headers_async.py::TestHeadersAsync.test_container_create_item_throughput_bucket_async
         binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
         with patch.object(binding, "create_item_async", wraps=binding.create_item_async) as operation:

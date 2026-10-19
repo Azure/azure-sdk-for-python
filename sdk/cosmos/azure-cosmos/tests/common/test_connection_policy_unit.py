@@ -97,7 +97,7 @@ def configured_policy():
     return policy
 
 
-def test_grouped_settings_match_direct_keywords(construct_client):
+def test_grouped_settings_match_direct_keywords_rust(construct_client):
     """Asking with a policy object and asking with keywords produce the same client.
 
     Two clients are built, one each way, with the same four settings. Their Rust
@@ -125,7 +125,7 @@ def test_grouped_settings_match_direct_keywords(construct_client):
 
 
 @pytest.mark.parametrize("policy", [None, ConnectionPolicy()])
-def test_default_policy_does_not_pin_rust_settings(construct_client, policy):
+def test_default_policy_does_not_pin_rust_settings_rust(construct_client, policy):
     """A caller who chose nothing pins nothing, whether they passed no policy or a stock one.
 
     The public clients build a policy for every client whether or not one was asked for,
@@ -147,7 +147,7 @@ def test_default_policy_does_not_pin_rust_settings(construct_client, policy):
     ("multiple_write_locations", "UseMultipleWriteLocations"),
 ])
 @pytest.mark.parametrize("value", [True, False, None, "unused"])
-def test_rust_routing_switches_fail_before_startup(
+def test_rust_routing_switches_fail_before_startup_rust(
     client_module, monkeypatch, from_connection_string, selection, grouped, option, attribute, value,
 ):
     policy = ConnectionPolicy()
@@ -185,7 +185,7 @@ def test_rust_routing_switches_fail_before_startup(
     ("EnableEndpointDiscovery", True), ("UseMultipleWriteLocations", False),
 ])
 @pytest.mark.parametrize("duplicate", [copy, deepcopy])
-def test_copied_explicit_default_routing_policy_is_rejected(construct_client, attribute, default, duplicate):
+def test_copied_explicit_default_routing_policy_is_rejected_rust(construct_client, attribute, default, duplicate):
     policy = ConnectionPolicy()
     setattr(policy, attribute, default)
     with pytest.raises(TypeError, match=attribute):
@@ -196,14 +196,14 @@ def test_copied_explicit_default_routing_policy_is_rejected(construct_client, at
     ("EnableEndpointDiscovery", True), ("EnableEndpointDiscovery", False),
     ("UseMultipleWriteLocations", False), ("UseMultipleWriteLocations", True),
 ])
-def test_subclass_routing_switch_is_rejected(construct_client, attribute, value):
+def test_subclass_routing_switch_is_rejected_rust(construct_client, attribute, value):
     policy = type("RoutingPolicy", (ConnectionPolicy,), {attribute: value})()
     with pytest.raises(TypeError, match=attribute):
         construct_client(connection_policy=policy)
 
 
 @pytest.mark.parametrize("backend", ["core-python", "rust"])
-def test_untouched_routing_policy_can_be_reused(construct_client, backend):
+def test_untouched_routing_policy_can_be_reused_rust(construct_client, backend):
     policy = configured_policy()
     original = dict(vars(policy))
     _, prepared_policy = construct_client(_backend=backend, connection_policy=policy)
@@ -218,7 +218,7 @@ def test_untouched_routing_policy_can_be_reused(construct_client, backend):
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("grouped", [False, True])
 @pytest.mark.parametrize("discovery,multi_write", [(True, False), (False, True), (None, None)])
-def test_legacy_routing_switches_remain_available(
+def test_legacy_routing_switches_remain_available_rust(
     construct_client, monkeypatch, from_connection_string, grouped, discovery, multi_write,
 ):
     monkeypatch.setenv("COSMOS_BACKEND", "rust")
@@ -237,7 +237,7 @@ def test_legacy_routing_switches_remain_available(
     assert prepared.UseMultipleWriteLocations is multi_write
 
 
-def test_connection_string_factory_preserves_grouped_settings(construct_client):
+def test_connection_string_factory_preserves_grouped_settings_rust(construct_client):
     """Building from a connection string keeps the policy just as the direct constructor does.
 
     There are two ways to make a client and they take different routes to the same
@@ -252,14 +252,14 @@ def test_connection_string_factory_preserves_grouped_settings(construct_client):
 
 
 @pytest.mark.parametrize("seconds", [2.5, 10.0])
-def test_fractional_throttle_wait_budget_reaches_prepared_config(construct_client, seconds):
+def test_fractional_throttle_wait_budget_reaches_prepared_config_rust(construct_client, seconds):
     client, legacy = construct_client(retry_throttle_total=5, retry_throttle_backoff_max=seconds)
     assert client._adapter._client_config.throttling_max_retry_count == 5
     assert client._adapter._client_config.throttling_max_retry_wait_time_seconds == seconds
     assert legacy.RetryOptions.MaxWaitTimeInSeconds == seconds
 
 
-def test_policy_zero_retry_limits_are_not_replaced_by_defaults(construct_client):
+def test_policy_zero_retry_limits_are_not_replaced_by_defaults_rust(construct_client):
     """Asking for no retries at all means no retries, not the default number.
 
     Zero and "not set" look alike to code written in a hurry, and the mistake is quiet:
@@ -288,7 +288,7 @@ def test_policy_zero_retry_limits_are_not_replaced_by_defaults(construct_client)
       "retry_backoff_max": 20, "retry_throttle_backoff_max": None}, 7, 20),
     ({"retry_throttle_total": None, "retry_throttle_backoff_max": None}, 3, 12),
 ])
-def test_retry_precedence_includes_zero(construct_client, backend, overrides, count, wait):
+def test_retry_precedence_includes_zero_rust(construct_client, backend, overrides, count, wait):
     """The specific retry keyword beats the general one, the general one beats the policy,
     and passing nothing means the keyword was not used.
 
@@ -314,7 +314,7 @@ def test_retry_precedence_includes_zero(construct_client, backend, overrides, co
 
 @pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("locations", [[], ["North Europe"]])
-def test_region_keywords_override_policy_including_empty(construct_client, backend, locations):
+def test_region_keywords_override_policy_including_empty_rust(construct_client, backend, locations):
     """An empty list of regions is a real instruction and must not fall back to the policy.
 
     The policy names regions; the keywords ask for an empty list. Empty means "no
@@ -336,7 +336,7 @@ def test_region_keywords_override_policy_including_empty(construct_client, backe
         assert client._adapter._client_config.excluded_locations == ()
 
 
-def test_legacy_policy_timeouts_still_resolve_with_keyword_and_alias_precedence(construct_client):
+def test_legacy_policy_timeouts_still_resolve_with_keyword_and_alias_precedence_rust(construct_client):
     """The older millisecond name for the connection timeout still wins, and the caller's
     policy is left alone.
 
@@ -365,7 +365,7 @@ def test_legacy_policy_timeouts_still_resolve_with_keyword_and_alias_precedence(
     ["proxy_config", "proxies", "ssl_config", "connection_verify", "connection_cert", "transport"],
 )
 @pytest.mark.parametrize("value", [None, True, False, {}, "alpha-bank-ca.pem"])
-def test_removed_network_options_fail_before_startup(
+def test_removed_network_options_fail_before_startup_rust(
     client_module, monkeypatch, backend, from_connection_string, option, value,
 ):
     connection = MagicMock()
@@ -389,7 +389,7 @@ def test_removed_network_options_fail_before_startup(
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("attribute", ["ProxyConfiguration", "SSLConfiguration", "DisableSSLVerification"])
 @pytest.mark.parametrize("value", [None, False, object()])
-def test_removed_policy_fields_fail_before_startup(
+def test_removed_policy_fields_fail_before_startup_rust(
     client_module, monkeypatch, backend, from_connection_string, attribute, value,
 ):
     policy = ConnectionPolicy()
@@ -415,7 +415,7 @@ def test_removed_policy_fields_fail_before_startup(
     "option",
     ["proxy_config", "proxies", "ssl_config", "connection_verify", "connection_cert", "transport"],
 )
-def test_nested_removed_network_options_are_rejected(nested, option):
+def test_nested_removed_network_options_are_rejected_rust(nested, option):
     from azure.cosmos._backend.capabilities import reject_removed_options
 
     with pytest.raises(TypeError, match=rf"{option} has been removed"):
@@ -426,7 +426,7 @@ def test_nested_removed_network_options_are_rejected(nested, option):
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("option", ["raw_request_hook", "raw_response_hook"])
 @pytest.mark.parametrize("value", [None, False, lambda _message: None])
-def test_removed_raw_hooks_fail_before_startup(
+def test_removed_raw_hooks_fail_before_startup_rust(
     client_module, monkeypatch, backend, from_connection_string, option, value,
 ):
     connection = MagicMock()
@@ -446,7 +446,7 @@ def test_removed_raw_hooks_fail_before_startup(
     backend_factory.assert_not_called()
 
 
-def test_removed_configuration_classes_are_not_exported():
+def test_removed_configuration_classes_are_not_exported_rust():
     import azure.cosmos
     from azure.cosmos import documents
 
@@ -460,13 +460,13 @@ def test_removed_configuration_classes_are_not_exported():
     ["proxy_config", "proxies", "ssl_config", "connection_verify", "connection_cert", "transport",
      "raw_request_hook", "raw_response_hook"],
 )
-def test_direct_connection_rejects_removed_options(client_module, option):
+def test_direct_connection_rejects_removed_options_rust(client_module, option):
     with pytest.raises(TypeError, match=rf"{option} has been removed"):
         client_module.CosmosClientConnection("https://alpha-bank-account.invalid", None, **{option: None})
 
 
 @pytest.mark.parametrize("from_connection_string", [False, True])
-def test_test_sender_uses_internal_pipeline_and_restores_factory(client_module, from_connection_string):
+def test_test_sender_uses_internal_pipeline_and_restores_factory_rust(client_module, from_connection_string):
     import importlib
     from azure.core.pipeline.policies import CustomHookPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
@@ -502,7 +502,7 @@ def test_test_sender_uses_internal_pipeline_and_restores_factory(client_module, 
             asyncio.run(result)
 
 
-def test_mutable_policy_settings_are_snapshotted(construct_client):
+def test_mutable_policy_settings_are_snapshotted_rust(construct_client):
     """Changing the policy the client produced does not reach back into the caller's.
 
     The earlier tests changed nothing after construction. This one attacks from the other
@@ -525,7 +525,7 @@ def test_mutable_policy_settings_are_snapshotted(construct_client):
     assert client._adapter._client_config.preferred_locations == ("West US", "East US")
 
 
-def test_normalization_does_not_modify_input_and_is_idempotent():
+def test_normalization_does_not_modify_input_and_is_idempotent_rust():
     """Working out the settings changes nothing it was given, and doing it twice changes
     nothing further.
 
@@ -546,7 +546,7 @@ def test_normalization_does_not_modify_input_and_is_idempotent():
     assert resolve_connection_policy_kwargs(resolved) == resolved
 
 
-def test_invalid_policy_rejected_before_startup(construct_client, client_module):
+def test_invalid_policy_rejected_before_startup_rust(construct_client, client_module):
     """Something that is not a policy object is refused, with the error naming the option.
 
     A plain dictionary is the natural mistake, and its keys even look right. Accepting it

@@ -38,7 +38,7 @@ def database_ids():
         client.close()
 
 
-def test_list_databases_baseline_properties(database_ids):
+def test_list_databases_baseline_properties_rust(database_ids):
     """Both backends return the created databases with the normal property shape."""
 
     def _do(client):
@@ -60,7 +60,7 @@ def test_list_databases_baseline_properties(database_ids):
     assert comparison.rust.return_value["all_properties_present"]
 
 
-def test_list_databases_continuation_replay(database_ids):
+def test_list_databases_continuation_replay_rust(database_ids):
     """A one-item page exposes a continuation token that resumes deterministically."""
     assert len(database_ids) == 3
 
@@ -91,7 +91,7 @@ def test_list_databases_continuation_replay(database_ids):
     assert result["second_id"] == result["replay_id"]
 
 
-def test_list_databases_options_and_page_hooks(database_ids):
+def test_list_databases_options_and_page_hooks_rust(database_ids):
     """Supported options preserve lazy per-page metadata on both backends."""
 
     def _do(client):

@@ -56,7 +56,7 @@ class TestHappyPathComposition(unittest.TestCase):
     body bytes parse cleanly back into the dict the body now carries.
     """
 
-    def test_returns_prepared_request_and_id(self):
+    def test_returns_prepared_request_and_id_rust(self):
         """A normal call returns a ``PreparedRequest`` with every field filled in."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/orders",
@@ -88,7 +88,7 @@ class TestHappyPathComposition(unittest.TestCase):
         # The rid is set into the headers under the key the SDK reads.
         self.assertEqual(wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"], "rid-orders-1")
 
-    def test_kwargs_dict_is_consumed_by_compose_step(self):
+    def test_kwargs_dict_is_consumed_by_compose_step_rust(self):
         """The prep removes every recognised keyword argument from the input
         dict, so the caller doesn't forward it a second time to azure-core."""
         kwargs = {
@@ -106,7 +106,7 @@ class TestHappyPathComposition(unittest.TestCase):
         # Keyword arguments the prep doesn't recognise stay put.
         self.assertEqual(kwargs["extra_unknown"], "left-alone")
 
-    def test_body_bytes_are_json_round_trippable(self):
+    def test_body_bytes_are_json_round_trippable_rust(self):
         """The serialised body bytes parse back into the dict the body now
         carries (after the id is generated)."""
         body = {"v": 1}  # No id, so one is generated.
@@ -131,7 +131,7 @@ class TestAutoIdGeneration(unittest.TestCase):
     flag can take.
     """
 
-    def test_missing_id_is_generated_without_changing_input_body(self):
+    def test_missing_id_is_generated_without_changing_input_body_rust(self):
         """Generate an id in the prepared request and its encoded body.
 
         The caller's original dictionary remains without an id.
@@ -151,7 +151,7 @@ class TestAutoIdGeneration(unittest.TestCase):
         # The generated id is forwarded on item_id (fast-path: no body re-parse).
         self.assertEqual(prepared.item_id, item_id)
 
-    def test_disabled_id_generation_rejects_missing_id_before_metadata(self):
+    def test_disabled_id_generation_rejects_missing_id_before_metadata_rust(self):
         body = {"total": 99.5}
         with self.assertRaisesRegex(ValueError, "non-empty 'id'"):
             prepare_create_item_request(
@@ -160,7 +160,7 @@ class TestAutoIdGeneration(unittest.TestCase):
             )
         self.assertEqual(body, {"total": 99.5})
 
-    def test_disable_flag_lands_in_options(self):
+    def test_disable_flag_lands_in_options_rust(self):
         """``enable_automatic_id_generation=False`` sets the
         ``disableAutomaticIdGeneration`` header to True, as the legacy path did."""
         prepared = prepare_create_item_request(
@@ -174,7 +174,7 @@ class TestAutoIdGeneration(unittest.TestCase):
         self.assertNotIn("disableAutomaticIdGeneration", wire_headers(prepared))
         self.assertNotIn("disableAutomaticIdGeneration", settings_options(prepared))
 
-    def test_enabled_flag_lands_in_options(self):
+    def test_enabled_flag_lands_in_options_rust(self):
         """``enable_automatic_id_generation=True`` sets the
         ``disableAutomaticIdGeneration`` header to False."""
         prepared = prepare_create_item_request(
@@ -198,7 +198,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
     ``test_pk_wire_unit.py``.
     """
 
-    def test_scalar_pk_renders_as_one_element_array(self):
+    def test_scalar_pk_renders_as_one_element_array_rust(self):
         """A scalar integer partition key becomes ``"[42]"`` in the partition-key header."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
@@ -209,7 +209,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
         _id = prepared.item_id
         self.assertEqual(legacy_partition_key_from_request(prepared), "[42]")
 
-    def test_hierarchical_pk_renders_in_order(self):
+    def test_hierarchical_pk_renders_in_order_rust(self):
         """A hierarchical partition-key list becomes a JSON array in the order given."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
@@ -220,7 +220,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
         _id = prepared.item_id
         self.assertEqual(legacy_partition_key_from_request(prepared), '["t1","r1"]')
 
-    def test_undefined_pk_renders_reserved_shape(self):
+    def test_undefined_pk_renders_reserved_shape_rust(self):
         """An ``_Undefined`` partition key becomes the reserved ``"[{}]"`` shape."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
@@ -231,7 +231,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
         _id = prepared.item_id
         self.assertEqual(legacy_partition_key_from_request(prepared), "[{}]")
 
-    def test_empty_pk_renders_reserved_shape(self):
+    def test_empty_pk_renders_reserved_shape_rust(self):
         """An ``_Empty`` partition key becomes the reserved ``"[]"`` shape (a
         partitionless container from the early SDK days)."""
         prepared = prepare_create_item_request(
@@ -253,7 +253,7 @@ class TestContainerRidOptional(unittest.TestCase):
     state it doesn't have.
     """
 
-    def test_unresolved_container_resource_id_omits_internal_option_header(self):
+    def test_unresolved_container_resource_id_omits_internal_option_header_rust(self):
         """With no resolved id, the header view omits the internal option name.
 
         This assertion checks ``Constants.ContainerRID``, not the HTTP header name.
@@ -267,7 +267,7 @@ class TestContainerRidOptional(unittest.TestCase):
         _id = prepared.item_id
         self.assertNotIn(Constants.ContainerRID, wire_headers(prepared))
 
-    def test_supplied_rid_lands_in_headers_under_constant_key(self):
+    def test_supplied_rid_lands_in_headers_under_constant_key_rust(self):
         """A supplied rid lands in the headers under ``Constants.ContainerRID``."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
@@ -288,7 +288,7 @@ class TestIndexingDirective(unittest.TestCase):
     ``"indexingDirective"`` only when it is supplied.
     """
 
-    def test_indexing_directive_lands_when_supplied(self):
+    def test_indexing_directive_lands_when_supplied_rust(self):
         """A supplied ``indexing_directive=N`` lands in the headers as ``"indexingDirective"``."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
@@ -300,7 +300,7 @@ class TestIndexingDirective(unittest.TestCase):
         _id = prepared.item_id
         self.assertEqual(wire_headers(prepared)["x-ms-indexing-directive"], '1')
 
-    def test_indexing_directive_omitted_when_not_supplied(self):
+    def test_indexing_directive_omitted_when_not_supplied_rust(self):
         """Left at the default (``None``), there is no ``"indexingDirective"`` key in the headers."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
@@ -311,7 +311,7 @@ class TestIndexingDirective(unittest.TestCase):
         _id = prepared.item_id
         self.assertNotIn("indexingDirective", wire_headers(prepared))
 
-    def test_indexing_directive_default_zero_omitted(self):
+    def test_indexing_directive_default_zero_omitted_rust(self):
         """``indexing_directive=0`` (``IndexingDirective.Default``) emits no header.
 
         ``0`` is falsy, so the value is dropped, matching the legacy path.
@@ -341,7 +341,7 @@ class TestThroughputBucketGate(unittest.TestCase):
     wire.)
     """
 
-    def test_throughput_bucket_zero_omitted(self):
+    def test_throughput_bucket_zero_omitted_rust(self):
         """``throughput_bucket=0`` emits no ``"throughputBucket"`` header (``0`` is falsy)."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
@@ -353,7 +353,7 @@ class TestThroughputBucketGate(unittest.TestCase):
         _id = prepared.item_id
         self.assertNotIn("throughputBucket", wire_headers(prepared))
 
-    def test_throughput_bucket_nonzero_emitted(self):
+    def test_throughput_bucket_nonzero_emitted_rust(self):
         """A real bucket value (``3``) lands in the headers under ``"throughputBucket"``."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
@@ -369,7 +369,7 @@ class TestThroughputBucketGate(unittest.TestCase):
 class TestPreparedRequestImmutability(unittest.TestCase):
     """The returned ``PreparedRequest`` is a frozen dataclass; the caller cannot change it."""
 
-    def test_assigning_to_field_raises(self):
+    def test_assigning_to_field_raises_rust(self):
         """Assigning to any field on the returned ``PreparedRequest`` raises (it is frozen)."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
@@ -385,7 +385,7 @@ class TestPreparedRequestImmutability(unittest.TestCase):
 class TestGeneratedIdConsistency(unittest.TestCase):
     """The prepared request and encoded body agree on the generated id."""
 
-    def test_generated_id_matches_request_body_without_changing_input(self):
+    def test_generated_id_matches_request_body_without_changing_input_rust(self):
         """Check the generated id's format and equality across request fields.
 
         The encoded body contains the id; the caller's dictionary does not.
@@ -407,7 +407,7 @@ class TestGeneratedIdConsistency(unittest.TestCase):
 
 
 class TestTriggerIncludeRejection(unittest.TestCase):
-    def test_trigger_inputs_are_rejected_instead_of_serialized(self):
+    def test_trigger_inputs_are_rejected_instead_of_serialized_rust(self):
         for key in ("pre_trigger_include", "post_trigger_include"):
             for value in ("validateOrder", ["t1", "t2"], ("a", "b"), ["only"], None, []):
                 with self.subTest(key=key, value=value):
@@ -428,13 +428,13 @@ class TestFlattenOptionsToHeaders(unittest.TestCase):
     the way to wire headers, so its behaviour is pinned here in one place.
     """
 
-    def test_trigger_list_is_rejected(self):
+    def test_trigger_list_is_rejected_rust(self):
         with self.assertRaisesRegex(TypeError, "triggers are excluded"):
             flatten_options_to_headers(
                 {"preTriggerInclude": ["t1", "t2"], "postTriggerInclude": ["p1"]}
             )
 
-    def test_initial_headers_are_real_headers(self):
+    def test_initial_headers_are_real_headers_rust(self):
         """Customer headers are actual top-level HTTP headers, never nested options."""
         headers = flatten_options_to_headers(
             {"initialHeaders": {"x-ms-foo": "bar", "x-ms-baz": "qux"}}
@@ -442,7 +442,7 @@ class TestFlattenOptionsToHeaders(unittest.TestCase):
         self.assertEqual(headers, {"x-ms-foo": "bar", "x-ms-baz": "qux"})
         self.assertNotIn("initialHeaders", headers)
 
-    def test_access_condition_becomes_if_match(self):
+    def test_access_condition_becomes_if_match_rust(self):
         """``accessCondition`` IfMatch becomes an ``If-Match`` header; the raw key is dropped."""
         headers = flatten_options_to_headers(
             {"accessCondition": {"type": "IfMatch", "condition": '"abc"'}}
@@ -450,41 +450,41 @@ class TestFlattenOptionsToHeaders(unittest.TestCase):
         self.assertEqual(headers["if-match"], '"abc"')
         self.assertNotIn("accessCondition", headers)
 
-    def test_access_condition_becomes_if_none_match(self):
+    def test_access_condition_becomes_if_none_match_rust(self):
         """``accessCondition`` IfNoneMatch becomes an ``If-None-Match`` header."""
         headers = flatten_options_to_headers(
             {"accessCondition": {"type": "IfNoneMatch", "condition": '"abc"'}}
         )
         self.assertEqual(headers["if-none-match"], '"abc"')
 
-    def test_cache_staleness_truthy_emits_wire_header(self):
+    def test_cache_staleness_truthy_emits_wire_header_rust(self):
         """A truthy ``maxIntegratedCacheStaleness`` becomes ``x-ms-dedicatedgateway-max-age``."""
         headers = flatten_options_to_headers({"maxIntegratedCacheStaleness": 5000})
         self.assertEqual(headers["x-ms-dedicatedgateway-max-age"], "5000")
 
-    def test_cache_staleness_zero_is_noop(self):
+    def test_cache_staleness_zero_is_noop_rust(self):
         """``maxIntegratedCacheStaleness=0`` ships no header (a documented no-op)."""
         headers = flatten_options_to_headers({"maxIntegratedCacheStaleness": 0})
         self.assertNotIn("x-ms-dedicatedgateway-max-age", headers)
 
-    def test_indexing_directive_zero_omitted(self):
+    def test_indexing_directive_zero_omitted_rust(self):
         """``indexingDirective=0`` (Default) is dropped, so no header is sent."""
         self.assertNotIn("indexingDirective", flatten_options_to_headers({"indexingDirective": 0}))
 
-    def test_indexing_directive_nonzero_emitted(self):
+    def test_indexing_directive_nonzero_emitted_rust(self):
         """A non-zero ``indexingDirective`` (Exclude=1 / Include=2) is emitted."""
         self.assertEqual(flatten_options_to_headers({"indexingDirective": 1})["x-ms-indexing-directive"], "1")
         self.assertEqual(flatten_options_to_headers({"indexingDirective": 2})["x-ms-indexing-directive"], "2")
 
-    def test_throughput_bucket_zero_omitted(self):
+    def test_throughput_bucket_zero_omitted_rust(self):
         """``throughputBucket=0`` is dropped, so no header is sent."""
         self.assertNotIn("throughputBucket", flatten_options_to_headers({"throughputBucket": 0}))
 
-    def test_throughput_bucket_nonzero_emitted(self):
+    def test_throughput_bucket_nonzero_emitted_rust(self):
         """A real ``throughputBucket`` value is emitted unchanged."""
         self.assertEqual(flatten_options_to_headers({"throughputBucket": 3})["x-ms-cosmos-throughput-bucket"], "3")
 
-    def test_unknown_option_copied_through(self):
+    def test_unknown_option_copied_through_rust(self):
         """An option key with no special handling is copied through unchanged."""
         headers = flatten_options_to_headers({"priorityLevel": "High"})
         self.assertEqual(headers["x-ms-cosmos-priority-level"], "High")

@@ -86,7 +86,7 @@ def _assert_no_dispatch(case):
     case.connection._set_container_properties_cache.assert_not_called()
 
 
-def test_sync_async_read_parameter_contracts_match():
+def test_sync_async_read_parameter_contracts_match_rust():
     """The sync and async container reads take exactly the same parameters, so a
     customer porting code between them does not find an option missing or
     renamed on one side.
@@ -104,7 +104,7 @@ def test_sync_async_read_parameter_contracts_match():
           "test_partitioned_collection_quota_async"]),
     ],
 )
-def test_legacy_read_copies_preserve_original_methods(surface, source_file, class_name, method_names):
+def test_legacy_read_copies_preserve_original_methods_rust(surface, source_file, class_name, method_names):
     """The copied container tests still match the shipped originals, sync and async.
 
     Each copy is compared against its source in parsed form, so the assertions
@@ -133,14 +133,16 @@ def test_legacy_read_copies_preserve_original_methods(surface, source_file, clas
         return found
 
     copied, source = methods(copied_text), methods(source_text)
-    assert set(copied) == set(method_names)
+    assert set(copied) == {name + "_rust" for name in method_names}
     for name in method_names:
-        assert ast.dump(copied[name], include_attributes=False) == ast.dump(source[name], include_attributes=False), name
+        copied_method = copied[name + "_rust"]
+        copied_method.name = name
+        assert ast.dump(copied_method, include_attributes=False) == ast.dump(source[name], include_attributes=False), name
         assert f"Source: tests/{source_file}::{class_name}.{name}" in copied_text
 
 
 @pytest.mark.parametrize("args", [(None,), (None, True), (None, True, True)])
-def test_all_settings_require_keywords(read_case, args):
+def test_all_settings_require_keywords_rust(read_case, args):
     """Container read takes no positional arguments at all.
 
     One, two, and three positional values are each a ``TypeError``. Older code
@@ -155,7 +157,7 @@ def test_all_settings_require_keywords(read_case, args):
 
 @pytest.mark.parametrize("option", ["session_token", "populate_query_metrics"])
 @pytest.mark.parametrize("value", [None, False, True, "unused"])
-def test_obsolete_options_rejected_by_presence(read_case, option, value):
+def test_obsolete_options_rejected_by_presence_rust(read_case, option, value):
     """Retired options are rejected because they were passed at all, not because of
     what they were set to.
 
@@ -175,7 +177,7 @@ def test_obsolete_options_rejected_by_presence(read_case, option, value):
 
 @pytest.mark.parametrize("quota", [None, False, True])
 @pytest.mark.parametrize("statistics", [None, False, True])
-def test_metadata_flags_and_none_timeout_preserve_backend(read_case, quota, statistics):
+def test_metadata_flags_and_none_timeout_preserve_backend_rust(read_case, quota, statistics):
     """The two metadata flags reach whichever engine is in use, in that engine's own
     form, and neither engine hands the call off to the other.
 
@@ -230,7 +232,7 @@ def test_metadata_flags_and_none_timeout_preserve_backend(read_case, quota, stat
     ({"etag": "unused", "match_condition": MatchConditions.IfPresent}, ("IfMatch", "*")),
     ({"etag": "unused", "match_condition": MatchConditions.IfMissing}, ("IfNoneMatch", "*")),
 ])
-def test_conditions_preserved_without_unused_etag_fallback(read_case, kwargs, expected):
+def test_conditions_preserved_without_unused_etag_fallback_rust(read_case, kwargs, expected):
     """Conditional reads carry the customer's condition on both engines, with no
     warning and no change of engine.
 
@@ -270,7 +272,7 @@ def test_conditions_preserved_without_unused_etag_fallback(read_case, kwargs, ex
     ({"match_condition": MatchConditions.IfModified}, ValueError),
     ({"match_condition": "invalid"}, TypeError),
 ])
-def test_invalid_conditions_do_not_dispatch(read_case, kwargs, error):
+def test_invalid_conditions_do_not_dispatch_rust(read_case, kwargs, error):
     """A condition that is incomplete or not a real match condition stops the read.
 
     An etag with no condition and a condition with no etag are ``ValueError``; a
@@ -284,7 +286,7 @@ def test_invalid_conditions_do_not_dispatch(read_case, kwargs, error):
 
 
 @pytest.mark.parametrize("timeout", [None, 1, 1.25, 10])
-def test_supported_timeout(read_case, timeout):
+def test_supported_timeout_rust(read_case, timeout):
     """A usable deadline reaches the Rust request in seconds, exactly as given --
     whole numbers, fractions, and no deadline at all. Rounding it on the way
     through would quietly give the customer a different limit than they set.
@@ -303,7 +305,7 @@ def test_supported_timeout(read_case, timeout):
     {"connection_timeout": 2},
     {"initial_headers": {"User-Agent": "custom"}},
 ])
-def test_unsupported_rust_settings_never_replay(read_case, kwargs):
+def test_unsupported_rust_settings_never_replay_rust(read_case, kwargs):
     """Settings the Rust path cannot honor raise there, and still work on legacy.
 
     The list covers deadlines that are too small, false, not a number, or a
@@ -330,7 +332,7 @@ def test_unsupported_rust_settings_never_replay(read_case, kwargs):
     assert rust_compatibility_fallback_count() == before
 
 
-def test_response_hook_cannot_mutate_results_or_cached_properties(read_case):
+def test_response_hook_cannot_mutate_results_or_cached_properties_rust(read_case):
     """A response hook cannot reach back into the result or the cached properties,
     however deeply it digs.
 
@@ -366,7 +368,7 @@ def test_response_hook_cannot_mutate_results_or_cached_properties(read_case):
     assert cached["partitionKey"] == case.properties["partitionKey"]
 
 
-def test_false_valued_response_hook_is_called_once(read_case):
+def test_false_valued_response_hook_is_called_once_rust(read_case):
     """A hook that reports itself as false when tested as a boolean still runs, once.
 
     It is callable, so it must be called; deciding by truth-test would skip it.
@@ -389,7 +391,7 @@ def test_false_valued_response_hook_is_called_once(read_case):
 
 
 @pytest.mark.parametrize("error_type", [ValueError, NotImplementedError, exceptions.CosmosResourceNotFoundError])
-def test_response_hook_error_is_not_retried_or_cached(read_case, error_type):
+def test_response_hook_error_is_not_retried_or_cached_rust(read_case, error_type):
     """When the customer's hook raises, the read is not repeated and nothing is
     cached.
 
@@ -418,7 +420,7 @@ def test_response_hook_error_is_not_retried_or_cached(read_case, error_type):
 
 
 @pytest.mark.parametrize("status", [403, 404, 412])
-def test_service_errors_have_no_success_response_hook(read_case, status):
+def test_service_errors_have_no_success_response_hook_rust(read_case, status):
     """A failed read raises with its status and never reports success.
 
     Forbidden, not-found, and precondition-failed are each raised on both
@@ -447,7 +449,7 @@ def test_service_errors_have_no_success_response_hook(read_case, status):
         case.connection.ReadContainer.assert_not_called()
 
 
-def test_binding_failure_never_replays(read_case):
+def test_binding_failure_never_replays_rust(read_case):
     """If the Rust engine reports it cannot carry out the read, the call fails there
     rather than being retried on legacy.
 
@@ -471,7 +473,7 @@ def test_binding_failure_never_replays(read_case):
     assert rust_compatibility_fallback_count() == before
 
 
-def test_async_cancellation_is_not_replayed(read_case):
+def test_async_cancellation_is_not_replayed_rust(read_case):
     """A cancelled async read stays cancelled.
 
     Cancellation is the customer or their framework asking the work to stop.

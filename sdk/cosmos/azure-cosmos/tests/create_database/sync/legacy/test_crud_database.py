@@ -32,7 +32,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
     def tearDownClass(cls):
         cls.key_client.close()
 
-    def test_database_level_offer_throughput(self):
+    def test_database_level_offer_throughput_rust(self):
         """Throughput set at the database level can be read back and then changed.
 
         Creates a database with 1000 request units, confirms ``get_throughput``

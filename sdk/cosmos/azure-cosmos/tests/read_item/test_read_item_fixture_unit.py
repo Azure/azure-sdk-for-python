@@ -29,11 +29,11 @@ OPERATION_METHODS = {
     ("sync", "test_crud.py", "TestCRUDOperations", "test_get_resource_with_dictionary_and_object"),
     ("aio", "test_crud_async.py", "TestCRUDOperationsAsync", "test_get_resource_with_dictionary_and_object_async"),
 ])
-def test_copied_dictionary_read_statements_match_original(surface, filename, classname, method):
-    def statements(path):
+def test_copied_dictionary_read_statements_match_original_rust(surface, filename, classname, method):
+    def statements(path, selected_method):
         module = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == classname)
-        function = next(node for node in cls.body if getattr(node, "name", None) == method)
+        function = next(node for node in cls.body if getattr(node, "name", None) == selected_method)
         start = next(
             index for index, node in enumerate(function.body)
             if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name)
@@ -41,8 +41,8 @@ def test_copied_dictionary_read_statements_match_original(surface, filename, cla
         )
         return function.body[start:]
 
-    copied = statements(ROOT / "tests" / "read_item" / surface / "legacy" / filename)
-    original = statements(ROOT / "tests" / filename)[:len(copied)]
+    copied = statements(ROOT / "tests" / "read_item" / surface / "legacy" / filename, method + "_rust")
+    original = statements(ROOT / "tests" / filename, method)[:len(copied)]
     assert [ast.dump(node) for node in copied] == [ast.dump(node) for node in original]
 
 
@@ -53,7 +53,7 @@ def _load(name, path):
     return module
 
 
-def test_runner_imports_checkout_in_fresh_process():
+def test_runner_imports_checkout_in_fresh_process_rust():
     script = ROOT / "scripts" / "v5" / "run_read_item_parity.py"
     result = subprocess.run(
         [
@@ -72,7 +72,7 @@ def test_runner_imports_checkout_in_fresh_process():
     "failure", [None, "database", "container", "assertion", "delete", "close", "assertion_and_delete"],
 )
 @pytest.mark.parametrize("operation", OPERATION_METHODS)
-def test_rust_fixture_cleanup(monkeypatch, failure, operation):
+def test_rust_fixture_cleanup_rust(monkeypatch, failure, operation):
     module = _load(
         "owned_" + operation + "_fixture",
         ROOT / "tests" / operation / "sync" / "legacy" / "test_none_options.py",
@@ -119,7 +119,7 @@ def test_rust_fixture_cleanup(monkeypatch, failure, operation):
     if failure in ("assertion", "assertion_and_delete"):
         getattr(container, operation).side_effect = lambda *args, **kwargs: {"id": "wrong", "value": 0}
     monkeypatch.setattr(module, "CosmosClient", MagicMock(return_value=client))
-    case = module.TestNoneOptions(OPERATION_METHODS[operation])
+    case = module.TestNoneOptions(OPERATION_METHODS[operation] + "_rust")
     result = unittest.TestResult()
     case.run(result)
 
@@ -136,7 +136,7 @@ def test_rust_fixture_cleanup(monkeypatch, failure, operation):
 
 
 @pytest.mark.parametrize("data_client_fails", [False, True])
-def test_original_fixture_closes_acquired_clients(monkeypatch, data_client_fails):
+def test_original_fixture_closes_acquired_clients_rust(monkeypatch, data_client_fails):
     module = _load("original_read_fixture", ROOT / "tests" / "test_none_options.py")
     key_client, data_client = MagicMock(), MagicMock()
     monkeypatch.setattr(module.cosmos_client, "CosmosClient", MagicMock(return_value=key_client))
@@ -162,7 +162,7 @@ def test_original_fixture_closes_acquired_clients(monkeypatch, data_client_fails
     ("test_none_options.py", "TestNoneOptionsAsync", "test_container_read_item_none_options_async"),
 ])
 @pytest.mark.parametrize("failure", [None, "database", "container", "delete"])
-def test_async_read_fixture_cleanup(monkeypatch, filename, classname, method, failure):
+def test_async_read_fixture_cleanup_rust(monkeypatch, filename, classname, method, failure):
     module = _load("async_owned_read_fixture", ROOT / "tests" / "read_item" / "aio" / "legacy" / filename)
     events = []
     client, database, container = MagicMock(), MagicMock(), MagicMock()
@@ -187,7 +187,7 @@ def test_async_read_fixture_cleanup(monkeypatch, filename, classname, method, fa
     if failure == "container":
         database.create_container.side_effect = RuntimeError("container failed")
     monkeypatch.setattr(module, "CosmosClient", MagicMock(return_value=client))
-    case = getattr(module, classname)(method)
+    case = getattr(module, classname)(method + "_rust")
     result = unittest.TestResult()
     case.run(result)
     assert result.wasSuccessful() is (failure is None)
@@ -198,7 +198,7 @@ def test_async_read_fixture_cleanup(monkeypatch, filename, classname, method, fa
 
 @pytest.mark.parametrize("failure", [None, "database", "container", "pytest", "pytest_error", "delete"])
 @pytest.mark.parametrize("operation", OPERATION_METHODS)
-def test_runner_owns_original_resources(monkeypatch, failure, operation):
+def test_runner_owns_original_resources_rust(monkeypatch, failure, operation):
     monkeypatch.setattr(sys, "path", list(sys.path))
     runner = _load("read_parity_runner", ROOT / "scripts" / "v5" / "run_read_item_parity.py")
     import test_config
@@ -265,7 +265,7 @@ def test_runner_owns_original_resources(monkeypatch, failure, operation):
 
 
 @pytest.mark.parametrize("operation", [None, *OPERATION_METHODS])
-def test_runner_selects_rust_copy(monkeypatch, operation):
+def test_runner_selects_rust_copy_rust(monkeypatch, operation):
     monkeypatch.setattr(sys, "path", list(sys.path))
     runner = _load("read_parity_runner", ROOT / "scripts" / "v5" / "run_read_item_parity.py")
     monkeypatch.chdir(ROOT)
@@ -284,12 +284,12 @@ def test_runner_selects_rust_copy(monkeypatch, operation):
     options = execute.call_args.args[0]
     expected_nodes = [(
         str(ROOT / "tests" / selected / "sync" / "legacy" / "test_none_options.py")
-        + "::TestNoneOptions::" + OPERATION_METHODS[selected]
+        + "::TestNoneOptions::" + OPERATION_METHODS[selected] + "_rust"
     )]
     if selected == "upsert_item":
         expected_nodes.append(
             str(ROOT / "tests" / selected / "sync" / "legacy" / "test_crud.py")
-            + "::TestCRUDOperations::test_document_upsert"
+            + "::TestCRUDOperations::test_document_upsert_rust"
         )
     assert options[-len(expected_nodes):] == expected_nodes
     assert os.environ["COSMOS_PARITY_CAPTURE_OP"] == selected
@@ -298,7 +298,7 @@ def test_runner_selects_rust_copy(monkeypatch, operation):
 
 
 @pytest.mark.parametrize("operation", ["create_item", "replace_item", "upsert_item", "delete_item"])
-def test_runner_rejects_unsupported_copied_suite(monkeypatch, operation):
+def test_runner_rejects_unsupported_copied_suite_rust(monkeypatch, operation):
     monkeypatch.setattr(sys, "path", list(sys.path))
     runner = _load("read_parity_runner", ROOT / "scripts" / "v5" / "run_read_item_parity.py")
     execute = MagicMock()

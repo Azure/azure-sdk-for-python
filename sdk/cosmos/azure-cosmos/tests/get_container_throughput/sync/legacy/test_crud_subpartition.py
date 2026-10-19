@@ -17,7 +17,7 @@ class TestCRUDOperationsSubPartition(unittest.TestCase):
         self.database = self.client.create_database("throughput_hpk_" + uuid.uuid4().hex)
         self.addCleanup(self.client.delete_database, self.database.id)
 
-    def test_partitioned_collection_subpartition(self):
+    def test_partitioned_collection_subpartition_rust(self):
         # Source: tests/test_crud_subpartition.py::TestSubpartitionCrud.test_partitioned_collection_subpartition
         created_db = self.database
         collection_definition = {

@@ -95,7 +95,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
     real (non-``None``) backend.
     """
 
-    def test_disable_automatic_id_generation_lands_in_options(self):
+    def test_disable_automatic_id_generation_lands_in_options_rust(self):
         """Turning off automatic id generation sets the matching option."""
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
@@ -108,7 +108,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         options = cc.CreateItem.call_args.kwargs["options"]
         self.assertTrue(options["disableAutomaticIdGeneration"])
 
-    def test_enable_automatic_id_generation_inverts_disable_flag(self):
+    def test_enable_automatic_id_generation_inverts_disable_flag_rust(self):
         """Turning on automatic id generation clears the matching option."""
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
@@ -121,7 +121,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         options = cc.CreateItem.call_args.kwargs["options"]
         self.assertFalse(options["disableAutomaticIdGeneration"])
 
-    def test_indexing_directive_lands_when_supplied(self):
+    def test_indexing_directive_lands_when_supplied_rust(self):
         """The indexing directive value is passed through to the options."""
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
@@ -134,7 +134,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         options = cc.CreateItem.call_args.kwargs["options"]
         self.assertEqual(options["indexingDirective"], 1)
 
-    def test_cached_container_resource_id_is_added_to_options(self):
+    def test_cached_container_resource_id_is_added_to_options_rust(self):
         """When the container is already cached, its resource id is added
         to the options."""
         cc = _make_cc_with_cache_hit(rid="rid-from-cache")
@@ -147,7 +147,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         options = cc.CreateItem.call_args.kwargs["options"]
         self.assertEqual(options[Constants.ContainerRID], "rid-from-cache")
 
-    def test_cache_miss_triggers_refresh(self):
+    def test_cache_miss_triggers_refresh_rust(self):
         """When the container is not cached, the helper refreshes the cache
         and then uses the freshly fetched resource id."""
         cc = MagicMock()
@@ -183,7 +183,7 @@ class TestItemHelperConfiguredBackend(unittest.TestCase):
     expects and does not call the existing client.
     """
 
-    def test_backend_offered_a_well_formed_prepared_request(self):
+    def test_backend_offered_a_well_formed_prepared_request_rust(self):
         """The helper builds a request and offers it to the backend. This
         checks the request carries the right operation, container, and body.
         """
@@ -209,7 +209,7 @@ class TestItemHelperConfiguredBackend(unittest.TestCase):
         self.assertEqual(prepared.container_link, "dbs/db/colls/c")
         self.assertEqual(prepared.body_bytes, b'{"id":"x"}')
 
-    def test_real_backend_response_parsed_into_cosmos_dict(self):
+    def test_real_backend_response_parsed_into_cosmos_dict_rust(self):
         """A successful backend response is returned to the caller as a
         dict; the existing client is not called."""
         cc = _make_cc_with_cache_hit()
@@ -238,7 +238,7 @@ class TestItemHelperConfiguredBackend(unittest.TestCase):
 class TestItemHelperMetadataIndependence(unittest.TestCase):
     """Python does not resolve metadata before dispatching an item."""
 
-    def test_item_does_not_call_python_metadata_getter(self):
+    def test_item_does_not_call_python_metadata_getter_rust(self):
         backend = _capturing_backend(BackendResponse(201, 0, {}, b'{"id":"x"}'))
         backend.get_container_metadata = MagicMock(side_effect=BindingProtocolError("Missing metadata"))
         result = call_create_item_helper(ItemHelper(backend),container_link="dbs/db/colls/c", body={"id": "x"})

@@ -13,7 +13,7 @@ from fault_injection import conftest as fixtures
 
 
 @pytest.mark.parametrize("inject", [True, False])
-def test_rule_preserves_exact_delay_probability_and_unlimited_failures(inject):
+def test_rule_preserves_exact_delay_probability_and_unlimited_failures_rust(inject):
     rule = create_rule("named-rule", "owned-container", inject)
     prepared, = _prepare_fault_injection_rules([rule])
     assert prepared.id == "named-rule"
@@ -27,32 +27,32 @@ def test_rule_preserves_exact_delay_probability_and_unlimited_failures(inject):
 
 
 @pytest.mark.parametrize("elapsed", [0, 9.99, 10.0, float("nan"), float("inf")])
-def test_failure_rejects_missing_or_invalid_delay(elapsed):
+def test_failure_rejects_missing_or_invalid_delay_rust(elapsed):
     with pytest.raises(AssertionError, match="delay"):
         assert_failure(exceptions.CosmosHttpResponseError(502), elapsed, 1)
 
 
 @pytest.mark.parametrize("error", [None, RuntimeError("wrong type"), exceptions.CosmosHttpResponseError(503)])
-def test_failure_rejects_success_or_wrong_error(error):
+def test_failure_rejects_success_or_wrong_error_rust(error):
     with pytest.raises(AssertionError):
         assert_failure(error, 10.1, 1)
 
 
 @pytest.mark.parametrize("hits", [0, -1])
-def test_failure_rejects_unapplied_fault(hits):
+def test_failure_rejects_unapplied_fault_rust(hits):
     with pytest.raises(AssertionError, match="did not apply"):
         assert_failure(exceptions.CosmosHttpResponseError(502), 10.1, hits)
 
 
 @pytest.mark.parametrize("hits", [1, 3])
-def test_failure_accepts_applied_delay_without_inventing_retry_count(hits):
+def test_failure_accepts_applied_delay_without_inventing_retry_count_rust(hits):
     assert_failure(exceptions.CosmosHttpResponseError(502), 10.1, hits)
 
 
 @pytest.mark.parametrize("target", ["returned", "stored"])
 @pytest.mark.parametrize("field", ["id", "pk", "name", "key"])
 @pytest.mark.parametrize("missing", [False, True])
-def test_control_detects_missing_or_changed_customer_fields(target, field, missing):
+def test_control_detects_missing_or_changed_customer_fields_rust(target, field, missing):
     item = {"id": "order", "pk": "customer", "name": "sample document", "key": "value"}
     responses = {"returned": dict(item), "stored": dict(item)}
     if missing:
@@ -63,7 +63,7 @@ def test_control_detects_missing_or_changed_customer_fields(target, field, missi
         assert_control(responses["returned"], responses["stored"], item, 0)
 
 
-def test_control_rejects_applied_fault_and_accepts_service_fields():
+def test_control_rejects_applied_fault_and_accepts_service_fields_rust():
     item = {"id": "order", "pk": "customer"}
     with pytest.raises(AssertionError, match="applied"):
         assert_control(item, item, item, 1)
@@ -73,13 +73,13 @@ def test_control_rejects_applied_fault_and_accepts_service_fields():
 @pytest.mark.parametrize("backend,binding_delta,fallback_delta", [
     ("rust", 0, 0), ("rust", 2, 0), ("rust", 1, 1), ("core-python", 1, 0),
 ])
-def test_route_rejects_wrong_path_or_fallback(backend, binding_delta, fallback_delta):
+def test_route_rejects_wrong_path_or_fallback_rust(backend, binding_delta, fallback_delta):
     with pytest.raises(AssertionError):
         assert_route((7, 2), (7 + binding_delta, 2 + fallback_delta), backend)
 
 
 @pytest.mark.asyncio
-async def test_async_hit_count_awaits_acquisition_and_forwards_rule_id(monkeypatch):
+async def test_async_hit_count_awaits_acquisition_and_forwards_rule_id_rust(monkeypatch):
     adapter = async_binding.AsyncBindingAdapter("https://fault.example", master_key="key")
     acquire = AsyncMock(return_value="owned-handle")
     counter = Mock(return_value=3)
@@ -95,7 +95,7 @@ async def test_async_hit_count_awaits_acquisition_and_forwards_rule_id(monkeypat
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("failure", ["acquisition", "counter", "missing_binding", "closed"])
-async def test_async_hit_count_does_not_hide_errors(monkeypatch, failure):
+async def test_async_hit_count_does_not_hide_errors_rust(monkeypatch, failure):
     adapter = async_binding.AsyncBindingAdapter("https://fault.example", master_key="key")
     counter = Mock(return_value=0)
     monkeypatch.setattr(async_binding, "_rust_module", SimpleNamespace(_debug_fault_injection_rule_hit_count=counter))
@@ -136,7 +136,7 @@ def fake_setup(monkeypatch):
     return client, fixtures.owned_target.__wrapped__(request)
 
 
-def test_fixture_cleans_owned_database_after_assertion_failure(fake_setup):
+def test_fixture_cleans_owned_database_after_assertion_failure_rust(fake_setup):
     client, fixture = fake_setup
     database_id, _ = next(fixture)
     with pytest.raises(AssertionError, match="case failed"):
@@ -146,7 +146,7 @@ def test_fixture_cleans_owned_database_after_assertion_failure(fake_setup):
     client.__exit__.assert_called_once()
 
 
-def test_fixture_does_not_delete_resource_when_create_conflicts(fake_setup):
+def test_fixture_does_not_delete_resource_when_create_conflicts_rust(fake_setup):
     client, fixture = fake_setup
     fixtures.create_owned_database.side_effect = exceptions.CosmosResourceExistsError(409)
     with pytest.raises(exceptions.CosmosResourceExistsError):
@@ -155,7 +155,7 @@ def test_fixture_does_not_delete_resource_when_create_conflicts(fake_setup):
     client.__exit__.assert_called_once()
 
 
-def test_fixture_surfaces_cleanup_failure(fake_setup):
+def test_fixture_surfaces_cleanup_failure_rust(fake_setup):
     client, fixture = fake_setup
     next(fixture)
     client.delete_database.side_effect = exceptions.CosmosHttpResponseError(500)
@@ -165,7 +165,7 @@ def test_fixture_surfaces_cleanup_failure(fake_setup):
     client.__exit__.assert_called_once()
 
 
-def test_fixture_cleans_ambiguous_setup_failure(fake_setup):
+def test_fixture_cleans_ambiguous_setup_failure_rust(fake_setup):
     client, fixture = fake_setup
     fixtures.create_owned_database.side_effect = RuntimeError("setup failed")
     client.delete_database.side_effect = exceptions.CosmosResourceNotFoundError(404)

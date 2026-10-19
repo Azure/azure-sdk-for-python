@@ -40,7 +40,7 @@ def _normalize_throughput(throughput_properties):
 
 
 @pytest.mark.asyncio
-async def test_replace_throughput_int_applies_same_ru_async(container_for):
+async def test_replace_throughput_int_applies_same_ru_async_rust(container_for):
     """Async replace_throughput(int) applies and reports the same RU/s on both backends."""
 
     async def _do(client):
@@ -57,7 +57,7 @@ async def test_replace_throughput_int_applies_same_ru_async(container_for):
 
 
 @pytest.mark.asyncio
-async def test_replace_throughput_object_applies_same_ru_async(container_for):
+async def test_replace_throughput_object_applies_same_ru_async_rust(container_for):
     """Async replace_throughput(ThroughputProperties) applies the same RU/s on both backends."""
 
     async def _do(client):
@@ -78,7 +78,7 @@ async def test_replace_throughput_object_applies_same_ru_async(container_for):
 
 
 @pytest.mark.asyncio
-async def test_replace_throughput_autoscale_applies_same_ceiling_async(autoscale_container_for):
+async def test_replace_throughput_autoscale_applies_same_ceiling_async_rust(autoscale_container_for):
     """Async replace_throughput of an autoscale ceiling behaves identically on both backends."""
 
     async def _do(client):

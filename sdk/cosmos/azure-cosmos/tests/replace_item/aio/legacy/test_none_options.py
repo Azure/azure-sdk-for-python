@@ -4,7 +4,8 @@
 ``_backend="rust"`` path.
 
 Copied from ``tests/test_none_options_async.py``; the class and method
-names match the source so the parity reporter can pair the core-python
+names match the source (apart from the method's ``_rust`` suffix) so the parity reporter
+can pair the core-python
 and Rust runs. The file name drops the ``_async`` suffix so it pairs
 with the sync copy. Builds its own database + container and reads
 ``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` from the environment.
@@ -59,7 +60,7 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
         )
         return item
 
-    async def test_replace_item_none_options_async(self):
+    async def test_replace_item_none_options_async_rust(self):
         """Verify the async replace_item accepts None for every optional kwarg (pre_trigger_include, post_trigger_include, session_token, initial_headers, etag, match_condition, priority, no_response, retry_write, throughput_bucket) and returns the replaced item."""
         # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_replace_item_none_options_async
         item = await self._create_sample_item()

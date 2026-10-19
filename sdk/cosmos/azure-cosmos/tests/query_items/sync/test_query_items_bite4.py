@@ -25,7 +25,7 @@ from common._parity_helpers import (
 class TestQueryDescendingOrder:
     """Require the returned sequence, not merely the same set of order IDs."""
 
-    def test_query_order_ids_by_amount_descending(self):
+    def test_query_order_ids_by_amount_descending_rust(self):
         """Return order-2 before order-1; exclude the other customer's order-3."""
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite4_" + uuid.uuid4().hex

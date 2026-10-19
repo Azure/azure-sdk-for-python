@@ -143,7 +143,7 @@ _VALIDATION_VALUES = (
     (cls, member.name) for cls in _SETTINGS_TYPES for member in fields(cls)
 ])
 @pytest.mark.parametrize("value", _VALIDATION_VALUES, ids=lambda value: type(value).__name__)
-def test_explicit_validation_matches_former_reflection(cls, field_name, value):
+def test_explicit_validation_matches_former_reflection_rust(cls, field_name, value):
     kwargs = {**_required_settings_values(cls), field_name: value}
     try:
         expected = _reflective_settings_values(cls, kwargs)
@@ -157,7 +157,7 @@ def test_explicit_validation_matches_former_reflection(cls, field_name, value):
 
 
 @pytest.mark.parametrize("cls", _SETTINGS_TYPES)
-def test_settings_construction_does_not_inspect_annotations_or_fields(monkeypatch, cls):
+def test_settings_construction_does_not_inspect_annotations_or_fields_rust(monkeypatch, cls):
     import dataclasses
     import typing
     from azure.cosmos._backend import request_settings
@@ -177,7 +177,7 @@ def test_settings_construction_does_not_inspect_annotations_or_fields(monkeypatc
     ({"throughput_bucket": -1, "session_token": 3}, "session_token"),
     ({"timeout_seconds": 0, "item": None}, "item"),
 ])
-def test_field_type_errors_still_precede_range_errors(kwargs, field_name):
+def test_field_type_errors_still_precede_range_errors_rust(kwargs, field_name):
     with pytest.raises(TypeError, match=rf"RequestSettings\.{field_name} has an invalid value type"):
         RequestSettings(**kwargs)
 
@@ -186,7 +186,7 @@ def test_field_type_errors_still_precede_range_errors(kwargs, field_name):
     (cls, first.name, second.name)
     for cls in _SETTINGS_TYPES for first, second in combinations(fields(cls), 2)
 ])
-def test_multiple_invalid_fields_preserve_error_order(cls, first, second):
+def test_multiple_invalid_fields_preserve_error_order_rust(cls, first, second):
     kwargs = {**_required_settings_values(cls), first: object(), second: object()}
     with pytest.raises(TypeError) as expected:
         _reflective_settings_values(cls, kwargs)
@@ -197,7 +197,7 @@ def test_multiple_invalid_fields_preserve_error_order(cls, first, second):
 
 @pytest.mark.parametrize("enabled", [False, True])
 @pytest.mark.parametrize("threshold", [None, True, -1, 0, 1, 2**64 - 1, 2**64])
-def test_hedging_range_and_type_checks_match_original(enabled, threshold):
+def test_hedging_range_and_type_checks_match_original_rust(enabled, threshold):
     kwargs = {"enabled": enabled, "threshold_ms": threshold}
     try:
         expected = _reflective_settings_values(HedgingSettings, kwargs)
@@ -210,7 +210,7 @@ def test_hedging_range_and_type_checks_match_original(enabled, threshold):
         assert (actual.enabled, actual.threshold_ms) == (expected["enabled"], expected["threshold_ms"])
 
 
-def test_settings_are_validated_and_immutable():
+def test_settings_are_validated_and_immutable_rust():
     """Settings cannot be changed after they are built, and refuse a name they do not know.
 
     Once a request is on its way there must be no chance of something altering it, so the
@@ -228,7 +228,7 @@ def test_settings_are_validated_and_immutable():
         RequestSettings(unrecognized_option=True)
 
 
-def test_mutable_inputs_are_snapshotted():
+def test_mutable_inputs_are_snapshotted_rust():
     """A list the caller passes in is copied, so later edits to it do not reach the request.
 
     The caller keeps their own list and may well reuse it. Here the list is changed right
@@ -242,7 +242,7 @@ def test_mutable_inputs_are_snapshotted():
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_incompatible_schema_fails_before_driver_acquisition(monkeypatch, async_mode):
+def test_incompatible_schema_fails_before_driver_acquisition_rust(monkeypatch, async_mode):
     """A version mismatch is reported before a driver is taken, not after.
 
     Getting a driver commits process-wide settings that cannot be undone. Finding the
@@ -278,7 +278,7 @@ def test_incompatible_schema_fails_before_driver_acquisition(monkeypatch, async_
             backend.close()
 
 
-def test_missing_settings_schema_does_not_block_legacy_imports():
+def test_missing_settings_schema_does_not_block_legacy_imports_rust():
     """An out-of-date Rust module must not stop a customer who is not using the Rust path.
 
     A separate process loads the real Rust module, removes the function that reports its
@@ -319,7 +319,7 @@ assert "rebuild" in async_rust._REQUEST_CONTRACT_ERROR
     {"timeout_seconds": 0}, {"excluded_locations": []}, {"excluded_locations": (1,)},
     {"session_token": 42}, {"timeout_seconds": 10**500},
 ])
-def test_invalid_values_fail_before_native_execution(kwargs):
+def test_invalid_values_fail_before_native_execution_rust(kwargs):
     """Every one of these bad values is refused in Python, before anything is sent.
 
     The cases cover the kinds of mistake that are easy to make and hard to spot later: a
@@ -335,7 +335,7 @@ def test_invalid_values_fail_before_native_execution(kwargs):
 
 
 @pytest.mark.parametrize("strict", ["0", "1"])
-def test_unknown_options_are_never_silently_dropped(monkeypatch, strict):
+def test_unknown_options_are_never_silently_dropped_rust(monkeypatch, strict):
     """An option nobody recognizes is always an error, whatever the environment says.
 
     A misspelled option used to become a header, go out, and be ignored, so the caller
@@ -355,7 +355,7 @@ def test_unknown_options_are_never_silently_dropped(monkeypatch, strict):
     (None, None), (False, HedgingSettings(False)), (True, HedgingSettings(True, 500)),
     (SimpleNamespace(threshold_ms=250), HedgingSettings(True, 250)),
 ])
-def test_hedging_retains_inherit_disabled_and_enabled(value, expected):
+def test_hedging_retains_inherit_disabled_and_enabled_rust(value, expected):
     """The second-attempt option keeps three distinct answers, not two.
 
     Nothing set means take whatever the client was configured with. Off means off for
@@ -370,7 +370,7 @@ def test_hedging_retains_inherit_disabled_and_enabled(value, expected):
     assert headers == {}
 
 
-def test_customer_headers_and_typed_service_values_remain_separate():
+def test_customer_headers_and_typed_service_values_remain_separate_rust():
     """Headers the caller supplied stay headers; everything the SDK understands becomes a field.
 
     One call passes both: a header of the caller's own and a set of recognized options.
@@ -395,7 +395,7 @@ def test_customer_headers_and_typed_service_values_remain_separate():
     assert settings.session_token == "session"
 
 
-def test_later_raw_condition_retains_existing_point_precedence():
+def test_later_raw_condition_retains_existing_point_precedence_rust():
     """A raw if-match header given after a write condition wins, as it did before.
 
     Both say what the item's version must be. The old code let whichever was applied last
@@ -415,7 +415,7 @@ def test_later_raw_condition_retains_existing_point_precedence():
 
 
 @pytest.mark.parametrize("condition", [None, 42, False])
-def test_invalid_condition_is_not_silently_omitted(condition):
+def test_invalid_condition_is_not_silently_omitted_rust(condition):
     """A write condition that is not a string is an error, and so is one with nothing to compare.
 
     These are the shapes a caller lands on by accident: nothing where a version was meant,
@@ -434,7 +434,7 @@ def test_invalid_condition_is_not_silently_omitted(condition):
     ("x-ms-activity-id", "activity_id"), ("x-ms-session-token", "session_token"),
 ])
 @pytest.mark.parametrize("initial_first", [False, True])
-def test_explicit_activity_and_session_win_over_nested_headers(wire, field, initial_first):
+def test_explicit_activity_and_session_win_over_nested_headers_rust(wire, field, initial_first):
     """A value passed directly beats the same value buried in a header bag, either order.
 
     Both the activity id and the session token can arrive two ways. The direct one is the
@@ -448,7 +448,7 @@ def test_explicit_activity_and_session_win_over_nested_headers(wire, field, init
 
 
 @pytest.mark.parametrize("adapter", [sync_page, async_page])
-def test_page_adapter_keeps_typed_settings_without_an_invocation_deadline(adapter):
+def test_page_adapter_keeps_typed_settings_without_an_invocation_deadline_rust(adapter):
     """Turning a page into a request carries the settings across and leaves the page untouched.
 
     Paging values move into the settings while the caller's own header is left alone. The
@@ -472,7 +472,7 @@ def test_page_adapter_keeps_typed_settings_without_an_invocation_deadline(adapte
     assert page.settings is settings
 
 
-def test_native_schema_has_no_unconsumed_python_fields():
+def test_native_schema_has_no_unconsumed_python_fields_rust():
     """Both sides list the same fields, and the check notices when they stop matching.
 
     Each side reports the names it knows and the two lists are compared. Order does not
@@ -499,7 +499,7 @@ def test_native_schema_has_no_unconsumed_python_fields():
     "delete_container", "replace_container", "get_throughput", "replace_throughput", "list_databases", "list_containers",
 ])
 @pytest.mark.parametrize("is_async", [False, True])
-def test_every_native_reader_rejects_an_incompatible_schema_before_io(method, is_async):
+def test_every_native_reader_rejects_an_incompatible_schema_before_io_rust(method, is_async):
     """All seventeen Rust entry points check the version number before doing any work.
 
     The settings record carries a version, currently three. Each entry point is handed a

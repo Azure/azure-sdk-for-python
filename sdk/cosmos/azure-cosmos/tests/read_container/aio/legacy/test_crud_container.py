@@ -28,8 +28,9 @@ assertions the team already trusts.
 Self-contained: it creates and deletes its own database, so it shares no state
 with any other test. The originals read a shared container named by
 ``test_config.TestConfig``; this copy creates that container itself. The class
-name and method names match the source, so the two test IDs differ only by
-path. The file name drops the ``_async`` suffix because the audit reporter
+name and method names match the source (apart from the method's ``_rust`` suffix), so
+the two test IDs differ by path and method suffix. The file name drops the ``_async``
+suffix because the audit reporter
 pairs sync and async copies by stripping it.
 
 Run with::
@@ -70,7 +71,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         self.addAsyncCleanup(self._delete_owned_database)
         self.database_for_test = await self.key_client.create_database(self._database_id)
         self.configs = SimpleNamespace(TEST_MULTI_PARTITION_CONTAINER_ID="quota_target")
-        if self._testMethodName == "test_partitioned_collection_quota_async":
+        if self._testMethodName == "test_partitioned_collection_quota_async_rust":
             await self.database_for_test.create_container(
                 self.configs.TEST_MULTI_PARTITION_CONTAINER_ID,
                 PartitionKey(path="/id"), offer_throughput=10100,
@@ -100,7 +101,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as inst:
             assert inst.status_code == status_code
 
-    async def test_collection_crud_async(self):
+    async def test_collection_crud_async_rust(self):
         """Reading a container returns its real settings, and reading a deleted one fails cleanly.
 
         The full legacy lifecycle test, kept here for the read half. After
@@ -151,7 +152,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      created_container.read)
 
-    async def test_partitioned_collection_async(self):
+    async def test_partitioned_collection_async_rust(self):
         """Reading a partitioned container returns its partition key and throughput.
 
         Creates a container with an explicit hash partition key and 10100
@@ -195,7 +196,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await created_db.delete_container(created_collection.id)
 
 
-    async def test_partitioned_collection_quota_async(self):
+    async def test_partitioned_collection_quota_async_rust(self):
         """Asking for statistics and quota information returns both.
 
         Reads a container with the partition key range statistics and quota

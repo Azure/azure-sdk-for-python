@@ -59,7 +59,7 @@ class TestAutoScale(unittest.TestCase):
             pass
         self.key_client.close()
 
-    def test_autoscale_replace_throughput(self):
+    def test_autoscale_replace_throughput_rust(self):
         """Autoscale settings can be changed after creation, on a database and a container.
 
         Both start at a 5000 request unit ceiling and are moved to 7000 with a

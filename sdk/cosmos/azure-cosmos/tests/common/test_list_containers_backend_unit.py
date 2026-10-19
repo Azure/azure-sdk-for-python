@@ -141,7 +141,7 @@ def _drain(case, pager):
     return _run(case, lambda: list(pager), collect)
 
 
-def test_lazy_pages_and_continuation_resume(listing_case):
+def test_lazy_pages_and_continuation_resume_rust(listing_case):
     """No request until the caller asks, one request per page, and a token resumes on
     a fresh pager.
 
@@ -200,7 +200,7 @@ def test_lazy_pages_and_continuation_resume(listing_case):
 
 
 @pytest.mark.parametrize("empty_first", [False, True])
-def test_falsey_hook_receives_each_page_as_an_isolated_snapshot(listing_case, empty_first):
+def test_falsey_hook_receives_each_page_as_an_isolated_snapshot_rust(listing_case, empty_first):
     """The hook runs once per page with that page's own headers, and cannot disturb
     the client.
 
@@ -243,7 +243,7 @@ def test_falsey_hook_receives_each_page_as_an_isolated_snapshot(listing_case, em
     assert "x-hook-mutation" not in case.connection.last_response_headers
 
 
-def test_empty_database_still_reports_its_successful_page(listing_case):
+def test_empty_database_still_reports_its_successful_page_rust(listing_case):
     """A database with no containers yields nothing but still reports one successful
     page.
 
@@ -259,7 +259,7 @@ def test_empty_database_still_reports_its_successful_page(listing_case):
     assert hook.call_args.args[1] is pager
 
 
-def test_hook_keeps_each_listings_iterator_and_can_retain_it(listing_case):
+def test_hook_keeps_each_listings_iterator_and_can_retain_it_rust(listing_case):
     """A shared hook receives each listing's own iterator, usable after the hook returns."""
     case = listing_case
     observed = []
@@ -283,7 +283,7 @@ def test_hook_keeps_each_listings_iterator_and_can_retain_it(listing_case):
 
 @pytest.mark.parametrize("option", ["session_token", "populate_query_metrics", "availability_strategy"])
 @pytest.mark.parametrize("value", [None, False, True])
-def test_obsolete_options_fail_before_paging(listing_case, option, value):
+def test_obsolete_options_fail_before_paging_rust(listing_case, option, value):
     """Retired options are refused as the pager is built, not on the first fetch.
 
     Session token, query metrics, and availability strategy each raise
@@ -299,7 +299,7 @@ def test_obsolete_options_fail_before_paging(listing_case, option, value):
 
 
 @pytest.mark.parametrize("args", [(1,), (1, False)])
-def test_options_are_keyword_only(listing_case, args):
+def test_options_are_keyword_only_rust(listing_case, args):
     """Listing takes no positional arguments; every option must be named.
 
     One and two positional values are both refused. Older code passed page size
@@ -314,7 +314,7 @@ def test_options_are_keyword_only(listing_case, args):
 
 
 @pytest.mark.parametrize("timeout", [None, 1, 1.5, 10])
-def test_supported_timeout_and_application_headers(listing_case, timeout):
+def test_supported_timeout_and_application_headers_rust(listing_case, timeout):
     """A supported deadline and the customer's own header reach every page request.
 
     The header must ride on both requests, not just the first, or a customer's
@@ -349,7 +349,7 @@ def test_supported_timeout_and_application_headers(listing_case, timeout):
     {"connection_timeout": 10}, {"unknown_option": None},
     {"request_options": {"availabilityStrategy": False}},
 ])
-def test_unsupported_rust_options_do_not_dispatch(listing_case, kwargs):
+def test_unsupported_rust_options_do_not_dispatch_rust(listing_case, kwargs):
     """Options the Rust path cannot honor never produce a request, and never move the
     feed to the legacy transport.
 
@@ -382,7 +382,7 @@ def test_unsupported_rust_options_do_not_dispatch(listing_case, kwargs):
     exceptions.CosmosHttpResponseError(status_code=429),
     exceptions.CosmosHttpResponseError(status_code=500),
 ])
-def test_hook_failure_does_not_fetch_again_or_fall_back(listing_case, error):
+def test_hook_failure_does_not_fetch_again_or_fall_back_rust(listing_case, error):
     """An error from the customer's hook stops the walk without refetching the page.
 
     Five errors are raised from the hook, including two that the SDK would
@@ -405,7 +405,7 @@ def test_hook_failure_does_not_fetch_again_or_fall_back(listing_case, error):
 
 
 @pytest.mark.parametrize("status", [403, 404, 429, 500])
-def test_error_page_does_not_invoke_success_hook(listing_case, status):
+def test_error_page_does_not_invoke_success_hook_rust(listing_case, status):
     """A failed page keeps its status and does not run the success hook.
 
     Four statuses are covered. Each reaches the caller with its status code
@@ -430,7 +430,7 @@ def test_error_page_does_not_invoke_success_hook(listing_case, status):
 @pytest.mark.parametrize("error", [
     PagePreflightError("unsupported page"), ValueError("binding failure"), asyncio.CancelledError(),
 ])
-def test_binding_failures_are_not_replayed(listing_case, error):
+def test_binding_failures_are_not_replayed_rust(listing_case, error):
     """A failure inside the Rust engine, including cancellation, ends the walk after
     one request.
 
@@ -455,7 +455,7 @@ def test_binding_failures_are_not_replayed(listing_case, error):
     assert len(case.requests) == 1
 
 
-def test_timeout_restarts_between_public_page_fetches(listing_case, monkeypatch):
+def test_timeout_restarts_between_public_page_fetches_rust(listing_case, monkeypatch):
     """The deadline covers fetching one page, not the whole walk.
 
     The clock is moved forward by ten seconds before the first page and ten more
@@ -488,7 +488,7 @@ def test_timeout_restarts_between_public_page_fetches(listing_case, monkeypatch)
     assert len(_run(case, sync_call, async_call)) == 2
 
 
-def test_empty_service_page_does_not_reset_current_page_budget(listing_case, monkeypatch):
+def test_empty_service_page_does_not_reset_current_page_budget_rust(listing_case, monkeypatch):
     """Time spent skipping past empty pages counts against the page the customer is
     waiting for.
 
@@ -519,7 +519,7 @@ def test_empty_service_page_does_not_reset_current_page_budget(listing_case, mon
     assert len(case.requests) == 1
 
 
-def test_query_container_timeout_policy_matches_listing():
+def test_query_container_timeout_policy_matches_listing_rust():
     """A container query with an ordinary deadline is allowed on the Rust path, the
     same as a listing.
 

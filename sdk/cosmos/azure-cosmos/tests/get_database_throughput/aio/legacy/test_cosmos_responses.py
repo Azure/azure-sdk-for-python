@@ -19,7 +19,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         self.database_id = "get_db_response_a_" + uuid.uuid4().hex
         self.addAsyncCleanup(self.client.close)
 
-    async def test_database_replace_throughput_async(self):
+    async def test_database_replace_throughput_async_rust(self):
         # Source: tests/test_cosmos_responses_async.py::TestCosmosResponsesAsync.test_database_replace_throughput_async
         db = await self.client.create_database(id=self.database_id, offer_throughput=400)
         self.addAsyncCleanup(self.client.delete_database, db.id)
@@ -29,7 +29,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         new_throughput = await db.get_throughput()
         assert replace_throughput_value == new_throughput.offer_throughput
 
-    async def test_container_replace_throughput_async(self):
+    async def test_container_replace_throughput_async_rust(self):
         # Source: tests/test_cosmos_responses_async.py::TestCosmosResponsesAsync.test_container_replace_throughput_async
         db = await self.client.create_database(self.database_id)
         self.addAsyncCleanup(self.client.delete_database, db.id)

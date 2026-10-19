@@ -23,7 +23,7 @@ from azure.cosmos.exceptions import CosmosClientTimeoutError
     for cursor, methods in ((False, STATELESS_PAGE_BINDING_FUNCTION_NAMES), (True, RETAINED_PAGE_BINDING_FUNCTION_NAMES))
     for op, method in methods.items()
 ])
-def test_every_page_dispatch_preserves_cursor_and_deadline_arguments(
+def test_every_page_dispatch_preserves_cursor_and_deadline_arguments_rust(
     monkeypatch, async_mode, budget, uses_cursor, op, method
 ):
     module = async_rust if async_mode else sync_rust
@@ -78,7 +78,7 @@ def test_every_page_dispatch_preserves_cursor_and_deadline_arguments(
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("has_deadline", [False, True])
 @pytest.mark.parametrize("error_kind", ["timeout", "unsupported", "transport", "cancelled"])
-def test_page_error_translation_preserves_cause_and_cancellation(
+def test_page_error_translation_preserves_cause_and_cancellation_rust(
     monkeypatch, async_mode, has_deadline, error_kind
 ):
     from azure.core.exceptions import ServiceResponseError
@@ -129,7 +129,7 @@ def test_page_error_translation_preserves_cause_and_cancellation(
     assert dispatch.call_count == 1
 
 
-def test_async_page_cancellation_reaches_pending_native_await(monkeypatch):
+def test_async_page_cancellation_reaches_pending_native_await_rust(monkeypatch):
     backend = object.__new__(async_rust.AsyncBindingAdapter)
     monkeypatch.setattr(backend, "_ensure_driver_handle", AsyncMock(return_value="handle"))
 
@@ -162,7 +162,7 @@ def test_async_page_cancellation_reaches_pending_native_await(monkeypatch):
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("op,method", list(STATELESS_PAGE_BINDING_FUNCTION_NAMES.items()))
-def test_native_page_entry_validates_timeout_before_driver_lookup(op, method, async_mode):
+def test_native_page_entry_validates_timeout_before_driver_lookup_rust(op, method, async_mode):
     from azure.cosmos import _rust
 
     link = "" if "databases" in op else "dbs/d" if "containers" in op else "dbs/d/colls/c"

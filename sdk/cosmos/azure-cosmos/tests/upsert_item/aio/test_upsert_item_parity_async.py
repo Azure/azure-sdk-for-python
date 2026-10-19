@@ -33,7 +33,7 @@ def container_for(request):
 
 
 @pytest.mark.asyncio
-async def test_async_upsert_insert_then_update(container_for):
+async def test_async_upsert_insert_then_update_rust(container_for):
     """async upsert insert then update -- parity on both backends."""
     item_id = uuid.uuid4().hex
 
@@ -48,7 +48,7 @@ async def test_async_upsert_insert_then_update(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_upsert_response_hook_fires_once(container_for):
+async def test_async_upsert_response_hook_fires_once_rust(container_for):
     """async upsert fires response_hook exactly once per backend."""
     fired = {"core-python": 0, "rust": 0}
     order = ["core-python", "rust"]

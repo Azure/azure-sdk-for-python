@@ -34,7 +34,7 @@ def _original_patch_method(asynchronous):
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("operation", NEGATIVE_OPERATIONS)
 @pytest.mark.parametrize("outcome", ["400", "success", "503", "wrong_exception"])
-def test_original_patch_requires_each_rejection(asynchronous, operation, outcome):
+def test_original_patch_requires_each_rejection_rust(asynchronous, operation, outcome):
     method = _original_patch_method(asynchronous)
     calls = []
 
@@ -88,7 +88,7 @@ def test_original_patch_requires_each_rejection(asynchronous, operation, outcome
     "stored_destination_missing", "stored_destination_wrong", "stored_destination_null",
     "returned_destination_wrong",
 ])
-def test_original_patch_requires_removed_and_moved_fields_absent(asynchronous, outcome):
+def test_original_patch_requires_removed_and_moved_fields_absent_rust(asynchronous, outcome):
     method = _original_patch_method(asynchronous)
     stored, events, requests = {}, [], []
     expected_operations = [

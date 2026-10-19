@@ -25,7 +25,7 @@ from common._parity_helpers import (
 class TestQueryAmountFilter:
     """Check partition scope and the numeric condition together."""
 
-    def test_query_one_customers_large_order_ids(self):
+    def test_query_one_customers_large_order_ids_rust(self):
         """Return only order-2: amount 150 in customer-501's partition."""
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite2_" + uuid.uuid4().hex

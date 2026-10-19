@@ -48,7 +48,7 @@ def invoke(container, operation, **kwargs):
     ({"request_options": {"timeout": 2}}, 2), ({"feed_options": {"timeout": 2}}, 2),
     ({"timeout": 3, "request_options": {"timeout": 2}}, 3),
 ])
-def test_shared_budget_and_independent_next_call(case, clock, operation, warm, options, budget):
+def test_shared_budget_and_independent_next_call_rust(case, clock, operation, warm, options, budget):
     calls = []
 
     def phase(name, body):
@@ -78,7 +78,7 @@ def test_shared_budget_and_independent_next_call(case, clock, operation, warm, o
 
 @pytest.mark.parametrize("phase", ["metadata", "lookup", "write"])
 @pytest.mark.parametrize("failure", ["expiry", "service"])
-def test_failure_skips_later_phases_and_callback(case, clock, operation, phase, failure):
+def test_failure_skips_later_phases_and_callback_rust(case, clock, operation, phase, failure):
     if operation == "get" and phase == "write":
         return
     calls = []
@@ -105,7 +105,7 @@ def test_failure_skips_later_phases_and_callback(case, clock, operation, phase, 
 
 
 @pytest.mark.parametrize("expire", [None, "refresh", "retry"])
-def test_recovery_uses_remaining_budget(case, clock, operation, expire):
+def test_recovery_uses_remaining_budget_rust(case, clock, operation, expire):
     calls = []
     container = case.client.get_database_client("sales").get_container_client("orders")
     complete_cache = case.client.client_connection._container_properties_cache
@@ -143,7 +143,7 @@ def test_recovery_uses_remaining_budget(case, clock, operation, expire):
     assert calls == [(name, 1 - i * 0.125) for i, name in enumerate(names)]
 
 
-def test_driver_initialization_cannot_start_request_after_expiry(case, clock, operation):
+def test_driver_initialization_cannot_start_request_after_expiry_rust(case, clock, operation):
     container = case.client.get_database_client("sales").get_container_client("orders")
     case.client.client_connection._container_properties_cache[container.container_link] = deepcopy(PROPERTIES)
 
@@ -160,7 +160,7 @@ def test_driver_initialization_cannot_start_request_after_expiry(case, clock, op
     write.assert_not_called()
 
 
-def test_internal_metadata_budget_can_be_less_than_public_minimum(case, clock):
+def test_internal_metadata_budget_can_be_less_than_public_minimum_rust(case, clock):
     read = case.install("read_container", result=response(PROPERTIES))
     container = case.client.get_database_client("sales").get_container_client("orders")
     complete(container._get_properties(_item_operation_deadline=clock[0] + 0.5))
@@ -168,7 +168,7 @@ def test_internal_metadata_budget_can_be_less_than_public_minimum(case, clock):
 
 
 @pytest.mark.parametrize("case", [False], indirect=True, ids=["sync"])
-def test_sync_cache_lock_wait_consumes_budget(case, clock, operation):
+def test_sync_cache_lock_wait_consumes_budget_rust(case, clock, operation):
     container = case.client.get_database_client("sales").get_container_client("orders")
 
     def acquire(*, timeout):
@@ -188,7 +188,7 @@ def test_sync_cache_lock_wait_consumes_budget(case, clock, operation):
 @pytest.mark.parametrize("case", [True], indirect=True, ids=["async"])
 @pytest.mark.parametrize("phase", ["metadata", "lookup", "refresh", "retry", "write", "lock"])
 @pytest.mark.parametrize("expire", [False, True], ids=["cancellation", "deadline"])
-def test_async_cancellation_awaits_cleanup(case, operation, phase, expire):
+def test_async_cancellation_awaits_cleanup_rust(case, operation, phase, expire):
     if operation == "get" and phase == "write":
         return
 

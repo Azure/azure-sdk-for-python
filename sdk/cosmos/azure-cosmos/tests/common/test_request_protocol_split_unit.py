@@ -47,7 +47,7 @@ from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("op", ["create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item"])
-def test_every_point_operation_has_only_headers_and_explicit_options(async_mode, op):
+def test_every_point_operation_has_only_headers_and_explicit_options_rust(async_mode, op):
     """Each single-item operation produces a request holding only wire headers and named
     settings, and leaves the caller's options untouched.
 
@@ -90,7 +90,7 @@ def test_every_point_operation_has_only_headers_and_explicit_options(async_mode,
 
 
 @pytest.mark.parametrize("operation", ["create_item", "upsert_item", "replace_item", "patch_item"])
-def test_write_builders_require_snapshots_and_normalized_options(operation):
+def test_write_builders_require_snapshots_and_normalized_options_rust(operation):
     """The builders for write operations demand an already-prepared body and already-sorted
     options, and refuse to accept the raw forms.
 
@@ -116,7 +116,7 @@ def test_write_builders_require_snapshots_and_normalized_options(operation):
 
 
 @pytest.mark.parametrize("adapter", [sync_page, async_page])
-def test_page_adapter_preserves_separate_options_without_a_deadline(adapter):
+def test_page_adapter_preserves_separate_options_without_a_deadline_rust(adapter):
     """Turning a page request into a Rust request moves paging values into headers, copies
     the settings, and carries no deadline.
 
@@ -146,7 +146,7 @@ def test_page_adapter_preserves_separate_options_without_a_deadline(adapter):
     assert not hasattr(page, "deadline")
 
 
-def test_unknown_options_do_not_become_headers_or_vanish():
+def test_unknown_options_do_not_become_headers_or_vanish_rust():
     """An option nobody recognizes is refused by name rather than passed along or dropped.
 
     The two easy alternatives are both bad. Turning it into a header sends it to
@@ -168,7 +168,7 @@ def test_unknown_options_do_not_become_headers_or_vanish():
 @pytest.mark.parametrize("header_case", [str.lower, str.upper, str.title])
 @pytest.mark.parametrize("source_order", list(permutations(("initial", "access", "direct"))))
 @pytest.mark.parametrize("through_builder", [False, True])
-def test_conditional_header_sources_resolve_case_insensitively_in_input_order(
+def test_conditional_header_sources_resolve_case_insensitively_in_input_order_rust(
     condition_type, header, header_case, source_order, through_builder
 ):
     """A conditional header can be given three ways, and whichever comes last in the
@@ -225,7 +225,7 @@ def test_conditional_header_sources_resolve_case_insensitively_in_input_order(
     "list_databases", "list_containers", "get_throughput", "replace_throughput",
 ])
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_native_every_extraction_family_reads_request_options_before_io(monkeypatch, method, async_mode):
+def test_native_every_extraction_family_reads_request_options_before_io_rust(monkeypatch, method, async_mode):
     """Every Rust entry point reads the named settings and refuses a bad one before doing
     any work.
 
@@ -258,7 +258,7 @@ def test_native_every_extraction_family_reads_request_options_before_io(monkeypa
 
 
 @pytest.mark.parametrize("consumed", ["partitionKey", "disableAutomaticIdGeneration"])
-def test_native_consumed_options_have_no_dead_allowlist(monkeypatch, consumed):
+def test_native_consumed_options_have_no_dead_allowlist_rust(monkeypatch, consumed):
     """Options that Python handles itself are not also accepted as settings for the Rust
     side.
 
@@ -276,7 +276,7 @@ def test_native_consumed_options_have_no_dead_allowlist(monkeypatch, consumed):
         RequestSettings(**{consumed: True})
 
 
-def test_native_rejects_old_private_request_shape(monkeypatch):
+def test_native_rejects_old_private_request_shape_rust(monkeypatch):
     """A request in the older shape is refused rather than partly understood.
 
     The old object carried a version number and relied on the Rust side reading
@@ -297,7 +297,7 @@ def test_native_rejects_old_private_request_shape(monkeypatch):
 
 
 @pytest.mark.parametrize("runtime_kwargs", [{}, {"runtime": None}])
-def test_native_driver_handle_exports_and_keyword_contract(runtime_kwargs):
+def test_native_driver_handle_exports_and_keyword_contract_rust(runtime_kwargs):
     """The Rust side offers exactly one way to take and give back a driver, with a fixed
     argument list.
 

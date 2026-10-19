@@ -56,7 +56,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
 
-    def test_collection_crud(self):
+    def test_collection_crud_rust(self):
         """A newly created container can be found by querying for its id.
 
         The full legacy lifecycle test, kept here for the query half. After

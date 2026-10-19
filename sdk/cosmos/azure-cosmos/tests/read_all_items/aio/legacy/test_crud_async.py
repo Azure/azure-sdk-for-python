@@ -5,8 +5,8 @@
 
 Self-contained: builds its own database + container in ``asyncSetUp``
 and deletes them in ``asyncTearDown``. The class name and method name
-match the source at ``tests/test_crud_async.py`` so test IDs differ
-only by path.
+match the source (apart from the method's ``_rust`` suffix) at
+``tests/test_crud_async.py`` so test IDs differ by path and method suffix.
 
 Run with::
 
@@ -50,7 +50,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.client.close()
 
-    async def test_query_iterable_functionality_async(self):
+    async def test_query_iterable_functionality_async_rust(self):
         """Enumerating a whole container works item by item and page by page.
 
         Three items are created, then read back three ways with a page size of

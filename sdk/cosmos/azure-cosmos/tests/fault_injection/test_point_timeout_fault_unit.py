@@ -12,7 +12,7 @@ from fault_injection._point_timeout import (
 
 
 @pytest.mark.parametrize("inject", [True, False])
-def test_point_timeout_rule_preserves_scope_delay_and_control(inject):
+def test_point_timeout_rule_preserves_scope_delay_and_control_rust(inject):
     prepared, = _prepare_fault_injection_rules([read_operation_timeout_rule("rule", "owned-container", inject)])
     assert prepared.id == "rule"
     assert prepared.container_id == "owned-container"
@@ -31,45 +31,45 @@ def test_point_timeout_rule_preserves_scope_delay_and_control(inject):
     exceptions.CosmosHttpResponseError(408), ServiceResponseError("408/20008 ClientOperationTimeout"),
     RuntimeError("unexpected error"),
 ])
-def test_point_timeout_rejects_success_and_wrong_exception(error):
+def test_point_timeout_rejects_success_and_wrong_exception_rust(error):
     with pytest.raises(AssertionError, match="Expected CosmosClientTimeoutError"):
         assert_point_timeout(error, 1.0, 1)
 
 
 @pytest.mark.parametrize("elapsed", [0, 0.89, 2.01, 5, float("nan"), float("inf"), -1])
-def test_point_timeout_rejects_early_late_and_invalid_elapsed(elapsed):
+def test_point_timeout_rejects_early_late_and_invalid_elapsed_rust(elapsed):
     with pytest.raises(AssertionError, match="scheduling allowance"):
         assert_point_timeout(exceptions.CosmosClientTimeoutError(), elapsed, 1)
 
 
 @pytest.mark.parametrize("hits", [0, -1])
-def test_point_timeout_requires_applied_fault(hits):
+def test_point_timeout_requires_applied_fault_rust(hits):
     with pytest.raises(AssertionError, match="did not apply"):
         assert_point_timeout(exceptions.CosmosClientTimeoutError(), 1.0, hits)
 
 
 @pytest.mark.parametrize("elapsed", [MIN_TIMEOUT_ELAPSED, OPERATION_TIMEOUT, MAX_OPERATION_ELAPSED])
-def test_point_timeout_accepts_bounded_expiry(elapsed):
+def test_point_timeout_accepts_bounded_expiry_rust(elapsed):
     assert_point_timeout(exceptions.CosmosClientTimeoutError(), elapsed, 1)
 
 
 @pytest.mark.parametrize("budgets", [[], [None], [0], [-1], [1.01], [float("nan")], [float("inf")], [0.5, 0.5]])
-def test_point_timeout_requires_one_remaining_native_budget(budgets):
+def test_point_timeout_requires_one_remaining_native_budget_rust(budgets):
     with pytest.raises(AssertionError):
         assert_read_budget(budgets)
 
 
 @pytest.mark.parametrize("budget", [0.001, 0.9, OPERATION_TIMEOUT])
-def test_point_timeout_accepts_remaining_native_budget(budget):
+def test_point_timeout_accepts_remaining_native_budget_rust(budget):
     assert_read_budget([budget])
 
 
 @pytest.mark.parametrize("elapsed", [-1, 2.01, 5, float("nan"), float("inf")])
-def test_control_rejects_unbounded_or_invalid_elapsed(elapsed):
+def test_control_rejects_unbounded_or_invalid_elapsed_rust(elapsed):
     with pytest.raises(AssertionError, match="control read"):
         assert_read_elapsed(elapsed)
 
 
 @pytest.mark.parametrize("elapsed", [0, 0.1, MAX_OPERATION_ELAPSED])
-def test_control_accepts_bounded_elapsed(elapsed):
+def test_control_accepts_bounded_elapsed_rust(elapsed):
     assert_read_elapsed(elapsed)

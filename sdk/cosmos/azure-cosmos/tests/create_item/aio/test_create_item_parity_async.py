@@ -127,7 +127,7 @@ async def _run_create(container, body: dict, summary: str,
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_baseline_body_and_pk_only(container_for):
+async def test_async_baseline_body_and_pk_only_rust(container_for):
     """minimal valid body, no optional kwargs.
 
     Both backends must accept the insert and return equivalent documents.
@@ -145,7 +145,7 @@ async def test_async_baseline_body_and_pk_only(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_pk_undefined(container_for):
+async def test_async_pk_undefined_rust(container_for):
     """body omits the declared PK path -- the undefined-PK wire shape.
 
     The binding accepts this and treats it as the undefined partition-key
@@ -157,7 +157,7 @@ async def test_async_pk_undefined(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_pk_explicit_none(container_for):
+async def test_async_pk_explicit_none_rust(container_for):
     """explicit ``pk: None`` -- the JSON-null partition-key wire shape.
 
     Distinct from the undefined case above: this sends a real ``null`` value
@@ -173,7 +173,7 @@ async def test_async_pk_explicit_none(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_pre_trigger_include(container_for):
+async def test_async_pre_trigger_include_rust(container_for):
     """Baseline call plus ``pre_trigger_include`` -- forwarded as a request header."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     cmp = await _run_create(container_for, body, summary="baseline + pre_trigger_include",
@@ -182,7 +182,7 @@ async def test_async_pre_trigger_include(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_post_trigger_include(container_for):
+async def test_async_post_trigger_include_rust(container_for):
     """Baseline call plus ``post_trigger_include`` -- forwarded as a request header."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     cmp = await _run_create(container_for, body, summary="baseline + post_trigger_include",
@@ -191,7 +191,7 @@ async def test_async_post_trigger_include(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_indexing_directive(container_for):
+async def test_async_indexing_directive_rust(container_for):
     """Baseline call plus ``indexing_directive=1`` (Exclude) -- forwarded as a header.
 
     The value is an enum member on the wire, so this also pins that the async
@@ -204,7 +204,7 @@ async def test_async_indexing_directive(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_session_token(container_for):
+async def test_async_session_token_rust(container_for):
     """Baseline call plus ``session_token`` -- forwarded as a request header."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     cmp = await _run_create(container_for, body, summary="baseline + session_token",
@@ -213,7 +213,7 @@ async def test_async_session_token(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_initial_headers(container_for):
+async def test_async_initial_headers_rust(container_for):
     """Baseline call plus ``initial_headers`` -- a caller-supplied custom header.
 
     Worth pinning on the async path specifically: custom headers ride a
@@ -227,7 +227,7 @@ async def test_async_initial_headers(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_priority(container_for):
+async def test_async_priority_rust(container_for):
     """Baseline call plus ``priority='High'`` -- the priority-based-throttling header."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     cmp = await _run_create(container_for, body, summary="baseline + priority=High",
@@ -236,7 +236,7 @@ async def test_async_priority(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_throughput_bucket(container_for):
+async def test_async_throughput_bucket_rust(container_for):
     """Baseline call plus ``throughput_bucket=1`` -- the throughput-bucket header."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     cmp = await _run_create(container_for, body, summary="baseline + throughput_bucket",
@@ -249,7 +249,7 @@ async def test_async_throughput_bucket(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_enable_automatic_id_generation(container_for):
+async def test_async_enable_automatic_id_generation_rust(container_for):
     """``enable_automatic_id_generation=True`` with no ``id`` in the body.
 
     Both backends must generate an id rather than reject the insert. The generated
@@ -264,7 +264,7 @@ async def test_async_enable_automatic_id_generation(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_no_response(container_for):
+async def test_async_no_response_rust(container_for):
     """``no_response=True`` -- the service must not echo the document back.
 
     This changes the *shape of the return value*, not just a header, so it is
@@ -277,7 +277,7 @@ async def test_async_no_response(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_retry_write(container_for):
+async def test_async_retry_write_rust(container_for):
     """``retry_write=1`` -- opts a non-idempotent write into retries."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     cmp = await _run_create(container_for, body, summary="baseline + retry_write",
@@ -286,7 +286,7 @@ async def test_async_retry_write(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_availability_strategy(container_for):
+async def test_async_availability_strategy_rust(container_for):
     """``availability_strategy=True`` -- enables hedged cross-region requests."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     cmp = await _run_create(container_for, body, summary="baseline + availability_strategy",
@@ -295,7 +295,7 @@ async def test_async_availability_strategy(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_timeout(container_for):
+async def test_async_timeout_rust(container_for):
     """``timeout=30`` -- the overall per-request timeout.
 
     Honoured on both backends: core-python through azure-core's per-call
@@ -313,7 +313,7 @@ async def test_async_timeout(container_for):
                          "Mirrors the same skip in the sync suite -- a single-region test "
                          "account cannot show a routing difference either way.")
 @pytest.mark.asyncio
-async def test_async_excluded_locations(container_for):
+async def test_async_excluded_locations_rust(container_for):
     """``excluded_locations`` -- a Python-only routing override."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     cmp = await _run_create(container_for, body, summary="baseline + excluded_locations",
@@ -327,7 +327,7 @@ async def test_async_excluded_locations(container_for):
                          "connection_timeout into the driver's connection-pool config yet. "
                          "Mirrors the sync suite's skip.")
 @pytest.mark.asyncio
-async def test_async_connection_timeout(container_for):
+async def test_async_connection_timeout_rust(container_for):
     """``connection_timeout=10`` -- the azure-core HTTP connect timeout."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     cmp = await _run_create(container_for, body, summary="baseline + connection_timeout=10",
@@ -340,7 +340,7 @@ async def test_async_connection_timeout(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_response_hook_fires_once(container_for):
+async def test_async_response_hook_fires_once_rust(container_for):
     """``response_hook`` must fire exactly once per backend on success.
 
     Counting the invocations is the point. Asserting only that the hook is
@@ -384,7 +384,7 @@ async def test_async_response_hook_fires_once(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_duplicate_id_raises_typed_exception(container_for):
+async def test_async_duplicate_id_raises_typed_exception_rust(container_for):
     """inserting the same id twice raises ``CosmosResourceExistsError``.
 
     Uses the functional exception assertion rather than the strict one: the
@@ -417,7 +417,7 @@ async def test_async_duplicate_id_raises_typed_exception(container_for):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("name", ["populate_query_metrics", "etag", "match_condition"])
 @pytest.mark.parametrize("value", [None, False, True])
-async def test_async_retired_create_arguments_are_rejected(container_for, name, value):
+async def test_async_retired_create_arguments_are_rejected_rust(container_for, name, value):
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     comparison = await _run_create(container_for, body, summary=f"create rejects {name}", **{name: value})
     for outcome in (comparison.core_python, comparison.rust):

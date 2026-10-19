@@ -91,7 +91,7 @@ class TestComputedPropertiesQueryAsync(AsyncReplacementCase):
                                                                          partition_key="test")]
         assert len(queried_items) == 0
 
-    async def test_replace_with_same_computed_properties_async(self):
+    async def test_replace_with_same_computed_properties_async_rust(self):
         """Replacing a container with the identical computed properties leaves them working.
 
         The container is created with three computed properties, items are
@@ -128,7 +128,7 @@ class TestComputedPropertiesQueryAsync(AsyncReplacementCase):
         await self.computedPropertiesTestCases(replaced_collection)
         await self.key_db.delete_container(created_collection_ref.id)
 
-    async def test_replace_without_computed_properties_async(self):
+    async def test_replace_without_computed_properties_async_rust(self):
         """Replace can add computed properties to a container created without any.
 
         The container starts with none, items are written, then a replace
@@ -160,7 +160,7 @@ class TestComputedPropertiesQueryAsync(AsyncReplacementCase):
         await self.computedPropertiesTestCases(replaced_collection)
         await self.key_db.delete_container(created_collection_ref.id)
 
-    async def test_replace_with_new_computed_properties_async(self):
+    async def test_replace_with_new_computed_properties_async_rust(self):
         """Replace swaps one set of computed properties for a different set.
 
         The container starts with ``cp_lower``, ``cp_power`` and
@@ -255,7 +255,7 @@ class TestComputedPropertiesQueryAsync(AsyncReplacementCase):
             expected_count=0)
         await self.key_db.delete_container(created_collection_ref.id)
 
-    async def test_replace_with_incorrect_computed_properties_async(self):
+    async def test_replace_with_incorrect_computed_properties_async_rust(self):
         """A single dict instead of a list of them is rejected by the service.
 
         Computed properties must be a list. Passing one bare dict is an easy
@@ -293,7 +293,7 @@ class TestComputedPropertiesQueryAsync(AsyncReplacementCase):
             assert e.status_code == 400
             assert "One of the specified inputs is invalid" in e.http_error_message
 
-    async def test_replace_with_remove_computed_properties_async(self):
+    async def test_replace_with_remove_computed_properties_async_rust(self):
         """Replacing without mentioning computed properties removes them entirely.
 
         The container is created with three, then replaced with no

@@ -76,7 +76,7 @@ def _normalize_feed_range(feed_range):
     )
 
 
-def test_feed_range_from_partition_key_baseline(container_for):
+def test_feed_range_from_partition_key_baseline_rust(container_for):
     """String partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -95,7 +95,7 @@ def test_feed_range_from_partition_key_baseline(container_for):
     comparison.assert_functional_parity()
 
 
-def test_feed_range_from_partition_key_numeric_partition_key(container_for):
+def test_feed_range_from_partition_key_numeric_partition_key_rust(container_for):
     """Numeric partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -114,7 +114,7 @@ def test_feed_range_from_partition_key_numeric_partition_key(container_for):
     comparison.assert_functional_parity()
 
 
-def test_feed_range_from_partition_key_bool_partition_key(container_for):
+def test_feed_range_from_partition_key_bool_partition_key_rust(container_for):
     """Boolean partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -133,7 +133,7 @@ def test_feed_range_from_partition_key_bool_partition_key(container_for):
     comparison.assert_functional_parity()
 
 
-def test_feed_range_from_partition_key_none_partition_key_value_branch(container_for):
+def test_feed_range_from_partition_key_none_partition_key_value_branch_rust(container_for):
     """NonePartitionKeyValue branch (`_Undefined` on non-system containers) is parity-safe."""
 
     def _do(client):
@@ -149,7 +149,7 @@ def test_feed_range_from_partition_key_none_partition_key_value_branch(container
     comparison.assert_functional_parity()
 
 
-def test_feed_range_from_partition_key_hpk_full_key(container_for_multihash):
+def test_feed_range_from_partition_key_hpk_full_key_rust(container_for_multihash):
     """Hierarchical full key (all PK components) is parity-safe."""
     run_suffix = uuid.uuid4().hex
 
@@ -169,7 +169,7 @@ def test_feed_range_from_partition_key_hpk_full_key(container_for_multihash):
     comparison.assert_functional_parity()
 
 
-def test_L6_feed_range_from_partition_key_hpk_prefix_key(container_for_multihash):
+def test_L6_feed_range_from_partition_key_hpk_prefix_key_rust(container_for_multihash):
     """Hierarchical prefix key (partial PK components) is parity-safe."""
     run_suffix = uuid.uuid4().hex
 
@@ -188,7 +188,7 @@ def test_L6_feed_range_from_partition_key_hpk_prefix_key(container_for_multihash
     comparison.assert_functional_parity()
 
 
-def test_feed_range_from_partition_key_null_partition_key(container_for):
+def test_feed_range_from_partition_key_null_partition_key_rust(container_for):
     """JSON-null partition key maps to the same feed range on both backends."""
 
     def _do(client):

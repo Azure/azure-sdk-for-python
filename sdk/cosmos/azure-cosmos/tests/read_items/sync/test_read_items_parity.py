@@ -73,7 +73,7 @@ def _run(container_id, items, description, request_kwargs):
     comparison.assert_functional_parity()
 
 
-def test_read_items_single_item(seeded):
+def test_read_items_single_item_rust(seeded):
     """One item -> read as a point read; same item on both backends."""
     items = [seeded["seeded"][-1]]  # the lone pk-c item
     _run(seeded["container_id"], items,
@@ -81,7 +81,7 @@ def test_read_items_single_item(seeded):
          request_kwargs={"count": 1})
 
 
-def test_read_items_same_partition(seeded):
+def test_read_items_same_partition_rust(seeded):
     """Several items in one partition -> read as one query; same set on both backends."""
     items = [pair for pair in seeded["seeded"] if pair[1] == "pk-a"]
     _run(seeded["container_id"], items,
@@ -89,7 +89,7 @@ def test_read_items_same_partition(seeded):
          request_kwargs={"count": len(items)})
 
 
-def test_read_items_across_partitions(seeded):
+def test_read_items_across_partitions_rust(seeded):
     """Items spread across partitions -> fan-out; same merged set on both backends."""
     items = list(seeded["seeded"])
     _run(seeded["container_id"], items,
@@ -97,7 +97,7 @@ def test_read_items_across_partitions(seeded):
          request_kwargs={"count": len(items)})
 
 
-def test_read_items_missing_omitted(seeded):
+def test_read_items_missing_omitted_rust(seeded):
     """A mix of real and non-existent ids -> only the real ones come back, on both."""
     items = list(seeded["seeded"]) + seeded["missing"]
     _run(seeded["container_id"], items,
@@ -105,7 +105,7 @@ def test_read_items_missing_omitted(seeded):
          request_kwargs={"requested": len(items), "existing": len(seeded["seeded"])})
 
 
-def test_read_items_all_missing(seeded):
+def test_read_items_all_missing_rust(seeded):
     """Only non-existent ids -> an empty result on both backends."""
     _run(seeded["container_id"], list(seeded["missing"]),
          description="read_items all-missing returns empty",
@@ -126,7 +126,7 @@ def _run_with_options(container_id, items, description, read_items_kwargs):
     comparison.assert_functional_parity()
 
 
-def test_read_items_availability_strategy_disabled(seeded):
+def test_read_items_availability_strategy_disabled_rust(seeded):
     """availability_strategy=False (hedging off) is honored on the rust point
     leg and returns the same items as legacy."""
     items = [seeded["seeded"][-1]]  # single item -> point read
@@ -135,7 +135,7 @@ def test_read_items_availability_strategy_disabled(seeded):
                       read_items_kwargs={"availability_strategy": False})
 
 
-def test_L6_read_items_custom_initial_headers(seeded):
+def test_L6_read_items_custom_initial_headers_rust(seeded):
     """A non-x-ms customer header on read_items is forwarded on both backends and
     does not change the returned items."""
     items = [seeded["seeded"][-1]]

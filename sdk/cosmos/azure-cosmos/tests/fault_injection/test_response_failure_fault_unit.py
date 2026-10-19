@@ -9,7 +9,7 @@ from fault_injection._response_failure import OPERATION_TIMEOUT, assert_response
 
 
 @pytest.mark.parametrize("inject", [True, False])
-def test_response_fault_is_scoped_transport_error_without_delay(inject):
+def test_response_fault_is_scoped_transport_error_without_delay_rust(inject):
     rule = response_failure_rule("rule", "owned-container", inject)
     prepared, = _prepare_fault_injection_rules([rule])
     assert prepared.id == "rule"
@@ -31,23 +31,23 @@ def test_response_fault_is_scoped_transport_error_without_delay(inject):
     exceptions.CosmosHttpResponseError(408), exceptions.CosmosHttpResponseError(503),
     ServiceRequestError("failed before sending"), RuntimeError("raw binding error"),
 ])
-def test_response_failure_rejects_success_deadline_http_and_wrong_transport_error(error):
+def test_response_failure_rejects_success_deadline_http_and_wrong_transport_error_rust(error):
     with pytest.raises(AssertionError, match="Expected ServiceResponseError"):
         assert_response_failure(error, 1.0, 1)
 
 
 @pytest.mark.parametrize("hits", [0, -1])
-def test_response_failure_requires_applied_fault(hits):
+def test_response_failure_requires_applied_fault_rust(hits):
     with pytest.raises(AssertionError, match="did not apply"):
         assert_response_failure(ServiceResponseError("injected"), 1.0, hits)
 
 
 @pytest.mark.parametrize("elapsed", [-1, OPERATION_TIMEOUT, OPERATION_TIMEOUT + 1, float("nan"), float("inf")])
-def test_response_failure_rejects_expired_or_invalid_budget(elapsed):
+def test_response_failure_rejects_expired_or_invalid_budget_rust(elapsed):
     with pytest.raises(AssertionError, match="before the operation budget"):
         assert_response_failure(ServiceResponseError("injected"), elapsed, 1)
 
 
 @pytest.mark.parametrize("hits", [1, 3])
-def test_response_failure_accepts_transport_error_without_inventing_retry_count(hits):
+def test_response_failure_accepts_transport_error_without_inventing_retry_count_rust(hits):
     assert_response_failure(ServiceResponseError("injected"), 1.0, hits)

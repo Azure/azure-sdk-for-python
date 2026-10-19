@@ -32,7 +32,7 @@ _KNOWN = "tests/test_query.py::QueryTests::test_query[West US]"
 _FAILURE = "FAILED {} - AssertionError: expected result\n".format(_KNOWN)
 
 
-def test_load_known_ids_preserves_case_and_parameters():
+def test_load_known_ids_preserves_case_and_parameters_rust():
     """Reading the exemption list keeps the test name exactly, and accepts either path style.
 
     Comment lines and blank lines are ignored, so the list can explain itself. Path
@@ -45,7 +45,7 @@ def test_load_known_ids_preserves_case_and_parameters():
 
 
 @pytest.mark.parametrize("entry", ["query", "feed", "resource_token", "tests/test_query.py"])
-def test_rejects_broad_known_failure_entries(entry):
+def test_rejects_broad_known_failure_entries_rust(entry):
     """An entry that would excuse more than one test is refused outright.
 
     Three of these are bare topic words and the fourth is a whole file. Any of them would
@@ -59,7 +59,7 @@ def test_rejects_broad_known_failure_entries(entry):
         ckf.load_known_ids(entry)
 
 
-def test_matching_is_exact_not_a_feature_substring_or_case_fold():
+def test_matching_is_exact_not_a_feature_substring_or_case_fold_rust():
     """A failure is excused only by its exact name, with one deliberate exception.
 
     Four failures are offered against a list holding one name. Only the identical one is
@@ -81,7 +81,7 @@ def test_matching_is_exact_not_a_feature_substring_or_case_fold():
     assert ckf.classify([_KNOWN.replace("/", "\\")], [_KNOWN])[1] == []
 
 
-def test_summary_ids_preserve_spaces_in_parameters_and_strip_error_text():
+def test_summary_ids_preserve_spaces_in_parameters_and_strip_error_text_rust():
     """Test names are read out of the run's output without the error message attached.
 
     Each line holds a name followed by a dash and a description of what went wrong. Only
@@ -118,7 +118,7 @@ def test_summary_ids_preserve_spaces_in_parameters_and_strip_error_text():
         ("unknown outcome in 0.01s", 0),
     ],
 )
-def test_invalid_runs_never_look_clean(text, exit_code):
+def test_invalid_runs_never_look_clean_rust(text, exit_code):
     """Sixteen ways a run can be unjudgeable, and every one of them is refused.
 
     They fall into groups. Output with no final tally at all: nothing, a run that only
@@ -148,7 +148,7 @@ def test_invalid_runs_never_look_clean(text, exit_code):
         "\x1b[32m1 passed in 0.01s\x1b[0m",
     ],
 )
-def test_complete_successful_runs_are_accepted(summary):
+def test_complete_successful_runs_are_accepted_rust(summary):
     """Real successful output is accepted in each of the forms it actually arrives in.
 
     Being strict is only useful if genuine runs still pass. These are the real variations:
@@ -163,7 +163,7 @@ def test_complete_successful_runs_are_accepted(summary):
     assert ckf.validate_run(summary, 0) == []
 
 
-def test_failure_and_teardown_error_counts_are_not_deduplicated():
+def test_failure_and_teardown_error_counts_are_not_deduplicated_rust():
     """One test that both failed and broke during cleanup counts as two events, not one.
 
     The name appears twice and both are kept, because the tally counts them separately
@@ -178,7 +178,7 @@ def test_failure_and_teardown_error_counts_are_not_deduplicated():
 
 
 @pytest.mark.parametrize("encoding", ["utf-8", "utf-8-sig", "utf-16"])
-def test_cli_accepts_complete_exempt_failure_in_powershell_encodings(tmp_path, encoding, capsys):
+def test_cli_accepts_complete_exempt_failure_in_powershell_encodings_rust(tmp_path, encoding, capsys):
     """A captured run is read correctly whichever way the shell wrote the file.
 
     PowerShell writes captured output in several encodings depending on how it was
@@ -198,7 +198,7 @@ def test_cli_accepts_complete_exempt_failure_in_powershell_encodings(tmp_path, e
     assert "1 explicitly exempt" in capsys.readouterr().out
 
 
-def test_cli_reports_unexplained_failure(tmp_path, capsys):
+def test_cli_reports_unexplained_failure_rust(tmp_path, capsys):
     """A failure nobody signed off is reported by name, and the run is judged a failure.
 
     Same run as above but with an empty exemption list. The name has to appear in the
@@ -213,7 +213,7 @@ def test_cli_reports_unexplained_failure(tmp_path, capsys):
     assert _KNOWN in capsys.readouterr().err
 
 
-def test_cli_rejects_empty_transcript_without_printing_success(tmp_path, capsys):
+def test_cli_rejects_empty_transcript_without_printing_success_rust(tmp_path, capsys):
     """An empty file is rejected, and nothing resembling success is printed.
 
     The third answer gets its own result code, distinct from both clean and failing, so a
@@ -231,7 +231,7 @@ def test_cli_rejects_empty_transcript_without_printing_success(tmp_path, capsys)
     assert not output.out
 
 
-def test_cli_requires_real_pytest_exit_code():
+def test_cli_requires_real_pytest_exit_code_rust():
     """The tool refuses to run unless it is told how the test process actually ended.
 
     There is no default. Without the real exit code the tool could only read the captured
@@ -244,7 +244,7 @@ def test_cli_requires_real_pytest_exit_code():
     assert error.value.code == 2
 
 
-def test_checked_in_allowlist_does_not_exempt_unreviewed_failures():
+def test_checked_in_allowlist_does_not_exempt_unreviewed_failures_rust():
     """The real exemption list in this repository excuses nothing it was not meant to.
 
     Every other test here uses made-up input. This one loads the file actually committed

@@ -135,7 +135,7 @@ def _assert_persisted_effect(container, item_id, operation, outcome):
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("operation", ["create", "replace", "upsert-create", "upsert-replace", "delete"])
 @pytest.mark.parametrize("token_kind", ["omitted", "from-write", "from-read", "older", "future", "malformed"])
-def test_explicit_write_session_token(orders, asynchronous, operation, token_kind):
+def test_explicit_write_session_token_rust(orders, asynchronous, operation, token_kind):
     key, database_id, setup, older_token = orders
     outcomes = {}
     for backend in ("core-python", "rust"):
@@ -168,7 +168,7 @@ def test_explicit_write_session_token(orders, asynchronous, operation, token_kin
 
 @pytest.mark.parametrize("backend", ["core-python", "rust"])
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-def test_future_token_is_enforced_on_a_read(orders, backend, asynchronous):
+def test_future_token_is_enforced_on_a_read_rust(orders, backend, asynchronous):
     key, database_id, setup, _ = orders
     read = setup.read_item("first-order", partition_key=CUSTOMER)
     token = _future_token(read.get_response_headers()[SESSION_HEADER])

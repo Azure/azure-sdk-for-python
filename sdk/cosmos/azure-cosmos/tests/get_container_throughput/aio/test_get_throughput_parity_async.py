@@ -79,7 +79,7 @@ def _normalize_throughput(throughput_properties):
 
 
 @pytest.mark.asyncio
-async def test_get_throughput_baseline_async(container_for):
+async def test_get_throughput_baseline_async_rust(container_for):
     """Async baseline get_throughput returns the same RU/s on both backends."""
     # Without this, a basic divergence in the reported RU/s would go unnoticed.
 

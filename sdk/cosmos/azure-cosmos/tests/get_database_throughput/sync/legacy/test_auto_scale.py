@@ -53,7 +53,7 @@ class TestAutoScale(unittest.TestCase):
     def tearDown(self) -> None:
         self.key_client.close()
 
-    def test_autoscale_create_database(self):
+    def test_autoscale_create_database_rust(self):
         """``get_throughput`` reports back the autoscale settings a database was created with.
 
         Two databases, one at a 5000 request unit ceiling with a 2 percent

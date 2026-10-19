@@ -81,7 +81,7 @@ def arguments(operation, body):
         "literal \\ud800 and \u00e9",
     ],
 )
-def test_encoding_matches_legacy(operation, compact, text):
+def test_encoding_matches_legacy_rust(operation, compact, text):
     """The bytes are identical to the older encoder's, for text and numbers that are easy
     to get wrong.
 
@@ -143,7 +143,7 @@ def test_encoding_matches_legacy(operation, compact, text):
         ("\\ud800", b"\\\\ud800", b"\\\\ud800"),
     ],
 )
-def test_encoding_has_independent_golden_bytes(text, escaped, compact):
+def test_encoding_has_independent_golden_bytes_rust(text, escaped, compact):
     """The same cases again, against bytes written out by hand rather than a second encoder.
 
     The test above compares one encoder to another. If both were changed together the
@@ -165,7 +165,7 @@ def test_encoding_has_independent_golden_bytes(text, escaped, compact):
 
 
 @pytest.mark.parametrize("operation", WRITES)
-def test_builders_only_reuse_snapshots(operation, monkeypatch):
+def test_builders_only_reuse_snapshots_rust(operation, monkeypatch):
     """After the bytes are taken, the caller's dictionary is gone and is never encoded again.
 
     First the raw body is checked to have been removed from the arguments entirely, in
@@ -207,7 +207,7 @@ def test_builders_only_reuse_snapshots(operation, monkeypatch):
 
 @pytest.mark.parametrize("operation", WRITES)
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_snapshot_once_before_execute_and_async_yield(
+def test_snapshot_once_before_execute_and_async_yield_rust(
     operation, async_mode, monkeypatch
 ):
     """The body is encoded once, before the request is sent, even across a pause.
@@ -263,7 +263,7 @@ def test_snapshot_once_before_execute_and_async_yield(
 
 
 @pytest.mark.parametrize("operation", WRITES)
-def test_wrapper_does_not_deepcopy_documents_or_call_legacy(operation, monkeypatch):
+def test_wrapper_does_not_deepcopy_documents_or_call_legacy_rust(operation, monkeypatch):
     """Nothing copies the item body, and none of the older preparation code runs.
 
     Copying was the obvious way to stop the caller changing a body in flight, and it
@@ -294,7 +294,7 @@ def test_wrapper_does_not_deepcopy_documents_or_call_legacy(operation, monkeypat
     forbidden.assert_not_called()
 
 
-def test_generated_id_is_resolved_once_without_mutating_a_mapping(monkeypatch):
+def test_generated_id_is_resolved_once_without_mutating_a_mapping_rust(monkeypatch):
     """A generated identifier is settled once, appears in the bytes, and leaves the caller's
     mapping untouched.
 
@@ -338,7 +338,7 @@ def test_generated_id_is_resolved_once_without_mutating_a_mapping(monkeypatch):
 
 @pytest.mark.parametrize("operation", ("upsert_item", "replace_item"))
 @pytest.mark.parametrize("body_id", [None, "", False, 42, "body-id"])
-def test_upsert_and_replace_do_not_generate_or_rewrite_ids(
+def test_upsert_and_replace_do_not_generate_or_rewrite_ids_rust(
     operation, body_id, monkeypatch
 ):
     """These two never make up an identifier, even when asked to, and never alter the body.
@@ -368,7 +368,7 @@ def test_upsert_and_replace_do_not_generate_or_rewrite_ids(
 
 
 @pytest.mark.parametrize("operation", DOCUMENT_WRITES)
-def test_body_id_matches_the_encoded_dictionary_not_an_overridden_get(operation):
+def test_body_id_matches_the_encoded_dictionary_not_an_overridden_get_rust(operation):
     """The reported identifier comes from what was encoded, not from asking the body for it.
 
     The body here is a dictionary subclass that lies when asked for a named field but
@@ -390,7 +390,7 @@ def test_body_id_matches_the_encoded_dictionary_not_an_overridden_get(operation)
 @pytest.mark.parametrize("operation", DOCUMENT_WRITES)
 @pytest.mark.parametrize("compact", [False, True])
 @pytest.mark.parametrize("body_id", ["\u65e5\u672c", "\U0001f600", "\ud83d\ude00"])
-def test_unicode_body_id_matches_json_and_utf8(operation, compact, body_id):
+def test_unicode_body_id_matches_json_and_utf8_rust(operation, compact, body_id):
     """An identifier outside the Latin alphabet still matches its bytes and survives the
     trip into a header.
 
@@ -412,7 +412,7 @@ def test_unicode_body_id_matches_json_and_utf8(operation, compact, body_id):
 
 @pytest.mark.parametrize("operation", WRITES)
 @pytest.mark.parametrize("value", [float("nan"), float("inf"), -float("inf")])
-def test_nonfinite_policy_is_not_silently_unified(operation, value):
+def test_nonfinite_policy_is_not_silently_unified_rust(operation, value):
     """The four writes do not agree about numbers JSON cannot express, and that split is
     pinned here deliberately.
 
@@ -440,7 +440,7 @@ def test_nonfinite_policy_is_not_silently_unified(operation, value):
 @pytest.mark.parametrize("operation", WRITES)
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("circular", [False, True])
-def test_invalid_json_fails_before_backend_dispatch(operation, async_mode, circular):
+def test_invalid_json_fails_before_backend_dispatch_rust(operation, async_mode, circular):
     """A body that cannot be encoded fails before anything is sent.
 
     Two ways to be unencodable: a body that contains itself, and a body holding an object
@@ -466,7 +466,7 @@ def test_invalid_json_fails_before_backend_dispatch(operation, async_mode, circu
 @pytest.mark.parametrize(
     "body", [b'{"id":"body"}', bytearray(b'{"id":"body"}'), '{"id":"body"}', None]
 )
-def test_replacement_keeps_existing_preencoded_body_support(body):
+def test_replacement_keeps_existing_preencoded_body_support_rust(body):
     """A body that is already encoded is passed along untouched, and nothing at all becomes
     empty bytes.
 

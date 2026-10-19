@@ -18,7 +18,7 @@ class TestCRUDOperationsSubPartitionAsync(unittest.IsolatedAsyncioTestCase):
         self.database = await self.client.create_database("throughput_hpk_" + uuid.uuid4().hex)
         self.addAsyncCleanup(self.client.delete_database, self.database.id)
 
-    async def test_partitioned_collection_subpartition_async(self):
+    async def test_partitioned_collection_subpartition_async_rust(self):
         # Source: tests/test_crud_subpartition_async.py::TestSubpartitionCrudAsync.test_partitioned_collection_subpartition_async
         created_db = self.database
         collection_definition = {

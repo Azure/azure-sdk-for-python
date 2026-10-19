@@ -53,27 +53,27 @@ class TestSinglePartitionKeyValues(unittest.TestCase):
     one-element JSON array with its native JSON type preserved.
     """
 
-    def test_string_value_wraps_in_one_element_array(self):
+    def test_string_value_wraps_in_one_element_array_rust(self):
         """The common case: a string PK like a customer id → ``["customerA"]``."""
         self.assertEqual(legacy_partition_key_header("customerA"), '["customerA"]')
 
-    def test_integer_value_stays_unquoted(self):
+    def test_integer_value_stays_unquoted_rust(self):
         """Integer ``123`` stays an unquoted JSON integer (distinct partition from ``"123"``)."""
         self.assertEqual(legacy_partition_key_header(123), "[123]")
 
-    def test_float_value_stays_unquoted(self):
+    def test_float_value_stays_unquoted_rust(self):
         """Float ``99.5`` stays unquoted — and is not rounded to ``99``."""
         self.assertEqual(legacy_partition_key_header(99.5), "[99.5]")
 
-    def test_true_renders_as_lowercase_json_true(self):
+    def test_true_renders_as_lowercase_json_true_rust(self):
         """Python ``True`` → JSON ``true`` (lowercase, unquoted)."""
         self.assertEqual(legacy_partition_key_header(True), "[true]")
 
-    def test_false_renders_as_lowercase_json_false(self):
+    def test_false_renders_as_lowercase_json_false_rust(self):
         """Python ``False`` → JSON ``false`` (lowercase, unquoted)."""
         self.assertEqual(legacy_partition_key_header(False), "[false]")
 
-    def test_none_renders_as_json_null(self):
+    def test_none_renders_as_json_null_rust(self):
         """A literal ``None`` PK value → ``[null]`` (distinct from ``_Undefined`` and ``_Empty``)."""
         self.assertEqual(legacy_partition_key_header(None), "[null]")
 
@@ -88,15 +88,15 @@ class TestSentinelPartitionKeyValues(unittest.TestCase):
     ``[]`` for "container has no partition key at all".
     """
 
-    def test_undefined_renders_as_array_with_empty_object(self):
+    def test_undefined_renders_as_array_with_empty_object_rust(self):
         """``_Undefined()`` → ``[{}]``: PK path exists in container but doc has no value at it."""
         self.assertEqual(legacy_partition_key_header(_Undefined()), "[{}]")
 
-    def test_empty_instance_renders_as_empty_array(self):
+    def test_empty_instance_renders_as_empty_array_rust(self):
         """``_Empty()`` → ``[]``: legacy partitionless container (no PK path defined)."""
         self.assertEqual(legacy_partition_key_header(_Empty()), "[]")
 
-    def test_none_partition_key_value_class_renders_as_empty_array(self):
+    def test_none_partition_key_value_class_renders_as_empty_array_rust(self):
         """``NonePartitionKeyValue`` (the class itself, not an instance) → ``[]``, same as ``_Empty()``."""
         self.assertEqual(legacy_partition_key_header(NonePartitionKeyValue), "[]")
 
@@ -111,35 +111,35 @@ class TestHierarchicalPartitionKeyValues(unittest.TestCase):
     sentinel shapes (``[{}]`` / ``[]``).
     """
 
-    def test_two_level_hierarchical_key_renders_in_order(self):
+    def test_two_level_hierarchical_key_renders_in_order_rust(self):
         """Two PK paths → two-element JSON array in the order supplied."""
         self.assertEqual(
             legacy_partition_key_header(["t1", "r1"]),
             '["t1","r1"]',
         )
 
-    def test_three_level_hierarchical_key_with_mixed_types(self):
+    def test_three_level_hierarchical_key_with_mixed_types_rust(self):
         """Mixed string / int / bool components each keep their JSON type."""
         self.assertEqual(
             legacy_partition_key_header(["tenant1", 42, True]),
             '["tenant1",42,true]',
         )
 
-    def test_hierarchical_key_with_empty_leaf_renders_null(self):
+    def test_hierarchical_key_with_empty_leaf_renders_null_rust(self):
         """``_Empty`` inside a hierarchical PK → JSON ``null`` at that position (not ``[]``)."""
         self.assertEqual(
             legacy_partition_key_header(["t1", _Empty()]),
             '["t1",null]',
         )
 
-    def test_hierarchical_key_with_undefined_leaf_renders_null(self):
+    def test_hierarchical_key_with_undefined_leaf_renders_null_rust(self):
         """``_Undefined`` inside a hierarchical PK → JSON ``null`` at that position (not ``[{}]``)."""
         self.assertEqual(
             legacy_partition_key_header([_Undefined(), "r1"]),
             '[null,"r1"]',
         )
 
-    def test_tuple_input_treated_the_same_as_list(self):
+    def test_tuple_input_treated_the_same_as_list_rust(self):
         """A tuple is accepted (matches the ``Sequence`` check) and serialises identically to a list."""
         self.assertEqual(
             legacy_partition_key_header(("t1", "r1")),
@@ -157,7 +157,7 @@ class TestOutputAlwaysStringAndCompactJson(unittest.TestCase):
     stable for customer string-comparison fixtures.
     """
 
-    def test_every_documented_input_returns_a_str(self):
+    def test_every_documented_input_returns_a_str_rust(self):
         """For every documented input shape, the return type is ``str``."""
         for value in [
             "customerA",
@@ -176,7 +176,7 @@ class TestOutputAlwaysStringAndCompactJson(unittest.TestCase):
                 result = legacy_partition_key_header(value)
                 self.assertIsInstance(result, str)
 
-    def test_compact_json_no_spaces_in_output(self):
+    def test_compact_json_no_spaces_in_output_rust(self):
         """Output is compact JSON — no spaces anywhere — so byte comparisons stay stable."""
         self.assertNotIn(
             " ", legacy_partition_key_header(["tenant1", "region1", 99])
@@ -218,7 +218,7 @@ class TestParityWithExistingHeaderBuilder(unittest.TestCase):
             return json.dumps(list(normalized), separators=(",", ":"))
         return json.dumps([pk_value], separators=(",", ":"))
 
-    def test_parity_against_legacy_for_full_input_table(self):
+    def test_parity_against_legacy_for_full_input_table_rust(self):
         """For every documented input shape, helper output == legacy output."""
         for value in [
             "customerA",

@@ -6,8 +6,8 @@
 Self-contained: builds its own database + container in ``setUp`` and
 registers cleanup after acquisition, including on setup failure.
 The class name and method name match the
-source at ``tests/test_none_options.py`` so test IDs differ only by
-path.
+source (apart from the method's ``_rust`` suffix) at ``tests/test_none_options.py`` so
+test IDs differ by path and method suffix.
 
 Run with::
 
@@ -44,7 +44,7 @@ class TestNoneOptions(unittest.TestCase):
             partition_key=PartitionKey(path="/pk"),
         )
 
-    def test_container_create_item_none_options(self):
+    def test_container_create_item_none_options_rust(self):
         # Source: tests/test_none_options.py::TestNoneOptions.test_container_create_item_none_options
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 1}
         created = self.container.create_item(

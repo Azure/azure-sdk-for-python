@@ -34,7 +34,7 @@ pytestmark = pytest.mark.cosmosEmulator
 @pytest.mark.parametrize(
     "inject", [True, False], ids=["cold-metadata-failure", "no-injection"]
 )
-async def test_query_setup_error_retries_same_iterator_async(
+async def test_query_setup_error_retries_same_iterator_async_rust(
     owned_target, monkeypatch, inject
 ):
     database_id, observer = owned_target

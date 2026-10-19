@@ -16,7 +16,7 @@ from fault_injection._query_setup import (
 
 
 @pytest.mark.parametrize("inject", [True, False])
-def test_setup_and_execution_rules_have_independent_controls(inject):
+def test_setup_and_execution_rules_have_independent_controls_rust(inject):
     metadata, guard = _prepare_fault_injection_rules(
         setup_rules("metadata", "guard", "owned", inject)
     )
@@ -59,7 +59,7 @@ def setup_evidence():
     )
 
 
-def test_setup_failure_accepts_unstarted_retryable_cursor():
+def test_setup_failure_accepts_unstarted_retryable_cursor_rust():
     assert_setup_failure(**setup_evidence())
 
 
@@ -81,7 +81,7 @@ def test_setup_failure_accepts_unstarted_retryable_cursor():
         "nan",
     ],
 )
-def test_setup_failure_rejects_false_evidence(change):
+def test_setup_failure_rejects_false_evidence_rust(change):
     evidence = setup_evidence()
     if change == "wrong-error":
         evidence["error"] = TimeoutError()
@@ -116,13 +116,13 @@ def test_setup_failure_rejects_false_evidence(change):
 @pytest.mark.parametrize(
     "substatus,hits", [(SETUP_SUBSTATUS, 1), (GUARD_SUBSTATUS, 0), (GUARD_SUBSTATUS, 2)]
 )
-def test_guard_requires_matching_positive_execution_fault(substatus, hits):
+def test_guard_requires_matching_positive_execution_fault_rust(substatus, hits):
     error = exceptions.CosmosHttpResponseError(status_code=429, sub_status=substatus)
     with pytest.raises(AssertionError):
         assert_guard_failure(error, hits)
 
 
-def test_guard_accepts_one_execution_fault():
+def test_guard_accepts_one_execution_fault_rust():
     assert_guard_failure(
         exceptions.CosmosHttpResponseError(status_code=429, sub_status=GUARD_SUBSTATUS),
         1,

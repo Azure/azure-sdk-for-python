@@ -179,7 +179,7 @@ _TRUTHY_CASES = [
     "option_key,option_value", _TRUTHY_CASES,
     ids=[f"{key}-{index}" for index, (key, _) in enumerate(_TRUTHY_CASES)],
 )
-def test_truthy_option_produces_identical_header_on_both_engines(option_key, option_value):
+def test_truthy_option_produces_identical_header_on_both_engines_rust(option_key, option_value):
     """A set option lands on the same header with the same value on both paths.
 
     This is the check that catches a wrong wire name in the Rust table (say
@@ -235,7 +235,7 @@ _FALSY_CASES = [
     "option_key,option_value", _FALSY_CASES,
     ids=[f"{key}-{index}" for index, (key, _) in enumerate(_FALSY_CASES)],
 )
-def test_falsy_option_emits_no_header_on_either_engine(option_key, option_value):
+def test_falsy_option_emits_no_header_on_either_engine_rust(option_key, option_value):
     """A falsy option ships no header on either path.
 
     Asserted twice over: the two engines must agree with each other, and both
@@ -261,7 +261,7 @@ def test_falsy_option_emits_no_header_on_either_engine(option_key, option_value)
     "condition_type,expected_header",
     [("IfMatch", "if-match"), ("IfNoneMatch", "if-none-match")],
 )
-def test_access_condition_becomes_the_same_conditional_header(condition_type, expected_header):
+def test_access_condition_becomes_the_same_conditional_header_rust(condition_type, expected_header):
     """``etag`` / ``match_condition`` reach the wire as the same conditional header.
 
     The rust path does not run the legacy header step, so its prep has to emit
@@ -274,7 +274,7 @@ def test_access_condition_becomes_the_same_conditional_header(condition_type, ex
     assert _rust_option_headers(options)[expected_header] == "etag-1"
 
 
-def test_many_options_at_once_stay_in_parity():
+def test_many_options_at_once_stay_in_parity_rust():
     """A realistic multi-option call matches header-for-header.
 
     Per-key tests can all pass while the combination diverges -- for instance if
@@ -293,7 +293,7 @@ def test_many_options_at_once_stay_in_parity():
     })
 
 
-def test_no_response_on_write_maps_to_prefer_on_legacy():
+def test_no_response_on_write_maps_to_prefer_on_legacy_rust():
     """``no_response`` becomes ``Prefer: return=minimal`` on the legacy path.
 
     Excluded from the generic diff because the binding lifts this option to a
@@ -320,7 +320,7 @@ def test_no_response_on_write_maps_to_prefer_on_legacy():
 # ---------------------------------------------------------------------------
 
 
-def test_every_rust_handled_key_is_covered_or_explicitly_excluded():
+def test_every_rust_handled_key_is_covered_or_explicitly_excluded_rust():
     """No option-key can be added without landing in this file's coverage.
 
     Without this, someone adds a knob to ``OPTION_FIELDS`` and the
@@ -338,7 +338,7 @@ def test_every_rust_handled_key_is_covered_or_explicitly_excluded():
     )
 
 
-def test_excluded_keys_are_still_real_keys():
+def test_excluded_keys_are_still_real_keys_rust():
     """The exclusion list cannot silently outlive the keys it names.
 
     A stale entry here would quietly shrink the coverage the test above
@@ -351,7 +351,7 @@ def test_excluded_keys_are_still_real_keys():
     )
 
 
-def test_header_inventory_contains_required_anchors():
+def test_header_inventory_contains_required_anchors_rust():
     """Keep the raw-header precedence inventory nonempty and complete."""
     mapping = _rust_option_key_to_wire_name()
     assert len(mapping) > 20
@@ -363,7 +363,7 @@ def test_header_inventory_contains_required_anchors():
     )
 
 
-def test_legacy_baseline_subtraction_leaves_nothing_for_empty_options():
+def test_legacy_baseline_subtraction_leaves_nothing_for_empty_options_rust():
     """An empty options dict yields no option-derived headers on either engine.
 
     This is what makes the differencing in :func:`_legacy_option_headers`

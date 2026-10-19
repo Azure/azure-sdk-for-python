@@ -21,7 +21,7 @@ pytestmark = pytest.mark.cosmosEmulator
 @pytest.mark.timeout(90)
 @pytest.mark.parametrize("retry_settings,retry_limit", THROTTLE_RETRY_CASES)
 @pytest.mark.parametrize("inject", [True, False], ids=["persistent-429", "no-injection"])
-def test_point_read_throttle_retry_limit(owned_target, retry_settings, retry_limit, inject):
+def test_point_read_throttle_retry_limit_rust(owned_target, retry_settings, retry_limit, inject):
     database_id, observer = owned_target
     item_id = uuid.uuid4().hex
     item = {"id": item_id, "pk": item_id, "name": "order-17", "state": "confirmed"}

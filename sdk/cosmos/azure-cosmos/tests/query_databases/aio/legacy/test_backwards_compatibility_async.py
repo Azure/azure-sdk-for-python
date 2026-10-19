@@ -38,7 +38,7 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
         await self.data_client.close()
 
-    async def test_session_token_compatibility_async(self):
+    async def test_session_token_compatibility_async_rust(self):
         """Passing ``session_token`` to operations that ignore it must not break them.
 
         Sweeps ``session_token`` through roughly a dozen database and container

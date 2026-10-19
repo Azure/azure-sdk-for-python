@@ -52,10 +52,10 @@ class TestContainerPropertiesCacheAsync(unittest.IsolatedAsyncioTestCase):
             assert False, "{}".format(e.http_error_message)
         self.assertEqual((await created_container.get_throughput()).offer_throughput, new_throughput)
 
-    async def test_offer_throughput_container_recreate_async(self):
+    async def test_offer_throughput_container_recreate_async_rust(self):
         # Source: tests/test_container_properties_cache_async.py::TestContainerPropertiesCache.test_offer_throughput_container_recreate_async
         await self._check_recreation("/PK", "/partkey")
 
-    async def test_offer_throughput_container_recreate_sub_partition_async(self):
+    async def test_offer_throughput_container_recreate_sub_partition_async_rust(self):
         # Source: tests/test_container_properties_cache_async.py::TestContainerPropertiesCache.test_offer_throughput_container_recreate_sub_partition_async
         await self._check_recreation(["/country", "/state"], ["/county", "/city"])

@@ -20,7 +20,7 @@ class TestAutoScale(unittest.TestCase):
         finally:
             self.client.close()
 
-    def test_autoscale_create_container(self):
+    def test_autoscale_create_container_rust(self):
         # Source: tests/test_auto_scale.py::TestAutoScale.test_autoscale_create_container
         container = self.database.create_container(
             id="auto_scale", partition_key=PartitionKey(path="/id"),

@@ -40,7 +40,7 @@ def saved_order():
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("warm", [False, True], ids=["cold", "warm"])
 @pytest.mark.parametrize("target_kind", ["id", "document", "self_only", "different_id", "non_string_id"])
-def test_same_item_name_and_saved_address(saved_order, asynchronous, warm, target_kind):
+def test_same_item_name_and_saved_address_rust(saved_order, asynchronous, warm, target_kind):
     database_id, expected = saved_order
     target = {
         "id": expected["id"],

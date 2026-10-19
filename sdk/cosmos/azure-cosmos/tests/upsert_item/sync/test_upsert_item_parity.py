@@ -32,7 +32,7 @@ def container_for(request):
         pass
 
 
-def test_upsert_insert_then_update(container_for):
+def test_upsert_insert_then_update_rust(container_for):
     """upsert inserts, then upserts the same id with a new field -- parity on both."""
     item_id = uuid.uuid4().hex
 
@@ -46,7 +46,7 @@ def test_upsert_insert_then_update(container_for):
     cmp.assert_functional_parity()
 
 
-def test_response_hook_fires_once(container_for):
+def test_response_hook_fires_once_rust(container_for):
     """upsert fires response_hook exactly once per backend."""
     fired = {"core-python": 0, "rust": 0}
     order = ["core-python", "rust"]; idx = [0]

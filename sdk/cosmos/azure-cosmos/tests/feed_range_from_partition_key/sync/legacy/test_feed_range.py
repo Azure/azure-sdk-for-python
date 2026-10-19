@@ -3,8 +3,9 @@
 """Sync ``test_partition_key_to_feed_range`` test against the ``_backend="rust"`` path.
 
 Self-contained: builds its own database + container in ``setUp`` and deletes them in
-``tearDown``. The class name and method name match the source at ``tests/test_feed_range.py``
-so test IDs differ only by path.
+``tearDown``. The class name and method name match the source (apart from the method's
+``_rust`` suffix) at ``tests/test_feed_range.py``
+so test IDs differ by path and method suffix.
 
 The parity suite only proves the two backends agree with each other; if both drifted the
 same way they would still pass while the value is wrong. This test pins the feed range for
@@ -52,7 +53,7 @@ class TestFeedRange(unittest.TestCase):
         except Exception:  # pylint: disable=broad-except
             pass
 
-    def test_partition_key_to_feed_range(self):
+    def test_partition_key_to_feed_range_rust(self):
         """Pin the normalized effective-key range for the sample key '1'.
 
         Check the literal lower bound, successor upper bound, and inclusivity flags.
@@ -69,7 +70,7 @@ class TestFeedRange(unittest.TestCase):
         )
         self.assertEqual(feed_range_epk.get_normalized_range(), expected_range)
 
-    def test_feed_range_is_subset_from_pk(self):
+    def test_feed_range_is_subset_from_pk_rust(self):
         """A range built from a partition key sits inside the full range.
 
         The full range covers everything from empty to ``FF``, so any single

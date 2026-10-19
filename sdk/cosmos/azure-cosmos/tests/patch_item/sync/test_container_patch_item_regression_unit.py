@@ -69,7 +69,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
 class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
     """When no Rust backend is set, the patch still behaves exactly as before."""
 
-    def test_string_item_resolves_to_document_link(self):
+    def test_string_item_resolves_to_document_link_rust(self):
         """A patch by id string targets that item."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
 
@@ -81,7 +81,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
             "dbs/db/colls/c/docs/patch_item",
         )
 
-    def test_dict_item_resolves_to_its_self_link(self):
+    def test_dict_item_resolves_to_its_self_link_rust(self):
         """A patch by item dict targets the item the dict points to."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         item = {"id": "patch_item", "pk": "a", "_self": "dbs/db/colls/c/docs/rid-abc"}
@@ -93,7 +93,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
             "dbs/db/colls/c/docs/rid-abc",
         )
 
-    def test_fall_through_forwards_operations_unchanged(self):
+    def test_fall_through_forwards_operations_unchanged_rust(self):
         """The list of patch operations reaches the existing client
         unchanged."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
@@ -102,7 +102,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
 
         self.assertEqual(cc.PatchItem.call_args.kwargs["operations"], _OPERATIONS)
 
-    def test_filter_predicate_becomes_filter_predicate_option(self):
+    def test_filter_predicate_becomes_filter_predicate_option_rust(self):
         """A filter is forwarded in the options for the server to apply."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
 
@@ -116,7 +116,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
             forwarded_options["filterPredicate"], "from root where root.number = 3"
         )
 
-    def test_cached_container_resource_id_is_added_to_options(self):
+    def test_cached_container_resource_id_is_added_to_options_rust(self):
         """When the container is already cached, its resource id is added
         to the options."""
         proxy, cc, _ = _make_proxy_with_mock_connection(rid="rid-hot")
@@ -126,7 +126,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
         forwarded_options = cc.PatchItem.call_args.kwargs["options"]
         self.assertEqual(forwarded_options[Constants.ContainerRID], "rid-hot")
 
-    def test_caller_request_options_are_merged_not_overwritten(self):
+    def test_caller_request_options_are_merged_not_overwritten_rust(self):
         """Options the caller passes are kept alongside the partition key,
         not thrown away. This guards against the bug where the container
         replaced the caller's options instead of adding to them."""
@@ -141,7 +141,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
         self.assertEqual(forwarded_options["customKey"], "customValue")
         self.assertEqual(forwarded_options["partitionKey"], "a")
 
-    def test_options_always_disable_id_generation(self):
+    def test_options_always_disable_id_generation_rust(self):
         """A patch never generates a new id, so id generation is always
         turned off."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
@@ -151,7 +151,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
         forwarded_options = cc.PatchItem.call_args.kwargs["options"]
         self.assertIs(forwarded_options["disableAutomaticIdGeneration"], True)
 
-    def test_etag_if_not_modified_becomes_access_condition(self):
+    def test_etag_if_not_modified_becomes_access_condition_rust(self):
         """An etag with "if not modified" becomes an if-match condition in
         the options (a patch only if the version still matches)."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
@@ -167,7 +167,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
             {"type": "IfMatch", "condition": "abc"},
         )
 
-    def test_cache_miss_forwards_excluded_locations_into_cache_fetch(self):
+    def test_cache_miss_forwards_excluded_locations_into_cache_fetch_rust(self):
         """When the container is not cached, options like excluded locations
         are passed through to the cache fetch."""
         proxy, _cc, cache = _make_proxy_with_mock_connection(precached=False)
@@ -181,7 +181,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
         self.assertEqual(read_kwargs.get("excluded_locations"), ["West US"])
         self.assertIn("dbs/db/colls/c", cache)
 
-    def test_cache_populate_step_takes_container_cache_lock(self):
+    def test_cache_populate_step_takes_container_cache_lock_rust(self):
         """Filling the cache happens under the container's lock so two calls
         don't both refresh at once."""
         proxy, _cc, _cache = _make_proxy_with_mock_connection(precached=False)
@@ -218,7 +218,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
     """The routing decision specific to patch: when the Rust backend is used
     and when the existing client is used instead."""
 
-    def test_plain_patch_routes_to_backend_with_item_id_and_operations_body(self):
+    def test_plain_patch_routes_to_backend_with_item_id_and_operations_body_rust(self):
         """A plain patch goes to the Rust backend with the item id and
         the operations as its body; the existing client is not called.
 
@@ -247,7 +247,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
             ]},
         )
 
-    def test_filter_predicate_patch_uses_rust_without_legacy(self):
+    def test_filter_predicate_patch_uses_rust_without_legacy_rust(self):
         """Filtered patches reach the selected backend with the condition intact."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
@@ -262,7 +262,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         self.assertTrue(backend.executed)
         cc.PatchItem.assert_not_called()
 
-    def test_version_guarded_patch_uses_rust_without_legacy(self):
+    def test_version_guarded_patch_uses_rust_without_legacy_rust(self):
         """With a Rust backend wired, a guarded patch goes to it and never falls through.
 
         The rest of this file pins the legacy fall-through. This test is the

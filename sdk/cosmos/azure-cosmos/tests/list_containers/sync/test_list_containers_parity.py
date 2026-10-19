@@ -75,7 +75,7 @@ def populated_database_id():
             client.close()
 
 
-def test_list_containers_returns_same_ids(populated_database_id):
+def test_list_containers_returns_same_ids_rust(populated_database_id):
     """Both engines report the same set of containers for the same database."""
 
     def _do(client):
@@ -90,7 +90,7 @@ def test_list_containers_returns_same_ids(populated_database_id):
     assert comparison.rust.return_value == ["c0", "c1", "c2"]
 
 
-def test_list_containers_on_empty_database_returns_empty(empty_database_id):
+def test_list_containers_on_empty_database_returns_empty_rust(empty_database_id):
     """A database with no containers yields an empty list on both engines, not an error."""
 
     def _do(client):
@@ -105,7 +105,7 @@ def test_list_containers_on_empty_database_returns_empty(empty_database_id):
     assert comparison.rust.return_value == []
 
 
-def test_list_containers_paged_matches(populated_database_id):
+def test_list_containers_paged_matches_rust(populated_database_id):
     """Forcing several pages yields the same containers as a single-page read."""
     # One item per page checks that continuation tokens do not lose containers.
 
@@ -126,7 +126,7 @@ def test_list_containers_paged_matches(populated_database_id):
     assert comparison.rust.return_value == ["c0", "c1", "c2"]
 
 
-def test_list_containers_continuation_resume(populated_database_id):
+def test_list_containers_continuation_resume_rust(populated_database_id):
     def run(client):
         database = client.get_database_client(populated_database_id)
 
@@ -150,7 +150,7 @@ def test_list_containers_continuation_resume(populated_database_id):
     assert comparison.rust.return_value == ["c0", "c1", "c2"]
 
 
-def test_list_containers_options_and_page_hooks(populated_database_id):
+def test_list_containers_options_and_page_hooks_rust(populated_database_id):
     def run(client):
         database = client.get_database_client(populated_database_id)
 

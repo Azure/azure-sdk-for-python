@@ -36,7 +36,7 @@ def traffic(at=2):
     ]
 
 
-def test_isolates_warm_read_and_later_reconnection():
+def test_isolates_warm_read_and_later_reconnection_rust():
     before = {"1": connection()}
     warm = {"1": connection(traffic())}
     assert warmed_connection(before, warm) == "1"
@@ -61,7 +61,7 @@ def test_isolates_warm_read_and_later_reconnection():
         {"1": connection(traffic()[:1])},
     ],
 )
-def test_rejects_missing_unwarmed_or_ambiguous_warm_connection(after):
+def test_rejects_missing_unwarmed_or_ambiguous_warm_connection_rust(after):
     with pytest.raises(AssertionError):
         warmed_connection({"1": connection()}, after)
 
@@ -85,12 +85,12 @@ def test_rejects_missing_unwarmed_or_ambiguous_warm_connection(after):
         [{"direction": "upstream", "bytes": 0, "at": 2}] + traffic()[1:],
     ],
 )
-def test_rejects_missing_response_wrong_order_or_outside_window(events):
+def test_rejects_missing_response_wrong_order_or_outside_window_rust(events):
     with pytest.raises(AssertionError):
         assert_response_exchange({"1": connection()}, {"1": connection(events)}, "1", 2, 3)
 
 
-def test_rejects_new_connection_as_only_fault_traffic():
+def test_rejects_new_connection_as_only_fault_traffic_rust():
     before = {"1": connection(traffic())}
     after = copy.deepcopy(before)
     after["2"] = connection(traffic(3), accepted=3)
@@ -98,14 +98,14 @@ def test_rejects_new_connection_as_only_fault_traffic():
         assert_response_exchange(before, after, "1", 3, 6)
 
 
-def test_rejects_reconnect_before_original_response():
+def test_rejects_reconnect_before_original_response_rust():
     before = {"1": connection()}
     after = {"1": connection(traffic(3)), "2": connection(accepted=3)}
     with pytest.raises(AssertionError, match="before response"):
         assert_response_exchange(before, after, "1", 3, 6)
 
 
-def test_rejects_changed_connection_history():
+def test_rejects_changed_connection_history_rust():
     before = {"1": connection(traffic())}
     after = {"1": connection(traffic(3))}
     with pytest.raises(AssertionError, match="history"):
@@ -122,7 +122,7 @@ def wait_for_events(observer, count):
         time.sleep(0.01)
 
 
-def test_observer_forwards_counts_separate_connections_and_stops():
+def test_observer_forwards_counts_separate_connections_and_stops_rust():
     with socket.socket() as server:
         server.bind(("127.0.0.1", 0))
         server.listen()
@@ -156,7 +156,7 @@ def test_observer_forwards_counts_separate_connections_and_stops():
             assert probe.connect_ex(("127.0.0.1", observer.port)) != 0
 
 
-def test_observer_failure_is_not_silently_accepted():
+def test_observer_failure_is_not_silently_accepted_rust():
     observer = TcpObserver(8081)
     observer.errors.append("controlled observation failure")
     with pytest.raises(AssertionError, match="observation failure"):
@@ -165,7 +165,7 @@ def test_observer_failure_is_not_silently_accepted():
         observer.close()
 
 
-def test_snapshot_waits_for_delivered_bytes_to_be_recorded(monkeypatch):
+def test_snapshot_waits_for_delivered_bytes_to_be_recorded_rust(monkeypatch):
     delivered, release, waiting = threading.Event(), threading.Event(), threading.Event()
     sendall = socket.socket.sendall
 
@@ -210,7 +210,7 @@ def test_snapshot_waits_for_delivered_bytes_to_be_recorded(monkeypatch):
             observer.close()
 
 
-def test_snapshot_wait_is_bounded(monkeypatch):
+def test_snapshot_wait_is_bounded_rust(monkeypatch):
     observer = TcpObserver(8081)
     wait_for = observer.changed.wait_for
     monkeypatch.setattr(observer.changed, "wait_for", lambda predicate, timeout: wait_for(predicate, 0.01))
@@ -223,7 +223,7 @@ def test_snapshot_wait_is_bounded(monkeypatch):
         observer.close()
 
 
-def test_callback_teardown_waits_for_active_call_and_rejects_new_calls(monkeypatch):
+def test_callback_teardown_waits_for_active_call_and_rejects_new_calls_rust(monkeypatch):
     entered, release, registered, finish, waiting = (threading.Event() for _ in range(5))
     calls = []
     with socket.socket() as server:
@@ -281,7 +281,7 @@ def test_callback_teardown_waits_for_active_call_and_rejects_new_calls(monkeypat
             observer.close()
 
 
-def test_callback_failure_remains_visible_without_unhandled_thread_error():
+def test_callback_failure_remains_visible_without_unhandled_thread_error_rust():
     with socket.socket() as server:
         server.bind(("127.0.0.1", 0))
         server.listen()
@@ -310,7 +310,7 @@ def test_callback_failure_remains_visible_without_unhandled_thread_error():
                 observer.close()
 
 
-def test_failed_send_does_not_publish_bytes(monkeypatch):
+def test_failed_send_does_not_publish_bytes_rust(monkeypatch):
     sendall = socket.socket.sendall
 
     def failed_send(connection, payload, *args, **kwargs):
@@ -350,7 +350,7 @@ def reset_connection():
     )
 
 
-def test_reset_evidence_requires_observed_reset_on_warmed_connection():
+def test_reset_evidence_requires_observed_reset_on_warmed_connection_rust():
     result = assert_reset_connection({"1": connection()}, {"1": reset_connection()}, "1", 2, 3)
     assert result["reset_after_start"] == pytest.approx(0.1)
     assert result["request_bytes"] == 100 and result["response_bytes"] == 200
@@ -368,12 +368,12 @@ def test_reset_evidence_requires_observed_reset_on_warmed_connection():
         {"events": traffic(1)},
     ],
 )
-def test_reset_evidence_rejects_orderly_close_or_wrong_connection_failure(change):
+def test_reset_evidence_rejects_orderly_close_or_wrong_connection_failure_rust(change):
     with pytest.raises(AssertionError):
         assert_reset_connection({"1": connection()}, {"1": dict(reset_connection(), **change)}, "1", 2, 3)
 
 
-def test_observer_holds_new_connections_until_fault_is_removed():
+def test_observer_holds_new_connections_until_fault_is_removed_rust():
     with socket.socket() as server:
         server.bind(("127.0.0.1", 0))
         server.listen()
@@ -399,7 +399,7 @@ def test_observer_holds_new_connections_until_fault_is_removed():
             observer.close()
 
 
-def test_forwarding_progress_records_deliveries_on_selected_connection():
+def test_forwarding_progress_records_deliveries_on_selected_connection_rust():
     events = traffic() + [{"direction": "downstream", "bytes": 1600, "at": at} for at in (2.11, 2.21, 2.31)]
     progress = forwarding_progress({"1": connection()}, {"1": connection(events)}, "1", 2, 3)
     assert progress["response_events"] == 4
@@ -409,7 +409,7 @@ def test_forwarding_progress_records_deliveries_on_selected_connection():
     assert progress["last_response_after_start"] == pytest.approx(0.31)
 
 
-def test_forwarding_progress_rejects_reordered_response_events():
+def test_forwarding_progress_rejects_reordered_response_events_rust():
     events = traffic() + [
         {"direction": "downstream", "bytes": 100, "at": 2.2},
         {"direction": "downstream", "bytes": 100, "at": 2.1},
@@ -418,7 +418,7 @@ def test_forwarding_progress_rejects_reordered_response_events():
         forwarding_progress({"1": connection()}, {"1": connection(events)}, "1", 2, 3)
 
 
-def test_two_observers_forward_through_both_legs_without_retaining_payloads():
+def test_two_observers_forward_through_both_legs_without_retaining_payloads_rust():
     with socket.socket() as server:
         server.bind(("127.0.0.1", 0))
         server.listen()
@@ -461,7 +461,7 @@ def cutoff_connection():
     )
 
 
-def test_cutoff_requires_exact_partial_bytes_then_observed_close():
+def test_cutoff_requires_exact_partial_bytes_then_observed_close_rust():
     evidence = assert_cutoff_connection({"1": connection()}, {"1": cutoff_connection()}, "1", 2, 3, 20000, 64000)
     assert evidence["response_bytes"] == 20000
     assert evidence["closed_after_start"] == pytest.approx(0.02)
@@ -487,7 +487,7 @@ def test_cutoff_requires_exact_partial_bytes_then_observed_close():
         },
     ],
 )
-def test_cutoff_rejects_wrong_close_missing_data_or_wrong_byte_count(change):
+def test_cutoff_rejects_wrong_close_missing_data_or_wrong_byte_count_rust(change):
     with pytest.raises(AssertionError):
         assert_cutoff_connection(
             {"1": connection()},
@@ -501,7 +501,7 @@ def test_cutoff_rejects_wrong_close_missing_data_or_wrong_byte_count(change):
 
 
 @pytest.mark.parametrize("baseline,cutoff", [(20000, 20000), (10000, 20000), (64000, 0)])
-def test_cutoff_rejects_complete_or_empty_transfer(baseline, cutoff):
+def test_cutoff_rejects_complete_or_empty_transfer_rust(baseline, cutoff):
     with pytest.raises(AssertionError):
         assert_cutoff_connection({"1": connection()}, {"1": cutoff_connection()}, "1", 2, 3, cutoff, baseline)
 
@@ -516,7 +516,7 @@ def persistent_connections():
     return {"1": cutoff_connection(), "2": replacement}
 
 
-def test_persistent_cutoff_requires_warmed_and_replacement_failures():
+def test_persistent_cutoff_requires_warmed_and_replacement_failures_rust():
     result = assert_persistent_cutoffs({"1": connection()}, persistent_connections(), "1", 2, 3, 20000, 64000)
     assert result["first"]["response_bytes"] == 20000
     assert result["replacement_cutoffs"][0]["connection"] == "2"
@@ -538,13 +538,13 @@ def test_persistent_cutoff_requires_warmed_and_replacement_failures():
         {"events": [{"direction": "downstream", "bytes": 20000, "at": 2.2}]},
     ],
 )
-def test_persistent_cutoff_rejects_gated_or_unproven_replacement(change):
+def test_persistent_cutoff_rejects_gated_or_unproven_replacement_rust(change):
     after = persistent_connections()
     after["2"].update(change)
     with pytest.raises(AssertionError):
         assert_persistent_cutoffs({"1": connection()}, after, "1", 2, 3, 20000, 64000)
 
 
-def test_persistent_cutoff_rejects_only_one_interruption():
+def test_persistent_cutoff_rejects_only_one_interruption_rust():
     with pytest.raises(AssertionError, match="No replacement"):
         assert_persistent_cutoffs({"1": connection()}, {"1": cutoff_connection()}, "1", 2, 3, 20000, 64000)

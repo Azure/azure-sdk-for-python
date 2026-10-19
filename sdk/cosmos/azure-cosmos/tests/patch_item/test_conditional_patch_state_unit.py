@@ -28,7 +28,7 @@ ROOT = Path(__file__).resolve().parents[2]
      "accepted_not_stored", "accepted_id_changed", "accepted_address_changed",
      "accepted_removed_field_retained"],
 )
-def test_original_conditional_patch_checks_state(asynchronous, scenario):
+def test_original_conditional_patch_checks_state_rust(asynchronous, scenario):
     filename = "test_crud_async.py" if asynchronous else "test_crud.py"
     name = "test_conditional_patching_async" if asynchronous else "test_conditional_patching"
     tree = ast.parse((ROOT / "tests" / filename).read_text(encoding="utf-8"))

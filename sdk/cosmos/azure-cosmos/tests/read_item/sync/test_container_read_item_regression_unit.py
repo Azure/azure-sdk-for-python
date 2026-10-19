@@ -62,7 +62,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
 class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
     """When no Rust backend is set, the read still behaves exactly as before."""
 
-    def test_string_item_resolves_to_document_link(self):
+    def test_string_item_resolves_to_document_link_rust(self):
         """A read by id string targets that item."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
 
@@ -74,7 +74,7 @@ class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
             "dbs/db/colls/c/docs/read_item",
         )
 
-    def test_dict_item_resolves_to_its_self_link(self):
+    def test_dict_item_resolves_to_its_self_link_rust(self):
         """A read by item dict targets the item the dict points to.
 
         Customers often pass back an item they already read rather than
@@ -89,7 +89,7 @@ class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
             "dbs/db/colls/c/docs/rid-abc",
         )
 
-    def test_partition_key_becomes_partition_key_option(self):
+    def test_partition_key_becomes_partition_key_option_rust(self):
         """The partition key passed in is forwarded in the options."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
 
@@ -97,7 +97,7 @@ class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
 
         self.assertEqual(cc.ReadItem.call_args.kwargs["options"]["partitionKey"], "a")
 
-    def test_caller_request_options_are_merged_not_overwritten(self):
+    def test_caller_request_options_are_merged_not_overwritten_rust(self):
         """Options the caller passes are kept alongside the partition key,
         not thrown away. This guards against the bug where the container
         replaced the caller's options instead of adding to them."""
@@ -112,7 +112,7 @@ class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
         self.assertEqual(forwarded_options["customKey"], "customValue")
         self.assertEqual(forwarded_options["partitionKey"], "a")
 
-    def test_cached_container_resource_id_is_added_to_options(self):
+    def test_cached_container_resource_id_is_added_to_options_rust(self):
         """When the container is already cached, its resource id is added
         to the options, so the service can reject the read if the container
         was dropped and recreated under the same name."""
@@ -124,7 +124,7 @@ class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
             cc.ReadItem.call_args.kwargs["options"][Constants.ContainerRID], "rid-hot"
         )
 
-    def test_etag_if_none_match_becomes_access_condition(self):
+    def test_etag_if_none_match_becomes_access_condition_rust(self):
         """An etag with "if modified" becomes an if-none-match condition in
         the options (a conditional read)."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
@@ -139,7 +139,7 @@ class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
             {"type": "IfNoneMatch", "condition": "abc"},
         )
 
-    def test_cache_miss_forwards_excluded_locations_into_cache_fetch(self):
+    def test_cache_miss_forwards_excluded_locations_into_cache_fetch_rust(self):
         """When the container is not cached, options like excluded locations
         are passed through to the cache fetch."""
         proxy, _cc, cache = _make_proxy_with_mock_connection(precached=False)
@@ -151,7 +151,7 @@ class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
         self.assertEqual(read_kwargs.get("excluded_locations"), ["West US"])
         self.assertIn("dbs/db/colls/c", cache)
 
-    def test_cache_populate_step_takes_container_cache_lock(self):
+    def test_cache_populate_step_takes_container_cache_lock_rust(self):
         """Filling the cache happens under the container's lock so two calls
         don't both refresh at once."""
         proxy, _cc, _cache = _make_proxy_with_mock_connection(precached=False)
@@ -188,7 +188,7 @@ class TestContainerReadItemBackendRouting(unittest.TestCase):
     """When a Rust backend is set, it handles the read and the existing
     client is not used."""
 
-    def test_read_routes_to_backend_with_item_id(self):
+    def test_read_routes_to_backend_with_item_id_rust(self):
         """A read goes to the Rust backend with the item id, and the
         existing client is not called; the backend's result is returned."""
         proxy, cc, _ = _make_proxy_with_mock_connection()

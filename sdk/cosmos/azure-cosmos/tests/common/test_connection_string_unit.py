@@ -52,7 +52,7 @@ def client_type(request):
 
 @pytest.mark.parametrize("suffix", ["", ";", ";;"])
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
-def test_connection_string_passes_endpoint_key_and_options(client_type, suffix, level):
+def test_connection_string_passes_endpoint_key_and_options_rust(client_type, suffix, level):
     """The address and key are pulled out of the string, any other arguments are passed
     along untouched, and trailing semicolons are tolerated.
 
@@ -87,7 +87,7 @@ def test_connection_string_passes_endpoint_key_and_options(client_type, suffix, 
     )
 
 
-def test_connection_string_uses_default_consistency(client_type):
+def test_connection_string_uses_default_consistency_rust(client_type):
     """With no consistency level given, one is still passed explicitly as "not set".
 
     Leaving the argument out entirely would let the client's own default apply,
@@ -126,7 +126,7 @@ def test_connection_string_uses_default_consistency(client_type):
         ("not-a-connection-string", None),
     ],
 )
-def test_connection_string_rejects_invalid_settings_before_construction(
+def test_connection_string_rejects_invalid_settings_before_construction_rust(
     client_type, conn_str, message
 ):
     """A string that parses but is missing or empties a required setting is refused, and
@@ -150,7 +150,7 @@ def test_connection_string_rejects_invalid_settings_before_construction(
 
 
 @pytest.mark.parametrize("conn_str", [None, 42, b"AccountKey=private-key", {}, []])
-def test_connection_string_rejects_non_strings_before_construction(
+def test_connection_string_rejects_non_strings_before_construction_rust(
     client_type, conn_str
 ):
     """Anything that is not text is refused with a message that says so and nothing else.
@@ -179,7 +179,7 @@ def test_connection_string_rejects_non_strings_before_construction(
         f"AccountEndpoint={ENDPOINT};;AccountKey=private-key",
     ],
 )
-def test_connection_string_malformed_errors_do_not_echo_values(client_type, conn_str):
+def test_connection_string_malformed_errors_do_not_echo_values_rust(client_type, conn_str):
     """A badly formed string produces one fixed message that never contains any part of
     what was passed.
 
@@ -202,7 +202,7 @@ def test_connection_string_malformed_errors_do_not_echo_values(client_type, conn
     constructor.assert_not_called()
 
 
-def test_connection_string_preserves_duplicate_and_extra_settings(client_type):
+def test_connection_string_preserves_duplicate_and_extra_settings_rust(client_type):
     """When a setting appears twice the later one wins, and settings that mean nothing
     here are ignored rather than refused.
 
@@ -227,7 +227,7 @@ def test_connection_string_preserves_duplicate_and_extra_settings(client_type):
 
 
 @pytest.mark.parametrize("name", ["AccountEndpoint", "AccountKey"])
-def test_connection_string_validates_last_duplicate_value(client_type, name):
+def test_connection_string_validates_last_duplicate_value_rust(client_type, name):
     """Checking happens after duplicates are resolved, so an empty repeat of a good
     setting is still caught.
 
@@ -245,7 +245,7 @@ def test_connection_string_validates_last_duplicate_value(client_type, name):
     constructor.assert_not_called()
 
 
-def test_shared_parser_preserves_values_and_setting_names():
+def test_shared_parser_preserves_values_and_setting_names_rust():
     """The parser hands back values exactly as written, including surrounding spaces, and
     setting names are matched exactly as spelled.
 
@@ -273,7 +273,7 @@ def test_shared_parser_preserves_values_and_setting_names():
         )
 
 
-def test_both_factories_use_the_neutral_parser(client_type):
+def test_both_factories_use_the_neutral_parser_rust(client_type):
     """Both clients read connection strings with the same parser, and it lives outside
     either of them.
 
@@ -298,7 +298,7 @@ def test_both_factories_use_the_neutral_parser(client_type):
     "credential", ["replacement-key", None, "", {"masterKey": "replacement"}, object()]
 )
 @pytest.mark.parametrize("conn_str", [CONNECTION_STRING, f"AccountEndpoint={ENDPOINT}"])
-def test_connection_string_rejects_credential_keyword(
+def test_connection_string_rejects_credential_keyword_rust(
     client_type, credential, conn_str
 ):
     """Passing a credential alongside a connection string is refused, whatever the
@@ -325,7 +325,7 @@ def test_connection_string_rejects_credential_keyword(
     constructor.assert_not_called()
 
 
-def test_connection_string_rejects_old_positional_credential(client_type):
+def test_connection_string_rejects_old_positional_credential_rust(client_type):
     """A credential passed by position, as an older version allowed, is refused rather
     than silently absorbed.
 
@@ -341,7 +341,7 @@ def test_connection_string_rejects_old_positional_credential(client_type):
     constructor.assert_not_called()
 
 
-def test_connection_string_signature_has_no_credential(client_type):
+def test_connection_string_signature_has_no_credential_rust(client_type):
     """The factory's own signature is checked, so the rules above cannot be undone by
     adding the argument back.
 
@@ -359,7 +359,7 @@ def test_connection_string_signature_has_no_credential(client_type):
     assert parameters["kwargs"].annotation is Any
 
 
-def test_connection_string_preserves_subclass_factory(client_type):
+def test_connection_string_preserves_subclass_factory_rust(client_type):
     """A subclass gets back its own type, not the base client.
 
     Customers subclass the client to add logging or defaults, and the factory
@@ -379,7 +379,7 @@ def test_connection_string_preserves_subclass_factory(client_type):
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-def test_connection_string_samples_use_default_backend_and_close_client(
+def test_connection_string_samples_use_default_backend_and_close_client_rust(
     asynchronous, monkeypatch, capsys,
 ):
     monkeypatch.setenv("AZURE_COSMOS_CONNECTION_STRING", CONNECTION_STRING)

@@ -37,7 +37,7 @@ _OFFER_QUERY = {
 @pytest.mark.parametrize("suffix", ["", "_async"])
 @pytest.mark.parametrize("remaining", [None, 0.25, 2])
 @pytest.mark.parametrize("include_attempts", [False, True])
-def test_offer_native_accepts_remaining_timeout(suffix, remaining, include_attempts):
+def test_offer_native_accepts_remaining_timeout_rust(suffix, remaining, include_attempts):
     """Native offer reads accept remaining budgets without changing default diagnostics."""
     from azure.cosmos import _rust
 
@@ -53,7 +53,7 @@ def test_offer_native_accepts_remaining_timeout(suffix, remaining, include_attem
 
 @pytest.mark.parametrize("suffix", ["", "_async"])
 @pytest.mark.parametrize("remaining", [0, -1, float("inf"), float("nan")])
-def test_offer_native_rejects_invalid_remaining_timeout(suffix, remaining):
+def test_offer_native_rejects_invalid_remaining_timeout_rust(suffix, remaining):
     """Reject invalid durations before looking up a driver or dispatching a request."""
     from azure.cosmos import _rust
 
@@ -73,7 +73,7 @@ def test_offer_native_rejects_invalid_remaining_timeout(suffix, remaining):
         (RUST_BACKEND, {"availabilityStrategy": True}, {}, False),
     ],
 )
-def test_offer_read_gate(backend, options, kwargs, expected):
+def test_offer_read_gate_rust(backend, options, kwargs, expected):
     """Only a plain offer read on the Rust backend is eligible for the Rust path.
 
     Five cases: the legacy backend is never eligible; a bare Rust call is; and
@@ -88,7 +88,7 @@ def test_offer_read_gate(backend, options, kwargs, expected):
 
 
 @pytest.mark.parametrize("header", sorted(HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE))
-def test_offer_read_refuses_customer_overrides(header):
+def test_offer_read_refuses_customer_overrides_rust(header):
     """Supplying any header the driver would overwrite sends the call to legacy.
 
     Runs once per header in that set. If a customer sets one of them by hand,
@@ -106,7 +106,7 @@ def test_offer_read_refuses_customer_overrides(header):
     )
 
 
-def test_header_policies_remain_distinct():
+def test_header_policies_remain_distinct_rust():
     """The two header lists mean different things and must not blur together.
 
     One list is headers the driver would silently overwrite: ``accept``,
@@ -138,7 +138,7 @@ def test_header_policies_remain_distinct():
 
 
 @pytest.mark.parametrize("resource_link", ["dbs/db", "/dbs/db/colls/coll/"])
-def test_offer_read_preparation_never_uses_legacy_transport(monkeypatch, resource_link):
+def test_offer_read_preparation_never_uses_legacy_transport_rust(monkeypatch, resource_link):
     """Building an offer read touches no legacy code and resolves every header conflict correctly.
 
     Five legacy helpers -- header building, session token handling, the
@@ -214,7 +214,7 @@ def test_offer_read_preparation_never_uses_legacy_transport(monkeypatch, resourc
     assert settings_options(prepared) == {"excludedLocations": ["West US"], "timeout_seconds": 7}
 
 
-def test_offer_builder_does_not_generate_activity_or_session_headers():
+def test_offer_builder_does_not_generate_activity_or_session_headers_rust():
     """With nothing supplied, the builder generates no headers of its own.
 
     No options and no default headers must produce an empty header set. In
@@ -234,7 +234,7 @@ def test_offer_builder_does_not_generate_activity_or_session_headers():
 
 
 @pytest.mark.parametrize("initial_headers", [[], False, "header"])
-def test_offer_builder_rejects_invalid_initial_headers(initial_headers):
+def test_offer_builder_rejects_invalid_initial_headers_rust(initial_headers):
     """Initial headers that are not a mapping are refused by name.
 
     An empty list, ``False`` and a bare string are each rejected with a
@@ -252,7 +252,7 @@ def test_offer_builder_rejects_invalid_initial_headers(initial_headers):
 
 
 @pytest.mark.parametrize("payload", [{}, {"Offers": {}}, {"Offers": ["invalid"]}])
-def test_offer_parser_rejects_malformed_payload(payload):
+def test_offer_parser_rejects_malformed_payload_rust(payload):
     """A payload without a usable list of offers is rejected, not guessed at.
 
     Three shapes: no ``Offers`` key at all, ``Offers`` holding a dict instead
@@ -268,7 +268,7 @@ def test_offer_parser_rejects_malformed_payload(payload):
 
 
 @pytest.mark.parametrize("offers", [[], [{"id": "offer", "content": {"offerThroughput": 400}}]])
-def test_offer_parser_preserves_records(offers):
+def test_offer_parser_preserves_records_rust(offers):
     """Valid offer records come back exactly as they arrived.
 
     Both an empty list and a single offer carrying a throughput value pass
@@ -281,7 +281,7 @@ def test_offer_parser_preserves_records(offers):
     assert parse_get_throughput_payload({"Offers": offers}) == offers
 
 
-def test_offer_headers_belong_to_response_not_later_client_diagnostics():
+def test_offer_headers_belong_to_response_not_later_client_diagnostics_rust():
     from types import SimpleNamespace
     from azure.cosmos._backend.contracts import BackendResponse
     from azure.cosmos._throughput_rust_routing import process_get_throughput_response, offer_response_headers
@@ -301,7 +301,7 @@ def test_offer_headers_belong_to_response_not_later_client_diagnostics():
 
 @pytest.mark.parametrize("is_async", [False, True])
 @pytest.mark.parametrize("replace_throughput", [False, True])
-def test_native_offer_entries_accept_direct_requests_before_io(monkeypatch, is_async, replace_throughput):
+def test_native_offer_entries_accept_direct_requests_before_io_rust(monkeypatch, is_async, replace_throughput):
     """The real Rust entry points accept a prepared offer request without any account.
 
     Covers read and replace, sync and async, against the actual compiled

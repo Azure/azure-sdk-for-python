@@ -28,7 +28,8 @@ contract drift (wrong offer body) by reusing a check the team already trusts.
 
 Self-contained: builds its own database + container in ``asyncSetUp`` and
 deletes them in ``asyncTearDown``. The class name and method name match the
-source so the two test IDs differ only by path. The container is created with
+source (apart from the method's ``_rust`` suffix) so the two test IDs differ by path and
+method suffix. The container is created with
 dedicated throughput because ``get_throughput`` only returns an offer when the
 container owns one.
 
@@ -84,7 +85,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         if expected_offer_type:
             assert expected_offer_type == offer.properties.get('offerType')
 
-    async def test_offer_read_and_query_async(self):
+    async def test_offer_read_and_query_async_rust(self):
         """Reading a container's offer returns a complete, correctly linked offer body.
 
         Checks the offer has an id, a resource id, a self link and a resource
@@ -103,7 +104,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         collection_properties = await collection.read()
         self.__validate_offer_response_body(expected_offer, collection_properties.get('_self'), None)
 
-    async def test_offer_replace_async(self):
+    async def test_offer_replace_async_rust(self):
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_offer_replace_async
         collection = self.container
         expected_offer = await collection.get_throughput()

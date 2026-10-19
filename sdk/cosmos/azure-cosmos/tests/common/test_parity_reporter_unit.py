@@ -115,7 +115,7 @@ class ReporterParserTests(unittest.TestCase):
         self.addCleanup(os.unlink, fh.name)
         return fh.name
 
-    def test_parses_v2_tokenised_sentinels(self):
+    def test_parses_v2_tokenised_sentinels_rust(self):
         """v2 sentinels (per-session 8-hex token) must round-trip."""
         path = self._write_temp(
             _make_block(token="a1b2c3d4", plugin_version="v2")
@@ -128,7 +128,7 @@ class ReporterParserTests(unittest.TestCase):
         self.assertEqual(blocks[0].status, "ok")
         self.assertEqual(blocks[0].test_doc, "Verify something.")
 
-    def test_parses_v1_legacy_sentinels(self):
+    def test_parses_v1_legacy_sentinels_rust(self):
         """Old token-less ``===PARITY-CAPTURE-START===`` blocks still parse."""
         payload = {
             "nodeid": "tests/somefile.py::TestX::test_y",
@@ -152,14 +152,14 @@ class ReporterParserTests(unittest.TestCase):
         self.assertEqual(len(blocks), 1)
         self.assertEqual(blocks[0].plugin_version, "v1")
 
-    def test_unique_tokens_in_same_transcript_dont_cross_match(self):
+    def test_unique_tokens_in_same_transcript_dont_cross_match_rust(self):
         """Two blocks with different tokens must each pair to their OWN end marker."""
         text = _make_block(token="aaaaaaaa") + _make_block(token="bbbbbbbb")
         path = self._write_temp(text)
         blocks = self.reporter.parse_captures(path)
         self.assertEqual(len(blocks), 2)
 
-    def test_collision_string_in_payload_does_not_confuse_parser(self):
+    def test_collision_string_in_payload_does_not_confuse_parser_rust(self):
         """Bug 6: a literal sentinel string inside a test's stdout must not
         derail the parser. The v2 tokenised sentinels make this safe by
         construction; this test pins the guarantee."""
@@ -180,7 +180,7 @@ class ReporterParserTests(unittest.TestCase):
         self.assertEqual(len(blocks), 1)
         self.assertEqual(blocks[0].nodeid, "tests/somefile.py::TestX::test_y")
 
-    def test_malformed_json_is_skipped_not_fatal(self):
+    def test_malformed_json_is_skipped_not_fatal_rust(self):
         """A malformed block warns to stderr but the run continues."""
         text = (
             "===PARITY-CAPTURE-deadbeef-START===\n"
@@ -198,7 +198,7 @@ class ReporterParserTests(unittest.TestCase):
         # The malformed block is dropped; the good block survives.
         self.assertEqual(len(blocks), 1)
 
-    def test_unmatched_start_does_not_hide_later_valid_capture(self):
+    def test_unmatched_start_does_not_hide_later_valid_capture_rust(self):
         """A truncated early block must not stop parsing the rest of the file."""
         text = (
             "===PARITY-CAPTURE-deadbeef-START===\n"
@@ -210,7 +210,7 @@ class ReporterParserTests(unittest.TestCase):
         self.assertEqual(len(blocks), 1)
         self.assertEqual(blocks[0].nodeid, "tests/somefile.py::TestX::test_y")
 
-    def test_parse_transcript_disambiguates_same_class_method_by_file(self):
+    def test_parse_transcript_disambiguates_same_class_method_by_file_rust(self):
         """Rows with the same class::method in different files must not collide."""
         text = (
             "tests/test_alpha.py::TestDup::test_same PASSED [ 50%]\n"
@@ -223,7 +223,7 @@ class ReporterParserTests(unittest.TestCase):
         self.assertIn(("test_alpha", "TestDup", "test_same", "PASSED"), keys)
         self.assertIn(("test_beta", "TestDup", "test_same", "FAILED"), keys)
 
-    def test_parameterized_token_ids_survive_combined_and_split_lines(self):
+    def test_parameterized_token_ids_survive_combined_and_split_lines_rust(self):
         methods = ["test_merge[0:1#55#3=52,2:1#54#3=52]", "test_merge[0:54 with spaces]"]
         path = self._write_temp(
             f"tests/test_tokens.py::TestTokens::{methods[0]} PASSED [ 50%]\n"
@@ -234,7 +234,7 @@ class ReporterParserTests(unittest.TestCase):
         self.assertEqual([row.method_name for row in rows], methods)
         self.assertEqual([row.outcome for row in rows], ["PASSED", "PASSED"])
 
-    def test_index_captures_disambiguates_same_class_method_by_file(self):
+    def test_index_captures_disambiguates_same_class_method_by_file_rust(self):
         """Capture indexing must keep file-level separation for duplicate names."""
         text = (
             _make_block(token="11111111", nodeid="tests/test_alpha.py::TestDup::test_same")
@@ -246,6 +246,49 @@ class ReporterParserTests(unittest.TestCase):
         self.assertEqual(len(idx), 2)
         self.assertIn(("sync", "test_alpha", "TestDup", "test_same"), idx)
         self.assertIn(("sync", "test_beta", "TestDup", "test_same"), idx)
+
+    def test_migration_suffix_preserves_result_and_capture_pairing_rust(self):
+        for surface in ("sync", "aio"):
+            for parameter in ("", "[core-python]", "[0:1#55#3=52 with spaces_rust]"):
+                for split in (False, True):
+                    with self.subTest(surface=surface, parameter=parameter, split=split):
+                        async_suffix = "_async" if surface == "aio" else ""
+                        original_method = "test_read" + async_suffix + parameter
+                        copied_method = "test_read" + async_suffix + "_rust" + parameter
+                        original = f"tests/test_item{async_suffix}.py::TestItem::{original_method}"
+                        copied = f"tests/read_item/{surface}/legacy/test_item.py::TestItem::{copied_method}"
+                        core_text = original + " PASSED\n" + _make_block(
+                            token="11111111", nodeid=original, surface=surface,
+                        )
+                        block = _make_block(token="22222222", nodeid=copied, surface=surface, backend="rust")
+                        rust_text = copied + (
+                            "\n" + block + "PASSED\n" if split else " PASSED\n" + block
+                        )
+                        core_path, rust_path = self._write_temp(core_text), self._write_temp(rust_text)
+                        core_rows = self.reporter.parse_transcript(core_path)
+                        rust_rows = self.reporter.parse_transcript(rust_path)
+                        self.assertEqual(len(core_rows), 1)
+                        self.assertEqual(len(rust_rows), 1)
+                        self.assertEqual(rust_rows[0].method_name, original_method)
+                        self.assertEqual(rust_rows[0].raw_path, copied.split("::")[0])
+                        self.assertEqual(self.reporter.pair_results(core_rows, rust_rows), [
+                            (core_rows[0], rust_rows[0]),
+                        ])
+                        core_index = self.reporter.index_captures(self.reporter.parse_captures(core_path))
+                        rust_index = self.reporter.index_captures(self.reporter.parse_captures(rust_path))
+                        self.assertEqual(set(core_index), set(rust_index))
+                        self.assertEqual(set(rust_index), {(surface, "test_item", "TestItem", original_method)})
+
+    def test_suffix_normalization_is_limited_to_migration_methods_rust(self):
+        normalize = self.reporter._source_method_name
+        for path in ("tests/test_item.py", "tests/workloads/test_item.py"):
+            self.assertEqual(normalize(path, "test_read_rust[param_rust]"), "test_read_rust[param_rust]")
+        for path in (
+            r"tests\read_item\sync\legacy\test_item.py",
+            "docs/V5/_parity_runs/temporary/test_item.py",
+        ):
+            self.assertEqual(normalize(path, "test_read_rust[param_rust]"), "test_read[param_rust]")
+            self.assertEqual(normalize(path, "test_read[param_rust]"), "test_read[param_rust]")
 
 
 class ReporterVerdictTests(unittest.TestCase):
@@ -266,7 +309,7 @@ class ReporterVerdictTests(unittest.TestCase):
         self.addCleanup(os.unlink, path.name)
         return self.reporter.parse_captures(path.name)[0]
 
-    def test_full_parity_when_blocks_match(self):
+    def test_full_parity_when_blocks_match_rust(self):
         """Two identical capture blocks must produce FULL PARITY."""
         cp = self._block(backend="core-python")
         rs = self._block(backend="rust")
@@ -277,7 +320,7 @@ class ReporterVerdictTests(unittest.TestCase):
             f"expected FULL PARITY, got: {verdict!r}",
         )
 
-    def test_same_exception_name_does_not_falsely_diverge(self):
+    def test_same_exception_name_does_not_falsely_diverge_rust(self):
         """Two captures that recorded ``ValueError`` on both sides
         must NOT register as EXCEPTION DIVERGENCE. This is the
         bug we fixed by caching the result of ``_synthesise_exception_class``."""
@@ -307,7 +350,7 @@ class ReporterVerdictTests(unittest.TestCase):
             f"got: {verdict!r}",
         )
 
-    def test_wire_nondeterministic_headers_do_not_fire_header_gap(self):
+    def test_wire_nondeterministic_headers_do_not_fire_header_gap_rust(self):
         """``x-ms-cosmos-quorum-acked-llsn`` is gateway-emitted
         non-deterministically; presence-missing on one side must NOT
         produce a HEADER GAP. This is Bug 2 of the
@@ -350,7 +393,7 @@ class ReporterRenderingTests(unittest.TestCase):
         self.addCleanup(os.unlink, path.name)
         return self.reporter.parse_captures(path.name)[0]
 
-    def test_emit_markdown_includes_verdict_categories_and_fallback_labels(self):
+    def test_emit_markdown_includes_verdict_categories_and_fallback_labels_rust(self):
         """Bug 5 fix: the 'How to read this report' section must
         list BOTH the four primary verdicts and the fallback labels."""
         # Render a doc against empty transcripts -- enough to fire
@@ -386,7 +429,7 @@ class ReporterRenderingTests(unittest.TestCase):
         ):
             self.assertIn(s, md, f"expected {s!r} in audit markdown")
 
-    def test_main_returns_zero_only_for_valid_matching_evidence(self):
+    def test_main_returns_zero_only_for_valid_matching_evidence_rust(self):
         """A complete v3 core/Rust pair with matching calls is a successful check."""
         with tempfile.TemporaryDirectory() as td:
             cp_path = os.path.join(td, "cp.txt")
@@ -418,7 +461,7 @@ class ReporterRenderingTests(unittest.TestCase):
 
             self.assertEqual(rc, 0)
 
-    def test_main_returns_nonzero_for_functional_difference(self):
+    def test_main_returns_nonzero_for_functional_difference_rust(self):
         """A response difference must produce a failing process exit code."""
         with tempfile.TemporaryDirectory() as td:
             cp_path = os.path.join(td, "cp.txt")
@@ -456,7 +499,7 @@ class ReporterRenderingTests(unittest.TestCase):
 
             self.assertEqual(rc, 1)
 
-    def test_second_call_divergence_controls_scoreboard_verdict(self):
+    def test_second_call_divergence_controls_scoreboard_verdict_rust(self):
         """A multi-call test must not be labelled from only its first call."""
         cp_first = self.reporter.CaptureBlock(
             nodeid="tests/test_x.py::TestX::test_y",
@@ -515,7 +558,7 @@ class ReporterRenderingTests(unittest.TestCase):
         scoreboard = md.split("## Per-test PARITY CALL blocks", 1)[0]
         self.assertIn("**FUNCTIONAL DIVERGENCE**", scoreboard)
 
-    def test_failed_pytest_outcome_cannot_be_overridden_by_matching_capture(self):
+    def test_failed_pytest_outcome_cannot_be_overridden_by_matching_capture_rust(self):
         """A Rust test failure must remain a regression even if its SDK call matched."""
         cp = self.reporter.TestResult(
             "sync", "test_x", "TestX", "test_y", "PASSED", "tests/test_x.py"
@@ -554,7 +597,7 @@ class ReporterRenderingTests(unittest.TestCase):
         scoreboard = md.split("## Per-test PARITY CALL blocks", 1)[0]
         self.assertIn("**RUST REGRESSION**", scoreboard)
 
-    def test_request_difference_is_a_functional_difference(self):
+    def test_request_difference_is_a_functional_difference_rust(self):
         """Missing or differently typed operation arguments must be compared."""
         cp = self._block(
             backend="core-python",
@@ -571,7 +614,7 @@ class ReporterRenderingTests(unittest.TestCase):
             any(diff.startswith("request:") for diff in comparison.diffs)
         )
 
-    def test_request_scalar_difference_is_not_hidden(self):
+    def test_request_scalar_difference_is_not_hidden_rust(self):
         """Different item ids or partition keys must not normalize to the same type."""
         cp = self._block(
             backend="core-python",
@@ -588,7 +631,7 @@ class ReporterRenderingTests(unittest.TestCase):
             any(diff.startswith("request:") for diff in comparison.diffs)
         )
 
-    def test_embedded_generated_uuid_is_normalized(self):
+    def test_embedded_generated_uuid_is_normalized_rust(self):
         """Independent resource UUIDs must not create false request or proxy diffs."""
         cp_id = "responses_test11111111-1111-1111-1111-111111111111"
         rs_id = "responses_test22222222-2222-2222-2222-222222222222"
@@ -614,7 +657,7 @@ class ReporterRenderingTests(unittest.TestCase):
             )
         )
 
-    def test_validation_rejects_wrong_backend_label(self):
+    def test_validation_rejects_wrong_backend_label_rust(self):
         """A rust-vs-rust transcript pair must never be accepted as parity."""
         result = self.reporter.TestResult(
             "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
@@ -630,7 +673,7 @@ class ReporterRenderingTests(unittest.TestCase):
         )
         self.assertTrue(any("core-python transcript captured backend" in e for e in errors))
 
-    def test_validation_rejects_rust_selected_call_that_fell_back(self):
+    def test_validation_rejects_rust_selected_call_that_fell_back_rust(self):
         """A Rust client running the legacy engine is not Rust execution evidence."""
         result = self.reporter.TestResult(
             "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
@@ -650,7 +693,7 @@ class ReporterRenderingTests(unittest.TestCase):
         )
         self.assertTrue(any("actually executed 'core-python'" in e for e in errors))
 
-    def test_validation_accepts_explicit_local_rejections_but_not_unproved_execution(self):
+    def test_validation_accepts_explicit_local_rejections_but_not_unproved_execution_rust(self):
         result = self.reporter.TestResult(
             "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
         )
@@ -675,7 +718,7 @@ class ReporterRenderingTests(unittest.TestCase):
                 )
                 self.assertEqual(not errors, valid, errors)
 
-    def test_local_token_utility_requires_zero_counters_and_no_response(self):
+    def test_local_token_utility_requires_zero_counters_and_no_response_rust(self):
         result = self.reporter.TestResult(
             "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
         )
@@ -700,7 +743,7 @@ class ReporterRenderingTests(unittest.TestCase):
                 )
                 self.assertEqual(not errors, valid, errors)
 
-    def test_validation_rejects_opaque_throughput_capture(self):
+    def test_validation_rejects_opaque_throughput_capture_rust(self):
         result = self.reporter.TestResult(
             "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
         )
@@ -717,7 +760,7 @@ class ReporterRenderingTests(unittest.TestCase):
         )
         self.assertTrue(any("missing structured throughput fields" in e for e in errors))
 
-    def test_throughput_value_difference_is_not_hidden(self):
+    def test_throughput_value_difference_is_not_hidden_rust(self):
         common = {
             "auto_scale_max_throughput": None,
             "auto_scale_increment_percent": None,
@@ -728,7 +771,7 @@ class ReporterRenderingTests(unittest.TestCase):
         comparison = self.reporter._build_comparison("TestX", "test_y", cp, rs)
         self.assertTrue(any(diff.startswith("return_value:") for diff in comparison.diffs))
 
-    def test_validation_rejects_unmaterialized_query_capture(self):
+    def test_validation_rejects_unmaterialized_query_capture_rust(self):
         """A pager repr is not evidence that query iteration matched."""
         result = self.reporter.TestResult(
             "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
@@ -753,7 +796,7 @@ class ReporterRenderingTests(unittest.TestCase):
         self.assertTrue(any("lazy pager object" in e for e in errors))
 
 
-def test_v4_replacement_report_accepts_isolated_baseline_and_long_summary(tmp_path):
+def test_v4_replacement_report_accepts_isolated_baseline_and_long_summary_rust(tmp_path):
     reporter = _load_reporter()
     paths = []
     for backend in ("core-python", "rust"):
@@ -775,7 +818,7 @@ def test_v4_replacement_report_accepts_isolated_baseline_and_long_summary(tmp_pa
     ]) == 0
 
 
-def test_report_rejects_unsupported_capture_versions(tmp_path):
+def test_report_rejects_unsupported_capture_versions_rust(tmp_path):
     reporter = _load_reporter()
     for version in ("v2", "v5"):
         path = tmp_path / f"{version}.txt"

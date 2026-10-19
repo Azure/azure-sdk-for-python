@@ -20,8 +20,9 @@ the same call on both engines and diff the numbers. This file runs on Rust
 only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
-with any other test. The class name and method name match the source, so the
-two test IDs differ only by path.
+with any other test. The class name and method name match the source (apart from the
+method's ``_rust`` suffix), so the
+two test IDs differ by path and method suffix.
 
 Run with::
 
@@ -60,7 +61,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         finally:
             self.key_client.close()
 
-    def test_database_crud(self):
+    def test_database_crud_rust(self):
         """Keep the original CRUD test's shared-throughput assertions."""
         # Source: tests/test_crud_database.py::TestCRUDDatabaseOperations.test_database_crud
         database_id = "get_db_crud_" + uuid.uuid4().hex
@@ -72,7 +73,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         self.assertEqual(database_id, database_proxy.id)
         self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
 
-    def test_database_level_offer_throughput(self):
+    def test_database_level_offer_throughput_rust(self):
         """Read provisioned throughput and check the replacement result.
 
         Creates a database at 1000 request units, confirms ``get_throughput``

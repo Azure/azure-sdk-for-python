@@ -25,8 +25,8 @@ only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so the fixed id
 ``responses_test`` cannot collide with a container another test left behind.
-The class name and method names match the source, so the two test IDs differ
-only by path.
+The class name and method names match the source (apart from the method's ``_rust``
+suffix), so the two test IDs differ by path and method suffix.
 
 Run with::
 
@@ -64,7 +64,7 @@ class TestCosmosResponses(unittest.TestCase):
             pass
         self.client.close()
 
-    def test_create_container_if_not_exists_headers(self):
+    def test_create_container_if_not_exists_headers_rust(self):
         """First call creates the container and returns populated headers.
 
         This is the create branch: nothing exists yet, so the call really does
@@ -76,7 +76,7 @@ class TestCosmosResponses(unittest.TestCase):
             partition_key=PartitionKey(path="/company"), return_properties=True)
         assert len(first_response[1].get_response_headers()) > 0
 
-    def test_create_container_if_not_exists_headers_negative(self):
+    def test_create_container_if_not_exists_headers_negative_rust(self):
         """Second call finds the container already there and still returns headers.
 
         Despite the name, nothing fails here. "Negative" means the create was

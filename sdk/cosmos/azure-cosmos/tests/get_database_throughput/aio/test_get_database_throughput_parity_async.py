@@ -79,7 +79,7 @@ def database_without_throughput():
     yield from _database_with_throughput(None)
 
 
-async def test_get_throughput_fixed_async(fixed_throughput_database):
+async def test_get_throughput_fixed_async_rust(fixed_throughput_database):
     """Async get_throughput reports the same fixed RU/s on both engines."""
 
     async def _do(client):
@@ -95,7 +95,7 @@ async def test_get_throughput_fixed_async(fixed_throughput_database):
     assert comparison.core_python.return_value["offer_throughput"] == 1000
 
 
-async def test_get_throughput_autoscale_async(autoscale_database):
+async def test_get_throughput_autoscale_async_rust(autoscale_database):
     """Async get_throughput reports the same autoscale ceiling and step on both engines."""
     # Autoscale values arrive in different fields from a fixed number, so a
     # fixed-number comparison alone would not catch rust mis-reading them.
@@ -115,7 +115,7 @@ async def test_get_throughput_autoscale_async(autoscale_database):
     assert comparison.core_python.return_value["offer_throughput"] is None
 
 
-async def test_get_throughput_without_provisioned_throughput_async(database_without_throughput):
+async def test_get_throughput_without_provisioned_throughput_async_rust(database_without_throughput):
     """Both implementations report a missing database offer as a typed 404."""
 
     async def _do(client):
@@ -138,7 +138,7 @@ async def test_get_throughput_without_provisioned_throughput_async(database_with
 
 
 @pytest.mark.parametrize("warm", [False, True])
-async def test_get_throughput_preserves_inputs_and_callback_result_async(fixed_throughput_database, warm):
+async def test_get_throughput_preserves_inputs_and_callback_result_async_rust(fixed_throughput_database, warm):
     async def read(client):
         database = client.get_database_client(fixed_throughput_database)
         if warm:
@@ -179,7 +179,7 @@ async def test_get_throughput_preserves_inputs_and_callback_result_async(fixed_t
     {"availability_strategy": {"type": "hedging"}},
     {"initial_headers": {"Accept": "unsupported"}},
 ])
-async def test_rust_database_read_rejects_unsupported_inputs_async(monkeypatch, options):
+async def test_rust_database_read_rejects_unsupported_inputs_async_rust(monkeypatch, options):
     from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 
     async with AsyncCosmosClient(

@@ -67,7 +67,7 @@ def _configure_test_paths(monkeypatch, tmp_path):
     return libs_directory, lock_file, manifest_file
 
 
-def test_sidecars_are_staged_and_cleaned(monkeypatch, tmp_path):
+def test_sidecars_are_staged_and_cleaned_rust(monkeypatch, tmp_path):
     """The build stages only native files and removes its temporary state.
 
     The source directory can hold other files next to the libraries. Copying
@@ -91,7 +91,7 @@ def test_sidecars_are_staged_and_cleaned(monkeypatch, tmp_path):
     assert lock_file.exists()
 
 
-def test_preexisting_package_files_are_preserved(monkeypatch, tmp_path):
+def test_preexisting_package_files_are_preserved_rust(monkeypatch, tmp_path):
     """An unexpected package file fails staging without deleting that file.
 
     If ``.libs`` already has something in it, the build cannot tell whether that
@@ -112,7 +112,7 @@ def test_preexisting_package_files_are_preserved(monkeypatch, tmp_path):
     assert lock_file.exists()
 
 
-def test_stale_lock_file_does_not_block_staging(monkeypatch, tmp_path):
+def test_stale_lock_file_does_not_block_staging_rust(monkeypatch, tmp_path):
     """A lock file left by a dead process does not block a later build.
 
     The lock is held by the operating system, not by the file's existence, so a
@@ -129,7 +129,7 @@ def test_stale_lock_file_does_not_block_staging(monkeypatch, tmp_path):
     assert lock_file.read_text(encoding="ascii") == "another process"
 
 
-def test_staging_lock_serializes_parallel_builds(monkeypatch, tmp_path):
+def test_staging_lock_serializes_parallel_builds_rust(monkeypatch, tmp_path):
     """A second build waits until the first build releases its OS-backed lock.
 
     Release pipelines build several wheels on one machine at the same time, and
@@ -169,7 +169,7 @@ def test_staging_lock_serializes_parallel_builds(monkeypatch, tmp_path):
     assert lock_file.exists()
 
 
-def test_partial_copy_failure_releases_staging_lock(monkeypatch, tmp_path):
+def test_partial_copy_failure_releases_staging_lock_rust(monkeypatch, tmp_path):
     """A failed copy removes its partial output and releases the staging lock.
 
     A half-copied library is worse than a missing one: it is the right size and
@@ -196,7 +196,7 @@ def test_partial_copy_failure_releases_staging_lock(monkeypatch, tmp_path):
     assert lock_file.exists()
 
 
-def test_abandoned_staging_is_recovered_without_deleting_unrelated_files(
+def test_abandoned_staging_is_recovered_without_deleting_unrelated_files_rust(
     monkeypatch, tmp_path
 ):
     """A crashed build's manifest allows the next build to remove only owned files.
@@ -227,7 +227,7 @@ def test_abandoned_staging_is_recovered_without_deleting_unrelated_files(
     assert not libs_directory.exists()
 
 
-def test_abandoned_staging_preserves_unowned_files(monkeypatch, tmp_path):
+def test_abandoned_staging_preserves_unowned_files_rust(monkeypatch, tmp_path):
     """Recovery fails rather than deleting files absent from the ownership manifest.
 
     Cleanup is only allowed to remove names the crashed build wrote down. Anything
@@ -257,7 +257,7 @@ def test_abandoned_staging_preserves_unowned_files(monkeypatch, tmp_path):
     assert unowned_file.read_bytes() == b"keep"
 
 
-def test_editable_build_ignores_release_sidecar_source(monkeypatch, tmp_path):
+def test_editable_build_ignores_release_sidecar_source_rust(monkeypatch, tmp_path):
     """Editable builds do not trigger release-only Cargo sidecar validation.
 
     ``pip install -e`` is what a developer runs while working on the SDK. There is

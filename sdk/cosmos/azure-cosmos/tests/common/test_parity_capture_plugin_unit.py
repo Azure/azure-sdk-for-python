@@ -43,7 +43,7 @@ def _load_plugin():
     (ItemPaged, "_CapturedSyncPagedResult", AsyncItemPaged),
     (AsyncItemPaged, "_CapturedAsyncPagedResult", ItemPaged),
 ])
-def test_paged_capture_preserves_actual_isinstance(paged_type, wrapper_name, other_type):
+def test_paged_capture_preserves_actual_isinstance_rust(paged_type, wrapper_name, other_type):
     plugin = _load_plugin()
     result = paged_type()
     wrapper = getattr(plugin, wrapper_name)
@@ -56,7 +56,7 @@ def test_paged_capture_preserves_actual_isinstance(paged_type, wrapper_name, oth
 
 @pytest.mark.parametrize("op", ["get_latest_session_token", "read_item"])
 @pytest.mark.parametrize("native,fallback", [(0, 0), (1, 0), (0, 1), (None, None)])
-def test_local_token_capture_is_narrow_and_requires_zero_counters(capsys, op, native, fallback):
+def test_local_token_capture_is_narrow_and_requires_zero_counters_rust(capsys, op, native, fallback):
     plugin = _load_plugin()
     payload = {
         "op": op, "executed_engine": "unknown",
@@ -83,7 +83,7 @@ def test_local_token_capture_is_narrow_and_requires_zero_counters(capsys, op, na
 # silently miss or misreport that operation.
 @pytest.mark.parametrize("surface", ("sync", "aio"))
 @pytest.mark.parametrize("server_response", (True, False))
-def test_point_error_capture_uses_exception_headers(monkeypatch, surface, server_response):
+def test_point_error_capture_uses_exception_headers_rust(monkeypatch, surface, server_response):
     from azure.cosmos.exceptions import CosmosHttpResponseError
 
     plugin = _load_plugin()
@@ -118,7 +118,7 @@ def test_point_error_capture_uses_exception_headers(monkeypatch, surface, server
 
 @pytest.mark.parametrize("surface", ("sync", "aio"))
 @pytest.mark.parametrize("autoscale", (False, True))
-def test_database_throughput_capture_records_values_and_properties(monkeypatch, surface, autoscale):
+def test_database_throughput_capture_records_values_and_properties_rust(monkeypatch, surface, autoscale):
     from azure.cosmos import ThroughputProperties
     from azure.cosmos._cosmos_responses import CosmosDict
 
@@ -170,7 +170,7 @@ class PluginRegistryTests(unittest.TestCase):
     def setUp(self):
         self.plugin = _load_plugin()
 
-    def test_registry_contains_migrated_crud_ops(self):
+    def test_registry_contains_migrated_crud_ops_rust(self):
         """All migrated operations must be registered for sync + aio capture."""
         # Without this, a migrated operation (e.g. query_items) could be missing from
         # the registry and its calls would never be captured for the audit.
@@ -199,7 +199,7 @@ class PluginRegistryTests(unittest.TestCase):
             self.assertTrue(callable(registry[op]["sync"]))
             self.assertTrue(callable(registry[op]["aio"]))
 
-    def test_replacement_targets_preserve_sync_and_async_shapes(self):
+    def test_replacement_targets_preserve_sync_and_async_shapes_rust(self):
         for surface in ("sync", "aio"):
             module, class_name, method_name = self.plugin._OP_REGISTRY["replace_container"][surface]()
             self.assertEqual(class_name, "DatabaseProxy")
@@ -209,7 +209,7 @@ class PluginRegistryTests(unittest.TestCase):
                 surface == "aio",
             )
 
-    def test_sync_calls_outside_a_test_are_not_captured(self):
+    def test_sync_calls_outside_a_test_are_not_captured_rust(self):
         """Session setup operations must not create unknown-node audit rows."""
         emitted = []
         original_emit = self.plugin._emit_block  # noqa: SLF001
@@ -228,7 +228,7 @@ class PluginRegistryTests(unittest.TestCase):
         self.assertEqual(result, "setup")
         self.assertEqual(emitted, [])
 
-    def test_async_calls_outside_a_test_are_not_captured(self):
+    def test_async_calls_outside_a_test_are_not_captured_rust(self):
         """Async session setup operations must not create unknown-node audit rows."""
         emitted = []
         original_emit = self.plugin._emit_block  # noqa: SLF001
@@ -251,7 +251,7 @@ class PluginRegistryTests(unittest.TestCase):
         self.assertEqual(result, "setup")
         self.assertEqual(emitted, [])
 
-    def test_list_databases_capture_is_deferred_until_sync_pager_is_drained(self):
+    def test_list_databases_capture_is_deferred_until_sync_pager_is_drained_rust(self):
         """The audit must capture returned database rows and Rust execution, not the pager."""
         emitted = []
         original_emit = self.plugin._emit_block  # noqa: SLF001
@@ -274,7 +274,7 @@ class PluginRegistryTests(unittest.TestCase):
         self.assertEqual(len(emitted), 1)
         self.assertEqual(emitted[0]["return_value"], [{"id": "db-1"}, {"id": "db-2"}])
 
-    def test_query_items_aio_patch_preserves_non_awaitable_signature(self):
+    def test_query_items_aio_patch_preserves_non_awaitable_signature_rust(self):
         """The aio query_items target is sync-shaped and must stay non-coroutine after patching."""
         # The aio query_items entry point returns an async iterable but is not itself a
         # coroutine. Without this, the capture patch could wrap it as a coroutine and
@@ -290,7 +290,7 @@ class PluginRegistryTests(unittest.TestCase):
         finally:
             self.plugin._revert_patches()  # noqa: SLF001
 
-    def test_read_feed_ranges_aio_patch_preserves_non_awaitable_signature(self):
+    def test_read_feed_ranges_aio_patch_preserves_non_awaitable_signature_rust(self):
         """The aio read_feed_ranges target is sync-shaped and must stay non-coroutine after patching."""
         # Same guard for aio read_feed_ranges: the patch must not turn a non-coroutine
         # into a coroutine, or async read_feed_ranges would break under audit.
@@ -305,7 +305,7 @@ class PluginRegistryTests(unittest.TestCase):
         finally:
             self.plugin._revert_patches()  # noqa: SLF001
 
-    def test_list_databases_aio_patch_preserves_non_awaitable_signature(self):
+    def test_list_databases_aio_patch_preserves_non_awaitable_signature_rust(self):
         """The aio list_databases target must remain an async iterable, not a coroutine."""
         module, class_name, method_name = self.plugin._aio_list_databases_target()  # noqa: SLF001
         cls = getattr(module, class_name)
@@ -318,7 +318,7 @@ class PluginRegistryTests(unittest.TestCase):
         finally:
             self.plugin._revert_patches()  # noqa: SLF001
 
-    def test_read_all_items_aio_patch_preserves_non_awaitable_signature(self):
+    def test_read_all_items_aio_patch_preserves_non_awaitable_signature_rust(self):
         """The aio read_all_items target is sync-shaped and must stay non-coroutine after patching."""
         module, class_name, method_name = self.plugin._aio_read_all_items_target()  # noqa: SLF001
         cls = getattr(module, class_name)
@@ -331,7 +331,7 @@ class PluginRegistryTests(unittest.TestCase):
         finally:
             self.plugin._revert_patches()  # noqa: SLF001
 
-    def test_repr_address_is_normalized_for_capture_payloads(self):
+    def test_repr_address_is_normalized_for_capture_payloads_rust(self):
         """Address-bearing repr strings are normalized to avoid false diffs."""
         # An object's text form carries a process-local memory address ("at 0x...") that
         # changes every run. Without normalizing it, two identical results would look
@@ -346,7 +346,7 @@ class PluginRegistryTests(unittest.TestCase):
         normalized = self.plugin._coerce_json_safe(_Dummy())  # noqa: SLF001
         self.assertEqual(normalized, "<Dummy object>")
 
-    def test_execution_evidence_uses_binding_counter_delta(self):
+    def test_execution_evidence_uses_binding_counter_delta_rust(self):
         """A Rust-selected client must prove that the binding counter moved."""
         original = self.plugin._rust_operation_count  # noqa: SLF001
         original_fallback = self.plugin._rust_fallback_count  # noqa: SLF001
@@ -360,7 +360,7 @@ class PluginRegistryTests(unittest.TestCase):
         self.assertEqual(evidence["executed_engine"], "rust")
         self.assertEqual(evidence["rust_operation_delta"], 2)
 
-    def test_zero_rust_calls_do_not_prove_legacy_execution(self):
+    def test_zero_rust_calls_do_not_prove_legacy_execution_rust(self):
         from unittest.mock import patch
 
         with patch.object(self.plugin, "_rust_operation_count", return_value=10), \
@@ -372,7 +372,7 @@ class PluginRegistryTests(unittest.TestCase):
             "rust_fallback_delta": 0,
         })
 
-    def test_result_headers_prefer_public_aggregate(self):
+    def test_result_headers_prefer_public_aggregate_rust(self):
         """List/read-many captures must use the result's aggregate headers."""
 
         class _Result:
@@ -395,7 +395,7 @@ class PluginRegistryTests(unittest.TestCase):
         )
         self.assertEqual(headers, {"x-ms-request-charge": "4.5"})
 
-    def test_execution_evidence_rejects_attempt_then_fallback(self):
+    def test_execution_evidence_rejects_attempt_then_fallback_rust(self):
         """Entering Rust and then retrying in Python is not Rust execution parity."""
         original_count = self.plugin._rust_operation_count  # noqa: SLF001
         original_fallback = self.plugin._rust_fallback_count  # noqa: SLF001
@@ -457,7 +457,7 @@ def captured_listing(request, monkeypatch, async_surface):
 
 
 @pytest.mark.asyncio
-async def test_paged_capture_preserves_lazy_partial_iteration(captured_listing):
+async def test_paged_capture_preserves_lazy_partial_iteration_rust(captured_listing):
     result, emitted, fetches, is_async = captured_listing
     assert emitted == fetches == []
     if is_async:
@@ -480,7 +480,7 @@ async def test_paged_capture_preserves_lazy_partial_iteration(captured_listing):
 
 
 @pytest.mark.asyncio
-async def test_paged_capture_preserves_continuation_replay_empty_pages_and_errors(captured_listing):
+async def test_paged_capture_preserves_continuation_replay_empty_pages_and_errors_rust(captured_listing):
     result, emitted, fetches, is_async = captured_listing
 
     async def page_rows(pages):
@@ -519,7 +519,7 @@ async def test_paged_capture_preserves_continuation_replay_empty_pages_and_error
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("terminal_response", [False, True])
-async def test_query_capture_distinguishes_local_drain_from_empty_response(
+async def test_query_capture_distinguishes_local_drain_from_empty_response_rust(
     monkeypatch, async_surface, terminal_response
 ):
     plugin = _load_plugin()
@@ -596,7 +596,7 @@ async def test_query_capture_distinguishes_local_drain_from_empty_response(
     assert all(block["rust_operation_delta"] == 1 for block in emitted)
 
 
-def test_query_capture_next_aliases_do_not_bypass_recording(monkeypatch):
+def test_query_capture_next_aliases_do_not_bypass_recording_rust(monkeypatch):
     plugin = _load_plugin()
     emitted = []
     fetches = []
@@ -632,7 +632,7 @@ def test_query_capture_next_aliases_do_not_bypass_recording(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_query_capture_allows_nonresumable_iteration(monkeypatch, async_surface):
+async def test_query_capture_allows_nonresumable_iteration_rust(monkeypatch, async_surface):
     plugin = _load_plugin()
     emitted = []
     fetches = []
@@ -698,7 +698,7 @@ async def test_query_capture_allows_nonresumable_iteration(monkeypatch, async_su
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("server_response", [False, True])
-async def test_query_page_error_preserves_exception_headers(monkeypatch, async_surface, server_response):
+async def test_query_page_error_preserves_exception_headers_rust(monkeypatch, async_surface, server_response):
     from azure.cosmos.exceptions import CosmosHttpResponseError
 
     plugin = _load_plugin()
@@ -746,7 +746,7 @@ async def test_query_page_error_preserves_exception_headers(monkeypatch, async_s
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("different_amount", [False, True])
-async def test_query_page_captures_feed_the_reporter(
+async def test_query_page_captures_feed_the_reporter_rust(
     monkeypatch, tmp_path, capsys, async_surface, different_amount
 ):
     reporter_path = _REPO_ROOT / "scripts" / "v5" / "build_legacy_parity_audit.py"

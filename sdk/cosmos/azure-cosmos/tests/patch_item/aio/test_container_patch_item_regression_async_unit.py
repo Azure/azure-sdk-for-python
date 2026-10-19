@@ -71,7 +71,7 @@ class _CapturingAsyncBackend(AsyncCosmosBackend):
 class TestAsyncContainerPatchItemRouting(unittest.IsolatedAsyncioTestCase):
     """The async patch behaves the same as the sync patch."""
 
-    async def test_caller_request_options_are_merged_not_overwritten(self):
+    async def test_caller_request_options_are_merged_not_overwritten_rust(self):
         """Options the caller passes are kept alongside the partition key
         (the async half of the merge guard)."""
         proxy, cc = _make_async_proxy()
@@ -85,7 +85,7 @@ class TestAsyncContainerPatchItemRouting(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(forwarded_options["customKey"], "customValue")
         self.assertEqual(forwarded_options["partitionKey"], "a")
 
-    async def test_plain_patch_routes_to_backend(self):
+    async def test_plain_patch_routes_to_backend_rust(self):
         """A plain patch goes to the Rust backend; the existing client is
         not called."""
         proxy, cc = _make_async_proxy()
@@ -100,7 +100,7 @@ class TestAsyncContainerPatchItemRouting(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(backend.prepared.op, OP_PATCH_ITEM)
         self.assertEqual(backend.prepared.item_id, "patch_item")
 
-    async def test_filter_predicate_patch_uses_rust_without_legacy(self):
+    async def test_filter_predicate_patch_uses_rust_without_legacy_rust(self):
         """Filtered patches use the selected backend without legacy replay."""
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()

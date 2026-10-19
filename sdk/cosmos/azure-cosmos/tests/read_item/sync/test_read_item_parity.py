@@ -170,7 +170,7 @@ def _run_read(container, summary: str,
     ],
     ids=["default", "options-eventual", "options-session", "header-eventual", "header-session"],
 )
-def test_baseline_read_by_id(container_for, read_options):
+def test_baseline_read_by_id_rust(container_for, read_options):
     """Read by bare id with default or explicitly overridden consistency.
 
     Both backends must succeed; the body's id/pk fields must match what
@@ -203,7 +203,7 @@ def test_baseline_read_by_id(container_for, read_options):
 # Polymorphic ``item`` shape + 404 cases
 # ---------------------------------------------------------------------------
 
-def test_read_by_document_dict(container_for):
+def test_read_by_document_dict_rust(container_for):
     """read by passing the document dict (uses ``_self`` lookup).
 
     Same precedent as ``delete_item``'s document-dict test:
@@ -214,7 +214,7 @@ def test_read_by_document_dict(container_for):
               by_dict=True).assert_functional_parity()
 
 
-def test_missing_id_raises_typed_not_found(container_for):
+def test_missing_id_raises_typed_not_found_rust(container_for):
     """Reading a never-created id must raise ``CosmosResourceNotFoundError``
     (HTTP 404) on **both** backends."""
     fixed_id = "does-not-exist-" + uuid.uuid4().hex
@@ -236,7 +236,7 @@ def test_missing_id_raises_typed_not_found(container_for):
     cmp.assert_functional_exception_parity()
 
 
-def test_wrong_partition_key_raises_typed_not_found(container_for):
+def test_wrong_partition_key_raises_typed_not_found_rust(container_for):
     """Reading with the wrong partition key returns 404 on both backends.
 
     The wire cannot distinguish wrong-id from wrong-pk; the server
@@ -269,7 +269,7 @@ def test_wrong_partition_key_raises_typed_not_found(container_for):
 # Header-bearing kwargs, one at a time
 # ---------------------------------------------------------------------------
 
-def test_post_trigger_include(container_for):
+def test_post_trigger_include_rust(container_for):
     """Baseline call plus ``post_trigger_include='auditRead'`` (header kwarg).
 
     There is no registered trigger by that name; the server returns
@@ -281,7 +281,7 @@ def test_post_trigger_include(container_for):
     cmp.assert_functional_exception_parity()
 
 
-def test_session_token(container_for):
+def test_session_token_rust(container_for):
     """Baseline call plus ``session_token=<token>``.
 
     Reads pass the session-token check; the known rust-side limitation
@@ -292,19 +292,19 @@ def test_session_token(container_for):
               session_token="0:1#42").assert_functional_parity()
 
 
-def test_initial_headers(container_for):
+def test_initial_headers_rust(container_for):
     """Baseline call plus customer-injected ``initial_headers``."""
     _run_read(container_for, summary="baseline + initial_headers",
               initial_headers={"x-ms-test-parity": "v1"}).assert_functional_parity()
 
 
-def test_priority_high(container_for):
+def test_priority_high_rust(container_for):
     """Baseline call plus ``priority='High'`` (``x-ms-cosmos-priority-level``)."""
     _run_read(container_for, summary="baseline + priority=High",
               priority="High").assert_functional_parity()
 
 
-def test_throughput_bucket(container_for):
+def test_throughput_bucket_rust(container_for):
     """Baseline call plus ``throughput_bucket=1`` (``x-ms-cosmos-throughput-bucket``)."""
     _run_read(container_for, summary="baseline + throughput_bucket=1",
               throughput_bucket=1).assert_functional_parity()
@@ -314,7 +314,7 @@ def test_throughput_bucket(container_for):
 # Behavioural / Python-only kwargs.
 # ---------------------------------------------------------------------------
 
-def test_max_cache_staleness_positive(container_for):
+def test_max_cache_staleness_positive_rust(container_for):
     """Baseline call plus ``max_integrated_cache_staleness_in_ms=5000``.
 
     The value reaches the wire as
@@ -325,7 +325,7 @@ def test_max_cache_staleness_positive(container_for):
               max_integrated_cache_staleness_in_ms=5000).assert_functional_parity()
 
 
-def test_max_cache_staleness_zero_is_silent_no_op(container_for):
+def test_max_cache_staleness_zero_is_silent_no_op_rust(container_for):
     """``max_integrated_cache_staleness_in_ms=0`` is a silent no-op.
 
     The header must not be emitted on either backend (a falsy value is
@@ -336,7 +336,7 @@ def test_max_cache_staleness_zero_is_silent_no_op(container_for):
               max_integrated_cache_staleness_in_ms=0).assert_functional_parity()
 
 
-def test_max_cache_staleness_negative_raises_value_error_up_front(container_for):
+def test_max_cache_staleness_negative_raises_value_error_up_front_rust(container_for):
     """negative cache-staleness raises ``ValueError`` BEFORE any network call.
 
     The validation lives at the call site so the customer's traceback
@@ -365,14 +365,14 @@ def test_max_cache_staleness_negative_raises_value_error_up_front(container_for)
     )
 
 
-def test_timeout(container_for):
+def test_timeout_rust(container_for):
     """Baseline call plus ``timeout=30`` (overall request timeout)."""
     _run_read(container_for, summary="baseline + timeout=30",
               timeout=30).assert_functional_parity()
 
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only hedging feature).")
-def test_availability_strategy(container_for):
+def test_availability_strategy_rust(container_for):
     """Baseline call plus ``availability_strategy=True`` (Python-only hedging feature).
 
     Hedging means sending the same read to a second region when the first
@@ -387,7 +387,7 @@ def test_availability_strategy(container_for):
                           "ExcludedRegions field, but the parity assertion is hard to make "
                           "end-to-end against a single-region test account. Same skip rationale "
                           "as create_item's L3_excluded_locations.")
-def test_excluded_locations(container_for):
+def test_excluded_locations_rust(container_for):
     """Baseline call plus ``excluded_locations=['East US']``.
 
     The binding passes this keyword to the driver as an excluded-regions
@@ -407,7 +407,7 @@ def test_excluded_locations(container_for):
 # Output / parsing parity, conditional reads
 # ---------------------------------------------------------------------------
 
-def test_response_hook_fires_once(container_for):
+def test_response_hook_fires_once_rust(container_for):
     """``response_hook`` must fire exactly once per backend on success.
 
     Mirrors the create_item / delete_item suites' response-hook test. The harness
@@ -448,7 +448,7 @@ def test_response_hook_fires_once(container_for):
     assert fired["rust"] == 1, "rust should fire response_hook exactly once"
 
 
-def test_conditional_etag_if_modified_unchanged_returns_304_empty_dict(container_for):
+def test_conditional_etag_if_modified_unchanged_returns_304_empty_dict_rust(container_for):
     """``etag`` + ``IfModified``, server etag unchanged -> 304 empty CosmosDict.
 
     This is the cache-validation idiom. The customer's cached etag
@@ -504,7 +504,7 @@ def test_conditional_etag_if_modified_unchanged_returns_304_empty_dict(container
         )
 
 
-def test_conditional_etag_if_not_modified_match_returns_200_body(container_for):
+def test_conditional_etag_if_not_modified_match_returns_200_body_rust(container_for):
     """``etag`` + ``IfNotModified``, server etag matches -> 200 + body.
 
     Same set-up as the 304 test above, but with ``IfNotModified``
@@ -536,7 +536,7 @@ def test_conditional_etag_if_not_modified_match_returns_200_body(container_for):
         )
 
 
-def test_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(container_for):
+def test_conditional_etag_if_not_modified_mismatch_observes_actual_behavior_rust(container_for):
     """stale ``etag`` + ``IfNotModified`` on a read: pin what actually
     happens on the wire, not the intuitive expectation.
 
@@ -596,7 +596,7 @@ def test_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(cont
 # Exception parity for misuse
 # ---------------------------------------------------------------------------
 
-def test_etag_without_match_condition_raises_value_error_up_front(container_for):
+def test_etag_without_match_condition_raises_value_error_up_front_rust(container_for):
     """``etag=`` without ``match_condition=`` raises ``ValueError`` before
     any network call.
 
@@ -629,7 +629,7 @@ def test_etag_without_match_condition_raises_value_error_up_front(container_for)
 # ---------------------------------------------------------------------------
 
 @pytest.mark.parametrize("value", [None, False, True])
-def test_populate_query_metrics_is_rejected(container_for, value):
+def test_populate_query_metrics_is_rejected_rust(container_for, value):
     def read(client):
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         return container.read_item("unused", "a", populate_query_metrics=value)

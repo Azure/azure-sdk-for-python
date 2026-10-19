@@ -20,6 +20,7 @@ from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._session_token_helpers import get_latest_session_token, parse_session_token
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import HttpHeaders
+from get_latest_session_token._fixtures import create_split_ranges
 
 
 PACKAGE = Path(__file__).resolve().parents[2]
@@ -30,7 +31,7 @@ def _range(minimum="AA", maximum="DD"):
 
 
 def _source_function(path, name, namespace=None):
-    """Load a real example/test function without running its account setup."""
+    """Load a sample function without running its account setup."""
     module = ast.parse(path.read_text(encoding="utf-8-sig"))
     function = next(
         node for node in module.body
@@ -41,7 +42,7 @@ def _source_function(path, name, namespace=None):
     return scope[name]
 
 
-CASES = _source_function(PACKAGE / "tests" / "test_session_token_helpers.py", "create_split_ranges")()
+CASES = create_split_ranges()
 
 
 def _call(async_client, pairs, target):
@@ -58,7 +59,7 @@ def _call(async_client, pairs, target):
 
 
 @pytest.mark.parametrize("pairs,target,expected", CASES)
-def test_split_merge_result_preserves_existing_cases_for_every_input_order(pairs, target, expected):
+def test_split_merge_result_preserves_existing_cases_for_every_input_order_rust(pairs, target, expected):
     original = [(_range(*bounds), token) for bounds, token in pairs]
     assert get_latest_session_token(original, _range(*target)) == expected
     for ordering in permutations(pairs):
@@ -71,7 +72,7 @@ def test_split_merge_result_preserves_existing_cases_for_every_input_order(pairs
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("pairs,target,expected", CASES)
-def test_both_public_clients_merge_locally_without_connection_state(async_client, pairs, target, expected):
+def test_both_public_clients_merge_locally_without_connection_state_rust(async_client, pairs, target, expected):
     inputs = [(_range(*bounds), token) for bounds, token in reversed(pairs)]
     before = deepcopy(inputs)
     actual = _call(async_client, inputs, _range(*target))
@@ -85,47 +86,47 @@ def test_both_public_clients_merge_locally_without_connection_state(async_client
     "0:1#2,", ",0:1#2", "0:1#2,,1:1#3", "0:1#2#bad",
     "0:-1", "0:54.5", "0: 54", "0:54 ", "0:５４", "0:18446744073709551616", "0:" + "9" * 5000,
 ])
-def test_overlapping_malformed_or_unsupported_tokens_fail_explicitly(async_client, token):
+def test_overlapping_malformed_or_unsupported_tokens_fail_explicitly_rust(async_client, token):
     with pytest.raises(ValueError, match="session token"):
         _call(async_client, [(_range(), token)], _range())
 
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("token", [None, 123, [], {}])
-def test_non_string_tokens_raise_type_error(async_client, token):
+def test_non_string_tokens_raise_type_error_rust(async_client, token):
     with pytest.raises(TypeError, match="session token"):
         _call(async_client, [(_range(), token)], _range())
 
 
 @pytest.mark.parametrize("token", ["missing-colon", "0:bad", ":1#1", "0:1#2:ignored"])
-def test_single_segment_parser_never_returns_an_invalid_vector(token):
+def test_single_segment_parser_never_returns_an_invalid_vector_rust(token):
     with pytest.raises(ValueError, match="session token"):
         parse_session_token(token)
 
 
 @pytest.mark.parametrize("async_client", [False, True])
-def test_non_overlapping_tokens_are_not_used_or_validated(async_client):
+def test_non_overlapping_tokens_are_not_used_or_validated_rust(async_client):
     pairs = [(_range("EE", "FF"), "unused"), (_range(), "0:1#54#3=50")]
     assert _call(async_client, pairs, _range()) == "0:1#54#3=50"
 
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("pairs", [[], [(_range("EE", "FF"), "0:1#1")]])
-def test_no_overlap_remains_value_error(async_client, pairs):
+def test_no_overlap_remains_value_error_rust(async_client, pairs):
     with pytest.raises(ValueError, match="There were no overlapping feed ranges with the target"):
         _call(async_client, pairs, _range())
 
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("pairs", [None, 5, "not pairs", {"Range": {}}])
-def test_invalid_pair_collection_raises_type_error(async_client, pairs):
+def test_invalid_pair_collection_raises_type_error_rust(async_client, pairs):
     with pytest.raises(TypeError, match="feed_ranges_to_session_tokens"):
         _call(async_client, pairs, _range())
 
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("entry", [None, "ab", (_range(),), (_range(), "0:1#2", "extra")])
-def test_invalid_pair_entries_fail_explicitly(async_client, entry):
+def test_invalid_pair_entries_fail_explicitly_rust(async_client, entry):
     with pytest.raises((TypeError, ValueError), match="feed_ranges_to_session_tokens"):
         _call(async_client, [entry], _range())
 
@@ -137,24 +138,24 @@ def test_invalid_pair_entries_fail_explicitly(async_client, entry):
     {"Range": {"min": "AA", "max": "DD", "isMinInclusive": "true", "isMaxInclusive": False}},
     {"Range": {"min": "DD", "max": "AA", "isMinInclusive": True, "isMaxInclusive": False}},
 ])
-def test_invalid_range_contents_raise_value_error(async_client, target):
+def test_invalid_range_contents_raise_value_error_rust(async_client, target):
     with pytest.raises(ValueError, match="target_feed_range"):
         _call(async_client, [(_range(), "0:1#1")], target)
 
 
 @pytest.mark.parametrize("async_client", [False, True])
-def test_merge_can_combine_values_instead_of_returning_one_input(async_client):
+def test_merge_can_combine_values_instead_of_returning_one_input_rust(async_client):
     inputs = [(_range(), "0:1#54#3=50"), (_range(), "0:1#51#3=52")]
     assert _call(async_client, inputs, _range()) == "0:1#54#3=52"
 
 
 @pytest.mark.parametrize("async_client", [False, True])
-def test_partial_target_coverage_does_not_require_observations_for_missing_ranges(async_client):
+def test_partial_target_coverage_does_not_require_observations_for_missing_ranges_rust(async_client):
     assert _call(async_client, [(_range("AA", "BB"), "0:1#2")], _range()) == "0:1#2"
 
 
 @pytest.mark.parametrize("async_client", [False, True])
-def test_closed_point_ranges_are_accepted_and_inputs_remain_unchanged(async_client):
+def test_closed_point_ranges_are_accepted_and_inputs_remain_unchanged_rust(async_client):
     target = FeedRangeInternalEpk(Range("AA", "AA", True, True)).to_dict()
     before = deepcopy(target)
     assert _call(async_client, [(target, "0:1#2")], target) == "0:1#2"
@@ -163,7 +164,7 @@ def test_closed_point_ranges_are_accepted_and_inputs_remain_unchanged(async_clie
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("value", [None, "AA", []])
-def test_range_value_types_fail_explicitly(async_client, value):
+def test_range_value_types_fail_explicitly_rust(async_client, value):
     with pytest.raises(TypeError, match="target_feed_range"):
         _call(async_client, [(_range(), "0:1#2")], value)
     with pytest.raises(TypeError, match="feed_ranges_to_session_tokens"):
@@ -171,7 +172,7 @@ def test_range_value_types_fail_explicitly(async_client, value):
 
 
 @pytest.mark.parametrize("async_client", [False, True])
-def test_compound_tokens_merge_repeated_partition_segments(async_client):
+def test_compound_tokens_merge_repeated_partition_segments_rust(async_client):
     inputs = [(_range(), "0:1#51#3=52,1:1#53#3=50"), (_range(), "0:1#54#3=50")]
     result = _call(async_client, inputs, _range())
     assert sorted(result.split(",")) == ["0:1#54#3=52", "1:1#53#3=50"]
@@ -191,7 +192,7 @@ def test_compound_tokens_merge_repeated_partition_segments(async_client):
     (["0:1000,1:30", "0:1#5#3=2,1:40"], "0:1#5#3=2,1:40"),
     (["0:1000", "1:1#5#3=2"], "1:1#5#3=2"),
 ])
-def test_simple_and_mixed_tokens_merge_locally_for_every_input_order(async_client, tokens, expected):
+def test_simple_and_mixed_tokens_merge_locally_for_every_input_order_rust(async_client, tokens, expected):
     for ordering in permutations(tokens):
         inputs = [(_range(), token) for token in ordering]
         before = deepcopy(inputs)
@@ -201,14 +202,14 @@ def test_simple_and_mixed_tokens_merge_locally_for_every_input_order(async_clien
 
 
 @pytest.mark.parametrize("async_client", [False, True])
-def test_simple_tokens_for_distinct_ranges_preserve_both_partitions(async_client):
+def test_simple_tokens_for_distinct_ranges_preserve_both_partitions_rust(async_client):
     inputs = [(_range("AA", "BB"), "0:54"), (_range("BB", "DD"), "1:60")]
     assert _call(async_client, inputs, _range()) == "0:54,1:60"
 
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("pairs,target,expected", CASES)
-def test_simple_tokens_preserve_existing_range_selection_cases(async_client, pairs, target, expected):
+def test_simple_tokens_preserve_existing_range_selection_cases_rust(async_client, pairs, target, expected):
     def simple(token):
         return ",".join(
             segment.split(":")[0] + ":" + segment.split("#")[1]
@@ -230,7 +231,7 @@ def test_simple_tokens_preserve_existing_range_selection_cases(async_client, pai
     ("80", "80", False),
     ("90", "80", False),
 ])
-def test_children_must_cover_parent_before_replacing_its_observation(
+def test_children_must_cover_parent_before_replacing_its_observation_rust(
     async_client, vector, left_max, right_min, keep_parent
 ):
     value = "1#" if vector else ""
@@ -254,7 +255,7 @@ def test_children_must_cover_parent_before_replacing_its_observation(
     ("0:1000", ["1:1#5", "2:1#6"], {"1:1#5", "2:1#6"}),
     ("0:1#5", ["1:1000", "2:2000"], {"0:1#5"}),
 ])
-def test_mixed_formats_in_complete_split_ranges_prefer_vector_tokens(async_client, parent, children, expected):
+def test_mixed_formats_in_complete_split_ranges_prefer_vector_tokens_rust(async_client, parent, children, expected):
     pairs = [
         (_range("AA", "DD"), parent),
         (_range("AA", "BB"), children[0]),
@@ -271,7 +272,7 @@ def test_mixed_formats_in_complete_split_ranges_prefer_vector_tokens(async_clien
     (Range("AA", "BB", True, True), Range("BB", "DD", False, False), True),
     (Range("AA", "DD", True, False), Range("BB", "FF", True, False), True),
 ])
-def test_range_mergeability_requires_overlap_or_an_included_shared_boundary(left, right, expected):
+def test_range_mergeability_requires_overlap_or_an_included_shared_boundary_rust(left, right, expected):
     assert left.can_merge(right) is expected
     assert right.can_merge(left) is expected
     if not expected:
@@ -281,14 +282,14 @@ def test_range_mergeability_requires_overlap_or_an_included_shared_boundary(left
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("enabled,expected", [("true", "0:2#5#3=99"), ("false", "0:2#100#3=99")])
-def test_existing_different_version_merge_setting_is_preserved(async_client, enabled, expected, monkeypatch):
+def test_existing_different_version_merge_setting_is_preserved_rust(async_client, enabled, expected, monkeypatch):
     monkeypatch.setenv("AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE", enabled)
     inputs = [(_range(), "0:1#100#3=99"), (_range(), "0:2#5#3=3")]
     assert _call(async_client, inputs, _range()) == expected
 
 
 @pytest.mark.parametrize("async_client", [False, True])
-def test_incompatible_same_version_regions_preserve_local_merge_error(async_client):
+def test_incompatible_same_version_regions_preserve_local_merge_error_rust(async_client):
     inputs = [(_range(), "0:1#2#3=1"), (_range(), "0:1#3#4=2")]
     with pytest.raises(CosmosHttpResponseError, match="unexpected regions") as caught:
         _call(async_client, inputs, _range())
@@ -296,7 +297,7 @@ def test_incompatible_same_version_regions_preserve_local_merge_error(async_clie
 
 
 @pytest.mark.parametrize("async_client", [False, True])
-def test_sample_updates_the_target_cache_key_not_the_last_cached_range(async_client):
+def test_sample_updates_the_target_cache_key_not_the_last_cached_range_rust(async_client):
     proxy_type = AsyncContainerProxy if async_client else ContainerProxy
     proxy = proxy_type.__new__(proxy_type)
     target, other = _range("AA", "BB"), _range("CC", "DD")

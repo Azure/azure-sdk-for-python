@@ -18,7 +18,7 @@ RID_HEADER = "x-ms-cosmos-intended-collection-rid"
 
 
 @pytest.mark.parametrize("existing", [None, "", "customer-rid"])
-def test_existing_container_resource_id_is_preserved_even_when_falsey(existing):
+def test_existing_container_resource_id_is_preserved_even_when_falsey_rust(existing):
     """A value the customer already set is never replaced, even when it is empty.
 
     All three existing values are left alone: a real id, an empty string, and
@@ -34,7 +34,7 @@ def test_existing_container_resource_id_is_preserved_even_when_falsey(existing):
     assert options == {Constants.ContainerRID: existing, "other": "untouched"}
 
 
-def test_container_resource_id_helper_requires_no_lookup_callback():
+def test_container_resource_id_helper_requires_no_lookup_callback_rust():
     """The helper is handed an already-resolved id; it never looks one up itself.
 
     Its only two arguments are the options and the id. If it instead took a
@@ -60,7 +60,7 @@ def test_container_resource_id_helper_requires_no_lookup_callback():
     ({"initialHeaders": {RID_HEADER: "customer"}, "containerRID": "option"}, "option"),
     ({RID_HEADER: "wire", "containerRID": "option"}, "option"),
 ])
-def test_resolved_canonical_rid_wins_without_mutating_customer_options(resolved, options, expected):
+def test_resolved_canonical_rid_wins_without_mutating_customer_options_rust(resolved, options, expected):
     """When the client has resolved an id, it wins over anything in the options, and
     the caller's options are never edited.
 

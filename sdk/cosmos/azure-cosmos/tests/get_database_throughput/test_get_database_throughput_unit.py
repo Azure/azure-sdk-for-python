@@ -36,7 +36,7 @@ def _offer():
     ],
 )
 @pytest.mark.parametrize("warm", [False, True])
-def test_read_shares_budget_and_next_call_resets(case, clock, options, budget, warm):
+def test_read_shares_budget_and_next_call_resets_rust(case, clock, options, budget, warm):
     calls = []
 
     def metadata(*args, **kwargs):
@@ -66,7 +66,7 @@ def test_read_shares_budget_and_next_call_resets(case, clock, options, budget, w
 
 
 @pytest.mark.parametrize("phase", ["metadata", "offers"])
-def test_expired_read_skips_callback_and_does_not_replay(case, clock, phase):
+def test_expired_read_skips_callback_and_does_not_replay_rust(case, clock, phase):
     hook = MagicMock()
 
     def metadata(*args, **kwargs):
@@ -87,7 +87,7 @@ def test_expired_read_skips_callback_and_does_not_replay(case, clock, phase):
 
 
 @pytest.mark.parametrize("phase", ["metadata", "offers"])
-def test_read_service_failure_keeps_error_and_skips_callback(case, phase):
+def test_read_service_failure_keeps_error_and_skips_callback_rust(case, phase):
     hook = MagicMock()
     case.install(
         "read_database",
@@ -102,7 +102,7 @@ def test_read_service_failure_keeps_error_and_skips_callback(case, phase):
     hook.assert_not_called()
 
 
-def test_read_callback_timeout_is_not_reclassified(case):
+def test_read_callback_timeout_is_not_reclassified_rust(case):
     failure = TimeoutError("customer callback")
     hook = MagicMock(side_effect=failure)
     case.install("get_throughput", result=_response(_offer()))
@@ -116,7 +116,7 @@ def test_read_callback_timeout_is_not_reclassified(case):
 
 @pytest.mark.parametrize("phase", ["metadata", "offers"])
 @pytest.mark.parametrize("case", [True], indirect=True, ids=["async"])
-def test_async_cancellation_stops_current_phase_and_skips_callback(case, phase):
+def test_async_cancellation_stops_current_phase_and_skips_callback_rust(case, phase):
     async def run():
         entered = asyncio.Event()
         cancelled = asyncio.Event()
@@ -153,7 +153,7 @@ def test_async_cancellation_stops_current_phase_and_skips_callback(case, phase):
 
 @pytest.mark.parametrize("phase", ["metadata", "offers"])
 @pytest.mark.parametrize("case", [True], indirect=True, ids=["async"])
-def test_async_deadline_cancels_pending_phase_and_awaits_cleanup(case, phase):
+def test_async_deadline_cancels_pending_phase_and_awaits_cleanup_rust(case, phase):
     async def run():
         cancelled = asyncio.Event()
         hook = MagicMock()

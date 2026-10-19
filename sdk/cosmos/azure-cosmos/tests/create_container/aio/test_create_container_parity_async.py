@@ -72,7 +72,7 @@ def _per_engine_id(client, prefix):
     return "{}_{}".format(prefix, _observed_backend_name(client).replace("-", "_"))
 
 
-async def test_create_container_with_explicit_settings_async(database_id):
+async def test_create_container_with_explicit_settings_async_rust(database_id):
     """Both engines create a container with the settings that were asked for."""
 
     async def _do(client):
@@ -101,7 +101,7 @@ async def test_create_container_with_explicit_settings_async(database_id):
     assert "/excluded/*" in comparison.rust.return_value["excludedPaths"]
 
 
-async def test_create_container_default_indexing_policy_async(database_id):
+async def test_create_container_default_indexing_policy_async_rust(database_id):
     """With no indexing policy given, both engines get the same policy back from the service."""
 
     async def _do(client):
@@ -123,7 +123,7 @@ async def test_create_container_default_indexing_policy_async(database_id):
     assert comparison.core_python.return_value["includedPaths"] == ["/*"]
 
 
-async def test_create_container_return_shapes_async(database_id):
+async def test_create_container_return_shapes_async_rust(database_id):
     """Both return shapes come back the same on both engines."""
 
     async def _do(client):
@@ -160,7 +160,7 @@ async def test_create_container_return_shapes_async(database_id):
     }
 
 
-async def test_create_container_conflict_async(database_id):
+async def test_create_container_conflict_async_rust(database_id):
     """Creating a container whose id is taken raises the same typed conflict on both engines."""
     taken_id = "already_taken_" + uuid.uuid4().hex[:8]
     with _admin_client() as admin:
@@ -186,7 +186,7 @@ async def test_create_container_conflict_async(database_id):
     assert comparison.rust.raised.status_code == 409
 
 
-async def test_create_container_supported_options_and_hook_async(database_id):
+async def test_create_container_supported_options_and_hook_async_rust(database_id):
     async def _do(client):
         database = client.get_database_client(database_id)
         hooks = []
@@ -221,7 +221,7 @@ async def test_create_container_supported_options_and_hook_async(database_id):
 
 
 @pytest.mark.parametrize("condition", [MatchConditions.IfNotModified, MatchConditions.IfModified, MatchConditions.IfPresent])
-async def test_create_container_preserves_conditional_request_behavior_async(database_id, condition):
+async def test_create_container_preserves_conditional_request_behavior_async_rust(database_id, condition):
     async def _do(client):
         database = client.get_database_client(database_id)
         container = await run_target_operation_async(client, lambda: database.create_container(

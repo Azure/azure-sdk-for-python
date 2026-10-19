@@ -28,7 +28,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         except CosmosResourceNotFoundError:
             pass
 
-    async def test_database_crud_async(self):
+    async def test_database_crud_async_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_database_crud_async
         database_id = self.database_id
         database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
@@ -40,7 +40,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         db_throughput = await database_proxy.get_throughput()
         assert 5000 == db_throughput.offer_throughput
 
-    async def test_database_level_offer_throughput_async(self):
+    async def test_database_level_offer_throughput_async_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_database_level_offer_throughput_async
         offer_throughput = 1000
         database_id = self.database_id

@@ -68,7 +68,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         print(f"\nDeleted owned async query database: {self._db_id}")
 
     @pytest.mark.asyncio
-    async def test_populate_query_metrics_async(self):
+    async def test_populate_query_metrics_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_populate_query_metrics_async
         container_id = self._container_id
         created_collection = self.container
@@ -97,7 +97,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.database.delete_container(container_id)
 
-    async def test_populate_index_metrics_async(self):
+    async def test_populate_index_metrics_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_populate_index_metrics_async
         container_id = self._container_id
         created_collection = self.container
@@ -138,7 +138,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.database.delete_container(container_id)
 
     @pytest.mark.skip(reason="environment-gap: Emulator does not support query advisor yet")
-    async def test_populate_query_advice_async(self):
+    async def test_populate_query_advice_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_populate_query_advice_async
         container_id = self._container_id
         created_collection = self.container
@@ -225,7 +225,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.database.delete_container(container_id)
 
-    async def test_value_max_query_results_async(self):
+    async def test_value_max_query_results_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_value_max_query_results_async
         container = self.container
         await container.create_item(
@@ -240,7 +240,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(item_list) == 1
         assert item_list[0] == 3
 
-    async def test_offset_limit_async(self):
+    async def test_offset_limit_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_offset_limit_async
         container_id = self._container_id
         created_collection = self.container
@@ -283,7 +283,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.database.delete_container(container_id)
 
-    async def test_distinct_async(self):
+    async def test_distinct_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_distinct_async
         distinct_field = 'distinct_field'
         pk_field = "pk"
@@ -343,7 +343,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.database.delete_container(container_id)
 
-    async def test_partition_scoped_count_is_index_only_async(self):
+    async def test_partition_scoped_count_is_index_only_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_partition_scoped_count_is_index_only_async
         created_collection = self.container
         partition_key = "PowerCut-" + str(uuid.uuid4())
@@ -391,7 +391,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             for item_id, item_partition_key in created_items:
                 await created_collection.delete_item(item_id, item_partition_key)
 
-    async def test_paging_with_continuation_token_async(self):
+    async def test_paging_with_continuation_token_async_rust(self):
         """A continuation token replays the page that follows it.
 
         Two items are queried one page at a time. After taking the first page,
@@ -427,7 +427,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         assert second_page['id'] == second_page_fetched_with_continuation_token['id']
 
-    async def test_continuation_token_size_limit_query_async(self):
+    async def test_continuation_token_size_limit_query_async_rust(self):
         """Preserve the original async one-kilobyte token assertions on owned data."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_continuation_token_size_limit_query_async
         container = self.container
@@ -444,7 +444,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         token = pager.continuation_token
         assert len(token.encode('utf-8')) <= 1024
 
-    async def test_cross_partition_query_with_continuation_token_async(self):
+    async def test_cross_partition_query_with_continuation_token_async_rust(self):
         """Original async cross-partition replay, without an explicit enable flag."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_cross_partition_query_with_continuation_token_async
         created_collection = self.container

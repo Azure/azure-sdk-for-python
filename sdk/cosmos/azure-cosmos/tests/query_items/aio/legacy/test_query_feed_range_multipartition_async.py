@@ -32,7 +32,7 @@ class TestFeedRangeMultiPartitionAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.delete_database(self.database_id)
         print(f"Deleted owned async prefix query database: {self.database_id}")
 
-    async def test_prefix_partition_key_query_pagination_resume_async(self):
+    async def test_prefix_partition_key_query_pagination_resume_async_rust(self):
         """Prefix query resumes all matching items and preserves the COUNT result."""
         # Source: tests/test_query_feed_range_multipartition_async.py, same class and method.
         db = self.database

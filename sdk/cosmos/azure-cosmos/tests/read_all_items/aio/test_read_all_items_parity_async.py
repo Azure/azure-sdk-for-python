@@ -59,7 +59,7 @@ def _collect_run_ids(items, run_id: str) -> list[str]:
 
 
 @pytest.mark.asyncio
-async def test_read_all_items_baseline_async(container_for):
+async def test_read_all_items_baseline_async_rust(container_for):
     """Async baseline read_all_items returns the same seeded ids."""
     # A plain read_all_items() is whole-container (no partition key), so it
     # is served through the Rust query fast path ("Select * from root r").
@@ -86,7 +86,7 @@ async def test_read_all_items_baseline_async(container_for):
 
 
 @pytest.mark.asyncio
-async def test_read_all_items_respects_max_item_count_paging_async(container_for):
+async def test_read_all_items_respects_max_item_count_paging_async_rust(container_for):
     """Async read_all_items with max_item_count returns the same seeded ids."""
     # Same Rust query fast path as the baseline test, but max_item_count=1 forces
     # the read across multiple pages so paging/continuation is exercised, not just one page.
@@ -118,7 +118,7 @@ async def test_read_all_items_respects_max_item_count_paging_async(container_for
 
 
 @pytest.mark.asyncio
-async def test_read_all_items_availability_strategy_backend_contract_async(container_for):
+async def test_read_all_items_availability_strategy_backend_contract_async_rust(container_for):
     """Rust rejects the override; explicitly selected core-python keeps support."""
     run_id = "run-" + uuid.uuid4().hex
 

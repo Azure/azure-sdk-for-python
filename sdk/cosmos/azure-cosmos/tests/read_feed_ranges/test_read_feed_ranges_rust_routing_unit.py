@@ -60,7 +60,7 @@ def _legacy_feed_ranges(raw_ranges):
     ]
 
 
-def test_rust_parser_matches_legacy_for_multi_range_mixed_case():
+def test_rust_parser_matches_legacy_for_multi_range_mixed_case_rust():
     """Rust payload to feed ranges must be byte-identical to the legacy builder.
 
     Uses multiple ranges with lowercase hex EPKs so a dropped .upper() (or any
@@ -93,7 +93,7 @@ def test_rust_parser_matches_legacy_for_multi_range_mixed_case():
         assert feed_range["Range"]["max"] == feed_range["Range"]["max"].upper()
 
 
-def test_rust_parser_matches_legacy_for_full_range():
+def test_rust_parser_matches_legacy_for_full_range_rust():
     """Single full range parity (the shape the emulator suites exercise)."""
     raw = [{"minInclusive": "", "maxExclusive": "FF"}]
     rust_payload = {
@@ -104,25 +104,25 @@ def test_rust_parser_matches_legacy_for_full_range():
     assert parse_read_feed_ranges_payload(rust_payload) == _legacy_feed_ranges(raw)
 
 
-def test_rust_parser_rejects_missing_partition_key_ranges():
+def test_rust_parser_rejects_missing_partition_key_ranges_rust():
     """A missing range list raises the expected public parsing error."""
     with pytest.raises(ValueError):
         parse_read_feed_ranges_payload({})
 
 
-def test_rust_parser_rejects_non_list_partition_key_ranges():
+def test_rust_parser_rejects_non_list_partition_key_ranges_rust():
     """A non-list range value raises the expected public parsing error."""
     with pytest.raises(ValueError):
         parse_read_feed_ranges_payload({"PartitionKeyRanges": {"minInclusive": ""}})
 
 
-def test_rust_parser_rejects_non_object_entry():
+def test_rust_parser_rejects_non_object_entry_rust():
     """A non-object range entry raises the expected public parsing error."""
     with pytest.raises(ValueError):
         parse_read_feed_ranges_payload({"PartitionKeyRanges": ["not-an-object"]})
 
 
-def test_rust_parser_rejects_non_string_bounds():
+def test_rust_parser_rejects_non_string_bounds_rust():
     """Non-string boundaries raise the expected public parsing error."""
     with pytest.raises(ValueError):
         parse_read_feed_ranges_payload(
@@ -130,17 +130,17 @@ def test_rust_parser_rejects_non_string_bounds():
         )
 
 
-def test_gate_requires_backend():
+def test_gate_requires_backend_rust():
     """Python handles the call when Rust is unavailable."""
     assert can_use_rust_backend_for_read_feed_ranges(backend=LEGACY_BACKEND, kwargs={}) is False
 
 
-def test_gate_allows_backend_with_no_kwargs():
+def test_gate_allows_backend_with_no_kwargs_rust():
     """Rust handles a supported read-feed-ranges call."""
     assert can_use_rust_backend_for_read_feed_ranges(backend=RUST_BACKEND, kwargs={}) is True
 
 
-def test_gate_rejects_extra_rust_options():
+def test_gate_rejects_extra_rust_options_rust():
     """The operation policy rejects unsupported options without a legacy call."""
     assert (
         can_use_rust_backend_for_read_feed_ranges(
@@ -150,17 +150,17 @@ def test_gate_rejects_extra_rust_options():
     )
 
 
-def test_feed_range_from_partition_key_gate_requires_backend():
+def test_feed_range_from_partition_key_gate_requires_backend_rust():
     """Python handles partition-key conversion when Rust is unavailable."""
     assert can_use_rust_backend_for_feed_range_from_partition_key(backend=LEGACY_BACKEND) is False
 
 
-def test_feed_range_from_partition_key_gate_allows_backend():
+def test_feed_range_from_partition_key_gate_allows_backend_rust():
     """Rust handles supported partition-key conversion."""
     assert can_use_rust_backend_for_feed_range_from_partition_key(backend=RUST_BACKEND) is True
 
 
-def test_feed_range_from_partition_key_builds_prepared_request():
+def test_feed_range_from_partition_key_builds_prepared_request_rust():
     """The request targets the correct container and partition key."""
     prepared = build_feed_range_from_partition_key_prepared_request(
         container_link="/dbs/d/colls/c/",
@@ -172,7 +172,7 @@ def test_feed_range_from_partition_key_builds_prepared_request():
     assert prepared.body_bytes == b""
 
 
-def test_feed_range_from_partition_key_payload_round_trips_and_normalizes_case():
+def test_feed_range_from_partition_key_payload_round_trips_and_normalizes_case_rust():
     """Rust returns the same normalized public feed range as Python."""
     parsed = parse_feed_range_from_partition_key_payload(
         {"Range": {"min": "3c", "max": "3cff", "isMinInclusive": True, "isMaxInclusive": False}}
@@ -182,7 +182,7 @@ def test_feed_range_from_partition_key_payload_round_trips_and_normalizes_case()
     }
 
 
-def test_feed_range_from_partition_key_payload_requires_range_object():
+def test_feed_range_from_partition_key_payload_requires_range_object_rust():
     """A missing or invalid range raises the expected public parsing error."""
     with pytest.raises(ValueError):
         parse_feed_range_from_partition_key_payload({})
@@ -190,7 +190,7 @@ def test_feed_range_from_partition_key_payload_requires_range_object():
         parse_feed_range_from_partition_key_payload({"Range": "not-an-object"})
 
 
-def test_feed_range_from_partition_key_payload_requires_string_bounds():
+def test_feed_range_from_partition_key_payload_requires_string_bounds_rust():
     """Missing or non-string boundaries raise the expected public parsing error."""
     with pytest.raises(ValueError):
         parse_feed_range_from_partition_key_payload(
@@ -202,7 +202,7 @@ def test_feed_range_from_partition_key_payload_requires_string_bounds():
         )
 
 
-def test_feed_range_from_partition_key_payload_requires_boolean_flags():
+def test_feed_range_from_partition_key_payload_requires_boolean_flags_rust():
     """Missing or non-boolean boundary flags raise the expected public error."""
     with pytest.raises(ValueError):
         parse_feed_range_from_partition_key_payload(
@@ -266,7 +266,7 @@ def _container(async_client=False):
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("missing", [NonePartitionKeyValue, _Undefined(), {}])
-def test_feed_range_from_partition_key_dispatch_preserves_missing_components(async_client, missing):
+def test_feed_range_from_partition_key_dispatch_preserves_missing_components_rust(async_client, missing):
     container, recording = _container(async_client)
     expected = {
         "Range": {
@@ -298,7 +298,7 @@ def _collect(values, async_client):
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("value", [None, 0, 1, "false", "true", [], {}, object()])
-def test_read_feed_ranges_rejects_non_boolean_refresh_before_execution(async_client, value):
+def test_read_feed_ranges_rejects_non_boolean_refresh_before_execution_rust(async_client, value):
     container, recording = _container(async_client)
     with pytest.raises(TypeError, match="force_refresh.*bool"):
         container.read_feed_ranges(force_refresh=value)
@@ -306,7 +306,7 @@ def test_read_feed_ranges_rejects_non_boolean_refresh_before_execution(async_cli
 
 
 @pytest.mark.parametrize("value", [None, 0, 1, "false", [], {}])
-def test_read_feed_ranges_builder_does_not_coerce_refresh(value):
+def test_read_feed_ranges_builder_does_not_coerce_refresh_rust(value):
     with pytest.raises(TypeError, match="force_refresh.*bool"):
         build_read_feed_ranges_prepared_request(container_link="dbs/sales/colls/orders", force_refresh=value)
 
@@ -318,7 +318,7 @@ def test_read_feed_ranges_builder_does_not_coerce_refresh(value):
     {"initial_headers": {"x-customer": "orders"}}, {"request_options": {}},
     {"unknown_option": False},
 ])
-def test_read_feed_ranges_rejects_extra_options_without_legacy_execution(async_client, options):
+def test_read_feed_ranges_rejects_extra_options_without_legacy_execution_rust(async_client, options):
     container, recording = _container(async_client)
     with pytest.raises(NotImplementedError, match="read_feed_ranges"):
         _collect(container.read_feed_ranges(**options), async_client)
@@ -330,7 +330,7 @@ def test_read_feed_ranges_rejects_extra_options_without_legacy_execution(async_c
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("force_refresh", [False, True])
-def test_read_feed_ranges_is_lazy_and_returns_an_owned_result(async_client, force_refresh):
+def test_read_feed_ranges_is_lazy_and_returns_an_owned_result_rust(async_client, force_refresh):
     container, recording = _container(async_client)
     results = container.read_feed_ranges(force_refresh=force_refresh)
     assert not recording.requests
@@ -359,7 +359,7 @@ def test_read_feed_ranges_is_lazy_and_returns_an_owned_result(async_client, forc
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("token", ["", "not-a-range-token"])
-def test_read_feed_ranges_rejects_continuation_instead_of_restarting(async_client, token):
+def test_read_feed_ranges_rejects_continuation_instead_of_restarting_rust(async_client, token):
     container, recording = _container(async_client)
     pages = container.read_feed_ranges().by_page(continuation_token=token)
     with pytest.raises(ValueError, match="continuation"):
@@ -371,13 +371,13 @@ def test_read_feed_ranges_rejects_continuation_instead_of_restarting(async_clien
 
 
 @pytest.mark.parametrize("payload", [None, [], {"PartitionKeyRanges": []}])
-def test_read_feed_ranges_rejects_missing_or_empty_routing_data(payload):
+def test_read_feed_ranges_rejects_missing_or_empty_routing_data_rust(payload):
     with pytest.raises(ValueError, match="read_feed_ranges"):
         parse_read_feed_ranges_payload(payload)
 
 
 @pytest.mark.asyncio
-async def test_read_feed_ranges_rejects_overlapping_async_fetches():
+async def test_read_feed_ranges_rejects_overlapping_async_fetches_rust():
     container, recording = _container(True)
     backend = container.client_connection._backend
     backend.started, backend.release = asyncio.Event(), asyncio.Event()
@@ -393,7 +393,7 @@ async def test_read_feed_ranges_rejects_overlapping_async_fetches():
     assert len(recording.requests) == 1
 
 
-def test_read_feed_ranges_rejects_overlapping_sync_fetches():
+def test_read_feed_ranges_rejects_overlapping_sync_fetches_rust():
     container, recording = _container()
     started, release = threading.Event(), threading.Event()
     original_execute = recording.execute
@@ -423,7 +423,7 @@ def test_read_feed_ranges_rejects_overlapping_sync_fetches():
     b'[["PartitionKeyRanges",[{"minInclusive":"","maxExclusive":"FF"}]]]',
     b'{"PartitionKeyRanges":[]}', b'{"unexpected":[]}',
 ])
-def test_read_feed_ranges_invalid_responses_do_not_become_empty_success(async_client, body):
+def test_read_feed_ranges_invalid_responses_do_not_become_empty_success_rust(async_client, body):
     container, recording = _container(async_client)
     recording.response = replace(recording.response, body=body)
     results = container.read_feed_ranges()
@@ -435,7 +435,7 @@ def test_read_feed_ranges_invalid_responses_do_not_become_empty_success(async_cl
 
 
 @pytest.mark.parametrize("async_client", [False, True])
-def test_read_feed_ranges_preserves_service_errors_and_does_not_replay(async_client):
+def test_read_feed_ranges_preserves_service_errors_and_does_not_replay_rust(async_client):
     container, recording = _container(async_client)
     recording.response = BackendResponse(
         404, 1002, {"x-ms-activity-id": "failed-lookup"},
@@ -452,7 +452,7 @@ def test_read_feed_ranges_preserves_service_errors_and_does_not_replay(async_cli
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("error", [RuntimeError("binding failed"), NotImplementedError("unsupported driver call")])
-def test_read_feed_ranges_binding_failures_never_execute_legacy(async_client, error):
+def test_read_feed_ranges_binding_failures_never_execute_legacy_rust(async_client, error):
     container, recording = _container(async_client)
     recording.error = error
     with pytest.raises(type(error), match=str(error)):
@@ -462,7 +462,7 @@ def test_read_feed_ranges_binding_failures_never_execute_legacy(async_client, er
 
 
 @pytest.mark.parametrize("async_client", [False, True])
-def test_read_feed_ranges_new_iterators_have_independent_results_and_headers(async_client):
+def test_read_feed_ranges_new_iterators_have_independent_results_and_headers_rust(async_client):
     container, recording = _container(async_client)
     first = container.read_feed_ranges()
     first_values = _collect(first, async_client)
@@ -479,7 +479,7 @@ def test_read_feed_ranges_new_iterators_have_independent_results_and_headers(asy
 
 
 @pytest.mark.asyncio
-async def test_read_feed_ranges_cancellation_releases_the_fetch_guard():
+async def test_read_feed_ranges_cancellation_releases_the_fetch_guard_rust():
     container, recording = _container(True)
     backend = container.client_connection._backend
     backend.started, backend.release = asyncio.Event(), asyncio.Event()
@@ -498,7 +498,7 @@ async def test_read_feed_ranges_cancellation_releases_the_fetch_guard():
 
 
 @pytest.mark.parametrize("async_client", [False, True])
-def test_read_feed_ranges_unsupported_hooks_are_not_copied_or_called(async_client):
+def test_read_feed_ranges_unsupported_hooks_are_not_copied_or_called_rust(async_client):
     class Hook:
         def __deepcopy__(self, memo):
             raise AssertionError("A customer callback must not be copied.")
@@ -514,7 +514,7 @@ def test_read_feed_ranges_unsupported_hooks_are_not_copied_or_called(async_clien
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("force_refresh", [False, True])
-def test_read_feed_ranges_preserves_the_private_legacy_comparison_path(async_client, force_refresh):
+def test_read_feed_ranges_preserves_the_private_legacy_comparison_path_rust(async_client, force_refresh):
     container, recording = _container(async_client)
     connection = container.client_connection
     connection._backend = ASYNC_LEGACY_BACKEND if async_client else LEGACY_BACKEND
@@ -540,7 +540,7 @@ def test_read_feed_ranges_preserves_the_private_legacy_comparison_path(async_cli
     (ContainerProxy, CosmosItemPaged),
     (AsyncContainerProxy, CosmosAsyncItemPaged),
 ])
-def test_read_feed_ranges_return_type_exposes_response_headers(proxy_type, result_type):
+def test_read_feed_ranges_return_type_exposes_response_headers_rust(proxy_type, result_type):
     method = inspect.unwrap(proxy_type.read_feed_ranges)
     assert get_type_hints(method)["return"] is result_type
     assert not inspect.iscoroutinefunction(method)

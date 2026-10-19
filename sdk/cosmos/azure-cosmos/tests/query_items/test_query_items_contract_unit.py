@@ -50,7 +50,7 @@ from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponse
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
 
 
-def test_deployed_udf_call_remains_an_ordinary_item_query(query):
+def test_deployed_udf_call_remains_an_ordinary_item_query_rust(query):
     sql = "SELECT c.id, udf.reviewBand(c.total) AS reviewBand FROM c"
     query.pages = [[{"id": "order-42", "reviewBand": "standard"}], None]
     assert query.collect(query.proxy.query_items(sql, partition_key="customer-17")) == [
@@ -190,7 +190,7 @@ def query(request, monkeypatch):
 
 
 @pytest.mark.parametrize("status", [429, 503])
-def test_initial_setup_service_error_can_retry_same_page_iterator(query, status):
+def test_initial_setup_service_error_can_retry_same_page_iterator_rust(query, status):
     hooks = []
     pages = query.proxy.query_items(
         "SELECT * FROM c", response_hook=lambda headers, body: hooks.append(body)
@@ -209,7 +209,7 @@ def test_initial_setup_service_error_can_retry_same_page_iterator(query, status)
     assert len(hooks) == 1
 
 
-def test_first_execution_service_error_still_invalidates(query):
+def test_first_execution_service_error_still_invalidates_rust(query):
     query.status = 503
     pages = query.proxy.query_items("SELECT * FROM c").by_page()
     with pytest.raises(CosmosHttpResponseError):
@@ -220,7 +220,7 @@ def test_first_execution_service_error_still_invalidates(query):
     assert len(query.calls) == 1
 
 
-def test_setup_failure_preserves_input_query_bookmark(query):
+def test_setup_failure_preserves_input_query_bookmark_rust(query):
     pager = query.proxy.query_items("SELECT * FROM c")
     original = pager.by_page()
     query.next_page(original)
@@ -239,7 +239,7 @@ def test_setup_failure_preserves_input_query_bookmark(query):
     assert pages.continuation_token != bookmark
 
 
-def test_cursor_is_lazy_per_iterator_and_released_at_completion(query):
+def test_cursor_is_lazy_per_iterator_and_released_at_completion_rust(query):
     """Each page iterator allocates its own cursor on first use and frees it at the end.
 
     Two page iterators are taken from one pager. Before anything is iterated
@@ -278,7 +278,7 @@ def test_cursor_is_lazy_per_iterator_and_released_at_completion(query):
 
 
 @pytest.mark.parametrize("interval", [None, ("00", "FF")])
-def test_typed_scope_is_prepared_without_creating_a_cursor(query, interval):
+def test_typed_scope_is_prepared_without_creating_a_cursor_rust(query, interval):
     """Scope preparation stays lazy and does not add a token envelope."""
     kwargs = (
         {}
@@ -291,7 +291,7 @@ def test_typed_scope_is_prepared_without_creating_a_cursor(query, interval):
     query.binding._ItemFeedCursor.assert_not_called()
 
 
-def test_complete_iteration_scalar_results_and_no_legacy_metadata(query):
+def test_complete_iteration_scalar_results_and_no_legacy_metadata_rust(query):
     """A full enumeration returns scalars untouched and never touches the legacy path.
 
     Nothing is fetched until iteration starts. Draining the pager then returns
@@ -322,7 +322,7 @@ def test_complete_iteration_scalar_results_and_no_legacy_metadata(query):
 
 
 @pytest.mark.parametrize("token_prefix", ["c1.", "service-"])
-def test_continuations_pass_through_and_resume_independently(query, token_prefix):
+def test_continuations_pass_through_and_resume_independently_rust(query, token_prefix):
     """Service and driver tokens resume independently without Python wrapping."""
     query.token_prefix = token_prefix
     pages = query.proxy.query_items("SELECT * FROM c").by_page()
@@ -340,7 +340,7 @@ def test_continuations_pass_through_and_resume_independently(query, token_prefix
     assert wire_headers(query.calls[1][0])["x-ms-continuation"] == bookmark
 
 
-def test_nonresumable_queries_enumerate_but_bookmark_access_raises(query):
+def test_nonresumable_queries_enumerate_but_bookmark_access_raises_rust(query):
     """A query that cannot be resumed still enumerates fully; only the token is refused.
 
     Queries like ``DISTINCT`` hold state the service cannot hand back in a
@@ -376,7 +376,7 @@ def test_nonresumable_queries_enumerate_but_bookmark_access_raises(query):
         (["tenant", NonePartitionKeyValue], '["tenant",{}]'),
     ],
 )
-def test_partition_scope_normalization(query, key, expected):
+def test_partition_scope_normalization_rust(query, key, expected):
     """Every shape of partition key turns into the right wire value, and stays out of the body.
 
     Covers no key at all, a plain string, ``False`` and ``0`` (which must not
@@ -398,7 +398,7 @@ def test_partition_scope_normalization(query, key, expected):
 
 
 @pytest.mark.parametrize("limit", [None, 0, 1, 2])
-def test_continuation_size_limit_is_forwarded_without_changing_the_token(query, limit):
+def test_continuation_size_limit_is_forwarded_without_changing_the_token_rust(query, limit):
     query.token_prefix = "service-"
     pages = query.proxy.query_items(
         "SELECT * FROM c", partition_key="customer-501", continuation_token_limit=limit
@@ -428,7 +428,7 @@ def test_continuation_size_limit_is_forwarded_without_changing_the_token(query, 
     ],
     ids=["omitted", "empty", "nested-values"],
 )
-def test_query_body_is_serialized_once_and_reused_without_freezing_page_settings(
+def test_query_body_is_serialized_once_and_reused_without_freezing_page_settings_rust(
     query, monkeypatch, parameters
 ):
     """Cache only the immutable SQL body; continuation and timeout remain per-page."""
@@ -475,7 +475,7 @@ def test_query_body_is_serialized_once_and_reused_without_freezing_page_settings
 
 
 @pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
-def test_native_query_accepts_service_body_and_requires_separate_scope(async_mode):
+def test_native_query_accepts_service_body_and_requires_separate_scope_rust(async_mode):
     """Exercise the installed binding without acquiring a driver or sending a request."""
     from dataclasses import replace
 
@@ -503,7 +503,7 @@ def test_native_query_accepts_service_body_and_requires_separate_scope(async_mod
         replace(prepared, query_body=bytearray(body))
 
 
-def test_query_body_scope_options_and_client_defaults_are_preserved(query):
+def test_query_body_scope_options_and_client_defaults_are_preserved_rust(query):
     """A fully loaded query is snapshotted at the call and every option lands in the right place.
 
     The parameters list, feed range and headers are all mutated *after* the
@@ -590,7 +590,7 @@ def test_query_body_scope_options_and_client_defaults_are_preserved(query):
         ({"continuation": "cf1.feed"}, ValueError),
     ],
 )
-def test_invalid_or_unsupported_arguments_fail_without_dispatch(query, kwargs, error):
+def test_invalid_or_unsupported_arguments_fail_without_dispatch_rust(query, kwargs, error):
     """Bad or unsupported arguments fail at the call, before anything is sent.
 
     ``ValueError`` covers right-typed but unusable values: an empty or missing
@@ -618,7 +618,7 @@ def test_invalid_or_unsupported_arguments_fail_without_dispatch(query, kwargs, e
     query.connection.QueryItems.assert_not_called()
 
 
-def test_empty_pages_share_deadline_and_preserve_hook_accounting(query):
+def test_empty_pages_share_deadline_and_preserve_hook_accounting_rust(query):
     """An empty page consumes budget and charge, and the hook cannot corrupt what follows.
 
     The first page is empty, so it is skipped internally -- but it still cost
@@ -653,7 +653,7 @@ def test_empty_pages_share_deadline_and_preserve_hook_accounting(query):
     assert query.calls[1][2] == pytest.approx(0.7)
 
 
-def test_errors_do_not_replay_and_keep_last_delivered_bookmark(query):
+def test_errors_do_not_replay_and_keep_last_delivered_bookmark_rust(query):
     """After a failed page the token still points at the last page actually delivered.
 
     One page succeeds, then the next fetch raises. The token is unchanged from
@@ -677,7 +677,7 @@ def test_errors_do_not_replay_and_keep_last_delivered_bookmark(query):
     query.connection.QueryItems.assert_not_called()
 
 
-def test_timeout_and_service_error_surface(query):
+def test_timeout_and_service_error_surface_rust(query):
     """Timeouts and service errors reach the caller as themselves.
 
     A page slower than the timeout raises ``CosmosClientTimeoutError``. A page
@@ -697,7 +697,7 @@ def test_timeout_and_service_error_surface(query):
     assert error.value.status_code == 429
 
 
-def test_hook_failure_does_not_advance_public_bookmark(query):
+def test_hook_failure_does_not_advance_public_bookmark_rust(query):
     """A hook that raises on the first page leaves the pager with no token at all.
 
     The hook fails before any page has been delivered, so there is nothing to
@@ -763,7 +763,7 @@ def legacy_query(query):
         pytest.param({"enable_cross_partition_query": False}, id="false-flag"),
     ],
 )
-def test_legacy_query_cross_partition_defaults(legacy_query, scope, unscoped, query_options):
+def test_legacy_query_cross_partition_defaults_rust(legacy_query, scope, unscoped, query_options):
     """Both public clients default only unscoped queries and retain explicit flags."""
     result = legacy_query.proxy.query_items("SELECT * FROM c", **scope, **query_options)
     assert result is legacy_query.connection.QueryItems.return_value
@@ -788,14 +788,14 @@ def test_legacy_query_cross_partition_defaults(legacy_query, scope, unscoped, qu
         pytest.param({"enable_cross_partition_query": False}, False, id="false"),
     ],
 )
-def test_rust_query_cross_partition_defaults(query, query_options, expected):
+def test_rust_query_cross_partition_defaults_rust(query, query_options, expected):
     from azure.cosmos._helpers._query_items import QueryConfig
 
     config = QueryConfig(query.proxy, {"query": "SELECT * FROM c", **query_options})
     assert config.scope.allow_cross_partition is expected
 
 
-def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens(legacy_query):
+def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens_rust(legacy_query):
     """On the core-python backend queries run the legacy path and refuse Rust tokens.
 
     With the legacy backend selected, the query returns the legacy iterable
@@ -826,7 +826,7 @@ def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens(legacy
         iterable(query.connection, "SELECT * FROM c", {}, continuation_token="q1.saved")
 
 
-def test_query_advice_and_index_headers_are_decoded_before_hooks(query, monkeypatch):
+def test_query_advice_and_index_headers_are_decoded_before_hooks_rust(query, monkeypatch):
     """Index and query advice headers are decoded before anyone sees them.
 
     Both arrive from the service in an encoded form. By the time the response
@@ -875,7 +875,7 @@ def test_query_advice_and_index_headers_are_decoded_before_hooks(query, monkeypa
     )
 
 
-def test_driver_initialization_consumes_public_page_budget(query, monkeypatch):
+def test_driver_initialization_consumes_public_page_budget_rust(query, monkeypatch):
     """Starting the driver counts against the first page's timeout.
 
     Start-up takes 2 seconds against a 1 second budget, so the call times out
@@ -901,7 +901,7 @@ def test_driver_initialization_consumes_public_page_budget(query, monkeypatch):
     assert not query.calls
 
 
-def test_async_query_cancellation_invalidates_cursor_without_replay(query):
+def test_async_query_cancellation_invalidates_cursor_without_replay_rust(query):
     """Concurrent use is refused, and cancelling a page leaves the pager unusable.
 
     While one page fetch is in flight, asking the same iterator for another
@@ -945,7 +945,7 @@ def test_async_query_cancellation_invalidates_cursor_without_replay(query):
     query.connection.QueryItems.assert_not_called()
 
 
-def test_service_error_carries_last_delivered_public_bookmark(query):
+def test_service_error_carries_last_delivered_public_bookmark_rust(query):
     """A service error carries the token for the last page that was delivered.
 
     After one good page the service returns 429. The raised error carries the
@@ -965,7 +965,7 @@ def test_service_error_carries_last_delivered_public_bookmark(query):
     assert pages.continuation_token == bookmark
 
 
-def test_enabled_request_hedging_uses_client_threshold(query, monkeypatch):
+def test_enabled_request_hedging_uses_client_threshold_rust(query, monkeypatch):
     """Turning on the availability strategy picks up the client's hedging threshold.
 
     ``availability_strategy=True`` is a request to hedge, not a full
@@ -987,7 +987,7 @@ def test_enabled_request_hedging_uses_client_threshold(query, monkeypatch):
     assert settings_options(query.calls[0][0])["availabilityStrategy"] == "enabled:250"
 
 
-def test_invalid_header_name_and_non_document_envelope_fail_explicitly(query):
+def test_invalid_header_name_and_non_document_envelope_fail_explicitly_rust(query):
     """A non-string header name and a malformed response envelope both fail with a clear message.
 
     A header name that is not a string is rejected at the call. Header names

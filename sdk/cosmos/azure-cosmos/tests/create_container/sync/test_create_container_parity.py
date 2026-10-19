@@ -70,7 +70,7 @@ def _per_engine_id(client, prefix):
     return "{}_{}".format(prefix, _observed_backend_name(client).replace("-", "_"))
 
 
-def test_create_container_with_explicit_settings(database_id):
+def test_create_container_with_explicit_settings_rust(database_id):
     """Both engines create a container with the settings that were asked for."""
 
     def _do(client):
@@ -99,7 +99,7 @@ def test_create_container_with_explicit_settings(database_id):
     assert "/excluded/*" in comparison.rust.return_value["excludedPaths"]
 
 
-def test_create_container_default_indexing_policy(database_id):
+def test_create_container_default_indexing_policy_rust(database_id):
     """With no indexing policy given, both engines get the same policy back from the service."""
 
     def _do(client):
@@ -121,7 +121,7 @@ def test_create_container_default_indexing_policy(database_id):
     assert comparison.core_python.return_value["includedPaths"] == ["/*"]
 
 
-def test_create_container_return_shapes(database_id):
+def test_create_container_return_shapes_rust(database_id):
     """Both return shapes come back the same on both engines."""
 
     def _do(client):
@@ -156,7 +156,7 @@ def test_create_container_return_shapes(database_id):
     }
 
 
-def test_create_container_conflict(database_id):
+def test_create_container_conflict_rust(database_id):
     """Creating a container whose id is taken raises the same typed conflict on both engines."""
     taken_id = "already_taken_" + uuid.uuid4().hex[:8]
     admin = _admin_client()
@@ -180,7 +180,7 @@ def test_create_container_conflict(database_id):
     assert comparison.rust.raised.status_code == 409
 
 
-def test_create_container_supported_options_and_hook(database_id):
+def test_create_container_supported_options_and_hook_rust(database_id):
     def _do(client):
         database = client.get_database_client(database_id)
         hooks = []
@@ -213,7 +213,7 @@ def test_create_container_supported_options_and_hook(database_id):
 
 
 @pytest.mark.parametrize("condition", [MatchConditions.IfNotModified, MatchConditions.IfModified, MatchConditions.IfPresent])
-def test_create_container_preserves_conditional_request_behavior(database_id, condition):
+def test_create_container_preserves_conditional_request_behavior_rust(database_id, condition):
     def _do(client):
         database = client.get_database_client(database_id)
         container = run_target_operation(client, lambda: database.create_container(

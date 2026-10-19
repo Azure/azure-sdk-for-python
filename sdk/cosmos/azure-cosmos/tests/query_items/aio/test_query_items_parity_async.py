@@ -46,7 +46,7 @@ def container_for(request):
         pytest.param({"enable_cross_partition_query": False}, id="false"),
     ],
 )
-async def test_partition_query_baseline_async(container_for, query_options):
+async def test_partition_query_baseline_async_rust(container_for, query_options):
     """Baseline async partition query returns the same item ids."""
     # Without this, a basic partition query returning different items or a different order
     # on rust would go unnoticed.
@@ -80,7 +80,7 @@ async def test_partition_query_baseline_async(container_for, query_options):
 
 
 @pytest.mark.asyncio
-async def test_partition_query_continuation_replay_async(container_for):
+async def test_partition_query_continuation_replay_async_rust(container_for):
     """Async partition query continuation token resumes on the same page."""
     # Without this, broken paging on rust (a wrong or non-resumable continuation token)
     # would slip through and break customers who page through large results.
@@ -136,7 +136,7 @@ async def test_partition_query_continuation_replay_async(container_for):
         pytest.param({"enable_cross_partition_query": True}, id="true"),
     ],
 )
-async def test_cross_partition_query_fallback_async(container_for, query_options):
+async def test_cross_partition_query_fallback_async_rust(container_for, query_options):
     """Async cross-partition query (no partition key) stays equivalent."""
     # Without this, the rust cross-partition path could drop or duplicate items unnoticed.
 
@@ -169,7 +169,7 @@ async def test_cross_partition_query_fallback_async(container_for, query_options
 
 
 @pytest.mark.asyncio
-async def test_invalid_query_raises_same_type_async(container_for):
+async def test_invalid_query_raises_same_type_async_rust(container_for):
     """Invalid SQL text raises the same typed exception on both backends (async)."""
     # Without this, rust raising a different exception type on bad SQL would break
     # customers' error handling.
@@ -196,7 +196,7 @@ async def test_invalid_query_raises_same_type_async(container_for):
 
 
 @pytest.mark.asyncio
-async def test_populate_index_metrics_parity_async(container_for):
+async def test_populate_index_metrics_parity_async_rust(container_for):
     """A supported metrics option uses Rust and returns the same public value."""
 
     async def _do(client):

@@ -26,7 +26,7 @@ pytestmark = pytest.mark.cosmosEmulator
 @pytest.mark.timeout(180)
 @pytest.mark.parametrize("backend", ["core-python", "rust"])
 @pytest.mark.parametrize("inject", [True, False], ids=["delayed-502", "no-injection"])
-async def test_throws_injected_error_async(owned_target, backend, inject):
+async def test_throws_injected_error_async_rust(owned_target, backend, inject, monkeypatch):
     database_id, owned_container = owned_target
     item_id = uuid.uuid4().hex
     item = {"id": item_id, "pk": item_id, "name": "sample document", "key": "value"}
@@ -35,25 +35,25 @@ async def test_throws_injected_error_async(owned_target, backend, inject):
     settings = {}
     if backend == "rust":
         settings["_fault_injection_rules"] = [create_rule(rule_id, owned_container.id, inject)]
-    else:
-        transport = FaultInjectionTransportAsync()
-
-        async def delayed_error(_request):
-            nonlocal legacy_hits
-            legacy_hits += 1
-            return await FaultInjectionTransportAsync.error_after_delay(
-                DELAY_MS, exceptions.CosmosHttpResponseError(502, message="Injected delayed create failure")
-            )
-
-        transport.add_fault(
-            lambda request: inject and FaultInjectionTransportAsync.predicate_req_for_document_with_id(request, item_id),
-            delayed_error,
-        )
-        settings["transport"] = transport
     async with CosmosClient(
         os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"],
         _backend=backend, consistency_level="Session", **settings,
     ) as client:
+        if backend == "core-python":
+            # Inject at the test-only send boundary; public transport overrides are removed.
+            transport = client.client_connection.pipeline_client._pipeline._transport
+            original_send = transport.send
+
+            async def send(request, **kwargs):
+                nonlocal legacy_hits
+                if inject and FaultInjectionTransportAsync.predicate_req_for_document_with_id(request, item_id):
+                    legacy_hits += 1
+                    raise await FaultInjectionTransportAsync.error_after_delay(
+                        DELAY_MS, exceptions.CosmosHttpResponseError(502, message="Injected delayed create failure")
+                    )
+                return await original_send(request, **kwargs)
+
+            monkeypatch.setattr(transport, "send", send)
         container = client.get_database_client(database_id).get_container_client(owned_container.id)
         await container.read()
         if backend == "rust":

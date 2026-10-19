@@ -5,8 +5,9 @@
 
 Self-contained: builds its own database + container in ``asyncSetUp``
 and deletes them in ``asyncTearDown``. The class name and method name
-match the source at ``tests/test_none_options_async.py`` so test IDs
-differ only by path.
+match the source (apart from the method's ``_rust`` suffix) at
+``tests/test_none_options_async.py`` so test IDs
+differ by path and method suffix.
 
 Run with::
 
@@ -50,7 +51,7 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.client.close()
 
-    async def test_container_create_item_none_options_async(self):
+    async def test_container_create_item_none_options_async_rust(self):
         # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_container_create_item_none_options_async
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 1}
         created = await self.container.create_item(item, pre_trigger_include=None, post_trigger_include=None,

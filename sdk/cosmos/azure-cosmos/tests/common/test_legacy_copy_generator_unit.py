@@ -56,7 +56,7 @@ class TestGeneratorReproducesCanonicalExemplars(unittest.TestCase):
         "CREATE_ITEM_AIO_HEADERS": "create_item/aio/legacy/test_headers.py",
     }
 
-    def test_exemplars_reproduced_byte_for_byte(self):
+    def test_exemplars_reproduced_byte_for_byte_rust(self):
         """Prove generated tests match the committed examples."""
         for spec_attr, rel in self._GOLDEN.items():
             with self.subTest(exemplar=rel):
@@ -67,7 +67,7 @@ class TestGeneratorReproducesCanonicalExemplars(unittest.TestCase):
                     "generator output no longer matches tests/" + rel,
                 )
 
-    def test_init_py_reproduced(self):
+    def test_init_py_reproduced_rust(self):
         """Prove generated package files match the committed package marker."""
         committed = (
             _TESTS_DIR / "create_item" / "sync" / "legacy" / "__init__.py"
@@ -79,15 +79,15 @@ class TestGeneratedOutputPassesEnforcer(unittest.TestCase):
     """Generated copies pass all of the enforcer's checks."""
 
     _ENFORCER_CHECKS = (
-        "test_legacy_folders_discovered",
-        "test_every_legacy_folder_is_a_package",
-        "test_every_test_method_has_a_source_comment",
-        "test_every_source_reference_resolves",
-        "test_every_legacy_file_pins_rust_backend",
-        "test_no_unstructured_skips",
+        "test_legacy_folders_discovered_rust",
+        "test_every_legacy_folder_is_a_package_rust",
+        "test_every_test_method_has_a_source_comment_rust",
+        "test_every_source_reference_resolves_rust",
+        "test_every_legacy_file_pins_rust_backend_rust",
+        "test_no_unstructured_skips_rust",
     )
 
-    def test_bundled_specs_generate_enforcer_clean_tree(self):
+    def test_bundled_specs_generate_enforcer_clean_tree_rust(self):
         """Prove every bundled test description passes structural checks."""
         enforcer = _load_module_by_path(_ENFORCER_PATH, "_legacy_enforcer_under_test")
         original_tests_dir = enforcer._TESTS_DIR
@@ -110,7 +110,7 @@ class TestGeneratedOutputPassesEnforcer(unittest.TestCase):
 class TestGeneratedShapesAreWellFormed(unittest.TestCase):
     """The async and instance-fixture surfaces render the right scaffold."""
 
-    def test_async_none_options_is_well_formed(self):
+    def test_async_none_options_is_well_formed_rust(self):
         """Prove an async generated test opens, uses, and closes a Rust client."""
         text = _gen.render_legacy_file(_gen.CREATE_ITEM_AIO_NONE_OPTIONS)
         for needle in (
@@ -120,13 +120,13 @@ class TestGeneratedShapesAreWellFormed(unittest.TestCase):
             "await self.client.__aenter__()",
             "async def asyncTearDown(self):",
             "await self.client.close()",
-            "async def test_container_create_item_none_options_async(self):",
+            "async def test_container_create_item_none_options_async_rust(self):",
             "created = await self.container.create_item(",
             '_backend="rust"',
         ):
             self.assertIn(needle, text, needle)
 
-    def test_sync_read_item_family_is_well_formed(self):
+    def test_sync_read_item_family_is_well_formed_rust(self):
         """Prove a sync generated read test keeps its source and Rust selection."""
         text = _gen.render_legacy_file(_gen.READ_ITEM_SYNC_NONE_OPTIONS)
         self.assertIn('_backend="rust"', text)

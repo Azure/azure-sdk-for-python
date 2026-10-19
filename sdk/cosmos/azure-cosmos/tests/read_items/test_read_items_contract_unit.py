@@ -133,7 +133,7 @@ def mode(request):
     return SimpleNamespace(asynchronous=asynchronous, run=run, make=make, mock=mock, proxy=proxy, captured=captured)
 
 
-def test_order_duplicate_occurrences_missing_items_and_all_page_charges(mode):
+def test_order_duplicate_occurrences_missing_items_and_all_page_charges_rust(mode):
     """One batch exercises ordering, duplicates, missing ids and charge totals together.
 
     The request asks for five keys, one of which appears twice and one of
@@ -174,7 +174,7 @@ def test_order_duplicate_occurrences_missing_items_and_all_page_charges(mode):
 
 
 @pytest.mark.parametrize("hook_kind", ["none", "mutating", "false-valued", "raising"])
-def test_hook_isolation_and_no_replay(mode, hook_kind):
+def test_hook_isolation_and_no_replay_rust(mode, hook_kind):
     """A response hook cannot corrupt the result, and never causes a second request.
 
     Four kinds of hook: absent, one that mutates everything it is handed, one
@@ -225,7 +225,7 @@ def test_hook_isolation_and_no_replay(mode, hook_kind):
     helper.client.QueryItems.assert_called_once()
 
 
-def test_empty_public_input_skips_metadata_and_calls_hook_once(mode):
+def test_empty_public_input_skips_metadata_and_calls_hook_once_rust(mode):
     """Asking for nothing costs nothing, but still behaves like a real call.
 
     An empty batch must not trigger the container metadata lookup or any
@@ -257,7 +257,7 @@ def test_empty_public_input_skips_metadata_and_calls_hook_once(mode):
     ([], {"response_hook": False}, TypeError), ([], {"timeout": 0.5}, ValueError),
     ([], {"timeout": float("nan")}, ValueError), ([], {"timeout": True}, ValueError),
 ])
-def test_validation_before_metadata_including_empty_input(mode, items, kwargs, error):
+def test_validation_before_metadata_including_empty_input_rust(mode, items, kwargs, error):
     """Every bad argument is rejected before the metadata lookup, let alone a request.
 
     Covers three families:
@@ -280,7 +280,7 @@ def test_validation_before_metadata_including_empty_input(mode, items, kwargs, e
     assert not mode.captured
 
 
-def test_request_options_and_input_keys_are_snapshots(mode):
+def test_request_options_and_input_keys_are_snapshots_rust(mode):
     """The caller's options dict and key list are copied, not adopted.
 
     The SDK merges ``session_token`` over ``request_options``, so it must work
@@ -303,7 +303,7 @@ def test_request_options_and_input_keys_are_snapshots(mode):
 
 
 @pytest.mark.parametrize("ranges", [[], None, [{"id": "0"}, {"id": "1"}]])
-def test_unresolved_or_ambiguous_routing_fails_instead_of_omitting_items(mode, ranges):
+def test_unresolved_or_ambiguous_routing_fails_instead_of_omitting_items_rust(mode, ranges):
     """If routing cannot name one owning range, the call fails rather than returning less.
 
     Three bad answers: no ranges, ``None``, and two ranges for a single key.
@@ -322,7 +322,7 @@ def test_unresolved_or_ambiguous_routing_fails_instead_of_omitting_items(mode, r
     helper.kwargs["response_hook"].assert_not_called()
 
 
-def test_typed_keys_do_not_share_routing_lookups(mode):
+def test_typed_keys_do_not_share_routing_lookups_rust(mode):
     """Keys that Python considers equal still get their own routing lookup.
 
     ``True == 1`` and ``False == 0`` in Python, and ``None`` hashes like any
@@ -344,7 +344,7 @@ def test_typed_keys_do_not_share_routing_lookups(mode):
     ("/a-b", 'c["a-b"]'),
     ("/na\u00efve", 'c["na\\u00efve"]'),
 ])
-def test_single_partition_queries_use_escaped_path_components(path, expression):
+def test_single_partition_queries_use_escaped_path_components_rust(path, expression):
     """Partition key paths are turned into bracket syntax, never pasted into the query.
 
     A nested path becomes chained brackets, a quoted path keeps its embedded
@@ -360,7 +360,7 @@ def test_single_partition_queries_use_escaped_path_components(path, expression):
     assert {"name": "@pk_0", "value": "p"} in query["parameters"]
 
 
-def test_hierarchical_predicates_and_identity_preserve_null_and_undefined():
+def test_hierarchical_predicates_and_identity_preserve_null_and_undefined_rust():
     """With hierarchical keys, a null component and a missing one stay different.
 
     For a two-level key, the query compares both components joined by ``AND``,
@@ -393,7 +393,7 @@ def test_hierarchical_predicates_and_identity_preserve_null_and_undefined():
     assert "user" not in next(row for index, row in indexed if index == 1)
 
 
-def test_typed_identity_and_logical_partition_classification():
+def test_typed_identity_and_logical_partition_classification_rust():
     """The rules for when two partition key values count as the same one.
 
     Different: ``True`` vs ``1`` and ``False`` vs ``0``, because type is part
@@ -421,7 +421,7 @@ def test_typed_identity_and_logical_partition_classification():
         normalize_read_items([("a", ["t"])], {"paths": ["/tenant", "/user"], "kind": "MultiHash"})
 
 
-def test_wrong_partition_response_is_not_accepted_by_id(mode):
+def test_wrong_partition_response_is_not_accepted_by_id_rust(mode):
     """A row is matched on id *and* partition key, so a stray row is an error.
 
     Two items are requested from partition ``a`` and the service answers with
@@ -434,7 +434,7 @@ def test_wrong_partition_response_is_not_accepted_by_id(mode):
         mode.run(helper.read_items())
 
 
-def test_metadata_consumes_budget_before_dispatch(mode, monkeypatch):
+def test_metadata_consumes_budget_before_dispatch_rust(mode, monkeypatch):
     """Time spent reading container metadata comes out of the caller's timeout.
 
     With a fake clock, a 5 second timeout, and a metadata lookup that takes 6
@@ -457,7 +457,7 @@ def test_metadata_consumes_budget_before_dispatch(mode, monkeypatch):
     assert not mode.captured
 
 
-def test_routing_consumes_budget_before_any_item(mode, monkeypatch):
+def test_routing_consumes_budget_before_any_item_rust(mode, monkeypatch):
     """The routing lookup is inside the budget too, and exhausting it stops the read.
 
     Routing is handed the remaining 5 seconds, then burns 6. The call times
@@ -481,7 +481,7 @@ def test_routing_consumes_budget_before_any_item(mode, monkeypatch):
     helper._execute_point_read.assert_not_called()
 
 
-def test_native_point_leg_receives_remaining_read_many_budget(point_read):
+def test_native_point_leg_receives_remaining_read_many_budget_rust(point_read):
     """An existing deadline limits the point leg more tightly than timeout=5.
 
     The fixture starts with 0.5 seconds remaining; simulated metadata consumes
@@ -520,7 +520,7 @@ def test_native_point_leg_receives_remaining_read_many_budget(point_read):
     assert context.events == [("metadata", 0.5), ("read", pytest.approx(0.3))]
 
 
-def test_public_hook_timeout_error_is_not_reclassified(mode):
+def test_public_hook_timeout_error_is_not_reclassified_rust(mode):
     """A ``TimeoutError`` raised by the caller's own hook reaches them unchanged.
 
     The hook raises ``TimeoutError``, and the exact object the caller raised
@@ -551,7 +551,7 @@ def test_public_hook_timeout_error_is_not_reclassified(mode):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("cancel", [False, True])
-async def test_async_timeout_or_caller_cancellation_drains_work(cancel):
+async def test_async_timeout_or_caller_cancellation_drains_work_rust(cancel):
     """Timeout and cancellation both stop cleanly and leave no task running.
 
     Two items in two ranges with a concurrency of one, so the second is still
@@ -590,7 +590,7 @@ async def test_async_timeout_or_caller_cancellation_drains_work(cancel):
 
 
 @pytest.mark.parametrize("owned", [False, True])
-def test_sync_timeout_does_not_wait_for_running_work_or_start_queued_work(owned):
+def test_sync_timeout_does_not_wait_for_running_work_or_start_queued_work_rust(owned):
     """A sync timeout returns straight away and does not break a borrowed thread pool.
 
     Threads cannot be cancelled, so the rule is different from async: on
@@ -629,7 +629,7 @@ def test_sync_timeout_does_not_wait_for_running_work_or_start_queued_work(owned)
             external.shutdown()
 
 
-def test_query_budget_is_not_restarted_between_pages(mode, monkeypatch):
+def test_query_budget_is_not_restarted_between_pages_rust(mode, monkeypatch):
     """Paging through a query does not hand each page a fresh timeout.
 
     The first page arrives, then the clock jumps past the deadline before the
@@ -668,7 +668,7 @@ def test_query_budget_is_not_restarted_between_pages(mode, monkeypatch):
         mode.run(helper.read_items())
 
 
-def test_legacy_page_dispatch_checks_absolute_deadline_before_transport(mode):
+def test_legacy_page_dispatch_checks_absolute_deadline_before_transport_rust(mode):
     """An already-expired deadline stops the legacy query path before it touches the network.
 
     The deadline is in the past while the per-request timeout still says 100
@@ -687,7 +687,7 @@ def test_legacy_page_dispatch_checks_absolute_deadline_before_transport(mode):
     assert connection.mock_calls == []
 
 
-def test_sync_routing_cache_lock_wait_is_bounded():
+def test_sync_routing_cache_lock_wait_is_bounded_rust():
     """Waiting for another thread's routing refresh is bounded by the deadline.
 
     The routing cache serialises refreshes per container so several threads do
@@ -713,7 +713,7 @@ def test_sync_routing_cache_lock_wait_is_bounded():
 
 
 @pytest.mark.asyncio
-async def test_async_routing_cache_lock_wait_is_bounded():
+async def test_async_routing_cache_lock_wait_is_bounded_rust():
     """The async routing cache bounds its lock wait exactly like the sync one.
 
     Same setup with the async cache: the lock is held, the arriving caller has
@@ -735,7 +735,7 @@ async def test_async_routing_cache_lock_wait_is_bounded():
         provider.release()
 
 
-def test_routing_change_feed_pages_consume_one_budget(mode, monkeypatch):
+def test_routing_change_feed_pages_consume_one_budget_rust(mode, monkeypatch):
     """Refreshing the routing map across pages spends a single shared budget.
 
     The range list arrives over two pages and each takes 1.5 seconds. Starting

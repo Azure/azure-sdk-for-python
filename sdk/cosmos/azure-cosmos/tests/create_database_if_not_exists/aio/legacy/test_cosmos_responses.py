@@ -18,7 +18,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         )
         self.addAsyncCleanup(self.client.close)
 
-    async def test_create_database_if_not_exists_headers_async(self):
+    async def test_create_database_if_not_exists_headers_async_rust(self):
         """First call creates the database and returns its id with populated headers.
 
         This is the create branch: nothing exists yet. The returned properties
@@ -34,7 +34,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.client.delete_database(database_id)
 
-    async def test_create_database_if_not_exists_headers_negative_async(self):
+    async def test_create_database_if_not_exists_headers_negative_async_rust(self):
         """Calls against an existing database return that same database, with headers.
 
         Despite the name, nothing fails here. "Negative" means the create was

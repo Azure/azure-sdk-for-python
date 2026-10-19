@@ -44,7 +44,7 @@ def records(endpoint=ENDPOINT, applied=False, status=200):
         (ServiceRequestError("closed"), 0.5, "terminal_transport_failure"),
     ],
 )
-def test_persistent_cutoff_classifies_bounded_failure(error, elapsed, expected):
+def test_persistent_cutoff_classifies_bounded_failure_rust(error, elapsed, expected):
     attempts = [dict(record, sub_status=20003) for record in records(status=503)] * 2
     assert assert_persistent_cutoff_outcome(error, elapsed, attempts) == expected
 
@@ -65,7 +65,7 @@ def test_persistent_cutoff_classifies_bounded_failure(error, elapsed, expected):
         (exceptions.CosmosHttpResponseError(408), 3.01, [(503, 20003)] * 2),
     ],
 )
-def test_persistent_cutoff_rejects_wrong_classification_or_budget(error, elapsed, pairs):
+def test_persistent_cutoff_rejects_wrong_classification_or_budget_rust(error, elapsed, pairs):
     with pytest.raises(AssertionError):
         assert_persistent_cutoff_outcome(
             error,
@@ -76,7 +76,7 @@ def test_persistent_cutoff_rejects_wrong_classification_or_budget(error, elapsed
 
 @pytest.mark.parametrize("failure", [None, "body", "remove", "configuration"])
 @pytest.mark.parametrize("active", [False, True])
-def test_persistent_fault_leaves_gates_open_until_cleanup(active, failure, monkeypatch):
+def test_persistent_fault_leaves_gates_open_until_cleanup_rust(active, failure, monkeypatch):
     monkeypatch.setattr("fault_injection._toxiproxy.emit", lambda *args, **kwargs: None)
     gate = threading.Event()
     gate.set()
@@ -130,7 +130,7 @@ def test_persistent_fault_leaves_gates_open_until_cleanup(active, failure, monke
     assert gate.is_set() and not toxics and len(deleted) == int(active)
 
 
-def test_topology_copies_account_and_removes_direct_routes():
+def test_topology_copies_account_and_removes_direct_routes_rust():
     original = {
         "readableLocations": [{"name": "South Central US", "databaseAccountEndpoint": "direct"}],
         "writableLocations": [{"name": "South Central US", "databaseAccountEndpoint": "direct"}],
@@ -162,12 +162,12 @@ def test_topology_copies_account_and_removes_direct_routes():
         "https://127.0.0.1:12345/path",
     ],
 )
-def test_topology_rejects_nonlocal_or_invalid_destination(endpoint):
+def test_topology_rejects_nonlocal_or_invalid_destination_rust(endpoint):
     with pytest.raises(ValueError):
         proxy_account({}, endpoint)
 
 
-def test_only_account_metadata_is_synthetic():
+def test_only_account_metadata_is_synthetic_rust():
     rule = account_rule("account-only", proxy_account({}, ENDPOINT))
     (prepared,) = _prepare_fault_injection_rules([rule])
     assert prepared.operation_type == "MetadataReadDatabaseAccount"
@@ -176,7 +176,7 @@ def test_only_account_metadata_is_synthetic():
     assert prepared.hit_limit is None
 
 
-def test_success_and_network_failure_are_distinct():
+def test_success_and_network_failure_are_distinct_rust():
     assert_read_outcome(ITEM.copy(), None, 0.01, records(), ENDPOINT, ITEM, False)
     assert_read_outcome(None, ServiceRequestError("offline"), 1, [], ENDPOINT, ITEM, True)
     assert_read_outcome(None, exceptions.CosmosClientTimeoutError(), 3, [], ENDPOINT, ITEM, True)
@@ -192,7 +192,7 @@ def test_success_and_network_failure_are_distinct():
         (None, exceptions.CosmosHttpResponseError(429)),
     ],
 )
-def test_disabled_route_rejects_success_and_unrelated_failure(returned, error):
+def test_disabled_route_rejects_success_and_unrelated_failure_rust(returned, error):
     with pytest.raises(AssertionError):
         assert_read_outcome(returned, error, 1, [], ENDPOINT, ITEM, True)
 
@@ -206,18 +206,18 @@ def test_disabled_route_rejects_success_and_unrelated_failure(returned, error):
         records(status=503),
     ],
 )
-def test_success_requires_real_proxy_attempt(attempts):
+def test_success_requires_real_proxy_attempt_rust(attempts):
     with pytest.raises(AssertionError):
         assert_read_outcome(ITEM, None, 0.01, attempts, ENDPOINT, ITEM, False)
 
 
 @pytest.mark.parametrize("elapsed", [-1, 6, float("inf"), float("nan")])
-def test_rejects_unbounded_or_invalid_elapsed(elapsed):
+def test_rejects_unbounded_or_invalid_elapsed_rust(elapsed):
     with pytest.raises(AssertionError):
         assert_read_outcome(None, ServiceRequestError("offline"), elapsed, [], ENDPOINT, ITEM, True)
 
 
-def test_rejects_unverified_executable(tmp_path):
+def test_rejects_unverified_executable_rust(tmp_path):
     with pytest.raises(FileNotFoundError):
         verify_server(tmp_path / "missing.exe")
     fake = tmp_path / "fake.exe"
@@ -244,7 +244,7 @@ def metrics(name="owned"):
     )
 
 
-def test_completed_transfer_metrics_select_only_owned_proxy():
+def test_completed_transfer_metrics_select_only_owned_proxy_rust():
     assert proxy_transfers("# HELP comment\n" + metrics("other") + "\n" + metrics(), "owned") == transfers()
 
 
@@ -257,12 +257,12 @@ def test_completed_transfer_metrics_select_only_owned_proxy():
         metrics() + "\n" + metrics(),
     ],
 )
-def test_transfer_metrics_reject_missing_invalid_or_duplicate_counters(text):
+def test_transfer_metrics_reject_missing_invalid_or_duplicate_counters_rust(text):
     with pytest.raises(AssertionError):
         proxy_transfers(text, "owned")
 
 
-def test_stall_requires_sdk_timeout_and_dropped_response_bytes():
+def test_stall_requires_sdk_timeout_and_dropped_response_bytes_rust():
     assert_stall_outcome(exceptions.CosmosClientTimeoutError(), 3.01, transfers())
     connections = {"accepted": ["127.0.0.1:1234"], "closed_links": []}
     assert_warmed_connections(connections, copy.deepcopy(connections))
@@ -279,7 +279,7 @@ def test_stall_requires_sdk_timeout_and_dropped_response_bytes():
         (exceptions.CosmosClientTimeoutError(), float("nan")),
     ],
 )
-def test_stall_rejects_wrong_timeout_or_budget(error, elapsed):
+def test_stall_rejects_wrong_timeout_or_budget_rust(error, elapsed):
     with pytest.raises(AssertionError):
         assert_stall_outcome(error, elapsed, transfers())
 
@@ -294,7 +294,7 @@ def test_stall_rejects_wrong_timeout_or_budget(error, elapsed):
         ("upstream_sent", 401),
     ],
 )
-def test_stall_rejects_missing_or_inconsistent_network_evidence(field, value):
+def test_stall_rejects_missing_or_inconsistent_network_evidence_rust(field, value):
     actual = transfers()
     actual[field] = value
     with pytest.raises(AssertionError):
@@ -315,7 +315,7 @@ def test_stall_rejects_missing_or_inconsistent_network_evidence(field, value):
         ),
     ],
 )
-def test_stall_rejects_unwarmed_or_new_connections(before, after):
+def test_stall_rejects_unwarmed_or_new_connections_rust(before, after):
     with pytest.raises(AssertionError):
         assert_warmed_connections(before, after)
 
@@ -326,7 +326,7 @@ def reset_attempts():
     return [failed, records()[0]]
 
 
-def test_reset_retry_requires_transport_failure_then_success():
+def test_reset_retry_requires_transport_failure_then_success_rust():
     assert_read_outcome(ITEM, None, 0.1, reset_attempts(), ENDPOINT, ITEM, False, transport_retry=True)
 
 
@@ -342,12 +342,12 @@ def test_reset_retry_requires_transport_failure_then_success():
         [reset_attempts()[0], records(status=503)[0]],
     ],
 )
-def test_reset_retry_rejects_missing_extra_or_unrelated_attempts(attempts):
+def test_reset_retry_rejects_missing_extra_or_unrelated_attempts_rust(attempts):
     with pytest.raises(AssertionError):
         assert_read_outcome(ITEM, None, 0.1, attempts, ENDPOINT, ITEM, False, transport_retry=True)
 
 
-def test_reset_retry_does_not_accept_a_late_success():
+def test_reset_retry_does_not_accept_a_late_success_rust():
     with pytest.raises(AssertionError, match="budget"):
         assert_read_outcome(
             ITEM,
@@ -369,7 +369,7 @@ def test_reset_retry_does_not_accept_a_late_success():
         (5000, exceptions.CosmosClientTimeoutError(), 3.01, []),
     ],
 )
-def test_latency_outcome_requires_delay_and_original_budget(delay_ms, error, elapsed, attempts):
+def test_latency_outcome_requires_delay_and_original_budget_rust(delay_ms, error, elapsed, attempts):
     assert assert_latency_outcome(error, elapsed, 0.005, delay_ms, attempts) == (elapsed - 0.005)
 
 
@@ -398,14 +398,14 @@ def test_latency_outcome_requires_delay_and_original_budget(delay_ms, error, ela
         (3000, None, 0.51, 0.005, records()),
     ],
 )
-def test_latency_rejects_unproven_delay_and_wrong_deadline(delay_ms, error, elapsed, response_after_start, attempts):
+def test_latency_rejects_unproven_delay_and_wrong_deadline_rust(delay_ms, error, elapsed, response_after_start, attempts):
     with pytest.raises(AssertionError):
         assert_latency_outcome(error, elapsed, response_after_start, delay_ms, attempts)
 
 
 @pytest.mark.parametrize("delay_ms", [0, 500, 5000])
 @pytest.mark.parametrize("body_fails", [False, True])
-def test_latency_configuration_and_cleanup(delay_ms, body_fails, monkeypatch):
+def test_latency_configuration_and_cleanup_rust(delay_ms, body_fails, monkeypatch):
     calls, toxics = [], []
     monkeypatch.setattr("fault_injection._toxiproxy.emit", lambda *args, **kwargs: None)
 
@@ -452,7 +452,7 @@ def test_latency_configuration_and_cleanup(delay_ms, body_fails, monkeypatch):
 
 
 @pytest.mark.parametrize("mismatch", [False, True])
-def test_latency_surfaces_removal_failure_or_configuration_mismatch(mismatch, monkeypatch):
+def test_latency_surfaces_removal_failure_or_configuration_mismatch_rust(mismatch, monkeypatch):
     monkeypatch.setattr("fault_injection._toxiproxy.emit", lambda *args, **kwargs: None)
     deleted = []
 
@@ -490,7 +490,7 @@ def bandwidth_progress(rate):
 
 
 @pytest.mark.parametrize("rate", [0, 64, 16])
-def test_bandwidth_requires_complete_success_or_timeout_despite_progress(rate):
+def test_bandwidth_requires_complete_success_or_timeout_despite_progress_rust(rate):
     progress = bandwidth_progress(rate)
     observed = assert_bandwidth_outcome(
         exceptions.CosmosClientTimeoutError() if rate == 16 else None,
@@ -523,7 +523,7 @@ def test_bandwidth_requires_complete_success_or_timeout_despite_progress(rate):
         {"response_bytes": 0},
     ],
 )
-def test_bandwidth_rejects_stall_burst_setup_or_unrelated_progress(change):
+def test_bandwidth_rejects_stall_burst_setup_or_unrelated_progress_rust(change):
     with pytest.raises(AssertionError):
         assert_bandwidth_outcome(
             exceptions.CosmosClientTimeoutError(),
@@ -550,14 +550,14 @@ def test_bandwidth_rejects_stall_burst_setup_or_unrelated_progress(change):
         (64, None, 1.1, 65000, records(status=503)),
     ],
 )
-def test_bandwidth_rejects_wrong_outcomes_and_unbounded_wait(rate, error, elapsed, baseline, attempts):
+def test_bandwidth_rejects_wrong_outcomes_and_unbounded_wait_rust(rate, error, elapsed, baseline, attempts):
     with pytest.raises(AssertionError):
         assert_bandwidth_outcome(error, elapsed, bandwidth_progress(rate), baseline, rate, attempts)
 
 
 @pytest.mark.parametrize("rate", [0, 64, 16])
 @pytest.mark.parametrize("body_fails", [False, True])
-def test_bandwidth_configuration_and_cleanup(rate, body_fails, monkeypatch):
+def test_bandwidth_configuration_and_cleanup_rust(rate, body_fails, monkeypatch):
     toxics, deleted = [], []
     monkeypatch.setattr("fault_injection._toxiproxy.emit", lambda *args, **kwargs: None)
 
@@ -601,7 +601,7 @@ def test_bandwidth_configuration_and_cleanup(rate, body_fails, monkeypatch):
 
 
 @pytest.mark.parametrize("failure", [None, "body", "close", "remove", "configuration"])
-def test_single_cutoff_gates_replacements_and_surfaces_failures(failure, monkeypatch):
+def test_single_cutoff_gates_replacements_and_surfaces_failures_rust(failure, monkeypatch):
     monkeypatch.setattr("fault_injection._toxiproxy.emit", lambda *args, **kwargs: None)
     gate = threading.Event()
     gate.set()
@@ -668,7 +668,7 @@ def test_single_cutoff_gates_replacements_and_surfaces_failures(failure, monkeyp
     assert gate.is_set() and removed and not toxics
 
 
-def test_recovered_read_rejects_a_partial_receipt():
+def test_recovered_read_rejects_a_partial_receipt_rust():
     expected = dict(ITEM, receipt="complete receipt")
     with pytest.raises(AssertionError):
         assert_read_outcome(

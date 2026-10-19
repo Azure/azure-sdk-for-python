@@ -70,7 +70,7 @@ ITEM_CALLS = [
 @pytest.mark.parametrize("option", ["raw_request_hook", "raw_response_hook"])
 @pytest.mark.parametrize("nested", [None, "request_options", "feed_options", "options"])
 @pytest.mark.parametrize("value", [None, False, lambda _message: None])
-def test_removed_raw_hooks_never_send_on_either_backend(
+def test_removed_raw_hooks_never_send_on_either_backend_rust(
     api, legacy, method, arguments, option, nested, value,
 ):
     if legacy:
@@ -124,7 +124,7 @@ EXCLUDED_OPTIONS = [
     ("client", "list_databases", {}),
     ("client", "query_databases", {"query": "SELECT * FROM c"}),
 ])
-def test_removed_raw_hooks_reject_resource_and_compound_calls(
+def test_removed_raw_hooks_reject_resource_and_compound_calls_rust(
     api, legacy, option, nested, target, method, arguments,
 ):
     backend = api.backend
@@ -149,7 +149,7 @@ def test_removed_raw_hooks_reject_resource_and_compound_calls(
 
 @pytest.mark.parametrize("method,arguments", ITEM_CALLS)
 @pytest.mark.parametrize("options", EXCLUDED_OPTIONS)
-def test_excluded_options_never_send_or_fall_back(api, method, arguments, options):
+def test_excluded_options_never_send_or_fall_back_rust(api, method, arguments, options):
     with pytest.raises(TypeError, match="not supported"):
         finish(getattr(api.container, method)(**arguments, **options))
     assert api.backend.events == []
@@ -164,13 +164,13 @@ def test_excluded_options_never_send_or_fall_back(api, method, arguments, option
     {"availabilityStrategy": {"threshold_steps_ms": 50}},
     {"availabilityStrategy": CrossRegionHedgingStrategy({"threshold_steps_ms": 50})},
 ])
-def test_internal_preparation_also_rejects_excluded_options(options):
+def test_internal_preparation_also_rejects_excluded_options_rust(options):
     with pytest.raises(TypeError, match="not supported"):
         build_request_headers_and_settings(options)
 
 
 @pytest.mark.parametrize("field", ["pre_triggers", "post_triggers"])
-def test_typed_settings_no_longer_advertise_triggers(field):
+def test_typed_settings_no_longer_advertise_triggers_rust(field):
     with pytest.raises(TypeError, match=field):
         ItemSettings(**{field: ("validateOrder",)})
 
@@ -178,14 +178,14 @@ def test_typed_settings_no_longer_advertise_triggers(field):
 @pytest.mark.parametrize("header", [
     "X-MS-DOCUMENTDB-PRE-TRIGGER-INCLUDE", "x-ms-documentdb-post-trigger-include",
 ])
-def test_client_headers_cannot_reintroduce_triggers(header):
+def test_client_headers_cannot_reintroduce_triggers_rust(header):
     with pytest.raises(TypeError, match="triggers are excluded"):
         build_client_config(headers={header: "validateOrder"})
 
 
 @pytest.mark.parametrize("legacy", [False, True])
 @pytest.mark.parametrize("name", ["scripts", "is_system_key"])
-def test_removed_container_properties_are_absent_on_both_backends(api, legacy, name):
+def test_removed_container_properties_are_absent_on_both_backends_rust(api, legacy, name):
     if legacy:
         backend = ASYNC_LEGACY_BACKEND if api.asynchronous else LEGACY_BACKEND
         api.connection._backend = backend
@@ -202,7 +202,7 @@ def test_removed_container_properties_are_absent_on_both_backends(api, legacy, n
     {"paths": ["/customerId"], "kind": "Hash"},
     {"paths": ["/customerId"], "kind": "Hash", "systemKey": False},
 ])
-def test_private_missing_key_resolution_uses_metadata(api, monkeypatch, definition):
+def test_private_missing_key_resolution_uses_metadata_rust(api, monkeypatch, definition):
     metadata = (AsyncMock if api.asynchronous else MagicMock)(
         return_value={"partitionKey": definition},
     )
@@ -218,7 +218,7 @@ def test_private_missing_key_resolution_uses_metadata(api, monkeypatch, definiti
     assert api.connection.mock_calls == []
 
 
-def test_private_missing_key_resolution_propagates_metadata_failure(api, monkeypatch):
+def test_private_missing_key_resolution_propagates_metadata_failure_rust(api, monkeypatch):
     error = RuntimeError("container metadata unavailable")
     metadata = (AsyncMock if api.asynchronous else MagicMock)(side_effect=error)
     monkeypatch.setattr(api.container, "_get_properties", metadata)
@@ -234,7 +234,7 @@ def test_private_missing_key_resolution_propagates_metadata_failure(api, monkeyp
     ("customer-17", "customer-17"),
     (["customer-17", "west"], ["customer-17", "west"]),
 ])
-def test_private_explicit_keys_do_not_read_metadata(api, monkeypatch, value, expected):
+def test_private_explicit_keys_do_not_read_metadata_rust(api, monkeypatch, value, expected):
     metadata = (AsyncMock if api.asynchronous else MagicMock)()
     monkeypatch.setattr(api.container, "_get_properties", metadata)
     assert finish(api.container._set_partition_key(value)) == expected
@@ -250,7 +250,7 @@ def test_private_explicit_keys_do_not_read_metadata(api, monkeypatch, value, exp
     ("azure.cosmos.aio._container", ("ScriptsProxy",)),
     ("azure.cosmos.documents", ("TriggerType", "TriggerOperation")),
 ])
-def test_scripting_types_are_not_exported(module, names):
+def test_scripting_types_are_not_exported_rust(module, names):
     public_module = importlib.import_module(module)
     for name in names:
         assert not hasattr(public_module, name)
@@ -260,7 +260,7 @@ def test_scripting_types_are_not_exported(module, names):
 @pytest.mark.parametrize("module", [
     "azure.cosmos.scripts", "azure.cosmos.aio._scripts",
 ])
-def test_scripting_modules_are_removed(module):
+def test_scripting_modules_are_removed_rust(module):
     with pytest.raises(ModuleNotFoundError) as error:
         importlib.import_module(module)
     assert error.value.name == module
@@ -270,7 +270,7 @@ def test_scripting_modules_are_removed(module):
     "azure.cosmos._cosmos_client_connection",
     "azure.cosmos.aio._cosmos_client_connection_async",
 ])
-def test_legacy_scripting_operations_are_removed(module):
+def test_legacy_scripting_operations_are_removed_rust(module):
     connection = importlib.import_module(module).CosmosClientConnection
     for resource in ("StoredProcedure", "Trigger", "UserDefinedFunction"):
         for operation in ("Create", "Upsert", "Read", "Replace", "Delete", "Execute"):
@@ -287,7 +287,7 @@ def test_legacy_scripting_operations_are_removed(module):
     "upsert_user", "replace_user", "delete_user", "_get_user_link",
 ])
 @pytest.mark.parametrize("legacy", [False, True])
-def test_user_management_is_removed_on_both_backends(api, method, legacy):
+def test_user_management_is_removed_on_both_backends_rust(api, method, legacy):
     if legacy:
         backend = ASYNC_LEGACY_BACKEND if api.asynchronous else LEGACY_BACKEND
         api.connection._backend = backend
@@ -305,14 +305,14 @@ def test_user_management_is_removed_on_both_backends(api, method, legacy):
     ("azure.cosmos.database", ("UserProxy",)),
     ("azure.cosmos.aio._database", ("UserProxy",)),
 ])
-def test_user_permission_types_are_not_exported(module, names):
+def test_user_permission_types_are_not_exported_rust(module, names):
     public_module = importlib.import_module(module)
     for name in names:
         assert not hasattr(public_module, name)
         assert name not in getattr(public_module, "__all__", ())
 
 
-def test_user_permission_constants_are_removed():
+def test_user_permission_constants_are_removed_rust():
     from azure.cosmos.http_constants import HttpHeaders, ResourceType
 
     assert not hasattr(ResourceType, "User")
@@ -323,7 +323,7 @@ def test_user_permission_constants_are_removed():
 @pytest.mark.parametrize("module", [
     "azure.cosmos.user", "azure.cosmos.aio._user", "azure.cosmos.permission",
 ])
-def test_user_permission_modules_are_removed(module):
+def test_user_permission_modules_are_removed_rust(module):
     with pytest.raises(ModuleNotFoundError) as error:
         importlib.import_module(module)
     assert error.value.name == module
@@ -333,7 +333,7 @@ def test_user_permission_modules_are_removed(module):
     "azure.cosmos._cosmos_client_connection",
     "azure.cosmos.aio._cosmos_client_connection_async",
 ])
-def test_legacy_user_permission_operations_are_removed(module):
+def test_legacy_user_permission_operations_are_removed_rust(module):
     connection = importlib.import_module(module).CosmosClientConnection
     for resource in ("User", "Permission"):
         for operation in ("Create", "Upsert", "Read", "Replace", "Delete"):
@@ -345,24 +345,24 @@ def test_legacy_user_permission_operations_are_removed(module):
     assert callable(connection.DeleteDatabase)
 
 
-def test_permission_token_expiry_is_not_a_typed_setting():
+def test_permission_token_expiry_is_not_a_typed_setting_rust():
     with pytest.raises(TypeError, match="resource_token_expiry_seconds"):
         ResourceSettings(resource_token_expiry_seconds=60)
 
 
 @pytest.mark.parametrize("option", ["resource_token_expiry_seconds", "resourceTokenExpirySeconds"])
-def test_permission_token_expiry_is_not_a_rust_request_option(option):
+def test_permission_token_expiry_is_not_a_rust_request_option_rust(option):
     with pytest.raises(TypeError, match="Unknown Rust request option"):
         build_request_headers_and_settings({option: 60})
 
 
-def test_legacy_hedging_strategy_can_represent_threshold_steps():
+def test_legacy_hedging_strategy_can_represent_threshold_steps_rust():
     strategy = CrossRegionHedgingStrategy({"threshold_ms": 100, "threshold_steps_ms": 50})
     assert strategy.threshold_steps_ms == 50
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-def test_rust_client_rejects_steps_but_legacy_client_keeps_them(asynchronous, monkeypatch):
+def test_rust_client_rejects_steps_but_legacy_client_keeps_them_rust(asynchronous, monkeypatch):
     module = "azure.cosmos.aio._cosmos_client" if asynchronous else "azure.cosmos.cosmos_client"
     connection = MagicMock()
     monkeypatch.setattr(module + ".CosmosClientConnection", connection)
@@ -409,7 +409,7 @@ def construct_client(cls, connection_string, **kwargs):
     lambda: {},
     lambda: [],
 ])
-def test_removed_credentials_fail_before_backend_or_connection_creation(
+def test_removed_credentials_fail_before_backend_or_connection_creation_rust(
     client_constructor, backend, credential_factory, monkeypatch,
 ):
     factory_name = "make_async_backend" if client_constructor.cls is AsyncCosmosClient else "make_backend"
@@ -428,7 +428,7 @@ def test_removed_credentials_fail_before_backend_or_connection_creation(
     "azure.cosmos.aio._cosmos_client_connection_async",
 ])
 @pytest.mark.parametrize("field,value", [("resourceTokens", None), ("permissionFeed", [])])
-def test_removed_auth_fields_cannot_be_used_by_direct_connections(module, field, value):
+def test_removed_auth_fields_cannot_be_used_by_direct_connections_rust(module, field, value):
     connection_module = importlib.import_module(module)
     assert field not in connection_module.CredentialDict.__annotations__
     with pytest.raises(ValueError, match="resource-token"):
@@ -437,7 +437,7 @@ def test_removed_auth_fields_cannot_be_used_by_direct_connections(module, field,
         )
 
 
-def test_resource_token_header_selection_is_removed():
+def test_resource_token_header_selection_is_removed_rust():
     from azure.cosmos import auth
 
     assert not hasattr(auth, "__get_authorization_token_using_resource_token")
@@ -449,7 +449,7 @@ def test_resource_token_header_selection_is_removed():
 
 @pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("credential", ["ZmFrZQ==", {"masterKey": "ZmFrZQ=="}])
-def test_account_key_forms_remain_supported(client_constructor, backend, credential):
+def test_account_key_forms_remain_supported_rust(client_constructor, backend, credential):
     client = client_constructor.cls("https://example.invalid", credential, _backend=backend)
     try:
         assert client_constructor.connection.call_args.kwargs["auth"] == {"masterKey": "ZmFrZQ=="}
@@ -460,7 +460,7 @@ def test_account_key_forms_remain_supported(client_constructor, backend, credent
 
 @pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("async_credential", [False, True])
-def test_entra_credentials_remain_supported_without_fetching_a_token(
+def test_entra_credentials_remain_supported_without_fetching_a_token_rust(
     client_constructor, backend, async_credential,
 ):
     class Credential:
@@ -485,7 +485,7 @@ def test_entra_credentials_remain_supported_without_fetching_a_token(
     {"preTriggerInclude": []},
     {"headers": {"x-ms-documentdb-post-trigger-include": "auditOrder"}},
 ])
-def test_constructor_rejects_excluded_inputs_before_backend_creation(
+def test_constructor_rejects_excluded_inputs_before_backend_creation_rust(
     client_constructor, connection_string, options, monkeypatch,
 ):
     factory_name = "make_async_backend" if client_constructor.cls is AsyncCosmosClient else "make_backend"
@@ -501,7 +501,7 @@ def test_constructor_rejects_excluded_inputs_before_backend_creation(
 
 @pytest.mark.parametrize("connection_string", [False, True], ids=["direct", "connection-string"])
 @pytest.mark.parametrize("backend", ["rust", "core-python"])
-def test_supported_constructor_preserves_backend_and_threshold(
+def test_supported_constructor_preserves_backend_and_threshold_rust(
     client_constructor, connection_string, backend,
 ):
     strategy = {"threshold_ms": 100}
@@ -519,7 +519,7 @@ def test_supported_constructor_preserves_backend_and_threshold(
 
 @pytest.mark.parametrize("connection_string", [False, True], ids=["direct", "connection-string"])
 @pytest.mark.parametrize("options", EXCLUDED_OPTIONS)
-def test_legacy_constructor_preserves_excluded_options(
+def test_legacy_constructor_preserves_excluded_options_rust(
     client_constructor, connection_string, options,
 ):
     client = construct_client(
@@ -531,7 +531,7 @@ def test_legacy_constructor_preserves_excluded_options(
 
 
 @pytest.mark.parametrize("connection_string", [False, True], ids=["direct", "connection-string"])
-def test_constructor_exclusions_follow_environment_and_explicit_override(
+def test_constructor_exclusions_follow_environment_and_explicit_override_rust(
     client_constructor, connection_string, monkeypatch,
 ):
     monkeypatch.setenv("COSMOS_BACKEND", "rust")

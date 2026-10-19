@@ -37,15 +37,15 @@ class TestFormatRuCharge(unittest.TestCase):
     deliberate decision recorded as a test diff.
     """
 
-    def test_whole_ru_renders_with_decimal_zero(self):
+    def test_whole_ru_renders_with_decimal_zero_rust(self):
         """``1.0`` → ``"1.0"`` (always a decimal-point string, never bare ``"1"``)."""
         self.assertEqual(format_ru_charge(1.0), "1.0")
 
-    def test_two_digit_decimal_renders_as_typed(self):
+    def test_two_digit_decimal_renders_as_typed_rust(self):
         """A two-decimal value renders verbatim — no rounding."""
         self.assertEqual(format_ru_charge(1.43), "1.43")
 
-    def test_simple_decimal_keeps_trailing_zero_dropped(self):
+    def test_simple_decimal_keeps_trailing_zero_dropped_rust(self):
         """``1.50`` (== ``1.5`` as a float) renders as ``"1.5"`` — Python's canonical form.
 
         Customer fixtures that string-match against
@@ -54,11 +54,11 @@ class TestFormatRuCharge(unittest.TestCase):
         """
         self.assertEqual(format_ru_charge(1.50), "1.5")
 
-    def test_zero_renders_as_zero_point_zero(self):
+    def test_zero_renders_as_zero_point_zero_rust(self):
         """``0.0`` → ``"0.0"`` (the free-tier read can show this; must not become ``"0"``)."""
         self.assertEqual(format_ru_charge(0.0), "0.0")
 
-    def test_int_input_is_coerced_to_float(self):
+    def test_int_input_is_coerced_to_float_rust(self):
         """An ``int`` argument is coerced to float so the output shape stays the same.
 
         Defensive: a future Rust-typed-field change that returns
@@ -67,11 +67,11 @@ class TestFormatRuCharge(unittest.TestCase):
         """
         self.assertEqual(format_ru_charge(2), "2.0")  # type: ignore[arg-type]
 
-    def test_large_charge_does_not_use_scientific_notation(self):
+    def test_large_charge_does_not_use_scientific_notation_rust(self):
         """Six-digit RU charges stay decimal — no ``"1.23e+05"`` flips."""
         self.assertEqual(format_ru_charge(123456.78), "123456.78")
 
-    def test_negative_value_passes_through(self):
+    def test_negative_value_passes_through_rust(self):
         """Negative input is formatted, not rejected — the helper must never raise.
 
         The Cosmos service does not return negative RU charges, but
@@ -81,7 +81,7 @@ class TestFormatRuCharge(unittest.TestCase):
         """
         self.assertEqual(format_ru_charge(-1.5), "-1.5")
 
-    def test_golden_values_match_canonical_wire_form(self):
+    def test_golden_values_match_canonical_wire_form_rust(self):
         """Golden table: representative real charges -> exact canonical string.
 
         These are the request-charge values customers actually see for

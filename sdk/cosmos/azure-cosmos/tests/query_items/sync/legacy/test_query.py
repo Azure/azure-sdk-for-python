@@ -4,7 +4,8 @@
 
 Self-contained: builds its own database + container in ``setUp`` and
 registers cleanup immediately. The class name and method names match the
-source at ``tests/test_query.py`` so test IDs differ only by path.
+source (apart from the method's ``_rust`` suffix) at ``tests/test_query.py`` so test IDs
+differ by path and method suffix.
 The None-parameters, ordered-paging, OFFSET LIMIT, COUNT, MAX, and query/index-metrics tests reuse the
 owned container; their query inputs and assertions are unchanged.
 DISTINCT retains its original composite indexes in a separate owned container.
@@ -52,7 +53,7 @@ class TestQuery(unittest.TestCase):
         self.client.delete_database(self._db_id)
         print(f"\nDeleted owned query database: {self._db_id}")
 
-    def test_populate_query_metrics(self):
+    def test_populate_query_metrics_rust(self):
         # Source: tests/test_query.py::TestQuery.test_populate_query_metrics
         created_collection = self.container
         doc_id = 'MyId' + str(uuid.uuid4())
@@ -78,7 +79,7 @@ class TestQuery(unittest.TestCase):
         self.assertTrue(all(['=' in x for x in metrics]))
         self.database.delete_container(created_collection.id)
 
-    def test_populate_index_metrics(self):
+    def test_populate_index_metrics_rust(self):
         # Source: tests/test_query.py::TestQuery.test_populate_index_metrics
         created_collection = self.container
 
@@ -117,7 +118,7 @@ class TestQuery(unittest.TestCase):
         self.database.delete_container(created_collection.id)
 
     @pytest.mark.skip(reason="environment-gap: Emulator does not support query advisor yet")
-    def test_populate_query_advice(self):
+    def test_populate_query_advice_rust(self):
         # Source: tests/test_query.py::TestQuery.test_populate_query_advice
         created_collection = self.container
 
@@ -202,7 +203,7 @@ class TestQuery(unittest.TestCase):
         self.assertIn("QA1009", query_advice)
         self.database.delete_container(created_collection.id)
 
-    def test_value_max_query_results(self):
+    def test_value_max_query_results_rust(self):
         # Source: tests/test_query.py::TestQuery.test_value_max_query_results
         container = self.container
         container.upsert_item(
@@ -217,7 +218,7 @@ class TestQuery(unittest.TestCase):
         assert len(item_list) == 1
         assert item_list[0] == 3
 
-    def test_query_items_with_parameters_none(self):
+    def test_query_items_with_parameters_none_rust(self):
         """Test that query_items handles parameters=None correctly (issue #43662)."""
         # Source: tests/test_query.py::TestQuery.test_query_items_with_parameters_none
         created_collection = self.container
@@ -269,7 +270,7 @@ class TestQuery(unittest.TestCase):
 
         self.database.delete_container(created_collection.id)
 
-    def test_query_pagination_with_max_item_count(self):
+    def test_query_pagination_with_max_item_count_rust(self):
         """Test pagination showing per-page limits and total results counting."""
         # Source: tests/test_query.py::TestQuery.test_query_pagination_with_max_item_count
         created_collection = self.container
@@ -322,7 +323,7 @@ class TestQuery(unittest.TestCase):
 
         self.database.delete_container(created_collection.id)
 
-    def test_offset_limit(self):
+    def test_offset_limit_rust(self):
         # Source: tests/test_query.py::TestQuery.test_offset_limit
         created_collection = self.container
         values = []
@@ -373,7 +374,7 @@ class TestQuery(unittest.TestCase):
         )
         self.assertListEqual(list(map(lambda doc: doc["value"], list(query_iterable))), results)
 
-    def test_distinct(self):
+    def test_distinct_rust(self):
         # Source: tests/test_query.py::TestQuery.test_distinct
         distinct_field = 'distinct_field'
         pk_field = "pk"
@@ -449,7 +450,7 @@ class TestQuery(unittest.TestCase):
             result_strings = sorted(result_strings)
         self.assertListEqual(result_strings, query_results_strings)
 
-    def test_partition_scoped_count_is_index_only(self):
+    def test_partition_scoped_count_is_index_only_rust(self):
         # Source: tests/test_query.py::TestQuery.test_partition_scoped_count_is_index_only
         created_collection = self.container
         partition_key = "PowerCut-" + str(uuid.uuid4())
@@ -496,7 +497,7 @@ class TestQuery(unittest.TestCase):
             for item_id, item_partition_key in created_items:
                 created_collection.delete_item(item_id, item_partition_key)
 
-    def test_paging_with_continuation_token(self):
+    def test_paging_with_continuation_token_rust(self):
         """A continuation token replays the page that follows it.
 
         Two items are queried one page at a time. After taking the first page,
@@ -532,7 +533,7 @@ class TestQuery(unittest.TestCase):
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
-    def test_continuation_token_size_limit_query(self):
+    def test_continuation_token_size_limit_query_rust(self):
         """Preserve the original one-kilobyte token assertions on owned data."""
         # Source: tests/test_query.py::TestQuery.test_continuation_token_size_limit_query
         container = self.container
@@ -549,7 +550,7 @@ class TestQuery(unittest.TestCase):
         token = pager.continuation_token
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
 
-    def test_cross_partition_query_with_continuation_token(self):
+    def test_cross_partition_query_with_continuation_token_rust(self):
         """Original cross-partition continuation replay, using this test's isolated container."""
         # Source: tests/test_query.py::TestQuery.test_cross_partition_query_with_continuation_token
         created_collection = self.container

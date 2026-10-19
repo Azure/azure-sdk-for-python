@@ -17,6 +17,12 @@ ROOT = Path(__file__).resolve().parents[2]
 COPY = ROOT / "tests" / "query_items" / "sync" / "legacy" / "test_query.py"
 
 
+def _method_name(path, name):
+    if path.parent != ROOT / "tests" and name.startswith("test_"):
+        return name + "_rust"
+    return name
+
+
 def load_module(name, path):
     spec = importlib.util.spec_from_file_location(name, path)
     assert spec is not None and spec.loader is not None
@@ -59,7 +65,7 @@ def load_module(name, path):
     ("query_items", "test_query_async.py", "::TestQueryAsync::test_continuation_token_size_limit_query_async",
      "token-limit", "aio"),
 ])
-def test_owned_runner_selects_original_or_copy(monkeypatch, backend, operation, filename, method, query_test, surface):
+def test_owned_runner_selects_original_or_copy_rust(monkeypatch, backend, operation, filename, method, query_test, surface):
     monkeypatch.chdir(ROOT)
     monkeypatch.syspath_prepend(str(ROOT / "tests"))
     for name in ("COSMOS_BACKEND", "COSMOS_TEST_DATA_AUTH_MODE", "COSMOS_PARITY_CAPTURE_OP"):
@@ -102,9 +108,10 @@ def test_owned_runner_selects_original_or_copy(monkeypatch, backend, operation, 
     folder = ROOT / "tests"
     if backend == "rust":
         folder = folder / operation / surface / "legacy"
-    assert str(folder / filename) + method in options
+    suffix = "_rust" if backend == "rust" else ""
+    assert str(folder / filename) + method + suffix in options
     if operation == "upsert_item":
-        assert str(folder / "test_crud.py") + "::TestCRUDOperations::test_document_upsert" in options
+        assert str(folder / "test_crud.py") + "::TestCRUDOperations::test_document_upsert" + suffix in options
     assert "--noconftest" in options
     assert "-s" in options
     assert "common.parity_capture_plugin" in options
@@ -133,13 +140,13 @@ def test_owned_runner_selects_original_or_copy(monkeypatch, backend, operation, 
     ("test_populate_index_metrics", 1, -1),
     ("test_populate_query_advice", 1, -1),
 ])
-def test_filter_copy_preserves_original_query_body(method_name, start, stop):
+def test_filter_copy_preserves_original_query_body_rust(method_name, start, stop):
     def body(path):
         module = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == "TestQuery")
         method = next(
             node for node in cls.body
-            if isinstance(node, ast.FunctionDef) and node.name == method_name
+            if isinstance(node, ast.FunctionDef) and node.name == _method_name(path, method_name)
         )
         # Only container setup and deletion differ; all queries and assertions match.
         return [ast.dump(node) for node in method.body[start:stop]]
@@ -155,12 +162,12 @@ def test_filter_copy_preserves_original_query_body(method_name, start, stop):
     ("sync", "test_query.py", "TestQuery", "test_continuation_token_size_limit_query"),
     ("aio", "test_query_async.py", "TestQueryAsync", "test_continuation_token_size_limit_query_async"),
 ])
-def test_continuation_copy_preserves_original_body(surface, filename, class_name, method_name):
+def test_continuation_copy_preserves_original_body_rust(surface, filename, class_name, method_name):
     def body(path):
         module = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == class_name)
         method = next(node for node in cls.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-                      and node.name == method_name)
+                      and node.name == _method_name(path, method_name))
         if method_name.startswith("test_cross_partition_query"):
             assert not any(
                 isinstance(node, ast.keyword) and node.arg == "enable_cross_partition_query"
@@ -175,7 +182,7 @@ def test_continuation_copy_preserves_original_body(surface, filename, class_name
     )
 
 
-def test_query_selector_rejects_other_operations():
+def test_query_selector_rejects_other_operations_rust():
     runner = load_module("_query_selector_guard", ROOT / "scripts" / "v5" / "run_read_item_parity.py")
     with pytest.raises(SystemExit) as error:
         runner.main(["--backend", "rust", "--query-test", "ordering"])
@@ -185,12 +192,12 @@ def test_query_selector_rejects_other_operations():
 @pytest.mark.parametrize("method_name", [
     "test_partition_scoped_count_is_index_only_async", "test_value_max_query_results_async",
 ])
-def test_async_count_and_max_copy_preserves_original_body(method_name):
+def test_async_count_and_max_copy_preserves_original_body_rust(method_name):
     def body(path):
         module = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == "TestQueryAsync")
         method = next(node for node in cls.body if isinstance(node, ast.AsyncFunctionDef)
-                      and node.name == method_name)
+                      and node.name == _method_name(path, method_name))
         # Only the container lookup is adapted to the owned fixture.
         return [ast.dump(node) for node in method.body[1:]]
 
@@ -205,7 +212,7 @@ def test_async_count_and_max_copy_preserves_original_body(method_name):
     ["--op", "query_items", "--query-test", "ordering"],
     ["--op", "query_items", "--query-test", "top"],
 ])
-def test_async_selector_rejects_unsupported_selections(options):
+def test_async_selector_rejects_unsupported_selections_rust(options):
     runner = load_module("_async_query_selector_guard", ROOT / "scripts" / "v5" / "run_read_item_parity.py")
     with pytest.raises(SystemExit) as error:
         runner.main(["--backend", "rust", "--surface", "aio"] + options)
@@ -220,12 +227,12 @@ def test_async_selector_rejects_unsupported_selections(options):
     ("test_config.py", "TestConfig", "_QueryConfig", "_validate_offset_limit"),
     ("test_config.py", "TestConfig", "_QueryConfig", "_validate_distinct_offset_limit"),
 ])
-def test_async_offset_copy_preserves_original_body(filename, source_class, copy_class, method_name):
+def test_async_offset_copy_preserves_original_body_rust(filename, source_class, copy_class, method_name):
     def body(path, class_name):
         module = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == class_name)
         method = next(node for node in cls.body if isinstance(node, ast.AsyncFunctionDef)
-                      and node.name == method_name)
+                      and node.name == _method_name(path, method_name))
         # Only the test's owned container setup and final deletion are adapted.
         nodes = method.body[2:-1] if method_name.startswith("test_") else method.body
         return [ast.dump(node) for node in nodes]
@@ -239,12 +246,12 @@ def test_async_offset_copy_preserves_original_body(filename, source_class, copy_
     ("sync", "test_query.py", "TestQuery", "test_distinct", 3),
     ("aio", "test_query_async.py", "TestQueryAsync", "test_distinct_async", 4),
 ])
-def test_distinct_copy_preserves_body_and_index_policy(surface, filename, class_name, method_name, setup_index):
+def test_distinct_copy_preserves_body_and_index_policy_rust(surface, filename, class_name, method_name, setup_index):
     def parts(path):
         module = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == class_name)
         method = next(node for node in cls.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-                      and node.name == method_name)
+                      and node.name == _method_name(path, method_name))
         setup = method.body[setup_index].value
         if isinstance(setup, ast.Await):
             setup = setup.value
@@ -260,12 +267,12 @@ def test_distinct_copy_preserves_body_and_index_policy(surface, filename, class_
 @pytest.mark.parametrize("method_name", [
     "_get_query_result_string", "_validate_distinct", "_pad_with_none", "_get_distinct_docs",
 ])
-def test_shared_distinct_helpers_preserve_original_implementation(method_name):
+def test_shared_distinct_helpers_preserve_original_implementation_rust(method_name):
     def method(path, class_name):
         module = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == class_name)
         return ast.dump(next(node for node in cls.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-                             and node.name == method_name))
+                             and node.name == _method_name(path, method_name)))
 
     assert method(ROOT / "tests" / "test_config.py", "TestConfig") == method(
         ROOT / "tests" / "query_items" / "_legacy_distinct_helpers.py", "DistinctConfig"
@@ -276,12 +283,12 @@ def test_shared_distinct_helpers_preserve_original_implementation(method_name):
     ("sync", "test_query.py", "TestQuery", "test_populate_query_advice"),
     ("aio", "test_query_async.py", "TestQueryAsync", "test_populate_query_advice_async"),
 ])
-def test_advice_copy_retains_original_skip_with_environment_category(surface, filename, class_name, method_name):
+def test_advice_copy_retains_original_skip_with_environment_category_rust(surface, filename, class_name, method_name):
     def decorators(path):
         module = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == class_name)
         method = next(node for node in cls.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-                      and node.name == method_name)
+                      and node.name == _method_name(path, method_name))
         return method.decorator_list
 
     original = decorators(ROOT / "tests" / filename)
@@ -296,7 +303,7 @@ def test_advice_copy_retains_original_skip_with_environment_category(surface, fi
 
 
 @pytest.mark.parametrize("failure_stage", [None, "container", "udf", "item"])
-def test_deployed_udf_fixture_uses_core_setup_and_always_cleans_database(monkeypatch, failure_stage):
+def test_deployed_udf_fixture_uses_core_setup_and_always_cleans_database_rust(monkeypatch, failure_stage):
     from query_items import _udf_fixture
 
     monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
@@ -337,7 +344,7 @@ def test_deployed_udf_fixture_uses_core_setup_and_always_cleans_database(monkeyp
     client.__exit__.assert_called_once()
 
 
-def test_async_fixture_cleans_database_when_container_setup_fails(monkeypatch):
+def test_async_fixture_cleans_database_when_container_setup_fails_rust(monkeypatch):
     module = load_module(
         "_offset_async_copy_cleanup",
         ROOT / "tests" / "query_items" / "aio" / "legacy" / "test_query_async.py",
@@ -350,7 +357,7 @@ def test_async_fixture_cleans_database_when_container_setup_fails(monkeypatch):
     database.create_container = AsyncMock(side_effect=RuntimeError("container setup failed"))
     client.create_database = AsyncMock(return_value=database)
     monkeypatch.setattr(module, "CosmosClient", MagicMock(return_value=client))
-    case = module.TestQueryAsync("test_offset_limit_async")
+    case = module.TestQueryAsync("test_offset_limit_async_rust")
     result = unittest.TestResult()
     case.run(result)
     assert len(result.errors) == 1
@@ -380,7 +387,7 @@ def test_async_fixture_cleans_database_when_container_setup_fails(monkeypatch):
     ("prefix-continuation", "aio", "test_query_feed_range_multipartition_async.py", "TestFeedRangeMultiPartitionAsync",
      "test_prefix_partition_key_query_pagination_resume_async"),
 ])
-def test_adapted_runner_uses_same_copy_with_only_backend_changed(
+def test_adapted_runner_uses_same_copy_with_only_backend_changed_rust(
     monkeypatch, backend, query_test, surface, filename, class_name, method_name,
 ):
     monkeypatch.syspath_prepend(str(ROOT / "scripts" / "v5"))
@@ -400,7 +407,7 @@ def test_adapted_runner_uses_same_copy_with_only_backend_changed(
         target = Path(path)
         selected_paths.append(target)
         assert cls == class_name
-        assert method == method_name
+        assert method == method_name + "_rust"
         actual = target.read_text(encoding="utf-8")
         expected = source.read_text(encoding="utf-8")
         if backend == "core-python":
@@ -424,13 +431,13 @@ def test_adapted_runner_uses_same_copy_with_only_backend_changed(
 @pytest.mark.parametrize("method_name", [
     "test_orderby_top_query", "execute_query_and_validate_results",
 ])
-def test_top_copy_preserves_queries_and_public_assertions(method_name):
+def test_top_copy_preserves_queries_and_public_assertions_rust(method_name):
     def body(path):
         module = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef)
                    and node.name == "TestCrossPartitionTopOrderBy")
         method = next(node for node in cls.body if isinstance(node, ast.FunctionDef)
-                      and node.name == method_name)
+                      and node.name == _method_name(path, method_name))
         return [
             ast.dump(node) for node in method.body
             if not any(isinstance(child, ast.Attribute) and child.attr == "_page_iterator_class"
@@ -448,7 +455,7 @@ def test_top_copy_preserves_queries_and_public_assertions(method_name):
     ("test_query_feed_range.py", "TestQueryFeedRange",
      "test_query_value_sum_across_full_feed_range_still_sums", "database_id"),
 ])
-def test_copied_fixture_cleans_database_when_container_setup_fails(
+def test_copied_fixture_cleans_database_when_container_setup_fails_rust(
     monkeypatch, filename, class_name, method_name, id_attribute,
 ):
     monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
@@ -457,7 +464,7 @@ def test_copied_fixture_cleans_database_when_container_setup_fails(
     client = MagicMock()
     client.create_database.return_value.create_container.side_effect = RuntimeError("container setup failed")
     monkeypatch.setattr(module, "CosmosClient", MagicMock(return_value=client))
-    case = getattr(module, class_name)(method_name)
+    case = getattr(module, class_name)(method_name + "_rust")
     try:
         with pytest.raises(RuntimeError, match="container setup failed"):
             case.setUp()
@@ -477,12 +484,12 @@ def test_copied_fixture_cleans_database_when_container_setup_fails(
     ("aio", "test_query_feed_range_async.py", "TestQueryFeedRangeAsync",
      "test_query_value_min_across_full_feed_range_returns_scalar_async"),
 ])
-def test_sum_and_min_copy_preserves_original_query_body(surface, filename, class_name, method_name):
+def test_sum_and_min_copy_preserves_original_query_body_rust(surface, filename, class_name, method_name):
     def parts(path):
         module = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == class_name)
         method = next(node for node in cls.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-                      and node.name == method_name)
+                      and node.name == _method_name(path, method_name))
         # Keep the docstring and all query/validation statements; adapt only container lookup.
         return [ast.dump(node) for node in method.body[:1] + method.body[2:]]
 
@@ -492,7 +499,7 @@ def test_sum_and_min_copy_preserves_original_query_body(surface, filename, class
 
 
 @pytest.mark.parametrize("name", ["create_range", "create_feed_range_in_dict"])
-def test_sum_range_helpers_preserve_original_implementation(name):
+def test_sum_range_helpers_preserve_original_implementation_rust(name):
     def body(path):
         module = ast.parse(path.read_text(encoding="utf-8"))
         return ast.dump(next(node for node in module.body if isinstance(node, ast.FunctionDef) and node.name == name))
@@ -508,12 +515,12 @@ def test_sum_range_helpers_preserve_original_implementation(name):
     ("aio", "test_query_feed_range_async.py", "TestQueryFeedRangeAsync",
      "test_query_with_avg_aggregate_single_partition_feed_range_succeeds_async"),
 ])
-def test_avg_copy_preserves_original_query_body(surface, filename, class_name, method_name):
+def test_avg_copy_preserves_original_query_body_rust(surface, filename, class_name, method_name):
     def body(path):
         module = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == class_name)
         method = next(node for node in cls.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-                      and node.name == method_name)
+                      and node.name == _method_name(path, method_name))
         # Only the two container lookups change to owned provisioning.
         return [
             ast.dump(node) for node in method.body
@@ -529,14 +536,15 @@ def test_avg_copy_preserves_original_query_body(surface, filename, class_name, m
 
 
 @pytest.mark.parametrize("surface,suffix", [("sync", ""), ("aio", "_async")])
-def test_prefix_copy_preserves_original_container_and_functional_body(surface, suffix):
+def test_prefix_copy_preserves_original_container_and_functional_body_rust(surface, suffix):
     filename = f"test_query_feed_range_multipartition{suffix}.py"
     method_name = f"test_prefix_partition_key_query_pagination_resume{suffix}"
 
     def parts(path):
         module = ast.parse(path.read_text(encoding="utf-8"))
         method = next(node for node in ast.walk(module)
-                      if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == method_name)
+                      if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                      and node.name == _method_name(path, method_name))
         setup = next(node for node in ast.walk(method)
                      if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
                      and node.func.attr == "create_container_if_not_exists")
@@ -551,7 +559,7 @@ def test_prefix_copy_preserves_original_container_and_functional_body(surface, s
 
 @pytest.mark.parametrize("surface,suffix", [("sync", ""), ("aio", "_async")])
 @pytest.mark.parametrize("failure_stage", ["container", "query"])
-def test_prefix_fixture_cleans_owned_database_on_failure(monkeypatch, surface, suffix, failure_stage):
+def test_prefix_fixture_cleans_owned_database_on_failure_rust(monkeypatch, surface, suffix, failure_stage):
     monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
     monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
     module = load_module(
@@ -574,7 +582,7 @@ def test_prefix_fixture_cleans_owned_database_on_failure(monkeypatch, surface, s
     target.side_effect = RuntimeError(f"{failure_stage} failed")
     monkeypatch.setattr(module, "CosmosClient", MagicMock(return_value=client))
     class_name = "TestFeedRangeMultiPartitionAsync" if surface == "aio" else "TestFeedRangeMultiPartition"
-    case = getattr(module, class_name)(f"test_prefix_partition_key_query_pagination_resume{suffix}")
+    case = getattr(module, class_name)(f"test_prefix_partition_key_query_pagination_resume{suffix}_rust")
     result = unittest.TestResult()
     case.run(result)
     assert len(result.errors) == 1
@@ -588,7 +596,7 @@ def test_prefix_fixture_cleans_owned_database_on_failure(monkeypatch, surface, s
         client.close.assert_called_once()
 
 
-def test_async_sum_fixture_cleans_database_when_container_setup_fails(monkeypatch):
+def test_async_sum_fixture_cleans_database_when_container_setup_fails_rust(monkeypatch):
     monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
     monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
     module = load_module(
@@ -603,7 +611,7 @@ def test_async_sum_fixture_cleans_database_when_container_setup_fails(monkeypatc
     database.create_container = AsyncMock(side_effect=RuntimeError("container setup failed"))
     client.create_database = AsyncMock(return_value=database)
     monkeypatch.setattr(module, "CosmosClient", MagicMock(return_value=client))
-    case = module.TestQueryFeedRangeAsync("test_query_value_sum_across_full_feed_range_still_sums_async")
+    case = module.TestQueryFeedRangeAsync("test_query_value_sum_across_full_feed_range_still_sums_async_rust")
     result = unittest.TestResult()
     case.run(result)
     assert len(result.errors) == 1

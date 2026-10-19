@@ -31,7 +31,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         if cls.key_client is not None:
             cls.key_client.close()
 
-    def test_sql_query_crud(self):
+    def test_sql_query_crud_rust(self):
         """Query databases by id with a parameterized dict, a no-match filter and a raw string."""
         # Source: tests/test_crud_database.py::TestCRUDDatabaseOperations.test_sql_query_crud
         # create two databases.

@@ -178,50 +178,6 @@ class TestPartitionSplitScenariosAsync(unittest.IsolatedAsyncioTestCase):
 
         assert_no_stage_failures(failures)
 
-    async def test_latest_session_token_hpk(self):
-        # create_container is control-plane and uses key_database (key-auth).
-        container_ref = await self.key_database.create_container(
-            "test_updated_session_token_hpk" + str(uuid.uuid4()),
-            PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"),
-            offer_throughput=400)
-        container = self.database.get_container_client(container_ref.id)
-        feed_ranges_and_session_tokens = []
-        previous_session_token = ""
-        pk = ['CA', 'LA1', '90001']
-        pk_feed_range = await container.feed_range_from_partition_key(pk)
-        target_session_token, target_feed_range, previous_session_token = await self.create_items_physical_pk_async(container,
-                                                                                                                     pk_feed_range,
-                                                                                                                     previous_session_token,
-                                                                                                                     feed_ranges_and_session_tokens,
-                                                                                                                     True)
-
-        session_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
-        assert session_token == target_session_token
-        # Cleanup: control-plane -> key_database (key-auth)
-        await self.key_database.delete_container(container.id)
-
-
-    async def test_latest_session_token_logical_hpk(self):
-        # create_container is control-plane and uses key_database (key-auth).
-        container_ref = await self.key_database.create_container(
-            "test_updated_session_token_from_logical_hpk" + str(uuid.uuid4()),
-            PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"),
-            offer_throughput=400)
-        container = self.database.get_container_client(container_ref.id)
-        feed_ranges_and_session_tokens = []
-        previous_session_token = ""
-        target_pk = ['CA', 'LA1', '90001']
-        target_feed_range = await container.feed_range_from_partition_key(target_pk)
-        target_session_token, previous_session_token = await self.create_items_logical_pk_async(container, target_feed_range,
-                                                                                                previous_session_token,
-                                                                                                feed_ranges_and_session_tokens,
-                                                                                                True)
-        session_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
-
-        assert session_token == target_session_token
-        # Cleanup: control-plane -> key_database (key-auth)
-        await self.key_database.delete_container(container.id)
-
     @staticmethod
     async def create_items_logical_pk_async(container, target_pk_range, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
         target_session_token = ""

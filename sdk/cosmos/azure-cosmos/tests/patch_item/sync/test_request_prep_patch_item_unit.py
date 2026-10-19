@@ -43,14 +43,14 @@ _SET_OP = {"op": "set", "path": "/status", "value": "shipped"}
 # ---------------------------------------------------------------------------
 
 
-def test_payload_wraps_operations_under_operations_key():
+def test_payload_wraps_operations_under_operations_key_rust():
     """The payload is exactly ``{"operations": [...]}`` -- the shape the
     driver reads back as its patch instructions."""
     payload = build_patch_operations_payload([_SET_OP])
     assert payload == {"operations": [{"op": "set", "path": "/status", "value": "shipped"}]}
 
 
-def test_incr_op_code_uses_canonical_service_spelling():
+def test_incr_op_code_uses_canonical_service_spelling_rust():
     """Both spellings of the increment operator produce the one the service accepts.
 
     Customers write either ``incr`` or ``increment``; the service only
@@ -62,7 +62,7 @@ def test_incr_op_code_uses_canonical_service_spelling():
     assert build_patch_operations_payload([{"op": "increment", "path": "/n", "value": 1}]) == payload
 
 
-def test_other_op_codes_pass_through_unchanged():
+def test_other_op_codes_pass_through_unchanged_rust():
     """add / set / replace / remove / move are spelled identically on both
     sides and must not be rewritten."""
     ops = [
@@ -76,7 +76,7 @@ def test_other_op_codes_pass_through_unchanged():
     assert payload["operations"] == ops
 
 
-def test_input_operations_are_not_mutated():
+def test_input_operations_are_not_mutated_rust():
     """Preparing canonical instructions leaves the caller's list unchanged."""
     original = [{"op": "incr", "path": "/n", "value": 1}]
     snapshot = json.loads(json.dumps(original))
@@ -85,14 +85,14 @@ def test_input_operations_are_not_mutated():
     assert original[0]["op"] == "incr"  # still the public spelling
 
 
-def test_payload_omits_an_unspecified_condition():
+def test_payload_omits_an_unspecified_condition_rust():
     """Unfiltered patches preserve their original operations-only body."""
     payload = build_patch_operations_payload([_SET_OP])
     assert "condition" not in payload
     assert set(payload.keys()) == {"operations"}
 
 
-def test_payload_carries_the_filter_condition():
+def test_payload_carries_the_filter_condition_rust():
     assert build_patch_operations_payload([_SET_OP], filter_predicate="FROM c WHERE c.n = 1") == {
         "operations": [_SET_OP], "condition": "FROM c WHERE c.n = 1",
     }
@@ -103,7 +103,7 @@ def test_payload_carries_the_filter_condition():
 # ---------------------------------------------------------------------------
 
 
-def test_baseline_is_operations_body_with_item_id():
+def test_baseline_is_operations_body_with_item_id_rust():
     """A patch carries the operations payload (serialised to JSON bytes) and
     the id of the item to patch on ``item_id``. The op tag is
     ``OP_PATCH_ITEM``."""
@@ -134,7 +134,7 @@ def test_baseline_is_operations_body_with_item_id():
     assert wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"] == "RID=="
 
 
-def test_body_round_trips_to_patch_instructions_shape():
+def test_body_round_trips_to_patch_instructions_shape_rust():
     """The serialised bytes parse back to ``{"operations": [...]}``."""
     prepared = prepare_patch_item_request(
         container_link="dbs/d/colls/c",
@@ -154,7 +154,7 @@ def test_body_round_trips_to_patch_instructions_shape():
 # ---------------------------------------------------------------------------
 
 
-def test_patch_preparation_accepts_if_match():
+def test_patch_preparation_accepts_if_match_rust():
     """The argument-normalising step turns ``etag`` plus ``IfNotModified`` into an access condition.
 
     This is the step ahead of request prep: it must both accept the guard as
@@ -179,7 +179,7 @@ def test_patch_preparation_accepts_if_match():
 # ---------------------------------------------------------------------------
 
 
-def test_initial_headers_are_flattened_into_outer_headers():
+def test_initial_headers_are_flattened_into_outer_headers_rust():
     """``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
     ``initialHeaders`` dict so the binding forwards each entry verbatim."""
     prepared = prepare_patch_item_request(
@@ -194,7 +194,7 @@ def test_initial_headers_are_flattened_into_outer_headers():
     assert wire_headers(prepared)["x-trace-id"] == "abc-123"
 
 
-def test_trigger_priority_bucket_no_response_land_as_option_keys():
+def test_trigger_priority_bucket_no_response_land_as_option_keys_rust():
     """The option set reaches the headers map under the internal option-key
     names. ``no_response`` is kept on patch (a patch returns the patched
     item, unlike delete / read)."""
@@ -215,7 +215,7 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
     assert settings_options(prepared)["responsePayloadOnWriteDisabled"] is True
 
 
-def test_timeout_kwarg_is_forwarded_under_sentinel_header():
+def test_timeout_kwarg_is_forwarded_under_sentinel_header_rust():
     """``timeout=30`` is forwarded as an operation option so
     the binding can turn it into the driver's own timeout setting -- the
     same mechanism as every other migrated operation."""
@@ -230,7 +230,7 @@ def test_timeout_kwarg_is_forwarded_under_sentinel_header():
     assert settings_options(prepared)["timeout_seconds"] == 30
 
 
-def test_compose_consumes_recognised_kwargs():
+def test_compose_consumes_recognised_kwargs_rust():
     """The option-shortcut keyword arguments the prep recognises are removed
     from the input dict, so the caller doesn't forward them again to the
     legacy path."""
@@ -251,7 +251,7 @@ def test_compose_consumes_recognised_kwargs():
 # ---------------------------------------------------------------------------
 
 
-def test_request_options_disable_id_generation_and_omit_query_metrics():
+def test_request_options_disable_id_generation_and_omit_query_metrics_rust():
     """``build_patch_item_request_options`` sets
     ``disableAutomaticIdGeneration`` (matching the legacy ``patch_item``) and
     -- unlike create / upsert -- never writes a ``populateQueryMetrics``
@@ -261,7 +261,7 @@ def test_request_options_disable_id_generation_and_omit_query_metrics():
     assert "populateQueryMetrics" not in options
 
 
-def test_request_options_fold_etag_pair_into_access_condition():
+def test_request_options_fold_etag_pair_into_access_condition_rust():
     """A valid ``etag`` + ``match_condition`` pair becomes the internal
     ``accessCondition`` shape -- the signal the helper reads to route a
     version-guarded patch to the legacy path (the driver can't honour it)."""
@@ -272,7 +272,7 @@ def test_request_options_fold_etag_pair_into_access_condition():
     assert options["accessCondition"] == {"type": "IfMatch", "condition": "abc"}
 
 
-def test_etag_without_match_condition_raises_up_front():
+def test_etag_without_match_condition_raises_up_front_rust():
     """``etag`` without ``match_condition`` is an application bug; the options
     build refuses to guess and raises before any network round trip -- the
     same gate delete / read / upsert enforce, firing on the caller's own
@@ -281,7 +281,7 @@ def test_etag_without_match_condition_raises_up_front():
         build_patch_item_request_options({"etag": "abc"})
 
 
-def test_merge_explicit_kwargs_omits_none_and_keeps_no_response():
+def test_merge_explicit_kwargs_omits_none_and_keeps_no_response_rust():
     """Only the explicit keyword arguments that aren't None land in the
     kwargs dict. Patch keeps ``no_response`` (it's a write that returns a
     body) and has no ``initial_headers`` parameter (that rides in

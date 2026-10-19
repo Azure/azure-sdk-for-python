@@ -58,7 +58,7 @@ def client_and_proxy_type(request):
 
 @pytest.mark.parametrize("mapping_type", [dict, UserDict, MappingProxyType])
 @pytest.mark.parametrize("database_id", ["sales", 123, 0, None, "00123"])
-def test_properties_id_is_converted_to_string(client_and_proxy_type, database_id, mapping_type):
+def test_properties_id_is_converted_to_string_rust(client_and_proxy_type, database_id, mapping_type):
     """A database described by its properties yields a client named by the string form
     of its id, without editing what the caller passed.
 
@@ -90,7 +90,7 @@ def test_properties_id_is_converted_to_string(client_and_proxy_type, database_id
 
 
 @pytest.mark.parametrize("database_id", ["Sales", "", "00123"])
-def test_string_name_is_preserved(client_and_proxy_type, database_id):
+def test_string_name_is_preserved_rust(client_and_proxy_type, database_id):
     """A database name is used exactly as given, and each call returns a separate
     client.
 
@@ -117,7 +117,7 @@ def test_string_name_is_preserved(client_and_proxy_type, database_id):
     assert client.client_connection.mock_calls == []
 
 
-def test_existing_proxy_creates_new_proxy_on_calling_client(client_and_proxy_type):
+def test_existing_proxy_creates_new_proxy_on_calling_client_rust(client_and_proxy_type):
     """Handing in a database client from elsewhere returns a new one wired to this
     client, and leaves the original alone.
 
@@ -155,7 +155,7 @@ def test_existing_proxy_creates_new_proxy_on_calling_client(client_and_proxy_typ
     assert original_context.adapter.mock_calls == []
 
 
-def test_missing_id_still_raises_key_error(client_and_proxy_type):
+def test_missing_id_still_raises_key_error_rust(client_and_proxy_type):
     """Properties with no id raise ``KeyError`` naming the missing key.
 
     It is a ``KeyError`` rather than something friendlier because that is what
@@ -171,7 +171,7 @@ def test_missing_id_still_raises_key_error(client_and_proxy_type):
 
 
 @pytest.mark.parametrize("input_form", ["name", "properties", "proxy"])
-def test_calling_client_context_reaches_container(client_and_proxy_type, input_form):
+def test_calling_client_context_reaches_container_rust(client_and_proxy_type, input_form):
     """The client's shared context carries down through the database to the container.
 
     Whether the database was named, described by properties, or handed in as an
@@ -205,7 +205,7 @@ def test_calling_client_context_reaches_container(client_and_proxy_type, input_f
 
 
 @pytest.mark.parametrize("database", [None, 123, []])
-def test_invalid_top_level_input_still_raises_type_error(client_and_proxy_type, database):
+def test_invalid_top_level_input_still_raises_type_error_rust(client_and_proxy_type, database):
     """Something that is not a name, properties, or a database client is a ``TypeError``.
 
     ``None``, a number, and a list are all rejected. ``None`` is the one worth
@@ -218,7 +218,7 @@ def test_invalid_top_level_input_still_raises_type_error(client_and_proxy_type, 
         client.get_database_client(database)
 
 
-def test_opposite_proxy_family_is_not_accepted(client_and_proxy_type):
+def test_opposite_proxy_family_is_not_accepted_rust(client_and_proxy_type):
     """A database client from the other client family is refused.
 
     Handing an async database client to a sync client, or the reverse, raises
@@ -241,7 +241,7 @@ def test_opposite_proxy_family_is_not_accepted(client_and_proxy_type):
     assert other_context.adapter.mock_calls == []
 
 
-def test_public_signature_describes_mapping_and_local_return(client_and_proxy_type):
+def test_public_signature_describes_mapping_and_local_return_rust(client_and_proxy_type):
     """The published signature matches what the call actually does.
 
     It takes one required argument, which may be passed by position or by name,

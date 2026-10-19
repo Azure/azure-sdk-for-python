@@ -34,7 +34,7 @@ def _read_toml(path):
         return tomllib.load(stream)
 
 
-def test_python_metadata_stays_aligned(monkeypatch):
+def test_python_metadata_stays_aligned_rust(monkeypatch):
     """The two places that describe this package agree with each other and with the version file.
 
     The package is described both in the modern configuration file and in the older build
@@ -61,7 +61,7 @@ def test_python_metadata_stays_aligned(monkeypatch):
     assert project["classifiers"] == legacy["classifiers"]
 
 
-def test_prototype_wheel_targets():
+def test_prototype_wheel_targets_rust():
     """Check declared wheel targets, builder version, and locked-build settings.
 
     These assertions do not build wheels, prove binary reproducibility, or
@@ -82,7 +82,7 @@ def test_prototype_wheel_targets():
     assert config["tool"]["maturin"]["module-name"] == "azure.cosmos._rust"
 
 
-def test_driver_source_and_features_are_preserved():
+def test_driver_source_and_features_are_preserved_rust():
     """The driver is taken from a fixed published revision, never from a local folder.
 
     The check for no local path is the important one. Pointing at a folder on disk is the
@@ -123,7 +123,7 @@ def test_driver_source_and_features_are_preserved():
     assert locked_driver["source"] == f"git+{driver['git']}?rev={driver['rev']}#{driver['rev']}"
 
 
-def test_windows_cross_build_has_target_and_import_library_inputs():
+def test_windows_cross_build_has_target_and_import_library_inputs_rust():
     """Building for Windows on ARM needs two settings, and both are still there.
 
     This build happens on an Intel machine producing a package for a different processor,
@@ -145,7 +145,7 @@ def test_windows_cross_build_has_target_and_import_library_inputs():
     }]
 
 
-def test_source_archive_declares_its_build_bootstrap_inputs():
+def test_source_archive_declares_its_build_bootstrap_inputs_rust():
     """Check declared source-archive inputs and the named scripts on disk.
 
     No archive is built or installed, so this does not verify actual archive

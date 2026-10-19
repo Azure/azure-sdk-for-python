@@ -33,7 +33,7 @@ def _methods(path):
     return methods
 
 
-def test_replacement_methods_match_originals():
+def test_replacement_methods_match_originals_rust():
     """Every copied replace-container test is identical to the original it came from.
 
     The copies exist to run the already-shipped legacy assertions against the
@@ -51,12 +51,14 @@ def test_replacement_methods_match_originals():
         suffix = "_async" if path.parent.parent.name == "aio" else ""
         original = _methods(ROOT / "tests" / f"{path.stem}{suffix}.py")
         for key, method in _methods(path).items():
-            assert ast.dump(method) == ast.dump(original[key]), (path, key)
+            source_key = (key[0], key[1].removesuffix("_rust"))
+            method.name = source_key[1]
+            assert ast.dump(method) == ast.dump(original[source_key]), (path, key)
             count += 1
     assert count == 18
 
 
-def test_replacement_collection_keeps_both_surfaces():
+def test_replacement_collection_keeps_both_surfaces_rust():
     """The copied tests are all actually collected, sync and async alike.
 
     Matching the source text is not enough; a copy that cannot be collected

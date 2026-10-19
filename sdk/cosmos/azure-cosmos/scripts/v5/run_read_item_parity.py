@@ -196,7 +196,7 @@ def main(argv=None):
         return run_copied_suite(args.backend, options)
     if args.backend == "rust":
         folder = ROOT / "tests" / args.op / args.surface / "legacy"
-        return pytest.main(options + [str(folder / filename) + node for filename, node in selections])
+        return pytest.main(options + [str(folder / filename) + node + "_rust" for filename, node in selections])
 
     if args.query_test in ("top", "sum", "avg", "min", "prefix-continuation"):
         from run_database_throughput_parity import _source_for_backend
@@ -207,7 +207,7 @@ def main(argv=None):
         with TemporaryDirectory(prefix=f"query_{args.query_test}_corepy_", dir=artifacts) as temporary:
             target = Path(temporary) / source_file
             target.write_text(_source_for_backend(source, args.backend), encoding="utf-8")
-            return pytest.main(options + [str(target) + method])
+            return pytest.main(options + [str(target) + method + "_rust"])
 
     import test_config  # pylint: disable=import-outside-toplevel
 

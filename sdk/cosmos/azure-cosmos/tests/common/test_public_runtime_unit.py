@@ -31,12 +31,12 @@ def close(client):
     ("max_idle_connections_per_endpoint", True), ("proxy_allowed", 1),
     ("connection_timeout", 10**1000), ("data_http_request_timeout", 2**64),
 ])
-def test_connection_options_validate_before_runtime_creation(field, value):
+def test_connection_options_validate_before_runtime_creation_rust(field, value):
     with pytest.raises((TypeError, ValueError)):
         ConnectionPoolOptions(**{field: value})
 
 
-def test_options_and_runtime_are_immutable():
+def test_options_and_runtime_are_immutable_rust():
     options = ConnectionPoolOptions(connection_timeout=2)
     with pytest.raises(FrozenInstanceError):
         options.connection_timeout = 3
@@ -49,7 +49,7 @@ def test_options_and_runtime_are_immutable():
         CosmosRuntime.create(connection_pool={})
 
 
-def test_explicit_runtimes_initialize_immediately_and_remain_independent():
+def test_explicit_runtimes_initialize_immediately_and_remain_independent_rust():
     first = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
         connection_timeout=2, data_http_request_timeout=8, metadata_http_request_timeout=20))
     second = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
@@ -63,7 +63,7 @@ def test_explicit_runtimes_initialize_immediately_and_remain_independent():
 
 @pytest.mark.parametrize("is_async", [False, True])
 @pytest.mark.parametrize("data_timeout,metadata_timeout", [(120, 65), (0.1, 0.1), (65, 20)])
-def test_data_and_metadata_attempt_limits_are_independent(is_async, data_timeout, metadata_timeout):
+def test_data_and_metadata_attempt_limits_are_independent_rust(is_async, data_timeout, metadata_timeout):
     options = ConnectionPoolOptions(
         connection_timeout=2,
         data_http_request_timeout=data_timeout,
@@ -76,7 +76,7 @@ def test_data_and_metadata_attempt_limits_are_independent(is_async, data_timeout
     assert runtime._handle.timeouts == (2, data_timeout, metadata_timeout)
 
 
-def test_async_creation_returns_initialized_shareable_runtime():
+def test_async_creation_returns_initialized_shareable_runtime_rust():
     async def run():
         first, second = await asyncio.gather(
             CosmosRuntime.create_async(connection_pool=ConnectionPoolOptions(connection_timeout=2)),
@@ -101,13 +101,13 @@ def test_async_creation_returns_initialized_shareable_runtime():
     {"proxy_allowed": False},
     {"data_http_request_timeout": 6}, {"metadata_http_request_timeout": 20},
 ])
-def test_legacy_client_network_overrides_are_rejected(client_type, setting):
+def test_legacy_client_network_overrides_are_rejected_rust(client_type, setting):
     with pytest.raises(TypeError, match="runtime|Runtime"):
         client_type("https://runtime.invalid", "key", _backend="rust", **setting)
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-def test_legacy_connection_alias_explains_conversion_to_runtime_seconds(client_type):
+def test_legacy_connection_alias_explains_conversion_to_runtime_seconds_rust(client_type):
     with pytest.raises(TypeError) as caught:
         client_type("https://runtime.invalid", "key", _backend="rust", request_timeout=5000)
     message = str(caught.value)
@@ -122,7 +122,7 @@ def test_legacy_connection_alias_explains_conversion_to_runtime_seconds(client_t
     (CosmosClient, "azure.cosmos.cosmos_client.make_backend"),
     (AsyncCosmosClient, "azure.cosmos.aio._cosmos_client.make_async_backend"),
 ])
-def test_client_connection_setting_is_rejected_before_adapter_creation(client_type, factory_path, monkeypatch):
+def test_client_connection_setting_is_rejected_before_adapter_creation_rust(client_type, factory_path, monkeypatch):
     factory = MagicMock(side_effect=AssertionError("adapter creation must not start"))
     monkeypatch.setattr(factory_path, factory)
     with pytest.raises(TypeError, match="Configure connection_timeout through ConnectionPoolOptions"):
@@ -131,7 +131,7 @@ def test_client_connection_setting_is_rejected_before_adapter_creation(client_ty
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-def test_nested_policy_timeouts_cannot_bypass_migration(client_type):
+def test_nested_policy_timeouts_cannot_bypass_migration_rust(client_type):
     policy = ConnectionPolicy()
     policy.RequestTimeout = 2
     with pytest.raises(TypeError, match="ConnectionPoolOptions"):
@@ -140,13 +140,13 @@ def test_nested_policy_timeouts_cannot_bypass_migration(client_type):
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
 @pytest.mark.parametrize("timeout", [0.5, True, float("nan"), float("inf"), 2**64])
-def test_invalid_overall_client_timeouts_are_rejected(client_type, timeout):
+def test_invalid_overall_client_timeouts_are_rejected_rust(client_type, timeout):
     with pytest.raises(ValueError, match="timeout"):
         client_type("https://runtime.invalid", "key", _backend="rust", timeout=timeout)
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-def test_overall_timeout_does_not_require_custom_runtime(client_type):
+def test_overall_timeout_does_not_require_custom_runtime_rust(client_type):
     client = client_type("https://runtime.invalid", "key", timeout=30, _backend="rust")
     try:
         assert client._adapter._runtime is None
@@ -156,7 +156,7 @@ def test_overall_timeout_does_not_require_custom_runtime(client_type):
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-def test_selected_runtime_is_retained_and_passed_to_binding(client_type, monkeypatch):
+def test_selected_runtime_is_retained_and_passed_to_binding_rust(client_type, monkeypatch):
     runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(connection_timeout=2))
     retained = weakref.ref(runtime)
     first = client_type("https://runtime.invalid", "key", runtime=runtime, _backend="rust")
@@ -182,7 +182,7 @@ def test_selected_runtime_is_retained_and_passed_to_binding(client_type, monkeyp
     assert retained() is None
 
 
-def test_runtime_initialization_failures_are_not_hidden(monkeypatch):
+def test_runtime_initialization_failures_are_not_hidden_rust(monkeypatch):
     def fail(_):
         raise RuntimeError("runtime initialization failed")
 
@@ -191,7 +191,7 @@ def test_runtime_initialization_failures_are_not_hidden(monkeypatch):
         CosmosRuntime.create()
 
 
-def test_async_runtime_failure_and_cancellation_propagate(monkeypatch):
+def test_async_runtime_failure_and_cancellation_propagate_rust(monkeypatch):
     async def run():
         for error in (RuntimeError("initialization failed"), asyncio.CancelledError()):
             async def fail(_):
@@ -207,14 +207,14 @@ def test_async_runtime_failure_and_cancellation_propagate(monkeypatch):
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-def test_invalid_runtime_is_rejected(client_type):
+def test_invalid_runtime_is_rejected_rust(client_type):
     with pytest.raises(TypeError, match="CosmosRuntime"):
         client_type("https://runtime.invalid", "key", runtime=object(), _backend="rust")
     with pytest.raises(ValueError, match="Rust"):
         client_type("https://runtime.invalid", "key", runtime=CosmosRuntime.create(), _backend="core-python")
 
 
-def test_async_close_cannot_switch_an_acquisition_to_default_runtime(monkeypatch):
+def test_async_close_cannot_switch_an_acquisition_to_default_runtime_rust(monkeypatch):
     from azure.cosmos.aio._backend.binding_adapter import AsyncBindingAdapter
 
     async def run():

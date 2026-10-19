@@ -26,8 +26,9 @@ contract drift (wrong return type) by reusing a check the team already
 trusts.
 
 Self-contained: builds its own database + container in ``setUp`` and deletes
-them in ``tearDown``. The class name and method name match the source so the
-two test IDs differ only by path. The database is created with shared
+them in ``tearDown``. The class name and method name match the source (apart from the
+method's ``_rust`` suffix) so the
+two test IDs differ by path and method suffix. The database is created with shared
 throughput and the container with dedicated throughput, because
 ``get_throughput`` only returns an offer when the resource owns one.
 
@@ -71,7 +72,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
         finally:
             self.client.close()
 
-    def test_offer_methods(self):
+    def test_offer_methods_rust(self):
         """``get_throughput`` returns an object that answers to both its old and new type names.
 
         The class was renamed from ``Offer`` to ``ThroughputProperties``, and

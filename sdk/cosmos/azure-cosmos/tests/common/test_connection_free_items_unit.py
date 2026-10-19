@@ -143,7 +143,7 @@ class AsyncBackend(AsyncCosmosBackend, Backend):
     ({"availability_strategy": {}}, 500),
     ({"availability_strategy": {"threshold_ms": 20}}, 20),
 ])
-def test_read_hedging_true_retains_client_threshold(
+def test_read_hedging_true_retains_client_threshold_rust(
     monkeypatch, async_mode, client_options, expected_threshold,
 ):
     backend = AsyncBackend() if async_mode else Backend()
@@ -220,7 +220,7 @@ def invoke(helper, op, **kwargs):
     ({"initial_headers": {"x-ms-cosmos-priority-level": "High",
                          "x-ms-cosmos-throughput-bucket": "7"}}, "High", "7"),
 ])
-def test_independent_items_inherit_client_defaults(async_mode, op, kwargs, priority, bucket):
+def test_independent_items_inherit_client_defaults_rust(async_mode, op, kwargs, priority, bucket):
     """Priority and throughput bucket set on the client apply to every item call, and a
     per-call value overrides them.
 
@@ -252,7 +252,7 @@ def test_independent_items_inherit_client_defaults(async_mode, op, kwargs, prior
 @pytest.mark.parametrize("op", [
     "create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item",
 ])
-def test_execute_item_builder_maps_arguments_and_returns_only_request(monkeypatch, op):
+def test_execute_item_builder_maps_arguments_and_returns_only_request_rust(monkeypatch, op):
     """The one shared builder hands each operation exactly the arguments it takes, and
     returns the request untouched.
 
@@ -313,7 +313,7 @@ def test_execute_item_builder_maps_arguments_and_returns_only_request(monkeypatc
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("op", ["create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item"])
-def test_standalone_item_execution(async_mode, op):
+def test_standalone_item_execution_rust(async_mode, op):
     """Each listed operation dispatches once to a fake backend on sync and async.
 
     Check the operation tag, partition-key representation, lack of a Python-
@@ -348,7 +348,7 @@ def test_standalone_item_execution(async_mode, op):
     BindingProtocolError("invalid partition key"),
     CosmosResourceNotFoundError(status_code=404, message="missing"), AttributeError("lookup failed"),
 ])
-def test_native_preparation_failure_propagates_without_a_python_metadata_call(async_mode, metadata):
+def test_native_preparation_failure_propagates_without_a_python_metadata_call_rust(async_mode, metadata):
     """When the driver fails to resolve the container, the error comes straight back and
     Python does not go looking itself.
 
@@ -371,7 +371,7 @@ def test_native_preparation_failure_propagates_without_a_python_metadata_call(as
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_options_defaults_errors_and_hooks(async_mode):
+def test_options_defaults_errors_and_hooks_rust(async_mode):
     """Check no-response override, listed patch rejections, and synthetic 404/304 hooks.
 
     The unsupported condition here is If-None-Match, not every access condition.
@@ -407,7 +407,7 @@ def test_options_defaults_errors_and_hooks(async_mode):
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("key", [NonePartitionKeyValue, NullPartitionKeyValue])
-def test_public_item_sentinels_do_not_read_connection(async_mode, key):
+def test_public_item_sentinels_do_not_read_connection_rust(async_mode, key):
     """The two special partition key values work on a container with no connection at all.
 
     One means the item has no partition key; the other means its key is
@@ -431,7 +431,7 @@ def test_public_item_sentinels_do_not_read_connection(async_mode, key):
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("op", ["create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item"])
-def test_all_public_point_methods_work_with_no_connection(async_mode, op):
+def test_all_public_point_methods_work_with_no_connection_rust(async_mode, op):
     """Watch every function called during an item operation and prove none of them belongs
     to the legacy code.
 
@@ -496,7 +496,7 @@ def test_all_public_point_methods_work_with_no_connection(async_mode, op):
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_no_python_metadata_calls_and_preparation_error_preserves_headers(async_mode):
+def test_no_python_metadata_calls_and_preparation_error_preserves_headers_rust(async_mode):
     """Repeated writes never fetch container information, and a failure before sending
     leaves the published headers alone.
 
@@ -524,7 +524,7 @@ def test_no_python_metadata_calls_and_preparation_error_preserves_headers(async_
 
 
 @pytest.mark.parametrize("helper_type,backend_type", [(ItemHelper, Backend), (AsyncItemHelper, AsyncBackend)])
-def test_rust_helper_rejects_old_connection_argument(helper_type, backend_type):
+def test_rust_helper_rejects_old_connection_argument_rust(helper_type, backend_type):
     """Passing a connection where the defaults belong is refused by name.
 
     That position used to take a connection. Code written against the older
@@ -539,7 +539,7 @@ def test_rust_helper_rejects_old_connection_argument(helper_type, backend_type):
 
 
 @pytest.mark.parametrize("helper_type,backend_type", [(ItemHelper, Backend), (AsyncItemHelper, AsyncBackend)])
-def test_rust_helper_rejects_invalid_response_state(helper_type, backend_type):
+def test_rust_helper_rejects_invalid_response_state_rust(helper_type, backend_type):
     """The place where response headers get published must be the real one.
 
     Anything else is refused at construction. This object is shared by the
@@ -562,7 +562,7 @@ def test_rust_helper_rejects_invalid_response_state(helper_type, backend_type):
     (MatchConditions.IfPresent, None, "If-Match", "*"),
     (MatchConditions.IfMissing, None, "If-None-Match", "*"),
 ])
-def test_rust_owned_condition_options_reach_wire(async_mode, op, condition, etag, header, value):
+def test_rust_owned_condition_options_reach_wire_rust(async_mode, op, condition, etag, header, value):
     """Check typed condition settings on requests captured by the fake backend.
 
     Despite the test name, no HTTP header rendering or transmission is observed.
@@ -579,7 +579,7 @@ def test_rust_owned_condition_options_reach_wire(async_mode, op, condition, etag
     ({"match_condition": MatchConditions.IfNotModified}, ValueError, "'match_condition' specified without 'etag'."),
     ({"match_condition": "invalid"}, TypeError, "Invalid match condition: invalid"),
 ])
-def test_condition_validation_precedes_metadata(kwargs, error, message):
+def test_condition_validation_precedes_metadata_rust(kwargs, error, message):
     """Half-specified conditions are refused before anything is sent, with exact messages.
 
     A version tag without a condition, either condition needing a tag without
@@ -601,7 +601,7 @@ def test_condition_validation_precedes_metadata(kwargs, error, message):
         assert backend.events == []
 
 
-def test_rust_option_prep_owns_copies_without_pipeline_bookkeeping():
+def test_rust_option_prep_owns_copies_without_pipeline_bookkeeping_rust():
     """Preparing options copies the caller's input, resolves conflicts in favor of the
     direct argument, and adds no internal bookkeeping.
 
@@ -648,7 +648,7 @@ def test_rust_option_prep_owns_copies_without_pipeline_bookkeeping():
     ("/ a / b /", ["a", "b"]),
     ("/", []),
 ])
-def test_shared_path_tokenization(path, expected):
+def test_shared_path_tokenization_rust(path, expected):
     """Splitting a partition key path handles quoting and spacing the way the service
     does.
 
@@ -665,7 +665,7 @@ def test_shared_path_tokenization(path, expected):
 
 
 @pytest.mark.parametrize("path", ["no-leading-slash", '/"unterminated', '/"a"b'])
-def test_shared_path_tokenization_rejects_invalid_paths(path):
+def test_shared_path_tokenization_rejects_invalid_paths_rust(path):
     """A path that cannot be read is refused, with the position of the problem.
 
     Three cases: no leading slash, a quote that is never closed, and text
@@ -682,7 +682,7 @@ def test_shared_path_tokenization_rejects_invalid_paths(path):
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("compact_utf8", [False, True])
-def test_public_context_and_compatibility_bridge(monkeypatch, async_mode, compact_utf8):
+def test_public_context_and_compatibility_bridge_rust(monkeypatch, async_mode, compact_utf8):
     """The client builds one context, shares it all the way down, and keeps the legacy
     headers view working without letting defaults leak back.
 
@@ -765,7 +765,7 @@ def test_public_context_and_compatibility_bridge(monkeypatch, async_mode, compac
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("via_database", [False, True])
-def test_direct_proxy_compatibility_is_explicit_legacy_only(async_mode, via_database):
+def test_direct_proxy_compatibility_is_explicit_legacy_only_rust(async_mode, via_database):
     """A container built directly from a connection keeps working on the legacy path, and
     refuses to use a Rust backend it was never given a context for.
 
@@ -814,7 +814,7 @@ def test_direct_proxy_compatibility_is_explicit_legacy_only(async_mode, via_data
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("with_context", [False, True])
-def test_read_many_point_leg_never_recovers_rust_backend(async_mode, with_context):
+def test_read_many_point_leg_never_recovers_rust_backend_rust(async_mode, with_context):
     """Reading many items falls back to single reads, and that fallback follows the same
     rule as every other item call.
 
@@ -861,7 +861,7 @@ def test_read_many_point_leg_never_recovers_rust_backend(async_mode, with_contex
 @pytest.mark.parametrize("op,method", [("create_item", "CreateItem"), ("read_item", "ReadItem"),
                                      ("delete_item", "DeleteItem"), ("upsert_item", "UpsertItem"),
                                      ("replace_item", "ReplaceItem"), ("patch_item", "PatchItem")])
-def test_explicit_parity_adapter_keeps_legacy_call(async_mode, op, method):
+def test_explicit_parity_adapter_keeps_legacy_call_rust(async_mode, op, method):
     """A container told explicitly to use the legacy backend still makes the old call,
     container id and all.
 

@@ -73,7 +73,7 @@ def _normalize_feed_range(feed_range):
 
 
 @pytest.mark.asyncio
-async def test_feed_range_from_partition_key_baseline_async(container_for):
+async def test_feed_range_from_partition_key_baseline_async_rust(container_for):
     """Async string partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -94,7 +94,7 @@ async def test_feed_range_from_partition_key_baseline_async(container_for):
 
 
 @pytest.mark.asyncio
-async def test_feed_range_from_partition_key_numeric_partition_key_async(container_for):
+async def test_feed_range_from_partition_key_numeric_partition_key_async_rust(container_for):
     """Async numeric partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -115,7 +115,7 @@ async def test_feed_range_from_partition_key_numeric_partition_key_async(contain
 
 
 @pytest.mark.asyncio
-async def test_feed_range_from_partition_key_bool_partition_key_async(container_for):
+async def test_feed_range_from_partition_key_bool_partition_key_async_rust(container_for):
     """Async boolean partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -136,7 +136,7 @@ async def test_feed_range_from_partition_key_bool_partition_key_async(container_
 
 
 @pytest.mark.asyncio
-async def test_feed_range_from_partition_key_none_partition_key_value_branch_async(container_for):
+async def test_feed_range_from_partition_key_none_partition_key_value_branch_async_rust(container_for):
     """Async NonePartitionKeyValue branch (`_Undefined` on non-system containers) is parity-safe."""
 
     async def _do(client):
@@ -154,7 +154,7 @@ async def test_feed_range_from_partition_key_none_partition_key_value_branch_asy
 
 
 @pytest.mark.asyncio
-async def test_feed_range_from_partition_key_hpk_full_key_async(container_for_multihash):
+async def test_feed_range_from_partition_key_hpk_full_key_async_rust(container_for_multihash):
     """Async hierarchical full key (all PK components) is parity-safe."""
     run_suffix = uuid.uuid4().hex
 
@@ -176,7 +176,7 @@ async def test_feed_range_from_partition_key_hpk_full_key_async(container_for_mu
 
 
 @pytest.mark.asyncio
-async def test_L6_feed_range_from_partition_key_hpk_prefix_key_async(container_for_multihash):
+async def test_L6_feed_range_from_partition_key_hpk_prefix_key_async_rust(container_for_multihash):
     """Async hierarchical prefix key (partial PK components) is parity-safe."""
     run_suffix = uuid.uuid4().hex
 
@@ -197,7 +197,7 @@ async def test_L6_feed_range_from_partition_key_hpk_prefix_key_async(container_f
 
 
 @pytest.mark.asyncio
-async def test_feed_range_from_partition_key_null_partition_key_async(container_for):
+async def test_feed_range_from_partition_key_null_partition_key_async_rust(container_for):
     """Async JSON-null partition key maps to the same feed range on both backends."""
 
     async def _do(client):

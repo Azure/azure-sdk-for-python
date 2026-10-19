@@ -32,7 +32,7 @@ def sample(request):
     )
 
 
-def test_response_sample_prints_returned_capacity_and_cleans_up(sample, capsys):
+def test_response_sample_prints_returned_capacity_and_cleans_up_rust(sample, capsys):
     sample.offer.offer_throughput = 600
     sample.run()
     assert "Container throughput changed to 600 RU/s" in capsys.readouterr().out
@@ -40,28 +40,28 @@ def test_response_sample_prints_returned_capacity_and_cleans_up(sample, capsys):
     sample.database.delete_container.assert_called_once_with("orders")
 
 
-def test_failed_replacement_cleans_up(sample, capsys):
+def test_failed_replacement_cleans_up_rust(sample, capsys):
     sample.container.replace_throughput.side_effect = exceptions.CosmosHttpResponseError(status_code=500, message="failed")
     sample.run()
     assert "Error changing container throughput" in capsys.readouterr().out
     sample.database.delete_container.assert_called_once_with("orders")
 
 
-def test_create_conflict_does_not_delete_existing_resource(sample, capsys):
+def test_create_conflict_does_not_delete_existing_resource_rust(sample, capsys):
     sample.database.create_container.side_effect = exceptions.CosmosResourceExistsError(status_code=409, message="exists")
     sample.run()
     assert "Error changing container throughput" in capsys.readouterr().out
     sample.database.delete_container.assert_not_called()
 
 
-def test_cleanup_failure_surfaces(sample):
+def test_cleanup_failure_surfaces_rust(sample):
     sample.database.delete_container.side_effect = RuntimeError("cleanup failed")
     with pytest.raises(RuntimeError, match="cleanup failed"):
         sample.run()
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-def test_autoscale_sample_uses_public_fields(asynchronous, capsys):
+def test_autoscale_sample_uses_public_fields_rust(asynchronous, capsys):
     mock = AsyncMock if asynchronous else MagicMock
     offer = SimpleNamespace(auto_scale_max_throughput=6000, auto_scale_increment_percent=0)
     container = SimpleNamespace(id="orders", replace_throughput=mock(return_value=offer))
@@ -78,7 +78,7 @@ def test_autoscale_sample_uses_public_fields(asynchronous, capsys):
 
 @pytest.mark.parametrize("asynchronous", [False, True])
 @pytest.mark.parametrize("missing", [False, True])
-def test_management_sample_uses_public_values_and_stops_after_missing_offer(asynchronous, missing, capsys):
+def test_management_sample_uses_public_values_and_stops_after_missing_offer_rust(asynchronous, missing, capsys):
     mock = AsyncMock if asynchronous else MagicMock
     container = SimpleNamespace(
         id="orders",

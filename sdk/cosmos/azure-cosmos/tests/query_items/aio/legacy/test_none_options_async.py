@@ -5,8 +5,9 @@ the ``_backend="rust"`` path.
 
 Self-contained: builds its own database + container in ``asyncSetUp``
 and deletes them in ``asyncTearDown``. The class name and method name
-match the source at ``tests/test_none_options_async.py`` so test IDs
-differ only by path.
+match the source (apart from the method's ``_rust`` suffix) at
+``tests/test_none_options_async.py`` so test IDs
+differ by path and method suffix.
 
 Run with::
 
@@ -50,7 +51,7 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.client.close()
 
-    async def test_container_query_items_none_options_partition_async(self):
+    async def test_container_query_items_none_options_partition_async_rust(self):
         """query_items accepts None for every optional argument.
 
         None means "not supplied". Customers commonly build one call site that

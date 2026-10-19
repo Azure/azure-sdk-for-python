@@ -38,7 +38,7 @@ class TestCosmosResponses(unittest.TestCase):
         self.client = CosmosClient(HOST, KEY, _backend="rust")
         self.addCleanup(self.client.close)
 
-    def test_database_read_headers(self):
+    def test_database_read_headers_rust(self):
         """Reading a database returns populated response headers.
 
         ``read`` is the plainest operation there is, and its headers still

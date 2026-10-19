@@ -43,7 +43,7 @@ def clean_registry():
             bridge_mod._REGISTRY.pop(key, None)  # noqa: SLF001
 
 
-def test_divergent_token_timeout_warns_and_first_wins(clean_registry, caplog):
+def test_divergent_token_timeout_warns_and_first_wins_rust(clean_registry, caplog):
     """Prove a later token timeout is ignored with a clear warning."""
     credential = _FakeAsyncCredential()
 
@@ -62,7 +62,7 @@ def test_divergent_token_timeout_warns_and_first_wins(clean_registry, caplog):
     assert any("token_timeout" in m and "1.0" in m and "9.0" in m for m in warnings), warnings
 
 
-def test_divergent_join_timeout_warns_and_first_wins(clean_registry, caplog):
+def test_divergent_join_timeout_warns_and_first_wins_rust(clean_registry, caplog):
     """Prove a later shutdown timeout is ignored with a clear warning."""
     credential = _FakeAsyncCredential()
 
@@ -77,7 +77,7 @@ def test_divergent_join_timeout_warns_and_first_wins(clean_registry, caplog):
     assert any("join_timeout" in m and "2.0" in m and "8.0" in m for m in warnings), warnings
 
 
-def test_matching_timeouts_do_not_warn(clean_registry, caplog):
+def test_matching_timeouts_do_not_warn_rust(clean_registry, caplog):
     """Prove repeated timeout settings do not produce a misleading warning."""
     credential = _FakeAsyncCredential()
 

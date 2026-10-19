@@ -28,7 +28,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.key_client.close()
 
-    async def test_sql_query_crud_async(self):
+    async def test_sql_query_crud_async_rust(self):
         """Query databases by id with a parameterized query, a no-match filter and a plain query string."""
         # Source: tests/test_crud_database_async.py::TestCRUDDatabaseOperationsAsync.test_sql_query_crud_async
         # create two databases.

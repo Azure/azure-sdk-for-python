@@ -14,7 +14,7 @@ class TestVectorPolicy(SyncReplacementCase):
     def _create_key_client(self):
         return CosmosClient(self.host, self.key, _backend="rust")
 
-    def test_replace_vector_indexing_policy(self):
+    def test_replace_vector_indexing_policy_rust(self):
         """A vector embedding policy and its vector indexes survive a replace.
 
         Replaces a container carrying a vector embedding policy and matching
@@ -109,7 +109,7 @@ class TestVectorPolicy(SyncReplacementCase):
         finally:
             self.test_db.delete_container(container_id)
 
-    def test_fail_replace_vector_indexing_policy(self):
+    def test_fail_replace_vector_indexing_policy_rust(self):
         """Three invalid vector replacements are each refused with their own message.
 
         First a vector index whose path does not match any path in the

@@ -24,7 +24,7 @@ pytestmark = pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 @pytest.mark.timeout(90)
 @pytest.mark.parametrize("inject", [True, False], ids=["delayed-page", "no-injection"])
-async def test_query_page_timeout_async(owned_target, monkeypatch, inject):
+async def test_query_page_timeout_async_rust(owned_target, monkeypatch, inject):
     database_id, observer = owned_target
     partition = uuid.uuid4().hex
     items = [

@@ -75,8 +75,8 @@ class LegacyMethod:
     lineage, and the body.
     """
 
-    #: The test method name. Matches the source so test IDs differ only by
-    #: path (the parity reporter pairs runs by ``(file, class, method)``).
+    #: The original test method name. Rendering appends the migration-suite
+    #: suffix; Source references keep the original name.
     name: str
 
     #: ``# Source:`` value -- ``"tests/<file>.py::Class.method"`` for a copy
@@ -162,9 +162,8 @@ def build_docstring(surface: str, method_name: str, source_file: str, out_path: 
             '``_backend="rust"`` path.\n'
             "\n"
             "Self-contained: builds its own database + container in ``asyncSetUp``\n"
-            "and deletes them in ``asyncTearDown``. The class name and method name\n"
-            "match the source at ``{src}`` so test IDs\n"
-            "differ only by path.\n"
+            "and deletes them in ``asyncTearDown``. The class name matches\n"
+            "``{src}``; copied method names add ``_rust``.\n"
             "\n"
             "Run with::\n"
             "\n"
@@ -175,9 +174,8 @@ def build_docstring(surface: str, method_name: str, source_file: str, out_path: 
         '``_backend="rust"`` path.\n'
         "\n"
         "Self-contained: builds its own database + container in ``setUp`` and\n"
-        "deletes them in ``tearDown``. The class name and method name match the\n"
-        "source at ``{src}`` so test IDs differ only by\n"
-        "path.\n"
+        "deletes them in ``tearDown``. The class name matches\n"
+        "``{src}``; copied method names add ``_rust``.\n"
         "\n"
         "Run with::\n"
         "\n"
@@ -296,7 +294,8 @@ def _method_block(spec: LegacyFileSpec, method: LegacyMethod) -> List[str]:
     for decorator in method.decorators:
         lines.append("    " + decorator)
     def_keyword = "    async def " if spec.surface == "aio" else "    def "
-    lines.append(def_keyword + method.name + "(self):")
+    name = method.name if method.name.endswith("_rust") else method.name + "_rust"
+    lines.append(def_keyword + name + "(self):")
     if method.docstring:
         lines.append('        """' + method.docstring + '"""')
     lines.append("        # Source: " + method.source)
@@ -450,9 +449,8 @@ activity ids, dedicated-gateway max-age, query headers, etc.; they
 belong to their own operations' ``legacy/`` folders.
 
 Self-contained: builds its own database + container in ``setUpClass``
-and deletes them in ``tearDownClass``. The class name and method name
-match the source at ``tests/test_headers.py`` so test IDs differ only
-by path.
+and deletes them in ``tearDownClass``. The class name matches
+``tests/test_headers.py``; copied method names add ``_rust``.
 
 Run with::
 
@@ -503,9 +501,8 @@ The other methods in the source ``TestHeadersAsync`` class cover other
 operations; they belong to their own operations' ``legacy/`` folders.
 
 Self-contained: builds its own database + container in ``asyncSetUp``
-and deletes them in ``asyncTearDown``. The class name and method name
-match the source at ``tests/test_headers_async.py`` so test IDs differ
-only by path.
+and deletes them in ``asyncTearDown``. The class name matches
+``tests/test_headers_async.py``; copied method names add ``_rust``.
 
 Run with::
 

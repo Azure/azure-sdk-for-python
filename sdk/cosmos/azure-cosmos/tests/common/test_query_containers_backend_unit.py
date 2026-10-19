@@ -68,7 +68,7 @@ def query_case(listing_case):
         case.legacy_post.assert_not_called()
 
 
-def test_sync_async_parameter_contracts_match():
+def test_sync_async_parameter_contracts_match_rust():
     """The sync and async versions take exactly the same arguments.
 
     They are written as separate code, so one can easily gain an option the
@@ -87,7 +87,7 @@ def test_sync_async_parameter_contracts_match():
 
 
 @pytest.mark.parametrize("form", ["string", "dictionary", "parameters"])
-def test_query_payload_and_lazy_resumable_pages(query_case, form):
+def test_query_payload_and_lazy_resumable_pages_rust(query_case, form):
     """All three ways of writing a query produce the same request, and the feed pages
     and resumes the same way.
 
@@ -160,7 +160,7 @@ def test_query_payload_and_lazy_resumable_pages(query_case, form):
 
 
 @pytest.mark.parametrize("empty", ["first", "all", "neither"])
-def test_page_hooks_are_lazy_independent_and_honor_false_callables(query_case, empty):
+def test_page_hooks_are_lazy_independent_and_honor_false_callables_rust(query_case, empty):
     """The hook runs once per page with that page's own headers, including for pages
     that matched nothing.
 
@@ -202,7 +202,7 @@ def test_page_hooks_are_lazy_independent_and_honor_false_callables(query_case, e
     assert "x-local" not in case.connection.last_response_headers
 
 
-def test_terminal_empty_service_page_still_invokes_hook(query_case):
+def test_terminal_empty_service_page_still_invokes_hook_rust(query_case):
     """A final page that matched nothing is still reported.
 
     The feed is staged as three pages, the last of which is empty and ends the
@@ -226,7 +226,7 @@ def test_terminal_empty_service_page_still_invokes_hook(query_case):
     assert all(results is pager for _, results in hooks)
 
 
-def test_shared_hook_keeps_each_query_iterator(query_case):
+def test_shared_hook_keeps_each_query_iterator_rust(query_case):
     case = query_case
     observed = []
 
@@ -251,7 +251,7 @@ def test_shared_hook_keeps_each_query_iterator(query_case):
     "session_token", "populate_query_metrics", "availability_strategy", "enable_cross_partition_query",
 ])
 @pytest.mark.parametrize("value", [None, False, True])
-def test_retired_options_rejected_before_requests(query_case, option, value):
+def test_retired_options_rejected_before_requests_rust(query_case, option, value):
     """Retired options are refused as the pager is built, whatever their value.
 
     Four are covered, including the cross-partition flag, which customers had to
@@ -266,7 +266,7 @@ def test_retired_options_rejected_before_requests(query_case, option, value):
 
 
 @pytest.mark.parametrize("args", [(), (SQL, []), (SQL, [], 1), (SQL, [], 1, False)])
-def test_query_required_and_only_positional_argument(query_case, args):
+def test_query_required_and_only_positional_argument_rust(query_case, args):
     """The query is required, and it is the only argument that may be positional.
 
     No arguments at all is refused, and so are one, two, and three extra
@@ -283,7 +283,7 @@ def test_query_required_and_only_positional_argument(query_case, args):
 
 @pytest.mark.parametrize("query", [SQL, None])
 @pytest.mark.parametrize("timeout", [None, 1, 1.5, 10])
-def test_supported_timeout_headers_and_explicit_none_query(query_case, query, timeout):
+def test_supported_timeout_headers_and_explicit_none_query_rust(query_case, query, timeout):
     """A deadline and the customer's header reach every page, and no query at all
     becomes a plain listing.
 
@@ -322,7 +322,7 @@ def test_supported_timeout_headers_and_explicit_none_query(query_case, query, ti
     {"connection_timeout": 10}, {"unknown_option": None},
     {"request_options": {"availabilityStrategy": False}},
 ])
-def test_unsupported_rust_options_never_fall_back(query_case, kwargs):
+def test_unsupported_rust_options_never_fall_back_rust(query_case, kwargs):
     """Options the Rust path cannot honor never produce a request, and never move the
     query to the legacy transport.
 
@@ -352,7 +352,7 @@ def test_unsupported_rust_options_never_fall_back(query_case, kwargs):
     ([], {}, TypeError), (False, {}, TypeError), ({}, {}, ValueError),
     ({"query": ""}, {}, ValueError), (None, {"parameters": []}, ValueError),
 ])
-def test_invalid_queries_preserve_errors_without_requests(query_case, query, kwargs, error):
+def test_invalid_queries_preserve_errors_without_requests_rust(query_case, query, kwargs, error):
     """A query that cannot be used is rejected without a request, with the error type
     that fits the mistake.
 
@@ -377,7 +377,7 @@ def test_invalid_queries_preserve_errors_without_requests(query_case, query, kwa
     exceptions.CosmosHttpResponseError(status_code=429),
     exceptions.CosmosHttpResponseError(status_code=500),
 ])
-def test_hook_error_propagates_without_repeating_page(query_case, error):
+def test_hook_error_propagates_without_repeating_page_rust(query_case, error):
     """An error from the customer's hook stops the walk without refetching the page.
 
     Five errors are raised from the hook, including two the SDK would normally
@@ -398,7 +398,7 @@ def test_hook_error_propagates_without_repeating_page(query_case, error):
 
 
 @pytest.mark.parametrize("status", [403, 404, 429, 500])
-def test_service_error_does_not_call_success_hook(query_case, status):
+def test_service_error_does_not_call_success_hook_rust(query_case, status):
     """A failed page keeps its status and does not run the success hook.
 
     Four statuses are covered, each reaching the caller with its status code
@@ -420,7 +420,7 @@ def test_service_error_does_not_call_success_hook(query_case, status):
 @pytest.mark.parametrize("error", [
     PagePreflightError("unsupported"), ValueError("binding failure"), asyncio.CancelledError(),
 ])
-def test_binding_failure_never_replays_on_legacy(query_case, error):
+def test_binding_failure_never_replays_on_legacy_rust(query_case, error):
     """A failure inside the Rust engine, including cancellation, ends the walk after
     one request.
 
@@ -444,7 +444,7 @@ def test_binding_failure_never_replays_on_legacy(query_case, error):
     assert len(query_case.requests) == 1
 
 
-def test_timeout_restarts_between_public_pages(query_case, monkeypatch):
+def test_timeout_restarts_between_public_pages_rust(query_case, monkeypatch):
     """The deadline covers fetching one page, not the whole walk.
 
     The clock jumps ten seconds before the first page and ten more before the
@@ -473,7 +473,7 @@ def test_timeout_restarts_between_public_pages(query_case, monkeypatch):
     assert len(_run(case, sync_call, async_call)) == 2
 
 
-def test_empty_page_does_not_reset_current_budget(query_case, monkeypatch):
+def test_empty_page_does_not_reset_current_budget_rust(query_case, monkeypatch):
     """Time spent skipping past pages that matched nothing counts against the page the
     customer is waiting for.
 

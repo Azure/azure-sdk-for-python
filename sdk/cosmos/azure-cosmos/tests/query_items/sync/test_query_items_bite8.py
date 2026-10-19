@@ -15,7 +15,7 @@ from common._parity_helpers import run_target_operation, skip_unless_emulator, s
 @skip_unless_emulator()
 @skip_unless_rust_binding()
 class TestQueryDistinctStatusValues:
-    def test_query_distinct_status_values(self):
+    def test_query_distinct_status_values_rust(self):
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite8_" + uuid.uuid4().hex
         with CosmosClient(

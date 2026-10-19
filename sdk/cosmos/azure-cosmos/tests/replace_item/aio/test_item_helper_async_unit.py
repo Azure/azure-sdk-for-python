@@ -71,7 +71,7 @@ def _connection_with_cache(rid="rid"):
 class TestAsyncReplaceItem(unittest.TestCase):
     """The explicit legacy backend is the async fallback replace path."""
 
-    def test_async_dispatch_falls_through_to_replace_item(self):
+    def test_async_dispatch_falls_through_to_replace_item_rust(self):
         """The explicit legacy backend awaits ``ReplaceItem`` and returns
         its value; the resolved ``document_link`` and the new ``body`` are
         forwarded unchanged and id generation is disabled (a replace never
@@ -95,7 +95,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         self.assertEqual(call.kwargs["new_document"], body)
         self.assertIs(call.kwargs["options"]["disableAutomaticIdGeneration"], True)
 
-    def test_async_backend_dispatch_parses_response_and_skips_legacy(self):
+    def test_async_backend_dispatch_parses_response_and_skips_legacy_rust(self):
         """When the backend returns a ``BackendResponse`` (Rust path), the
         helper parses it into a ``CosmosDict`` and never awaits the legacy
         ``ReplaceItem``."""
@@ -120,7 +120,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         self.assertEqual(result.get_response_headers()["etag"], "v2")
         cc.ReplaceItem.assert_not_awaited()
 
-    def test_async_replace_threads_version_guard_access_condition(self):
+    def test_async_replace_threads_version_guard_access_condition_rust(self):
         """``etag`` + ``IfNotModified`` (the version-guarded replace) reaches
         the legacy options as the ``If-Match`` access condition on the async
         path too."""
@@ -140,7 +140,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         options = cc.ReplaceItem.call_args.kwargs["options"]
         self.assertEqual(options["accessCondition"], {"type": "IfMatch", "condition": "abc"})
 
-    def test_async_cache_miss_awaits_refresh_and_adds_container_resource_id(self):
+    def test_async_cache_miss_awaits_refresh_and_adds_container_resource_id_rust(self):
         """Async cache miss: ``_refresh_container_properties_cache`` is
         awaited and the refreshed rid is written into the options."""
         cc = MagicMock()

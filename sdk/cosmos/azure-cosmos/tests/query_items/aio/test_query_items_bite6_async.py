@@ -21,7 +21,7 @@ from common._parity_helpers import (
 @skip_unless_emulator()
 @skip_unless_rust_binding()
 class TestQueryOffsetLimitAsync:
-    async def test_query_second_largest_order_async(self):
+    async def test_query_second_largest_order_async_rust(self):
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite6_async_" + uuid.uuid4().hex
         async with CosmosClient(

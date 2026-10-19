@@ -47,7 +47,7 @@ def _replace_prepared() -> PreparedRequest:
     )
 
 
-def test_sync_rust_backend_dispatches_replace_to_binding(monkeypatch):
+def test_sync_rust_backend_dispatches_replace_to_binding_rust(monkeypatch):
     """The sync backend calls the binding's ``replace_item`` (not
     ``upsert_item`` and not ``create_item``) for a replace op and wraps the
     4-tuple it returns. A 200 here models the overwrite."""
@@ -69,7 +69,7 @@ def test_sync_rust_backend_dispatches_replace_to_binding(monkeypatch):
     assert resp.body == b'{"id":"order-42"}'
 
 
-def test_sync_rust_backend_replace_surfaces_412(monkeypatch):
+def test_sync_rust_backend_replace_surfaces_412_rust(monkeypatch):
     """A version-guarded replace whose etag is stale comes back as a 412
     4-tuple (not a raised binding error). The backend wraps it as a
     ``BackendResponse`` for the parser to map to the typed exception."""
@@ -85,7 +85,7 @@ def test_sync_rust_backend_replace_surfaces_412(monkeypatch):
     fake_module.replace_item.assert_called_once()
 
 
-def test_async_rust_backend_dispatches_replace_to_binding(monkeypatch):
+def test_async_rust_backend_dispatches_replace_to_binding_rust(monkeypatch):
     """Async sibling: the replace op is awaited on the binding's async
     ``replace_item_async`` function, never the sync ``replace_item`` and never a
     sibling write-with-body op."""
@@ -111,7 +111,7 @@ def test_async_rust_backend_dispatches_replace_to_binding(monkeypatch):
     asyncio.run(_run())
 
 
-def test_sync_rust_backend_replace_raises_when_binding_not_built(monkeypatch):
+def test_sync_rust_backend_replace_raises_when_binding_not_built_rust(monkeypatch):
     """Before ``maturin develop`` builds ``_rust.pyd``, a replace on the
     Rust backend raises the same clear ``NotImplementedError`` every other
     op raises -- never a silent wrong-op dispatch."""
@@ -121,7 +121,7 @@ def test_sync_rust_backend_replace_raises_when_binding_not_built(monkeypatch):
         backend.execute(_replace_prepared())
 
 
-def test_async_rust_backend_replace_raises_when_binding_not_built(monkeypatch):
+def test_async_rust_backend_replace_raises_when_binding_not_built_rust(monkeypatch):
     """Async sibling of the not-built guard."""
     monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", None)
 

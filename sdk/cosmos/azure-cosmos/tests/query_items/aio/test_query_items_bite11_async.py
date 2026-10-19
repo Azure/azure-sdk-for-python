@@ -17,7 +17,7 @@ from common._parity_helpers import run_target_operation_async, skip_unless_emula
 @skip_unless_emulator()
 @skip_unless_rust_binding()
 class TestQueryCustomerOrderAverageAsync:
-    async def test_query_average_customer_order_amounts_async(self):
+    async def test_query_average_customer_order_amounts_async_rust(self):
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite11_async_" + uuid.uuid4().hex
         async with CosmosClient(

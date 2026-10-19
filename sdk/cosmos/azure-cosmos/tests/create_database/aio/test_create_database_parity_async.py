@@ -48,7 +48,7 @@ async def _run_case(label, call):
 
 
 @pytest.mark.asyncio
-async def test_create_database_baseline_properties_async():
+async def test_create_database_baseline_properties_async_rust():
     """Minimal create returns the same customer-visible database document."""
 
     async def _call(client, database_id):
@@ -60,7 +60,7 @@ async def test_create_database_baseline_properties_async():
 
 
 @pytest.mark.asyncio
-async def test_create_database_manual_throughput_async():
+async def test_create_database_manual_throughput_async_rust():
     """Manual database throughput is created and read back identically."""
 
     async def _call(client, database_id):
@@ -73,7 +73,7 @@ async def test_create_database_manual_throughput_async():
 
 
 @pytest.mark.asyncio
-async def test_create_database_autoscale_zero_increment_async():
+async def test_create_database_autoscale_zero_increment_async_rust():
     """Autoscale max throughput and an explicit zero increment survive the request."""
 
     async def _call(client, database_id):
@@ -96,7 +96,7 @@ async def test_create_database_autoscale_zero_increment_async():
 
 
 @pytest.mark.asyncio
-async def test_create_database_options_and_response_hook_async():
+async def test_create_database_options_and_response_hook_async_rust():
     """Throughput bucket, initial headers and response hook work on both backends."""
 
     async def _call(client, database_id):
@@ -124,7 +124,7 @@ async def test_create_database_options_and_response_hook_async():
 
 
 @pytest.mark.asyncio
-async def test_create_database_duplicate_maps_409_async():
+async def test_create_database_duplicate_maps_409_async_rust():
     """Creating the same database twice raises the same typed 409 exception."""
 
     async def _call(client, database_id):

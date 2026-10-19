@@ -43,7 +43,7 @@ from common.request_preparation import (
 # ---------------------------------------------------------------------------
 
 
-def test_baseline_returns_read_item_prepared_with_no_body():
+def test_baseline_returns_read_item_prepared_with_no_body_rust():
     """Baseline: the container link, the partition-key shape, and the
     item-id slot are all set, and a read carries no body."""
     prepared = prepare_read_item_request(
@@ -61,7 +61,7 @@ def test_baseline_returns_read_item_prepared_with_no_body():
     assert prepared.item_id == "order-42"
 
 
-def test_baseline_preserves_container_resource_id():
+def test_baseline_preserves_container_resource_id_rust():
     """The prepared request's test header view contains the supplied resource id.
 
     No native HTTP request or service-side enforcement is exercised here.
@@ -81,7 +81,7 @@ def test_baseline_preserves_container_resource_id():
 # ---------------------------------------------------------------------------
 
 
-def test_cache_staleness_positive_emits_dedicated_gateway_header():
+def test_cache_staleness_positive_emits_dedicated_gateway_header_rust():
     """``max_integrated_cache_staleness_in_ms=5000`` becomes
     ``x-ms-dedicatedgateway-max-age: 5000``.
 
@@ -100,7 +100,7 @@ def test_cache_staleness_positive_emits_dedicated_gateway_header():
     assert "maxIntegratedCacheStaleness" not in wire_headers(prepared)
 
 
-def test_cache_staleness_zero_is_silent_no_op():
+def test_cache_staleness_zero_is_silent_no_op_rust():
     """``max_integrated_cache_staleness_in_ms=0`` must emit no header.
 
     ``0`` sends nothing on the wire. A falsy value is dropped, and the
@@ -125,7 +125,7 @@ def test_cache_staleness_zero_is_silent_no_op():
 # ---------------------------------------------------------------------------
 
 
-def test_etag_if_modified_translates_to_if_none_match():
+def test_etag_if_modified_translates_to_if_none_match_rust():
     """``etag=<v>`` + ``IfModified`` (the cache-validation case) becomes
     ``If-None-Match: <v>``."""
     options = build_read_item_request_options({
@@ -151,7 +151,7 @@ def test_etag_if_modified_translates_to_if_none_match():
     assert "if-match" not in wire_headers(prepared)
 
 
-def test_etag_if_not_modified_translates_to_if_match():
+def test_etag_if_not_modified_translates_to_if_match_rust():
     """``etag=<v>`` + ``IfNotModified`` (a rare precondition on a read)
     becomes ``If-Match: <v>``."""
     options = build_read_item_request_options({
@@ -171,7 +171,7 @@ def test_etag_if_not_modified_translates_to_if_match():
     assert "if-none-match" not in wire_headers(prepared)
 
 
-def test_etag_without_match_condition_raises_value_error_up_front():
+def test_etag_without_match_condition_raises_value_error_up_front_rust():
     """``etag`` without ``match_condition`` is an application bug, and the
     SDK refuses to guess which one was meant. The error fires before any
     network round trip, so the customer's traceback points at their own
@@ -186,7 +186,7 @@ def test_etag_without_match_condition_raises_value_error_up_front():
 # ---------------------------------------------------------------------------
 
 
-def test_initial_headers_are_flattened_into_outer_headers():
+def test_initial_headers_are_flattened_into_outer_headers_rust():
     """A customer's ``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
     ``initialHeaders`` dict in ``PreparedRequest.headers`` so the binding forwards
     each entry verbatim -- including non-``x-ms-`` names it would otherwise drop."""
@@ -209,7 +209,7 @@ def test_initial_headers_are_flattened_into_outer_headers():
 # ---------------------------------------------------------------------------
 
 
-def test_post_trigger_include_is_rejected():
+def test_post_trigger_include_is_rejected_rust():
     with pytest.raises(TypeError, match="triggers are excluded"):
         prepare_read_item_request(
             container_link="dbs/d/colls/c",
@@ -220,7 +220,7 @@ def test_post_trigger_include_is_rejected():
         )
 
 
-def test_priority_high_lands_as_option_key():
+def test_priority_high_lands_as_option_key_rust():
     """``priority="High"`` is set as the ``priorityLevel`` request header the
     driver reads.
 
@@ -237,7 +237,7 @@ def test_priority_high_lands_as_option_key():
     assert wire_headers(prepared)["x-ms-cosmos-priority-level"] == "High"
 
 
-def test_throughput_bucket_lands_as_option_key():
+def test_throughput_bucket_lands_as_option_key_rust():
     """``throughput_bucket=1`` is set as the ``throughputBucket`` request header.
 
     Buckets let a customer cap how much of a container's throughput one class
@@ -257,7 +257,7 @@ def test_throughput_bucket_lands_as_option_key():
 # ---------------------------------------------------------------------------
 
 
-def test_timeout_kwarg_is_forwarded_under_sentinel_header():
+def test_timeout_kwarg_is_forwarded_under_sentinel_header_rust():
     """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30``, an
     internal marker header that never reaches the wire: the binding reads it
     out and turns it into the driver's own timeout setting."""
@@ -276,7 +276,7 @@ def test_timeout_kwarg_is_forwarded_under_sentinel_header():
 # ---------------------------------------------------------------------------
 
 
-def test_merge_read_item_explicit_kwargs_omits_none_entries():
+def test_merge_read_item_explicit_kwargs_omits_none_entries_rust():
     """Only the explicit keyword arguments that aren't None land in the
     merged dict. None means "not supplied" and must not be set, otherwise
     the options build would write ``priorityLevel: None`` and so on, and the
@@ -298,7 +298,7 @@ def test_merge_read_item_explicit_kwargs_omits_none_entries():
     assert kwargs == {"session_token": "0:1#42"}
 
 
-def test_merge_read_item_explicit_kwargs_includes_cache_staleness_when_positive():
+def test_merge_read_item_explicit_kwargs_includes_cache_staleness_when_positive_rust():
     """A positive ``max_integrated_cache_staleness_in_ms`` is kept in the merged
     kwargs (it is a real supplied value, unlike ``None``)."""
     kwargs: dict = {}
@@ -309,7 +309,7 @@ def test_merge_read_item_explicit_kwargs_includes_cache_staleness_when_positive(
     assert kwargs == {"max_integrated_cache_staleness_in_ms": 5000}
 
 
-def test_merge_read_item_explicit_kwargs_does_not_expose_retry_write_or_no_response():
+def test_merge_read_item_explicit_kwargs_does_not_expose_retry_write_or_no_response_rust():
     """A read has no response body to suppress (so ``no_response`` is
     meaningless) and is already idempotent (so ``retry_write`` is
     meaningless). The merge helper must not even accept those parameter

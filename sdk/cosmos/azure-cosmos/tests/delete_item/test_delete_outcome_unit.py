@@ -18,11 +18,12 @@ ORIGINAL = ROOT / "tests" / "test_none_options.py"
 COPY = ROOT / "tests" / "delete_item" / "sync" / "legacy" / "test_none_options.py"
 
 
-def test_delete_method_preserves_original_assertions():
+def test_delete_method_preserves_original_assertions_rust():
     def statements(path):
         tree = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == "TestNoneOptions")
-        method = next(node for node in cls.body if getattr(node, "name", None) == "test_delete_item_none_options")
+        name = "test_delete_item_none_options" + ("_rust" if path == COPY else "")
+        method = next(node for node in cls.body if getattr(node, "name", None) == name)
         body = method.body
         if isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant) and isinstance(body[0].value.value, str):
             body = body[1:]
@@ -36,11 +37,12 @@ def test_delete_method_preserves_original_assertions():
     "scenario",
     ["deleted", "still_present", "post_503", "post_403", "missing_before", "wrong_before"],
 )
-def test_delete_requires_existing_item_then_not_found(path, scenario):
+def test_delete_requires_existing_item_then_not_found_rust(path, scenario):
     spec = importlib.util.spec_from_file_location("delete_outcome_test", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    case = module.TestNoneOptions("test_delete_item_none_options")
+    method_name = "test_delete_item_none_options" + ("_rust" if path == COPY else "")
+    case = module.TestNoneOptions(method_name)
     container = MagicMock()
     case.container = container
     state = {}
@@ -77,11 +79,11 @@ def test_delete_requires_existing_item_then_not_found(path, scenario):
     container.read_item.side_effect = read
     container.delete_item.side_effect = delete
     if scenario == "deleted":
-        case.test_delete_item_none_options()
+        getattr(case, method_name)()
         assert events == ["create", "read_before", "delete", "read_after"]
     else:
         error = CosmosHttpResponseError if scenario == "missing_before" else AssertionError
         with pytest.raises(error):
-            case.test_delete_item_none_options()
+            getattr(case, method_name)()
         if scenario in ("missing_before", "wrong_before"):
             container.delete_item.assert_not_called()

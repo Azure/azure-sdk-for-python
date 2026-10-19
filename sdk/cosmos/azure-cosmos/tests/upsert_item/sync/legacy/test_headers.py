@@ -4,7 +4,8 @@
 ``_backend="rust"`` path.
 
 Copied from ``tests/test_headers.py``; the class and method names match
-the source so the parity reporter can pair the core-python and Rust
+the source (apart from the method's ``_rust`` suffix) so the parity reporter can pair
+the core-python and Rust
 runs. Builds its own database + container and reads ``ACCOUNT_HOST`` /
 ``ACCOUNT_KEY`` from the environment.
 
@@ -53,7 +54,7 @@ class TestHeaders(unittest.TestCase):
         except Exception:  # pylint: disable=broad-except
             pass
 
-    def test_container_upsert_item_throughput_bucket(self):
+    def test_container_upsert_item_throughput_bucket_rust(self):
         """Verify the operation prepares the requested throughput bucket."""
         # Source: tests/test_headers.py::TestHeaders.test_container_upsert_item_throughput_bucket
         binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module

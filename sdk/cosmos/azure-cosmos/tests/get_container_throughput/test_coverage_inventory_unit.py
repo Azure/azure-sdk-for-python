@@ -47,7 +47,7 @@ def assertions(method, cls):
 
 @pytest.mark.parametrize("operation,expected", [("get", 25), ("replace", 18)])
 @pytest.mark.parametrize("backend", ["rust", "core-python"])
-def test_same_original_selection_and_source_pins(monkeypatch, operation, expected, backend):
+def test_same_original_selection_and_source_pins_rust(monkeypatch, operation, expected, backend):
     module = runner()
     monkeypatch.setattr(sys, "path", list(sys.path))
     monkeypatch.setattr(sys, "argv", ["runner", "--operation", operation, "--backend", backend])

@@ -34,7 +34,7 @@ def _make_offer() -> Dict[str, Any]:
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-def test_reference_replace_offer_forwards_normalized_options_once(asynchronous):
+def test_reference_replace_offer_forwards_normalized_options_once_rust(asynchronous):
     from azure.cosmos._cosmos_client_connection import CosmosClientConnection
     from azure.cosmos.aio._cosmos_client_connection_async import (
         CosmosClientConnection as AsyncCosmosClientConnection,
@@ -62,7 +62,7 @@ def test_reference_replace_offer_forwards_normalized_options_once(asynchronous):
     assert seen == [(options, {"timeout": 10})]
 
 
-def test_sync_reference_replace_throughput_uses_mutated_offer_object(monkeypatch):
+def test_sync_reference_replace_throughput_uses_mutated_offer_object_rust(monkeypatch):
     """Legacy path: ReplaceOffer must receive the mutated
     offer copy that _replace_throughput produced, and the original queried offer must
     stay untouched. A marker set only on the mutated copy proves the right object was
@@ -128,7 +128,7 @@ class _AsyncIterable:
 
 
 @pytest.mark.asyncio
-async def test_async_reference_replace_throughput_uses_mutated_offer_object(monkeypatch):
+async def test_async_reference_replace_throughput_uses_mutated_offer_object_rust(monkeypatch):
     """Async twin: the explicit legacy reference PUTs the mutated offer copy, not the
     source object.
     """

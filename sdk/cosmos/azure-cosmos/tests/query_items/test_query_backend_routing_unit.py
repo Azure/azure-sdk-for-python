@@ -252,7 +252,7 @@ async def _listing_rows(iterable, is_async):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("timeout", [None, 1, 3.5, 10])
-async def test_database_feed_public_hook_is_lazy_per_page_and_replayable(listing_client, database_feed, timeout):
+async def test_database_feed_public_hook_is_lazy_per_page_and_replayable_rust(listing_client, database_feed, timeout):
     """Listing databases is lazy, calls the hook once per page, and resumes from a token.
 
     Runs for all four ways of asking -- ``list_databases`` and
@@ -329,7 +329,7 @@ async def test_database_feed_public_hook_is_lazy_per_page_and_replayable(listing
 
 
 @pytest.mark.asyncio
-async def test_database_feed_hook_cannot_mutate_paging_headers(listing_client, database_feed):
+async def test_database_feed_hook_cannot_mutate_paging_headers_rust(listing_client, database_feed):
     """A hook that wipes its headers cannot break paging or the recorded response.
 
     The hook clears the dict it is handed. The continuation token still works
@@ -353,7 +353,7 @@ async def test_database_feed_hook_cannot_mutate_paging_headers(listing_client, d
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("has_continuation", [False, True])
-async def test_database_feed_hook_includes_empty_successful_pages(listing_client, database_feed, has_continuation):
+async def test_database_feed_hook_includes_empty_successful_pages_rust(listing_client, database_feed, has_continuation):
     """An empty page still reaches the hook, and only a token means there is more to come.
 
     The first page comes back successful but empty, in two variants: with and
@@ -397,7 +397,7 @@ async def test_database_feed_hook_includes_empty_successful_pages(listing_client
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("later_page", [False, True])
-async def test_database_feed_hook_not_called_on_failed_page(listing_client, database_feed, later_page):
+async def test_database_feed_hook_not_called_on_failed_page_rust(listing_client, database_feed, later_page):
     """A page that fails does not reach the hook, whether it is the first page or a later one.
 
     The backend returns 403. The error surfaces with its status, and the hook
@@ -429,7 +429,7 @@ async def test_database_feed_hook_not_called_on_failed_page(listing_client, data
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("error_type", [ValueError, PagePreflightError, asyncio.CancelledError])
-async def test_database_feed_hook_errors_propagate_without_replay(listing_client, database_feed, error_type):
+async def test_database_feed_hook_errors_propagate_without_replay_rust(listing_client, database_feed, error_type):
     """A failing hook is never treated as a reason to retry on the legacy path.
 
     Three kinds of failure: an ordinary ``ValueError``, a backend capability
@@ -457,7 +457,7 @@ async def test_database_feed_hook_errors_propagate_without_replay(listing_client
 @pytest.mark.parametrize("option", ["session_token", "populate_query_metrics", "availability_strategy"])
 @pytest.mark.parametrize("value", [None, False, True, "unused", CrossRegionHedgingStrategy()])
 @pytest.mark.parametrize("use_legacy_backend", [False, True], ids=["rust", "core-python"])
-def test_database_feed_rejects_irrelevant_arguments_before_iteration(
+def test_database_feed_rejects_irrelevant_arguments_before_iteration_rust(
     listing_client, database_feed, option, value, use_legacy_backend
 ):
     """Options that mean nothing for a database feed are rejected at the call, on both backends.
@@ -490,7 +490,7 @@ def test_database_feed_rejects_irrelevant_arguments_before_iteration(
 
 
 @pytest.mark.parametrize("args", [(2,), (2, False)])
-def test_list_databases_settings_are_keyword_only(listing_client, args):
+def test_list_databases_settings_are_keyword_only_rust(listing_client, args):
     """``list_databases`` takes no positional arguments.
 
     A positional page size, alone or with a second value, is a ``TypeError``
@@ -507,7 +507,7 @@ def test_list_databases_settings_are_keyword_only(listing_client, args):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("later_page", [False, True])
 @pytest.mark.parametrize("error_type", [PagePreflightError, UnsupportedQueryError])
-async def test_database_feed_capability_errors_never_replay(
+async def test_database_feed_capability_errors_never_replay_rust(
     listing_client, database_feed, later_page, error_type
 ):
     """A backend that cannot serve a database page reports it; it does not fall back to legacy.
@@ -552,7 +552,7 @@ async def test_database_feed_capability_errors_never_replay(
         pytest.param(10**1000, False, id="overflowing-integer"),
     ],
 )
-def test_database_feed_gate_only_accepts_representable_timeouts(is_query, timeout, supported):
+def test_database_feed_gate_only_accepts_representable_timeouts_rust(is_query, timeout, supported):
     """The routing gate only sends a page to Rust when the timeout can be represented.
 
     Accepted: no timeout at all, and ordinary positive numbers.
@@ -591,7 +591,7 @@ def test_database_feed_gate_only_accepts_representable_timeouts(is_query, timeou
         ({"timeout": 10}, {"timeout": None}, False),
     ],
 )
-def test_database_feed_timeout_must_match_the_forwarded_option(options, kwargs, supported):
+def test_database_feed_timeout_must_match_the_forwarded_option_rust(options, kwargs, supported):
     """A page only routes to Rust when the timeout in the options is the one being forwarded.
 
     Routing is allowed when the options carry the timeout and the keyword
@@ -611,7 +611,7 @@ def test_database_feed_timeout_must_match_the_forwarded_option(options, kwargs, 
 
 
 @pytest.mark.parametrize("is_query", [False, True], ids=["list", "query"])
-def test_container_feeds_support_page_timeouts(is_query):
+def test_container_feeds_support_page_timeouts_rust(is_query):
     """Container listing and querying accept a page timeout too.
 
     The same check as for databases, one resource level down, for both listing
@@ -653,7 +653,7 @@ def _configure_legacy_database_feed(conn, is_async):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
-async def test_database_feed_timeout_resets_per_page_and_replay(
+async def test_database_feed_timeout_resets_per_page_and_replay_rust(
     listing_client, database_feed, monkeypatch, use_legacy
 ):
     """``timeout`` bounds each page, so time spent in the caller's own code never counts.
@@ -699,7 +699,7 @@ async def test_database_feed_timeout_resets_per_page_and_replay(
 @pytest.mark.asyncio
 @pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
 @pytest.mark.parametrize("fetch_first", [False, True])
-async def test_database_feed_retains_existing_operation_scope_checks(
+async def test_database_feed_retains_existing_operation_scope_checks_rust(
     listing_client, database_feed, monkeypatch, use_legacy, fetch_first
 ):
     """Asking for an operation-wide timeout brings back the stricter, older behaviour.
@@ -740,7 +740,7 @@ async def test_database_feed_retains_existing_operation_scope_checks(
 
 
 @pytest.mark.asyncio
-async def test_database_feed_empty_pages_do_not_restart_expired_budget(listing_client, database_feed, monkeypatch):
+async def test_database_feed_empty_pages_do_not_restart_expired_budget_rust(listing_client, database_feed, monkeypatch):
     """An empty page that overruns the budget ends the call instead of quietly paging on.
 
     The backend returns an empty page with a continuation token, taking 4
@@ -779,7 +779,7 @@ async def test_database_feed_empty_pages_do_not_restart_expired_budget(listing_c
 
 
 @pytest.mark.asyncio
-async def test_database_feed_driver_timeout_propagates_without_replay(listing_client, database_feed, monkeypatch):
+async def test_database_feed_driver_timeout_propagates_without_replay_rust(listing_client, database_feed, monkeypatch):
     """A timeout raised by the driver reaches the caller and is not retried on legacy.
 
     The driver itself raises ``CosmosClientTimeoutError``. It surfaces as-is,
@@ -822,7 +822,7 @@ async def test_database_feed_driver_timeout_propagates_without_replay(listing_cl
         {"unknown_option": True},
     ],
 )
-async def test_database_feed_unsupported_public_options_never_fall_back(
+async def test_database_feed_unsupported_public_options_never_fall_back_rust(
     listing_client, database_feed, kwargs
 ):
     """Options the Rust database feed cannot honour fail loudly instead of falling back.
@@ -858,7 +858,7 @@ async def test_database_feed_unsupported_public_options_never_fall_back(
 
 
 @pytest.mark.asyncio
-async def test_query_databases_old_sql_mode_does_not_fall_back(listing_client):
+async def test_query_databases_old_sql_mode_does_not_fall_back_rust(listing_client):
     """An unsupported internal query mode fails validation rather than rerouting.
 
     With the connection switched to the old SQL query compatibility mode, the
@@ -880,7 +880,7 @@ async def test_query_databases_old_sql_mode_does_not_fall_back(listing_client):
 
 
 @pytest.mark.parametrize("value", [None, False, True])
-def test_query_databases_rejects_old_positional_query_metrics(value):
+def test_query_databases_rejects_old_positional_query_metrics_rust(value):
     """The old positional call shape is no longer accepted.
 
     ``query_databases`` once took several positional arguments ending in a
@@ -905,7 +905,7 @@ def test_query_databases_rejects_old_positional_query_metrics(value):
         ("SELECT * FROM root r", [], True, 20),
     ],
 )
-def test_query_databases_requires_query_and_keyword_only_settings(client_type, args):
+def test_query_databases_requires_query_and_keyword_only_settings_rust(client_type, args):
     """The query is required, and everything after it must be passed by name.
 
     No arguments at all fails, and so does any call that passes parameters,
@@ -926,7 +926,7 @@ def test_query_databases_requires_query_and_keyword_only_settings(client_type, a
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("query_by_keyword", [False, True])
-async def test_query_databases_accepts_positional_or_named_query_with_keyword_settings(listing_client, query_by_keyword):
+async def test_query_databases_accepts_positional_or_named_query_with_keyword_settings_rust(listing_client, query_by_keyword):
     """The query may be given positionally or by name, and both build the same request.
 
     The positive counterpart to the signature tests. Either way the query and
@@ -957,7 +957,7 @@ async def test_query_databases_accepts_positional_or_named_query_with_keyword_se
 @pytest.mark.parametrize("value", [None, False, True])
 @pytest.mark.parametrize("query", [None, "SELECT * FROM root r"])
 @pytest.mark.parametrize("use_legacy_backend", [False, True], ids=["rust", "core-python"])
-def test_query_databases_rejects_cross_partition_option_before_iteration(
+def test_query_databases_rejects_cross_partition_option_before_iteration_rust(
     listing_client, value, query, use_legacy_backend
 ):
     """``enable_cross_partition_query`` is refused for database queries on both backends.
@@ -1001,7 +1001,7 @@ def test_query_databases_rejects_cross_partition_option_before_iteration(
          {"query": "SELECT * FROM c"}, OP_QUERY_ITEMS),
     ],
 )
-async def test_all_rust_feed_operations_expose_diagnostics(
+async def test_all_rust_feed_operations_expose_diagnostics_rust(
     monkeypatch, is_async, resource_type, path, body_key, query, op
 ):
     """Every Rust feed operation reports diagnostics everywhere, and prepares no legacy headers.
@@ -1215,7 +1215,7 @@ async def _run_async_read_feed(
     "adapter",
     [_sync_binding_request_from_page, _async_binding_request_from_page],
 )
-def test_rust_page_adapter_preserves_zero_max_item_count(adapter):
+def test_rust_page_adapter_preserves_zero_max_item_count_rust(adapter):
     """Typed paging fields are authoritative, including an explicit zero."""
     prepared = PreparedPageRequest(
         op=OP_READ_ALL_ITEMS,
@@ -1234,7 +1234,7 @@ def test_rust_page_adapter_preserves_zero_max_item_count(adapter):
     assert wire_headers(request)["x-ms-max-item-count"] == "0"
 
 
-def test_rust_feed_prep_has_one_paging_authority():
+def test_rust_feed_prep_has_one_paging_authority_rust():
     """Typed options win; raw-header-only paging is promoted rather than lost."""
     prepared = build_list_databases_prepared_page_request(
         options={
@@ -1274,7 +1274,7 @@ def test_rust_feed_prep_has_one_paging_authority():
 
 
 @pytest.mark.parametrize("count", ["", "not-an-integer", "2.5"])
-def test_rust_feed_rejects_invalid_raw_page_size(count):
+def test_rust_feed_rejects_invalid_raw_page_size_rust(count):
     """A page size supplied as a raw header must be a whole number.
 
     Callers can set paging headers directly. An empty string, a word, and
@@ -1290,7 +1290,7 @@ def test_rust_feed_rejects_invalid_raw_page_size(count):
 
 
 @pytest.mark.parametrize("typed", [False, True])
-def test_rust_feed_header_and_paging_precedence_is_case_insensitive(typed):
+def test_rust_feed_header_and_paging_precedence_is_case_insensitive_rust(typed):
     """Header names match regardless of case, and typed settings outrank raw headers.
 
     The caller supplies upper-case headers over lower-case defaults. Matching
@@ -1341,7 +1341,7 @@ def test_rust_feed_header_and_paging_precedence_is_case_insensitive(typed):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("is_async", [False, True])
 @pytest.mark.parametrize("route", ["legacy", "capability-fallback", "ineligible", "query-plan"])
-async def test_query_legacy_preparation_is_lazy_but_preserved(monkeypatch, is_async, route):
+async def test_query_legacy_preparation_is_lazy_but_preserved_rust(monkeypatch, is_async, route):
     """Whenever a query does end up on the legacy path, it is prepared exactly as before.
 
     Four ways to get there: a legacy backend, a backend that rejects the page
@@ -1396,7 +1396,7 @@ async def test_query_legacy_preparation_is_lazy_but_preserved(monkeypatch, is_as
         ({"changeFeedState": object()}, False),
     ],
 )
-def test_list_databases_gate_rejects_non_read_feed_shapes(options, is_query_plan):
+def test_list_databases_gate_rejects_non_read_feed_shapes_rust(options, is_query_plan):
     """The gate refuses shapes the Rust database page does not serve yet.
 
     A query-plan request and a change-feed read both reach this code but are not
@@ -1410,7 +1410,7 @@ def test_list_databases_gate_rejects_non_read_feed_shapes(options, is_query_plan
     )
 
 
-def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepresentable_options():
+def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepresentable_options_rust():
     """Sync query eligibility gate. Cross-partition queries (including COUNT and
     ORDER BY) are now eligible because the old Python SQL-regex scan was removed --
     the driver's reply decides whether it can run them. But options the Rust page
@@ -1542,7 +1542,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
     )
 
 
-def test_sync_query_backend_page_builds_prepared_request_and_updates_headers():
+def test_sync_query_backend_page_builds_prepared_request_and_updates_headers_rust():
     """Sync query page. A Rust-served page builds the right ``PreparedPageRequest`` (op,
     container link, partition-key header, continuation, max item count, forwarded
     excluded-locations and timeout), returns the parsed Documents, decodes the
@@ -1605,7 +1605,7 @@ def test_sync_query_backend_page_builds_prepared_request_and_updates_headers():
     assert settings_options(prepared)["timeout_seconds"] == 9
 
 
-def test_sync_query_backend_page_defaults_partition_header_to_cross_partition_for_query_items():
+def test_sync_query_backend_page_defaults_partition_header_to_cross_partition_for_query_items_rust():
     """Sync query page with no partition key. ``query_items`` defaults the
     partition-key header to the cross-partition marker (``"[]"``), so an unscoped
     query fans out across partitions instead of accidentally targeting just one.
@@ -1634,7 +1634,7 @@ def test_sync_query_backend_page_defaults_partition_header_to_cross_partition_fo
     assert legacy_partition_key_from_request(prepared) == "[]"
 
 
-def test_async_query_backend_page_builds_prepared_request_and_updates_headers():
+def test_async_query_backend_page_builds_prepared_request_and_updates_headers_rust():
     """Async twin of the query-page build/headers test."""
     async def _run() -> None:
         index_metrics_wire = base64.b64encode(json.dumps({"indexUsed": True}).encode("utf-8")).decode("ascii")
@@ -1695,7 +1695,7 @@ def test_async_query_backend_page_builds_prepared_request_and_updates_headers():
     asyncio.run(_run())
 
 
-def test_async_query_backend_eligibility_honors_unsupported_request_options():
+def test_async_query_backend_eligibility_honors_unsupported_request_options_rust():
     """Async query eligibility gate: an unrepresentable option (``populateQueryAdvice``)
     blocks the Rust page path on the async connection too.
     """
@@ -1711,7 +1711,7 @@ def test_async_query_backend_eligibility_honors_unsupported_request_options():
     )
 
 
-def test_sync_read_all_marks_unsupported_options_as_rust_ineligible():
+def test_sync_read_all_marks_unsupported_options_as_rust_ineligible_rust():
     """Check which sync read-all inputs the Rust eligibility function accepts.
 
     A plain document read-feed is eligible; the listed unsupported options and
@@ -1784,7 +1784,7 @@ def test_sync_read_all_marks_unsupported_options_as_rust_ineligible():
     )
 
 
-def test_async_read_all_marks_unsupported_options_as_rust_ineligible():
+def test_async_read_all_marks_unsupported_options_as_rust_ineligible_rust():
     """Async twin of the read_all_items eligibility gate."""
     eligibility = can_use_rust_backend_for_read_all_items_page
 
@@ -1846,7 +1846,7 @@ def test_async_read_all_marks_unsupported_options_as_rust_ineligible():
     )
 
 
-def test_sync_read_all_backend_delegates_cross_partition_scope(monkeypatch):
+def test_sync_read_all_backend_delegates_cross_partition_scope_rust(monkeypatch):
     """Sync read_all_items, whole container. Builds a ``read_all_items`` prepared
     query with the cross-partition header (``"[]"``), no ``PartitionKey`` header, and
     no query text (a native read-feed, not a synthesized SELECT), and still
@@ -1891,7 +1891,7 @@ def test_sync_read_all_backend_delegates_cross_partition_scope(monkeypatch):
     assert prepared.query is None
 
 
-def test_async_read_all_backend_delegates_cross_partition_scope(monkeypatch):
+def test_async_read_all_backend_delegates_cross_partition_scope_rust(monkeypatch):
     """Async twin of the whole-container read_all_items delegation test."""
     async def _run() -> None:
         conn = _new_async_connection()
@@ -1968,7 +1968,7 @@ def test_async_read_all_backend_delegates_cross_partition_scope(monkeypatch):
 # ---------------------------------------------------------------------------
 
 
-def test_sync_list_databases_backend_delegates_account_feed(monkeypatch):
+def test_sync_list_databases_backend_delegates_account_feed_rust(monkeypatch):
     """A normal ``client.list_databases()`` reaches Rust with the right request.
 
     Checks the parts that are specific to account scope: the container link is
@@ -2013,7 +2013,7 @@ def test_sync_list_databases_backend_delegates_account_feed(monkeypatch):
     assert all(wire_headers(backend.prepared).get(key.lower()) == str(value) for key, value in ({"x-test-header": "yes"}).items())
 
 
-def test_list_databases_prepared_request_drops_driver_owned_headers(monkeypatch):
+def test_list_databases_prepared_request_drops_driver_owned_headers_rust(monkeypatch):
     """Headers Python already built are not handed to the driver a second time.
 
     The driver writes its own authorization, date, version, user-agent, accept,
@@ -2050,7 +2050,7 @@ def test_list_databases_prepared_request_drops_driver_owned_headers(monkeypatch)
     assert wire_headers(backend.prepared) == {"x-ms-cosmos-throughput-bucket": "7"}
 
 
-def test_async_list_databases_backend_delegates_account_feed(monkeypatch):
+def test_async_list_databases_backend_delegates_account_feed_rust(monkeypatch):
     """Same as the sync test above, for ``async for db in client.list_databases()``."""
     async def _run() -> None:
         conn = _new_async_connection()
@@ -2078,7 +2078,7 @@ def test_async_list_databases_backend_delegates_account_feed(monkeypatch):
     asyncio.run(_run())
 
 
-def test_list_databases_backend_uses_default_headers_without_initial_headers(monkeypatch):
+def test_list_databases_backend_uses_default_headers_without_initial_headers_rust(monkeypatch):
     """A plain ``client.list_databases()`` with no options still carries the client's headers.
 
     Headers set once when the client was built (for example a user agent suffix)
@@ -2105,7 +2105,7 @@ def test_list_databases_backend_uses_default_headers_without_initial_headers(mon
     assert wire_headers(backend.prepared)["x-default-header"] == "yes"
 
 
-def test_async_list_databases_backend_uses_default_headers_without_initial_headers(monkeypatch):
+def test_async_list_databases_backend_uses_default_headers_without_initial_headers_rust(monkeypatch):
     """Same as the sync test above, on the async client."""
     async def _run() -> None:
         conn = _new_async_connection()
@@ -2128,7 +2128,7 @@ def test_async_list_databases_backend_uses_default_headers_without_initial_heade
     asyncio.run(_run())
 
 
-def test_list_databases_legacy_path_sends_initial_headers(monkeypatch):
+def test_list_databases_legacy_path_sends_initial_headers_rust(monkeypatch):
     """When the call runs on the old path, ``initial_headers`` still works.
 
     A customer passing ``initial_headers`` can override one of the client's own
@@ -2179,7 +2179,7 @@ def test_list_databases_legacy_path_sends_initial_headers(monkeypatch):
     assert conn.default_headers == {"x-default-header": "default", "x-override": "default"}
 
 
-def test_async_list_databases_legacy_path_sends_initial_headers(monkeypatch):
+def test_async_list_databases_legacy_path_sends_initial_headers_rust(monkeypatch):
     """The async legacy database feed honors the same initial_headers contract."""
     async def _run() -> None:
         conn = _new_async_connection()
@@ -2244,7 +2244,7 @@ def test_async_list_databases_legacy_path_sends_initial_headers(monkeypatch):
         ({Constants.Kwargs.AVAILABILITY_STRATEGY: False}, {}),
     ],
 )
-def test_async_list_databases_backend_rejects_unrepresentable_options(monkeypatch, options, kwargs):
+def test_async_list_databases_backend_rejects_unrepresentable_options_rust(monkeypatch, options, kwargs):
     """Unsupported listing options must not cross into legacy transport."""
     async def _run() -> None:
         conn = _new_async_connection()
@@ -2287,7 +2287,7 @@ def test_async_list_databases_backend_rejects_unrepresentable_options(monkeypatc
         ({Constants.Kwargs.AVAILABILITY_STRATEGY: False}, {}),
     ],
 )
-def test_list_databases_backend_rejects_unrepresentable_options(monkeypatch, options, kwargs):
+def test_list_databases_backend_rejects_unrepresentable_options_rust(monkeypatch, options, kwargs):
     """Unsupported listing options raise before either transport sends a page."""
     conn = _new_sync_connection()
     backend = _CapturingSyncBackend(BackendResponse(status_code=200))
@@ -2323,7 +2323,7 @@ def test_list_databases_backend_rejects_unrepresentable_options(monkeypatch, opt
         ({"initialHeaders": {"x-ms-version": "custom"}}, {}),
     ],
 )
-def test_list_databases_rejection_categories_are_explicit(monkeypatch, is_async, options, kwargs):
+def test_list_databases_rejection_categories_are_explicit_rust(monkeypatch, is_async, options, kwargs):
     """Each kind of unsupported listing call gets one clear, actionable error.
 
     Five categories: a sub-second timeout, a connection timeout, an unknown
@@ -2365,7 +2365,7 @@ def test_list_databases_rejection_categories_are_explicit(monkeypatch, is_async,
 
 
 @pytest.mark.parametrize("fail_on_page", [1, 2])
-def test_sync_list_databases_capability_error_never_replays_legacy(monkeypatch, fail_on_page):
+def test_sync_list_databases_capability_error_never_replays_legacy_rust(monkeypatch, fail_on_page):
     """A capability error part way through a listing is reported, never replayed on legacy.
 
     The backend fails either on the first page or on the second, after one
@@ -2409,7 +2409,7 @@ def test_sync_list_databases_capability_error_never_replays_legacy(monkeypatch, 
 
 
 @pytest.mark.parametrize("fail_on_page", [1, 2])
-def test_async_list_databases_capability_error_never_replays_legacy(monkeypatch, fail_on_page):
+def test_async_list_databases_capability_error_never_replays_legacy_rust(monkeypatch, fail_on_page):
     """The async listing behaves exactly like the sync one when a page is unsupported.
 
     Same scenario through the async client: fail on the first page or after
@@ -2455,7 +2455,7 @@ def test_async_list_databases_capability_error_never_replays_legacy(monkeypatch,
 
 
 @pytest.mark.parametrize("status_code", [403, 404, 429])
-def test_sync_list_databases_rust_service_errors_do_not_replay_legacy(monkeypatch, status_code):
+def test_sync_list_databases_rust_service_errors_do_not_replay_legacy_rust(monkeypatch, status_code):
     """An error from the service is raised once and the call is not retried on the old path.
 
     Rust returning a 403, 404, or 429 means the service answered. That is a real
@@ -2498,7 +2498,7 @@ def test_sync_list_databases_rust_service_errors_do_not_replay_legacy(monkeypatc
 
 
 @pytest.mark.parametrize("status_code", [403, 404, 429])
-def test_async_list_databases_rust_service_errors_do_not_replay_legacy(monkeypatch, status_code):
+def test_async_list_databases_rust_service_errors_do_not_replay_legacy_rust(monkeypatch, status_code):
     """Same as the sync error test above, on the async client."""
     async def _run() -> None:
         conn = _new_async_connection()
@@ -2538,7 +2538,7 @@ def test_async_list_databases_rust_service_errors_do_not_replay_legacy(monkeypat
     asyncio.run(_run())
 
 
-def test_sync_read_databases_keeps_python_paging_and_rust_fetches_each_page(monkeypatch):
+def test_sync_read_databases_keeps_python_paging_and_rust_fetches_each_page_rust(monkeypatch):
     """Looping over two pages of databases works, and the page token is carried over.
 
     An account with more databases than one page holds is returned in pieces.
@@ -2569,7 +2569,7 @@ def test_sync_read_databases_keeps_python_paging_and_rust_fetches_each_page(monk
     assert all(request.max_item_count == 1 for request in backend.prepared)
 
 
-def test_async_read_databases_keeps_python_paging_and_rust_fetches_each_page(monkeypatch):
+def test_async_read_databases_keeps_python_paging_and_rust_fetches_each_page_rust(monkeypatch):
     """Same as the sync paging test above, on the async client."""
     async def _run() -> None:
         conn = _new_async_connection()
@@ -2593,7 +2593,7 @@ def test_async_read_databases_keeps_python_paging_and_rust_fetches_each_page(mon
     asyncio.run(_run())
 
 
-def test_sync_read_all_backend_page_with_partition_key_uses_native_read_feed(monkeypatch):
+def test_sync_read_all_backend_page_with_partition_key_uses_native_read_feed_rust(monkeypatch):
     """Sync read_all_items scoped to one partition key. Builds a ``read_all_items``
     prepared query carrying that partition-key header and no query text -- served as
     a native single-partition read-feed, not a synthesized query.
@@ -2626,7 +2626,7 @@ def test_sync_read_all_backend_page_with_partition_key_uses_native_read_feed(mon
     assert prepared.query is None
 
 
-def test_async_read_all_backend_page_with_partition_key_uses_native_read_feed(monkeypatch):
+def test_async_read_all_backend_page_with_partition_key_uses_native_read_feed_rust(monkeypatch):
     """Async twin of the single-partition read_all_items native-read-feed test."""
     async def _run() -> None:
         conn = _new_async_connection()
@@ -2663,7 +2663,7 @@ def test_async_read_all_backend_page_with_partition_key_uses_native_read_feed(mo
     asyncio.run(_run())
 
 
-def test_sync_read_all_backend_page_empty_container(monkeypatch):
+def test_sync_read_all_backend_page_empty_container_rust(monkeypatch):
     """Sync read_all_items on an empty (or fully-drained) container. Cross-partition
     read_all is routed through the Rust query-page path (``SELECT * FROM root r``) and
     still finalizes normally: empty ``Documents`` array, header and session
@@ -2701,7 +2701,7 @@ def test_sync_read_all_backend_page_empty_container(monkeypatch):
     assert backend.prepared.query is None
 
 
-def test_async_read_all_backend_page_empty_container(monkeypatch):
+def test_async_read_all_backend_page_empty_container_rust(monkeypatch):
     """Async twin of the empty-container read_all_items test."""
     async def _run() -> None:
         conn = _new_async_connection()
@@ -2742,7 +2742,7 @@ def test_async_read_all_backend_page_empty_container(monkeypatch):
     asyncio.run(_run())
 
 
-def test_sync_driver_unsupported_query_never_replays():
+def test_sync_driver_unsupported_query_never_replays_rust():
     """Query planning is execution, not a static preflight capability check."""
 
     class _UnsupportedBackend(CosmosBackend):
@@ -2773,7 +2773,7 @@ def test_sync_driver_unsupported_query_never_replays():
     assert rust_compatibility_fallback_count() == fallback_count_before
 
 
-def test_async_driver_unsupported_query_never_replays():
+def test_async_driver_unsupported_query_never_replays_rust():
     """Async execution failures cannot switch transports."""
 
     class _UnsupportedBackend(AsyncCosmosBackend):
@@ -2813,7 +2813,7 @@ def test_async_driver_unsupported_query_never_replays():
     asyncio.run(_run())
 
 
-def test_sync_unrelated_not_implemented_error_is_not_replayed():
+def test_sync_unrelated_not_implemented_error_is_not_replayed_rust():
     """Unexpected backend errors propagate instead of triggering a second request."""
     class _BrokenBackend(CosmosBackend):
         def execute(self, prepared, *, deadline=None):
@@ -2842,7 +2842,7 @@ def test_sync_unrelated_not_implemented_error_is_not_replayed():
     assert rust_compatibility_fallback_count() == fallback_count_before
 
 
-def test_async_unrelated_not_implemented_error_is_not_replayed():
+def test_async_unrelated_not_implemented_error_is_not_replayed_rust():
     """Async unexpected backend errors also propagate without fallback."""
     class _BrokenBackend(AsyncCosmosBackend):
         async def execute(self, prepared, *, deadline=None):
@@ -2880,7 +2880,7 @@ def test_async_unrelated_not_implemented_error_is_not_replayed():
     asyncio.run(_run())
 
 
-def test_sync_empty_page_iterator_is_not_replayed():
+def test_sync_empty_page_iterator_is_not_replayed_rust():
     """A missing Rust page raises one public error and does not repeat the call."""
     class _EmptyBackend(CosmosBackend):
         def execute(self, prepared, *, deadline=None):
@@ -2903,7 +2903,7 @@ def test_sync_empty_page_iterator_is_not_replayed():
     assert legacy_calls == []
 
 
-def test_async_empty_page_iterator_is_not_replayed():
+def test_async_empty_page_iterator_is_not_replayed_rust():
     """A missing async Rust page raises one public error and is not repeated."""
     class _EmptyBackend(AsyncCosmosBackend):
         async def execute(self, prepared, *, deadline=None):
@@ -2935,7 +2935,7 @@ def test_async_empty_page_iterator_is_not_replayed():
     asyncio.run(_run())
 
 
-def test_sync_missing_backend_attribute_is_not_silently_treated_as_legacy():
+def test_sync_missing_backend_attribute_is_not_silently_treated_as_legacy_rust():
     """A broken connection state raises its public error instead of using Python."""
     conn = _new_sync_connection()
     del conn._backend
@@ -2948,7 +2948,7 @@ def test_sync_missing_backend_attribute_is_not_silently_treated_as_legacy():
         )
 
 
-def test_async_missing_backend_attribute_is_not_silently_treated_as_legacy():
+def test_async_missing_backend_attribute_is_not_silently_treated_as_legacy_rust():
     """A broken async connection state raises instead of using Python."""
     async def _run():
         conn = _new_async_connection()
@@ -2964,7 +2964,7 @@ def test_async_missing_backend_attribute_is_not_silently_treated_as_legacy():
     asyncio.run(_run())
 
 
-def test_sync_read_all_legacy_fallback_updates_session(monkeypatch):
+def test_sync_read_all_legacy_fallback_updates_session_rust(monkeypatch):
     """Sync legacy fallback (no backend). The read-feed still calls
     ``_UpdateSessionIfRequired`` and propagates the session token, so a fallback read
     advances the session bookmark exactly like before the migration.
@@ -3009,7 +3009,7 @@ def test_sync_read_all_legacy_fallback_updates_session(monkeypatch):
     assert len(update_calls) == 1
 
 
-def test_async_read_all_legacy_fallback_updates_session(monkeypatch):
+def test_async_read_all_legacy_fallback_updates_session_rust(monkeypatch):
     """Async twin of the legacy-fallback session-update test. The async legacy
     read-feed branch already called ``_UpdateSessionIfRequired`` before this
     migration; this pins it so a future refactor cannot silently drop the session
@@ -3120,7 +3120,7 @@ async def _run_async_database_query_feed(conn, *, query, options, **kwargs):
         ),
     ],
 )
-def test_query_databases_gate_rejects_shapes_rust_cannot_serve(
+def test_query_databases_gate_rejects_shapes_rust_cannot_serve_rust(
     query_payload, options, is_query_plan, resource_type
 ):
     """Unsupported database-query shapes use Python."""
@@ -3133,7 +3133,7 @@ def test_query_databases_gate_rejects_shapes_rust_cannot_serve(
     )
 
 
-def test_query_databases_gate_accepts_a_plain_account_query():
+def test_query_databases_gate_accepts_a_plain_account_query_rust():
     """A supported parameterized database query uses Rust."""
     assert can_use_rust_backend_for_query_databases_page(
         query_payload={
@@ -3147,7 +3147,7 @@ def test_query_databases_gate_accepts_a_plain_account_query():
     )
 
 
-def test_sync_query_databases_backend_delegates_account_query(monkeypatch):
+def test_sync_query_databases_backend_delegates_account_query_rust(monkeypatch):
     """Rust receives the database query, parameters, page options, and headers."""
     conn = _new_sync_connection()
     backend = _CapturingSyncBackend(
@@ -3190,7 +3190,7 @@ def test_sync_query_databases_backend_delegates_account_query(monkeypatch):
     assert all(wire_headers(backend.prepared).get(key.lower()) == str(value) for key, value in ({"x-test-header": "yes"}).items())
 
 
-def test_query_databases_binding_request_carries_the_query_body():
+def test_query_databases_binding_request_carries_the_query_body_rust():
     """The Rust request contains the complete database query body."""
     binding_request = _sync_binding_request_from_page(
         PreparedPageRequest(
@@ -3223,7 +3223,7 @@ def test_query_databases_binding_request_carries_the_query_body():
     ],
 )
 @pytest.mark.asyncio
-async def test_query_databases_backend_rejects_unrepresentable_options(listing_client, options, kwargs):
+async def test_query_databases_backend_rejects_unrepresentable_options_rust(listing_client, options, kwargs):
     """Neither client may send an unsupported database query through legacy."""
     _, conn, backend, is_async = listing_client
     fallback_before = rust_compatibility_fallback_count()
@@ -3242,7 +3242,7 @@ async def test_query_databases_backend_rejects_unrepresentable_options(listing_c
     assert rust_compatibility_fallback_count() == fallback_before
 
 
-def test_sync_query_databases_pages_carry_the_continuation_token(monkeypatch):
+def test_sync_query_databases_pages_carry_the_continuation_token_rust(monkeypatch):
     """Database-query pages stay ordered and carry the continuation forward."""
     conn = _new_sync_connection()
     backend = _SequencedSyncBackend()
@@ -3267,7 +3267,7 @@ def test_sync_query_databases_pages_carry_the_continuation_token(monkeypatch):
     assert [request.max_item_count for request in backend.prepared] == [1, 1]
 
 
-def test_async_query_databases_backend_delegates_account_query(monkeypatch):
+def test_async_query_databases_backend_delegates_account_query_rust(monkeypatch):
     """Async Rust receives the complete database query and page options."""
     async def _run() -> None:
         """Wire a capturing backend and assert the full query request is forwarded."""
@@ -3308,7 +3308,7 @@ def test_async_query_databases_backend_delegates_account_query(monkeypatch):
     asyncio.run(_run())
 
 
-def test_async_query_databases_pages_carry_the_continuation_token(monkeypatch):
+def test_async_query_databases_pages_carry_the_continuation_token_rust(monkeypatch):
     """Async database-query pages preserve contents and continuation behavior."""
     async def _run() -> None:
         """Page through two sequenced responses and confirm continuation tokens thread through."""

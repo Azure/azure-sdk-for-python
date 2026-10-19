@@ -56,7 +56,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as inst:
             assert inst.status_code == status_code
 
-    async def test_collection_crud_async(self):
+    async def test_collection_crud_async_rust(self):
         """Container listing stays accurate across a create and a delete.
 
         The full legacy lifecycle test, kept here for the listing half. It

@@ -56,7 +56,7 @@ async def _run(item_id, backend, credential):
             await db.delete_container(cname)
 
 
-def test_async_token_credential_parity():
+def test_async_token_credential_parity_rust():
     """rust with an async token credential must match the core-python baseline."""
     async def main():
         base_c, base_r = await _run(uuid.uuid4().hex, "core-python", os.environ["ACCOUNT_KEY"])

@@ -38,7 +38,7 @@ def _gate(options):
     )
 
 
-def test_query_leg_marker_forces_legacy():
+def test_query_leg_marker_forces_legacy_rust():
     """The marker keeps internal query chunks on the selected legacy strategy."""
     assert _gate({Constants.ReadItemsQueryLeg: True}) is False
 
@@ -49,7 +49,7 @@ def test_same_query_without_marker_is_eligible_for_rust():
     assert _gate({}) is True
 
 
-def test_marker_uses_the_shared_constant_value():
+def test_marker_uses_the_shared_constant_value_rust():
     """Guard against the producers (read_items helpers) and this consumer drifting
     on the raw key: the constant is the single source of truth."""
     assert Constants.ReadItemsQueryLeg == "_read_items_query_leg"

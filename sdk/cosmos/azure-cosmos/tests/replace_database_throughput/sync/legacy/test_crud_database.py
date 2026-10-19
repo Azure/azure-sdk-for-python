@@ -58,7 +58,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
                 pass
         self.key_client.close()
 
-    def test_database_level_offer_throughput(self):
+    def test_database_level_offer_throughput_rust(self):
         """Throughput on a database can be raised after creation and reports the new value.
 
         Created at 1000 request units, then moved to 2000 through

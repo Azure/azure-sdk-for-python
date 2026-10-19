@@ -90,7 +90,7 @@ def database_without_throughput(request):
             client.close()
 
 
-def test_get_throughput_fixed(fixed_throughput_database):
+def test_get_throughput_fixed_rust(fixed_throughput_database):
     """get_throughput reports the same fixed RU/s on both engines."""
 
     def _do(client):
@@ -104,7 +104,7 @@ def test_get_throughput_fixed(fixed_throughput_database):
     assert comparison.core_python.return_value["offer_throughput"] == 1000
 
 
-def test_get_throughput_autoscale(autoscale_database):
+def test_get_throughput_autoscale_rust(autoscale_database):
     """get_throughput reports the same autoscale ceiling and step on both engines."""
     # Autoscale values arrive in different fields from a fixed number, so a
     # fixed-number comparison alone would not catch rust mis-reading them.
@@ -122,7 +122,7 @@ def test_get_throughput_autoscale(autoscale_database):
     assert comparison.core_python.return_value["offer_throughput"] is None
 
 
-def test_get_throughput_without_provisioned_throughput(database_without_throughput):
+def test_get_throughput_without_provisioned_throughput_rust(database_without_throughput):
     """Both implementations report a missing database offer as a typed 404."""
     def _do(client):
         database = client.get_database_client(database_without_throughput)
@@ -141,7 +141,7 @@ def test_get_throughput_without_provisioned_throughput(database_without_throughp
 
 
 @pytest.mark.parametrize("warm", [False, True])
-def test_get_throughput_preserves_inputs_and_callback_result(fixed_throughput_database, warm):
+def test_get_throughput_preserves_inputs_and_callback_result_rust(fixed_throughput_database, warm):
     def read(client):
         database = client.get_database_client(fixed_throughput_database)
         if warm:
@@ -182,7 +182,7 @@ def test_get_throughput_preserves_inputs_and_callback_result(fixed_throughput_da
     {"availability_strategy": {"type": "hedging"}},
     {"initial_headers": {"Accept": "unsupported"}},
 ])
-def test_rust_database_read_rejects_unsupported_inputs(monkeypatch, options):
+def test_rust_database_read_rejects_unsupported_inputs_rust(monkeypatch, options):
     with CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust") as client:
         database = client.get_database_client("not-requested")
 

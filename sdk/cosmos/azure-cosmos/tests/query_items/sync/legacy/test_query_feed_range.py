@@ -45,7 +45,7 @@ class TestQueryFeedRange(unittest.TestCase):
         self.client.delete_database(self.database_id)
         print(f"Deleted owned SUM database: {self.database_id}")
 
-    def test_query_value_min_across_full_feed_range_returns_scalar(self):
+    def test_query_value_min_across_full_feed_range_returns_scalar_rust(self):
         """MIN over a multi-partition feed_range should return one value (the smallest)."""
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_value_min_across_full_feed_range_returns_scalar
         container = self.container
@@ -73,7 +73,7 @@ class TestQueryFeedRange(unittest.TestCase):
         )
         assert items[0] == 100
 
-    def test_query_value_sum_across_full_feed_range_still_sums(self):
+    def test_query_value_sum_across_full_feed_range_still_sums_rust(self):
         """SUM should still add per-partition totals together."""
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_value_sum_across_full_feed_range_still_sums
         container = self.container
@@ -101,7 +101,7 @@ class TestQueryFeedRange(unittest.TestCase):
         )
         assert items[0] == 100 * len(PK_VALUES)
 
-    def test_query_with_avg_aggregate_single_partition_feed_range_succeeds(self):
+    def test_query_with_avg_aggregate_single_partition_feed_range_succeeds_rust(self):
         """AVG scoped to a single-partition feed_range must still succeed."""
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_with_avg_aggregate_single_partition_feed_range_succeeds
         container = self.container

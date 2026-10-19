@@ -38,7 +38,7 @@ def _offer(throughput=1000):
     ],
 )
 @pytest.mark.parametrize("warm", [False, True])
-def test_replacement_shares_budget_and_next_call_resets(case, clock, options, budget, warm):
+def test_replacement_shares_budget_and_next_call_resets_rust(case, clock, options, budget, warm):
     calls = []
 
     def phase(name, body):
@@ -67,7 +67,7 @@ def test_replacement_shares_budget_and_next_call_resets(case, clock, options, bu
 
 
 @pytest.mark.parametrize("phase", ["metadata", "lookup", "write"])
-def test_expired_replacement_skips_later_phases_and_callback(case, clock, phase):
+def test_expired_replacement_skips_later_phases_and_callback_rust(case, clock, phase):
     calls = []
     hook = MagicMock()
 
@@ -87,7 +87,7 @@ def test_expired_replacement_skips_later_phases_and_callback(case, clock, phase)
     hook.assert_not_called()
 
 
-def test_driver_setup_uses_remaining_budget_before_lookup(case, clock):
+def test_driver_setup_uses_remaining_budget_before_lookup_rust(case, clock):
     def setup():
         clock[0] += 1.25
         return "test-driver"
@@ -104,7 +104,7 @@ def test_driver_setup_uses_remaining_budget_before_lookup(case, clock):
 
 
 @pytest.mark.parametrize("phase", ["metadata", "lookup", "write"])
-def test_service_failure_keeps_error_headers_and_skips_later_phases(case, phase):
+def test_service_failure_keeps_error_headers_and_skips_later_phases_rust(case, phase):
     hook = MagicMock()
     metadata = case.install(
         "read_database",
@@ -124,7 +124,7 @@ def test_service_failure_keeps_error_headers_and_skips_later_phases(case, phase)
     hook.assert_not_called()
 
 
-def test_callback_timeout_is_not_reclassified_or_replayed(case):
+def test_callback_timeout_is_not_reclassified_or_replayed_rust(case):
     failure = TimeoutError("customer callback")
     hook = MagicMock(side_effect=failure)
     case.install("get_throughput", result=_response({"Offers": [_offer()]}))
@@ -141,7 +141,7 @@ def test_callback_timeout_is_not_reclassified_or_replayed(case):
 @pytest.mark.parametrize("phase", ["metadata", "lookup", "write"])
 @pytest.mark.parametrize("expire", [False, True], ids=["customer-cancellation", "deadline"])
 @pytest.mark.parametrize("case", [True], indirect=True, ids=["async"])
-def test_async_pending_phase_cancels_and_awaits_cleanup(case, phase, expire):
+def test_async_pending_phase_cancels_and_awaits_cleanup_rust(case, phase, expire):
     async def run():
         entered = asyncio.Event()
         cleaned = asyncio.Event()

@@ -21,7 +21,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.client.close()
 
-    async def test_autoscale_create_container_async(self):
+    async def test_autoscale_create_container_async_rust(self):
         # Source: tests/test_auto_scale_async.py::TestAutoScaleAsync.test_autoscale_create_container_async
         container = await self.database.create_container(
             id="container_with_auto_scale_settings", partition_key=PartitionKey(path="/id"),

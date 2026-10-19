@@ -33,7 +33,7 @@ def container_for(request):
 
 
 @pytest.mark.asyncio
-async def test_async_create_then_replace(container_for):
+async def test_async_create_then_replace_rust(container_for):
     """async create then replace -- parity on both backends."""
     item_id = uuid.uuid4().hex
 
@@ -48,7 +48,7 @@ async def test_async_create_then_replace(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_replace_missing_raises(container_for):
+async def test_async_replace_missing_raises_rust(container_for):
     """async replace of a missing id raises CosmosResourceNotFoundError on both."""
     async def _do(client):
         c = client.get_database_client("parity_db").get_container_client(container_for.id)

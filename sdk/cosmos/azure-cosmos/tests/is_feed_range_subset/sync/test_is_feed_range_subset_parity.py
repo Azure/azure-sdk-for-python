@@ -80,7 +80,7 @@ def _run(container_id, parent, child, description, request_kwargs):
     comparison.assert_functional_parity()
 
 
-def test_is_feed_range_subset_narrow_inside_wide(parity_container):
+def test_is_feed_range_subset_narrow_inside_wide_rust(parity_container):
     """A narrow range inside the full key space is a subset on both backends."""
     _run(
         parity_container.id,
@@ -91,7 +91,7 @@ def test_is_feed_range_subset_narrow_inside_wide(parity_container):
     )
 
 
-def test_is_feed_range_subset_wide_not_inside_narrow(parity_container):
+def test_is_feed_range_subset_wide_not_inside_narrow_rust(parity_container):
     """The full key space is not a subset of a narrow range on either backend."""
     _run(
         parity_container.id,
@@ -102,7 +102,7 @@ def test_is_feed_range_subset_wide_not_inside_narrow(parity_container):
     )
 
 
-def test_is_feed_range_subset_equal_ranges(parity_container):
+def test_is_feed_range_subset_equal_ranges_rust(parity_container):
     """Two identical ranges are subsets of each other on both backends."""
     _run(
         parity_container.id,
@@ -113,7 +113,7 @@ def test_is_feed_range_subset_equal_ranges(parity_container):
     )
 
 
-def test_is_feed_range_subset_disjoint_ranges(parity_container):
+def test_is_feed_range_subset_disjoint_ranges_rust(parity_container):
     """Two non-overlapping ranges are not subsets on either backend."""
     _run(
         parity_container.id,
@@ -124,7 +124,7 @@ def test_is_feed_range_subset_disjoint_ranges(parity_container):
     )
 
 
-def test_is_feed_range_subset_inclusive_exclusive_bounds(parity_container):
+def test_is_feed_range_subset_inclusive_exclusive_bounds_rust(parity_container):
     """Inclusive/exclusive-bound pairs normalize the same way on both backends."""
     _run(
         parity_container.id,
@@ -135,7 +135,7 @@ def test_is_feed_range_subset_inclusive_exclusive_bounds(parity_container):
     )
 
 
-def test_is_feed_range_subset_from_partition_key(parity_container):
+def test_is_feed_range_subset_from_partition_key_rust(parity_container):
     """A key's feed range is a subset of the full key space on both backends.
 
     This is the real customer shape: find which container slice a key falls into
@@ -157,7 +157,7 @@ def test_is_feed_range_subset_from_partition_key(parity_container):
 
 
 @pytest.mark.parametrize("backend_name", ["core-python", "rust"])
-def test_L6_is_feed_range_subset_leaves_last_response_headers_untouched(parity_container, backend_name):
+def test_L6_is_feed_range_subset_leaves_last_response_headers_untouched_rust(parity_container, backend_name):
     """is_feed_range_subset is a pure client-side check with no wire call, so it must
     not overwrite ``client_connection.last_response_headers`` -- the headers left by
     the caller's previous real operation. This guards the fix that stopped the rust
@@ -181,7 +181,7 @@ def test_L6_is_feed_range_subset_leaves_last_response_headers_untouched(parity_c
 
 
 @pytest.mark.parametrize("backend_name", ["core-python", "rust"])
-def test_L7_is_feed_range_subset_inverted_range_contract(parity_container, backend_name):
+def test_L7_is_feed_range_subset_inverted_range_contract_rust(parity_container, backend_name):
     """Retain the legacy result and explicitly reject unsupported Rust input without fallback."""
     from azure.cosmos import _rust
     from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count

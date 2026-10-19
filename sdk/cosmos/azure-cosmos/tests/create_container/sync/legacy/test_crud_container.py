@@ -25,7 +25,8 @@ Self-contained: it creates and deletes its own database, so it shares no state
 with any other test. The original's first leg reads a shared container named by
 ``test_config.TestConfig``; this copy creates that container itself with no
 indexing policy given, which is the case the leg is testing. The class name and
-method name match the source, so the two test IDs differ only by path.
+method name match the source (apart from the method's ``_rust`` suffix), so the two test
+IDs differ by path and method suffix.
 
 Run with::
 
@@ -95,7 +96,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
                                           if included_path['path'] == '/*'])
         self.assertFalse(root_included_path.get('indexes'))
 
-    def test_create_default_indexing_policy(self):
+    def test_create_default_indexing_policy_rust(self):
         """Five ways of leaving the indexing policy incomplete all produce the same defaults.
 
         A customer can omit the indexing policy entirely, or supply a partial

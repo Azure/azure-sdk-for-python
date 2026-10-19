@@ -32,14 +32,14 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         if expected_offer_type:
             assert expected_offer_type == offer.properties.get('offerType')
 
-    async def test_offer_read_and_query_async(self):
+    async def test_offer_read_and_query_async_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_offer_read_and_query_async
         collection = self.container
         expected_offer = await collection.get_throughput()
         collection_properties = await collection.read()
         self.__validate_offer_response_body(expected_offer, collection_properties.get('_self'), None)
 
-    async def test_offer_replace_async(self):
+    async def test_offer_replace_async_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_offer_replace_async
         collection = self.container
         expected_offer = await collection.get_throughput()
@@ -52,7 +52,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                 replaced_offer.properties.get('content').get('offerThroughput'))
         assert expected_offer.offer_throughput + 100 == replaced_offer.offer_throughput
 
-    async def test_partitioned_collection_async(self):
+    async def test_partitioned_collection_async_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_partitioned_collection_async
         created_db = self.database
         collection_definition = {

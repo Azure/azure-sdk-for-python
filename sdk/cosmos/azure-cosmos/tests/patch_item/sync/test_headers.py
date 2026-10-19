@@ -48,7 +48,7 @@ class TestHeaders(unittest.TestCase):
         except Exception:  # pylint: disable=broad-except
             pass
 
-    def test_container_patch_item_throughput_bucket(self):
+    def test_container_patch_item_throughput_bucket_rust(self):
         """patch_item forwards the ``throughput_bucket`` keyword as the
         ``x-ms-cosmos-throughput-bucket`` header, and all six patch
         operations apply to produce the expected item."""

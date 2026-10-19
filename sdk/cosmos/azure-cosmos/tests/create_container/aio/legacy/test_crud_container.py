@@ -26,7 +26,8 @@ Self-contained: it creates and deletes its own database, so it shares no state
 with any other test. The original's first leg reads a shared container named by
 ``test_config.TestConfig``; this copy creates that container itself with no
 indexing policy given, which is the case the leg is testing. The class name and
-method name match the source, so the two test IDs differ only by path. The file
+method name match the source (apart from the method's ``_rust`` suffix), so the two test
+IDs differ by path and method suffix. The file
 name drops the ``_async`` suffix because the audit reporter pairs sync and
 async copies by stripping it.
 
@@ -98,7 +99,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
                                           if included_path['path'] == '/*'])
         assert not root_included_path.get('indexes')
 
-    async def test_create_default_indexing_policy_async(self):
+    async def test_create_default_indexing_policy_async_rust(self):
         """Five ways of leaving the indexing policy incomplete all produce the same defaults.
 
         A customer can omit the indexing policy entirely, or supply a partial

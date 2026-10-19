@@ -32,12 +32,12 @@ from azure.cosmos._backend._binding_conversions import normalize_response_header
 
 # --- Empty / None inputs -------------------------------------------------
 
-def test_returns_none_for_none_input():
+def test_returns_none_for_none_input_rust():
     """Prove a missing header collection remains absent."""
     assert normalize_response_headers(None) is None
 
 
-def test_returns_none_for_empty_mapping():
+def test_returns_none_for_empty_mapping_rust():
     """An empty collection of headers is reported as absent, like no collection at all.
 
     Both mean the reply carried no headers worth passing on, so they get one answer.
@@ -49,7 +49,7 @@ def test_returns_none_for_empty_mapping():
 
 # --- Passthrough for unrelated headers ----------------------------------
 
-def test_unrelated_headers_flow_through_unchanged():
+def test_unrelated_headers_flow_through_unchanged_rust():
     """Prove ordinary service headers retain their names and values."""
     headers = {
         "etag": '"abc"',
@@ -64,7 +64,7 @@ def test_unrelated_headers_flow_through_unchanged():
     assert len(result) == 3
 
 
-def test_result_is_case_insensitive():
+def test_result_is_case_insensitive_rust():
     """Prove customers can read response headers with any letter case."""
     headers = {"ETag": '"abc"'}
     result = normalize_response_headers(headers)
@@ -75,7 +75,7 @@ def test_result_is_case_insensitive():
 
 # --- LSN family: gateway names pass through, NO aliases invented --------
 
-def test_lsn_family_passes_through_without_inventing_aliases():
+def test_lsn_family_passes_through_without_inventing_aliases_rust():
     """The gateway's LSN header names flow through unchanged, and the
     function must NOT invent the un-prefixed double-``l`` aliases.
 

@@ -64,7 +64,7 @@ def _session(collect_only=False, failures=0, names=("test_crud.py",), continue_o
         _session(names=("test_fault_rules_unit.py", "test_known_failures_check_unit.py")),
     ],
 )
-def test_nonexecuting_runs_do_not_create_live_resources(setup_module_under_test, monkeypatch, session):
+def test_nonexecuting_runs_do_not_create_live_resources_rust(setup_module_under_test, monkeypatch, session):
     """Four kinds of run that must not touch an account: each is checked here.
 
     Listing tests without running them, a run that has already given up, a run that
@@ -84,7 +84,7 @@ def test_nonexecuting_runs_do_not_create_live_resources(setup_module_under_test,
 
 
 @pytest.mark.parametrize("session", [_session(), _session(failures=1, continue_on_errors=True)])
-def test_live_run_still_creates_shared_resources(setup_module_under_test, monkeypatch, session):
+def test_live_run_still_creates_shared_resources_rust(setup_module_under_test, monkeypatch, session):
     """A run that needs resources gets all six, in order, from one client.
 
     The order matters: the account is asked about itself first, then the database is made,

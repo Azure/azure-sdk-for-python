@@ -135,7 +135,7 @@ async def _run_delete(container, summary: str,
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_baseline_delete_by_id(container_for):
+async def test_baseline_delete_by_id_rust(container_for):
     """Baseline: async delete by bare id + ``partition_key``, no optional kwargs.
 
     ``delete_item`` returns ``None`` on success, so the parity contract here
@@ -152,7 +152,7 @@ async def test_baseline_delete_by_id(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_delete_by_document_dict(container_for):
+async def test_delete_by_document_dict_rust(container_for):
     """async delete by passing the document dict (uses ``_self`` lookup).
 
     ``Container._get_document_link`` accepts a bare id string or a full
@@ -167,7 +167,7 @@ async def test_delete_by_document_dict(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_pre_trigger_include(container_for):
+async def test_pre_trigger_include_rust(container_for):
     """Baseline call plus ``pre_trigger_include='auditDelete'``.
 
     No trigger by that name is registered, so the service returns the same
@@ -180,7 +180,7 @@ async def test_pre_trigger_include(container_for):
 
 
 @pytest.mark.asyncio
-async def test_post_trigger_include(container_for):
+async def test_post_trigger_include_rust(container_for):
     """Baseline call plus ``post_trigger_include='auditDelete'``.
 
     Same contract as the pre-trigger case above: the typed exception must
@@ -192,7 +192,7 @@ async def test_post_trigger_include(container_for):
 
 
 @pytest.mark.asyncio
-async def test_session_token(container_for):
+async def test_session_token_rust(container_for):
     """Baseline call plus ``session_token=<token>``.
 
     Both backends forward the token as-is; the outcome on the wire must
@@ -204,7 +204,7 @@ async def test_session_token(container_for):
 
 
 @pytest.mark.asyncio
-async def test_initial_headers(container_for):
+async def test_initial_headers_rust(container_for):
     """Baseline call plus customer-injected ``initial_headers``."""
     cmp = await _run_delete(container_for, summary="baseline + initial_headers",
                             initial_headers={"x-ms-test-parity": "v1"})
@@ -212,14 +212,14 @@ async def test_initial_headers(container_for):
 
 
 @pytest.mark.asyncio
-async def test_priority_high(container_for):
+async def test_priority_high_rust(container_for):
     """Baseline call plus ``priority='High'`` (``x-ms-cosmos-priority-level``)."""
     cmp = await _run_delete(container_for, summary="baseline + priority=High", priority="High")
     cmp.assert_functional_parity()
 
 
 @pytest.mark.asyncio
-async def test_throughput_bucket(container_for):
+async def test_throughput_bucket_rust(container_for):
     """Baseline call plus ``throughput_bucket=1`` (``x-ms-cosmos-throughput-bucket``)."""
     cmp = await _run_delete(container_for, summary="baseline + throughput_bucket=1", throughput_bucket=1)
     cmp.assert_functional_parity()
@@ -230,7 +230,7 @@ async def test_throughput_bucket(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_timeout(container_for):
+async def test_timeout_rust(container_for):
     """Baseline call plus ``timeout=30`` (overall request timeout)."""
     cmp = await _run_delete(container_for, summary="baseline + timeout=30", timeout=30)
     cmp.assert_functional_parity()
@@ -239,7 +239,7 @@ async def test_timeout(container_for):
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only knob). "
                          "Same rationale as the sync suite's L3_retry_write.")
 @pytest.mark.asyncio
-async def test_retry_write(container_for):
+async def test_retry_write_rust(container_for):
     """Baseline call plus ``retry_write=1`` (Python-only retry option).
 
     The rust driver owns its own retry policy and exposes no per-request
@@ -252,7 +252,7 @@ async def test_retry_write(container_for):
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only hedging feature). "
                          "Same rationale as the sync suite's L3_availability_strategy.")
 @pytest.mark.asyncio
-async def test_availability_strategy(container_for):
+async def test_availability_strategy_rust(container_for):
     """Baseline call plus ``availability_strategy=True`` (Python-only hedging feature).
 
     The rust driver surface has no hedging option, so there is nothing to
@@ -268,7 +268,7 @@ async def test_availability_strategy(container_for):
                          "end-to-end against a single-region test account. Same skip rationale "
                          "as the sync suite's L3_excluded_locations.")
 @pytest.mark.asyncio
-async def test_excluded_locations(container_for):
+async def test_excluded_locations_rust(container_for):
     """Baseline call plus ``excluded_locations=['East US']``.
 
     Skipped only because the assertion is not meaningful on a single-region
@@ -285,7 +285,7 @@ async def test_excluded_locations(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_response_hook_fires_once(container_for):
+async def test_response_hook_fires_once_rust(container_for):
     """``response_hook`` must fire exactly once per backend on success.
 
     The harness runs core-python first and rust second, deterministically, so
@@ -327,7 +327,7 @@ async def test_response_hook_fires_once(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_missing_id_raises_typed_not_found(container_for):
+async def test_missing_id_raises_typed_not_found_rust(container_for):
     """Deleting a never-created id raises ``CosmosResourceNotFoundError``
     (HTTP 404) on both backends with the same status code."""
     fixed_id = "does-not-exist-" + uuid.uuid4().hex
@@ -350,7 +350,7 @@ async def test_missing_id_raises_typed_not_found(container_for):
 
 
 @pytest.mark.asyncio
-async def test_stale_etag_if_not_modified_raises_412(container_for):
+async def test_stale_etag_if_not_modified_raises_412_rust(container_for):
     """stale ``etag`` + ``MatchConditions.IfNotModified`` => HTTP 412.
 
     This is the delete-specific contract: on ``delete_item`` the
@@ -404,7 +404,7 @@ async def test_stale_etag_if_not_modified_raises_412(container_for):
 
 
 @pytest.mark.asyncio
-async def test_current_etag_if_not_modified_succeeds_without_warning(container_for):
+async def test_current_etag_if_not_modified_succeeds_without_warning_rust(container_for):
     """a *current* ``etag`` + ``IfNotModified`` succeeds and does not warn.
 
     The mirror of the 412 case: when the etag is still current the delete
@@ -441,7 +441,7 @@ async def test_current_etag_if_not_modified_succeeds_without_warning(container_f
 
 
 @pytest.mark.asyncio
-async def test_etag_without_match_condition_raises_value_error_up_front(container_for):
+async def test_etag_without_match_condition_raises_value_error_up_front_rust(container_for):
     """``etag=`` without ``match_condition=`` raises ``ValueError`` before
     any network call.
 

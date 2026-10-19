@@ -26,7 +26,7 @@ class TestCRUDOperations(unittest.TestCase):
         print(f"\nOwned read-test database: {self.database.id}")
         self.container = self.database.create_container("orders", partition_key=PartitionKey(path="/pk"))
 
-    def test_get_resource_with_dictionary_and_object(self):
+    def test_get_resource_with_dictionary_and_object_rust(self):
         created_container = self.container
         created_item = created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'})
 

@@ -70,7 +70,7 @@ def _service_error(head="(NotFound) Entity with the specified id does not exist 
 # Noise must be removed
 # ---------------------------------------------------------------------------
 
-def test_two_calls_differing_only_in_service_telemetry_normalize_equal():
+def test_two_calls_differing_only_in_service_telemetry_normalize_equal_rust():
     """The exact failure this normalizer was written for.
 
     Same operation, same error, two different samples of the service's health
@@ -82,7 +82,7 @@ def test_two_calls_differing_only_in_service_telemetry_normalize_equal():
     assert _normalize_exception_message(first) == _normalize_exception_message(second)
 
 
-def test_telemetry_values_are_absent_from_the_normalized_text():
+def test_telemetry_values_are_absent_from_the_normalized_text_rust():
     """None of the machine-state readings survive normalization."""
     normalized = _normalize_exception_message(_service_error())
     for noise in ("systemHistory", "cpu", "memory", "BELatencyMs",
@@ -92,7 +92,7 @@ def test_telemetry_values_are_absent_from_the_normalized_text():
             "got {!r}".format(noise, normalized))
 
 
-def test_retry_that_repeats_the_tail_reads_the_same_as_one_attempt():
+def test_retry_that_repeats_the_tail_reads_the_same_as_one_attempt_rust():
     """A retried request can carry the diagnostics tail twice.
 
     The two backends need not retry the same number of times, so a doubled
@@ -109,13 +109,13 @@ def test_retry_that_repeats_the_tail_reads_the_same_as_one_attempt():
 # Signal must survive
 # ---------------------------------------------------------------------------
 
-def test_canonical_server_error_text_is_preserved():
+def test_canonical_server_error_text_is_preserved_rust():
     """The part a customer's error handler actually reads stays intact."""
     normalized = _normalize_exception_message(_service_error())
     assert "(NotFound) Entity with the specified id does not exist in the system." in normalized
 
 
-def test_operation_and_resource_type_are_preserved():
+def test_operation_and_resource_type_are_preserved_rust():
     """The two meaningful fields inside the tail are kept.
 
     Without these, a backend that issued the wrong operation kind would
@@ -126,21 +126,21 @@ def test_operation_and_resource_type_are_preserved():
     assert "OperationType: Read" in normalized
 
 
-def test_different_error_text_still_differs():
+def test_different_error_text_still_differs_rust():
     """Normalization must not flatten genuinely different failures together."""
     not_found = _service_error("(NotFound) Entity with the specified id does not exist.")
     bad_request = _service_error("(BadRequest) Invalid partition key.")
     assert _normalize_exception_message(not_found) != _normalize_exception_message(bad_request)
 
 
-def test_different_operation_type_still_differs():
+def test_different_operation_type_still_differs_rust():
     """A backend issuing Upsert where the other issued Read must be caught."""
     read = _service_error(operation_type="Read")
     upsert = _service_error(operation_type="Upsert")
     assert _normalize_exception_message(read) != _normalize_exception_message(upsert)
 
 
-def test_different_resource_type_still_differs():
+def test_different_resource_type_still_differs_rust():
     """A backend addressing the wrong resource kind must be caught."""
     document = _service_error(resource_type="Document")
     stored_proc = _service_error(resource_type="StoredProcedure")
@@ -165,7 +165,7 @@ _LONG_FORM = (
 )
 
 
-def test_echoed_and_plain_forms_of_the_same_error_normalize_equal():
+def test_echoed_and_plain_forms_of_the_same_error_normalize_equal_rust():
     """The long form only repeats the short form; they must compare equal.
 
     Otherwise the missing-id tests fail roughly half the time, depending on
@@ -175,7 +175,7 @@ def test_echoed_and_plain_forms_of_the_same_error_normalize_equal():
             == _normalize_exception_message(_FakeError(_LONG_FORM)))
 
 
-def test_normalized_form_keeps_the_canonical_sentence_once():
+def test_normalized_form_keeps_the_canonical_sentence_once_rust():
     """The result is the canonical error text -- no echo, no host build tag."""
     normalized = _normalize_exception_message(_FakeError(_LONG_FORM))
     assert normalized == _CANONICAL, normalized
@@ -183,7 +183,7 @@ def test_normalized_form_keeps_the_canonical_sentence_once():
     assert normalized.count("Entity with the specified id") == 1
 
 
-def test_echo_stripping_does_not_merge_different_errors():
+def test_echo_stripping_does_not_merge_different_errors_rust():
     """Two different errors in the echoed shape must still differ."""
     other = _LONG_FORM.replace("(NotFound) Entity with the specified id does not exist",
                                "(BadRequest) Partition key is invalid")
@@ -191,7 +191,7 @@ def test_echo_stripping_does_not_merge_different_errors():
             != _normalize_exception_message(_FakeError(other)))
 
 
-def test_message_mentioning_code_without_the_echo_shape_is_untouched():
+def test_message_mentioning_code_without_the_echo_shape_is_untouched_rust():
     """Only the ``Code: <reason> Message:`` echo is cut, not any mention of it.
 
     Guards against an over-broad rule that would truncate a legitimate error
@@ -205,7 +205,7 @@ def test_message_mentioning_code_without_the_echo_shape_is_untouched():
 # Messages without a service tail must pass through untouched
 # ---------------------------------------------------------------------------
 
-def test_message_without_a_service_tail_is_left_alone():
+def test_message_without_a_service_tail_is_left_alone_rust():
     """The supplied marker-free error strings retain their expected text.
 
     Marker matching is textual, not determined by the exception's origin.
@@ -214,7 +214,7 @@ def test_message_without_a_service_tail_is_left_alone():
     assert _normalize_exception_message(plain) == "'etag' specified without 'match_condition'."
 
 
-def test_tail_carrying_no_meaningful_fields_reduces_to_the_error_text():
+def test_tail_carrying_no_meaningful_fields_reduces_to_the_error_text_rust():
     """If the tail has no ResourceType/OperationType, only the head remains."""
     exc = _FakeError("(ServiceUnavailable) backend busy"
                      ", RequestStartTime: 2026-01-01T00:00:00Z, BELatencyMs: 3.2")

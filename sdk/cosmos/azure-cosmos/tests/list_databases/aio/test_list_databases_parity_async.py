@@ -39,7 +39,7 @@ def database_ids():
 
 
 @pytest.mark.asyncio
-async def test_list_databases_baseline_properties_async(database_ids):
+async def test_list_databases_baseline_properties_async_rust(database_ids):
     """Both async backends return the created databases with the normal property shape."""
 
     async def _do(client):
@@ -62,7 +62,7 @@ async def test_list_databases_baseline_properties_async(database_ids):
 
 
 @pytest.mark.asyncio
-async def test_list_databases_continuation_replay_async(database_ids):
+async def test_list_databases_continuation_replay_async_rust(database_ids):
     """Async one-item paging exposes a continuation token that can be replayed."""
     assert len(database_ids) == 3
 
@@ -98,7 +98,7 @@ async def test_list_databases_continuation_replay_async(database_ids):
 
 
 @pytest.mark.asyncio
-async def test_list_databases_options_and_page_hooks_async(database_ids):
+async def test_list_databases_options_and_page_hooks_async_rust(database_ids):
     """Supported async options preserve lazy per-page metadata on both backends."""
 
     async def _do(client):

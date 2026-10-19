@@ -85,7 +85,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
 class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
     """The fall-through path must stay byte-for-byte the legacy replace."""
 
-    def test_string_item_resolves_to_document_link(self):
+    def test_string_item_resolves_to_document_link_rust(self):
         """A bare id string ``item`` resolves to ``<container>/docs/<id>`` --
         the document link the legacy ``ReplaceItem`` consumes."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
@@ -98,7 +98,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
             "dbs/db/colls/c/docs/order-42",
         )
 
-    def test_dict_item_resolves_to_its_self_link(self):
+    def test_dict_item_resolves_to_its_self_link_rust(self):
         """A document-dict ``item`` resolves via its ``_self`` link (the
         convenience shape a customer passes after a read)."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
@@ -111,7 +111,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
             "dbs/db/colls/c/docs/rid-abc",
         )
 
-    def test_fall_through_forwards_body_unchanged(self):
+    def test_fall_through_forwards_body_unchanged_rust(self):
         """The new ``body`` reaches ``ReplaceItem`` as ``new_document``,
         exactly as the customer passed it -- a replace never rewrites the
         body."""
@@ -124,7 +124,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
         self.assertEqual(call.kwargs["new_document"], body)
         self.assertNotIn("id_minted", body)  # body object untouched
 
-    def test_cached_container_resource_id_is_added_to_options(self):
+    def test_cached_container_resource_id_is_added_to_options_rust(self):
         """Cache hit: the cached ``_rid`` ends up in the options dict sent
         to ``ReplaceItem`` (the drop-and-recreate guard)."""
         proxy, cc, _ = _make_proxy_with_mock_connection(rid="rid-hot")
@@ -134,7 +134,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
         forwarded_options = cc.ReplaceItem.call_args.kwargs["options"]
         self.assertEqual(forwarded_options[Constants.ContainerRID], "rid-hot")
 
-    def test_options_always_disable_id_generation(self):
+    def test_options_always_disable_id_generation_rust(self):
         """Every replace sets ``disableAutomaticIdGeneration`` -- a replace
         targets an existing id and never generates one."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
@@ -144,7 +144,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
         forwarded_options = cc.ReplaceItem.call_args.kwargs["options"]
         self.assertIs(forwarded_options["disableAutomaticIdGeneration"], True)
 
-    def test_etag_if_not_modified_becomes_guarded_replace_access_condition(self):
+    def test_etag_if_not_modified_becomes_guarded_replace_access_condition_rust(self):
         """``etag`` + ``IfNotModified`` (the version-guarded replace) becomes
         the ``If-Match`` access condition on the legacy path -- the replace's
         headline precondition."""
@@ -163,7 +163,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
             {"type": "IfMatch", "condition": "abc"},
         )
 
-    def test_populate_query_metrics_warns_and_is_forwarded(self):
+    def test_populate_query_metrics_warns_and_is_forwarded_rust(self):
         """The deprecated sync-only ``populate_query_metrics`` still warns
         and still reaches the legacy options, exactly as the legacy
         ``replace_item`` did (warn-and-write, including for ``False``)."""
@@ -177,7 +177,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
         forwarded_options = cc.ReplaceItem.call_args.kwargs["options"]
         self.assertIs(forwarded_options["populateQueryMetrics"], True)
 
-    def test_cache_miss_forwards_excluded_locations_into_cache_fetch(self):
+    def test_cache_miss_forwards_excluded_locations_into_cache_fetch_rust(self):
         """Cache miss: ``excluded_locations`` from the call reaches the
         cache-refresh ``read`` (same contract create / upsert have)."""
         proxy, _cc, cache = _make_proxy_with_mock_connection(precached=False)
@@ -191,7 +191,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
         self.assertEqual(read_kwargs.get("excluded_locations"), ["West US"])
         self.assertIn("dbs/db/colls/c", cache)
 
-    def test_cache_populate_step_takes_container_cache_lock(self):
+    def test_cache_populate_step_takes_container_cache_lock_rust(self):
         """Cache populate runs under ``container_cache_lock`` (thread-safety)."""
         proxy, _cc, _cache = _make_proxy_with_mock_connection(precached=False)
         lock_use_recorder = MagicMock(wraps=proxy.container_cache_lock)
@@ -199,7 +199,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
             proxy.replace_item("order-42", {"id": "order-42", "pk": "a"})
         lock_use_recorder.__enter__.assert_called()
 
-    def test_backend_path_uses_item_id_from_item_not_body(self):
+    def test_backend_path_uses_item_id_from_item_not_body_rust(self):
         """On the Rust backend path, the id the binding puts on the wire URL
         is resolved from ``item`` (a string id as-is, a dict's ``id`` field)
         and carried on ``PreparedRequest.item_id`` -- never re-derived from

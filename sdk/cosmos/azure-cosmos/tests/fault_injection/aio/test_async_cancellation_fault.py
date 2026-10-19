@@ -22,7 +22,7 @@ pytestmark = pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 @pytest.mark.timeout(90)
 @pytest.mark.parametrize("inject", [True, False], ids=["cancel-delayed-read", "no-injection"])
-async def test_cancelled_read_drops_native_future_and_client_recovers(owned_target, monkeypatch, inject):
+async def test_cancelled_read_drops_native_future_and_client_recovers_rust(owned_target, monkeypatch, inject):
     database_id, observer = owned_target
     item_id = uuid.uuid4().hex
     item = {"id": item_id, "pk": item_id, "name": "order-17", "state": "confirmed"}

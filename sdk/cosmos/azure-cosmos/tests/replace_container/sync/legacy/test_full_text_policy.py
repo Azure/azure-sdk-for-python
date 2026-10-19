@@ -14,7 +14,7 @@ class TestFullTextPolicy(SyncReplacementCase):
     def _create_key_client(self):
         return CosmosClient(self.host, self.key, _backend="rust")
 
-    def test_replace_full_text_container(self):
+    def test_replace_full_text_container_rust(self):
         """Replace can both add a full text policy and change an existing one.
 
         Two rounds. First a container with no full text settings is replaced so

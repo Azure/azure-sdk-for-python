@@ -29,7 +29,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         print(f"\nOwned read-test database: {self.database.id}")
         self.container = await self.database.create_container("orders", partition_key=PartitionKey(path="/pk"))
 
-    async def test_get_resource_with_dictionary_and_object_async(self):
+    async def test_get_resource_with_dictionary_and_object_async_rust(self):
         created_container = self.container
         created_item = await created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'})
         await sleep(5)

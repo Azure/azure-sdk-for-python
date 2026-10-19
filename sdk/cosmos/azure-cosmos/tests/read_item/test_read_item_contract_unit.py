@@ -172,7 +172,7 @@ def point_read(request, monkeypatch):
 
 
 @pytest.mark.parametrize("value", [None, False, True, 0])
-def test_retired_metrics_are_rejected_by_presence_before_metadata(point_read, value):
+def test_retired_metrics_are_rejected_by_presence_before_metadata_rust(point_read, value):
     """``populate_query_metrics`` is rejected whenever it is supplied at all.
 
     The argument was retired. Rejection is by presence, not by truthiness, so
@@ -185,7 +185,7 @@ def test_retired_metrics_are_rejected_by_presence_before_metadata(point_read, va
     assert point_read.events == []
 
 
-def test_only_item_and_partition_key_are_positional(point_read):
+def test_only_item_and_partition_key_are_positional_rust(point_read):
     """Only ``item`` and ``partition_key`` may be passed positionally.
 
     Everything else is keyword-only, so the SDK can add or reorder options
@@ -209,7 +209,7 @@ def test_only_item_and_partition_key_are_positional(point_read):
     ({"etag": "", "match_condition": MatchConditions.IfNotModified}, ValueError),
     ({"match_condition": "invalid"}, TypeError),
 ])
-def test_invalid_conditions_fail_before_metadata(point_read, kwargs, error):
+def test_invalid_conditions_fail_before_metadata_rust(point_read, kwargs, error):
     """A half-specified or malformed access condition fails before any request.
 
     ``etag`` and ``match_condition`` only mean something together, so either
@@ -228,7 +228,7 @@ def test_invalid_conditions_fail_before_metadata(point_read, kwargs, error):
     (MatchConditions.IfMissing, "IfNoneMatch", "*"),
     (MatchConditions.IfPresent, "IfMatch", "*"),
 ])
-def test_conditions_and_options_are_isolated(point_read, condition, kind, value):
+def test_conditions_and_options_are_isolated_rust(point_read, condition, kind, value):
     """Each match condition maps to the right header, and the caller's dict is left alone.
 
     ``IfModified``/``IfMissing`` become ``If-None-Match``;
@@ -250,7 +250,7 @@ def test_conditions_and_options_are_isolated(point_read, condition, kind, value)
 
 
 @pytest.mark.parametrize("status", [200, 304])
-def test_hook_receives_independent_cosmosdict_and_headers_even_when_falsey(point_read, status):
+def test_hook_receives_independent_cosmosdict_and_headers_even_when_falsey_rust(point_read, status):
     """The response hook runs even if it is falsey, and cannot corrupt the result.
 
     A hook object whose ``__bool__`` is False is still a supplied callback,
@@ -289,7 +289,7 @@ def test_hook_receives_independent_cosmosdict_and_headers_even_when_falsey(point
     assert [phase for phase, _ in point_read.events] == ["metadata", "read"]
 
 
-def test_hook_exception_is_not_replayed(point_read):
+def test_hook_exception_is_not_replayed_rust(point_read):
     """If the customer's hook raises, that exact error surfaces and the read is not repeated.
 
     The hook runs after a successful reply, so a failure inside it is the
@@ -306,13 +306,13 @@ def test_hook_exception_is_not_replayed(point_read):
 
 
 @pytest.mark.parametrize("hook", [False, 0, 1, "not-callable", {}])
-def test_invalid_hook_fails_before_metadata(point_read, hook):
+def test_invalid_hook_fails_before_metadata_rust(point_read, hook):
     with pytest.raises(TypeError, match="response_hook"):
         point_read.call("item", "pk", response_hook=hook)
     assert point_read.events == []
 
 
-def test_feed_options_reaches_read_without_mutating_customer_settings(point_read):
+def test_feed_options_reaches_read_without_mutating_customer_settings_rust(point_read):
     supplied = {
         "timeout": 2,
         "partitionKey": "ignored",
@@ -337,7 +337,7 @@ def test_feed_options_reaches_read_without_mutating_customer_settings(point_read
 
 
 @pytest.mark.parametrize("request_options", [None, {}, {"timeout": 3}])
-def test_request_options_presence_wins_over_feed_options(point_read, request_options):
+def test_request_options_presence_wins_over_feed_options_rust(point_read, request_options):
     point_read.call(
         "item", "pk", request_options=request_options, feed_options={"timeout": 2},
     )
@@ -346,19 +346,19 @@ def test_request_options_presence_wins_over_feed_options(point_read, request_opt
 
 
 @pytest.mark.parametrize("timeout", [None, 4])
-def test_explicit_timeout_overrides_feed_options(point_read, timeout):
+def test_explicit_timeout_overrides_feed_options_rust(point_read, timeout):
     point_read.call("item", "pk", feed_options={"timeout": 2}, timeout=timeout)
     assert point_read.events == [("metadata", timeout), ("read", timeout)]
 
 
-def test_invalid_feed_timeout_fails_before_metadata(point_read):
+def test_invalid_feed_timeout_fails_before_metadata_rust(point_read):
     with pytest.raises(ValueError, match="timeout"):
         point_read.call("item", "pk", feed_options={"timeout": 0.5})
     assert point_read.events == []
 
 
 @pytest.mark.parametrize("id_fields", [{}, {"id": "item"}, {"id": "different-item"}, {"id": None}, {"id": 42}])
-def test_dictionary_target_keeps_original_resource_address(point_read, id_fields):
+def test_dictionary_target_keeps_original_resource_address_rust(point_read, id_fields):
     item = {
         **id_fields,
         "_self": "dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
@@ -374,7 +374,7 @@ def test_dictionary_target_keeps_original_resource_address(point_read, id_fields
         assert point_read.document_link == item["_self"]
 
 
-def test_dictionary_target_requires_self_instead_of_falling_back_to_id(point_read):
+def test_dictionary_target_requires_self_instead_of_falling_back_to_id_rust(point_read):
     with pytest.raises(KeyError, match="_self"):
         point_read.call({"id": "item"}, "pk")
     assert point_read.events == []
@@ -388,7 +388,7 @@ def test_dictionary_target_requires_self_instead_of_falling_back_to_id(point_rea
     ("", ValueError, "target _self"),
     ("dbs/db/colls/c", ValueError, "target _self"),
 ])
-def test_native_read_accepts_address_only_and_rejects_missing_or_invalid_targets(method, self_link, error, message):
+def test_native_read_accepts_address_only_and_rejects_missing_or_invalid_targets_rust(method, self_link, error, message):
     from azure.cosmos._helpers._request_item import build_read_item_request
 
     binding = pytest.importorskip("azure.cosmos._rust")
@@ -401,7 +401,7 @@ def test_native_read_accepts_address_only_and_rejects_missing_or_invalid_targets
 
 
 @pytest.mark.parametrize("self_link", [None, 42])
-def test_invalid_rust_dictionary_address_does_not_fall_back_to_name(point_read, self_link):
+def test_invalid_rust_dictionary_address_does_not_fall_back_to_name_rust(point_read, self_link):
     if not point_read.rust:
         pytest.skip("Legacy validates the address in its transport preparation.")
     with pytest.raises(TypeError, match="_self"):
@@ -409,7 +409,7 @@ def test_invalid_rust_dictionary_address_does_not_fall_back_to_name(point_read, 
     assert point_read.events == []
 
 
-def test_service_412_is_preserved_and_does_not_invoke_success_hook(point_read):
+def test_service_412_is_preserved_and_does_not_invoke_success_hook_rust(point_read):
     """A 412 from the service becomes the typed error, and the success hook stays silent.
 
     The hook is a success callback. Firing it on a failed precondition would
@@ -423,7 +423,7 @@ def test_service_412_is_preserved_and_does_not_invoke_success_hook(point_read):
     hook.assert_not_called()
 
 
-def test_stale_if_match_does_not_invent_local_412(point_read):
+def test_stale_if_match_does_not_invent_local_412_rust(point_read):
     """Pass through the fixture's successful read despite a stale supplied etag.
 
     The fake response supplies the current etag. This checks that Python does
@@ -435,7 +435,7 @@ def test_stale_if_match_does_not_invent_local_412(point_read):
 
 
 @pytest.mark.parametrize("timeout", [0, -1, 0.5, True, "2", float("nan"), float("inf"), 2**64, 10**1000])
-def test_invalid_timeout_fails_before_metadata(point_read, timeout):
+def test_invalid_timeout_fails_before_metadata_rust(point_read, timeout):
     """A timeout that isn't a usable positive duration is rejected up front.
 
     Zero and negatives mean "no time at all", booleans and strings are the
@@ -448,7 +448,7 @@ def test_invalid_timeout_fails_before_metadata(point_read, timeout):
     assert point_read.events == []
 
 
-def test_remaining_subsecond_budget_reaches_item_without_rounding(point_read):
+def test_remaining_subsecond_budget_reaches_item_without_rounding_rust(point_read):
     """Time left over after resolving the container is passed on exactly.
 
     Metadata takes 0.75s of a 1s budget, so the read must be given 0.25s --
@@ -462,7 +462,7 @@ def test_remaining_subsecond_budget_reaches_item_without_rounding(point_read):
     assert point_read.events == [("metadata", 1), ("read", 0.25)]
 
 
-def test_metadata_timeout_never_dispatches_item(point_read):
+def test_metadata_timeout_never_dispatches_item_rust(point_read):
     """If resolving the container uses up the budget, the read is never sent.
 
     The customer asked for the whole call to finish within the timeout, so
@@ -477,7 +477,7 @@ def test_metadata_timeout_never_dispatches_item(point_read):
     hook.assert_not_called()
 
 
-def test_combined_phases_cannot_each_restart_budget(point_read):
+def test_combined_phases_cannot_each_restart_budget_rust(point_read):
     """The timeout covers the whole call, not each phase separately.
 
     Metadata takes 0.75s and the read 0.5s. Neither exceeds the 1s budget on
@@ -493,7 +493,7 @@ def test_combined_phases_cannot_each_restart_budget(point_read):
     assert point_read.clock.now == 101
 
 
-def test_no_read_after_metadata_uses_exact_budget(point_read):
+def test_no_read_after_metadata_uses_exact_budget_rust(point_read):
     """Using the budget exactly, with nothing left over, still stops the call.
 
     The boundary case of the test above: metadata consumes the full 1s. Zero
@@ -505,7 +505,7 @@ def test_no_read_after_metadata_uses_exact_budget(point_read):
     assert point_read.events == [("metadata", 1)]
 
 
-def test_lazy_driver_handle_initialization_consumes_budget(point_read):
+def test_lazy_driver_handle_initialization_consumes_budget_rust(point_read):
     """Starting the driver on the first call counts against the customer's timeout.
 
     The Rust driver is built on first use. That setup is time the customer
@@ -521,7 +521,7 @@ def test_lazy_driver_handle_initialization_consumes_budget(point_read):
     assert point_read.events == []
 
 
-def test_expired_cache_lock_does_not_start_metadata(point_read):
+def test_expired_cache_lock_does_not_start_metadata_rust(point_read):
     """Time spent queueing behind another call's cache refresh also counts.
 
     When several calls race to resolve the same container, only one refreshes
@@ -556,7 +556,7 @@ def test_expired_cache_lock_does_not_start_metadata(point_read):
     "create_item", "create_item_async",
 ])
 @pytest.mark.parametrize("seconds", [0, -1, float("nan"), float("inf"), 2**64])
-def test_native_remaining_timeout_rejects_invalid_durations_without_dispatch(method, seconds):
+def test_native_remaining_timeout_rejects_invalid_durations_without_dispatch_rust(method, seconds):
     """The binding re-checks the timeout itself, for every entry point it exposes.
 
     The Python layer already rejects these values, but the binding is a
@@ -582,7 +582,7 @@ def test_native_remaining_timeout_rejects_invalid_durations_without_dispatch(met
 
 @pytest.mark.parametrize("key", [None, NullPartitionKeyValue, NonePartitionKeyValue])
 @pytest.mark.parametrize("system_key", [False, True])
-def test_partition_key_sentinels_preserve_native_unknown_system_key_fallback(point_read, key, system_key):
+def test_partition_key_sentinels_preserve_native_unknown_system_key_fallback_rust(point_read, key, system_key):
     """The three "no partition key value" spellings each keep their own meaning.
 
     ``None`` and ``NullPartitionKeyValue`` both mean a stored JSON null and
@@ -605,7 +605,7 @@ def test_partition_key_sentinels_preserve_native_unknown_system_key_fallback(poi
 
 @pytest.mark.parametrize("source", ["request_options", "feed_options", "initial_headers"])
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
-def test_read_consistency_reaches_binding_settings(point_read, source, level):
+def test_read_consistency_reaches_binding_settings_rust(point_read, source, level):
     kwargs = {
         source: {
             "x-ms-consistency-level" if source == "initial_headers" else "consistencyLevel": level,
@@ -626,7 +626,7 @@ def test_read_consistency_reaches_binding_settings(point_read, source, level):
 @pytest.mark.parametrize("level", ["Unknown", "LatestCommitted", "GlobalStrong", "Default", "eventual"])
 @pytest.mark.parametrize("raw_header", [False, True])
 @pytest.mark.parametrize("timeout_seconds", [None, float("nan")])
-def test_native_unknown_read_consistency_fails_before_driver_lookup(
+def test_native_unknown_read_consistency_fails_before_driver_lookup_rust(
     method, level, raw_header, timeout_seconds
 ):
     from azure.cosmos._backend.contracts import PreparedRequest
@@ -648,7 +648,7 @@ def test_native_unknown_read_consistency_fails_before_driver_lookup(
 @pytest.mark.parametrize("method", ["read_item", "read_item_async"])
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong", None])
 @pytest.mark.parametrize("raw_header", [False, True])
-def test_native_supported_read_consistency_reaches_driver_lookup(method, level, raw_header):
+def test_native_supported_read_consistency_reaches_driver_lookup_rust(method, level, raw_header):
     from azure.cosmos._backend.contracts import PreparedRequest
     from azure.cosmos._backend.request_settings import RequestSettings
 

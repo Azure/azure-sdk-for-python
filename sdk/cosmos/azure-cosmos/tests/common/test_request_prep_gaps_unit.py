@@ -44,7 +44,7 @@ _NO_RESPONSE_KEY = "responsePayloadOnWriteDisabled"
 
 
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
-def test_consistency_level_becomes_wire_header(level):
+def test_consistency_level_becomes_wire_header_rust(level):
     """A truthy ``consistencyLevel`` option emits ``x-ms-consistency-level`` and
     drops the raw option-key (which the driver would not recognise)."""
     headers = flatten_options_to_headers({"consistencyLevel": level})
@@ -52,14 +52,14 @@ def test_consistency_level_becomes_wire_header(level):
     assert "consistencyLevel" not in headers
 
 
-def test_consistency_level_falsy_emits_no_header():
+def test_consistency_level_falsy_emits_no_header_rust():
     """An empty / falsy override ships no header, matching the legacy truthy gate."""
     assert HttpHeaders.ConsistencyLevel not in flatten_options_to_headers({"consistencyLevel": ""})
     assert HttpHeaders.ConsistencyLevel not in flatten_options_to_headers({"consistencyLevel": None})
 
 
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
-def test_consistency_level_reaches_wire_through_request_options_on_create(level):
+def test_consistency_level_reaches_wire_through_request_options_on_create_rust(level):
     """Preparation preserves the legacy header, not a write-policy override."""
     prepared = prepare_create_item_request(
         container_link="dbs/d/colls/orders",
@@ -78,7 +78,7 @@ def test_consistency_level_reaches_wire_through_request_options_on_create(level)
 # ---------------------------------------------------------------------------
 
 
-def test_internal_option_keys_are_not_emitted_as_headers():
+def test_internal_option_keys_are_not_emitted_as_headers_rust():
     """Keys that ride in the options dict for the legacy pipeline's own use are
     not wire headers and must be dropped, while real customer options survive.
 
@@ -123,7 +123,7 @@ def test_internal_option_keys_are_not_emitted_as_headers():
     assert headers[HttpHeaders.ConsistencyLevel] == "Session"
 
 
-def test_container_rid_is_truthy_gated():
+def test_container_rid_is_truthy_gated_rust():
     """An empty container rid sends no header.
 
     Legacy ``_base.GetHeaders`` gates it with ``options.get(containerRID)``, so a
@@ -144,21 +144,21 @@ def test_container_rid_is_truthy_gated():
 # ---------------------------------------------------------------------------
 
 
-def test_default_fallback_sets_option_when_absent():
+def test_default_fallback_sets_option_when_absent_rust():
     """With no per-call value, a truthy client default suppresses the response body."""
     options = {}
     apply_no_response_on_write_default(options, True)
     assert options[_NO_RESPONSE_KEY] is True
 
 
-def test_default_false_leaves_options_untouched():
+def test_default_false_leaves_options_untouched_rust():
     """A falsy client default (the common case) adds nothing."""
     options = {}
     apply_no_response_on_write_default(options, False)
     assert _NO_RESPONSE_KEY not in options
 
 
-def test_percall_value_wins_over_default():
+def test_percall_value_wins_over_default_rust():
     """An explicit per-call value is never overwritten by the client default --
     including an explicit ``False`` that asks for the body back."""
     options_false = {_NO_RESPONSE_KEY: False}
@@ -230,7 +230,7 @@ def _patch_options(*, default, kwargs):
 _BUILDERS = (_create_options, _upsert_options, _replace_options, _patch_options)
 
 
-def test_client_default_suppresses_echo_on_every_write_builder():
+def test_client_default_suppresses_echo_on_every_write_builder_rust():
     """Each write builder honours a truthy client default when the call passes
     no per-call ``no_response``."""
     for make_headers in _BUILDERS:
@@ -238,7 +238,7 @@ def test_client_default_suppresses_echo_on_every_write_builder():
         assert headers.get(_NO_RESPONSE_KEY) is True, make_headers.__name__
 
 
-def test_no_default_emits_no_suppression_header_on_every_write_builder():
+def test_no_default_emits_no_suppression_header_on_every_write_builder_rust():
     """With the default off and no per-call value, no suppression header is
     added -- the driver returns the body by default."""
     for make_headers in _BUILDERS:
@@ -246,7 +246,7 @@ def test_no_default_emits_no_suppression_header_on_every_write_builder():
         assert _NO_RESPONSE_KEY not in headers, make_headers.__name__
 
 
-def test_percall_no_response_false_beats_client_default_on_every_write_builder():
+def test_percall_no_response_false_beats_client_default_on_every_write_builder_rust():
     """An explicit per-call ``no_response=False`` still gets the body back even
     when the client default is on."""
     for make_headers in _BUILDERS:

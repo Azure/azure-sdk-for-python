@@ -77,7 +77,7 @@ def completion(row, **changes):
     }
 
 
-def test_terminal_throttles_not_limited_by_error_detail_buffer(modules):
+def test_terminal_throttles_not_limited_by_error_detail_buffer_rust(modules):
     stats = modules["perf_stats"].Stats()
     for _ in range(2005):
         stats.record_error("ReadItem", "throttled", "", 429)
@@ -94,7 +94,7 @@ def test_terminal_throttles_not_limited_by_error_detail_buffer(modules):
     ("server", "encode"),
     ("component", "encode"),
 ])
-def test_stats_recording_continues_during_window_serialization(modules, monkeypatch, histogram, method):
+def test_stats_recording_continues_during_window_serialization_rust(modules, monkeypatch, histogram, method):
     stats_module = modules["perf_stats"]
     monkeypatch.setattr(stats_module.time, "time", lambda: 1000.0)
 
@@ -153,12 +153,12 @@ def test_stats_recording_continues_during_window_serialization(modules, monkeypa
 
 @pytest.mark.parametrize("value", [float("nan"), float("inf"), -1])
 @pytest.mark.parametrize("method", ["record", "record_ru", "record_server_ms"])
-def test_stats_reject_invalid_measurements(modules, method, value):
+def test_stats_reject_invalid_measurements_rust(modules, method, value):
     with pytest.raises(ValueError):
         getattr(modules["perf_stats"].Stats(), method)("ReadItem", value)
 
 
-def test_latency_ignores_error_completion_and_cleanup_rows(modules):
+def test_latency_ignores_error_completion_and_cleanup_rows_rust(modules):
     row = measurement(modules)
     error = {"record_type": "error", "workload_id": row["workload_id"], "error_message": "failed"}
     cleanup = measurement(modules, operation="CreateCleanupDelete", count=0, errors=1, hist_b64=None)
@@ -170,25 +170,25 @@ def test_latency_ignores_error_completion_and_cleanup_rows(modules):
     assert provenance == (["a" * 40], 0, 1)
 
 
-def test_missing_histogram_is_not_a_fast_p99(modules):
+def test_missing_histogram_is_not_a_fast_p99_rust(modules):
     row = measurement(modules, hist_b64=None)
     cells, _ = modules["latency_report"]._aggregate(Rows([row]), "baseline-", STAMP)
     assert math.isnan(modules["latency_report"]._pctile_ms(cells[("read", "rust")], 99))
 
 
-def test_wrong_histogram_sample_count_fails(modules):
+def test_wrong_histogram_sample_count_fails_rust(modules):
     with pytest.raises(ValueError, match="samples"):
         modules["latency_report"]._aggregate(Rows([measurement(modules, count=99)]), "baseline-", STAMP)
 
 
-def test_missing_retry_evidence_cannot_cancel_positive_counts(modules):
+def test_missing_retry_evidence_cannot_cancel_positive_counts_rust(modules):
     row = measurement(modules, retry_calls=-1)
     next_row = measurement(modules, retry_calls=1, window_id="window-2", elapsed_seconds=120)
     cells, _ = modules["latency_report"]._aggregate(Rows([row, next_row]), "baseline-", STAMP)
     assert cells[("read", "rust")]["retry_calls"] is None
 
 
-def test_ru_average_uses_header_sample_counts_not_success_counts(modules):
+def test_ru_average_uses_header_sample_counts_not_success_counts_rust(modules):
     rows = [
         measurement(modules, ru_sum=10, ru_count=1, mean_ru=10),
         measurement(modules, ru_sum=6, ru_count=2, mean_ru=3),
@@ -199,7 +199,7 @@ def test_ru_average_uses_header_sample_counts_not_success_counts(modules):
 
 
 @pytest.mark.parametrize("backend", ["rust", "core-python"])
-def test_latency_labels_explain_counter_and_charge_coverage(modules, backend):
+def test_latency_labels_explain_counter_and_charge_coverage_rust(modules, backend):
     row = measurement(modules, workload_id=f"baseline-read-{backend}-{STAMP}",
                       config_backend=backend, ru_sum=2, ru_count=1)
     report = modules["latency_report"]
@@ -212,7 +212,7 @@ def test_latency_labels_explain_counter_and_charge_coverage(modules, backend):
         assert "recorded_non_initial= n/a" in text
 
 
-def test_mixed_throughput_counts_shared_window_once(modules):
+def test_mixed_throughput_counts_shared_window_once_rust(modules):
     read = measurement(modules, workload_id=f"mixed-blend-rust-{STAMP}")
     create = {**read, "operation": "CreateItem"}
     per_op, blended, _ = modules["mixed_report"]._aggregate(Rows([read, create]), "mixed-", STAMP)
@@ -221,14 +221,14 @@ def test_mixed_throughput_counts_shared_window_once(modules):
     assert len(per_op) == 2
 
 
-def test_zero_success_error_window_needs_no_histogram(modules):
+def test_zero_success_error_window_needs_no_histogram_rust(modules):
     row = measurement(modules, count=0, errors=1, hist_b64=None)
     cells, _ = modules["latency_report"]._aggregate(Rows([row]), "baseline-", STAMP)
     assert cells[("read", "rust")]["no_hist_windows"] == 0
     assert math.isnan(modules["latency_report"]._pctile_ms(cells[("read", "rust")], 99))
 
 
-def test_cold_samples_deduplicate_process_windows(modules):
+def test_cold_samples_deduplicate_process_windows_rust(modules):
     row = measurement(modules, workload_id=f"cold-read-rust-{STAMP}",
                       cold_first_ms=20, cold_first_n_ms=[20, 5])
     later = {**row, "window_id": "window-2", "cold_first_n_ms": [20, 5, 2]}
@@ -236,22 +236,22 @@ def test_cold_samples_deduplicate_process_windows(modules):
     assert cells[("rust", "read")] == {"firsts": [20], "curves": [[20, 5, 2]]}
 
 
-def test_cold_first_success_does_not_hide_failed_first_call(modules):
+def test_cold_first_success_does_not_hide_failed_first_call_rust(modules):
     row = measurement(modules, workload_id=f"cold-read-rust-{STAMP}", errors=1, cold_first_ms=20)
     with pytest.raises(ValueError, match="first success"):
         modules["coldstart_report"]._aggregate(Rows([row]), "cold-", STAMP)
 
 
-def test_nearest_rank_percentile(modules):
+def test_nearest_rank_percentile_rust(modules):
     assert modules["coldstart_report"]._pct(list(range(1, 11)), 50) == 5
 
 
 @pytest.mark.parametrize("value", ["unknown", "", "branch-main", "none", "xyz12345"])
-def test_invalid_commit_labels_fail_every_report_gate(modules, value):
+def test_invalid_commit_labels_fail_every_report_gate_rust(modules, value):
     assert not modules["perf_driver_commit_gate"].decide([value], 0, 1)[0]
 
 
-def test_partial_unknown_binding_or_wrong_runtime_does_not_pass(modules):
+def test_partial_unknown_binding_or_wrong_runtime_does_not_pass_rust(modules):
     first = measurement(modules)
     unknown = measurement(modules, binding_calls=-1, elapsed_seconds=120, window_id="window-2")
     validator = modules["perf_validate"]
@@ -260,19 +260,19 @@ def test_partial_unknown_binding_or_wrong_runtime_does_not_pass(modules):
     assert not validator.check_backend_execution(Rows([wrong]), "baseline-", STAMP)[0]
 
 
-def test_legacy_actual_class_name_is_accepted(modules):
+def test_legacy_actual_class_name_is_accepted_rust(modules):
     row = measurement(modules, config_backend="core-python", runtime_backend="AsyncLegacyBackend",
                       rust_execute_calls=0, binding_calls=0)
     assert modules["perf_validate"].check_backend_execution(Rows([row]), "baseline-", STAMP)[0]
 
 
 @pytest.mark.parametrize("name", ["BindingAdapter", "AsyncBindingAdapter", "RustBinding", "AsyncRustBinding"])
-def test_historical_and_current_rust_class_labels_are_accepted(modules, name):
+def test_historical_and_current_rust_class_labels_are_accepted_rust(modules, name):
     row = measurement(modules, runtime_backend=name)
     assert modules["perf_validate"].check_backend_execution(Rows([row]), "baseline-", STAMP)[0]
 
 
-def test_profiler_reads_private_process_counters(modules):
+def test_profiler_reads_private_process_counters_rust(modules):
     counters = importlib.import_module("perf_backend_counters")
     from azure.cosmos import _rust
     for kind in ("operation", "attempt", "retry"):
@@ -280,7 +280,7 @@ def test_profiler_reads_private_process_counters(modules):
         assert getattr(counters, f"binding_{kind}_count")() == expected
 
 
-def test_final_missing_window_and_entire_cell_fail(modules):
+def test_final_missing_window_and_entire_cell_fail_rust(modules):
     row = measurement(modules)
     validator = modules["perf_validate"]
     assert validator.check_completion(Rows([row, completion(row)]), "baseline-", STAMP)[0]
@@ -293,25 +293,25 @@ def test_final_missing_window_and_entire_cell_fail(modules):
         [row["workload_id"], f"baseline-read-core-python-{STAMP}"])[0]
 
 
-def test_empty_data_does_not_pass_quality_or_backend_gate(modules):
+def test_empty_data_does_not_pass_quality_or_backend_gate_rust(modules):
     rows = Rows([{"record_type": "completion"}])
     assert not modules["perf_validate"].check_quality(rows, "", "", ["rust"])[0]
     assert not modules["perf_validate"].check_backend_execution(rows, "", "")[0]
 
 
-def test_reporter_failure_warning_detected(modules, tmp_path):
+def test_reporter_failure_warning_detected_rust(modules, tmp_path):
     (tmp_path / "cell.log").write_text("PerfReporter final flush failed: network error\n")
     assert not modules["perf_validate"].check_warnings(str(tmp_path))[0]
 
 
-def test_mixed_continuity_deduplicates_windows(modules):
+def test_mixed_continuity_deduplicates_windows_rust(modules):
     row = measurement(modules)
     other = {**row, "operation": "CreateItem"}
     ok, lines = modules["perf_validate"].check_continuity(Rows([row, other]), "baseline-", STAMP, 60)
     assert ok and "rows=1" in lines[0]
 
 
-def test_reporter_emits_fractional_timeout_and_completion(modules, monkeypatch):
+def test_reporter_emits_fractional_timeout_and_completion_rust(modules, monkeypatch):
     monkeypatch.setenv("COSMOS_REQUEST_TIMEOUT", "1.5")
     stats = modules["perf_stats"].Stats()
     config = {"report_interval": 60, "workload_id": f"baseline-read-rust-{STAMP}",
@@ -326,7 +326,7 @@ def test_reporter_emits_fractional_timeout_and_completion(modules, monkeypatch):
     assert row["process_id"] == final["process_id"]
 
 
-def test_reporter_failed_write_fails_stop(modules):
+def test_reporter_failed_write_fails_stop_rust(modules):
     class Broken(Rows):
         def upsert_item(self, row):
             raise OSError("sink unavailable")
@@ -339,7 +339,7 @@ def test_reporter_failed_write_fails_stop(modules):
         reporter.stop()
 
 
-def test_failed_sampling_cannot_be_reported_as_zero_memory(modules, monkeypatch):
+def test_failed_sampling_cannot_be_reported_as_zero_memory_rust(modules, monkeypatch):
     reporter_module = modules["perf_reporter"]
     stats = modules["perf_stats"].Stats()
     reporter = reporter_module.PerfReporter(
@@ -354,7 +354,7 @@ def test_failed_sampling_cannot_be_reported_as_zero_memory(modules, monkeypatch)
     assert reporter._container.rows == []
 
 
-def test_reporter_startup_failure_is_sticky(modules, monkeypatch):
+def test_reporter_startup_failure_is_sticky_rust(modules, monkeypatch):
     module = modules["perf_reporter"]
     reporter = module.PerfReporter(modules["perf_stats"].Stats(), {})
     monkeypatch.setattr(module, "_get_cpu_percent", lambda process: (_ for _ in ()).throw(OSError("denied")))
@@ -362,20 +362,20 @@ def test_reporter_startup_failure_is_sticky(modules, monkeypatch):
     assert isinstance(reporter._failure, OSError)
 
 
-def test_mixed_quality_does_not_hide_a_failing_operation(modules):
+def test_mixed_quality_does_not_hide_a_failing_operation_rust(modules):
     good = measurement(modules)
     failed = {**good, "operation": "CreateItem", "count": 0, "errors": 1, "hist_b64": None}
     assert not modules["perf_validate"].check_quality(Rows([good, failed]), "baseline-", STAMP, ["rust"])[0]
 
 
-def test_fractional_counts_are_rejected(modules):
+def test_fractional_counts_are_rejected_rust(modules):
     with pytest.raises(ValueError, match="integers"):
         list(modules["perf_results"].summary_rows([measurement(modules, count=1.5)]))
 
 
 @pytest.mark.parametrize("name", ["latency_report", "mixed_report", "coldstart_report",
                                  "scale_verdict", "scaleout_report", "leak_verdict"])
-def test_report_cli_rejects_no_measurements(modules, monkeypatch, name):
+def test_report_cli_rejects_no_measurements_rust(modules, monkeypatch, name):
     module = importlib.import_module(name)
     monkeypatch.setattr(module, "_connect", lambda: Rows([{"record_type": "completion"}]))
     monkeypatch.setattr(sys, "argv", [name, "--prefix", "test-", "--stamp", STAMP])
@@ -386,7 +386,7 @@ def test_report_cli_rejects_no_measurements(modules, monkeypatch, name):
 
 @pytest.mark.parametrize("value", ["nan", "inf", "-1"])
 @pytest.mark.parametrize("flag", ["--expected-rps", "--max-p99-ms"])
-def test_latency_cli_rejects_invalid_threshold_before_connecting(modules, monkeypatch, value, flag):
+def test_latency_cli_rejects_invalid_threshold_before_connecting_rust(modules, monkeypatch, value, flag):
     module = modules["latency_report"]
     monkeypatch.setattr(module, "_connect", lambda: pytest.fail("Invalid threshold reached the results account"))
     monkeypatch.setattr(sys, "argv", ["latency_report", flag, value])
@@ -395,7 +395,7 @@ def test_latency_cli_rejects_invalid_threshold_before_connecting(modules, monkey
     assert result.value.code == 2
 
 
-def test_fractional_mix_is_sampled_without_rounding_rare_operation_away(modules, monkeypatch):
+def test_fractional_mix_is_sampled_without_rounding_rare_operation_away_rust(modules, monkeypatch):
     utils = modules["workload_utils"]
     def choose(operations, weights, k):
         assert operations == ["read", "patch"] and weights == [99.5, 0.5] and k == 1
@@ -404,7 +404,7 @@ def test_fractional_mix_is_sampled_without_rounding_rare_operation_away(modules,
     assert utils._mix_counts({"read": 99.5, "patch": 0.5}, 1) == {"patch": 1}
 
 
-def test_fixed_rate_instrumentation_failure_propagates(modules):
+def test_fixed_rate_instrumentation_failure_propagates_rust(modules):
     utils = modules["workload_utils"]
     class BrokenStats(modules["perf_stats"].Stats):
         def record(self, *args, **kwargs):
@@ -421,14 +421,14 @@ def test_fixed_rate_instrumentation_failure_propagates(modules):
         asyncio.run(run())
 
 
-def test_mixed_unknown_throttles_remain_unknown(modules):
+def test_mixed_unknown_throttles_remain_unknown_rust(modules):
     row = measurement(modules, workload_id=f"mixed-blend-rust-{STAMP}")
     del row["throttled_429"]
     _, blended, _ = modules["mixed_report"]._aggregate(Rows([row]), "mixed-", STAMP)
     assert blended["rust"]["throttled_429"] is None
 
 
-def test_cargo_build_details_use_resolved_git_revision(modules, monkeypatch):
+def test_cargo_build_details_use_resolved_git_revision_rust(modules, monkeypatch):
     build_details = importlib.import_module("perf_build_details")
     def metadata(command, **kwargs):
         assert command == ["cargo", "metadata", "--locked", "--offline", "--format-version", "1"]
@@ -441,7 +441,7 @@ def test_cargo_build_details_use_resolved_git_revision(modules, monkeypatch):
 
 
 @pytest.mark.parametrize("source", [None, "path+local", "registry+crates.io", "git+url#short"])
-def test_cargo_build_details_reject_unidentified_source(modules, monkeypatch, source):
+def test_cargo_build_details_reject_unidentified_source_rust(modules, monkeypatch, source):
     build_details = importlib.import_module("perf_build_details")
     monkeypatch.setattr(build_details.subprocess, "check_output", lambda *args, **kwargs:
                         json.dumps({"packages": [{"name": "azure_data_cosmos_driver", "source": source}]}))
@@ -454,7 +454,7 @@ def test_cargo_build_details_reject_unidentified_source(modules, monkeypatch, so
     "tests/workloads/profiling_config.env.template",
     "tests/workloads/workload_config_helpers.py",
 ])
-def test_source_fingerprint_catches_uncommitted_edits(modules, monkeypatch, tmp_path, relative_path):
+def test_source_fingerprint_catches_uncommitted_edits_rust(modules, monkeypatch, tmp_path, relative_path):
     build_details = importlib.import_module("perf_build_details")
     monkeypatch.setattr(build_details, "PACKAGE_ROOT", tmp_path)
     source = tmp_path / relative_path
@@ -467,7 +467,7 @@ def test_source_fingerprint_catches_uncommitted_edits(modules, monkeypatch, tmp_
 
 
 @pytest.mark.parametrize("profiling_session_id", [None, STAMP, "20260918-120000000"])
-def test_manifest_escapes_values_and_excludes_credentials(modules, monkeypatch, tmp_path, profiling_session_id):
+def test_manifest_escapes_values_and_excludes_credentials_rust(modules, monkeypatch, tmp_path, profiling_session_id):
     manifest = importlib.import_module("perf_manifest")
     monkeypatch.setattr(manifest, "driver_commit", lambda: "a" * 40)
     monkeypatch.setattr(manifest, "source_digest", lambda: "b" * 64)
@@ -497,7 +497,7 @@ def test_manifest_escapes_values_and_excludes_credentials(modules, monkeypatch, 
 
 
 @pytest.mark.parametrize("memory", [None, 0, -1, float("nan"), float("inf")])
-def test_leak_report_rejects_unavailable_memory(modules, monkeypatch, memory):
+def test_leak_report_rejects_unavailable_memory_rust(modules, monkeypatch, memory):
     module = importlib.import_module("leak_verdict")
     row = measurement(modules, workload_id=f"leak-read-rust-{STAMP}", memory_bytes=memory)
     monkeypatch.setattr(module, "_connect", lambda: Rows([row]))
@@ -536,7 +536,7 @@ def embedded_python(script, index=0):
 
 
 @pytest.mark.parametrize("selection", ["default", "candidate"])
-def test_profiling_environment_selection_survives_child_processes(tmp_path, selection):
+def test_profiling_environment_selection_survives_child_processes_rust(tmp_path, selection):
     shutil.copyfile(WORKLOADS / "profiling_common.sh", tmp_path / "profiling_common.sh")
     for name in ("venvs/perfdrill", "candidate environment"):
         fake_profiling_environment(tmp_path, name)
@@ -564,7 +564,7 @@ def test_profiling_environment_selection_survives_child_processes(tmp_path, sele
 @pytest.mark.parametrize("defect", [
     "empty", "relative", "missing", "interpreter", "failed", "wrong", "unset", "wrong_path",
 ])
-def test_profiling_environment_selection_fails_without_falling_back(tmp_path, defect):
+def test_profiling_environment_selection_fails_without_falling_back_rust(tmp_path, defect):
     shutil.copyfile(WORKLOADS / "profiling_common.sh", tmp_path / "profiling_common.sh")
     activate = fake_profiling_environment(tmp_path, "candidate")
     scripts = {
@@ -593,7 +593,7 @@ def test_profiling_environment_selection_fails_without_falling_back(tmp_path, de
 
 @pytest.mark.parametrize("field", ["python_executable", "python_environment"])
 @pytest.mark.parametrize("matching", [False, True])
-def test_session_validation_checks_the_recorded_python_environment(
+def test_session_validation_checks_the_recorded_python_environment_rust(
     modules, monkeypatch, tmp_path, field, matching
 ):
     details = importlib.import_module("perf_build_details")
@@ -629,7 +629,7 @@ def test_session_validation_checks_the_recorded_python_environment(
 @pytest.mark.parametrize("manifest_id", [None, STAMP, "20260918-120000000"])
 @pytest.mark.parametrize("configuration_hash", [None, "same", "changed"])
 @pytest.mark.parametrize("saved_names", ["current", "legacy", "conflicting"])
-def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id, configuration_hash, saved_names):
+def test_profiling_session_identifier_restore_rust(tmp_path, saved_name, manifest_id, configuration_hash, saved_names):
     shutil.copyfile(WORKLOADS / "profiling_common.sh", tmp_path / "profiling_common.sh")
     folder = tmp_path / "session"
     folder.mkdir()
@@ -691,7 +691,7 @@ def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id,
     assert before == {path.name: path.read_bytes() for path in folder.iterdir()}
 
 
-def test_profiling_session_creation_uses_explicit_identifier(tmp_path):
+def test_profiling_session_creation_uses_explicit_identifier_rust(tmp_path):
     shutil.copyfile(WORKLOADS / "profiling_create_session.sh", tmp_path / "profiling_create_session.sh")
     (tmp_path / "profiling_common.sh").write_text(
         "profiling_validate_phase() { return 0; }\n"
@@ -733,7 +733,7 @@ def test_profiling_session_creation_uses_explicit_identifier(tmp_path):
 
 @pytest.mark.parametrize("name", ["latency_report", "client_service_duration_report", "perf_validate"])
 @pytest.mark.parametrize("flag", ["--profiling-session-id", "--run-id", "--stamp"])
-def test_profiling_report_identifier_selects_existing_rows(modules, monkeypatch, name, flag):
+def test_profiling_report_identifier_selects_existing_rows_rust(modules, monkeypatch, name, flag):
     module = modules[name]
     selections = []
 
@@ -755,7 +755,7 @@ def test_profiling_report_identifier_selects_existing_rows(modules, monkeypatch,
 
 
 @pytest.mark.parametrize("name", ["latency_report", "client_service_duration_report", "perf_validate"])
-def test_profiling_report_rejects_conflicting_identifier_flags(modules, monkeypatch, name):
+def test_profiling_report_rejects_conflicting_identifier_flags_rust(modules, monkeypatch, name):
     def unexpected_connection():
         pytest.fail("Conflicting identifiers must fail before contacting the results container")
 
@@ -769,7 +769,7 @@ def test_profiling_report_rejects_conflicting_identifier_flags(modules, monkeypa
 
 
 @pytest.mark.parametrize("outcome", ["pass", "fail", "missing", "query-error", "container-error"])
-def test_integrity_report_closes_results_client(modules, monkeypatch, outcome):
+def test_integrity_report_closes_results_client_rust(modules, monkeypatch, outcome):
     module = modules["perf_validate"]
     events = []
 
@@ -816,7 +816,7 @@ def test_integrity_report_closes_results_client(modules, monkeypatch, outcome):
 
 
 @pytest.mark.parametrize("outcome", [0, 1, 2, "query-error", "container-error"])
-def test_latency_report_closes_results_client(modules, monkeypatch, outcome):
+def test_latency_report_closes_results_client_rust(modules, monkeypatch, outcome):
     module = modules["latency_report"]
     events = []
 
@@ -856,7 +856,7 @@ def test_latency_report_closes_results_client(modules, monkeypatch, outcome):
     assert events == ["enter", "close"]
 
 
-def test_build_check_accepts_current_counter_exports(monkeypatch):
+def test_build_check_accepts_current_counter_exports_rust(monkeypatch):
     import types
     import azure.cosmos as sdk
 
@@ -871,7 +871,7 @@ def test_build_check_accepts_current_counter_exports(monkeypatch):
 
 
 @pytest.mark.parametrize("paths", [["/partition_key"], ["/id"], [], ["/partition_key", "/id"], None])
-def test_target_checks_results_container_schema(monkeypatch, paths):
+def test_target_checks_results_container_schema_rust(monkeypatch, paths):
     import azure.cosmos as sdk
     from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
@@ -915,7 +915,7 @@ def test_target_checks_results_container_schema(monkeypatch, paths):
 
 
 @pytest.mark.parametrize("override", [False, True])
-def test_baseline_keeps_validated_target_and_range(tmp_path, override):
+def test_baseline_keeps_validated_target_and_range_rust(tmp_path, override):
     script = "profiling_run_read_baseline.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text(
@@ -1046,7 +1046,7 @@ def read_baseline_batch(folder):
 
 
 @pytest.mark.parametrize("count,backends", [(None, None), ("2", "rust core-python"), ("3", "rust")])
-def test_baseline_batch_isolates_sessions_and_retains_evidence(baseline_batch, count, backends):
+def test_baseline_batch_isolates_sessions_and_retains_evidence_rust(baseline_batch, count, backends):
     folder, env = baseline_batch
     if count is not None:
         env["BASELINE_COMPARISONS"] = count
@@ -1089,7 +1089,7 @@ def test_baseline_batch_isolates_sessions_and_retains_evidence(baseline_batch, c
 @pytest.mark.parametrize("stage,completed", [
     ("process", 2), ("integrity", 2), ("report", 2), ("create", 1), ("changed", 1), ("ambiguous", 1),
 ])
-def test_baseline_batch_stops_after_failure(baseline_batch, stage, completed):
+def test_baseline_batch_stops_after_failure_rust(baseline_batch, stage, completed):
     folder, env = baseline_batch
     env["BATCH_FAIL_STAGE"] = stage
     result = run_baseline_batch(folder, env)
@@ -1105,7 +1105,7 @@ def test_baseline_batch_stops_after_failure(baseline_batch, stage, completed):
     assert "ERROR:" in result.stderr + result.stdout
 
 
-def test_baseline_single_comparison_preserves_original_layout(baseline_batch):
+def test_baseline_single_comparison_preserves_original_layout_rust(baseline_batch):
     folder, env = baseline_batch
     env["BASELINE_COMPARISONS"] = "1"
     result = run_baseline_batch(folder, env)
@@ -1117,7 +1117,7 @@ def test_baseline_single_comparison_preserves_original_layout(baseline_batch):
     assert len((folder / "launched.txt").read_text().splitlines()) == 2
 
 
-def test_baseline_batch_records_interruption(baseline_batch):
+def test_baseline_batch_records_interruption_rust(baseline_batch):
     folder, env = baseline_batch
     env["BATCH_FAIL_STAGE"] = "interrupt"
     result = run_baseline_batch(folder, env)
@@ -1128,7 +1128,7 @@ def test_baseline_batch_records_interruption(baseline_batch):
     assert len(rows) == 1 and rows[0][3:] == ["interrupted", "143"]
 
 
-def test_baseline_batch_refuses_existing_evidence(baseline_batch):
+def test_baseline_batch_refuses_existing_evidence_rust(baseline_batch):
     folder, env = baseline_batch
     env["BASELINE_COMPARISONS"] = "2"
     first = run_baseline_batch(folder, env)
@@ -1143,7 +1143,7 @@ def test_baseline_batch_refuses_existing_evidence(baseline_batch):
 
 
 @pytest.mark.parametrize("count", ["", "0", "-1", "1.5", "abc", "05", "1+1", "18446744073709551617"])
-def test_baseline_rejects_invalid_comparison_count_before_setup(tmp_path, count):
+def test_baseline_rejects_invalid_comparison_count_before_setup_rust(tmp_path, count):
     script = "profiling_run_read_baseline.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     result = subprocess.run(
@@ -1178,7 +1178,7 @@ def profiling_config_test_setup(tmp_path):
 
 
 @pytest.mark.parametrize("inherited", [None, "250", "350", ""])
-def test_profiling_config_is_authoritative(tmp_path, inherited):
+def test_profiling_config_is_authoritative_rust(tmp_path, inherited):
     import hashlib
     config, env, prefix = profiling_config_test_setup(tmp_path)
     if inherited is not None:
@@ -1202,7 +1202,7 @@ def test_profiling_config_is_authoritative(tmp_path, inherited):
     ("true", "true", None), ("false", "false", None),
     ("invalid", None, None), (None, "invalid", None), ("", None, None),
 ])
-def test_lifecycle_python_and_shell_conversion(modules, tmp_path, current, legacy, expected):
+def test_lifecycle_python_and_shell_conversion_rust(modules, tmp_path, current, legacy, expected):
     helper = importlib.import_module("workload_config_helpers")
     values = {}
     if current is not None:
@@ -1238,7 +1238,7 @@ def test_lifecycle_python_and_shell_conversion(modules, tmp_path, current, legac
     (None, None, "true", None, None), (None, None, None, "false", None),
     ("true", None, None, "invalid", None), (None, "", None, None, None),
 ])
-def test_lifecycle_config_file_remains_authoritative(
+def test_lifecycle_config_file_remains_authoritative_rust(
         tmp_path, file_current, file_legacy, inherited_current, inherited_legacy, expected):
     config, env, prefix = profiling_config_test_setup(tmp_path)
     text = config.read_text().replace("export WORKLOAD_MANAGE_CLIENT_LIFECYCLE=true\n", "")
@@ -1268,7 +1268,7 @@ def test_lifecycle_config_file_remains_authoritative(
     ("PROFILING_CHECK_PARTITION_KEY_VALUE", "PROFILING_PROOF_PK"),
 ])
 @pytest.mark.parametrize("current_value", [None, "saved-value", "conflicting-value"])
-def test_profiling_deprecated_names_are_explicit(tmp_path, current, legacy, current_value):
+def test_profiling_deprecated_names_are_explicit_rust(tmp_path, current, legacy, current_value):
     _, env, _ = profiling_config_test_setup(tmp_path)
     env.pop("ARTIFACTS", None)
     env.pop("PROFILE_STAMP", None)
@@ -1290,7 +1290,7 @@ def test_profiling_deprecated_names_are_explicit(tmp_path, current, legacy, curr
 @pytest.mark.parametrize("current,legacy,skip_close", [
     ("true", None, False), ("false", None, True), (None, "false", False), (None, "true", True),
 ])
-def test_reporter_preserves_saved_skip_close_semantics(modules, monkeypatch, current, legacy, skip_close):
+def test_reporter_preserves_saved_skip_close_semantics_rust(modules, monkeypatch, current, legacy, skip_close):
     for name, value in (("WORKLOAD_MANAGE_CLIENT_LIFECYCLE", current), ("WORKLOAD_SKIP_CLOSE", legacy)):
         monkeypatch.delenv(name, raising=False)
         if value is not None:
@@ -1306,7 +1306,7 @@ def test_reporter_preserves_saved_skip_close_semantics(modules, monkeypatch, cur
 
 @pytest.mark.parametrize("manage", [True, False])
 @pytest.mark.parametrize("read_fails", [True, False])
-def test_workload_lifecycle_controls_entry_and_exit(modules, monkeypatch, manage, read_fails):
+def test_workload_lifecycle_controls_entry_and_exit_rust(modules, monkeypatch, manage, read_fails):
     from types import SimpleNamespace
     from unittest.mock import AsyncMock
 
@@ -1362,7 +1362,7 @@ def test_workload_lifecycle_controls_entry_and_exit(modules, monkeypatch, manage
     "PROFILING_PROOF_DATABASE", "PROFILING_PROOF_CONTAINER", "PROFILING_PROOF_PARTITION_KEY",
     "MEMRAY_ARRIVAL_RATE", "EXPECT_DATABASE",
 ])
-def test_profiling_config_rejects_missing_invalid_and_removed_settings(tmp_path, invalid):
+def test_profiling_config_rejects_missing_invalid_and_removed_settings_rust(tmp_path, invalid):
     config, env, prefix = profiling_config_test_setup(tmp_path)
     text = config.read_text()
     if invalid == "missing-file":
@@ -1393,7 +1393,7 @@ def test_profiling_config_rejects_missing_invalid_and_removed_settings(tmp_path,
     ("--confirm-target https://test.invalid/ db other", False),
     ("--confirm-target https://test.invalid db items", True),
 ])
-def test_target_confirmation_precedes_service_access(tmp_path, arguments, valid):
+def test_target_confirmation_precedes_service_access_rust(tmp_path, arguments, valid):
     _, env, prefix = profiling_config_test_setup(tmp_path)
     result = subprocess.run(
         [bash_executable(), "-c", prefix + 'profiling_load_config || exit $?\n'
@@ -1408,7 +1408,7 @@ def test_target_confirmation_precedes_service_access(tmp_path, arguments, valid)
     ("WORKLOAD_NUM_CLIENTS", "2"), ("WORKLOAD_ARRIVAL_RATE", "0"),
     ("WORKLOAD_USE_PROXY", "true"), ("WORKLOAD_MANAGE_CLIENT_LIFECYCLE", "false"), ("PERF_ENABLED", "false"),
 ])
-def test_read_workload_does_not_silently_replace_configuration(tmp_path, setting, value):
+def test_read_workload_does_not_silently_replace_configuration_rust(tmp_path, setting, value):
     config, env, prefix = profiling_config_test_setup(tmp_path)
     config.write_text(config.read_text() + f"\nexport {setting}={value}\n")
     result = subprocess.run(
@@ -1420,7 +1420,7 @@ def test_read_workload_does_not_silently_replace_configuration(tmp_path, setting
 
 
 @pytest.mark.parametrize("script", ["profiling_check_target.sh", "profiling_prepare_test_items.sh"])
-def test_target_scripts_refuse_unconfirmed_destination_before_python(tmp_path, script):
+def test_target_scripts_refuse_unconfirmed_destination_before_python_rust(tmp_path, script):
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text(
         "profiling_load_env() { :; }\n"
@@ -1432,7 +1432,7 @@ def test_target_scripts_refuse_unconfirmed_destination_before_python(tmp_path, s
     assert not (tmp_path / "live.txt").exists()
 
 
-def test_source_update_requires_explicit_commit_before_git(tmp_path):
+def test_source_update_requires_explicit_commit_before_git_rust(tmp_path):
     script = "profiling_update_source.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text(
@@ -1444,7 +1444,7 @@ def test_source_update_requires_explicit_commit_before_git(tmp_path):
 
 
 @pytest.mark.parametrize("status_rc", [0, 1, 2])
-def test_source_update_selects_exact_commit_without_building(tmp_path, status_rc):
+def test_source_update_selects_exact_commit_without_building_rust(tmp_path, status_rc):
     script = "profiling_update_source.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     commit = "a" * 40
@@ -1469,7 +1469,7 @@ def test_source_update_selects_exact_commit_without_building(tmp_path, status_rc
 
 
 @pytest.mark.parametrize("preparation_rc", [0, 7])
-def test_experiment_preparation_records_session_before_items(tmp_path, preparation_rc):
+def test_experiment_preparation_records_session_before_items_rust(tmp_path, preparation_rc):
     script = "profiling_prepare_experiment.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text(
@@ -1497,7 +1497,7 @@ def test_experiment_preparation_records_session_before_items(tmp_path, preparati
 
 
 @pytest.mark.parametrize("arguments", ["", "first second", "../other"])
-def test_activation_requires_explicit_session_before_loading_environment(tmp_path, arguments):
+def test_activation_requires_explicit_session_before_loading_environment_rust(tmp_path, arguments):
     shutil.copyfile(WORKLOADS / "profiling_load_session.sh", tmp_path / "profiling_load_session.sh")
     (tmp_path / "profiling_common.sh").write_text(
         "profiling_load_env() { echo loaded >> loaded.txt; }\n", encoding="utf-8")
@@ -1511,7 +1511,7 @@ def test_activation_requires_explicit_session_before_loading_environment(tmp_pat
 @pytest.mark.parametrize("script", [
     "profiling_run_read_baseline.sh", "profiling_capture_py_spy.sh", "profiling_capture_memray.sh",
 ])
-def test_measurement_scripts_do_not_select_newest_session(tmp_path, script):
+def test_measurement_scripts_do_not_select_newest_session_rust(tmp_path, script):
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text("", encoding="utf-8")
     (tmp_path / "profiling_load_session.sh").write_text("echo selected >> selected.txt\n", encoding="utf-8")
@@ -1526,7 +1526,7 @@ def test_measurement_scripts_do_not_select_newest_session(tmp_path, script):
 
 
 @pytest.mark.parametrize("script", ["profiling_capture_py_spy.sh", "profiling_capture_memray.sh"])
-def test_captures_preserve_configuration_before_launch(tmp_path, script):
+def test_captures_preserve_configuration_before_launch_rust(tmp_path, script):
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text(
         "profiling_load_env() { :; }\nprofiling_load_session() { :; }\n"
@@ -1558,7 +1558,7 @@ def test_captures_preserve_configuration_before_launch(tmp_path, script):
     ("behind in sampling\nSamples: 21101 Errors: 0", False),
     ("failed to read\nSamples: 21101 Errors: 0", False),
 ])
-def test_py_spy_capture_requires_error_free_sample_summary(tmp_path, summary, accepted):
+def test_py_spy_capture_requires_error_free_sample_summary_rust(tmp_path, summary, accepted):
     script = (WORKLOADS / "profiling_capture_py_spy.sh").read_text(encoding="utf-8")
     start = script.index('if [[ "${_py_spy_failed}" -eq 0 ]]; then\n'
                          '  echo "=== Recording Python-visible stacks')
@@ -1585,7 +1585,7 @@ def test_py_spy_capture_requires_error_free_sample_summary(tmp_path, summary, ac
 
 
 @pytest.mark.parametrize("authorized", [True, False])
-def test_perf_capture_uses_command_permission_and_never_password_validation(tmp_path, authorized):
+def test_perf_capture_uses_command_permission_and_never_password_validation_rust(tmp_path, authorized):
     shutil.copyfile(WORKLOADS / "profiling_capture_perf.sh", tmp_path / "profiling_capture_perf.sh")
     (tmp_path / "smaps-before.txt").write_text("before\n", encoding="utf-8")
     (tmp_path / "profiling_common.sh").write_text(
@@ -1630,7 +1630,7 @@ def test_perf_capture_uses_command_permission_and_never_password_validation(tmp_
         assert (tmp_path / "profile-integrity.txt").exists()
 
 
-def test_transport_check_rejects_saved_target_mismatch_before_read(tmp_path):
+def test_transport_check_rejects_saved_target_mismatch_before_read_rust(tmp_path):
     script = "profiling_check_rust_transport.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text(
@@ -1651,7 +1651,7 @@ def test_transport_check_rejects_saved_target_mismatch_before_read(tmp_path):
 
 
 @pytest.mark.parametrize("environment", ["venvs/perfdrill", "candidate environment"])
-def test_build_needs_python_activation_but_not_cosmos_configuration(tmp_path, environment):
+def test_build_needs_python_activation_but_not_cosmos_configuration_rust(tmp_path, environment):
     config, env, prefix = profiling_config_test_setup(tmp_path)
     config.unlink()
     fake_profiling_environment(tmp_path, environment)
@@ -1675,7 +1675,7 @@ def test_build_needs_python_activation_but_not_cosmos_configuration(tmp_path, en
 
 
 @pytest.mark.parametrize("script", ["run_coldstart.sh", "run_docsize.sh", "run_mixed.sh"])
-def test_auxiliary_workloads_use_the_selected_environment(tmp_path, script):
+def test_auxiliary_workloads_use_the_selected_environment_rust(tmp_path, script):
     for name in (script, "profiling_common.sh"):
         shutil.copyfile(WORKLOADS / name, tmp_path / name)
     fake_profiling_environment(tmp_path, "candidate environment")
@@ -1696,7 +1696,7 @@ def test_auxiliary_workloads_use_the_selected_environment(tmp_path, script):
     assert (tmp_path / "selected.txt").read_text().strip().endswith("/candidate environment")
 
 
-def test_build_finds_common_helpers_after_changing_to_package_directory(tmp_path):
+def test_build_finds_common_helpers_after_changing_to_package_directory_rust(tmp_path):
     _, env, _ = profiling_config_test_setup(tmp_path)
     activate = fake_profiling_environment(tmp_path)
     activate.write_text(
@@ -1722,7 +1722,7 @@ def test_build_finds_common_helpers_after_changing_to_package_directory(tmp_path
     assert len((tmp_path / "helper-paths.txt").read_text().splitlines()) == 2
 
 
-def test_profiling_config_accepts_fractional_timeout(tmp_path):
+def test_profiling_config_accepts_fractional_timeout_rust(tmp_path):
     config, env, prefix = profiling_config_test_setup(tmp_path)
     config.write_text(config.read_text().replace("COSMOS_REQUEST_TIMEOUT=30", "COSMOS_REQUEST_TIMEOUT=1.5"))
     result = subprocess.run([bash_executable(), "-c", prefix + "profiling_load_config"],
@@ -1731,7 +1731,7 @@ def test_profiling_config_accepts_fractional_timeout(tmp_path):
 
 
 @pytest.mark.parametrize("rate", ["250", "333"])
-def test_credentials_file_cannot_replace_experiment_configuration(tmp_path, rate):
+def test_credentials_file_cannot_replace_experiment_configuration_rust(tmp_path, rate):
     _, env, prefix = profiling_config_test_setup(tmp_path)
     fake_profiling_environment(tmp_path)
     (tmp_path / "perf_secrets.env").write_text(
@@ -1747,7 +1747,7 @@ def test_credentials_file_cannot_replace_experiment_configuration(tmp_path, rate
 
 @pytest.mark.parametrize("force_seed", [False, True])
 @pytest.mark.parametrize("readback_rc", [0, 1, 3, 4])
-def test_seed_requires_full_readback(tmp_path, force_seed, readback_rc):
+def test_seed_requires_full_readback_rust(tmp_path, force_seed, readback_rc):
     script = "profiling_prepare_test_items.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_check_target.sh").write_text("exit 0\n", encoding="utf-8")
@@ -1774,7 +1774,7 @@ def test_seed_requires_full_readback(tmp_path, force_seed, readback_rc):
 
 
 @pytest.mark.parametrize("check_rc", [0, 1, 3])
-def test_seed_does_not_write_when_probe_passes_or_crashes(tmp_path, check_rc):
+def test_seed_does_not_write_when_probe_passes_or_crashes_rust(tmp_path, check_rc):
     script = "profiling_prepare_test_items.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_check_target.sh").write_text("exit 0\n", encoding="utf-8")
@@ -1796,7 +1796,7 @@ def test_seed_does_not_write_when_probe_passes_or_crashes(tmp_path, check_rc):
 
 
 @pytest.mark.parametrize("outcome,expected_rc", [("present", 0), ("missing", 4), ("permission", 3)])
-def test_data_probe_distinguishes_missing_items_from_failure(monkeypatch, outcome, expected_rc):
+def test_data_probe_distinguishes_missing_items_from_failure_rust(monkeypatch, outcome, expected_rc):
     import azure.cosmos as sdk
     from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceNotFoundError
 
@@ -1846,7 +1846,7 @@ def test_data_probe_distinguishes_missing_items_from_failure(monkeypatch, outcom
     ("TRANSPORT VERDICT: gateway_v2 -- stubbed evidence", 0, 3, 2),
     ("interpreter crashed before a verdict", 1, 0, 2),
 ])
-def test_rust_transport_check_validates_exit_and_evidence(tmp_path, verdict, python_rc, tee_rc, expected):
+def test_rust_transport_check_validates_exit_and_evidence_rust(tmp_path, verdict, python_rc, tee_rc, expected):
     script = "profiling_check_rust_transport.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text(
@@ -1870,7 +1870,7 @@ def test_rust_transport_check_validates_exit_and_evidence(tmp_path, verdict, pyt
     ("gateway_v2", 0), ("gateway", 1), ("mixed", 2), ("missing", 2),
     ("legacy", 2), ("read_failure", 2), ("no_binding_entry", 2), ("no_requests", 2),
 ])
-def test_rust_transport_check_requires_rust_read_evidence(monkeypatch, capsys, scenario, expected_rc):
+def test_rust_transport_check_requires_rust_read_evidence_rust(monkeypatch, capsys, scenario, expected_rc):
     from types import SimpleNamespace
     import azure.cosmos as sdk
     import azure.cosmos.aio as async_sdk
@@ -1935,7 +1935,7 @@ def test_rust_transport_check_requires_rust_read_evidence(monkeypatch, capsys, s
     assert f"TRANSPORT VERDICT: {expected_verdict} --" in capsys.readouterr().out
 
 
-def test_throughput_launcher_keeps_earlier_child_failure(tmp_path):
+def test_throughput_launcher_keeps_earlier_child_failure_rust(tmp_path):
     script = "run_throughput_sweep.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "perf_drill_defaults.sh").write_text(
@@ -1958,7 +1958,7 @@ def test_throughput_launcher_keeps_earlier_child_failure(tmp_path):
     assert result.returncode == 1, result.stdout + result.stderr
 
 
-def test_duplicate_processes_cannot_reuse_one_workload_id(modules):
+def test_duplicate_processes_cannot_reuse_one_workload_id_rust(modules):
     row = measurement(modules)
     second = {**row, "process_id": "process-2", "window_id": "other-window"}
     ok, lines = modules["perf_validate"].check_completion(
@@ -1966,7 +1966,7 @@ def test_duplicate_processes_cannot_reuse_one_workload_id(modules):
     assert not ok and any("reused" in line for line in lines)
 
 
-def test_wrong_python_sdk_checkout_is_rejected(modules, monkeypatch, tmp_path):
+def test_wrong_python_sdk_checkout_is_rejected_rust(modules, monkeypatch, tmp_path):
     import azure.cosmos as sdk
     build_details = importlib.import_module("perf_build_details")
     monkeypatch.setattr(sdk, "__file__", str(tmp_path / "__init__.py"))
@@ -1974,7 +1974,7 @@ def test_wrong_python_sdk_checkout_is_rejected(modules, monkeypatch, tmp_path):
         build_details.extension_details()
 
 
-def test_existing_run_directory_is_not_reused(tmp_path):
+def test_existing_run_directory_is_not_reused_rust(tmp_path):
     target = tmp_path / "run"
     target.mkdir()
     marker = target / "evidence.txt"
@@ -1996,7 +1996,7 @@ def test_existing_run_directory_is_not_reused(tmp_path):
     ("scaleout_report", "scaleout-", "read-rust-c1-N1-r1-p1"),
     ("leak_verdict", "leak-", "read-rust"),
 ])
-def test_report_cli_accepts_valid_measurement_population(modules, monkeypatch, name, prefix, middle):
+def test_report_cli_accepts_valid_measurement_population_rust(modules, monkeypatch, name, prefix, middle):
     module = importlib.import_module(name)
     rows = [measurement(
         modules, workload_id=f"{prefix}{middle}-{STAMP}", window_id=f"window-{i}", window_index=i,
@@ -2011,14 +2011,14 @@ def test_report_cli_accepts_valid_measurement_population(modules, monkeypatch, n
     assert result.value.code == 0
 
 
-def test_read_preparation_does_not_generate_write_body(modules, monkeypatch):
+def test_read_preparation_does_not_generate_write_body_rust(modules, monkeypatch):
     utils = modules["workload_utils"]
     monkeypatch.setattr(utils, "create_random_item", lambda: pytest.fail("Read generated a write body"))
     keys = utils.get_existing_random_keys()
     assert set(keys) == {"id", "pk"}
 
 
-def test_fixed_rate_keeps_lateness_over_five_seconds(modules, monkeypatch):
+def test_fixed_rate_keeps_lateness_over_five_seconds_rust(modules, monkeypatch):
     utils = modules["workload_utils"]
     monkeypatch.setattr(utils, "WORKLOAD_MIX", {})
     clock_reads = iter([0])
@@ -2061,7 +2061,7 @@ def schedule_record(**changes):
 
 
 @pytest.mark.parametrize("failed", [False, True])
-def test_fixed_rate_records_delay_sdk_and_total_per_outcome(modules, monkeypatch, failed):
+def test_fixed_rate_records_delay_sdk_and_total_per_outcome_rust(modules, monkeypatch, failed):
     utils = modules["workload_utils"]
     times = iter([60_000_000, 65_000_000])
     monkeypatch.setattr(utils.time, "perf_counter_ns", lambda: next(times))
@@ -2086,7 +2086,7 @@ def test_fixed_rate_records_delay_sdk_and_total_per_outcome(modules, monkeypatch
     assert stats.drain_all() == ([], [])
 
 
-def test_total_histogram_is_not_sum_of_component_percentiles(modules):
+def test_total_histogram_is_not_sum_of_component_percentiles_rust(modules):
     stats = modules["perf_stats"].Stats()
     stats.record("ReadItem", 100, delay_before_call_ms=95, sdk_call_ms=5)
     stats.record("ReadItem", 100, delay_before_call_ms=5, sdk_call_ms=95)
@@ -2097,7 +2097,7 @@ def test_total_histogram_is_not_sum_of_component_percentiles(modules):
     assert tails["delay_before_call"] + tails["sdk_call"] > 180
 
 
-def test_fixed_rate_timing_and_schedule_survive_reporter_persistence(modules, monkeypatch):
+def test_fixed_rate_timing_and_schedule_survive_reporter_persistence_rust(modules, monkeypatch):
     monkeypatch.setenv("WORKLOAD_ARRIVAL_RATE", "250")
     monkeypatch.setenv("WORKLOAD_MAX_INFLIGHT", "10")
     monkeypatch.setenv("WORKLOAD_NUM_CLIENTS", "1")
@@ -2117,7 +2117,7 @@ def test_fixed_rate_timing_and_schedule_survive_reporter_persistence(modules, mo
     assert modules["perf_validate"].check_completion(Rows([row, done]), "baseline-", STAMP)[0]
 
 
-def test_ten_slots_hold_eleventh_call_and_stop_drains_only_launched_work(modules, monkeypatch):
+def test_ten_slots_hold_eleventh_call_and_stop_drains_only_launched_work_rust(modules, monkeypatch):
     utils = modules["workload_utils"]
     monkeypatch.setattr(utils, "WORKLOAD_MIX", {})
     clock = {"now": 20_000_000, "first": True}
@@ -2168,7 +2168,7 @@ def test_ten_slots_hold_eleventh_call_and_stop_drains_only_launched_work(modules
 
 
 @pytest.mark.parametrize("cancel", [False, True])
-def test_waiting_for_capacity_stops_without_leaking_slot_or_task(modules, cancel):
+def test_waiting_for_capacity_stops_without_leaking_slot_or_task_rust(modules, cancel):
     utils = modules["workload_utils"]
 
     async def run():
@@ -2192,7 +2192,7 @@ def test_waiting_for_capacity_stops_without_leaking_slot_or_task(modules, cancel
     asyncio.run(run())
 
 
-def test_slot_is_returned_when_stop_and_capacity_arrive_together(modules):
+def test_slot_is_returned_when_stop_and_capacity_arrive_together_rust(modules):
     async def run():
         slots = asyncio.Semaphore(1)
         stop = asyncio.Event()
@@ -2202,7 +2202,7 @@ def test_slot_is_returned_when_stop_and_capacity_arrive_together(modules):
     asyncio.run(run())
 
 
-def test_overflow_is_reported_instead_of_a_clipped_p99(modules, capsys):
+def test_overflow_is_reported_instead_of_a_clipped_p99_rust(modules, capsys):
     row = fixed_rate_row(modules, delay_ms=70_000, sdk_ms=5)
     report = modules["latency_report"]
     cells, _ = report._aggregate(Rows([row]), "baseline-", STAMP)
@@ -2214,7 +2214,7 @@ def test_overflow_is_reported_instead_of_a_clipped_p99(modules, capsys):
     assert "p99=nan" in output
 
 
-def test_unknown_old_overflow_evidence_cannot_hide_known_clipping(modules):
+def test_unknown_old_overflow_evidence_cannot_hide_known_clipping_rust(modules):
     old = measurement(modules)
     del old["latency_overflow_count"]
     clipped = fixed_rate_row(modules, delay_ms=70_000, sdk_ms=1)
@@ -2225,7 +2225,7 @@ def test_unknown_old_overflow_evidence_cannot_hide_known_clipping(modules):
         assert math.isnan(report._pctile_ms(cell, 99))
 
 
-def test_component_histograms_pool_across_reporting_windows(modules):
+def test_component_histograms_pool_across_reporting_windows_rust(modules):
     first = fixed_rate_row(modules, delay_ms=1, sdk_ms=2)
     second = fixed_rate_row(modules, delay_ms=20, sdk_ms=5,
                             window_index=2, window_id="window-2", elapsed_seconds=120)
@@ -2237,7 +2237,7 @@ def test_component_histograms_pool_across_reporting_windows(modules):
     assert cell["schedule"]["launched_count"] == 2
 
 
-def test_primary_sdk_latency_pools_components_without_mutating_total(modules):
+def test_primary_sdk_latency_pools_components_without_mutating_total_rust(modules):
     rows = [fixed_rate_row(modules, delay_ms=20, sdk_ms=2),
             fixed_rate_row(modules, delay_ms=40, sdk_ms=8)]
     report = modules["latency_report"]
@@ -2253,7 +2253,7 @@ def test_primary_sdk_latency_pools_components_without_mutating_total(modules):
 
 
 @pytest.mark.parametrize("missing", ["all", "one"])
-def test_primary_sdk_latency_never_falls_back_to_total(modules, missing):
+def test_primary_sdk_latency_never_falls_back_to_total_rust(modules, missing):
     first = fixed_rate_row(modules)
     del first["fixed_rate_timings"]
     rows = [first] if missing == "all" else [first, fixed_rate_row(modules)]
@@ -2267,7 +2267,7 @@ def test_primary_sdk_latency_never_falls_back_to_total(modules, missing):
 
 
 @pytest.mark.parametrize("component", ["delay", "sdk"])
-def test_primary_sdk_latency_uses_its_own_overflow_evidence(modules, component):
+def test_primary_sdk_latency_uses_its_own_overflow_evidence_rust(modules, component):
     row = fixed_rate_row(modules, delay_ms=70_000 if component == "delay" else 1,
                          sdk_ms=70_000 if component == "sdk" else 5)
     report = modules["latency_report"]
@@ -2280,7 +2280,7 @@ def test_primary_sdk_latency_uses_its_own_overflow_evidence(modules, component):
         assert report._pctile_ms(selected, 99) == pytest.approx(5, rel=0.001)
 
 
-def test_send_and_wait_primary_sdk_latency_preserves_existing_histogram(modules):
+def test_send_and_wait_primary_sdk_latency_preserves_existing_histogram_rust(modules):
     row = measurement(modules, config_arrival_rate=0)
     report = modules["latency_report"]
     cell = report._aggregate(Rows([row]), "baseline-", STAMP)[0][("read", "rust")]
@@ -2290,7 +2290,7 @@ def test_send_and_wait_primary_sdk_latency_preserves_existing_histogram(modules)
 
 
 @pytest.mark.parametrize("metric,expected_exit", [(None, 0), ("sdk-call", 0), ("total", 1)])
-def test_report_summary_comparison_and_gate_use_same_latency_metric(
+def test_report_summary_comparison_and_gate_use_same_latency_metric_rust(
         modules, monkeypatch, capsys, metric, expected_exit):
     rows = []
     for backend, sdk_ms in (("core-python", 7), ("rust", 3)):
@@ -2322,7 +2322,7 @@ def test_report_summary_comparison_and_gate_use_same_latency_metric(
 
 
 @pytest.mark.parametrize("sdk_ms", [4.002, 5, 70_000])
-def test_sdk_call_gate_rejects_above_target_and_overflow(modules, monkeypatch, capsys, sdk_ms):
+def test_sdk_call_gate_rejects_above_target_and_overflow_rust(modules, monkeypatch, capsys, sdk_ms):
     row = fixed_rate_row(modules, delay_ms=0, sdk_ms=sdk_ms)
     report = modules["latency_report"]
     monkeypatch.setattr(report, "_connect", lambda: Rows([
@@ -2336,7 +2336,7 @@ def test_sdk_call_gate_rejects_above_target_and_overflow(modules, monkeypatch, c
 
 
 @pytest.mark.parametrize("p99,expected_exit", [(3.999, 0), (4.0, 0), (4.001, 1)])
-def test_sdk_call_gate_uses_inclusive_unrounded_target(modules, monkeypatch, capsys, p99, expected_exit):
+def test_sdk_call_gate_uses_inclusive_unrounded_target_rust(modules, monkeypatch, capsys, p99, expected_exit):
     row = fixed_rate_row(modules, delay_ms=0, sdk_ms=3)
     report = modules["latency_report"]
     monkeypatch.setattr(report, "_connect", lambda: Rows([
@@ -2353,14 +2353,14 @@ def test_sdk_call_gate_uses_inclusive_unrounded_target(modules, monkeypatch, cap
     assert f"[{verdict}] rust: SDK-call p99 <= 4 ms ({p99:.3f} ms)" in capsys.readouterr().out
 
 
-def test_missing_one_clients_schedule_is_rejected(modules):
+def test_missing_one_clients_schedule_is_rejected_rust(modules):
     row = fixed_rate_row(modules, config_num_clients=2)
     done = completion(row, fixed_rate_schedules=[schedule_record()])
     with pytest.raises(ValueError, match="client schedules"):
         modules["perf_validate"].check_completion(Rows([row, done]), "baseline-", STAMP)
 
 
-def test_multiple_clients_schedules_reconcile_with_process_totals(modules):
+def test_multiple_clients_schedules_reconcile_with_process_totals_rust(modules):
     first = fixed_rate_row(modules, config_num_clients=2)
     second = {**first, "window_id": "window-2", "window_index": 2, "elapsed_seconds": 120}
     done = completion(first, window_count=2, summary_count=2, total_count=2, fixed_rate_schedules=[
@@ -2370,7 +2370,7 @@ def test_multiple_clients_schedules_reconcile_with_process_totals(modules):
     assert cell["schedule"]["scheduled_count"] == 2
 
 
-def test_waiting_for_capacity_resumes_and_releases_exactly_one_slot(modules):
+def test_waiting_for_capacity_resumes_and_releases_exactly_one_slot_rust(modules):
     async def run():
         slots = asyncio.Semaphore(1)
         await slots.acquire()
@@ -2387,7 +2387,7 @@ def test_waiting_for_capacity_resumes_and_releases_exactly_one_slot(modules):
 
 
 @pytest.mark.parametrize("missing", ["timings", "schedule", "overflow"])
-def test_older_rows_never_invent_new_measurements(modules, missing, capsys):
+def test_older_rows_never_invent_new_measurements_rust(modules, missing, capsys):
     row = fixed_rate_row(modules)
     done = completion(row, fixed_rate_schedules=[schedule_record()])
     if missing == "timings":
@@ -2405,7 +2405,7 @@ def test_older_rows_never_invent_new_measurements(modules, missing, capsys):
 
 
 @pytest.mark.parametrize("issue", ["none", "wait", "unlaunched", "missing", "overflow"])
-def test_point_read_gate_requires_unconstrained_complete_timing(modules, monkeypatch, issue):
+def test_point_read_gate_requires_unconstrained_complete_timing_rust(modules, monkeypatch, issue):
     row = fixed_rate_row(modules, delay_ms=1, sdk_ms=1)
     schedule = schedule_record()
     if issue == "wait":
@@ -2426,7 +2426,7 @@ def test_point_read_gate_requires_unconstrained_complete_timing(modules, monkeyp
     assert result.value.code == (0 if issue == "none" else 1)
 
 
-def test_mixed_fixed_rate_schedule_is_counted_once(modules):
+def test_mixed_fixed_rate_schedule_is_counted_once_rust(modules):
     read = fixed_rate_row(modules, workload_id=f"mixed-blend-rust-{STAMP}")
     patch = {**read, "operation": "PatchItem"}
     done = completion(read, summary_count=2, total_count=2, fixed_rate_schedules=[
@@ -2438,28 +2438,28 @@ def test_mixed_fixed_rate_schedule_is_counted_once(modules):
     assert per_op[("rust", "read")]["timings"]["success"]["sdk_call"]["hist"].total_count == 1
 
 
-def test_timing_population_mismatch_is_rejected(modules):
+def test_timing_population_mismatch_is_rejected_rust(modules):
     row = fixed_rate_row(modules)
     row["fixed_rate_timings"]["success"]["sdk_call"]["count"] = 2
     with pytest.raises(ValueError, match="population"):
         modules["latency_report"]._aggregate(Rows([row]), "baseline-", STAMP)
 
 
-def test_schedule_population_mismatch_is_rejected(modules):
+def test_schedule_population_mismatch_is_rejected_rust(modules):
     row = fixed_rate_row(modules)
     done = completion(row, fixed_rate_schedules=[schedule_record(scheduled_count=2, launched_count=2)])
     with pytest.raises(ValueError, match="Launched"):
         modules["perf_validate"].check_completion(Rows([row, done]), "baseline-", STAMP)
 
 
-def test_total_and_sdk_call_durations_cannot_be_pooled(modules):
+def test_total_and_sdk_call_durations_cannot_be_pooled_rust(modules):
     fixed = fixed_rate_row(modules)
     waiting = measurement(modules, config_arrival_rate=0)
     with pytest.raises(ValueError, match="Cannot combine"):
         modules["latency_report"]._aggregate(Rows([fixed, waiting]), "baseline-", STAMP)
 
 
-def test_delete_setup_failure_is_not_a_successful_delete(modules):
+def test_delete_setup_failure_is_not_a_successful_delete_rust(modules):
     utils = modules["workload_utils"]
     stats = modules["perf_stats"].Stats()
     class Container:
@@ -2472,7 +2472,7 @@ def test_delete_setup_failure_is_not_a_successful_delete(modules):
     assert summary["operation"] == "DeleteSetupCreate" and summary["errors"] == 1
 
 
-def test_straddling_warmup_window_is_excluded(modules):
+def test_straddling_warmup_window_is_excluded_rust(modules):
     assert not modules["perf_results"].post_warmup(
         {"elapsed_seconds": 610, "window_seconds": 60}, 600)
     assert modules["perf_results"].post_warmup(

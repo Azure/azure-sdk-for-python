@@ -41,7 +41,7 @@ def _upsert_prepared() -> PreparedRequest:
     )
 
 
-def test_sync_rust_backend_dispatches_upsert_to_binding(monkeypatch):
+def test_sync_rust_backend_dispatches_upsert_to_binding_rust(monkeypatch):
     """The sync backend calls the binding's ``upsert_item`` (not
     ``create_item``) for an upsert op and wraps the 4-tuple it returns.
     A 200 here models the replace half of insert-or-replace."""
@@ -61,7 +61,7 @@ def test_sync_rust_backend_dispatches_upsert_to_binding(monkeypatch):
     assert resp.body == b'{"id":"order-42"}'
 
 
-def test_async_rust_backend_dispatches_upsert_to_binding(monkeypatch):
+def test_async_rust_backend_dispatches_upsert_to_binding_rust(monkeypatch):
     """Async sibling: the upsert op is awaited on the binding's async
     ``upsert_item_async`` function, never the sync ``upsert_item`` and never
     ``create_item_async``. A 201 here models the insert half."""
@@ -85,7 +85,7 @@ def test_async_rust_backend_dispatches_upsert_to_binding(monkeypatch):
     asyncio.run(_run())
 
 
-def test_sync_rust_backend_upsert_raises_when_binding_not_built(monkeypatch):
+def test_sync_rust_backend_upsert_raises_when_binding_not_built_rust(monkeypatch):
     """Before ``maturin develop``, an upsert on the Rust backend raises
     the same clear ``NotImplementedError`` every other op raises --
     upsert is no longer special-cased to silently defer to legacy."""

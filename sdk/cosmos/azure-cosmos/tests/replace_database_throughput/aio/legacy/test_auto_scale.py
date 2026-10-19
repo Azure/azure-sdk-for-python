@@ -59,7 +59,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.key_client.close()
 
-    async def test_replace_throughput_async(self):
+    async def test_replace_throughput_async_rust(self):
         """Autoscale settings can be changed after creation, on a database and a container.
 
         Both start at a 5000 request unit ceiling and are moved to 7000 with a

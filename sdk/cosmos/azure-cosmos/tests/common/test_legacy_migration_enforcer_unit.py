@@ -45,7 +45,7 @@ import subprocess
 import sys
 import unittest
 
-from common._retired_test_sources import RETIRED_THROUGHPUT_SOURCES
+from common._retired_test_sources import RETIRED_TEST_SOURCES
 
 
 # tests/common/<this file> -> parents[1] is .../azure-cosmos/tests
@@ -177,7 +177,7 @@ def _class_method_exists(src_tree, class_name, method_name):
 class LegacyMigrationEnforcerTests(unittest.TestCase):
     """Check the copies' source structure and marker-based collection."""
 
-    def test_legacy_folders_discovered(self):
+    def test_legacy_folders_discovered_rust(self):
         """Sanity: the walk finds legacy folders, so the checks below
         can't pass vacuously on a misconfigured path."""
         dirs = _legacy_dirs()
@@ -186,7 +186,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
             "No tests/<op>/<surface>/legacy/ folders found under {}.".format(_rel(_TESTS_DIR)),
         )
 
-    def test_every_legacy_folder_is_a_package(self):
+    def test_every_legacy_folder_is_a_package_rust(self):
         """Invariant 1: each legacy/ folder has __init__.py."""
         missing = [_rel(d) for d in _legacy_dirs() if not (d / "__init__.py").is_file()]
         self.assertEqual(
@@ -194,7 +194,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
             "legacy/ folders missing __init__.py:\n  - " + "\n  - ".join(missing),
         )
 
-    def test_every_test_method_has_a_source_comment(self):
+    def test_every_test_method_has_a_source_comment_rust(self):
         """Invariant 2: every test_* method names where it was copied from."""
         violations = []
         for path in _legacy_test_files():
@@ -210,7 +210,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
             + "\n  - ".join(violations),
         )
 
-    def test_every_source_reference_resolves(self):
+    def test_every_source_reference_resolves_rust(self):
         """Invariant 3: each source has a live original or approved replacement."""
         violations = []
         src_cache = {}
@@ -226,7 +226,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
                 if "::" not in ref:
                     violations.append("{} -> malformed Source {!r}".format(where, ref))
                     continue
-                path_part, qualified = RETIRED_THROUGHPUT_SOURCES.get(ref, ref).split("::", 1)
+                path_part, qualified = RETIRED_TEST_SOURCES.get(ref, ref).split("::", 1)
                 src_path = _PKG_ROOT / path_part
                 if not src_path.is_file():
                     violations.append("{} -> source file not found: {}".format(where, path_part))
@@ -245,7 +245,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
             + "\n  - ".join(violations),
         )
 
-    def test_every_legacy_file_pins_rust_backend(self):
+    def test_every_legacy_file_pins_rust_backend_rust(self):
         """Invariant 4: each legacy file carries the literal _backend pin."""
         violations = []
         for path in _legacy_test_files():
@@ -258,7 +258,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
             "the rust column silently runs core-python):\n  - " + "\n  - ".join(violations),
         )
 
-    def test_no_unstructured_skips(self):
+    def test_no_unstructured_skips_rust(self):
         """Invariant 5: every skip in a legacy file has a structured reason."""
         violations = []
         for path in _legacy_test_files():
@@ -287,7 +287,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
             "({}):\n  - ".format(", ".join(_STRUCTURED_SKIP_TAGS)) + "\n  - ".join(violations),
         )
 
-    def test_every_legacy_test_is_selected_by_emulator_marker(self):
+    def test_every_legacy_test_is_selected_by_emulator_marker_rust(self):
         """Marker-filtered collection must retain every copied parameter case."""
         files = _legacy_test_files()
         expected = set()

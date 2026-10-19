@@ -23,7 +23,7 @@ def _method(tree, qualified):
     )
 
 
-def test_retirements_are_scoped_to_verified_throughput_cases():
+def test_retirements_are_scoped_to_verified_throughput_cases_rust():
     assert len(RETIRED_THROUGHPUT_SOURCES) == 33
     assert len(set(RETIRED_THROUGHPUT_SOURCES.values())) == 33
     for reference, replacement in RETIRED_THROUGHPUT_SOURCES.items():
@@ -36,7 +36,7 @@ def test_retirements_are_scoped_to_verified_throughput_cases():
 
 
 @pytest.mark.parametrize("reference,replacement", RETIRED_THROUGHPUT_SOURCES.items())
-def test_each_retired_original_has_a_retained_rust_contract(reference, replacement):
+def test_each_retired_original_has_a_retained_rust_contract_rust(reference, replacement):
     original_file, original_name = reference.split("::")
     original_path = ROOT / original_file
     if original_path.exists():
@@ -81,7 +81,7 @@ def test_each_retired_original_has_a_retained_rust_contract(reference, replaceme
 
 
 @pytest.mark.parametrize("failure", ["unapproved-original", "missing-replacement", "missing-method"])
-def test_lineage_enforcement_does_not_ignore_missing_tests(monkeypatch, tmp_path, failure):
+def test_lineage_enforcement_does_not_ignore_missing_tests_rust(monkeypatch, tmp_path, failure):
     reference, replacement = next(iter(RETIRED_THROUGHPUT_SOURCES.items()))
     if failure == "unapproved-original":
         reference = "tests/test_not_retired.py::TestOriginal.test_missing"
@@ -101,6 +101,6 @@ def test_lineage_enforcement_does_not_ignore_missing_tests(monkeypatch, tmp_path
     )
     monkeypatch.setattr(enforcer, "_PKG_ROOT", tmp_path)
     monkeypatch.setattr(enforcer, "_legacy_test_files", lambda: [copied])
-    check = enforcer.LegacyMigrationEnforcerTests("test_every_source_reference_resolves")
+    check = enforcer.LegacyMigrationEnforcerTests("test_every_source_reference_resolves_rust")
     with pytest.raises(AssertionError, match="lineage no longer resolves"):
-        check.test_every_source_reference_resolves()
+        check.test_every_source_reference_resolves_rust()

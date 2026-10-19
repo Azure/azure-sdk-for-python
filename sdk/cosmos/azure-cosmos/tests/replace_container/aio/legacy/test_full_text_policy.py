@@ -14,7 +14,7 @@ class TestFullTextPolicyAsync(AsyncReplacementCase):
     def _create_key_client(self):
         return CosmosClient(self.host, self.key, _backend="rust")
 
-    async def test_replace_full_text_container_async(self):
+    async def test_replace_full_text_container_async_rust(self):
         """Replace can both add a full text policy and change an existing one.
 
         Two rounds. First a container with no full text settings is replaced so

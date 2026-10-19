@@ -71,6 +71,7 @@ def generated_files():
                         chunks.append("\n".join(lines[node.lineno - 1:node.end_lineno]))
             for method in methods:
                 copied = lines[method.lineno - 1:method.end_lineno]
+                copied[0] = copied[0].replace("def " + method.name + "(", "def " + method.name + "_rust(", 1)
                 copied.insert(1, f"        # Source: tests/{source_path.name}::{cls.name}.{method.name}")
                 chunks.append("\n".join(copied))
             destination = ROOT / "tests" / "replace_container" / surface / "legacy" / f"test_{family}.py"

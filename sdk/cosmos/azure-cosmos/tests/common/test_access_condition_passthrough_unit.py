@@ -46,7 +46,7 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
         client._adapter = "rust"
         return client
 
-    def test_delete_database_forwards_access_condition(self):
+    def test_delete_database_forwards_access_condition_rust(self):
         """A guarded delete must arrive at the helper carrying accessCondition."""
         client = self._client()
         captured = {}
@@ -74,14 +74,14 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
         self.assertNotIn("match_condition", captured["kwargs"])
         self.assertNotIn("session_token", captured["kwargs"])
 
-    def test_delete_database_rejects_etag_without_match_condition(self):
+    def test_delete_database_rejects_etag_without_match_condition_rust(self):
         """``etag`` alone is a caller error and must still raise."""
         client = self._client()
         with mock.patch.object(cosmos_client, "DatabaseHelper"):
             with self.assertRaises(ValueError):
                 client.delete_database("db-id", etag="etag-value")
 
-    def test_create_container_forwards_access_condition(self):
+    def test_create_container_forwards_access_condition_rust(self):
         """The same guard must survive ``DatabaseProxy.create_container``."""
         import azure.cosmos.database as database_module
 
@@ -109,7 +109,7 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
             {"type": "IfMatch", "condition": "etag-value"},
         )
 
-    def test_access_condition_becomes_a_typed_setting_on_the_rust_path(self):
+    def test_access_condition_becomes_a_typed_setting_on_the_rust_path_rust(self):
         """Both kinds of write condition become named fields rather than staying loose text.
 
         A caller supplies the condition as a small mapping saying which kind and which
@@ -135,7 +135,7 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
             "etag-value",
         )
 
-    def test_access_condition_does_not_force_a_legacy_fallback(self):
+    def test_access_condition_does_not_force_a_legacy_fallback_rust(self):
         """Rust honors the header, so a guarded call stays on the Rust path."""
         options = {"accessCondition": {"type": "IfMatch", "condition": "etag-value"}}
         self.assertTrue(is_delete_database_rust_eligible(options, {}))

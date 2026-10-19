@@ -3,8 +3,9 @@
 """Async ``is_feed_range_subset`` test against the ``_backend="rust"`` path.
 
 Self-contained: builds its own database + container in ``asyncSetUp`` and deletes
-them in ``asyncTearDown``. The class name and method name match the source at
-``tests/test_feed_range_async.py`` so test IDs differ only by path.
+them in ``asyncTearDown``. The class name and method name match the source (apart from
+the method's ``_rust`` suffix) at
+``tests/test_feed_range_async.py`` so test IDs differ by path and method suffix.
 
 The parity suite only proves the two backends agree with each other; if both
 drifted the same way they would still pass while the answer is wrong. This test
@@ -55,7 +56,7 @@ class TestFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.client.close()
 
-    async def test_feed_range_is_subset_from_pk_async(self):
+    async def test_feed_range_is_subset_from_pk_async_rust(self):
         """A range built from a partition key sits inside the full range.
 
         The full range covers everything from empty to ``FF``, so any single

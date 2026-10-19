@@ -30,7 +30,7 @@ class TestAsyncItemHelper(unittest.TestCase):
     refresh first.
     """
 
-    def test_async_dispatch_falls_through_to_create_item(self):
+    def test_async_dispatch_falls_through_to_create_item_rust(self):
         """When the backend does nothing, the helper calls the existing
         client and returns its result."""
         cc = MagicMock()
@@ -50,7 +50,7 @@ class TestAsyncItemHelper(unittest.TestCase):
         self.assertEqual(result, "async-result")
         cc.CreateItem.assert_awaited_once()
 
-    def test_async_cache_miss_awaits_refresh(self):
+    def test_async_cache_miss_awaits_refresh_rust(self):
         """When the container is not cached yet, the helper refreshes the
         cache and then uses the freshly fetched resource id."""
         cc = MagicMock()

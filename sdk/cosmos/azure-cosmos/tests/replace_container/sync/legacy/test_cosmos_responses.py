@@ -16,7 +16,7 @@ class TestCosmosResponses(SyncReplacementCase):
     def _create_key_client(self):
         return CosmosClient(self.host, self.key, _backend="rust")
 
-    def test_replace_container_headers(self):
+    def test_replace_container_headers_rust(self):
         """``replace_container`` with ``return_properties`` returns populated headers.
 
         The same return-shape rule as create, on the replace path: the second

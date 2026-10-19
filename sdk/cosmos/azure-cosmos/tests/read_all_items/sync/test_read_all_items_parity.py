@@ -59,7 +59,7 @@ def _collect_run_ids(items, run_id: str) -> list[str]:
     return sorted(item["id"] for item in items if item.get("run_id") == run_id)
 
 
-def test_read_all_items_baseline(container_for):
+def test_read_all_items_baseline_rust(container_for):
     """Baseline read_all_items returns the same seeded ids."""
     # A plain read_all_items() is whole-container (no partition key), so it
     # is served through the Rust query fast path ("Select * from root r").
@@ -83,7 +83,7 @@ def test_read_all_items_baseline(container_for):
     comparison.assert_functional_parity()
 
 
-def test_read_all_items_respects_max_item_count_paging(container_for):
+def test_read_all_items_respects_max_item_count_paging_rust(container_for):
     """read_all_items with max_item_count still returns the same seeded ids."""
     # Same Rust query fast path as the baseline test, but max_item_count=1 forces
     # the read across multiple pages so paging/continuation is exercised, not just one page.
@@ -110,7 +110,7 @@ def test_read_all_items_respects_max_item_count_paging(container_for):
     comparison.assert_functional_parity()
 
 
-def test_read_all_items_availability_strategy_backend_contract(container_for):
+def test_read_all_items_availability_strategy_backend_contract_rust(container_for):
     """Rust rejects the override; explicitly selected core-python keeps support."""
     run_id = "run-" + uuid.uuid4().hex
 

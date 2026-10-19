@@ -124,7 +124,7 @@ async def _run_patch(container, patch_operations: list, summary: str,
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_baseline_set(container_for):
+async def test_async_baseline_set_rust(container_for):
     """a single ``set`` on an existing field, no optional kwargs.
 
     If the baseline fails, async ``patch_item`` is broken on one backend and no other
@@ -145,7 +145,7 @@ async def test_async_baseline_set(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_op_add_new_field(container_for):
+async def test_async_op_add_new_field_rust(container_for):
     """``add`` introduces a field the seed item does not have."""
     cmp = await _run_patch(container_for, [{"op": "add", "path": "/added", "value": "x"}],
                            summary="add new field")
@@ -153,7 +153,7 @@ async def test_async_op_add_new_field(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_op_replace_existing_field(container_for):
+async def test_async_op_replace_existing_field_rust(container_for):
     """``replace`` overwrites a field that already exists.
 
     Distinct from ``set``: ``replace`` requires the path to be present, so this
@@ -165,7 +165,7 @@ async def test_async_op_replace_existing_field(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_op_remove_field(container_for):
+async def test_async_op_remove_field_rust(container_for):
     """``remove`` deletes a field -- the only operator carrying no value.
 
     Worth its own test because the absent ``value`` key is a different wire
@@ -178,7 +178,7 @@ async def test_async_op_remove_field(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_op_incr(container_for):
+async def test_async_op_incr_rust(container_for):
     """Compare an increment, including any extra returned tracking property."""
     cmp = await _run_patch(container_for, [{"op": "incr", "path": "/n", "value": 5}],
                            summary="incr /n by 5")
@@ -186,7 +186,7 @@ async def test_async_op_incr(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_op_nested_path(container_for):
+async def test_async_op_nested_path_rust(container_for):
     """a nested path (``/nested/inner``) must survive the trip intact."""
     cmp = await _run_patch(container_for, [{"op": "set", "path": "/nested/inner", "value": 42}],
                            summary="set nested path")
@@ -194,7 +194,7 @@ async def test_async_op_nested_path(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_multiple_operations_applied_in_order(container_for):
+async def test_async_multiple_operations_applied_in_order_rust(container_for):
     """a multi-operation program applies atomically and in order.
 
     The program increments ``/n`` and then sets it, so the final value proves
@@ -219,7 +219,7 @@ async def test_async_multiple_operations_applied_in_order(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_session_token(container_for):
+async def test_async_session_token_rust(container_for):
     """Baseline call plus ``session_token`` -- forwarded as a request header."""
     cmp = await _run_patch(container_for, [{"op": "set", "path": "/n", "value": 2}],
                            summary="baseline + session_token",
@@ -229,7 +229,7 @@ async def test_async_session_token(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_priority(container_for):
+async def test_async_priority_rust(container_for):
     """Baseline call plus ``priority='High'`` -- the priority-based-throttling header."""
     cmp = await _run_patch(container_for, [{"op": "set", "path": "/n", "value": 2}],
                            summary="baseline + priority=High",
@@ -238,7 +238,7 @@ async def test_async_priority(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_throughput_bucket(container_for):
+async def test_async_throughput_bucket_rust(container_for):
     """Baseline call plus ``throughput_bucket=1`` -- the throughput-bucket header."""
     cmp = await _run_patch(container_for, [{"op": "set", "path": "/n", "value": 2}],
                            summary="baseline + throughput_bucket",
@@ -251,7 +251,7 @@ async def test_async_throughput_bucket(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_no_response(container_for):
+async def test_async_no_response_rust(container_for):
     """``no_response=True`` -- the service must not echo the item back.
 
     Changes the shape of the return value rather than just a header, so it is
@@ -265,7 +265,7 @@ async def test_async_no_response(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_retry_write(container_for):
+async def test_async_retry_write_rust(container_for):
     """``retry_write=1`` -- opts a non-idempotent write into retries."""
     cmp = await _run_patch(container_for, [{"op": "set", "path": "/n", "value": 2}],
                            summary="baseline + retry_write",
@@ -274,7 +274,7 @@ async def test_async_retry_write(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_availability_strategy(container_for):
+async def test_async_availability_strategy_rust(container_for):
     """``availability_strategy=True`` -- enables hedged cross-region requests."""
     cmp = await _run_patch(container_for, [{"op": "set", "path": "/n", "value": 2}],
                            summary="baseline + availability_strategy",
@@ -283,7 +283,7 @@ async def test_async_availability_strategy(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_timeout(container_for):
+async def test_async_timeout_rust(container_for):
     """``timeout=30`` -- the overall per-request timeout.
 
     Honoured on both backends: core-python through azure-core's per-call
@@ -297,7 +297,7 @@ async def test_async_timeout(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_filter_predicate_matching(container_for):
+async def test_async_filter_predicate_matching_rust(container_for):
     """a ``filter_predicate`` whose condition holds lets the patch through.
 
     This is a conditional update expressed as SQL against the stored item,
@@ -315,7 +315,7 @@ async def test_async_filter_predicate_matching(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_response_hook_fires_once(container_for):
+async def test_async_response_hook_fires_once_rust(container_for):
     """``response_hook`` must fire exactly once per backend on success.
 
     Counting invocations is the point: asserting only that the hook is accepted
@@ -363,7 +363,7 @@ async def test_async_response_hook_fires_once(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_async_patch_missing_id_raises_not_found(container_for):
+async def test_async_patch_missing_id_raises_not_found_rust(container_for):
     """patching an id that was never created raises a typed 404 on both.
 
     Uses the functional exception assertion: the rust binding exposes a smaller
@@ -388,7 +388,7 @@ async def test_async_patch_missing_id_raises_not_found(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_stale_etag_raises_precondition_failed(container_for):
+async def test_async_stale_etag_raises_precondition_failed_rust(container_for):
     """a stale ``etag`` with ``IfNotModified`` must fail the patch on both.
 
     This is the optimistic-concurrency contract customers rely on for
@@ -422,7 +422,7 @@ async def test_async_stale_etag_raises_precondition_failed(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_current_etag_succeeds(container_for):
+async def test_async_current_etag_succeeds_rust(container_for):
     """the *current* etag with ``IfNotModified`` must let the patch through.
 
     The other half of the concurrency contract. Without this, a backend that
@@ -446,7 +446,7 @@ async def test_async_current_etag_succeeds(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_etag_without_match_condition_raises_value_error(container_for):
+async def test_async_etag_without_match_condition_raises_value_error_rust(container_for):
     """``etag`` without ``match_condition`` is rejected before any network call.
 
     The gate lives in the shared ``_base._get_match_headers``, so the error must
@@ -473,7 +473,7 @@ async def test_async_etag_without_match_condition_raises_value_error(container_f
 
 
 @pytest.mark.asyncio
-async def test_async_invalid_patch_path_raises(container_for):
+async def test_async_invalid_patch_path_raises_rust(container_for):
     """a patch against a path that cannot be resolved must fail on both.
 
     An increment with a missing parent tests the Rust driver\'s local error

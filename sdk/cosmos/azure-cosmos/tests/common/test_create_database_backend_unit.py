@@ -112,20 +112,20 @@ def _created_response() -> BackendResponse:
     )
 
 
-def test_create_database_is_registered_as_single_response_operation():
+def test_create_database_is_registered_as_single_response_operation_rust():
     """Create-database is wired as a single-reply operation, so it is sent to the
     binding's ``create_database`` entry point rather than the paged query path."""
     assert OP_TO_BINDING_FUNCTION_NAME[OP_CREATE_DATABASE] == "create_database"
 
 
-def test_create_database_if_not_exists_is_not_registered_in_the_binding():
+def test_create_database_if_not_exists_is_not_registered_in_the_binding_rust():
     """The compound coordinator is not a wire op; its read primitive is."""
     assert "create_database_if_not_exists" not in OP_TO_BINDING_FUNCTION_NAME
     assert OP_TO_BINDING_FUNCTION_NAME[OP_READ_DATABASE] == "read_database"
 
 
 @pytest.mark.parametrize("autoscale_mode", [False, True])
-def test_create_database_prepared_request_preserves_body_and_options(autoscale_mode):
+def test_create_database_prepared_request_preserves_body_and_options_rust(autoscale_mode):
     """The request handed to the Rust backend carries everything the create needs:
     the database body, account-level scope (empty container link, cross-partition
     ``"[]"`` header since there is no partition key), and every option the customer
@@ -157,7 +157,7 @@ def test_create_database_prepared_request_preserves_body_and_options(autoscale_m
     assert settings_options(prepared)["timeout_seconds"] == 3.5
 
 
-def test_read_database_prepared_request_is_bodiless():
+def test_read_database_prepared_request_is_bodiless_rust():
     """The existence read sends no body, only the database id.
 
     Create sends the database definition; read identifies the database by id alone.
@@ -177,7 +177,7 @@ def test_read_database_prepared_request_is_bodiless():
     assert settings_options(prepared)["timeout_seconds"] == 3.5
 
 
-def test_read_database_prepared_preserves_legacy_option_headers():
+def test_read_database_prepared_preserves_legacy_option_headers_rust():
     """Every truthy option that legacy GetHeaders emits reaches the binding."""
     initial_headers = {"x-custom": "value"}
     options = {
@@ -227,14 +227,14 @@ def test_read_database_prepared_preserves_legacy_option_headers():
         "throughputBucket",
     ],
 )
-def test_read_database_prepared_omits_falsy_legacy_headers(option_key):
+def test_read_database_prepared_omits_falsy_legacy_headers_rust(option_key):
     """Prove empty Python-only options do not become request headers."""
     prepared = build_read_database_prepared("db1", {option_key: None})
 
     assert option_key not in wire_headers(prepared)
 
 
-def test_read_database_prepared_preserves_legacy_id_stringification():
+def test_read_database_prepared_preserves_legacy_id_stringification_rust():
     """Read keeps its own id rules: it stringifies and tolerates a trailing slash,
     where create validates."""
     assert build_read_database_prepared(123, {}).item_id == "123"
@@ -242,7 +242,7 @@ def test_read_database_prepared_preserves_legacy_id_stringification():
 
 
 @pytest.mark.parametrize("database_id", ["", "/", "///"])
-def test_read_database_prepared_rejects_empty_normalized_id(database_id):
+def test_read_database_prepared_rejects_empty_normalized_id_rust(database_id):
     """Prove an empty database ID fails before a request is sent."""
     with pytest.raises(ValueError, match="Failed Parsing ResourceID from link: /dbs/"):
         build_read_database_prepared(database_id, {})
@@ -269,7 +269,7 @@ def test_read_database_prepared_rejects_empty_normalized_id(database_id):
         ({"initialHeaders": {"X-MS-VERSION": "2018-12-31"}}, {}, False),
     ],
 )
-def test_read_database_rust_eligibility_never_drops_transport_kwargs(
+def test_read_database_rust_eligibility_never_drops_transport_kwargs_rust(
     request_options, operation_kwargs, expected
 ):
     """Prove transport options keep a read on Python when Rust cannot honor them."""
@@ -279,7 +279,7 @@ def test_read_database_rust_eligibility_never_drops_transport_kwargs(
     )
 
 
-def test_sync_connection_read_database_forwards_initial_headers():
+def test_sync_connection_read_database_forwards_initial_headers_rust():
     """Prove sync database reads preserve caller-supplied initial headers."""
     connection = SimpleNamespace(
         Read=MagicMock(return_value={"id": "db1"}),
@@ -318,7 +318,7 @@ def test_sync_connection_read_database_forwards_initial_headers():
         ({"id": 1}, "Id type must be a string."),
     ],
 )
-def test_create_database_prepared_preserves_legacy_id_validation(database, error_message):
+def test_create_database_prepared_preserves_legacy_id_validation_rust(database, error_message):
     """A bad database id (illegal characters, a trailing space, or a non-string) is
     rejected while building the request -- before anything is sent -- exactly as the
     legacy path rejected it, so the customer gets the same clear error."""
@@ -346,7 +346,7 @@ class _BindingAdapter(CosmosBackend):
         return self.responses[0]
 
 
-def test_sync_helper_routes_to_rust_and_parses_response():
+def test_sync_helper_routes_to_rust_and_parses_response_rust():
     """On a Rust-backed client the coordinator runs the create through the backend,
     returns the created database, records the response headers on the connection, and
     fires ``response_hook`` once with the headers and the created database."""
@@ -367,7 +367,7 @@ def test_sync_helper_routes_to_rust_and_parses_response():
     assert hooks[0][1] == {"id": "db1", "_rid": "rid1"}
 
 
-def test_sync_read_database_routes_to_rust_and_parses_response():
+def test_sync_read_database_routes_to_rust_and_parses_response_rust():
     """A proxy database read uses the Rust read primitive and never calls legacy."""
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
@@ -404,7 +404,7 @@ def test_sync_read_database_routes_to_rust_and_parses_response():
 
 
 
-def test_sync_read_database_maps_not_found_and_skips_hook():
+def test_sync_read_database_maps_not_found_and_skips_hook_rust():
     """A not-found from the Rust engine still raises the typed not-found error."""
     backend = _BindingAdapter(
         BackendResponse(
@@ -425,7 +425,7 @@ def test_sync_read_database_maps_not_found_and_skips_hook():
     assert not hook_calls
 
 
-def test_sync_database_proxy_read_selects_rust_backend():
+def test_sync_database_proxy_read_selects_rust_backend_rust():
     """The public sync proxy delegates its read through the stored backend."""
     backend = _BindingAdapter(
         BackendResponse(
@@ -448,7 +448,7 @@ def test_sync_database_proxy_read_selects_rust_backend():
     connection.ReadDatabase.assert_not_called()
 
 
-def test_sync_database_proxy_read_rejects_deprecated_session_token():
+def test_sync_database_proxy_read_rejects_deprecated_session_token_rust():
     """Obsolete session-token usage fails before any request is sent."""
     backend = _BindingAdapter(
         BackendResponse(
@@ -531,7 +531,7 @@ def _call_database_read(case, *args, **kwargs):
     [(option, value) for option in ("session_token", "populate_query_metrics")
      for value in (None, False, True, "unused")],
 )
-def test_database_read_rejects_obsolete_and_socket_options(database_read_case, use_legacy, option, value):
+def test_database_read_rejects_obsolete_and_socket_options_rust(database_read_case, use_legacy, option, value):
     """Retired options are refused up front on both engines, whatever value they
     carry.
 
@@ -556,7 +556,7 @@ def test_database_read_rejects_obsolete_and_socket_options(database_read_case, u
 
 
 @pytest.mark.parametrize("value", [None, False, True])
-def test_database_read_is_keyword_only(database_read_case, value):
+def test_database_read_is_keyword_only_rust(database_read_case, value):
     """``read`` takes no positional arguments, so a stray one is a ``TypeError``
     rather than being quietly bound to the first keyword and changing what the
     call does. Nothing is sent to either engine.
@@ -568,7 +568,7 @@ def test_database_read_is_keyword_only(database_read_case, value):
 
 
 @pytest.mark.parametrize("timeout", [None, 1, 3.5, 10, float(2**64 - 2048)])
-def test_database_read_preserves_supported_options_and_refreshes_properties(database_read_case, timeout):
+def test_database_read_preserves_supported_options_and_refreshes_properties_rust(database_read_case, timeout):
     """Supported options reach the Rust request unchanged, and the read refreshes
     the proxy's cached properties.
 
@@ -611,7 +611,7 @@ def test_database_read_preserves_supported_options_and_refreshes_properties(data
     ids=["false", "true", "zero", "negative", "subsecond", "string", "nan", "inf",
          "negative-inf", "rounds-out-of-range", "out-of-range", "overflow"],
 )
-def test_database_read_invalid_timeout_never_reaches_a_transport(database_read_case, timeout):
+def test_database_read_invalid_timeout_never_reaches_a_transport_rust(database_read_case, timeout):
     """A timeout the Rust engine cannot express exactly is refused before anything
     is sent.
 
@@ -645,7 +645,7 @@ def test_database_read_invalid_timeout_never_reaches_a_transport(database_read_c
         {"request_options": {"timeout": 10}},
     ],
 )
-def test_database_read_unsupported_settings_never_fall_back(database_read_case, kwargs):
+def test_database_read_unsupported_settings_never_fall_back_rust(database_read_case, kwargs):
     """Settings the Rust engine cannot honor raise instead of quietly replaying the
     call through the legacy transport.
 
@@ -668,7 +668,7 @@ def test_database_read_unsupported_settings_never_fall_back(database_read_case, 
 
 
 @pytest.mark.parametrize("use_legacy", [False, True])
-def test_database_read_hook_snapshot_is_isolated_and_falsey_callable_runs(database_read_case, use_legacy):
+def test_database_read_hook_snapshot_is_isolated_and_falsey_callable_runs_rust(database_read_case, use_legacy):
     """The response hook runs once on both engines, and gets its own copy of the
     headers.
 
@@ -734,7 +734,7 @@ def test_database_read_hook_snapshot_is_isolated_and_falsey_callable_runs(databa
         ({"if_none_match": "v1"}, {"If-None-Match": "v1"}),
     ],
 )
-def test_database_read_preserves_conditional_headers(database_read_case, use_legacy, kwargs, expected):
+def test_database_read_preserves_conditional_headers_rust(database_read_case, use_legacy, kwargs, expected):
     """Conditional read arguments turn into the same request headers on both
     engines.
 
@@ -782,7 +782,7 @@ def test_database_read_preserves_conditional_headers(database_read_case, use_leg
         ({"etag": "v1", "match_condition": "invalid"}, TypeError),
     ],
 )
-def test_database_read_invalid_guards_fail_before_dispatch(database_read_case, use_legacy, kwargs, error_type):
+def test_database_read_invalid_guards_fail_before_dispatch_rust(database_read_case, use_legacy, kwargs, error_type):
     """Incomplete or malformed conditional arguments fail before a request is sent,
     on both engines.
 
@@ -802,7 +802,7 @@ def test_database_read_invalid_guards_fail_before_dispatch(database_read_case, u
 
 @pytest.mark.parametrize("failure_source", ["hook", "backend"])
 @pytest.mark.parametrize("error_type", [ValueError, ServiceRequestError, NotImplementedError, asyncio.CancelledError])
-def test_database_read_exceptions_never_replay_or_replace_cached_properties(
+def test_database_read_exceptions_never_replay_or_replace_cached_properties_rust(
     database_read_case, failure_source, error_type
 ):
     """A failure in either the hook or the engine is raised as-is, with no retry and
@@ -836,7 +836,7 @@ def test_database_read_exceptions_never_replay_or_replace_cached_properties(
 
 
 @pytest.mark.parametrize("status", [403, 404, 408, 412, 429, 500])
-def test_database_read_service_errors_never_replay(database_read_case, status):
+def test_database_read_service_errors_never_replay_rust(database_read_case, status):
     """An error status from the service surfaces as a typed error and is not retried
     on the other engine.
 
@@ -869,7 +869,7 @@ def test_database_read_service_errors_never_replay(database_read_case, status):
     case.connection.ReadDatabase.assert_not_called()
 
 
-def test_database_read_not_modified_preserves_empty_response_and_hook(database_read_case):
+def test_database_read_not_modified_preserves_empty_response_and_hook_rust(database_read_case):
     """A not-modified reply is a success, not an error.
 
     When the customer's conditional read matches, the service replies with no
@@ -901,7 +901,7 @@ def test_database_read_not_modified_preserves_empty_response_and_hook(database_r
     case.connection.ReadDatabase.assert_not_called()
 
 
-def test_sync_helper_keeps_legacy_create_database_behind_boundary():
+def test_sync_helper_keeps_legacy_create_database_behind_boundary_rust():
     """With no Rust backend (the core-python client) the coordinator runs the legacy
     ``CreateDatabase`` call directly, passing the database, options, and any extra
     kwargs straight through -- the legacy engine stays behind the same boundary."""
@@ -932,7 +932,7 @@ def test_sync_helper_keeps_legacy_create_database_behind_boundary():
 
 
 
-def test_sync_helper_maps_conflict_to_resource_exists():
+def test_sync_helper_maps_conflict_to_resource_exists_rust():
     """A 409 from the backend (the database id is already taken) surfaces as
     ``CosmosResourceExistsError`` -- the same typed error a customer catches to handle
     "this database already exists"."""
@@ -953,7 +953,7 @@ def test_sync_helper_maps_conflict_to_resource_exists():
     assert hook_calls == []
 
 
-def test_sync_if_not_exists_reads_through_rust_without_legacy_calls():
+def test_sync_if_not_exists_reads_through_rust_without_legacy_calls_rust():
     """The database already exists, so the read is the only request sent.
 
     Python decides whether to create; the Rust path performs the read. The legacy
@@ -992,7 +992,7 @@ def test_sync_if_not_exists_reads_through_rust_without_legacy_calls():
     ]
 
 
-def test_sync_if_not_exists_rust_404_then_rust_create_without_legacy_calls():
+def test_sync_if_not_exists_rust_404_then_rust_create_without_legacy_calls_rust():
     """The database is missing, so both requests run on the Rust path.
 
     Also checks the two legs carry different options: ``offerThroughput`` sets the
@@ -1040,7 +1040,7 @@ def test_sync_if_not_exists_rust_404_then_rust_create_without_legacy_calls():
     connection.CreateDatabase.assert_not_called()
 
 
-def test_sync_if_not_exists_rust_create_race_reads_winning_database():
+def test_sync_if_not_exists_rust_create_race_reads_winning_database_rust():
     """Return the winning caller's database after a creation conflict."""
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
@@ -1082,7 +1082,7 @@ def test_sync_if_not_exists_rust_create_race_reads_winning_database():
     connection.CreateDatabase.assert_not_called()
 
 
-def test_sync_if_not_exists_legacy_returns_existing_without_create_headers():
+def test_sync_if_not_exists_legacy_returns_existing_without_create_headers_rust():
     """When the database already exists, the legacy path returns it straight from the
     existence read and never calls CreateDatabase. Provisioning-only options
     (``offerThroughput``, ``autoUpgradePolicy``) are stripped from the read so it can't
@@ -1121,7 +1121,7 @@ def test_sync_if_not_exists_legacy_returns_existing_without_create_headers():
     ]
 
 
-def test_sync_if_not_exists_legacy_reads_winning_database_after_conflict():
+def test_sync_if_not_exists_legacy_reads_winning_database_after_conflict_rust():
     """The shared Python coordinator also recovers when using legacy transport."""
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(
@@ -1261,7 +1261,7 @@ def test_async_read_database_routes_to_rust():
         ),
     ],
 )
-def test_resolve_initial_headers_layers_caller_headers_over_defaults(options, expected):
+def test_resolve_initial_headers_layers_caller_headers_over_defaults_rust(options, expected):
     """The sync and async connections share one merge, so it is tested once.
 
     Duplicating the merge in each connection is how the two paths drift: one
@@ -1276,7 +1276,7 @@ def test_resolve_initial_headers_layers_caller_headers_over_defaults(options, ex
     assert default_headers == {"x-ms-version": "2020-07-15"}
 
 
-def test_async_connection_read_database_forwards_initial_headers():
+def test_async_connection_read_database_forwards_initial_headers_rust():
     """Prove async database reads preserve caller-supplied initial headers."""
     async def run():
         """Call ``AsyncClientConnection.ReadDatabase`` and verify caller headers are merged into the upstream call."""
@@ -1311,7 +1311,7 @@ def test_async_connection_read_database_forwards_initial_headers():
 
 
 
-def test_async_read_database_maps_not_found_and_skips_hook():
+def test_async_read_database_maps_not_found_and_skips_hook_rust():
     """Async twin: a Rust 404 raises the typed error and runs no response hook.
 
     ``response_hook`` receives the properties of a database that was read. A 404
@@ -1360,7 +1360,7 @@ def test_async_read_database_maps_not_found_and_skips_hook():
         {"connection_timeout": 2},
     ],
 )
-def test_read_database_rejects_options_rust_cannot_honor(
+def test_read_database_rejects_options_rust_cannot_honor_rust(
     operation_kwargs,
 ):
     """Unsupported reads never cross from Rust to legacy transport."""
@@ -1379,7 +1379,7 @@ def test_read_database_rejects_options_rust_cannot_honor(
     connection.ReadDatabase.assert_not_called()
 
 
-def test_read_database_rejects_driver_owned_initial_header():
+def test_read_database_rejects_driver_owned_initial_header_rust():
     """Driver-owned header overrides fail without a legacy request."""
     request_options = {"initialHeaders": {"Accept": "application/custom"}}
     connection = SimpleNamespace(
@@ -1405,7 +1405,7 @@ def test_read_database_rejects_driver_owned_initial_header():
         {"connection_timeout": 2},
     ],
 )
-def test_async_read_database_rejects_options_rust_cannot_honor(
+def test_async_read_database_rejects_options_rust_cannot_honor_rust(
     operation_kwargs,
 ):
     """Async reads also reject unsupported calls without fallback."""
@@ -1428,7 +1428,7 @@ def test_async_read_database_rejects_options_rust_cannot_honor(
     asyncio.run(run())
 
 
-def test_async_read_database_rejects_driver_owned_initial_header():
+def test_async_read_database_rejects_driver_owned_initial_header_rust():
     """Async driver-owned header overrides fail without fallback."""
     async def run():
         """Neither transport should receive this unsupported call."""
@@ -1448,7 +1448,7 @@ def test_async_read_database_rejects_driver_owned_initial_header():
     asyncio.run(run())
 
 
-def test_async_database_proxy_read_selects_rust_backend():
+def test_async_database_proxy_read_selects_rust_backend_rust():
     """The public async proxy delegates its read through the stored backend."""
     async def run():
         """Read via the public async proxy and confirm Rust serves the request, not the legacy connection."""
@@ -1475,7 +1475,7 @@ def test_async_database_proxy_read_selects_rust_backend():
     asyncio.run(run())
 
 
-def test_async_database_proxy_read_rejects_deprecated_session_token():
+def test_async_database_proxy_read_rejects_deprecated_session_token_rust():
     """The async proxy also rejects the obsolete token before any request is sent."""
     async def run():
         """No request is prepared for an obsolete option."""
@@ -1496,7 +1496,7 @@ def test_async_database_proxy_read_rejects_deprecated_session_token():
     asyncio.run(run())
 
 
-def test_async_helper_does_not_call_response_hook_on_failure():
+def test_async_helper_does_not_call_response_hook_on_failure_rust():
     """A failed create does not run the caller's response hook.
 
     ``response_hook`` is customer code that receives the headers and body of a
@@ -1531,7 +1531,7 @@ def test_async_helper_does_not_call_response_hook_on_failure():
     asyncio.run(run())
 
 
-def test_async_helper_keeps_legacy_create_database_behind_boundary():
+def test_async_helper_keeps_legacy_create_database_behind_boundary_rust():
     """Async twin: with no Rust backend, the async coordinator awaits the legacy
     ``CreateDatabase`` call directly, passing database/options/extra kwargs through."""
     async def run():
@@ -1564,7 +1564,7 @@ def test_async_helper_keeps_legacy_create_database_behind_boundary():
 
 
 
-def test_async_if_not_exists_legacy_reads_then_creates_only_on_404():
+def test_async_if_not_exists_legacy_reads_then_creates_only_on_404_rust():
     """Async legacy path: the existence read returns 404, so it goes on to create, and
     ``response_hook`` fires once with the created database. The read leg drops the
     internal ``response_hook`` kwarg so the hook can't be invoked twice."""
@@ -1607,7 +1607,7 @@ def test_async_if_not_exists_legacy_reads_then_creates_only_on_404():
     asyncio.run(run())
 
 
-def test_sync_public_create_database_returns_proxy_and_properties():
+def test_sync_public_create_database_returns_proxy_and_properties_rust():
     """End-to-end through the public sync method: with ``return_properties=True`` the
     customer gets back both the ``DatabaseProxy`` handle and the created database's
     properties (its server-assigned rid, etc.), and ``response_hook`` receives the
@@ -1631,7 +1631,7 @@ def test_sync_public_create_database_returns_proxy_and_properties():
     assert hook_calls[0][1]["id"] == "db1"
 
 
-def test_sync_public_create_database_preserves_zero_autoscale_increment():
+def test_sync_public_create_database_preserves_zero_autoscale_increment_rust():
     """A customer creating an autoscale database with an increment percent of ``0``
     keeps that ``0`` in the throughput settings sent -- it is a real, intentional
     value, not treated as "unset" and dropped."""
@@ -1655,7 +1655,7 @@ def test_sync_public_create_database_preserves_zero_autoscale_increment():
     assert policy["autoUpgradePolicy"]["throughputPolicy"]["incrementPercent"] == 0
 
 
-def test_async_public_create_database_returns_proxy_and_properties():
+def test_async_public_create_database_returns_proxy_and_properties_rust():
     """Async twin of the public-method test: ``return_properties=True`` returns the
     proxy and the created database's properties; the async ``response_hook`` receives
     the headers and created database."""
@@ -1687,7 +1687,7 @@ def test_async_public_create_database_returns_proxy_and_properties():
     asyncio.run(run())
 
 
-def test_public_create_database_if_not_exists_returns_final_properties_sync_and_async():
+def test_public_create_database_if_not_exists_returns_final_properties_sync_and_async_rust():
     """End-to-end through the public method (sync and async): with
     ``return_properties=True`` the customer gets back the ``DatabaseProxy`` handle plus
     the final database properties while orchestration remains in Python."""
@@ -1800,7 +1800,7 @@ def _call_create_database(client, *args, method_name="create_database", **kwargs
     return asyncio.run(result) if inspect.isawaitable(result) else result
 
 
-def test_create_database_hedging_true_retains_client_threshold(create_database_client):
+def test_create_database_hedging_true_retains_client_threshold_rust(create_database_client):
     from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
 
     client = create_database_client
@@ -1826,7 +1826,7 @@ def test_create_database_hedging_true_retains_client_threshold(create_database_c
         "x-ms-documentdb-populatequerymetrics", "prefer",
     )],
 ])
-def test_create_rejects_unhonored_options_without_dispatch(create_database_client, options):
+def test_create_rejects_unhonored_options_without_dispatch_rust(create_database_client, options):
     """Anything the Rust engine cannot honor exactly stops the call before a request
     is built.
 
@@ -1852,7 +1852,7 @@ def test_create_rejects_unhonored_options_without_dispatch(create_database_clien
 
 @pytest.mark.parametrize("timeout", [0.25, 0, -1, True, "5", float("nan"), float("inf"), 2**64])
 @pytest.mark.parametrize("nested", [False, True])
-def test_create_rejects_invalid_timeout_before_dispatch(create_database_client, timeout, nested):
+def test_create_rejects_invalid_timeout_before_dispatch_rust(create_database_client, timeout, nested):
     """An unusable timeout is a ``ValueError`` before any request is prepared,
     whether it is passed directly or nested in a raw request-options dictionary.
 
@@ -1874,7 +1874,7 @@ def test_create_rejects_invalid_timeout_before_dispatch(create_database_client, 
     ThroughputProperties(auto_scale_increment_percent=10),
     ThroughputProperties(),
 ])
-def test_create_rejects_invalid_throughput_choice(create_database_client, throughput):
+def test_create_rejects_invalid_throughput_choice_rust(create_database_client, throughput):
     """A throughput setting that does not describe one clear choice is refused.
 
     A database is either at fixed throughput or autoscale, never both, so asking
@@ -1902,7 +1902,7 @@ def test_create_rejects_invalid_throughput_choice(create_database_client, throug
         "x-ms-cosmos-offer-autopilot-settings": '{"maxThroughput":4000}',
     }},
 ])
-def test_create_rejects_mixed_throughput_across_input_routes(create_database_client, options):
+def test_create_rejects_mixed_throughput_across_input_routes_rust(create_database_client, options):
     """Conflicting throughput is caught even when the two halves arrive by different
     routes.
 
@@ -1919,7 +1919,7 @@ def test_create_rejects_mixed_throughput_across_input_routes(create_database_cli
     assert not create_database_client._adapter.prepared_requests
 
 
-def test_create_snapshots_options_and_does_not_leak_throughput(create_database_client):
+def test_create_snapshots_options_and_does_not_leak_throughput_rust(create_database_client):
     """The caller's options dictionary is read, never written to, and never carried
     over into the next call.
 
@@ -1950,7 +1950,7 @@ def test_create_snapshots_options_and_does_not_leak_throughput(create_database_c
     assert wire_headers(first)["x-trace-id"] == "original"
 
 
-def test_create_explicit_throughput_replaces_nested_mode(create_database_client):
+def test_create_explicit_throughput_replaces_nested_mode_rust(create_database_client):
     """The explicit ``offer_throughput`` argument wins over an autoscale setting
     buried in raw options, and the autoscale header is dropped rather than sent
     alongside it. Sending both would leave the service to decide which one
@@ -1963,7 +1963,7 @@ def test_create_explicit_throughput_replaces_nested_mode(create_database_client)
     assert "x-ms-cosmos-offer-autopilot-settings" not in headers
 
 
-def test_create_hook_owns_headers_and_nested_body(create_database_client):
+def test_create_hook_owns_headers_and_nested_body_rust(create_database_client):
     """What the response hook receives is its own to modify, all the way down.
 
     The hook here reports itself as false when tested as a boolean but is still
@@ -2002,7 +2002,7 @@ def test_create_hook_owns_headers_and_nested_body(create_database_client):
     assert client._item_context.response_state.last_response_headers["x-ms-activity-id"] == "own"
 
 
-def test_create_hook_uses_result_not_latest_client_headers(create_database_client, monkeypatch):
+def test_create_hook_uses_result_not_latest_client_headers_rust(create_database_client, monkeypatch):
     """The hook reports the headers from its own call, not whatever the client saw
     most recently.
 
@@ -2036,7 +2036,7 @@ def test_create_hook_uses_result_not_latest_client_headers(create_database_clien
 
 
 @pytest.mark.parametrize("hook", [False, "invalid", 0])
-def test_create_validates_hook_before_dispatch(create_database_client, hook):
+def test_create_validates_hook_before_dispatch_rust(create_database_client, hook):
     """A ``response_hook`` that is not callable is a ``TypeError`` before the
     database is created.
 
@@ -2050,7 +2050,7 @@ def test_create_validates_hook_before_dispatch(create_database_client, hook):
     assert not create_database_client._adapter.prepared_requests
 
 
-def test_create_hook_error_is_not_retried_or_reclassified(create_database_client):
+def test_create_hook_error_is_not_retried_or_reclassified_rust(create_database_client):
     """An error raised by the customer's hook reaches them unchanged and does not
     cause a second create.
 
@@ -2072,7 +2072,7 @@ def test_create_hook_error_is_not_retried_or_reclassified(create_database_client
     create_database_client.client_connection.CreateDatabase.assert_not_called()
 
 
-def test_create_passes_one_deadline_and_honors_nested_timeout(create_database_client, monkeypatch):
+def test_create_passes_one_deadline_and_honors_nested_timeout_rust(create_database_client, monkeypatch):
     """A timeout given in raw options becomes one absolute deadline, computed once.
 
     The clock is pinned so the arithmetic is exact: a 3.5 second budget starting
@@ -2105,7 +2105,7 @@ def test_create_passes_one_deadline_and_honors_nested_timeout(create_database_cl
 
 
 @pytest.mark.parametrize("setup_seconds", [0.75, 1.25])
-def test_create_driver_setup_consumes_budget(native_create_database_client, monkeypatch, setup_seconds):
+def test_create_driver_setup_consumes_budget_rust(native_create_database_client, monkeypatch, setup_seconds):
     """Time spent starting the driver counts against the customer's timeout.
 
     The customer allows one second. Preparing the driver is made to burn part of
@@ -2155,7 +2155,7 @@ def test_create_driver_setup_consumes_budget(native_create_database_client, monk
     client.client_connection.ReadDatabase.assert_not_called()
 
 
-def test_create_async_timeout_drains_pending_work():
+def test_create_async_timeout_drains_pending_work_rust():
     """When an async create times out, the work already in flight is cancelled and
     waited on before the error is raised.
 
@@ -2194,7 +2194,7 @@ def test_create_async_timeout_drains_pending_work():
 @pytest.mark.parametrize("name", ["create_database", "create_database_async"])
 @pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
 @pytest.mark.parametrize("include_attempts", [False, True])
-def test_create_native_binding_accepts_remaining_budget(name, remaining, include_attempts):
+def test_create_native_binding_accepts_remaining_budget_rust(name, remaining, include_attempts):
     """The native create entry points, sync and async, accept a prepared request plus
     whatever time is left, and get as far as looking for the driver.
 
@@ -2215,7 +2215,7 @@ def test_create_native_binding_accepts_remaining_budget(name, remaining, include
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-def test_create_boolean_overload_preserves_literal_overloads(client_type):
+def test_create_boolean_overload_preserves_literal_overloads_rust(client_type):
     """``create_database`` keeps its three declared forms in order: asking for
     properties as a constant false, as a constant true, and as a plain boolean.
 
@@ -2242,7 +2242,7 @@ def test_create_boolean_overload_preserves_literal_overloads(client_type):
 
 
 @pytest.mark.parametrize("is_async", [False, True])
-def test_create_explicit_legacy_preserves_pipeline_and_isolates_hook(is_async):
+def test_create_explicit_legacy_preserves_pipeline_and_isolates_hook_rust(is_async):
     """On the legacy path the transport settings still reach the old call, and the
     hook is still handed its own copy.
 
@@ -2281,7 +2281,7 @@ def test_create_explicit_legacy_preserves_pipeline_and_isolates_hook(is_async):
 @pytest.mark.parametrize("option", ["populate_query_metrics", "session_token", "etag", "match_condition"])
 @pytest.mark.parametrize("value", [None, False, True, "value"])
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
-def test_create_database_rejects_inapplicable_options(create_database_client, option, value, method_name):
+def test_create_database_rejects_inapplicable_options_rust(create_database_client, option, value, method_name):
     """Options that mean nothing when creating a database are refused by both create
     methods, whatever value they carry.
 
@@ -2317,7 +2317,7 @@ def test_create_database_rejects_inapplicable_options(create_database_client, op
     ],
 )
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
-def test_create_database_rejects_invalid_argument_binding(create_database_client, args, kwargs, method_name):
+def test_create_database_rejects_invalid_argument_binding_rust(create_database_client, args, kwargs, method_name):
     """Arguments that do not match the signature fail as ``TypeError`` before
     anything is created.
 
@@ -2341,7 +2341,7 @@ def test_create_database_rejects_invalid_argument_binding(create_database_client
 @pytest.mark.parametrize("return_properties", [False, True])
 @pytest.mark.parametrize("throughput", [None, 400, ThroughputProperties(auto_scale_max_throughput=4000)])
 @pytest.mark.parametrize("workflow", ["create", "existing", "missing", "race"])
-def test_create_database_preserves_supported_settings(
+def test_create_database_preserves_supported_settings_rust(
     create_database_client, keyword_id, return_properties, throughput, workflow
 ):
     """The broadest test in the file: every supported option survives, across all
@@ -2464,7 +2464,7 @@ def test_create_database_preserves_supported_settings(
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
-def test_create_database_signature_is_keyword_only_after_id(client_type, method_name):
+def test_create_database_signature_is_keyword_only_after_id_rust(client_type, method_name):
     """Both create methods take the database id positionally and require everything
     else by name.
 
@@ -2496,7 +2496,7 @@ def test_create_database_signature_is_keyword_only_after_id(client_type, method_
         [404, 409, 500],
     ],
 )
-def test_if_not_exists_recovery_is_bounded_and_preserves_errors(create_database_client, statuses):
+def test_if_not_exists_recovery_is_bounded_and_preserves_errors_rust(create_database_client, statuses):
     """Get-or-create gives up after at most three requests and reports the last real
     failure.
 
@@ -2543,7 +2543,7 @@ def test_if_not_exists_recovery_is_bounded_and_preserves_errors(create_database_
 
 
 @pytest.mark.parametrize("failure_type", [ServiceRequestError, asyncio.CancelledError])
-def test_if_not_exists_follow_up_read_preserves_transport_error_or_cancellation(
+def test_if_not_exists_follow_up_read_preserves_transport_error_or_cancellation_rust(
     create_database_client, failure_type
 ):
     """If the final read is interrupted, the interruption itself is what the customer
@@ -2587,7 +2587,7 @@ def test_if_not_exists_follow_up_read_preserves_transport_error_or_cancellation(
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-def test_public_create_database_does_not_select_backend(client_type):
+def test_public_create_database_does_not_select_backend_rust(client_type):
     """The public ``create_database`` (sync and async) must not name an engine: its
     source mentions no Rust backend, no eligibility check, and no direct legacy call.
     That keeps engine selection entirely behind the coordinator, so the public method
@@ -2599,7 +2599,7 @@ def test_public_create_database_does_not_select_backend(client_type):
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-def test_public_create_database_if_not_exists_does_not_orchestrate_backends(client_type):
+def test_public_create_database_if_not_exists_does_not_orchestrate_backends_rust(client_type):
     """The public ``create_database_if_not_exists`` (sync and async) must stay a thin
     delegate: its source names no Rust backend and makes no direct ReadDatabase or
     CreateDatabase call, so the read-then-create and the engine choice live entirely in
@@ -2615,7 +2615,7 @@ def test_public_create_database_if_not_exists_does_not_orchestrate_backends(clie
 # ---------------------------------------------------------------------------
 
 
-def test_async_if_not_exists_uses_python_coordinator_with_rust_selected():
+def test_async_if_not_exists_uses_python_coordinator_with_rust_selected_rust():
     """Async twin: the database already exists, so the read is the only request
     sent and no legacy call is made."""
     async def run():
@@ -2654,7 +2654,7 @@ def test_async_if_not_exists_uses_python_coordinator_with_rust_selected():
     asyncio.run(run())
 
 
-def test_async_if_not_exists_rust_404_then_rust_create_without_legacy_calls():
+def test_async_if_not_exists_rust_404_then_rust_create_without_legacy_calls_rust():
     """Async twin: the database is missing, so both requests run on the Rust path.
 
     Async clients are a separate code path with their own coordinator, so the same
@@ -2708,7 +2708,7 @@ def test_async_if_not_exists_rust_404_then_rust_create_without_legacy_calls():
     asyncio.run(run())
 
 
-def test_async_if_not_exists_rust_create_race_reads_winning_database():
+def test_async_if_not_exists_rust_create_race_reads_winning_database_rust():
     """Async twin: a creation conflict is followed by one read."""
     async def run():
         """Return the winning database without invoking legacy transport."""
@@ -2757,7 +2757,7 @@ def test_async_if_not_exists_rust_create_race_reads_winning_database():
     asyncio.run(run())
 
 
-def test_async_if_not_exists_legacy_existing_skips_create_and_strips_create_only_options():
+def test_async_if_not_exists_legacy_existing_skips_create_and_strips_create_only_options_rust():
     """Async twin of ``test_sync_if_not_exists_legacy_returns_existing_without_create_headers``:
     the legacy path returns the existing database without calling CreateDatabase, and
     strips provisioning-only options (offerThroughput, autoUpgradePolicy) from the
@@ -2807,7 +2807,7 @@ def test_async_if_not_exists_legacy_existing_skips_create_and_strips_create_only
 
 
 
-def test_sync_if_not_exists_non_404_read_error_propagates_without_create():
+def test_sync_if_not_exists_non_404_read_error_propagates_without_create_rust():
     """A read error other than 404 (e.g. 403 Forbidden) propagates immediately
     without ever attempting the create. Recovery from a creation conflict is a
     separate concern; this locks in that only 404 triggers create."""
@@ -2828,7 +2828,7 @@ def test_sync_if_not_exists_non_404_read_error_propagates_without_create():
     connection.CreateDatabase.assert_not_called()
 
 
-def test_async_if_not_exists_non_404_read_error_propagates_without_create():
+def test_async_if_not_exists_non_404_read_error_propagates_without_create_rust():
     """Async twin of the non-404 read-error propagation test."""
     async def run():
         """Read raises a non-404 error on the async legacy path; confirm it propagates and create is never called."""
@@ -2903,7 +2903,7 @@ def _get_or_create_responses(statuses):
     ({"initial_headers": {"Prefer": "return=minimal"}}, NotImplementedError),
     ({"initial_headers": {"Authorization": "unused"}}, NotImplementedError),
 ])
-def test_if_not_exists_preflight_validates_the_complete_workflow(create_database_client, options, error):
+def test_if_not_exists_preflight_validates_the_complete_workflow_rust(create_database_client, options, error):
     """Get-or-create checks every option against the whole workflow before it sends
     anything.
 
@@ -2933,7 +2933,7 @@ def test_if_not_exists_preflight_validates_the_complete_workflow(create_database
     ("X-MS-OFFER-THROUGHPUT", "400"),
     ("X-MS-COSMOS-OFFER-AUTOPILOT-SETTINGS", '{"maxThroughput":4000}'),
 ])
-def test_if_not_exists_snapshots_settings_and_limits_throughput_to_create(
+def test_if_not_exists_snapshots_settings_and_limits_throughput_to_create_rust(
     create_database_client, statuses, mapping_name, header, value
 ):
     """Options are read once at the start, and throughput reaches only the create
@@ -2990,7 +2990,7 @@ def test_if_not_exists_snapshots_settings_and_limits_throughput_to_create(
 
 
 @pytest.mark.parametrize("statuses", [[200], [404, 201], [404, 409, 200]])
-def test_if_not_exists_hook_has_independent_final_response(create_database_client, monkeypatch, statuses):
+def test_if_not_exists_hook_has_independent_final_response_rust(create_database_client, monkeypatch, statuses):
     """The hook fires once, for the step that actually produced the result, and owns
     what it is given.
 
@@ -3046,7 +3046,7 @@ def test_if_not_exists_hook_has_independent_final_response(create_database_clien
     CosmosResourceNotFoundError(status_code=404, message="customer hook"),
     CosmosResourceExistsError(status_code=409, message="customer hook"),
 ])
-def test_if_not_exists_hook_errors_never_enter_recovery(create_database_client, statuses, failure):
+def test_if_not_exists_hook_errors_never_enter_recovery_rust(create_database_client, statuses, failure):
     """An error from the customer's hook is never mistaken for a service reply.
 
     This is the trap the test exists for. The hook raises the very error types
@@ -3075,7 +3075,7 @@ def test_if_not_exists_hook_errors_never_enter_recovery(create_database_client, 
 
 
 @pytest.mark.parametrize("expire_after", [1, 2, 3])
-def test_if_not_exists_expiration_stops_requests_and_success_hooks(
+def test_if_not_exists_expiration_stops_requests_and_success_hooks_rust(
     create_database_client, monkeypatch, expire_after
 ):
     """When the budget runs out mid-workflow, the remaining steps are not attempted.
@@ -3122,7 +3122,7 @@ def test_if_not_exists_expiration_stops_requests_and_success_hooks(
     hook.assert_not_called()
 
 
-def test_if_not_exists_native_dispatch_gets_only_remaining_time(native_create_database_client, monkeypatch):
+def test_if_not_exists_native_dispatch_gets_only_remaining_time_rust(native_create_database_client, monkeypatch):
     """Each leg of the workflow is given only the time left, not a fresh budget.
 
     With a pinned clock, a five second budget, one second spent starting the
@@ -3176,7 +3176,7 @@ def test_if_not_exists_native_dispatch_gets_only_remaining_time(native_create_da
 
 @pytest.mark.parametrize("stage", [1, 2, 3])
 @pytest.mark.parametrize("cancel", [False, True])
-def test_if_not_exists_async_timeout_or_cancellation_drains_each_stage(stage, cancel):
+def test_if_not_exists_async_timeout_or_cancellation_drains_each_stage_rust(stage, cancel):
     """Whichever step is in flight when the async workflow stops, that work is
     cancelled and waited on before the error is raised.
 
@@ -3228,7 +3228,7 @@ def test_if_not_exists_async_timeout_or_cancellation_drains_each_stage(stage, ca
 @pytest.mark.parametrize("name", ["read_database", "read_database_async"])
 @pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
 @pytest.mark.parametrize("include_attempts", [False, True])
-def test_database_read_native_binding_accepts_remaining_budget(name, remaining, include_attempts):
+def test_database_read_native_binding_accepts_remaining_budget_rust(name, remaining, include_attempts):
     """The native read entry points, sync and async, accept a prepared read plus the
     time remaining, including no limit at all.
 
@@ -3246,7 +3246,7 @@ def test_database_read_native_binding_accepts_remaining_budget(name, remaining, 
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-def test_if_not_exists_boolean_overload_preserves_literal_overloads(client_type):
+def test_if_not_exists_boolean_overload_preserves_literal_overloads_rust(client_type):
     """Get-or-create declares the same three forms in the same order as the plain
     create, so a customer gets identical type checking whichever method they
     pick. Needs Python 3.11 to inspect the declarations at runtime.
@@ -3263,7 +3263,7 @@ def test_if_not_exists_boolean_overload_preserves_literal_overloads(client_type)
 
 
 @pytest.mark.parametrize("statuses", [[200], [404, 201], [404, 409, 200]])
-def test_if_not_exists_legacy_receives_remaining_budget_and_isolated_hook(
+def test_if_not_exists_legacy_receives_remaining_budget_and_isolated_hook_rust(
     create_database_client, monkeypatch, statuses
 ):
     """On the legacy path the same budget and hook rules apply, in that path's own
@@ -3355,7 +3355,7 @@ def test_if_not_exists_legacy_receives_remaining_budget_and_isolated_hook(
     ({"request_options": {"autoUpgradePolicy": {"maxThroughput": 4000}}}, TypeError),
     ({"feed_options": {"autoUpgradePolicy": 4000}}, TypeError),
 ])
-def test_creation_values_fail_before_any_request(create_database_client, method_name, use_legacy, options, error):
+def test_creation_values_fail_before_any_request_rust(create_database_client, method_name, use_legacy, options, error):
     client = create_database_client
     backend = client._adapter
     backend.responses = _get_or_create_responses([200])
@@ -3373,7 +3373,7 @@ def test_creation_values_fail_before_any_request(create_database_client, method_
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
 @pytest.mark.parametrize("mapping_name", ["request_options", "feed_options"])
 @pytest.mark.parametrize("throughput", [None, 0, -(2**63), 2**63 - 1])
-def test_manual_throughput_local_validation_preserves_representable_values(
+def test_manual_throughput_local_validation_preserves_representable_values_rust(
     create_database_client, method_name, mapping_name, throughput
 ):
     client = create_database_client
@@ -3407,7 +3407,7 @@ def test_manual_throughput_local_validation_preserves_representable_values(
      {"x-ms-cosmos-priority-level": "Low", "x-ms-cosmos-throughput-bucket": "2"},
      {"priority": None, "throughput_bucket": 0}, ("Low", "2")),
 ])
-def test_database_defaults_and_overrides_are_stable_across_every_step(
+def test_database_defaults_and_overrides_are_stable_across_every_step_rust(
     create_database_client, method_name, statuses, use_legacy, reverse, typed, raw, explicit, expected,
 ):
     from copy import deepcopy
@@ -3474,7 +3474,7 @@ def test_database_defaults_and_overrides_are_stable_across_every_step(
     ("contentType", "content-type", "application/json", "application/custom+json"),
     ("correlatedActivityId", "x-ms-cosmos-correlated-activityid", "raw", "typed"),
 ])
-def test_get_or_create_typed_options_override_headers_without_order_dependency(
+def test_get_or_create_typed_options_override_headers_without_order_dependency_rust(
     create_database_client, reverse, option, header, value, override,
 ):
     client = create_database_client
@@ -3491,7 +3491,7 @@ def test_get_or_create_typed_options_override_headers_without_order_dependency(
 
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
 @pytest.mark.parametrize("offer", [4000, ThroughputProperties(auto_scale_max_throughput=4000)])
-def test_explicit_throughput_replaces_invalid_unused_nested_values(create_database_client, method_name, offer):
+def test_explicit_throughput_replaces_invalid_unused_nested_values_rust(create_database_client, method_name, offer):
     client = create_database_client
     client._adapter.responses = _get_or_create_responses(
         [201] if method_name == "create_database" else [404, 201]
@@ -3511,7 +3511,7 @@ def test_explicit_throughput_replaces_invalid_unused_nested_values(create_databa
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
 @pytest.mark.parametrize("options", [{}, {"priority": None, "throughput_bucket": None},
                                     {"priority": "", "throughput_bucket": 0}])
-def test_unset_database_defaults_add_no_request_tags_or_capacity(create_database_client, method_name, options):
+def test_unset_database_defaults_add_no_request_tags_or_capacity_rust(create_database_client, method_name, options):
     client = create_database_client
     client._adapter.responses = _get_or_create_responses(
         [201] if method_name == "create_database" else [404, 409, 200]
@@ -3607,7 +3607,7 @@ def _use_legacy_delete(client):
 @pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
 @pytest.mark.parametrize("option", ["session_token", "populate_query_metrics"])
 @pytest.mark.parametrize("value", [None, False, True, "unused"])
-def test_delete_database_rejects_obsolete_options_before_dispatch(
+def test_delete_database_rejects_obsolete_options_before_dispatch_rust(
     delete_database_client, use_legacy, option, value
 ):
     """Retired options are refused on both paths before anything is deleted.
@@ -3634,7 +3634,7 @@ def test_delete_database_rejects_obsolete_options_before_dispatch(
 
 
 @pytest.mark.parametrize("value", [None, False, True])
-def test_delete_database_rejects_positional_query_metrics(delete_database_client, value):
+def test_delete_database_rejects_positional_query_metrics_rust(delete_database_client, value):
     """A second positional argument is a ``TypeError``, not a silently accepted
     option.
 
@@ -3650,7 +3650,7 @@ def test_delete_database_rejects_positional_query_metrics(delete_database_client
 
 
 @pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
-def test_delete_database_hook_receives_an_isolated_case_insensitive_snapshot(delete_database_client, use_legacy):
+def test_delete_database_hook_receives_an_isolated_case_insensitive_snapshot_rust(delete_database_client, use_legacy):
     """The delete hook is handed one argument -- the headers -- and they are its own
     private copy, on both paths.
 
@@ -3694,7 +3694,7 @@ def test_delete_database_hook_receives_an_isolated_case_insensitive_snapshot(del
     assert client.client_connection.last_response_headers["x-ms-request-charge"] == "4.24"
 
 
-def test_delete_database_invokes_falsey_callable_hook(delete_database_client):
+def test_delete_database_invokes_falsey_callable_hook_rust(delete_database_client):
     """A hook that reports itself as false when tested as a boolean is still
     callable, so it still runs exactly once. Deciding whether to call a hook by
     truth-testing it would silently skip a valid one and lose the customer's
@@ -3716,7 +3716,7 @@ def test_delete_database_invokes_falsey_callable_hook(delete_database_client):
 
 
 @pytest.mark.parametrize("error_type", [ValueError, NotImplementedError, asyncio.CancelledError])
-def test_delete_database_hook_failure_never_replays(delete_database_client, error_type):
+def test_delete_database_hook_failure_never_replays_rust(delete_database_client, error_type):
     """If the customer's hook raises after a successful delete, the delete is not
     repeated.
 
@@ -3742,7 +3742,7 @@ def test_delete_database_hook_failure_never_replays(delete_database_client, erro
 
 
 @pytest.mark.parametrize("error_type", [ServiceRequestError, NotImplementedError, asyncio.CancelledError])
-def test_delete_database_backend_failure_never_replays(delete_database_client, error_type):
+def test_delete_database_backend_failure_never_replays_rust(delete_database_client, error_type):
     """A failure inside the engine is raised as-is and is not retried on the other
     path.
 
@@ -3767,7 +3767,7 @@ def test_delete_database_backend_failure_never_replays(delete_database_client, e
 
 
 @pytest.mark.parametrize("status", [403, 404, 412, 429, 500])
-def test_delete_database_service_error_never_fires_success_hook_or_replays(delete_database_client, status):
+def test_delete_database_service_error_never_fires_success_hook_or_replays_rust(delete_database_client, status):
     """A rejected delete surfaces with its status and is never tried again on the
     other path.
 
@@ -3815,7 +3815,7 @@ def test_delete_database_service_error_never_fires_success_hook_or_replays(delet
         {"unknown_option": True},
     ],
 )
-def test_delete_database_unsupported_options_never_fall_back(delete_database_client, kwargs):
+def test_delete_database_unsupported_options_never_fall_back_rust(delete_database_client, kwargs):
     """Options the Rust engine cannot honor stop the delete instead of quietly
     sending it through the legacy transport.
 
@@ -3840,7 +3840,7 @@ def test_delete_database_unsupported_options_never_fall_back(delete_database_cli
 
 
 @pytest.mark.parametrize("timeout", [None, 1, 3.5])
-def test_delete_database_preserves_supported_deadlines_and_options(delete_database_client, timeout):
+def test_delete_database_preserves_supported_deadlines_and_options_rust(delete_database_client, timeout):
     """Supported options reach the delete request unchanged, and the call returns
     nothing on success.
 
@@ -3880,7 +3880,7 @@ def test_delete_database_preserves_supported_deadlines_and_options(delete_databa
         ({"if_none_match": "v1"}, {"If-None-Match": "v1"}),
     ],
 )
-def test_delete_database_preserves_conditional_headers_on_both_backends(
+def test_delete_database_preserves_conditional_headers_on_both_backends_rust(
     delete_database_client, use_legacy, kwargs, expected
 ):
     """Conditional delete arguments become the same headers on both paths.
@@ -3931,7 +3931,7 @@ def test_delete_database_preserves_conditional_headers_on_both_backends(
         ({"etag": "v1", "match_condition": "invalid"}, TypeError),
     ],
 )
-def test_delete_database_invalid_guards_fail_before_dispatch(
+def test_delete_database_invalid_guards_fail_before_dispatch_rust(
     delete_database_client, use_legacy, kwargs, error
 ):
     """Incomplete or malformed conditional arguments stop the delete on both paths.
@@ -3959,7 +3959,7 @@ def test_delete_database_invalid_guards_fail_before_dispatch(
 @pytest.mark.parametrize("name", ["delete_database", "delete_database_async"])
 @pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
 @pytest.mark.parametrize("include_attempts", [False, True])
-def test_delete_native_binding_accepts_remaining_budget(name, remaining, include_attempts):
+def test_delete_native_binding_accepts_remaining_budget_rust(name, remaining, include_attempts):
     """Reach driver lookup with the exact remaining budget, without acquiring a driver."""
     from azure.cosmos import _rust
 
@@ -3974,7 +3974,7 @@ def test_delete_native_binding_accepts_remaining_budget(name, remaining, include
 
 @pytest.mark.parametrize("name", ["delete_database", "delete_database_async"])
 @pytest.mark.parametrize("remaining", [0, -1, float("inf"), float("nan")])
-def test_delete_native_binding_rejects_invalid_remaining_budget(name, remaining):
+def test_delete_native_binding_rejects_invalid_remaining_budget_rust(name, remaining):
     """Reject invalid remaining durations before driver lookup or deletion."""
     from azure.cosmos import _rust
 
@@ -3984,7 +3984,7 @@ def test_delete_native_binding_rejects_invalid_remaining_budget(name, remaining)
 
 
 @pytest.mark.parametrize("setup_seconds", [0.75, 1.25])
-def test_delete_driver_setup_consumes_budget(native_create_database_client, monkeypatch, setup_seconds):
+def test_delete_driver_setup_consumes_budget_rust(native_create_database_client, monkeypatch, setup_seconds):
     """Driver setup consumes deletion's one-second budget before native dispatch."""
     from azure.cosmos._backend import binding_adapter as sync_rust
     from azure.cosmos.aio._backend import binding_adapter as async_rust
@@ -4024,7 +4024,7 @@ def test_delete_driver_setup_consumes_budget(native_create_database_client, monk
     client.client_connection.DeleteDatabase.assert_not_called()
 
 
-def test_delete_database_is_registered_as_single_response_operation():
+def test_delete_database_is_registered_as_single_response_operation_rust():
     """Delete-database is a single-reply operation, so it is sent to the
     binding's ``delete_database`` entry point rather than the paged query path."""
     assert OP_TO_BINDING_FUNCTION_NAME[OP_DELETE_DATABASE] == "delete_database"
@@ -4039,7 +4039,7 @@ def test_delete_database_is_registered_as_single_response_operation():
         ("dbs/my db", "my db"),
     ],
 )
-def test_delete_database_prepared_derives_the_id_from_the_link(database_link, expected_id):
+def test_delete_database_prepared_derives_the_id_from_the_link_rust(database_link, expected_id):
     """The binding names the database, while the legacy path passes the whole
     ``dbs/{id}`` link. The link forms the legacy parser accepts must all reduce to
     the same name here, or the two paths would delete different databases -- or
@@ -4054,7 +4054,7 @@ def test_delete_database_prepared_derives_the_id_from_the_link(database_link, ex
 
 
 @pytest.mark.parametrize("database_link", ["dbs/", "dbs", "/dbs/", ""])
-def test_delete_database_prepared_rejects_a_link_with_no_id(database_link):
+def test_delete_database_prepared_rejects_a_link_with_no_id_rust(database_link):
     """A link with no name raises the same error the legacy link parser raises,
     rather than sending an account-level request that fails later with a different
     service error."""
@@ -4062,7 +4062,7 @@ def test_delete_database_prepared_rejects_a_link_with_no_id(database_link):
         build_delete_database_prepared(database_link, {})
 
 
-def test_delete_database_prepared_drops_headers_the_legacy_path_suppresses():
+def test_delete_database_prepared_drops_headers_the_legacy_path_suppresses_rust():
     """A database is a master resource: the legacy path attaches no session token
     and drops the intended-collection-rid header. The Rust request has to carry the
     same headers, while keeping the options the customer did set."""
@@ -4082,7 +4082,7 @@ def test_delete_database_prepared_drops_headers_the_legacy_path_suppresses():
     assert settings_options(prepared)["timeout_seconds"] == 3.5
 
 
-def test_sync_delete_database_routes_to_rust_and_never_calls_legacy():
+def test_sync_delete_database_routes_to_rust_and_never_calls_legacy_rust():
     """On a Rust-backed client the delete runs through the backend, records the
     response headers on the connection, and returns nothing. A 204 with no body is
     a success, not a parse failure."""
@@ -4106,7 +4106,7 @@ def test_sync_delete_database_routes_to_rust_and_never_calls_legacy():
     connection.DeleteDatabase.assert_not_called()
 
 
-def test_sync_delete_database_raises_not_found_for_a_missing_database():
+def test_sync_delete_database_raises_not_found_for_a_missing_database_rust():
     """The parse step is what turns a 404 into the typed error. Dropping the parse
     because the delete returns nothing would turn a failed delete into a silent
     success."""
@@ -4128,7 +4128,7 @@ def test_sync_delete_database_raises_not_found_for_a_missing_database():
 
 
 
-def test_async_delete_database_routes_to_rust_and_never_calls_legacy():
+def test_async_delete_database_routes_to_rust_and_never_calls_legacy_rust():
     """Prove async database deletion uses Rust and does not call Python."""
     async def run():
         """Drive the async delete through Rust and verify the backend was used, not legacy."""
@@ -4160,7 +4160,7 @@ def test_async_delete_database_routes_to_rust_and_never_calls_legacy():
     ["db1", {"id": "db1", "_self": "dbs/db1/"}],
     ids=["name", "properties"],
 )
-def test_public_sync_delete_database_accepts_every_argument_form(database_argument):
+def test_public_sync_delete_database_accepts_every_argument_form_rust(database_argument):
     """``delete_database`` takes a name, a properties mapping, or a proxy. All three
     have to reach the backend as the same database, because the reduction from
     argument to link happens once and the Rust request derives its name from it."""
@@ -4177,7 +4177,7 @@ def test_public_sync_delete_database_accepts_every_argument_form(database_argume
     assert backend.prepared.item_id == "db1"
 
 
-def test_public_sync_delete_database_accepts_a_proxy():
+def test_public_sync_delete_database_accepts_a_proxy_rust():
     """The proxy form of the same check."""
     client = object.__new__(CosmosClient)
     client.client_connection = SimpleNamespace(
@@ -4192,7 +4192,7 @@ def test_public_sync_delete_database_accepts_a_proxy():
     assert backend.prepared.item_id == "db1"
 
 
-def test_public_sync_delete_database_fires_response_hook_with_headers_only():
+def test_public_sync_delete_database_fires_response_hook_with_headers_only_rust():
     """The public hook for a delete takes the headers alone -- there is no body to
     hand it. Routing through the coordinator must not change that signature."""
     client = object.__new__(CosmosClient)
@@ -4209,7 +4209,7 @@ def test_public_sync_delete_database_fires_response_hook_with_headers_only():
     assert hook_calls[0]["x-ms-request-charge"] == "4.24"
 
 
-def test_sync_delete_database_preserves_access_conditions_without_warnings():
+def test_sync_delete_database_preserves_access_conditions_without_warnings_rust():
     """A guarded delete remains guarded without misleading deprecation warnings."""
     client = object.__new__(CosmosClient)
     client.client_connection = SimpleNamespace(
@@ -4236,7 +4236,7 @@ def test_sync_delete_database_preserves_access_conditions_without_warnings():
     assert "x-ms-session-token" not in wire_headers(prepared)
 
 
-def test_sync_delete_database_preserves_wildcard_guard_without_fallback():
+def test_sync_delete_database_preserves_wildcard_guard_without_fallback_rust():
     """An unused ETag must not force fallback or remove the validated wildcard guard."""
     client = object.__new__(CosmosClient)
     client.client_connection = SimpleNamespace(
@@ -4259,7 +4259,7 @@ def test_sync_delete_database_preserves_wildcard_guard_without_fallback():
     client.client_connection.DeleteDatabase.assert_not_called()
 
 
-def test_async_delete_database_preserves_access_conditions_without_warnings():
+def test_async_delete_database_preserves_access_conditions_without_warnings_rust():
     """Async deletes retain conditional headers without deprecation warnings."""
     async def run():
         """Verify the condition reaches the Rust request."""

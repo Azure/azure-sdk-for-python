@@ -81,7 +81,7 @@ def _database_for(client, created):
     return client.get_database_client(created[_observed_backend_name(client)])
 
 
-async def test_replace_throughput_fixed_async(database_per_backend):
+async def test_replace_throughput_fixed_async_rust(database_per_backend):
     """Async: changing a fixed RU/s number lands the same value on both engines."""
     # The value is read back so the check covers what reached the server, not
     # only what the SDK handed back.
@@ -101,7 +101,7 @@ async def test_replace_throughput_fixed_async(database_per_backend):
     assert comparison.rust.return_value["offer_throughput"] == 2000
 
 
-async def test_replace_throughput_autoscale_async(database_per_backend):
+async def test_replace_throughput_autoscale_async_rust(database_per_backend):
     """Async: changing an autoscale ceiling and step lands the same values on both engines."""
     # Read-back proves the nested autoscale settings reached the service.
     created = database_per_backend(
@@ -125,7 +125,7 @@ async def test_replace_throughput_autoscale_async(database_per_backend):
     assert comparison.rust.return_value["auto_scale_increment_percent"] == 20
 
 
-async def test_replace_throughput_callback_cannot_change_result_async(database_per_backend):
+async def test_replace_throughput_callback_cannot_change_result_async_rust(database_per_backend):
     """Async callback mutations cannot change returned or persisted shared capacity."""
     created = database_per_backend(1000)
 
@@ -153,7 +153,7 @@ async def test_replace_throughput_callback_cannot_change_result_async(database_p
     comparison.assert_functional_parity()
 
 
-async def test_replace_throughput_without_provisioned_throughput_async(database_per_backend):
+async def test_replace_throughput_without_provisioned_throughput_async_rust(database_per_backend):
     """Both async implementations reject replacing a missing offer with a typed 404."""
     created = database_per_backend(None)
 

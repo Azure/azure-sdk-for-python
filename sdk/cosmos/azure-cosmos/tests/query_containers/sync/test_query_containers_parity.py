@@ -66,7 +66,7 @@ def database_with_containers():
             client.close()
 
 
-def test_query_containers_by_id_matches(database_with_containers):
+def test_query_containers_by_id_matches_rust(database_with_containers):
     """A parameterised query for one container returns it on both engines."""
     database_id, container_ids = database_with_containers
     target = container_ids[1]
@@ -86,7 +86,7 @@ def test_query_containers_by_id_matches(database_with_containers):
     assert comparison.rust.return_value == [target]
 
 
-def test_query_containers_no_match_is_empty(database_with_containers):
+def test_query_containers_no_match_is_empty_rust(database_with_containers):
     """A query matching nothing returns an empty result on both engines, not an error."""
     database_id, _ = database_with_containers
 
@@ -105,7 +105,7 @@ def test_query_containers_no_match_is_empty(database_with_containers):
     assert comparison.rust.return_value == []
 
 
-def test_query_containers_select_all_matches_full_membership(database_with_containers):
+def test_query_containers_select_all_matches_full_membership_rust(database_with_containers):
     """An unfiltered query agrees with the containers actually created."""
     database_id, container_ids = database_with_containers
 
@@ -121,7 +121,7 @@ def test_query_containers_select_all_matches_full_membership(database_with_conta
     assert comparison.rust.return_value == sorted(container_ids)
 
 
-def test_query_containers_string_query_matches(database_with_containers):
+def test_query_containers_string_query_matches_rust(database_with_containers):
     """A query passed as a bare string behaves the same on both engines."""
     database_id, container_ids = database_with_containers
 
@@ -137,7 +137,7 @@ def test_query_containers_string_query_matches(database_with_containers):
     assert comparison.rust.return_value == sorted(container_ids)
 
 
-def test_query_containers_pages_and_resumption(database_with_containers):
+def test_query_containers_pages_and_resumption_rust(database_with_containers):
     database_id, container_ids = database_with_containers
 
     def run(client):
@@ -170,7 +170,7 @@ def test_query_containers_pages_and_resumption(database_with_containers):
 
 
 @pytest.mark.parametrize("timeout", [None, 10])
-def test_query_containers_page_hooks_and_timeout(database_with_containers, timeout):
+def test_query_containers_page_hooks_and_timeout_rust(database_with_containers, timeout):
     database_id, container_ids = database_with_containers
 
     def run(client):

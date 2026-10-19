@@ -52,7 +52,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.client.close()
 
-    async def test_container_patch_item_throughput_bucket_async(self):
+    async def test_container_patch_item_throughput_bucket_async_rust(self):
         """Verify the async patch_item forwards the throughput_bucket kwarg as the x-ms-cosmos-throughput-bucket header and that all six patch operations produce the expected item."""
         pkValue = "patch_item_pk"
         item = {

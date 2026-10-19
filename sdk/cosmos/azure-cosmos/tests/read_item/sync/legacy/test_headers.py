@@ -62,7 +62,7 @@ class TestHeaders(unittest.TestCase):
             partition_key=PartitionKey(path="/pk"),
         )
 
-    def test_container_read_item_throughput_bucket(self):
+    def test_container_read_item_throughput_bucket_rust(self):
         """Verify the operation prepares the requested throughput bucket."""
         # Source: tests/test_headers.py::TestHeaders.test_container_read_item_throughput_bucket
         created_document = self.container.create_item(
@@ -82,7 +82,7 @@ class TestHeaders(unittest.TestCase):
                 str(request_throughput_bucket_number),
             )
 
-    def test_negative_max_integrated_cache_staleness(self):
+    def test_negative_max_integrated_cache_staleness_rust(self):
         """If the negative-staleness call raises, require a ValueError.
 
         The copied try/except has no assertion when the call returns normally.

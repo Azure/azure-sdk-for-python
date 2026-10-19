@@ -19,7 +19,7 @@ def modules(monkeypatch):
     return tuple(importlib.import_module(name) for name in ("perf_read_trace", "workload_utils", "perf_stats"))
 
 
-def test_bounded_retention_keeps_global_slowest_and_reports_evictions(modules, tmp_path):
+def test_bounded_retention_keeps_global_slowest_and_reports_evictions_rust(modules, tmp_path):
     trace = modules[0].ReadTrace("rust", capacity=2, top_count=2, slow_ms=1)
     for duration in (100, 80, 5, 4, 3):
         state, token = trace.begin(0, {})
@@ -40,7 +40,7 @@ def test_bounded_retention_keeps_global_slowest_and_reports_evictions(modules, t
         trace.save(tmp_path / "bad.json", measured_count=4, measured_errors=0)
 
 
-def test_read_result_hook_headers_and_exact_stats_timing(modules, monkeypatch):
+def test_read_result_hook_headers_and_exact_stats_timing_rust(modules, monkeypatch):
     trace_module, utils, stats_module = modules
     stats = stats_module.Stats()
     trace = stats.read_trace = trace_module.ReadTrace("rust", slow_ms=0.000001)
@@ -76,7 +76,7 @@ def test_read_result_hook_headers_and_exact_stats_timing(modules, monkeypatch):
     assert trace.current.get() is None and not trace.active
 
 
-def test_errors_cancellation_and_missing_headers_are_explicit(modules, tmp_path):
+def test_errors_cancellation_and_missing_headers_are_explicit_rust(modules, tmp_path):
     trace_module, utils, stats_module = modules
     stats = stats_module.Stats()
     trace = stats.read_trace = trace_module.ReadTrace("core-python")
@@ -99,7 +99,7 @@ def test_errors_cancellation_and_missing_headers_are_explicit(modules, tmp_path)
         trace.save(tmp_path / "cancelled.json", measured_count=1, measured_errors=1)
 
 
-def test_concurrent_calls_keep_their_own_binding_spans_and_restore_patches(modules):
+def test_concurrent_calls_keep_their_own_binding_spans_and_restore_patches_rust(modules):
     trace_module, utils, stats_module = modules
     trace = trace_module.ReadTrace("rust", slow_ms=0.000001)
     stats = stats_module.Stats()

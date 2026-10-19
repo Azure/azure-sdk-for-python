@@ -43,7 +43,7 @@ def _normalize_feed_ranges(feed_ranges):
 
 
 @pytest.mark.asyncio
-async def test_read_feed_ranges_baseline_async(container_for):
+async def test_read_feed_ranges_baseline_async_rust(container_for):
     """Async baseline read_feed_ranges returns the same normalized ranges."""
     # Without this, a basic divergence in the returned range boundaries would go unnoticed.
 
@@ -60,7 +60,7 @@ async def test_read_feed_ranges_baseline_async(container_for):
 
 
 @pytest.mark.asyncio
-async def test_read_feed_ranges_force_refresh_async(container_for):
+async def test_read_feed_ranges_force_refresh_async_rust(container_for):
     """Async force-refresh read_feed_ranges stays equivalent on both backends."""
     # Exercise a refresh after discovery has populated the cache. This checks
     # returned values, not split handling or freshness after a failed refresh.

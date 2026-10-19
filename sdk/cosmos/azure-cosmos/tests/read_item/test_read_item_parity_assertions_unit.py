@@ -24,7 +24,7 @@ from common import _parity_helpers
         "read_error", "create_error", "setup_only_binding", "read_fallback",
     ],
 )
-def test_read_baseline_requires_each_expected_item(surface, read_options, result, monkeypatch):
+def test_read_baseline_requires_each_expected_item_rust(surface, read_options, result, monkeypatch):
     module_name = (
         "read_item.sync.test_read_item_parity"
         if surface == "sync"
@@ -97,7 +97,7 @@ def test_read_baseline_requires_each_expected_item(surface, read_options, result
         monkeypatch.setattr(_parity_helpers, "AioCosmosClient", async_client)
 
     def run():
-        outcome = baseline.test_baseline_read_by_id(SimpleNamespace(id="isolated-orders"), read_options)
+        outcome = baseline.test_baseline_read_by_id_rust(SimpleNamespace(id="isolated-orders"), read_options)
         if surface == "aio":
             asyncio.run(outcome)
 

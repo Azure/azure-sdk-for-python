@@ -25,18 +25,18 @@ class TestEmptyAndPrimitiveBodies(unittest.TestCase):
     These tests cover that passthrough behaviour.
     """
 
-    def test_none_returns_empty_bytes(self):
+    def test_none_returns_empty_bytes_rust(self):
         """``body=None`` → ``b""`` (the "no payload" signal for ops like delete)."""
         self.assertEqual(serialize_body_to_bytes(None), b"")
 
-    def test_bytes_input_passes_through_unchanged(self):
+    def test_bytes_input_passes_through_unchanged_rust(self):
         """A ``bytes`` body (e.g. pre-encoded by a future Rust path) is returned as-is."""
         payload = b'{"id":"x","total":1}'
         result = serialize_body_to_bytes(payload)
         self.assertEqual(result, payload)
         self.assertIsInstance(result, bytes)
 
-    def test_bytearray_input_returns_bytes(self):
+    def test_bytearray_input_returns_bytes_rust(self):
         """A ``bytearray`` body returns an immutable ``bytes`` copy.
 
         The helper must hand back ``bytes`` (not ``bytearray``) so that
@@ -51,7 +51,7 @@ class TestEmptyAndPrimitiveBodies(unittest.TestCase):
         ba[0] = ord("X")
         self.assertEqual(result, b'{"k":1}')
 
-    def test_str_input_is_utf8_encoded(self):
+    def test_str_input_is_utf8_encoded_rust(self):
         """A ``str`` body is assumed to already be valid JSON text and is just UTF-8 encoded."""
         self.assertEqual(serialize_body_to_bytes('{"id":"x"}'), b'{"id":"x"}')
 
@@ -67,14 +67,14 @@ class TestDictListSerialization(unittest.TestCase):
     customer fixtures) depend on it byte-for-byte.
     """
 
-    def test_simple_dict_compact_no_spaces(self):
+    def test_simple_dict_compact_no_spaces_rust(self):
         """Dict → compact JSON with no incidental whitespace anywhere."""
         self.assertEqual(
             serialize_body_to_bytes({"id": "order-42", "total": 99.5}),
             b'{"id":"order-42","total":99.5}',
         )
 
-    def test_dict_key_insertion_order_preserved(self):
+    def test_dict_key_insertion_order_preserved_rust(self):
         """Keys appear in the exact order the caller inserted them.
 
         Python dicts preserve insertion order since 3.7. The Cosmos
@@ -87,28 +87,28 @@ class TestDictListSerialization(unittest.TestCase):
             b'{"z":1,"a":2,"m":3}',
         )
 
-    def test_integer_stays_integer_not_float(self):
+    def test_integer_stays_integer_not_float_rust(self):
         """The sample integer is encoded as 123 rather than 123.0."""
         self.assertEqual(
             serialize_body_to_bytes({"n": 123}),
             b'{"n":123}',
         )
 
-    def test_float_with_simple_decimal_keeps_decimal(self):
+    def test_float_with_simple_decimal_keeps_decimal_rust(self):
         """``99.5`` stays ``99.5`` — no scientific notation, no rounding."""
         self.assertEqual(
             serialize_body_to_bytes({"price": 99.5}),
             b'{"price":99.5}',
         )
 
-    def test_booleans_render_lowercase(self):
+    def test_booleans_render_lowercase_rust(self):
         """Python ``True`` / ``False`` → JSON ``true`` / ``false`` (lowercase)."""
         self.assertEqual(
             serialize_body_to_bytes({"flag": True, "off": False}),
             b'{"flag":true,"off":false}',
         )
 
-    def test_none_value_renders_as_json_null(self):
+    def test_none_value_renders_as_json_null_rust(self):
         """A ``None`` *value* inside the body becomes JSON ``null``.
 
         Distinct from the top-level ``None`` case (which means "no
@@ -119,7 +119,7 @@ class TestDictListSerialization(unittest.TestCase):
             b'{"v":null}',
         )
 
-    def test_nested_dict_serializes_recursively(self):
+    def test_nested_dict_serializes_recursively_rust(self):
         """Nested dicts are serialised recursively with the same compact rules."""
         body = {"id": "x", "meta": {"region": "us-east", "count": 3}}
         self.assertEqual(
@@ -127,21 +127,21 @@ class TestDictListSerialization(unittest.TestCase):
             b'{"id":"x","meta":{"region":"us-east","count":3}}',
         )
 
-    def test_list_input_serializes_as_json_array(self):
+    def test_list_input_serializes_as_json_array_rust(self):
         """A bare ``list`` is a legal JSON document and serialises to a JSON array."""
         self.assertEqual(
             serialize_body_to_bytes([1, 2, 3]),
             b"[1,2,3]",
         )
 
-    def test_tuple_input_serializes_as_json_array(self):
+    def test_tuple_input_serializes_as_json_array_rust(self):
         """A ``tuple`` takes the same path as a list — ``json.dumps`` treats them identically."""
         self.assertEqual(
             serialize_body_to_bytes(("a", "b")),
             b'["a","b"]',
         )
 
-    def test_non_ascii_string_value_uses_unicode_escape(self):
+    def test_non_ascii_string_value_uses_unicode_escape_rust(self):
         """Check escaped Unicode bytes for the supplied string with ensure_ascii enabled."""
         self.assertEqual(
             serialize_body_to_bytes({"name": "café"}),
@@ -159,7 +159,7 @@ class TestUnknownTypeRaisesLoudly(unittest.TestCase):
     a confusing 400 from the service.
     """
 
-    def test_object_input_raises_type_error(self):
+    def test_object_input_raises_type_error_rust(self):
         """A custom class instance is not a body shape we accept; the error names the type."""
         class Custom:
             """Represent an unsupported request-body type."""
@@ -170,12 +170,12 @@ class TestUnknownTypeRaisesLoudly(unittest.TestCase):
             serialize_body_to_bytes(Custom())
         self.assertIn("Custom", str(ctx.exception))
 
-    def test_int_input_raises_type_error(self):
+    def test_int_input_raises_type_error_rust(self):
         """A bare integer is not a valid Cosmos document — caught here, not by the service."""
         with self.assertRaises(TypeError):
             serialize_body_to_bytes(42)
 
-    def test_set_input_raises_type_error(self):
+    def test_set_input_raises_type_error_rust(self):
         """A ``set`` has no JSON representation; we raise with a clearer message than ``json.dumps``."""
         with self.assertRaises(TypeError):
             serialize_body_to_bytes({"a", "b"})
@@ -199,7 +199,7 @@ class TestParityWithLegacySerializer(unittest.TestCase):
             return b""
         raise TypeError("test-only helper does not handle this input")
 
-    def test_parity_for_full_input_table(self):
+    def test_parity_for_full_input_table_rust(self):
         """Helper bytes equal the inline reference for each input in this table."""
         for value in [
             None,

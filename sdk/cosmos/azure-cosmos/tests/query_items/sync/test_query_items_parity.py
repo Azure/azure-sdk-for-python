@@ -45,7 +45,7 @@ def container_for(request):
         pytest.param({"enable_cross_partition_query": False}, id="false"),
     ],
 )
-def test_partition_query_baseline(container_for, query_options):
+def test_partition_query_baseline_rust(container_for, query_options):
     """Baseline: partition-scoped query returns the same item ids."""
     # Without this, a basic partition query returning different items or a different order
     # on rust would go unnoticed.
@@ -78,7 +78,7 @@ def test_partition_query_baseline(container_for, query_options):
     assert comparison.rust.return_value == [0, 1, 2]
 
 
-def test_partition_query_continuation_replay(container_for):
+def test_partition_query_continuation_replay_rust(container_for):
     """Partition query continuation token resumes on the same page."""
     # Without this, broken paging on rust (a wrong or non-resumable continuation token)
     # would slip through and break customers who page through large results.
@@ -128,7 +128,7 @@ def test_partition_query_continuation_replay(container_for):
         pytest.param({"enable_cross_partition_query": True}, id="true"),
     ],
 )
-def test_cross_partition_query_fallback(container_for, query_options):
+def test_cross_partition_query_fallback_rust(container_for, query_options):
     """Cross-partition query (no partition key) stays behaviorally equivalent."""
     # Without this, the rust cross-partition path could drop or duplicate items unnoticed.
 
@@ -160,7 +160,7 @@ def test_cross_partition_query_fallback(container_for, query_options):
     assert comparison.rust.return_value == ["a", "b"]
 
 
-def test_invalid_query_raises_same_type(container_for):
+def test_invalid_query_raises_same_type_rust(container_for):
     """Invalid SQL text raises the same typed exception on both backends."""
     # Without this, rust raising a different exception type on bad SQL would break
     # customers' error handling.
@@ -186,7 +186,7 @@ def test_invalid_query_raises_same_type(container_for):
     comparison.assert_exception_parity()
 
 
-def test_populate_index_metrics_parity(container_for):
+def test_populate_index_metrics_parity_rust(container_for):
     """A supported metrics option uses Rust and returns the same public value."""
 
     def _do(client):

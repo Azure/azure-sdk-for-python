@@ -63,7 +63,7 @@ def readable_database_id():
                 pass  # A failed create may not have reached the service.
 
 
-def test_read_database_baseline_properties(readable_database_id):
+def test_read_database_baseline_properties_rust(readable_database_id):
     """Both backends return the same stable database properties."""
 
     def _call(client):
@@ -83,7 +83,7 @@ def test_read_database_baseline_properties(readable_database_id):
     comparison.assert_functional_parity()
 
 
-def test_read_database_options_and_response_hook(readable_database_id):
+def test_read_database_options_and_response_hook_rust(readable_database_id):
     """Supported options and isolated response hooks retain parity."""
 
     def _call(client):
@@ -133,7 +133,7 @@ def test_read_database_options_and_response_hook(readable_database_id):
     [(MatchConditions.IfNotModified, False), (MatchConditions.IfModified, True),
      (MatchConditions.IfPresent, False)],
 )
-def test_read_database_conditional_read(readable_database_id, condition, empty_body):
+def test_read_database_conditional_read_rust(readable_database_id, condition, empty_body):
     def _call(client):
         database = client.get_database_client(readable_database_id)
         original = database.read()
@@ -157,7 +157,7 @@ def test_read_database_conditional_read(readable_database_id, condition, empty_b
     comparison.assert_functional_parity()
 
 
-def test_read_database_preserves_service_behavior_for_stale_if_match(readable_database_id):
+def test_read_database_preserves_service_behavior_for_stale_if_match_rust(readable_database_id):
     """The service does not enforce If-Match on this GET; do not invent a 412."""
     def _call(client):
         database = client.get_database_client(readable_database_id)
@@ -173,7 +173,7 @@ def test_read_database_preserves_service_behavior_for_stale_if_match(readable_da
     comparison.assert_functional_parity()
 
 
-def test_read_database_missing_maps_404():
+def test_read_database_missing_maps_404_rust():
     """A missing database raises the same typed 404 exception."""
     database_id = "parity_missing_read_db_" + uuid.uuid4().hex
 

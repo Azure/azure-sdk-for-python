@@ -58,7 +58,7 @@ def recorded():
     provider.shutdown()
 
 
-def test_exact_compiled_fields_match_recorded_spans(recorded):
+def test_exact_compiled_fields_match_recorded_spans_rust(recorded):
     exporter, trace_id, payload = recorded
     spans = proof.inspect_spans(exporter, trace_id, "enabled", "connection", payload)
     assert len(spans) == 3
@@ -76,7 +76,7 @@ def test_exact_compiled_fields_match_recorded_spans(recorded):
         ("execution_context", "transport_retry"),
     ],
 )
-def test_changed_or_incomplete_compiled_record_fails_proof(recorded, field, value):
+def test_changed_or_incomplete_compiled_record_fails_proof_rust(recorded, field, value):
     exporter, trace_id, payload = recorded
     payload = copy.deepcopy(payload)
     payload["attempts"][0][field] = value
@@ -94,7 +94,7 @@ def test_changed_or_incomplete_compiled_record_fails_proof(recorded, field, valu
         ("retained_request_count", 2),
     ],
 )
-def test_bad_schema_or_counts_fail_proof(recorded, field, value):
+def test_bad_schema_or_counts_fail_proof_rust(recorded, field, value):
     exporter, trace_id, payload = recorded
     payload = {**payload, field: value}
     with pytest.raises(AssertionError):
@@ -110,14 +110,14 @@ def test_bad_schema_or_counts_fail_proof(recorded, field, value):
         ("enabled", "cancellation"),
     ],
 )
-def test_unexpected_attempts_fail_proof(recorded, mode, failure):
+def test_unexpected_attempts_fail_proof_rust(recorded, mode, failure):
     exporter, trace_id, _ = recorded
     with pytest.raises(AssertionError):
         proof.inspect_spans(exporter, trace_id, mode, failure, None)
 
 
 @pytest.mark.parametrize("host", ["example.com", "localhost.example.com", "127.0.0.1.example.com", ""])
-def test_nonloopback_target_is_rejected(monkeypatch, host):
+def test_nonloopback_target_is_rejected_rust(monkeypatch, host):
     monkeypatch.setenv("COSMOSDBCONNECTIONSTRING", f"AccountEndpoint=https://{host}:8081/;")
     with pytest.raises(ValueError, match="loopback"):
         proof.emulator_connection_string()

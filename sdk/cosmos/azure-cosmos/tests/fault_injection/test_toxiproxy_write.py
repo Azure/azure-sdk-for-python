@@ -101,7 +101,7 @@ def cutoff_after_commit(proxy, observer, target, expected, identity, source_iden
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("inject_fault", [True, False], ids=["cutoff", "control"])
 @pytest.mark.parametrize("proxy_route", ["sdk-observed"], indirect=True)
-async def test_lost_write_response(proxy_route, proxy_target, monkeypatch, operation, asynchronous, inject_fault):
+async def test_lost_write_response_rust(proxy_route, proxy_target, monkeypatch, operation, asynchronous, inject_fault):
     database_id, observer = proxy_target
     target = uuid.uuid4().hex
     item = {

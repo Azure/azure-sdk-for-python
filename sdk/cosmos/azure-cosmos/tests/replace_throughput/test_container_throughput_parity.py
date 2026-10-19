@@ -23,7 +23,7 @@ pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("autoscale", [False, True], ids=["manual", "autoscale"])
 @pytest.mark.parametrize("warm", [False, True], ids=["cold", "warm"])
-def test_replacement_fields_and_callback_ownership(request, asynchronous, autoscale, warm):
+def test_replacement_fields_and_callback_ownership_rust(request, asynchronous, autoscale, warm):
     resources = request.getfixturevalue("autoscale_container_for" if autoscale else "container_for")
 
     def prepare(client):

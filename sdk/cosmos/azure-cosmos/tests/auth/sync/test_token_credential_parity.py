@@ -56,7 +56,7 @@ def _factory_for(cred):
     return factory
 
 
-def test_create_item_parity_with_token_credential(container_for):
+def test_create_item_parity_with_token_credential_rust(container_for):
     """create_item must match across backends when authed by a token credential."""
     body = {"id": uuid.uuid4().hex, "pk": "a", "n": 1}
     cmp = run_on_both_backends(
@@ -70,7 +70,7 @@ def test_create_item_parity_with_token_credential(container_for):
     cmp.assert_functional_parity()
 
 
-def test_read_item_parity_with_token_credential(container_for):
+def test_read_item_parity_with_token_credential_rust(container_for):
     """Read the account-key fixture's item using token credentials on both backends."""
     item_id = uuid.uuid4().hex
     container_for.create_item(body={"id": item_id, "pk": "a"})
@@ -84,7 +84,7 @@ def test_read_item_parity_with_token_credential(container_for):
     cmp.assert_functional_parity()
 
 
-def test_engine_shared_for_one_credential_object():
+def test_engine_shared_for_one_credential_object_rust():
     """The same credential object and endpoint produce equal driver-handle strings."""
     cred = make_sync_token_credential()
     h1 = BindingAdapter(endpoint=os.environ["ACCOUNT_HOST"], token_credential=cred)._ensure_driver_handle()
@@ -92,7 +92,7 @@ def test_engine_shared_for_one_credential_object():
     assert h1 == h2, "same credential object must reuse one engine handle"
 
 
-def test_engine_multiplied_for_distinct_credential_objects():
+def test_engine_multiplied_for_distinct_credential_objects_rust():
     """The two distinct credential objects produce different driver-handle strings."""
     h1 = BindingAdapter(endpoint=os.environ["ACCOUNT_HOST"],
                      token_credential=make_sync_token_credential())._ensure_driver_handle()

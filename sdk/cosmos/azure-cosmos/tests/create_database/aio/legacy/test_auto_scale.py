@@ -31,7 +31,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.key_client.close()
 
-    async def test_autoscale_create_database_async(self):
+    async def test_autoscale_create_database_async_rust(self):
         """Autoscale throughput settings survive both ways of creating a database.
 
         Creates one database with a 5000 request unit ceiling and a 2 percent

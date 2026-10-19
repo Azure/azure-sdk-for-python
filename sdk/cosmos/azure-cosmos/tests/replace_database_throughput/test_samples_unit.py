@@ -32,7 +32,7 @@ def sample_case(request):
     return request.param, client, database, offer
 
 
-def test_sample_prints_returned_capacity_and_deletes_owned_database(sample_case, capsys):
+def test_sample_prints_returned_capacity_and_deletes_owned_database_rust(sample_case, capsys):
     asynchronous, client, database, offer = sample_case
     offer.offer_throughput = 600
     _sample(asynchronous, client)
@@ -42,7 +42,7 @@ def test_sample_prints_returned_capacity_and_deletes_owned_database(sample_case,
     client.delete_database.assert_called_once_with("sales1")
 
 
-def test_sample_deletes_owned_database_after_replacement_failure(sample_case, capsys):
+def test_sample_deletes_owned_database_after_replacement_failure_rust(sample_case, capsys):
     asynchronous, client, database, _ = sample_case
     database.replace_throughput.side_effect = exceptions.CosmosHttpResponseError(status_code=500, message="failed")
     _sample(asynchronous, client)
@@ -50,7 +50,7 @@ def test_sample_deletes_owned_database_after_replacement_failure(sample_case, ca
     client.delete_database.assert_called_once_with("sales1")
 
 
-def test_sample_does_not_delete_a_database_it_did_not_create(sample_case, capsys):
+def test_sample_does_not_delete_a_database_it_did_not_create_rust(sample_case, capsys):
     asynchronous, client, _, _ = sample_case
     client.create_database.side_effect = exceptions.CosmosResourceExistsError(status_code=409, message="exists")
     _sample(asynchronous, client)
@@ -58,7 +58,7 @@ def test_sample_does_not_delete_a_database_it_did_not_create(sample_case, capsys
     client.delete_database.assert_not_called()
 
 
-def test_sample_cleans_up_after_unexpected_response_failure(sample_case):
+def test_sample_cleans_up_after_unexpected_response_failure_rust(sample_case):
     asynchronous, client, _, offer = sample_case
     offer.get_response_headers.side_effect = RuntimeError("response failure")
     with pytest.raises(RuntimeError, match="response failure"):
@@ -66,7 +66,7 @@ def test_sample_cleans_up_after_unexpected_response_failure(sample_case):
     client.delete_database.assert_called_once_with("sales1")
 
 
-def test_sample_surfaces_cleanup_failure(sample_case):
+def test_sample_surfaces_cleanup_failure_rust(sample_case):
     asynchronous, client, _, _ = sample_case
     failure = exceptions.CosmosHttpResponseError(status_code=500, message="cleanup failed")
     client.delete_database.side_effect = failure

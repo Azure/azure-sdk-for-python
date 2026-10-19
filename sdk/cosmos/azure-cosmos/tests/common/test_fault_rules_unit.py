@@ -26,7 +26,7 @@ def _rule(**overrides):
 
 
 @pytest.mark.parametrize("rules", [None, [], ()])
-def test_absent_or_empty_rule_sequence_disables_injection(rules):
+def test_absent_or_empty_rule_sequence_disables_injection_rust(rules):
     """Asking for no faults, in any of the three ways, means no faults.
 
     Nothing at all and two kinds of empty collection all mean the same thing, and all
@@ -37,7 +37,7 @@ def test_absent_or_empty_rule_sequence_disables_injection(rules):
 
 
 @pytest.mark.parametrize("rules", [{}, "", b"", bytearray(), False, 0, 1, set()])
-def test_invalid_collection_is_rejected_even_when_empty(rules):
+def test_invalid_collection_is_rejected_even_when_empty_rust(rules):
     """Things that merely look empty are refused rather than quietly accepted.
 
     All eight are empty or false in the way Python judges such things, so a check written
@@ -53,7 +53,7 @@ def test_invalid_collection_is_rejected_even_when_empty(rules):
 
 
 @pytest.mark.parametrize("field", ["error_kind", "hit_limt", 42])  # cspell:disable-line
-def test_unknown_rule_fields_do_not_silently_change_the_test(field):
+def test_unknown_rule_fields_do_not_silently_change_the_test_rust(field):
     """A field name that is not recognized is an error, including a near miss.
 
     The three cases are a name that sounds plausible, the same name as a real one with a
@@ -76,7 +76,7 @@ def test_unknown_rule_fields_do_not_silently_change_the_test(field):
         ("operation_type", []), ("operation_type", "PatchItem"),
     ],
 )
-def test_invalid_values_raise_value_error_before_native_conversion(field, value):
+def test_invalid_values_raise_value_error_before_native_conversion_rust(field, value):
     """Fourteen bad values, each refused in Python with the field named in the message.
 
     The delay and the hit limit must be whole numbers that fit the sizes the driver uses,
@@ -97,7 +97,7 @@ def test_invalid_values_raise_value_error_before_native_conversion(field, value)
         _prepare_fault_injection_rules([_rule(**{field: value})])
 
 
-def test_native_integer_boundaries_are_preserved_without_mutating_inputs():
+def test_native_integer_boundaries_are_preserved_without_mutating_inputs_rust():
     """The largest accepted values survive exactly, and the caller's rule is not altered.
 
     One below each size limit, passed through unchanged rather than rounded or wrapped.
@@ -117,7 +117,7 @@ def test_native_integer_boundaries_are_preserved_without_mutating_inputs():
 
 
 @pytest.mark.parametrize("error_type", ["ConnectionError", "ResponseTimeout"])
-def test_transport_fault_has_no_synthetic_response(error_type):
+def test_transport_fault_has_no_synthetic_response_rust(error_type):
     rule = {"id": "transport", "operation_type": "ReadItem", "error_type": error_type}
     before = dict(rule)
     prepared, = _prepare_fault_injection_rules([rule])
@@ -136,13 +136,13 @@ def test_transport_fault_has_no_synthetic_response(error_type):
     {"error_type": "ResponseTimeoutAfterService"},
     {"error_type": ""}, {"error_type": []}, {"error_type": True},
 ])
-def test_transport_fault_rejects_ambiguous_or_unsupported_rules(error_type, extra):
+def test_transport_fault_rejects_ambiguous_or_unsupported_rules_rust(error_type, extra):
     rule = {"id": "transport", "operation_type": "ReadItem", "error_type": error_type, **extra}
     with pytest.raises(ValueError, match="error_type"):
         _prepare_fault_injection_rules([rule])
 
 
-def test_zero_and_false_are_values_not_missing_options():
+def test_zero_and_false_are_values_not_missing_options_rust():
     """Zero and off are real choices, not the same as leaving a field out.
 
     All four are values Python treats as false, so anything deciding "was this set?" by
@@ -161,7 +161,7 @@ def test_zero_and_false_are_values_not_missing_options():
     assert prepared.enabled is False
 
 
-def test_response_headers_are_normalized_copied_and_frozen():
+def test_response_headers_are_normalized_copied_and_frozen_rust():
     headers = {"X-MS-Retry-After-MS": "1000", "x-test": ""}
     rule = _rule(response_headers=headers)
     prepared, = _prepare_fault_injection_rules([rule])
@@ -179,12 +179,12 @@ def test_response_headers_are_normalized_copied_and_frozen():
     {"x-test": "\x00"}, {"x-test": "\x7f"}, {"x-test": "1", "X-Test": "2"},
     {"X-MS-Substatus": "1"},
 ])
-def test_response_headers_reject_invalid_or_ambiguous_values(headers):
+def test_response_headers_reject_invalid_or_ambiguous_values_rust(headers):
     with pytest.raises(ValueError, match="response_headers"):
         _prepare_fault_injection_rules([_rule(response_headers=headers)])
 
 
-def test_rule_defaults_and_duplicate_detection_are_preserved():
+def test_rule_defaults_and_duplicate_detection_are_preserved_rust():
     """A minimal rule gets sensible defaults, and two rules cannot share one name.
 
     Left alone, a rule applies every time with no limit on how often, is switched on, and

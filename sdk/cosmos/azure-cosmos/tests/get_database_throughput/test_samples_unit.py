@@ -25,7 +25,7 @@ def _function(filename, name, namespace):
 
 @pytest.mark.parametrize("asynchronous", [False, True])
 @pytest.mark.parametrize("autoscale", [False, True])
-def test_read_sample_uses_public_properties(asynchronous, autoscale, capsys):
+def test_read_sample_uses_public_properties_rust(asynchronous, autoscale, capsys):
     offer = SimpleNamespace(
         auto_scale_max_throughput=5000 if autoscale else None,
         auto_scale_increment_percent=0 if autoscale else None,
@@ -46,7 +46,7 @@ def test_read_sample_uses_public_properties(asynchronous, autoscale, capsys):
 
 
 @pytest.mark.parametrize("fail", [False, True])
-def test_sync_sample_always_closes_client(fail):
+def test_sync_sample_always_closes_client_rust(fail):
     client = MagicMock()
     create = MagicMock(return_value=MagicMock())
     if fail:

@@ -56,7 +56,7 @@ def close_backend(backend):
 
 
 @pytest.mark.parametrize("enter", [False, True])
-def test_rust_client_never_constructs_unused_python_pipeline(monkeypatch, enter):
+def test_rust_client_never_constructs_unused_python_pipeline_rust(monkeypatch, enter):
     from azure.cosmos.aio import _cosmos_client_connection_async as connection_module
 
     factory = MagicMock(side_effect=AssertionError("unused Python pipeline constructed"))
@@ -79,7 +79,7 @@ def test_rust_client_never_constructs_unused_python_pipeline(monkeypatch, enter)
     assert initialize.await_count == int(enter)
 
 
-def test_rust_startup_does_not_import_aiohttp_in_fresh_process():
+def test_rust_startup_does_not_import_aiohttp_in_fresh_process_rust():
     script = """
 import asyncio
 import sys
@@ -102,7 +102,7 @@ asyncio.run(run())
 
 
 @pytest.mark.parametrize("failure", [RuntimeError("driver failed"), asyncio.CancelledError()])
-def test_rust_startup_failure_does_not_construct_pipeline(monkeypatch, failure):
+def test_rust_startup_failure_does_not_construct_pipeline_rust(monkeypatch, failure):
     from azure.cosmos.aio import _cosmos_client_connection_async as connection_module
 
     factory = MagicMock(side_effect=AssertionError("unused Python pipeline constructed"))
@@ -121,7 +121,7 @@ def test_rust_startup_failure_does_not_construct_pipeline(monkeypatch, failure):
     factory.assert_not_called()
 
 
-def test_deferred_pipeline_is_created_once_on_retained_request(monkeypatch):
+def test_deferred_pipeline_is_created_once_on_retained_request_rust(monkeypatch):
     from azure.cosmos.aio import _cosmos_client_connection_async as connection_module
 
     pipeline = MagicMock()
@@ -149,7 +149,7 @@ def test_deferred_pipeline_is_created_once_on_retained_request(monkeypatch):
     asyncio.run(run())
 
 
-def test_deferred_pipeline_construction_failure_is_not_cached(monkeypatch):
+def test_deferred_pipeline_construction_failure_is_not_cached_rust(monkeypatch):
     from azure.cosmos.aio import _cosmos_client_connection_async as connection_module
 
     pipeline = MagicMock()
@@ -173,7 +173,7 @@ def test_deferred_pipeline_construction_failure_is_not_cached(monkeypatch):
 
 
 @pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
-def test_factory_forwards_every_declared_option_to_shared_construction(monkeypatch, async_mode):
+def test_factory_forwards_every_declared_option_to_shared_construction_rust(monkeypatch, async_mode):
     from azure.cosmos._backend import factory as sync_factory
     from azure.cosmos.aio._backend import factory as async_factory
 
@@ -198,7 +198,7 @@ def test_factory_forwards_every_declared_option_to_shared_construction(monkeypat
 
 @pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("failure_stage", [None, "config", "constructor"])
-def test_factory_keeps_credential_guard_active_through_construction(
+def test_factory_keeps_credential_guard_active_through_construction_rust(
     monkeypatch, async_mode, failure_stage
 ):
     from contextlib import contextmanager
@@ -247,7 +247,7 @@ def test_factory_keeps_credential_guard_active_through_construction(
 
 @pytest.mark.parametrize("value", [-1, True, 1.5, "3", 2**32])
 @pytest.mark.parametrize("nested", [False, True])
-def test_invalid_retry_counts_fail_before_legacy_startup(module, value, nested):
+def test_invalid_retry_counts_fail_before_legacy_startup_rust(module, value, nested):
     """A retry count that is not a whole number of attempts is refused before anything is
     started or reserved.
 
@@ -275,7 +275,7 @@ def test_invalid_retry_counts_fail_before_legacy_startup(module, value, nested):
 
 @pytest.mark.parametrize("name", ["preferred_locations", "excluded_locations"])
 @pytest.mark.parametrize("value", [[123], [None], [True], [" "], {"West US": 1}, False])
-def test_invalid_region_values_rejected_at_construction(module, name, value):
+def test_invalid_region_values_rejected_at_construction_rust(module, name, value):
     """Reject the listed malformed region-list containers and entries.
 
     The assertion checks types/nonblank strings, error naming, and no legacy
@@ -287,7 +287,7 @@ def test_invalid_region_values_rejected_at_construction(module, name, value):
 
 
 @pytest.mark.parametrize("value", [-1, True, "30", float("nan"), float("inf"), 2**64 - 1, 2**64])
-def test_invalid_retry_wait_rejected(value):
+def test_invalid_retry_wait_rejected_rust(value):
     """Reject the listed invalid cumulative throttle-wait budgets during config building.
 
     This setting is a total retry-wait budget, not the longest individual delay.
@@ -297,7 +297,7 @@ def test_invalid_retry_wait_rejected(value):
 
 
 @pytest.mark.parametrize("stage", ["encoding", "auth", "policy", "legacy"])
-def test_failed_constructor_unwinds_backend(module, monkeypatch, stage):
+def test_failed_constructor_unwinds_backend_rust(module, monkeypatch, stage):
     """Startup failures mark the stored adapter closed and preserve the error."""
     factory_name = "make_backend" if module is sync_client else "make_async_backend"
     factory = getattr(module, factory_name)
@@ -333,7 +333,7 @@ def test_failed_constructor_unwinds_backend(module, monkeypatch, stage):
             close_backend(adapter)
 
 
-def test_close_does_not_validate_or_replay_runtime_settings(monkeypatch):
+def test_close_does_not_validate_or_replay_runtime_settings_rust(monkeypatch):
     validator = MagicMock()
     monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
     first = sync_backend.BindingAdapter(
@@ -352,7 +352,7 @@ def test_close_does_not_validate_or_replay_runtime_settings(monkeypatch):
     validator.assert_not_called()
 
 
-def test_close_during_initialization_releases_late_handle(monkeypatch):
+def test_close_during_initialization_releases_late_handle_rust(monkeypatch):
     """Close releases a late acquired handle without publishing it."""
     started, finish = threading.Event(), threading.Event()
 
@@ -384,7 +384,7 @@ def test_close_during_initialization_releases_late_handle(monkeypatch):
     binding.release_driver_handle.assert_called_once_with("test-handle")
 
 
-def test_failed_driver_build_leaves_runtime_validation_to_binding(monkeypatch):
+def test_failed_driver_build_leaves_runtime_validation_to_binding_rust(monkeypatch):
     """A failed build and close cannot clear settings already fixed in the binding."""
     validator = MagicMock()
     monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
@@ -421,7 +421,7 @@ class AsyncCredential:
         return AccessToken("test-token", 9999999999)
 
 
-def test_failed_constructor_does_not_release_another_clients_credential_hold(module, monkeypatch):
+def test_failed_constructor_does_not_release_another_clients_credential_hold_rust(module, monkeypatch):
     """Failed construction releases only the failed adapter's credential bridge use.
 
     Check the shared count before explicitly closing the failed adapter, then
@@ -463,7 +463,7 @@ def test_failed_constructor_does_not_release_another_clients_credential_hold(mod
 
 @pytest.mark.parametrize("cancelled", [False, True])
 @pytest.mark.parametrize("backend_name", ["core-python", "rust"])
-def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled, backend_name):
+def test_async_entry_failure_closes_all_resources_rust(monkeypatch, cancelled, backend_name):
     """If entering the async client fails, everything opened on the way in is closed
     again.
 
@@ -532,7 +532,7 @@ def async_rust_startup(monkeypatch):
     asyncio.run(client.close())
 
 
-def test_async_entry_waits_for_driver_and_first_read_reuses_it(async_rust_startup):
+def test_async_entry_waits_for_driver_and_first_read_reuses_it_rust(async_rust_startup):
     env = async_rust_startup
     started, finish = threading.Event(), threading.Event()
 
@@ -577,7 +577,7 @@ def test_async_entry_waits_for_driver_and_first_read_reuses_it(async_rust_startu
     env.binding.release_driver_handle.assert_called_once_with("startup-handle")
 
 
-def test_async_driver_failure_prevents_entry_and_cleans_up(async_rust_startup):
+def test_async_driver_failure_prevents_entry_and_cleans_up_rust(async_rust_startup):
     env = async_rust_startup
     error = RuntimeError("account initialization failed")
     env.binding.acquire_driver_handle.side_effect = error
@@ -598,7 +598,7 @@ def test_async_driver_failure_prevents_entry_and_cleans_up(async_rust_startup):
     env.binding.release_driver_handle.assert_not_called()
 
 
-def test_cancelled_async_entry_releases_late_driver(async_rust_startup):
+def test_cancelled_async_entry_releases_late_driver_rust(async_rust_startup):
     env = async_rust_startup
     started, finish = threading.Event(), threading.Event()
 
@@ -635,7 +635,7 @@ def test_cancelled_async_entry_releases_late_driver(async_rust_startup):
     env.connection._setup.assert_not_awaited()
 
 
-def test_client_priority_defaults_are_captured(module):
+def test_client_priority_defaults_are_captured_rust(module):
     """Priority and throughput bucket given to the client are kept as defaults for later
     item calls.
 
@@ -654,7 +654,7 @@ def test_client_priority_defaults_are_captured(module):
 
 
 @pytest.mark.parametrize("backend_name", ["rust", "core-python"])
-def test_client_and_proxies_share_the_adapter_field(module, backend_name):
+def test_client_and_proxies_share_the_adapter_field_rust(module, backend_name):
     client = module.CosmosClient(
         "https://account.invalid", "ZmFrZQ==", _backend=backend_name
     )
@@ -674,7 +674,7 @@ def test_client_and_proxies_share_the_adapter_field(module, backend_name):
         close_backend(client._adapter)
 
 
-def test_native_validation_does_not_initialize_default_runtime():
+def test_native_validation_does_not_initialize_default_runtime_rust():
     """Client defaults do not reserve or initialize the singleton."""
     code = """
 from azure.cosmos import _rust
@@ -696,7 +696,7 @@ for config in (
 
 
 @pytest.mark.parametrize("stage", ["account", "consistency"])
-def test_real_sync_connection_releases_partial_startup_resources(monkeypatch, stage):
+def test_real_sync_connection_releases_partial_startup_resources_rust(monkeypatch, stage):
     """The real legacy connection cleans up after itself when its own startup fails partway.
 
     Two failure points are covered: fetching the account information, and

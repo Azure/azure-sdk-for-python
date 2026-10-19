@@ -73,7 +73,7 @@ def _database_for(client, created):
     return client.get_database_client(created[_observed_backend_name(client)])
 
 
-def test_replace_throughput_fixed(database_per_backend):
+def test_replace_throughput_fixed_rust(database_per_backend):
     """Changing a fixed RU/s number reports the same result on both engines."""
     created = database_per_backend(1000)
 
@@ -87,7 +87,7 @@ def test_replace_throughput_fixed(database_per_backend):
     assert comparison.rust.return_value["offer_throughput"] == 2000
 
 
-def test_replace_throughput_autoscale(database_per_backend):
+def test_replace_throughput_autoscale_rust(database_per_backend):
     """Changing an autoscale ceiling and step lands the same values on both engines."""
     # Read-back proves the nested autoscale settings reached the service.
     created = database_per_backend(
@@ -109,7 +109,7 @@ def test_replace_throughput_autoscale(database_per_backend):
     assert comparison.rust.return_value["auto_scale_increment_percent"] == 20
 
 
-def test_replace_throughput_persists(database_per_backend):
+def test_replace_throughput_persists_rust(database_per_backend):
     """Reading back after the change returns the new number on both engines."""
     created = database_per_backend(1000)
 
@@ -127,7 +127,7 @@ def test_replace_throughput_persists(database_per_backend):
     assert comparison.rust.return_value["offer_throughput"] == 3000
 
 
-def test_replace_throughput_callback_cannot_change_result(database_per_backend):
+def test_replace_throughput_callback_cannot_change_result_rust(database_per_backend):
     """Callback mutations cannot change returned or persisted shared capacity."""
     created = database_per_backend(1000)
 
@@ -153,7 +153,7 @@ def test_replace_throughput_callback_cannot_change_result(database_per_backend):
     comparison.assert_functional_parity()
 
 
-def test_replace_throughput_without_provisioned_throughput():
+def test_replace_throughput_without_provisioned_throughput_rust():
     """Both implementations reject replacing a missing throughput offer with a typed 404."""
     client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
     database_id = "parity_repl_db_notp_" + uuid.uuid4().hex

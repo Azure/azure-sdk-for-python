@@ -28,8 +28,9 @@ only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so the fixed id
 ``responses_test1`` cannot collide with a container another test left behind.
-The class name and method names match the source, so the two test IDs differ
-only by path. The file name drops the ``_async`` suffix because the audit
+The class name and method names match the source (apart from the method's ``_rust``
+suffix), so the two test IDs differ by path and method suffix. The file name drops the
+``_async`` suffix because the audit
 reporter pairs sync and async copies by stripping it.
 
 Run with::
@@ -68,7 +69,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.client.close()
 
-    async def test_create_container_if_not_exists_headers_async(self):
+    async def test_create_container_if_not_exists_headers_async_rust(self):
         """First call creates the container and returns populated headers.
 
         This is the create branch: nothing exists yet, so the call really does
@@ -80,7 +81,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
             partition_key=PartitionKey(path="/company"), return_properties=True)
         assert len(first_response[1].get_response_headers()) > 0
 
-    async def test_create_container_if_not_exists_headers_negative_async(self):
+    async def test_create_container_if_not_exists_headers_negative_async_rust(self):
         """Second call finds the container already there and still returns headers.
 
         Despite the name, nothing fails here. "Negative" means the create was

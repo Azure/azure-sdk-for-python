@@ -66,7 +66,7 @@ def request_count(query_client):
     ],
 )
 @pytest.mark.parametrize("value", [None, False, True, "customer-value"])
-def test_rejected_options_have_no_nested_bypass(query_client, source, name, key, value):
+def test_rejected_options_have_no_nested_bypass_rust(query_client, source, name, key, value):
     kwargs = {name: value} if source == "keyword" else {source: {key: value}}
     original = deepcopy(kwargs)
     with pytest.raises(TypeError, match=name):
@@ -77,7 +77,7 @@ def test_rejected_options_have_no_nested_bypass(query_client, source, name, key,
 
 @pytest.mark.parametrize("value", [0, -2, 2**63, 2**80, True, 1.5, "invalid"])
 @pytest.mark.parametrize("source", ["typed", "initial", "nested", "raw", "default"])
-def test_invalid_effective_page_size_fails_before_iteration(query_client, value, source):
+def test_invalid_effective_page_size_fails_before_iteration_rust(query_client, value, source):
     client, connection, _, _, _ = query_client
     header = {"X-MS-MAX-ITEM-COUNT": str(value)}
     if source == "typed":
@@ -100,7 +100,7 @@ def test_invalid_effective_page_size_fails_before_iteration(query_client, value,
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("count", [-1, 1, 2**63 - 1])
-async def test_named_page_size_wins_over_invalid_headers(query_client, count):
+async def test_named_page_size_wins_over_invalid_headers_rust(query_client, count):
     client, connection, backend, is_async, legacy = query_client
     connection.default_headers["x-ms-max-item-count"] = "0"
     options = {"initialHeaders": {"X-MS-MAX-ITEM-COUNT": "invalid"}}
@@ -117,7 +117,7 @@ async def test_named_page_size_wins_over_invalid_headers(query_client, count):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("specification", [False, True])
-async def test_query_parameters_and_options_are_snapshotted(query_client, specification):
+async def test_query_parameters_and_options_are_snapshotted_rust(query_client, specification):
     client, connection, backend, is_async, legacy = query_client
     parameters = [{"name": "@id", "value": {"nested": ["original"]}}]
     query = {"query": SQL, "parameters": parameters} if specification else SQL
@@ -161,14 +161,14 @@ async def test_query_parameters_and_options_are_snapshotted(query_client, specif
         (SQL, [{"name": "@id"}]), (SQL, [{"name": 1, "value": 2}]),
     ],
 )
-def test_invalid_query_inputs_fail_before_iteration(query_client, query, parameters):
+def test_invalid_query_inputs_fail_before_iteration_rust(query_client, query, parameters):
     with pytest.raises(ValueError):
         query_client[0].query_databases(query, parameters=parameters)
     assert request_count(query_client) == 0
 
 
 @pytest.mark.parametrize("hook", [False, 0, "not callable", {}])
-def test_invalid_hook_does_not_fetch_a_page(query_client, hook):
+def test_invalid_hook_does_not_fetch_a_page_rust(query_client, hook):
     with pytest.raises(TypeError, match="callable"):
         query_client[0].query_databases(SQL, response_hook=hook)
     assert request_count(query_client) == 0
@@ -176,7 +176,7 @@ def test_invalid_hook_does_not_fetch_a_page(query_client, hook):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("error_type", [StopIteration, StopAsyncIteration, CosmosHttpResponseError])
-async def test_hook_failure_never_replays_or_silently_ends(query_client, error_type):
+async def test_hook_failure_never_replays_or_silently_ends_rust(query_client, error_type):
     client, _, _, is_async, _ = query_client
     error = (
         error_type(status_code=429, message="hook failure")
@@ -198,7 +198,7 @@ async def test_hook_failure_never_replays_or_silently_ends(query_client, error_t
 
 
 @pytest.mark.asyncio
-async def test_hook_isolation_and_false_valued_callable(query_client):
+async def test_hook_isolation_and_false_valued_callable_rust(query_client):
     client, connection, _, is_async, _ = query_client
     calls = []
 
@@ -220,7 +220,7 @@ async def test_hook_isolation_and_false_valued_callable(query_client):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("rows", [[{"id": "sales"}], ["sales", 1, None, True, ["nested"]]])
-async def test_query_projection_rows_are_not_forced_into_property_dicts(query_client, rows):
+async def test_query_projection_rows_are_not_forced_into_property_dicts_rust(query_client, rows):
     client, _, backend, is_async, _ = query_client
     backend._response = BackendResponse(
         status_code=200, headers=CaseInsensitiveDict(), body=json.dumps({"Databases": rows}).encode(),
@@ -229,7 +229,7 @@ async def test_query_projection_rows_are_not_forced_into_property_dicts(query_cl
 
 
 @pytest.mark.asyncio
-async def test_rust_query_does_not_use_legacy_query_orchestrators(listing_client):
+async def test_rust_query_does_not_use_legacy_query_orchestrators_rust(listing_client):
     client, connection, _, is_async = listing_client
     for name in ("QueryDatabases", "ReadDatabases", "_CosmosClientConnection__QueryFeed",
                  "_CosmosClientConnection__CheckAndUnifyQueryFormat"):
@@ -238,7 +238,7 @@ async def test_rust_query_does_not_use_legacy_query_orchestrators(listing_client
 
 
 @pytest.mark.asyncio
-async def test_empty_page_must_advance_before_retrying(query_client):
+async def test_empty_page_must_advance_before_retrying_rust(query_client):
     client, _, backend, is_async, _ = query_client
     backend._response = BackendResponse(
         status_code=200, headers=CaseInsensitiveDict({"x-ms-continuation": "same"}),

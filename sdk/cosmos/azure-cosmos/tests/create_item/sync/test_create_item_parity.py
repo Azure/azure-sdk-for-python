@@ -140,7 +140,7 @@ def _run(container, body, summary: str, **kwargs):
 # This test MUST pass for the rest of the suite to be meaningful.
 # ---------------------------------------------------------------------------
 
-def test_baseline_body_and_pk_only(container_for):
+def test_baseline_body_and_pk_only_rust(container_for):
     """Baseline: minimal valid body, no optional kwargs.
 
     Sends ``{"id": <uuid>, "pk": "customerA", "n": 1}`` and nothing else.
@@ -158,7 +158,7 @@ def test_baseline_body_and_pk_only(container_for):
 # ---------------------------------------------------------------------------
 
 # Compare the omitted-key case through the public clients.
-def test_pk_undefined(container_for):
+def test_pk_undefined_rust(container_for):
     """Compare outcomes when the body omits the declared partition-key path.
 
     The comparison filters headers and selected body fields; it does not capture
@@ -168,7 +168,7 @@ def test_pk_undefined(container_for):
     _run(container_for, body, summary="undefined PK").assert_functional_parity()
 
 
-def test_pk_explicit_none(container_for):
+def test_pk_explicit_none_rust(container_for):
     """Compare outcomes when the body explicitly contains a null partition key.
 
     This differs from an absent path. No native header bytes are inspected.
@@ -183,7 +183,7 @@ def test_pk_explicit_none(container_for):
 # ---------------------------------------------------------------------------
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_pre_trigger_include(container_for):
+def test_pre_trigger_include_rust(container_for):
     """Baseline call plus ``pre_trigger_include='validateOrder'`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + pre_trigger_include",
@@ -191,14 +191,14 @@ def test_pre_trigger_include(container_for):
 
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_indexing_directive(container_for):
+def test_indexing_directive_rust(container_for):
     """Baseline call plus ``indexing_directive=Exclude`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + indexing_directive=Exclude",
          indexing_directive=1).assert_functional_parity()
 
 
-def test_create_item_resolves_container_after_python_preparation(container_for, monkeypatch):
+def test_create_item_resolves_container_after_python_preparation_rust(container_for, monkeypatch):
     """Create in the same container without requiring Python to stamp Rust's RID.
 
     Legacy resolves the container before __Post. Rust receives its name and
@@ -256,7 +256,7 @@ def test_create_item_resolves_container_after_python_preparation(container_for, 
 
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_priority_high(container_for):
+def test_priority_high_rust(container_for):
     """Baseline call plus ``priority='High'`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + priority=High",
@@ -270,7 +270,7 @@ def test_priority_high(container_for):
 # ---------------------------------------------------------------------------
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_post_trigger_include(container_for):
+def test_post_trigger_include_rust(container_for):
     """Baseline call plus ``post_trigger_include='auditOrder'`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + post_trigger_include",
@@ -278,7 +278,7 @@ def test_post_trigger_include(container_for):
 
 
 # Binding routes the session token to the driver's typed setter.
-def test_session_token(container_for):
+def test_session_token_rust(container_for):
     """Baseline call plus ``session_token=<token>`` (Session-consistency header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + session_token",
@@ -289,7 +289,7 @@ def test_session_token(container_for):
 # Python side: ``_request_headers.py`` now flattens the ``initialHeaders`` dict
 # into individual entries on ``PreparedRequest.headers`` so the binding's
 # existing ``x-ms-...``/``prefer`` pass-through picks each one up.
-def test_initial_headers(container_for):
+def test_initial_headers_rust(container_for):
     """Baseline call plus ``initial_headers={'x-ms-test': 'v'}`` (caller-injected headers)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + initial_headers",
@@ -297,7 +297,7 @@ def test_initial_headers(container_for):
 
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_throughput_bucket(container_for):
+def test_throughput_bucket_rust(container_for):
     """Baseline call plus ``throughput_bucket=1`` (``x-ms-cosmos-throughput-bucket`` hdr)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + throughput_bucket=1",
@@ -308,7 +308,7 @@ def test_throughput_bucket(container_for):
 # Behavioural kwargs (change behaviour, not just header shape)
 # ---------------------------------------------------------------------------
 
-def test_enable_automatic_id_generation(container_for):
+def test_enable_automatic_id_generation_rust(container_for):
     """Compare create outcomes with automatic id generation requested.
 
     This comparison excludes returned ids by default; it does not establish
@@ -321,7 +321,7 @@ def test_enable_automatic_id_generation(container_for):
 
 # No_response -- binding now maps responsePayloadOnWriteDisabled
 # onto the driver's typed content_response_on_write option.
-def test_no_response(container_for):
+def test_no_response_rust(container_for):
     """Baseline call plus ``no_response=True`` (suppresses response body via Prefer hdr)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + no_response",
@@ -329,7 +329,7 @@ def test_no_response(container_for):
 
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only knob).")
-def test_retry_write(container_for):
+def test_retry_write_rust(container_for):
     """Baseline call plus ``retry_write=1`` (Python-only retry option; no rust analogue)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + retry_write=1",
@@ -337,7 +337,7 @@ def test_retry_write(container_for):
 
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only knob).")
-def test_availability_strategy(container_for):
+def test_availability_strategy_rust(container_for):
     """Baseline call plus ``availability_strategy=True`` (Python-only hedging feature)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + availability_strategy=True",
@@ -349,7 +349,7 @@ def test_availability_strategy(container_for):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only routing knob).")
-def test_excluded_locations(container_for):
+def test_excluded_locations_rust(container_for):
     """Baseline call plus ``excluded_locations=['East US']`` (a Python-only routing override).
 
     The binding passes this keyword to the driver as an excluded-regions
@@ -366,7 +366,7 @@ def test_excluded_locations(container_for):
          excluded_locations=["East US"]).assert_functional_parity()
 
 
-def test_timeout(container_for):
+def test_timeout_rust(container_for):
     """Baseline call plus ``timeout=30`` (overall request timeout).
 
     Both backends honour this keyword now: core-python through
@@ -388,7 +388,7 @@ def test_timeout(container_for):
                           "AZURE_COSMOS_CONNECTION_POOL_MAX_CONNECT_TIMEOUT_MS, but the binding "
                           "doesn't yet wire Python's `connection_timeout` kwarg into the pool config. "
                           "No per-call hook today; client-level parity is a binding follow-up.")
-def test_connection_timeout(container_for):
+def test_connection_timeout_rust(container_for):
     """Baseline call plus ``connection_timeout=10`` (azure-core HTTP connect timeout)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + connection_timeout=10",
@@ -399,7 +399,7 @@ def test_connection_timeout(container_for):
 # Output / parsing parity
 # ---------------------------------------------------------------------------
 
-def test_response_hook_fires_once(container_for):
+def test_response_hook_fires_once_rust(container_for):
     """``response_hook`` must fire exactly once per backend on success.
 
     Goes through the same ``run_on_both_backends`` harness as every
@@ -443,7 +443,7 @@ def test_response_hook_fires_once(container_for):
 # Exception parity
 # ---------------------------------------------------------------------------
 
-def test_duplicate_id_raises_typed_exception(container_for):
+def test_duplicate_id_raises_typed_exception_rust(container_for):
     """Inserting the same id twice must raise ``CosmosResourceExistsError``
     (HTTP 409, sub_status 0) on **both** backends."""
     fixed_id = uuid.uuid4().hex
@@ -470,7 +470,7 @@ def test_duplicate_id_raises_typed_exception(container_for):
 
 @pytest.mark.parametrize("name", ["populate_query_metrics", "etag", "match_condition"])
 @pytest.mark.parametrize("value", [None, False, True])
-def test_retired_create_arguments_are_rejected(container_for, name, value):
+def test_retired_create_arguments_are_rejected_rust(container_for, name, value):
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     comparison = _run(container_for, body, summary=f"create rejects {name}", **{name: value})
     for outcome in (comparison.core_python, comparison.rust):
@@ -482,7 +482,7 @@ def test_retired_create_arguments_are_rejected(container_for, name, value):
 # driver's routing behavior or replace a test against a partitionless container.
 # ---------------------------------------------------------------------------
 
-def test_partitionless_container_rejected_by_rust_binding():
+def test_partitionless_container_rejected_by_rust_binding_rust():
     """Check rejection of the explicit typed partitionless-key sentinel.
 
     Accept ValueError or RuntimeError and require 'partitionless' in its message.

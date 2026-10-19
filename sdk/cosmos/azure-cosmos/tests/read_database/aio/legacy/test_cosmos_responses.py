@@ -34,7 +34,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         self.client = CosmosClient(HOST, KEY, _backend="rust")
         self.addAsyncCleanup(self.client.close)
 
-    async def test_database_read_headers_async(self):
+    async def test_database_read_headers_async_rust(self):
         """Reading a database returns populated response headers.
 
         ``read`` is the plainest operation there is, and its headers still

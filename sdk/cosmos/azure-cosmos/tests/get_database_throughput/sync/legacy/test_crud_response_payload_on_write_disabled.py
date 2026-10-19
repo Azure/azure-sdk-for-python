@@ -28,7 +28,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         except CosmosResourceNotFoundError:
             pass
 
-    def test_database_crud(self):
+    def test_database_crud_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_database_crud
         database_id = self.database_id
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
@@ -38,7 +38,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.assertEqual(database_id, database_proxy.id)
         self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
 
-    def test_database_level_offer_throughput(self):
+    def test_database_level_offer_throughput_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_database_level_offer_throughput
         offer_throughput = 1000
         database_id = self.database_id

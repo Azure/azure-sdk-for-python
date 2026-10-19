@@ -65,7 +65,7 @@ def database_with_containers():
             client.close()
 
 
-async def test_query_containers_by_id_matches_async(database_with_containers):
+async def test_query_containers_by_id_matches_async_rust(database_with_containers):
     """A parameterised query for one container returns it on both engines."""
     database_id, container_ids = database_with_containers
     target = container_ids[1]
@@ -87,7 +87,7 @@ async def test_query_containers_by_id_matches_async(database_with_containers):
     assert comparison.rust.return_value == [target]
 
 
-async def test_query_containers_no_match_is_empty_async(database_with_containers):
+async def test_query_containers_no_match_is_empty_async_rust(database_with_containers):
     """A query matching nothing returns an empty result on both engines, not an error."""
     database_id, _ = database_with_containers
 
@@ -108,7 +108,7 @@ async def test_query_containers_no_match_is_empty_async(database_with_containers
     assert comparison.rust.return_value == []
 
 
-async def test_query_containers_select_all_matches_full_membership_async(database_with_containers):
+async def test_query_containers_select_all_matches_full_membership_async_rust(database_with_containers):
     """An unfiltered query agrees with the containers actually created."""
     database_id, container_ids = database_with_containers
 
@@ -126,7 +126,7 @@ async def test_query_containers_select_all_matches_full_membership_async(databas
     assert comparison.rust.return_value == sorted(container_ids)
 
 
-async def test_query_containers_string_query_matches_async(database_with_containers):
+async def test_query_containers_string_query_matches_async_rust(database_with_containers):
     """A query passed as a bare string behaves the same on both engines."""
     database_id, container_ids = database_with_containers
 
@@ -144,7 +144,7 @@ async def test_query_containers_string_query_matches_async(database_with_contain
     assert comparison.rust.return_value == sorted(container_ids)
 
 
-async def test_query_containers_pages_and_resumption_async(database_with_containers):
+async def test_query_containers_pages_and_resumption_async_rust(database_with_containers):
     database_id, container_ids = database_with_containers
 
     async def run(client):
@@ -177,7 +177,7 @@ async def test_query_containers_pages_and_resumption_async(database_with_contain
 
 
 @pytest.mark.parametrize("timeout", [None, 10])
-async def test_query_containers_page_hooks_and_timeout_async(database_with_containers, timeout):
+async def test_query_containers_page_hooks_and_timeout_async_rust(database_with_containers, timeout):
     database_id, container_ids = database_with_containers
 
     async def run(client):

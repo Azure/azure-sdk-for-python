@@ -22,8 +22,9 @@ on both engines and diff the results. This file runs on Rust only and reuses
 assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
-with any other test. The class name and method names match the source, so the
-two test IDs differ only by path.
+with any other test. The class name and method names match the source (apart from the
+method's ``_rust`` suffix), so the
+two test IDs differ by path and method suffix.
 
 Run with::
 
@@ -61,7 +62,7 @@ class TestCosmosResponses(unittest.TestCase):
             pass
         self.client.close()
 
-    def test_create_container_headers(self):
+    def test_create_container_headers_rust(self):
         """With ``return_properties=True``, the response headers come back populated.
 
         The second half of the returned pair is what a customer reads the
@@ -73,7 +74,7 @@ class TestCosmosResponses(unittest.TestCase):
                                                              return_properties=True)
         assert len(first_response[1].get_response_headers()) > 0
 
-    def test_create_container_returns_container_proxy(self):
+    def test_create_container_returns_container_proxy_rust(self):
         """Without ``return_properties``, the plain ``ContainerProxy`` comes back.
 
         This is the default and by far the common case: callers chain straight

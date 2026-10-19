@@ -79,7 +79,7 @@ def replacement(request, monkeypatch):
 
 
 @pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
-def test_replace_passes_only_remaining_timeout(replacement, source):
+def test_replace_passes_only_remaining_timeout_rust(replacement, source):
     replacement.initialization_delay = 2
     kwargs = {"timeout": 5} if source == "keyword" else {source: {"timeout": 5}}
     replacement.call(**kwargs)
@@ -87,14 +87,14 @@ def test_replace_passes_only_remaining_timeout(replacement, source):
     assert kwargs == ({"timeout": 5} if source == "keyword" else {source: {"timeout": 5}})
 
 
-def test_expired_initialization_does_not_send_replacement(replacement):
+def test_expired_initialization_does_not_send_replacement_rust(replacement):
     replacement.initialization_delay = 6
     with pytest.raises(CosmosClientTimeoutError):
         replacement.call(timeout=5)
     replacement.native_call.assert_not_called()
 
 
-def test_native_timeout_uses_public_timeout_exception_without_success_hook(replacement):
+def test_native_timeout_uses_public_timeout_exception_without_success_hook_rust(replacement):
     replacement.native_error = TimeoutError("metadata exhausted the budget")
     hook = MagicMock()
     with pytest.raises(CosmosClientTimeoutError):
@@ -103,20 +103,20 @@ def test_native_timeout_uses_public_timeout_exception_without_success_hook(repla
 
 
 @pytest.mark.parametrize("item_id", ["bad/id", "bad\\id", "bad#id", "bad?id", "trailing ", 42])
-def test_invalid_body_id_is_rejected_before_driver_acquisition(replacement, item_id):
+def test_invalid_body_id_is_rejected_before_driver_acquisition_rust(replacement, item_id):
     with pytest.raises((TypeError, ValueError)):
         replacement.call(body={"id": item_id, "tenant": "northwind"})
     replacement.initialize_call.assert_not_called()
     replacement.native_call.assert_not_called()
 
 
-def test_valid_body_id_is_not_used_to_retarget_replacement(replacement):
+def test_valid_body_id_is_not_used_to_retarget_replacement_rust(replacement):
     replacement.call(body={"id": "different-order", "tenant": "northwind"})
     assert replacement.prepared.item_id == "order-42"
     assert b'"id":"different-order"' in replacement.prepared.body_bytes
 
 
-def test_dictionary_target_preserves_self_link_not_just_customer_id(replacement):
+def test_dictionary_target_preserves_self_link_not_just_customer_id_rust(replacement):
     item = {
         "id": "order-42",
         "_self": "dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
@@ -126,21 +126,21 @@ def test_dictionary_target_preserves_self_link_not_just_customer_id(replacement)
     assert replacement.prepared.item_id == item["id"]
 
 
-def test_dictionary_target_without_self_link_is_still_rejected(replacement):
+def test_dictionary_target_without_self_link_is_still_rejected_rust(replacement):
     with pytest.raises(KeyError, match="_self"):
         replacement.call(item={"id": "order-42"})
     replacement.native_call.assert_not_called()
 
 
 @pytest.mark.parametrize("self_link", [None, 42])
-def test_invalid_self_link_never_falls_back_to_customer_id(replacement, self_link):
+def test_invalid_self_link_never_falls_back_to_customer_id_rust(replacement, self_link):
     with pytest.raises(TypeError, match="_self"):
         replacement.call(item={"id": "order-42", "_self": self_link})
     replacement.initialize_call.assert_not_called()
 
 
 @pytest.mark.parametrize("entry_point", ["replace_item", "replace_item_async"])
-def test_native_replacement_rejects_invalid_address_before_driver_lookup(replacement, entry_point):
+def test_native_replacement_rejects_invalid_address_before_driver_lookup_rust(replacement, entry_point):
     binding = pytest.importorskip("azure.cosmos._rust")
     replacement.call(item={"id": "order-42", "_self": "not-an-item-address"})
     with pytest.raises(ValueError, match="target _self must identify"):
@@ -153,7 +153,7 @@ def test_native_replacement_rejects_invalid_address_before_driver_lookup(replace
     ("status", "exception"),
     [(404, CosmosResourceNotFoundError), (412, CosmosAccessConditionFailedError)],
 )
-def test_service_failure_preserves_message_headers_and_skips_success_hook(replacement, status, exception):
+def test_service_failure_preserves_message_headers_and_skips_success_hook_rust(replacement, status, exception):
     replacement.status = status
     replacement.body = b'{"code":"ServiceFailure","message":"Original service explanation"}'
     hook = MagicMock()
@@ -166,7 +166,7 @@ def test_service_failure_preserves_message_headers_and_skips_success_hook(replac
     assert replacement.native_call.call_count == 1
 
 
-def test_no_response_retains_headers_and_invokes_hook_once(replacement):
+def test_no_response_retains_headers_and_invokes_hook_once_rust(replacement):
     replacement.body = b""
     hook = MagicMock()
     result = replacement.call(no_response=True, response_hook=hook)
@@ -177,12 +177,12 @@ def test_no_response_retains_headers_and_invokes_hook_once(replacement):
     assert hook.call_args.args[1] == {}
 
 
-def test_conditional_replacement_keeps_customer_etag(replacement):
+def test_conditional_replacement_keeps_customer_etag_rust(replacement):
     replacement.call(etag='"previous"', match_condition=MatchConditions.IfNotModified)
     assert replacement.prepared.settings.item.if_match == '"previous"'
 
 
-def test_hook_failure_does_not_replay_replacement(replacement):
+def test_hook_failure_does_not_replay_replacement_rust(replacement):
     failure = ValueError("customer hook failed")
     hook = MagicMock(side_effect=failure)
     with pytest.raises(ValueError) as raised:

@@ -56,7 +56,7 @@ def _normalize_throughput(throughput_properties):
     }
 
 
-def test_replace_throughput_int_applies_same_ru(container_for):
+def test_replace_throughput_int_applies_same_ru_rust(container_for):
     """replace_throughput(int) applies and reports the same RU/s on both backends."""
     # Without this, rust could set or report a different RU/s than core-python for the
     # same fixed target, and a scaler reading the confirmation would act on a wrong number.
@@ -74,7 +74,7 @@ def test_replace_throughput_int_applies_same_ru(container_for):
     comparison.assert_functional_parity()
 
 
-def test_replace_throughput_object_applies_same_ru(container_for):
+def test_replace_throughput_object_applies_same_ru_rust(container_for):
     """replace_throughput(ThroughputProperties) applies the same RU/s on both backends."""
 
     def _do(client):
@@ -94,7 +94,7 @@ def test_replace_throughput_object_applies_same_ru(container_for):
     comparison.assert_functional_parity()
 
 
-def test_replace_throughput_autoscale_applies_same_ceiling(autoscale_container_for):
+def test_replace_throughput_autoscale_applies_same_ceiling_rust(autoscale_container_for):
     """replace_throughput of an autoscale ceiling behaves identically on both backends."""
     # Autoscale settings ride in the offer body, not a header; this proves the Rust
     # path sends and reads them back the same way core-python does.

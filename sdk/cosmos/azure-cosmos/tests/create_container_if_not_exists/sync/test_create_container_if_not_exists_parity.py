@@ -111,7 +111,7 @@ def existing_container_id(database_id):
         client.close()
 
 
-def test_create_leg(database_id):
+def test_create_leg_rust(database_id):
     """When the container is not there, both engines create it with the same settings."""
     # This is the leg that runs once, on a customer's very first deployment.
 
@@ -138,7 +138,7 @@ def test_create_leg(database_id):
     assert comparison.rust.return_value["settings"]["partitionKey"]["paths"] == ["/pk"]
 
 
-def test_existing_leg_returns_existing_container(database_id, existing_container_id):
+def test_existing_leg_returns_existing_container_rust(database_id, existing_container_id):
     """When the container is already there, both engines return it rather than a new one."""
     # Both engines use the same id on purpose here: neither of them should be
     # creating anything, so there is nothing to collide.
@@ -163,7 +163,7 @@ def test_existing_leg_returns_existing_container(database_id, existing_container
     assert comparison.rust.return_value["id"] == existing_container_id
 
 
-def test_existing_leg_preserves_settings(database_id, existing_container_id):
+def test_existing_leg_preserves_settings_rust(database_id, existing_container_id):
     """The existing container keeps the settings it was created with on both engines."""
     # Request different settings to prove that the existing definition is not reconciled.
 
@@ -189,7 +189,7 @@ def test_existing_leg_preserves_settings(database_id, existing_container_id):
     assert "/excluded/*" in comparison.rust.return_value["excludedPaths"]
 
 
-def test_existing_leg_return_properties_shape(database_id, existing_container_id):
+def test_existing_leg_return_properties_shape_rust(database_id, existing_container_id):
     """With return_properties set, the existing leg gives the same pair on both engines."""
     # The headers in the second half are where a customer reads what the call
     # cost, and the existing leg costs less than the create leg. If rust left

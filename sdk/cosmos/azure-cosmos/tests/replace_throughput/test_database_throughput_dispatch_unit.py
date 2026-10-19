@@ -102,7 +102,7 @@ def database_read(request):
     return invoke, database, recording, metadata
 
 
-def test_database_read_retains_its_own_headers(database_read):
+def test_database_read_retains_its_own_headers_rust(database_read):
     invoke, database, recording, _ = database_read
     result = invoke()
     headers = result.get_response_headers()
@@ -115,7 +115,7 @@ def test_database_read_retains_its_own_headers(database_read):
     assert len(recording.requests) == 1
 
 
-def test_database_read_hook_cannot_change_result(database_read):
+def test_database_read_hook_cannot_change_result_rust(database_read):
     invoke, database, _, _ = database_read
     calls = []
 
@@ -134,7 +134,7 @@ def test_database_read_hook_cannot_change_result(database_read):
 
 
 @pytest.mark.parametrize("hook", [False, 0, "", "not-callable", {}])
-def test_database_read_rejects_invalid_hook_before_requests(database_read, hook):
+def test_database_read_rejects_invalid_hook_before_requests_rust(database_read, hook):
     invoke, _, recording, metadata = database_read
     with pytest.raises(TypeError, match="response_hook must be callable or None"):
         invoke(response_hook=hook)
@@ -142,7 +142,7 @@ def test_database_read_rejects_invalid_hook_before_requests(database_read, hook)
     assert not recording.requests
 
 
-def test_database_read_invokes_false_valued_callable(database_read):
+def test_database_read_invokes_false_valued_callable_rust(database_read):
     invoke, _, _, _ = database_read
 
     class Hook:
@@ -159,7 +159,7 @@ def test_database_read_invokes_false_valued_callable(database_read):
     assert hook.calls == 1
 
 
-def test_database_read_does_not_replay_hook_failure(database_read):
+def test_database_read_does_not_replay_hook_failure_rust(database_read):
     invoke, _, recording, _ = database_read
     error = RuntimeError("callback failed")
 
@@ -173,7 +173,7 @@ def test_database_read_does_not_replay_hook_failure(database_read):
 
 
 @pytest.mark.parametrize("alias", ["request_options", "feed_options"])
-def test_database_read_preserves_customer_options(database_read, alias):
+def test_database_read_preserves_customer_options_rust(database_read, alias):
     invoke, _, recording, _ = database_read
     options = {"initialHeaders": {"x-customer": "kept"}}
     initial_headers = {"x-customer": "override"}
@@ -185,7 +185,7 @@ def test_database_read_preserves_customer_options(database_read, alias):
 
 @pytest.mark.parametrize("alias", ["request_options", "feed_options"])
 @pytest.mark.parametrize("value", [None, [], False, "options"])
-def test_database_read_rejects_invalid_options_before_requests(database_read, alias, value):
+def test_database_read_rejects_invalid_options_before_requests_rust(database_read, alias, value):
     invoke, _, recording, metadata = database_read
     with pytest.raises(TypeError, match=f"{alias} must be a mapping"):
         invoke(**{alias: value})
@@ -193,7 +193,7 @@ def test_database_read_rejects_invalid_options_before_requests(database_read, al
     assert not recording.requests
 
 
-def test_database_read_missing_offer_does_not_call_hook(database_read):
+def test_database_read_missing_offer_does_not_call_hook_rust(database_read):
     invoke, _, recording, _ = database_read
     recording.offers = []
     calls = []
@@ -203,7 +203,7 @@ def test_database_read_missing_offer_does_not_call_hook(database_read):
     assert len(recording.requests) == 1
 
 
-def test_database_read_service_failure_keeps_headers_and_skips_hook(database_read):
+def test_database_read_service_failure_keeps_headers_and_skips_hook_rust(database_read):
     invoke, _, recording, _ = database_read
     recording.status = 403
     calls = []
@@ -220,7 +220,7 @@ def test_database_read_service_failure_keeps_headers_and_skips_hook(database_rea
 
 @pytest.mark.parametrize("fail", [False, True])
 @pytest.mark.parametrize("alias", ["request_options", "feed_options", "options"])
-def test_explicit_legacy_database_read_preserves_owned_data(database_read, fail, alias):
+def test_explicit_legacy_database_read_preserves_owned_data_rust(database_read, fail, alias):
     invoke, database, recording, _ = database_read
     from azure.cosmos._backend.legacy import LEGACY_BACKEND
     from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
@@ -283,7 +283,7 @@ def test_explicit_legacy_database_read_preserves_owned_data(database_read, fail,
     {"request_options": {"initialHeaders": {"Accept": "custom"}}},
     {"timeout": 0.5},
 ])
-def test_database_read_rejects_unsupported_inputs_without_legacy(database_read, kwargs):
+def test_database_read_rejects_unsupported_inputs_without_legacy_rust(database_read, kwargs):
     from unittest.mock import Mock
     from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 
@@ -303,7 +303,7 @@ def test_database_read_rejects_unsupported_inputs_without_legacy(database_read, 
     legacy.assert_not_called()
 
 
-def test_database_read_rejects_unknown_nested_option_before_requests(database_read):
+def test_database_read_rejects_unknown_nested_option_before_requests_rust(database_read):
     invoke, _, recording, metadata = database_read
     with pytest.raises((TypeError, ValueError)):
         invoke(request_options={"unknown_option": True})
@@ -311,7 +311,7 @@ def test_database_read_rejects_unknown_nested_option_before_requests(database_re
     assert not recording.requests
 
 
-def test_database_read_preserves_autoscale_fields(database_read):
+def test_database_read_preserves_autoscale_fields_rust(database_read):
     invoke, _, recording, _ = database_read
     recording.offers[0]["content"] = {
         "offerAutopilotSettings": {
@@ -355,7 +355,7 @@ def throughput_replace(database_read):
     {"timeout": 0},
     {"timeout": 0.5},
 ])
-def test_replacement_rejects_unsupported_inputs_before_metadata(throughput_replace, kwargs):
+def test_replacement_rejects_unsupported_inputs_before_metadata_rust(throughput_replace, kwargs):
     from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 
     invoke, _, recording, metadata = throughput_replace
@@ -368,7 +368,7 @@ def test_replacement_rejects_unsupported_inputs_before_metadata(throughput_repla
 
 
 @pytest.mark.parametrize("hook", [False, 0, "", {}, "not-callable"])
-def test_replacement_rejects_invalid_hook_before_metadata(throughput_replace, hook):
+def test_replacement_rejects_invalid_hook_before_metadata_rust(throughput_replace, hook):
     invoke, _, recording, metadata = throughput_replace
     with pytest.raises(TypeError, match="response_hook must be callable or None"):
         invoke(response_hook=hook)
@@ -376,7 +376,7 @@ def test_replacement_rejects_invalid_hook_before_metadata(throughput_replace, ho
     assert not recording.requests
 
 
-def test_replacement_rejects_mixed_settings_before_metadata(throughput_replace):
+def test_replacement_rejects_mixed_settings_before_metadata_rust(throughput_replace):
     from azure.cosmos import ThroughputProperties
 
     invoke, _, recording, metadata = throughput_replace
@@ -387,7 +387,7 @@ def test_replacement_rejects_mixed_settings_before_metadata(throughput_replace):
 
 
 @pytest.mark.parametrize("value", [None, "500", {}, 500.5])
-def test_replacement_rejects_invalid_type_before_metadata(throughput_replace, value):
+def test_replacement_rejects_invalid_type_before_metadata_rust(throughput_replace, value):
     invoke, _, recording, metadata = throughput_replace
     with pytest.raises(TypeError, match="offer_throughput must be"):
         invoke(value)
@@ -395,7 +395,7 @@ def test_replacement_rejects_invalid_type_before_metadata(throughput_replace, va
     assert not recording.requests
 
 
-def test_replacement_missing_offer_does_not_write_or_call_hook(throughput_replace):
+def test_replacement_missing_offer_does_not_write_or_call_hook_rust(throughput_replace):
     invoke, proxy, recording, _ = throughput_replace
     recording.offers = []
     hooks = []
@@ -409,7 +409,7 @@ def test_replacement_missing_offer_does_not_write_or_call_hook(throughput_replac
 
 
 @pytest.mark.parametrize("alias", ["request_options", "feed_options"])
-def test_replacement_owns_payload_options_and_response(throughput_replace, alias):
+def test_replacement_owns_payload_options_and_response_rust(throughput_replace, alias):
     invoke, proxy, recording, _ = throughput_replace
     options = {"initialHeaders": {"x-customer": "kept"}}
     original = deepcopy((recording.offers, options))
@@ -440,7 +440,7 @@ def test_replacement_owns_payload_options_and_response(throughput_replace, alias
 
 
 @pytest.mark.parametrize("increment", [0, 10])
-def test_replacement_preserves_autoscale_result_and_zero_increment(throughput_replace, increment):
+def test_replacement_preserves_autoscale_result_and_zero_increment_rust(throughput_replace, increment):
     from azure.cosmos import ThroughputProperties
 
     invoke, _, recording, _ = throughput_replace
@@ -455,7 +455,7 @@ def test_replacement_preserves_autoscale_result_and_zero_increment(throughput_re
     assert recording.offers == original
 
 
-def test_replacement_does_not_replay_hook_failure(throughput_replace):
+def test_replacement_does_not_replay_hook_failure_rust(throughput_replace):
     invoke, _, recording, _ = throughput_replace
     error = RuntimeError("callback failed")
 
@@ -469,7 +469,7 @@ def test_replacement_does_not_replay_hook_failure(throughput_replace):
 
 
 @pytest.mark.parametrize("failed_leg", ["get_throughput", "replace_throughput"])
-def test_replacement_preserves_service_error_without_replay(throughput_replace, failed_leg):
+def test_replacement_preserves_service_error_without_replay_rust(throughput_replace, failed_leg):
     invoke, _, recording, _ = throughput_replace
     execute = recording.execute
     hooks = []
@@ -490,7 +490,7 @@ def test_replacement_preserves_service_error_without_replay(throughput_replace, 
 @pytest.mark.parametrize("proxy", [
     SyncDatabaseProxy, AsyncDatabaseProxy, SyncContainerProxy, AsyncContainerProxy,
 ])
-def test_public_throughput_surface_has_no_offer_aliases(proxy):
+def test_public_throughput_surface_has_no_offer_aliases_rust(proxy):
     assert callable(proxy.get_throughput)
     assert callable(proxy.replace_throughput)
     instance = proxy.__new__(proxy)
@@ -502,7 +502,7 @@ def test_public_throughput_surface_has_no_offer_aliases(proxy):
 
 @pytest.mark.parametrize("asynchronous", [False, True])
 @pytest.mark.parametrize("continuation", [None, "next-page"])
-def test_legacy_retry_keeps_empty_database_offer_pages(asynchronous, continuation):
+def test_legacy_retry_keeps_empty_database_offer_pages_rust(asynchronous, continuation):
     from unittest.mock import MagicMock
     from azure.cosmos import _retry_utility
     from azure.cosmos.aio import _retry_utility_async
@@ -601,7 +601,7 @@ def _async_database(backend: Any, **connection: Any) -> AsyncDatabaseProxy:
 # --- the option a database offer must not carry ---------------------------
 
 
-def test_database_read_sends_no_intended_collection_rid(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_database_read_sends_no_intended_collection_rid_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """A database throughput read does not send a container-only header."""
     seen: Dict[str, Any] = {}
 
@@ -620,7 +620,7 @@ def test_database_read_sends_no_intended_collection_rid(monkeypatch: pytest.Monk
     assert Constants.ContainerRID not in seen["options"]
 
 
-def test_container_read_still_sends_the_intended_collection_rid(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_container_read_still_sends_the_intended_collection_rid_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """A container throughput read still sends its required container ID."""
     from azure.cosmos.container import ContainerProxy
 
@@ -722,7 +722,7 @@ def test_async_replace_throughput_routes_both_legs_to_rust(monkeypatch: pytest.M
 # --- explicitly selected comparison backend ------------------------------
 
 
-def test_sync_explicit_legacy_get_throughput_preserves_options(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_sync_explicit_legacy_get_throughput_preserves_options_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """The separately selected legacy Python path remains available for comparison."""
     monkeypatch.setattr(
         "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",
@@ -747,7 +747,7 @@ def test_sync_explicit_legacy_get_throughput_preserves_options(monkeypatch: pyte
     assert seen["query"]["parameters"][0]["value"] == "dbs/db/"
 
 
-def test_sync_explicit_legacy_replacement_applies_options_to_both_legs(
+def test_sync_explicit_legacy_replacement_applies_options_to_both_legs_rust(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """The isolated reference receives owned options on both legs."""
@@ -783,7 +783,7 @@ def test_sync_explicit_legacy_replacement_applies_options_to_both_legs(
     assert replace_kwargs["sent_throughput"] == 500
 
 
-def test_async_explicit_legacy_replacement_applies_options_to_both_legs(
+def test_async_explicit_legacy_replacement_applies_options_to_both_legs_rust(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Async replacement options continue to reach both operations."""
@@ -831,7 +831,7 @@ def test_async_explicit_legacy_replacement_applies_options_to_both_legs(
 # --- a database with no provisioned throughput ----------------------------
 
 
-def test_sync_get_throughput_raises_when_no_offer_exists(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_sync_get_throughput_raises_when_no_offer_exists_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """Missing database throughput raises a typed error instead of ``IndexError``."""
     monkeypatch.setattr(
         "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",
@@ -845,7 +845,7 @@ def test_sync_get_throughput_raises_when_no_offer_exists(monkeypatch: pytest.Mon
     assert "Could not find ThroughputProperties for database dbs/db" in caught.value.message
 
 
-def test_sync_replace_throughput_raises_when_no_offer_exists(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_sync_replace_throughput_raises_when_no_offer_exists_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """Missing offer stops the replacement before it attempts a write."""
     monkeypatch.setattr(
         "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_replace_throughput",
@@ -861,7 +861,7 @@ def test_sync_replace_throughput_raises_when_no_offer_exists(monkeypatch: pytest
     assert backend.calls == ["get_throughput"]
 
 
-def test_async_replace_throughput_uses_consistent_not_found_wording(
+def test_async_replace_throughput_uses_consistent_not_found_wording_rust(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Both replacement variants name the missing throughput resource."""
@@ -880,7 +880,7 @@ def test_async_replace_throughput_uses_consistent_not_found_wording(
 # --- async-specific regression cases --------------------------------------
 
 
-def test_async_explicit_legacy_get_throughput_preserves_options(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_async_explicit_legacy_get_throughput_preserves_options_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """The separately selected legacy Python path remains available for comparison."""
     monkeypatch.setattr(
         "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",
@@ -912,7 +912,7 @@ def test_async_explicit_legacy_get_throughput_preserves_options(monkeypatch: pyt
     assert seen["query"]["parameters"][0]["value"] == "dbs/db/"
 
 
-def test_async_get_throughput_raises_when_no_offer_exists(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_async_get_throughput_raises_when_no_offer_exists_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """An async read uses the stable typed error and message for no throughput."""
     monkeypatch.setattr(
         "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",
@@ -926,7 +926,7 @@ def test_async_get_throughput_raises_when_no_offer_exists(monkeypatch: pytest.Mo
     assert "Could not find ThroughputProperties for database dbs/db" in caught.value.message
 
 
-def test_async_replace_throughput_raises_before_writing_an_offer(
+def test_async_replace_throughput_raises_before_writing_an_offer_rust(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """An async replacement does not write when no throughput offer exists."""

@@ -26,8 +26,8 @@ assertions the team already trusts.
 Self-contained: it creates and deletes its own database, so it shares no state
 with any other test. The originals read a shared container named by
 ``test_config.TestConfig``; this copy creates that container itself. The class
-name and method names match the source, so the two test IDs differ only by
-path.
+name and method names match the source (apart from the method's ``_rust`` suffix), so
+the two test IDs differ by path and method suffix.
 
 Run with::
 
@@ -88,7 +88,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
 
-    def test_collection_crud(self):
+    def test_collection_crud_rust(self):
         """Reading a container returns its real settings, and reading a deleted one fails cleanly.
 
         The full legacy lifecycle test, kept here for the read half. After
@@ -142,7 +142,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
                                            created_container.read)
 
 
-    def test_partitioned_collection(self):
+    def test_partitioned_collection_rust(self):
         """Reading a partitioned container returns its partition key, statistics and throughput.
 
         Creates a container with an explicit hash partition key on ``/id`` and

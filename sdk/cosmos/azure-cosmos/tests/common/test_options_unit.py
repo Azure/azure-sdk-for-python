@@ -81,15 +81,15 @@ class TestCommonOptionsTableContent(unittest.TestCase):
         "max_integrated_cache_staleness_in_ms": "maxIntegratedCacheStaleness",
     }
 
-    def test_table_has_exactly_the_documented_entries(self):
+    def test_table_has_exactly_the_documented_entries_rust(self):
         """``COMMON_OPTIONS`` must equal the fixed table exactly — no add / remove / rename slips through."""
         self.assertEqual(COMMON_OPTIONS, self.EXPECTED_ENTRIES)
 
-    def test_legacy_alias_in_base_module_is_the_same_object(self):
+    def test_legacy_alias_in_base_module_is_the_same_object_rust(self):
         """``_base._COMMON_OPTIONS`` is the same dict object — catches a future contributor forking it."""
         self.assertIs(_base._COMMON_OPTIONS, COMMON_OPTIONS)
 
-    def test_get_common_options_returns_the_canonical_mapping(self):
+    def test_get_common_options_returns_the_canonical_mapping_rust(self):
         """The public read-only accessor returns the canonical dict (identity, not a copy)."""
         self.assertIs(get_common_options(), COMMON_OPTIONS)
 
@@ -104,19 +104,19 @@ class TestComposeOptionsFromKwargs(unittest.TestCase):
     seed mechanism, and freshness of the returned dict.
     """
 
-    def test_empty_kwargs_returns_empty_options(self):
+    def test_empty_kwargs_returns_empty_options_rust(self):
         """Empty input → empty options; the input dict is left untouched."""
         kwargs = {}
         self.assertEqual(compose_options_from_kwargs(kwargs), {})
         self.assertEqual(kwargs, {})
 
-    def test_known_kwarg_is_translated_to_internal_key(self):
+    def test_known_kwarg_is_translated_to_internal_key_rust(self):
         """A recognised kwarg becomes its internal option key in the returned dict."""
         kwargs = {"pre_trigger_include": "validateOrder"}
         options = compose_options_from_kwargs(kwargs)
         self.assertEqual(options, {"preTriggerInclude": "validateOrder"})
 
-    def test_known_kwarg_is_popped_out_of_kwargs(self):
+    def test_known_kwarg_is_popped_out_of_kwargs_rust(self):
         """A recognised kwarg is removed from the input dict (not forwarded twice).
 
         The caller forwards leftover kwargs to azure-core; if we left
@@ -129,14 +129,14 @@ class TestComposeOptionsFromKwargs(unittest.TestCase):
         # Unrecognised kwargs are left alone.
         self.assertEqual(kwargs, {"extra": 1})
 
-    def test_unknown_kwarg_is_left_in_kwargs_and_not_in_options(self):
+    def test_unknown_kwarg_is_left_in_kwargs_and_not_in_options_rust(self):
         """Unrecognised kwargs stay in the input dict and do not appear in the options dict."""
         kwargs = {"some_brand_new_kwarg": "x"}
         options = compose_options_from_kwargs(kwargs)
         self.assertEqual(options, {})
         self.assertEqual(kwargs, {"some_brand_new_kwarg": "x"})
 
-    def test_multiple_known_kwargs_all_translated(self):
+    def test_multiple_known_kwargs_all_translated_rust(self):
         """A realistic multi-kwarg call (the common ``create_item`` shape) — all recognised entries translated and popped."""
         kwargs = {
             "pre_trigger_include": "validateOrder",
@@ -160,7 +160,7 @@ class TestComposeOptionsFromKwargs(unittest.TestCase):
         )
         self.assertEqual(kwargs, {})
 
-    def test_request_options_seed_is_consumed_and_overridden(self):
+    def test_request_options_seed_is_consumed_and_overridden_rust(self):
         """A pre-built ``request_options`` seeds the result; any matching kwarg shortcut overrides it.
 
         This is how power-users mix a hand-crafted options dict with
@@ -178,13 +178,13 @@ class TestComposeOptionsFromKwargs(unittest.TestCase):
         # The request_options key itself is consumed too.
         self.assertNotIn("request_options", kwargs)
 
-    def test_request_options_seed_with_no_kwarg_overrides(self):
+    def test_request_options_seed_with_no_kwarg_overrides_rust(self):
         """A seed with no matching kwarg shortcut comes through verbatim."""
         kwargs = {"request_options": {"customKey": "customValue"}}
         options = compose_options_from_kwargs(kwargs)
         self.assertEqual(options, {"customKey": "customValue"})
 
-    def test_returns_a_fresh_dict_each_call(self):
+    def test_returns_a_fresh_dict_each_call_rust(self):
         """Two calls return two distinct dicts — no shared-state bug between calls."""
         first = compose_options_from_kwargs({"priority": "High"})
         second = compose_options_from_kwargs({"priority": "Low"})
@@ -231,7 +231,7 @@ class TestParityWithLegacyBuildOptions(unittest.TestCase):
                 options[opt_key] = kwargs.pop(kwarg)
         return options
 
-    def test_kwarg_mapping_subset_matches_legacy(self):
+    def test_kwarg_mapping_subset_matches_legacy_rust(self):
         """For every input shape, helper and legacy produce the same options dict and consume the same kwargs."""
         for inputs in self.KWARG_INPUTS:
             with self.subTest(kwargs=inputs):

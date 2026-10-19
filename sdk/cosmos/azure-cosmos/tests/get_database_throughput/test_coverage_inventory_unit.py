@@ -25,7 +25,7 @@ def _runner():
     return module
 
 
-def test_original_database_contract_inventory_and_backend_pins():
+def test_original_database_contract_inventory_and_backend_pins_rust():
     runner = _runner()
     references = set()
     for path in runner.test_files("get"):
@@ -82,13 +82,13 @@ def test_original_database_contract_inventory_and_backend_pins():
         assert any(isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == method for node in cls.body)
 
 
-def test_baseline_paths_keep_neighboring_families_distinct():
+def test_baseline_paths_keep_neighboring_families_distinct_rust():
     files = _runner().test_files("get")
     targets = {(path.parent.parent.parent.name, path.parent.parent.name, path.name) for path in files}
     assert len(targets) == len(files)
 
 
-def test_original_replacement_contract_inventory_and_assertions():
+def test_original_replacement_contract_inventory_and_assertions_rust():
     runner = _runner()
     references = set()
     targets = []
@@ -143,7 +143,7 @@ def test_original_replacement_contract_inventory_and_assertions():
 
 
 @pytest.mark.parametrize("backend", ["rust", "core-python"])
-def test_runner_pins_source_and_selects_eight_replacements(monkeypatch, backend):
+def test_runner_pins_source_and_selects_eight_replacements_rust(monkeypatch, backend):
     runner = _runner()
     monkeypatch.chdir(ROOT)
     monkeypatch.setattr(sys, "path", list(sys.path))

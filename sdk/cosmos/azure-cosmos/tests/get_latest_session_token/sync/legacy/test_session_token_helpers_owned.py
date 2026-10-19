@@ -15,7 +15,7 @@ import pytest
 from azure.cosmos import CosmosClient
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
-from test_session_token_helpers import create_split_ranges
+from get_latest_session_token._fixtures import create_split_ranges
 
 
 COLLECTION = "created_collection"
@@ -37,8 +37,10 @@ def deterministic_observations():
         random.setstate(state)
 
 
+@pytest.mark.cosmosEmulator
 class TestSessionTokenHelpers:
-    def test_get_session_token_update(self, setup):
+    def test_get_session_token_update_rust(self, setup):
+        # Source: tests/test_session_token_helpers.py::TestSessionTokenHelpers.test_get_session_token_update
         feed_range = FeedRangeInternalEpk(
             Range("AA", "BB", True, False)).to_dict()
         session_token = "0:1#54#3=50"
@@ -48,7 +50,8 @@ class TestSessionTokenHelpers:
         session_token = setup[COLLECTION].get_latest_session_token(feed_ranges_and_session_tokens, feed_range)
         assert session_token == "0:1#54#3=52"
 
-    def test_many_session_tokens_update_same_range(self, setup):
+    def test_many_session_tokens_update_same_range_rust(self, setup):
+        # Source: tests/test_session_token_helpers.py::TestSessionTokenHelpers.test_many_session_tokens_update_same_range
         feed_range = FeedRangeInternalEpk(
             Range("AA", "BB", True, False)).to_dict()
         feed_ranges_and_session_tokens = []
@@ -61,7 +64,8 @@ class TestSessionTokenHelpers:
                                                                                      feed_range)
         assert updated_session_token == session_token
 
-    def test_many_session_tokens_update(self, setup):
+    def test_many_session_tokens_update_rust(self, setup):
+        # Source: tests/test_session_token_helpers.py::TestSessionTokenHelpers.test_many_session_tokens_update
         feed_range = FeedRangeInternalEpk(
             Range("AA", "BB", True, False)).to_dict()
         feed_ranges_and_session_tokens = []
@@ -85,7 +89,8 @@ class TestSessionTokenHelpers:
         assert updated_session_token == session_token
 
     @pytest.mark.parametrize("split_ranges, target_feed_range, expected_session_token", create_split_ranges())
-    def test_simulated_splits_merges(self, setup, split_ranges, target_feed_range, expected_session_token):
+    def test_simulated_splits_merges_rust(self, setup, split_ranges, target_feed_range, expected_session_token):
+        # Source: tests/test_session_token_helpers.py::TestSessionTokenHelpers.test_simulated_splits_merges
         actual_split_ranges = []
         for feed_range, session_token in split_ranges:
             actual_split_ranges.append((FeedRangeInternalEpk(Range(feed_range[0], feed_range[1],
@@ -95,7 +100,8 @@ class TestSessionTokenHelpers:
         updated_session_token = setup[COLLECTION].get_latest_session_token(actual_split_ranges, target_feed_range)
         assert updated_session_token == expected_session_token
 
-    def test_invalid_feed_range(self, setup):
+    def test_invalid_feed_range_rust(self, setup):
+        # Source: tests/test_session_token_helpers.py::TestSessionTokenHelpers.test_invalid_feed_range
         feed_range = FeedRangeInternalEpk(
             Range("AA", "BB", True, False)).to_dict()
         session_token = "0:1#54#3=50"

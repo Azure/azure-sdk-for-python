@@ -69,7 +69,7 @@ class _CapturingAsyncBackend(AsyncCosmosBackend):
 class TestAsyncContainerReadItemRouting(unittest.IsolatedAsyncioTestCase):
     """The async read behaves the same as the sync read."""
 
-    async def test_string_item_resolves_to_document_link(self):
+    async def test_string_item_resolves_to_document_link_rust(self):
         """A read by id string targets that item."""
         proxy, cc = _make_async_proxy()
 
@@ -81,7 +81,7 @@ class TestAsyncContainerReadItemRouting(unittest.IsolatedAsyncioTestCase):
             "dbs/db/colls/c/docs/read_item",
         )
 
-    async def test_caller_request_options_are_merged_not_overwritten(self):
+    async def test_caller_request_options_are_merged_not_overwritten_rust(self):
         """Options the caller passes are kept alongside the partition key
         (the async half of the merge guard)."""
         proxy, cc = _make_async_proxy()
@@ -95,7 +95,7 @@ class TestAsyncContainerReadItemRouting(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(forwarded_options["customKey"], "customValue")
         self.assertEqual(forwarded_options["partitionKey"], "a")
 
-    async def test_read_routes_to_backend_with_item_id(self):
+    async def test_read_routes_to_backend_with_item_id_rust(self):
         """A read goes to the Rust backend with the item id; the existing
         client is not called."""
         proxy, cc = _make_async_proxy()

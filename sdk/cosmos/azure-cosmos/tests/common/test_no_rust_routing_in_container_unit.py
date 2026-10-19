@@ -96,7 +96,7 @@ class _NoRustRoutingInContainerBase:
         """Return the source of the container module the subclass points at."""
         return _read_source(self.module)
 
-    def test_module_source_has_no_forbidden_backend_inspection_or_rust_naming(self):
+    def test_module_source_has_no_forbidden_backend_inspection_or_rust_naming_rust(self):
         """Prove container modules contain no direct implementation checks."""
         source = self._source()
         hits = [needle for needle in _FORBIDDEN_SUBSTRINGS if needle in source]
@@ -109,7 +109,7 @@ class _NoRustRoutingInContainerBase:
             "container methods.".format(self.module.__name__, hits),
         )
 
-    def test_throughput_and_feed_range_methods_do_not_reference_backend_attribute(self):
+    def test_throughput_and_feed_range_methods_do_not_reference_backend_attribute_rust(self):
         """Each of the five public methods, read individually by source, never
         reads ``self.client_connection._backend`` (however spelled)."""
         source = self._source()

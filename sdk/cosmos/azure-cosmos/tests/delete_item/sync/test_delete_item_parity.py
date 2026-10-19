@@ -154,7 +154,7 @@ def _run_delete(container, summary: str,
 # This test MUST pass for the rest of the suite to be meaningful.
 # ---------------------------------------------------------------------------
 
-def test_baseline_delete_by_id(container_for):
+def test_baseline_delete_by_id_rust(container_for):
     """Baseline: delete by bare id + ``partition_key``. No optional kwargs.
 
     Both backends must succeed and surface ``None`` (DELETE returns
@@ -169,7 +169,7 @@ def test_baseline_delete_by_id(container_for):
 # Exercises ``Container._get_document_link`` resolving ``item["_self"]``.
 # ---------------------------------------------------------------------------
 
-def test_delete_by_document_dict(container_for):
+def test_delete_by_document_dict_rust(container_for):
     """delete by passing the document dict (uses ``_self`` lookup).
 
     ``Container._get_document_link`` accepts either a bare id string
@@ -186,7 +186,7 @@ def test_delete_by_document_dict(container_for):
 # Header-bearing kwargs, one at a time.
 # ---------------------------------------------------------------------------
 
-def test_pre_trigger_include(container_for):
+def test_pre_trigger_include_rust(container_for):
     """Baseline call plus ``pre_trigger_include='validateOrder'`` (header kwarg).
 
     There is no registered trigger by that name on the parity
@@ -205,14 +205,14 @@ def test_pre_trigger_include(container_for):
     cmp.assert_functional_exception_parity()
 
 
-def test_post_trigger_include(container_for):
+def test_post_trigger_include_rust(container_for):
     """Baseline call plus ``post_trigger_include='auditOrder'`` (header kwarg)."""
     cmp = _run_delete(container_for, summary="baseline + post_trigger_include",
                       post_trigger_include="auditOrder")
     cmp.assert_functional_exception_parity()
 
 
-def test_session_token(container_for):
+def test_session_token_rust(container_for):
     """Baseline call plus ``session_token=<token>`` (Session-consistency header kwarg).
 
     The token shape ``"0:1#42"`` is intentionally permissive; the server
@@ -224,7 +224,7 @@ def test_session_token(container_for):
                 session_token="0:1#42").assert_functional_parity()
 
 
-def test_initial_headers(container_for):
+def test_initial_headers_rust(container_for):
     """Baseline call plus ``initial_headers={'x-ms-test-parity': 'v1'}`` -- caller-injected.
 
     The SDK forwards customer-supplied headers verbatim, no
@@ -234,13 +234,13 @@ def test_initial_headers(container_for):
                 initial_headers={"x-ms-test-parity": "v1"}).assert_functional_parity()
 
 
-def test_priority_high(container_for):
+def test_priority_high_rust(container_for):
     """Baseline call plus ``priority='High'`` (``x-ms-cosmos-priority-level`` header)."""
     _run_delete(container_for, summary="baseline + priority=High",
                 priority="High").assert_functional_parity()
 
 
-def test_throughput_bucket(container_for):
+def test_throughput_bucket_rust(container_for):
     """Baseline call plus ``throughput_bucket=1`` (``x-ms-cosmos-throughput-bucket`` hdr)."""
     _run_delete(container_for, summary="baseline + throughput_bucket=1",
                 throughput_bucket=1).assert_functional_parity()
@@ -252,7 +252,7 @@ def test_throughput_bucket(container_for):
 # The skips quote the same reason the create_item parity suite uses.
 # ---------------------------------------------------------------------------
 
-def test_timeout(container_for):
+def test_timeout_rust(container_for):
     """Baseline call plus ``timeout=30`` (overall request timeout).
 
     Both backends honour the keyword today: core-python through
@@ -265,14 +265,14 @@ def test_timeout(container_for):
 
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only knob).")
-def test_retry_write(container_for):
+def test_retry_write_rust(container_for):
     """Baseline call plus ``retry_write=1`` (Python-only retry option; no rust analogue)."""
     _run_delete(container_for, summary="baseline + retry_write=1",
                 retry_write=1).assert_functional_parity()
 
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only hedging feature).")
-def test_availability_strategy(container_for):
+def test_availability_strategy_rust(container_for):
     """Baseline call plus ``availability_strategy=True`` (Python-only hedging feature)."""
     _run_delete(container_for, summary="baseline + availability_strategy=True",
                 availability_strategy=True).assert_functional_parity()
@@ -282,7 +282,7 @@ def test_availability_strategy(container_for):
                           "ExcludedRegions field, but the parity assertion is hard to make "
                           "end-to-end against a single-region test account. Same skip rationale "
                           "as create_item's L3_excluded_locations.")
-def test_excluded_locations(container_for):
+def test_excluded_locations_rust(container_for):
     """Baseline call plus ``excluded_locations=['East US']``.
 
     The binding passes this keyword to the driver as an excluded-regions
@@ -300,7 +300,7 @@ def test_excluded_locations(container_for):
                           "ConnectionPoolOptions::{min,max}_connect_timeout but the binding doesn't "
                           "yet wire Python's `connection_timeout` kwarg into the pool config. "
                           "Same skip rationale as create_item's L3_connection_timeout.")
-def test_connection_timeout(container_for):
+def test_connection_timeout_rust(container_for):
     """Baseline call plus ``connection_timeout=10`` (azure-core HTTP connect timeout)."""
     _run_delete(container_for, summary="baseline + connection_timeout=10",
                 connection_timeout=10).assert_functional_parity()
@@ -310,7 +310,7 @@ def test_connection_timeout(container_for):
 # Output / parsing parity
 # ---------------------------------------------------------------------------
 
-def test_response_hook_fires_once(container_for):
+def test_response_hook_fires_once_rust(container_for):
     """``response_hook`` must fire exactly once per backend on success.
 
     Mirrors the create_item suite's response-hook test. The harness deterministically
@@ -354,7 +354,7 @@ def test_response_hook_fires_once(container_for):
 # Exception parity
 # ---------------------------------------------------------------------------
 
-def test_missing_id_raises_typed_not_found(container_for):
+def test_missing_id_raises_typed_not_found_rust(container_for):
     """Deleting a never-created id must raise ``CosmosResourceNotFoundError``
     (HTTP 404) on **both** backends with the same status code."""
     fixed_id = "does-not-exist-" + uuid.uuid4().hex
@@ -374,7 +374,7 @@ def test_missing_id_raises_typed_not_found(container_for):
     cmp.assert_functional_exception_parity()
 
 
-def test_stale_etag_if_not_modified_raises_412(container_for):
+def test_stale_etag_if_not_modified_raises_412_rust(container_for):
     """stale ``etag`` + ``MatchConditions.IfNotModified`` => HTTP 412.
 
     This is the delete-vs-create difference: on ``delete_item`` the
@@ -454,7 +454,7 @@ def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
     )
 
 
-def test_populate_query_metrics_deprecated_and_not_on_wire(container_for):
+def test_populate_query_metrics_deprecated_and_not_on_wire_rust(container_for):
     """``populate_query_metrics=True`` is deprecated AND not forwarded.
 
     Two pinned guarantees:
@@ -525,7 +525,7 @@ def test_populate_query_metrics_deprecated_and_not_on_wire(container_for):
     )
 
 
-def test_etag_meaningful_not_deprecated(container_for):
+def test_etag_meaningful_not_deprecated_rust(container_for):
     """``etag`` + ``match_condition`` are meaningful on delete_item.
 
     Unlike ``create_item`` where these two kwargs are inert and warn,

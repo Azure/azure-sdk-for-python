@@ -4,7 +4,8 @@
 ``_backend="rust"`` path.
 
 Copied from ``tests/test_headers_async.py``; the class and method names
-match the source so the parity reporter can pair the core-python and
+match the source (apart from the method's ``_rust`` suffix) so the parity reporter can
+pair the core-python and
 Rust runs. The file name drops the ``_async`` suffix so it pairs with
 the sync copy. Builds its own database + container and reads
 ``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` from the environment.
@@ -55,7 +56,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.client.close()
 
-    async def test_container_replace_item_throughput_bucket_async(self):
+    async def test_container_replace_item_throughput_bucket_async_rust(self):
         """Verify the operation prepares the requested throughput bucket."""
         # Source: tests/test_headers_async.py::TestHeadersAsync.test_container_replace_item_throughput_bucket_async
         created_document = await self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})

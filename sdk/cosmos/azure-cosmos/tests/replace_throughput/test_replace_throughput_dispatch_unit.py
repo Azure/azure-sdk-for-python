@@ -34,7 +34,7 @@ def _offer(throughput: int = 400) -> Dict[str, Any]:
     }
 
 
-def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_sync_replace_throughput_routes_to_rust_when_supported_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """Rust route (sync): when the eligibility gate says yes, both get_throughput and
     replace_throughput run through the backend and the legacy QueryOffers/ReplaceOffer
     are never called. Also checks the end-to-end timeout is lifted into options and
@@ -107,7 +107,7 @@ def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pyte
 
 
 @pytest.mark.asyncio
-async def test_async_replace_throughput_routes_to_rust_when_supported(
+async def test_async_replace_throughput_routes_to_rust_when_supported_rust(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Async twin of the Rust-route test: same guarantee on the async proxy -- both

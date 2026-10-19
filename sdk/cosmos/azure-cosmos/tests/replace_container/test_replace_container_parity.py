@@ -61,7 +61,7 @@ async def replacement_client(database_id, mode, backend):
 @pytest.mark.parametrize("mode", ["sync", "async"])
 @pytest.mark.parametrize("backend", ["core-python", "rust"])
 @pytest.mark.parametrize("target_kind", ["name", "mapping", "proxy"])
-async def test_replace_properties_and_keep_items(owned_database, mode, backend, target_kind):
+async def test_replace_properties_and_keep_items_rust(owned_database, mode, backend, target_kind):
     name = "properties_" + uuid.uuid4().hex
     original = owned_database.create_container(
         name, PK, indexing_policy={"indexingMode": "none"},
@@ -107,7 +107,7 @@ async def test_replace_properties_and_keep_items(owned_database, mode, backend, 
 @pytest.mark.parametrize("mode", ["sync", "async"])
 @pytest.mark.parametrize("backend", ["core-python", "rust"])
 @pytest.mark.parametrize("warm", [False, True])
-async def test_conditions_with_cold_and_warm_metadata(owned_database, mode, backend, warm):
+async def test_conditions_with_cold_and_warm_metadata_rust(owned_database, mode, backend, warm):
     name = "conditional_" + uuid.uuid4().hex
     original = owned_database.create_container(name, PK, default_ttl=60)
     hook = MagicMock()
@@ -137,7 +137,7 @@ async def test_conditions_with_cold_and_warm_metadata(owned_database, mode, back
 
 @pytest.mark.parametrize("mode", ["sync", "async"])
 @pytest.mark.parametrize("backend", ["core-python", "rust"])
-async def test_missing_container_does_not_invoke_success_hook(owned_database, mode, backend):
+async def test_missing_container_does_not_invoke_success_hook_rust(owned_database, mode, backend):
     hook = MagicMock()
     async with replacement_client(owned_database.id, mode, backend) as (_, _, replace):
         with pytest.raises(exceptions.CosmosResourceNotFoundError):

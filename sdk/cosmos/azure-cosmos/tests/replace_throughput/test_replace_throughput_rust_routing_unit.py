@@ -35,7 +35,7 @@ _OFFER = {"id": "offer", "_self": "offers/AAAAAA==/", "content": {"offerThroughp
         (SimpleNamespace(name="rust"), {"initialHeaders": {"USER-AGENT": "custom"}}, {}, False),
     ],
 )
-def test_replace_gate(backend, options, kwargs, expected):
+def test_replace_gate_rust(backend, options, kwargs, expected):
     """Only a plain throughput replacement on the Rust backend is eligible.
 
     Unsupported Rust inputs are rejected by the workflow policy, not routed
@@ -45,7 +45,7 @@ def test_replace_gate(backend, options, kwargs, expected):
 
 
 @pytest.mark.parametrize("resource_link", ["dbs/db", "dbs/db/colls/coll"])
-def test_replace_preparation_never_uses_legacy_transport(monkeypatch, resource_link):
+def test_replace_preparation_never_uses_legacy_transport_rust(monkeypatch, resource_link):
     """Building a throughput replacement touches no legacy code and keeps the offer's identity.
 
     The same five legacy helpers are replaced with mocks that fail if called,
@@ -107,7 +107,7 @@ def test_replace_preparation_never_uses_legacy_transport(monkeypatch, resource_l
     assert settings_options(prepared) == {"excludedLocations": ["West US"], "timeout_seconds": 12}
 
 
-def test_replace_builder_requires_offer_identity():
+def test_replace_builder_requires_offer_identity_rust():
     """An offer with no ``_self`` link is refused rather than sent without a target.
 
     The resource id lives in that link and is the only thing saying which offer
@@ -128,7 +128,7 @@ def test_replace_builder_requires_offer_identity():
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-def test_native_replacement_accepts_deadline_and_attempt_controls(asynchronous):
+def test_native_replacement_accepts_deadline_and_attempt_controls_rust(asynchronous):
     from azure.cosmos import _rust
 
     prepared = build_replace_throughput_request(

@@ -59,7 +59,7 @@ PK = PartitionKey(path="/pk")
 @pytest.mark.parametrize("method", ["replace_container", "replace_container_async"])
 @pytest.mark.parametrize("include_attempts", [False, True])
 @pytest.mark.parametrize("timeout", [0, -1, float("inf"), float("nan")])
-def test_native_replacement_validates_remaining_timeout(method, include_attempts, timeout):
+def test_native_replacement_validates_remaining_timeout_rust(method, include_attempts, timeout):
     binding = pytest.importorskip("azure.cosmos._rust")
     function = getattr(binding, method)
     parameters = inspect.signature(function).parameters
@@ -132,7 +132,7 @@ def _assert_no_dispatch(case):
 
 @pytest.mark.parametrize("kind", ["name", "dict", "mapping", "proxy", "other_database_proxy"])
 @pytest.mark.parametrize("return_properties", [False, True])
-def test_target_ownership_returns_and_rust_dispatch(replace_case, kind, return_properties):
+def test_target_ownership_returns_and_rust_dispatch_rust(replace_case, kind, return_properties):
     """However the container is named, the replacement lands on the caller's own
     database and sends the same request.
 
@@ -189,7 +189,7 @@ def test_target_ownership_returns_and_rust_dispatch(replace_case, kind, return_p
     assert body == {"id": "c1", "partitionKey": PK, "defaultTtl": 3600}
 
 
-def test_all_replacement_fields_preserved_without_mutating_inputs(replace_case):
+def test_all_replacement_fields_preserved_without_mutating_inputs_rust(replace_case):
     """Every settable field reaches the request under its wire name, and the
     customer's own dictionaries are left alone.
 
@@ -234,7 +234,7 @@ def test_all_replacement_fields_preserved_without_mutating_inputs(replace_case):
     (("c1", PK), {"container": "other"}), (("c1", PK), {"partition_key": PK}),
     (("c1", PK, {}), {}), (("c1", PK, {}, 60), {}),
 ])
-def test_invalid_argument_binding_fails_before_dispatch(replace_case, args, kwargs):
+def test_invalid_argument_binding_fails_before_dispatch_rust(replace_case, args, kwargs):
     """Calls that do not match the signature fail before any container is touched.
 
     Covered: no arguments at all, a container with no partition key, a partition
@@ -253,7 +253,7 @@ def test_invalid_argument_binding_fails_before_dispatch(replace_case, args, kwar
 
 @pytest.mark.parametrize("option", ["session_token", "populate_query_metrics"])
 @pytest.mark.parametrize("value", [None, False, True])
-def test_retired_keywords_rejected_by_presence(replace_case, option, value):
+def test_retired_keywords_rejected_by_presence_rust(replace_case, option, value):
     """Retired options are refused because they were passed, whatever their value.
 
     Session token and query metrics raise ``TypeError`` naming the option, even
@@ -275,7 +275,7 @@ def test_retired_keywords_rejected_by_presence(replace_case, option, value):
     {"initial_headers": {"User-Agent": "override"}}, {"initial_headers": {"x-ms-version": "override"}},
     {"request_options": {"timeout": 10}},
 ])
-def test_unsupported_rust_options_never_fall_back(replace_case, kwargs):
+def test_unsupported_rust_options_never_fall_back_rust(replace_case, kwargs):
     """Options the Rust path cannot honor stop the replacement instead of moving it
     to the legacy transport.
 
@@ -302,7 +302,7 @@ def test_unsupported_rust_options_never_fall_back(replace_case, kwargs):
 
 
 @pytest.mark.parametrize("timeout", [None, 1, 1.5, 10])
-def test_supported_timeouts_and_application_headers(replace_case, timeout):
+def test_supported_timeouts_and_application_headers_rust(replace_case, timeout):
     """A supported deadline and the customer's own header both reach the request
     unchanged, and no read is made along the way.
 
@@ -325,7 +325,7 @@ def test_supported_timeouts_and_application_headers(replace_case, timeout):
     ({"etag": "unused", "match_condition": MatchConditions.IfPresent}, ("IfMatch", "*")),
     ({"etag": "unused", "match_condition": MatchConditions.IfMissing}, ("IfNoneMatch", "*")),
 ])
-def test_conditions_forwarded_without_ignored_warnings(replace_case, kwargs, expected):
+def test_conditions_forwarded_without_ignored_warnings_rust(replace_case, kwargs, expected):
     """A conditional replacement carries its condition on both engines, with no
     warning raised.
 
@@ -365,7 +365,7 @@ def test_conditions_forwarded_without_ignored_warnings(replace_case, kwargs, exp
     ({"etag": "v1"}, ValueError), ({"match_condition": MatchConditions.IfNotModified}, ValueError),
     ({"match_condition": MatchConditions.IfModified}, ValueError), ({"match_condition": "invalid"}, TypeError),
 ])
-def test_invalid_conditions_fail_before_dispatch(replace_case, kwargs, error):
+def test_invalid_conditions_fail_before_dispatch_rust(replace_case, kwargs, error):
     """An incomplete or malformed condition stops the replacement.
 
     An etag with no condition and a condition with no etag are ``ValueError``; a
@@ -379,7 +379,7 @@ def test_invalid_conditions_fail_before_dispatch(replace_case, kwargs, error):
 
 
 @pytest.mark.parametrize("falsey", [False, True])
-def test_hooks_cannot_change_headers_body_or_cached_properties(replace_case, falsey):
+def test_hooks_cannot_change_headers_body_or_cached_properties_rust(replace_case, falsey):
     """A response hook cannot alter the result, and runs whether or not it reports
     itself as true.
 
@@ -415,7 +415,7 @@ def test_hooks_cannot_change_headers_body_or_cached_properties(replace_case, fal
 
 
 @pytest.mark.parametrize("error", [ValueError("hook"), exceptions.CosmosResourceNotFoundError(status_code=404)])
-def test_hook_errors_never_replay_replacement(replace_case, error):
+def test_hook_errors_never_replay_replacement_rust(replace_case, error):
     """An error from the customer's hook never causes a second replacement.
 
     The exact exception reaches the caller, the hook ran once, and exactly one
@@ -437,7 +437,7 @@ def test_hook_errors_never_replay_replacement(replace_case, error):
 
 
 @pytest.mark.parametrize("status", [400, 401, 403, 404, 409, 412, 429, 500])
-def test_rust_errors_preserve_status_and_do_not_call_hook(replace_case, status):
+def test_rust_errors_preserve_status_and_do_not_call_hook_rust(replace_case, status):
     """Every failure status from the service arrives intact, with no success hook and
     no second attempt on legacy.
 
@@ -469,7 +469,7 @@ def test_rust_errors_preserve_status_and_do_not_call_hook(replace_case, status):
 
 
 @pytest.mark.parametrize("error", [ValueError("binding"), NotImplementedError("binding"), asyncio.CancelledError()])
-def test_binding_failures_and_cancellation_do_not_replay(replace_case, error):
+def test_binding_failures_and_cancellation_do_not_replay_rust(replace_case, error):
     """A failure inside the Rust engine, including cancellation, is raised as-is and
     not retried on legacy.
 
@@ -492,7 +492,7 @@ def test_binding_failures_and_cancellation_do_not_replay(replace_case, error):
     case.connection.ReplaceContainer.assert_not_called()
 
 
-def test_builder_registration_and_invalid_links():
+def test_builder_registration_and_invalid_links_rust():
     """Replace is wired to the right entry point, rejects links that do not name a
     container, and does not modify the caller's options.
 

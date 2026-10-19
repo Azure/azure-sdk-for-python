@@ -4,7 +4,8 @@
 the ``_backend="rust"`` path.
 
 Source: ``tests/test_none_options_async.py``. The class name and method
-name match the source so the parity reporter can pair the two runs by
+name match the source (apart from the method's ``_rust`` suffix) so the parity reporter
+can pair the two runs by
 ``(file basename, class name, method name)``.
 
 Self-contained: builds its own database + container in ``asyncSetUp``
@@ -59,7 +60,7 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
         )
         return item
 
-    async def test_container_read_item_none_options_async(self):
+    async def test_container_read_item_none_options_async_rust(self):
         """The async read_item accepts None for every optional argument.
 
         None means "not supplied". Customers commonly build one call site

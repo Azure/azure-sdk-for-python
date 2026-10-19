@@ -49,7 +49,7 @@ def snapshot_after_exchange(observer, identity, count, response_bytes=0):
         time.sleep(0.001)
 
 
-def test_proxy_resets_established_socket(tmp_path):
+def test_proxy_resets_established_socket_rust(tmp_path):
     with socket.socket() as server:
         server.bind(("127.0.0.1", 0))
         server.listen()
@@ -103,7 +103,7 @@ def test_proxy_resets_established_socket(tmp_path):
 
 
 @pytest.mark.parametrize("persistent", [False, True], ids=["single", "persistent"])
-def test_proxy_cuts_established_socket(tmp_path, persistent):
+def test_proxy_cuts_established_socket_rust(tmp_path, persistent):
     payload = bytes(range(256)) * 250
     with socket.socket() as server:
         server.bind(("127.0.0.1", 0))
@@ -199,7 +199,7 @@ def test_proxy_cuts_established_socket(tmp_path, persistent):
 
 
 @pytest.mark.parametrize("failure", ["body", "removal"])
-def test_owned_routes_isolate_faults_and_clean_up_after_failure(tmp_path, monkeypatch, failure):
+def test_owned_routes_isolate_faults_and_clean_up_after_failure_rust(tmp_path, monkeypatch, failure):
     payload = bytes(range(256)) * 250
     proxies = []
     with socket.socket() as server:

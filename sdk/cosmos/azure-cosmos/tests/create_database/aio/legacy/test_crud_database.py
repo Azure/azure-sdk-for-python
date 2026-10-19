@@ -30,7 +30,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.key_client.close()
 
-    async def test_database_level_offer_throughput_async(self):
+    async def test_database_level_offer_throughput_async_rust(self):
         """Throughput set at the database level can be read back and then changed.
 
         Creates a database with 1000 request units, confirms ``get_throughput``

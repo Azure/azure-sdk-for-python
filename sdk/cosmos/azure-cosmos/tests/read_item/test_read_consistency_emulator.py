@@ -55,7 +55,7 @@ def _read_options(source, level):
 
 @pytest.mark.parametrize("level", LEVELS)
 @pytest.mark.parametrize("source", SOURCES)
-def test_rust_read_consistency(consistency_order, source, level):
+def test_rust_read_consistency_rust(consistency_order, source, level):
     endpoint, key, database_id, expected, strong_account = consistency_order
     default = level if source == "client" else "Session"
     with CosmosClient(endpoint, key, _backend="rust", consistency_level=default) as client:
@@ -82,7 +82,7 @@ def test_rust_read_consistency(consistency_order, source, level):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("level", LEVELS)
 @pytest.mark.parametrize("source", SOURCES)
-async def test_rust_read_consistency_async(consistency_order, source, level):
+async def test_rust_read_consistency_async_rust(consistency_order, source, level):
     endpoint, key, database_id, expected, strong_account = consistency_order
     default = level if source == "client" else "Session"
     async with AsyncCosmosClient(endpoint, key, _backend="rust", consistency_level=default) as client:

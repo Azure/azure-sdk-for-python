@@ -38,7 +38,7 @@ def database_ids():
         client.close()
 
 
-def test_query_databases_parameterized_filter(database_ids):
+def test_query_databases_parameterized_filter_rust(database_ids):
     """A parameterized filter returns exactly the one database it names."""
     target_id = database_ids[0]
 
@@ -68,7 +68,7 @@ def test_query_databases_parameterized_filter(database_ids):
     assert comparison.rust.return_value["all_properties_present"]
 
 
-def test_query_databases_no_match_returns_empty(database_ids):
+def test_query_databases_no_match_returns_empty_rust(database_ids):
     """A filter that matches nothing returns an empty result on both backends."""
 
     def _do(client):
@@ -91,7 +91,7 @@ def test_query_databases_no_match_returns_empty(database_ids):
     assert comparison.rust.return_value["count"] == 0
 
 
-def test_query_databases_continuation_replay(database_ids):
+def test_query_databases_continuation_replay_rust(database_ids):
     """A one-item page exposes a continuation token that resumes deterministically."""
     assert len(database_ids) == 3
 
@@ -125,7 +125,7 @@ def test_query_databases_continuation_replay(database_ids):
     assert result["second_id"] == result["replay_id"]
 
 
-def test_query_databases_options_and_page_hooks(database_ids):
+def test_query_databases_options_and_page_hooks_rust(database_ids):
     """Supported options and hooks apply to each fetched query page."""
 
     def _do(client):

@@ -37,10 +37,10 @@ class TestContainerPropertiesCache(unittest.TestCase):
         self.assertEqual(new_offer.offer_throughput, new_throughput)
         self.assertEqual(created_container.get_throughput().offer_throughput, new_throughput)
 
-    def test_offer_throughput_container_recreate(self):
+    def test_offer_throughput_container_recreate_rust(self):
         # Source: tests/test_container_properties_cache.py::TestContainerPropertiesCache.test_offer_throughput_container_recreate
         self._check_recreation("/PK", "/partkey")
 
-    def test_offer_throughput_container_recreate_sub_partition(self):
+    def test_offer_throughput_container_recreate_sub_partition_rust(self):
         # Source: tests/test_container_properties_cache.py::TestContainerPropertiesCache.test_offer_throughput_container_recreate_sub_partition
         self._check_recreation(["/country", "/state"], ["/county", "/city"])

@@ -4,7 +4,8 @@
 
 Self-contained: builds its own database + container in ``asyncSetUp`` and
 deletes them in ``asyncTearDown``. The class name and method name match the
-source at ``tests/test_change_feed_async.py`` so test IDs differ only by path.
+source (apart from the method's ``_rust`` suffix) at ``tests/test_change_feed_async.py``
+so test IDs differ by path and method suffix.
 
 Run with::
 
@@ -48,7 +49,7 @@ class TestChangeFeedAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.client.close()
 
-    async def test_get_feed_ranges(self):
+    async def test_get_feed_ranges_rust(self):
         """A container on a single physical partition reports exactly one feed range.
 
         Feed ranges are how a caller splits a change feed or a query across

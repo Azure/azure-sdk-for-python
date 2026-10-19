@@ -18,7 +18,7 @@ pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.timeout(90)
 @pytest.mark.parametrize("inject", [True, False], ids=["response-failure", "no-injection"])
-def test_point_read_response_failure(owned_target, inject):
+def test_point_read_response_failure_rust(owned_target, inject):
     database_id, observer = owned_target
     item_id = uuid.uuid4().hex
     item = {"id": item_id, "pk": item_id, "name": "order-17", "state": "confirmed"}

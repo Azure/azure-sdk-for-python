@@ -49,7 +49,7 @@ from azure.cosmos.partition_key import _Empty, _Undefined
         ("rid", ("/pk",), "Hash", 1),
     ],
 )
-def test_invalid_native_metadata_is_a_protocol_error(raw):
+def test_invalid_native_metadata_is_a_protocol_error_rust(raw):
     """Anything that is not well-formed metadata is refused outright.
 
     Twelve shapes are covered: nothing at all, an empty set of values, a
@@ -71,7 +71,7 @@ def test_invalid_native_metadata_is_a_protocol_error(raw):
 
 @pytest.mark.parametrize("kind", ["Hash", "MultiHash", "Range"])
 @pytest.mark.parametrize("system_key", [None, False, True])
-def test_metadata_preserves_kind_and_system_key_knowledge(kind, system_key):
+def test_metadata_preserves_kind_and_system_key_knowledge_rust(kind, system_key):
     """All three partition key kinds and all three states of the system-key flag survive
     unchanged, and the result cannot be edited afterwards.
 
@@ -100,7 +100,7 @@ def test_metadata_preserves_kind_and_system_key_knowledge(kind, system_key):
         ("Range", ("/pk",), {"pk": "x"}, "x"),
     ],
 )
-def test_extraction_uses_kind_not_path_count(kind, paths, body, expected):
+def test_extraction_uses_kind_not_path_count_rust(kind, paths, body, expected):
     """The partition key value is shaped by the container's kind, not by how many paths
     it happens to have.
 
@@ -122,7 +122,7 @@ def test_extraction_uses_kind_not_path_count(kind, paths, body, expected):
 @pytest.mark.parametrize(
     "flag,expected", [(True, _Empty), (False, _Undefined), (None, _Undefined)]
 )
-def test_missing_partition_key_preserves_existing_system_key_behavior(flag, expected):
+def test_missing_partition_key_preserves_existing_system_key_behavior_rust(flag, expected):
     """An item with no partition key value is reported differently depending on whether
     the container uses a system key.
 
@@ -138,7 +138,7 @@ def test_missing_partition_key_preserves_existing_system_key_behavior(flag, expe
     assert isinstance(extract_partition_key_value(metadata, {"id": "item"}), expected)
 
 
-def test_absent_definition_is_explicit():
+def test_absent_definition_is_explicit_rust():
     """A container with no partition key definition yields "empty", even when the item
     has a value that would otherwise have matched.
 
@@ -251,7 +251,7 @@ def metadata_case(request, monkeypatch):
     run(backend.close())
 
 
-def test_metadata_success_does_not_parse_json_or_a_response(metadata_case, monkeypatch):
+def test_metadata_success_does_not_parse_json_or_a_response_rust(metadata_case, monkeypatch):
     """Fetching metadata is not an item read, and does not go through response
     handling at all.
 
@@ -280,7 +280,7 @@ def test_metadata_success_does_not_parse_json_or_a_response(metadata_case, monke
     assert metadata_case.state.last_response_headers is metadata_case.original_headers
 
 
-def test_each_call_observes_current_driver_metadata_without_a_python_cache(
+def test_each_call_observes_current_driver_metadata_without_a_python_cache_rust(
     metadata_case,
 ):
     """Each lookup asks the driver again rather than remembering an earlier answer.
@@ -300,7 +300,7 @@ def test_each_call_observes_current_driver_metadata_without_a_python_cache(
     assert metadata_case.getter.call_count == 2
 
 
-def test_point_operation_uses_one_item_call_and_only_publishes_item_headers(
+def test_point_operation_uses_one_item_call_and_only_publishes_item_headers_rust(
     metadata_case,
 ):
     """One mocked item-binding call publishes its response headers.
@@ -325,7 +325,7 @@ def test_point_operation_uses_one_item_call_and_only_publishes_item_headers(
         (_Empty(), "[]"),
     ],
 )
-def test_explicit_key_overrides_extraction(metadata_case, key, header):
+def test_explicit_key_overrides_extraction_rust(metadata_case, key, header):
     """A partition key the customer supplied is used as given, and still no metadata is
     fetched.
 
@@ -354,7 +354,7 @@ def test_explicit_key_overrides_extraction(metadata_case, key, header):
         "patch_item",
     ],
 )
-def test_all_point_operations_enter_only_the_item_binding(
+def test_all_point_operations_enter_only_the_item_binding_rust(
     metadata_case, op, monkeypatch
 ):
     """Each listed point operation uses its item-binding entry, not Python metadata.
@@ -379,7 +379,7 @@ def test_all_point_operations_enter_only_the_item_binding(
 
 
 @pytest.mark.parametrize("status", [400, 404, 429])
-def test_metadata_errors_keep_details_without_publishing_headers(metadata_case, status):
+def test_metadata_errors_keep_details_without_publishing_headers_rust(metadata_case, status):
     """Selected metadata error fields survive translation without publishing headers.
 
     These synthetic failures check status, substatus, message, exception type,
@@ -413,7 +413,7 @@ def test_metadata_errors_keep_details_without_publishing_headers(metadata_case, 
 
 
 @pytest.mark.parametrize("phase", ["metadata", "write"])
-def test_transport_failure_does_not_clear_previous_headers(metadata_case, phase):
+def test_transport_failure_does_not_clear_previous_headers_rust(metadata_case, phase):
     """A transport failure at either step leaves the previous headers intact.
 
     The failure is injected once while resolving the container and once during
@@ -434,7 +434,7 @@ def test_transport_failure_does_not_clear_previous_headers(metadata_case, phase)
     assert metadata_case.state.last_response_headers is metadata_case.original_headers
 
 
-def test_metadata_cancellation_preserves_headers_and_drains_work(metadata_case):
+def test_metadata_cancellation_preserves_headers_and_drains_work_rust(metadata_case):
     """Cancelling a write in flight unwinds the driver call and leaves the headers
     alone.
 

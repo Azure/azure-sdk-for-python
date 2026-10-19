@@ -31,7 +31,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
         cls.client.close()
         cls.data_client.close()
 
-    def test_session_token_compatibility(self):
+    def test_session_token_compatibility_rust(self):
         """Passing ``session_token`` to operations that ignore it must not break them.
 
         Sweeps ``session_token`` through roughly a dozen database and container

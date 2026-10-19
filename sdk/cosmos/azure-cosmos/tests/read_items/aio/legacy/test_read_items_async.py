@@ -4,8 +4,9 @@
 
 Self-contained: builds its own database + container in ``asyncSetUp`` and deletes
 them in ``asyncTearDown``; methods that need a different partition-key shape build
-(and delete) their own container. The class and method names match the source at
-``tests/test_read_items_async.py`` so test IDs differ only by path.
+(and delete) their own container. The class and method names match the source (apart
+from the method's ``_rust`` suffix) at
+``tests/test_read_items_async.py`` so test IDs differ by path and method suffix.
 
 These pin the async customer-facing contract of ``read_items`` -- missing items
 omitted, single vs multi item, different / hierarchical partition keys, the
@@ -73,7 +74,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
             await container.create_item({'id': doc_id, 'data': i})
         return items_to_read, item_ids
 
-    async def test_read_items_single_item_async(self):
+    async def test_read_items_single_item_async_rust(self):
         """One (id, pk) pair in the batch -> read_items returns exactly that one item."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_single_item_async
         items_to_read, item_ids = await self._create_records_for_read_items(self.container, 1)
@@ -81,7 +82,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(read_items), 1)
         self.assertEqual(read_items[0]['id'], item_ids[0])
 
-    async def test_read_items_with_missing_items_async(self):
+    async def test_read_items_with_missing_items_async_rust(self):
         """A batch mixing real and non-existent ids -> only the real items come back; missing ids are omitted, not errors."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_with_missing_items_async
         items_to_read, _ = await self._create_records_for_read_items(self.container, 3, "existing_item")
@@ -93,7 +94,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         expected_ids = {item_tuple[0] for item_tuple in items_to_read if "existing" in item_tuple[0]}
         self.assertSetEqual(returned_ids, expected_ids)
 
-    async def test_read_items_different_partition_key_async(self):
+    async def test_read_items_different_partition_key_async_rust(self):
         """Partition key on its own path (/pk, not /id) -> read_items still finds every requested item."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_different_partition_key_async
         container_id = 'read_items_pk_container_' + str(uuid.uuid4())
@@ -115,7 +116,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.database.delete_container(container_id)
 
-    async def test_read_items_fails_with_incomplete_hierarchical_pk_async(self):
+    async def test_read_items_fails_with_incomplete_hierarchical_pk_async_rust(self):
         """A hierarchical partition key with too few components -> read_items raises ValueError before any network call."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_fails_with_incomplete_hierarchical_pk_async
         container_id = 'read_items_hpk_incomplete_container_' + str(uuid.uuid4())
@@ -140,7 +141,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.database.delete_container(container_id)
 
-    async def test_read_items_hierarchical_partition_key_async(self):
+    async def test_read_items_hierarchical_partition_key_async_rust(self):
         """Two-level (tenantId, userId) partition key -> read_items returns every requested item."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_hierarchical_partition_key_async
         container_id = 'read_hpk_container_' + str(uuid.uuid4())
@@ -166,7 +167,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.database.delete_container(container_id)
 
-    async def test_read_items_with_no_results_preserve_headers_async(self):
+    async def test_read_items_with_no_results_preserve_headers_async_rust(self):
         """All ids non-existent -> an empty result, but the aggregated x-ms-request-charge header is still present and non-zero."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_with_no_results_preserve_headers_async
         items_to_read = [
@@ -179,7 +180,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         self.assertListEqual(list(headers.keys()), ['x-ms-request-charge'])
         self.assertGreater(float(headers.get('x-ms-request-charge')), 0)
 
-    async def test_headers_being_returned_on_success_async(self):
+    async def test_headers_being_returned_on_success_async_rust(self):
         """On success the merged result exposes only the aggregated x-ms-request-charge header (the summed RU cost of all the leaf reads)."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_headers_being_returned_on_success_async
         items_to_read, item_ids = await self._create_records_for_read_items(self.container, 5)
@@ -190,7 +191,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         self.assertListEqual(list(headers.keys()), ['x-ms-request-charge'])
         self.assertGreater(float(headers.get('x-ms-request-charge')), 0)
 
-    async def test_read_items_order_using_zip_comparison_async(self):
+    async def test_read_items_order_using_zip_comparison_async_rust(self):
         """The returned items come back in the same order as the input (id, pk) list."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_order_using_zip_comparison_async
         container_id = 'read_order_zip_container_' + str(uuid.uuid4())

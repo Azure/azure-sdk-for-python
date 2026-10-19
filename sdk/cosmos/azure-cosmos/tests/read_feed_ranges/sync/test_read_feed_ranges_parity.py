@@ -42,7 +42,7 @@ def _normalize_feed_ranges(feed_ranges):
     return sorted(feed_ranges, key=lambda value: (value["Range"]["min"], value["Range"]["max"]))
 
 
-def test_read_feed_ranges_baseline(container_for):
+def test_read_feed_ranges_baseline_rust(container_for):
     """Baseline read_feed_ranges returns the same normalized ranges."""
     # Without this, a basic divergence in the returned range boundaries would go unnoticed.
 
@@ -58,7 +58,7 @@ def test_read_feed_ranges_baseline(container_for):
     comparison.assert_functional_parity()
 
 
-def test_read_feed_ranges_force_refresh(container_for):
+def test_read_feed_ranges_force_refresh_rust(container_for):
     """Force-refresh read_feed_ranges stays equivalent on both backends."""
     # Exercise a refresh after discovery has populated the cache. This checks
     # returned values, not split handling or freshness after a failed refresh.

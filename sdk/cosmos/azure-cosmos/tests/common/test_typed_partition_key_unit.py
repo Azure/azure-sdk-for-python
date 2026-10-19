@@ -56,7 +56,7 @@ from azure.cosmos.partition_key import _Empty, _Undefined, NonePartitionKeyValue
         (["tenant", _Undefined()], "components", ("tenant", None)),
     ],
 )
-def test_point_normalization_preserves_source(value, kind, values):
+def test_point_normalization_preserves_source_rust(value, kind, values):
     """Each accepted input keeps its own meaning instead of collapsing into a shared one.
 
     The cases worth reading carefully are the ones that used to look alike. A container
@@ -91,11 +91,11 @@ def test_point_normalization_preserves_source(value, kind, values):
         ),
     ],
 )
-def test_feed_range_normalization_preserves_missing_components(value, expected):
+def test_feed_range_normalization_preserves_missing_components_rust(value, expected):
     assert normalize_feed_range_partition_key(value) == expected
 
 
-def test_query_components_do_not_erase_undefined():
+def test_query_components_do_not_erase_undefined_rust():
     """Queries keep "the path is missing" apart from "the value is nothing".
 
     This is where the two differ. Point operations follow the old rule and turn a missing
@@ -110,7 +110,7 @@ def test_query_components_do_not_erase_undefined():
     assert serialize_partition_key_for_continuation(key) == '["tenant",{},null]'
 
 
-def test_component_snapshots_and_identity_are_immutable_and_type_sensitive():
+def test_component_snapshots_and_identity_are_immutable_and_type_sensitive_rust():
     """The caller's list is copied, the result cannot be changed, and types stay distinct.
 
     The first part is the same reuse problem as elsewhere: the caller's list is edited
@@ -132,7 +132,7 @@ def test_component_snapshots_and_identity_are_immutable_and_type_sensitive():
     assert normalize_partition_key(1) != normalize_partition_key(1.0)
 
 
-def test_scalar_subclasses_keep_their_underlying_values():
+def test_scalar_subclasses_keep_their_underlying_values_rust():
     """A caller's own type based on text or a number is read for its value, not its behavior.
 
     Each of the three classes here overrides the method Python would normally use to turn
@@ -175,7 +175,7 @@ def test_scalar_subclasses_keep_their_underlying_values():
         ("\udc00\ud800", "\udc00\ud800"),
     ],
 )
-def test_unicode_normalization_preserves_key_shapes_and_bookmarks(value, expected):
+def test_unicode_normalization_preserves_key_shapes_and_bookmarks_rust(value, expected):
     """Text arriving in either encoding form becomes one key, and saved bookmarks still match.
 
     Characters outside the common range can reach Python as a single character or as the
@@ -206,7 +206,7 @@ def test_unicode_normalization_preserves_key_shapes_and_bookmarks(value, expecte
 @pytest.mark.parametrize("key_shape", ["scalar", "hierarchical", "query"])
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.asyncio
-async def test_native_unicode_key_extraction_matches_legacy(key_shape, async_mode):
+async def test_native_unicode_key_extraction_matches_legacy_rust(key_shape, async_mode):
     """The Rust side accepts such a key, whether built directly or read back from old text.
 
     Two keys are tried for each shape: one built from the value as the caller gave it, and
@@ -252,7 +252,7 @@ async def test_native_unicode_key_extraction_matches_legacy(key_shape, async_mod
                 await result
 
 
-def test_change_feed_does_not_turn_the_empty_sentinel_into_null():
+def test_change_feed_does_not_turn_the_empty_sentinel_into_null_rust():
     """Reading a change feed on a container with no partition key keeps that meaning.
 
     This is the one place the distinction was most easily lost. Asking for changes in a
@@ -282,7 +282,7 @@ def test_change_feed_does_not_turn_the_empty_sentinel_into_null():
         [Ellipsis],
     ],
 )
-def test_invalid_public_components_fail_explicitly(value):
+def test_invalid_public_components_fail_explicitly_rust(value):
     """Values the service cannot store as a key are refused here, with a reason.
 
     Three groups, each verified by running them. Numbers that are not a finite value the
@@ -309,7 +309,7 @@ def test_invalid_public_components_fail_explicitly(value):
         ("components", ({},)),
     ],
 )
-def test_invalid_private_shapes_are_rejected(kind, values):
+def test_invalid_private_shapes_are_rejected_rust(kind, values):
     """The record refuses to exist in a state that does not make sense.
 
     These are mistakes only SDK code could make, and each is checked by running it: a
@@ -330,7 +330,7 @@ def test_invalid_private_shapes_are_rejected(kind, values):
     "value,expected",
     [("customer-17", "customer-17"), ("\ud83d\ude00", "\U0001f600")],
 )
-def test_read_preparation_does_not_encode_or_decode_partition_json(
+def test_read_preparation_does_not_encode_or_decode_partition_json_rust(
     monkeypatch, value, expected
 ):
     """Preparing a read never writes the key out as text or reads it back.
@@ -360,7 +360,7 @@ def test_read_preparation_does_not_encode_or_decode_partition_json(
     assert not hasattr(prepared, "partition_key_header")
 
 
-def test_customer_header_is_decoded_only_at_the_external_input_boundary():
+def test_customer_header_is_decoded_only_at_the_external_input_boundary_rust():
     """Reading a key from text happens only where a customer actually supplied text.
 
     A caller may set the partition key header themselves, and that text has to be read.
@@ -388,7 +388,7 @@ def test_customer_header_is_decoded_only_at_the_external_input_boundary():
         ("colls", {}, BindingPartitionKey("cross_partition")),
     ],
 )
-def test_unused_raw_headers_are_not_parsed(resource, options, expected):
+def test_unused_raw_headers_are_not_parsed_rust(resource, options, expected):
     """A leftover header that nobody needs is ignored rather than read and rejected.
 
     Each case carries a partition key header holding text that is not valid JSON. If the
@@ -425,7 +425,7 @@ def test_unused_raw_headers_are_not_parsed(resource, options, expected):
     ],
 )
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_native_consumers_reject_untyped_components_before_io(method, async_mode):
+def test_native_consumers_reject_untyped_components_before_io_rust(method, async_mode):
     """Nine Rust entry points refuse a key component they do not understand, before sending.
 
     The request here is deliberately not the real record -- it is a stand-in whose key
@@ -464,7 +464,7 @@ def test_native_consumers_reject_untyped_components_before_io(method, async_mode
     ],
 )
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_old_request_envelope_fails_before_reading_its_legacy_header(
+def test_old_request_envelope_fails_before_reading_its_legacy_header_rust(
     method, async_mode
 ):
     """An older request that still carries the key as text is refused on the version alone.
@@ -492,7 +492,7 @@ def test_old_request_envelope_fails_before_reading_its_legacy_header(
         )
 
 
-def test_prepared_records_require_typed_keys():
+def test_prepared_records_require_typed_keys_rust():
     """A request cannot be built with the key as text, for either point calls or queries.
 
     Passing the old text form is refused at construction. Without this the two forms
@@ -521,7 +521,7 @@ def test_prepared_records_require_typed_keys():
     ],
 )
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_retained_native_readers_reject_old_body_scope_contract(
+def test_retained_native_readers_reject_old_body_scope_contract_rust(
     op, payload, error, message, async_mode
 ):
     """Neither feed accepts the old body as a substitute for typed routing.
@@ -553,7 +553,7 @@ def test_retained_native_readers_reject_old_body_scope_contract(
         (None, "components"),
     ],
 )
-def test_feed_range_builder_keeps_source_provenance(value, kind):
+def test_feed_range_builder_keeps_source_provenance_rust(value, kind):
     """Asking which range of the container a key belongs to keeps the inputs apart.
 
     A container with no partition key and an empty list stay distinct from each other and

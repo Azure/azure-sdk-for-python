@@ -52,7 +52,7 @@ from common.request_preparation import (
 # ---------------------------------------------------------------------------
 
 
-def test_baseline_is_write_with_body_with_item_id():
+def test_baseline_is_write_with_body_with_item_id_rust():
     """A replace carries the new body (serialised to JSON bytes) and the id
     of the item to overwrite on ``item_id`` -- both at once. The op tag
     is ``OP_REPLACE_ITEM``."""
@@ -76,7 +76,7 @@ def test_baseline_is_write_with_body_with_item_id():
     assert wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"] == "RID=="
 
 
-def test_url_id_comes_from_item_id_not_body():
+def test_url_id_comes_from_item_id_not_body_rust():
     """The URL id is whatever ``item_id`` the caller resolved from ``item`` --
     it is not re-derived from the body. The legacy ``ReplaceItem`` takes the
     URL id from the resolved document link, so a body whose own id disagrees
@@ -98,7 +98,7 @@ def test_url_id_comes_from_item_id_not_body():
     assert json.loads(prepared.body_bytes)["id"] == "B"
 
 
-def test_body_bytes_round_trip_to_the_same_dict():
+def test_body_bytes_round_trip_to_the_same_dict_rust():
     """The serialised bytes parse back to the body the customer passed --
     replace never rewrites the body."""
     body = {"id": "order-42", "pk": "customerA"}
@@ -118,7 +118,7 @@ def test_body_bytes_round_trip_to_the_same_dict():
 # ---------------------------------------------------------------------------
 
 
-def test_missing_id_is_not_generated_or_added_to_input_body():
+def test_missing_id_is_not_generated_or_added_to_input_body_rust():
     """The input body and encoded replacement body both remain without an id.
 
     This preparation-only test does not check the service's response.
@@ -141,7 +141,7 @@ def test_missing_id_is_not_generated_or_added_to_input_body():
 # ---------------------------------------------------------------------------
 
 
-def test_etag_if_not_modified_translates_to_if_match_guarded_replace():
+def test_etag_if_not_modified_translates_to_if_match_guarded_replace_rust():
     """``etag=<v>`` + ``IfNotModified`` is the replace's headline guard:
     ``If-Match: <v>`` (a stale etag surfaces as 412)."""
     options = build_upsert_item_request_options({
@@ -163,7 +163,7 @@ def test_etag_if_not_modified_translates_to_if_match_guarded_replace():
     assert "if-none-match" not in wire_headers(prepared)
 
 
-def test_if_missing_translates_to_if_none_match_wildcard():
+def test_if_missing_translates_to_if_none_match_wildcard_rust():
     """``match_condition=IfMissing`` (no etag) -> ``If-None-Match: *``. The
     same translation upsert uses; on a replace it is rare but must still
     emit the header (it goes through the shared access-condition step)."""
@@ -181,7 +181,7 @@ def test_if_missing_translates_to_if_none_match_wildcard():
     assert "if-match" not in wire_headers(prepared)
 
 
-def test_no_access_condition_emits_no_precondition_headers():
+def test_no_access_condition_emits_no_precondition_headers_rust():
     """A plain replace (no etag / match_condition) carries neither
     ``If-Match`` nor ``If-None-Match``, and never leaks the raw internal
     ``accessCondition`` shape onto the wire."""
@@ -199,7 +199,7 @@ def test_no_access_condition_emits_no_precondition_headers():
     assert "accessCondition" not in wire_headers(prepared)
 
 
-def test_etag_without_match_condition_raises_value_error_up_front():
+def test_etag_without_match_condition_raises_value_error_up_front_rust():
     """``etag`` without ``match_condition`` is an application bug; the
     options build refuses to guess and raises before any network round
     trip -- the same gate delete / read / upsert enforce."""
@@ -212,7 +212,7 @@ def test_etag_without_match_condition_raises_value_error_up_front():
 # ---------------------------------------------------------------------------
 
 
-def test_initial_headers_are_flattened_into_outer_headers():
+def test_initial_headers_are_flattened_into_outer_headers_rust():
     """``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
     ``initialHeaders`` dict so the binding forwards each entry verbatim."""
     prepared = prepare_replace_item_request(
@@ -228,7 +228,7 @@ def test_initial_headers_are_flattened_into_outer_headers():
     assert "initial_headers" not in wire_headers(prepared)
 
 
-def test_trigger_priority_bucket_no_response_land_as_option_keys():
+def test_trigger_priority_bucket_no_response_land_as_option_keys_rust():
     """The body-carrying option set reaches the headers map under the
     internal option-key names. ``no_response`` is kept on replace (a replace
     returns a body, unlike delete / read)."""
@@ -249,7 +249,7 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
     assert settings_options(prepared)["responsePayloadOnWriteDisabled"] is True
 
 
-def test_timeout_kwarg_is_forwarded_under_sentinel_header():
+def test_timeout_kwarg_is_forwarded_under_sentinel_header_rust():
     """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30`` so
     the binding can turn it into the driver's own timeout setting -- the
     same mechanism as every other migrated operation."""
@@ -264,7 +264,7 @@ def test_timeout_kwarg_is_forwarded_under_sentinel_header():
     assert settings_options(prepared)["timeout_seconds"] == 30
 
 
-def test_compose_consumes_recognised_kwargs():
+def test_compose_consumes_recognised_kwargs_rust():
     """The option-shortcut keyword arguments the prep recognises are removed
     from the input dict, so the caller doesn't forward them again to the
     legacy path."""
@@ -285,7 +285,7 @@ def test_compose_consumes_recognised_kwargs():
 # ---------------------------------------------------------------------------
 
 
-def test_replace_and_upsert_prep_differ_only_by_op_and_item_id():
+def test_replace_and_upsert_prep_differ_only_by_op_and_item_id_rust():
     """``prepare_replace_item_request`` and ``prepare_upsert_item_request``
     both delegate to one shared builder, so for the same inputs every field
     on the wire must be identical except the ``op`` tag and the ``item_id``

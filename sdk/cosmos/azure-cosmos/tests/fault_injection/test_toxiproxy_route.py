@@ -62,7 +62,7 @@ pytestmark = [
 @pytest.mark.timeout(120)
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("disable_route", [True, False], ids=["unavailable", "control"])
-async def test_read_depends_on_proxy(proxy_route, proxy_target, monkeypatch, asynchronous, disable_route):
+async def test_read_depends_on_proxy_rust(proxy_route, proxy_target, monkeypatch, asynchronous, disable_route):
     await exercise_read(
         proxy_route,
         proxy_target,
@@ -78,7 +78,7 @@ async def test_read_depends_on_proxy(proxy_route, proxy_target, monkeypatch, asy
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("stall_response", [True, False], ids=["stalled", "control"])
 @pytest.mark.parametrize("proxy_route", ["observed"], indirect=True)
-async def test_read_response_stall(proxy_route, proxy_target, monkeypatch, asynchronous, stall_response):
+async def test_read_response_stall_rust(proxy_route, proxy_target, monkeypatch, asynchronous, stall_response):
     await exercise_read(proxy_route, proxy_target, monkeypatch, asynchronous, "stall", stall_response)
 
 
@@ -87,7 +87,7 @@ async def test_read_response_stall(proxy_route, proxy_target, monkeypatch, async
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("reset_connection", [True, False], ids=["reset", "control"])
 @pytest.mark.parametrize("proxy_route", ["reset"], indirect=True)
-async def test_read_connection_reset(proxy_route, proxy_target, monkeypatch, asynchronous, reset_connection):
+async def test_read_connection_reset_rust(proxy_route, proxy_target, monkeypatch, asynchronous, reset_connection):
     await exercise_read(proxy_route, proxy_target, monkeypatch, asynchronous, "reset", reset_connection)
 
 
@@ -96,7 +96,7 @@ async def test_read_connection_reset(proxy_route, proxy_target, monkeypatch, asy
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("delay_ms", [0, 500, 5000], ids=["control", "slow", "late"])
 @pytest.mark.parametrize("proxy_route", ["observed"], indirect=True)
-async def test_read_response_latency(proxy_route, proxy_target, monkeypatch, asynchronous, delay_ms):
+async def test_read_response_latency_rust(proxy_route, proxy_target, monkeypatch, asynchronous, delay_ms):
     await exercise_read(
         proxy_route,
         proxy_target,
@@ -113,7 +113,7 @@ async def test_read_response_latency(proxy_route, proxy_target, monkeypatch, asy
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("rate_kbps", [0, 64, 16], ids=["control", "moderate", "slow"])
 @pytest.mark.parametrize("proxy_route", ["sdk-observed"], indirect=True)
-async def test_read_response_bandwidth(proxy_route, proxy_target, monkeypatch, asynchronous, rate_kbps):
+async def test_read_response_bandwidth_rust(proxy_route, proxy_target, monkeypatch, asynchronous, rate_kbps):
     await exercise_read(
         proxy_route,
         proxy_target,
@@ -130,7 +130,7 @@ async def test_read_response_bandwidth(proxy_route, proxy_target, monkeypatch, a
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("cut_response", [True, False], ids=["cutoff", "control"])
 @pytest.mark.parametrize("proxy_route", ["sdk-observed"], indirect=True)
-async def test_read_response_cutoff(proxy_route, proxy_target, monkeypatch, asynchronous, cut_response):
+async def test_read_response_cutoff_rust(proxy_route, proxy_target, monkeypatch, asynchronous, cut_response):
     await exercise_read(proxy_route, proxy_target, monkeypatch, asynchronous, "cutoff", cut_response)
 
 
@@ -139,7 +139,7 @@ async def test_read_response_cutoff(proxy_route, proxy_target, monkeypatch, asyn
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("cut_response", [True, False], ids=["persistent", "control"])
 @pytest.mark.parametrize("proxy_route", ["sdk-observed"], indirect=True)
-async def test_read_persistent_cutoff(proxy_route, proxy_target, monkeypatch, asynchronous, cut_response):
+async def test_read_persistent_cutoff_rust(proxy_route, proxy_target, monkeypatch, asynchronous, cut_response):
     await exercise_read(
         proxy_route,
         proxy_target,

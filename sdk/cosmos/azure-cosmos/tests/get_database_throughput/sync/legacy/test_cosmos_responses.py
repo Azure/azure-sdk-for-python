@@ -18,7 +18,7 @@ class TestCosmosResponses(unittest.TestCase):
         self.database_id = "get_db_response_" + uuid.uuid4().hex
         self.addCleanup(self.client.close)
 
-    def test_database_replace_throughput(self):
+    def test_database_replace_throughput_rust(self):
         # Source: tests/test_cosmos_responses.py::TestCosmosResponses.test_database_replace_throughput
         db = self.client.create_database(id=self.database_id, offer_throughput=400)
         self.addCleanup(self.client.delete_database, db.id)
@@ -27,7 +27,7 @@ class TestCosmosResponses(unittest.TestCase):
         assert len(first_response.get_response_headers()) > 0
         assert replace_throughput_value == db.get_throughput().offer_throughput
 
-    def test_container_replace_throughput(self):
+    def test_container_replace_throughput_rust(self):
         # Source: tests/test_cosmos_responses.py::TestCosmosResponses.test_container_replace_throughput
         db = self.client.create_database(self.database_id)
         self.addCleanup(self.client.delete_database, db.id)

@@ -86,7 +86,7 @@ def tracing():
     "filtered_logging", "network_span_namer", "connection_retry_policy",
     "headers_default", "headers_per_call",
 ])
-def test_policy_capability(backend, saved_order, asynchronous, capability, monkeypatch):
+def test_policy_capability_rust(backend, saved_order, asynchronous, capability, monkeypatch):
     database_id, expected = saved_order
     events, prepared_headers = [], []
     handler = MockHandler()

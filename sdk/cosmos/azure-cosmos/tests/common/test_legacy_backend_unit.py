@@ -40,23 +40,23 @@ from azure.cosmos.aio._backend.legacy import (
 class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
     """``LegacyBackend`` is a real ``CosmosBackend``, never a ``None`` stand-in."""
 
-    def test_legacy_backend_is_a_cosmos_backend_subclass(self):
+    def test_legacy_backend_is_a_cosmos_backend_subclass_rust(self):
         """Prove the shared Python implementation is a concrete backend."""
         self.assertIsInstance(LEGACY_BACKEND, CosmosBackend)
         self.assertIsInstance(LEGACY_BACKEND, LegacyBackend)
 
-    def test_legacy_backend_name_is_core_python(self):
+    def test_legacy_backend_name_is_core_python_rust(self):
         """Prove the Python implementation reports its public backend name."""
         self.assertEqual(LEGACY_BACKEND.name, BACKEND_NAME_CORE_PYTHON)
 
-    def test_legacy_backend_execute_is_not_prepared_request_driven(self):
+    def test_legacy_backend_execute_is_not_prepared_request_driven_rust(self):
         """``execute`` is the Rust wire primitive; the legacy engine does not
         implement it (its work is the original call arguments, not a wire
         request), so calling it raises rather than silently returning ``None``."""
         with self.assertRaises(NotImplementedError):
             LEGACY_BACKEND.execute(None)
 
-    def test_run_operation_always_invokes_the_legacy_operation(self):
+    def test_run_operation_always_invokes_the_legacy_operation_rust(self):
         """``LegacyBackend.run_operation`` unconditionally runs
         ``legacy_operation.invoke()`` -- it never calls ``build_request`` or
         ``execute``, and ignores ``rust_eligible`` entirely (there is no ``None``
@@ -84,7 +84,7 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
         self.assertEqual(prepare_request_calls, [])
         self.assertEqual(parse_response_calls, [])
 
-    def test_run_page_operation_always_invokes_the_legacy_operation(self):
+    def test_run_page_operation_always_invokes_the_legacy_operation_rust(self):
         """Prove paged calls use the supplied Python operation."""
         result = LEGACY_BACKEND.run_page_operation(
             build_request=lambda: self.fail("build_request must not run"),
@@ -96,7 +96,7 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
         )
         self.assertEqual(result, "legacy-page")
 
-    def test_operation_routing_is_frozen(self):
+    def test_operation_routing_is_frozen_rust(self):
         """Operation identity and compatibility cannot change during execution."""
         op = OperationRouting(op="create_item")
         self.assertEqual(op.op, "create_item")
@@ -107,7 +107,7 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
 class TestBackendCompatibilityFallback(unittest.TestCase):
     """The backend boundary owns temporary parity fallback."""
 
-    def test_backend_execution_errors_never_replay(self):
+    def test_backend_execution_errors_never_replay_rust(self):
         """Dispatch failure propagates, even for an operation allowing preflight fallback."""
 
         class _RejectingBackend(CosmosBackend):
@@ -130,16 +130,16 @@ class TestBackendCompatibilityFallback(unittest.TestCase):
 class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
     """Async twin: ``AsyncLegacyBackend`` is a real ``AsyncCosmosBackend``."""
 
-    def test_async_legacy_backend_is_an_async_cosmos_backend_subclass(self):
+    def test_async_legacy_backend_is_an_async_cosmos_backend_subclass_rust(self):
         """Prove the shared async Python implementation is a concrete backend."""
         self.assertIsInstance(ASYNC_LEGACY_BACKEND, AsyncCosmosBackend)
         self.assertIsInstance(ASYNC_LEGACY_BACKEND, AsyncLegacyBackend)
 
-    def test_async_legacy_backend_name_is_core_python(self):
+    def test_async_legacy_backend_name_is_core_python_rust(self):
         """Prove the async Python implementation reports its public name."""
         self.assertEqual(ASYNC_LEGACY_BACKEND.name, BACKEND_NAME_CORE_PYTHON)
 
-    def test_async_execute_is_not_prepared_request_driven(self):
+    def test_async_execute_is_not_prepared_request_driven_rust(self):
         """Prove direct prepared-request execution is unsupported."""
 
         async def _run():
@@ -148,7 +148,7 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
 
         asyncio.run(_run())
 
-    def test_async_run_operation_always_invokes_the_legacy_operation(self):
+    def test_async_run_operation_always_invokes_the_legacy_operation_rust(self):
         """Prove async calls use the supplied Python operation."""
 
         async def _run():
@@ -179,7 +179,7 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
 
         asyncio.run(_run())
 
-    def test_async_run_page_operation_always_invokes_the_legacy_operation(self):
+    def test_async_run_page_operation_always_invokes_the_legacy_operation_rust(self):
         """Prove async paged calls use the supplied Python operation."""
 
         async def _run():
@@ -201,7 +201,7 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
 
         asyncio.run(_run())
 
-    def test_async_backend_execution_errors_never_replay(self):
+    def test_async_backend_execution_errors_never_replay_rust(self):
         """An async execution failure cannot switch transports."""
 
         async def _run():

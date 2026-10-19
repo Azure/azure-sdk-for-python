@@ -25,7 +25,7 @@ from common._parity_helpers import (
 class TestQueryAmountParameters:
     """Change the numeric parameter without changing SQL or partition scope."""
 
-    def test_query_with_changing_minimum_amount(self):
+    def test_query_with_changing_minimum_amount_rust(self):
         """Minimums 100 and 150 return order-2; minimum 200 returns no orders."""
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite3_" + uuid.uuid4().hex

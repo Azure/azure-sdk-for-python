@@ -3,8 +3,9 @@
 """Sync ``is_feed_range_subset`` tests against the ``_backend="rust"`` path.
 
 Self-contained: builds its own database + container in a class fixture and deletes
-them afterward. The class name and method names match the source at
-``tests/test_feed_range.py`` so test IDs differ only by path.
+them afterward. The class name and method names match the source (apart from the
+method's ``_rust`` suffix) at
+``tests/test_feed_range.py`` so test IDs differ by path and method suffix.
 
 The parity suite only proves the two backends agree with each other; if both
 drifted the same way they would still pass while the answer is wrong. These tests
@@ -88,7 +89,7 @@ def rust_container():
 class TestFeedRange:
 
     @pytest.mark.parametrize("parent_feed_range, child_feed_range, is_subset", test_subset_ranges)
-    def test_feed_range_is_subset(self, rust_container, parent_feed_range, child_feed_range, is_subset):
+    def test_feed_range_is_subset_rust(self, rust_container, parent_feed_range, child_feed_range, is_subset):
         """A table of parent and child range pairs with the answer pinned for each.
 
         The cases cover full containment, the same pair the other way round,
@@ -107,7 +108,7 @@ class TestFeedRange:
         epk_child_feed_range = FeedRangeInternalEpk(child_feed_range).to_dict()
         assert rust_container.is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range) == is_subset
 
-    def test_feed_range_is_subset_from_pk(self, rust_container):
+    def test_feed_range_is_subset_from_pk_rust(self, rust_container):
         """A range built from a partition key sits inside the full range.
 
         The full range covers everything from empty to ``FF``, so any single

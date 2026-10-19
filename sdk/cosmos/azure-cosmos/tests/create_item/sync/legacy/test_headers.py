@@ -8,9 +8,8 @@ activity ids, dedicated-gateway max-age, query headers, etc.; they
 belong to their own operations' ``legacy/`` folders.
 
 Self-contained: builds its own database + container in ``setUpClass``
-and deletes them in ``tearDownClass``. The class name and method name
-match the source at ``tests/test_headers.py`` so test IDs differ only
-by path.
+and deletes them in ``tearDownClass``. The class name matches
+``tests/test_headers.py``; copied method names add ``_rust``.
 
 Run with::
 
@@ -61,7 +60,7 @@ class TestHeaders(unittest.TestCase):
         except Exception:  # pylint: disable=broad-except
             pass
 
-    def test_container_create_item_throughput_bucket(self):
+    def test_container_create_item_throughput_bucket_rust(self):
         # Source: tests/test_headers.py::TestHeaders.test_container_create_item_throughput_bucket
         binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
         with patch.object(binding, "create_item", wraps=binding.create_item) as operation:

@@ -68,7 +68,7 @@ def _make_response(*, status_code=200, sub_status=0, headers=None, body=b"", dia
 
 @pytest.mark.parametrize("hook_fails", [False, True])
 @pytest.mark.parametrize("with_state", [False, True])
-def test_delete_hook_receives_none_after_headers_are_published(with_state, hook_fails):
+def test_delete_hook_receives_none_after_headers_are_published_rust(with_state, hook_fails):
     state = ClientLastResponseHeaders() if with_state else None
     response = _make_response(
         status_code=204, headers={"etag": "original", "x-ms-request-charge": "1"}, diagnostics="delete-diagnostics"
@@ -99,7 +99,7 @@ def test_delete_hook_receives_none_after_headers_are_published(with_state, hook_
         assert state.last_response_headers["etag"] == "original"
 
 
-def test_delete_failure_publishes_headers_without_calling_hook():
+def test_delete_failure_publishes_headers_without_calling_hook_rust():
     state = ClientLastResponseHeaders()
     response = _make_response(status_code=404, headers={"x-ms-request-charge": "1"}, diagnostics="delete-diagnostics")
     calls = []
@@ -110,7 +110,7 @@ def test_delete_failure_publishes_headers_without_calling_hook():
     assert state.last_response_headers["x-ms-cosmos-sdk-diagnostics"] == "delete-diagnostics"
 
 
-def test_wire_string_headers_do_not_need_deepcopy(monkeypatch):
+def test_wire_string_headers_do_not_need_deepcopy_rust(monkeypatch):
     from types import SimpleNamespace
     from azure.cosmos._helpers import _response_parse as parser
 
@@ -134,7 +134,7 @@ def test_wire_string_headers_do_not_need_deepcopy(monkeypatch):
     assert response.headers["etag"] == "original"
 
 
-def test_header_snapshot_does_not_build_an_intermediate_mapping(monkeypatch):
+def test_header_snapshot_does_not_build_an_intermediate_mapping_rust(monkeypatch):
     from azure.cosmos._helpers import _response_parse as parser
 
     received = []
@@ -151,7 +151,7 @@ def test_header_snapshot_does_not_build_an_intermediate_mapping(monkeypatch):
 
 
 @pytest.mark.parametrize("mapping_type", [dict, CaseInsensitiveDict])
-def test_header_snapshot_preserves_case_collisions_and_nested_isolation(mapping_type):
+def test_header_snapshot_preserves_case_collisions_and_nested_isolation_rust(mapping_type):
     from azure.cosmos._helpers import _response_parse as parser
 
     incoming = mapping_type({"ETag": "first", "etag": "last", "Nested": {"values": [1]}})
@@ -163,7 +163,7 @@ def test_header_snapshot_preserves_case_collisions_and_nested_isolation(mapping_
     assert incoming["Nested"] == {"values": [1, 2]}
 
 
-def test_header_snapshot_copies_string_subclass_state():
+def test_header_snapshot_copies_string_subclass_state_rust():
     from azure.cosmos._helpers import _response_parse as parser
 
     class HeaderValue(str):
@@ -178,7 +178,7 @@ def test_header_snapshot_copies_string_subclass_state():
     assert result["etag"].metadata == {"values": [1]}
 
 
-def test_header_snapshot_failure_does_not_publish_partial_headers():
+def test_header_snapshot_failure_does_not_publish_partial_headers_rust():
     class Uncopyable:
         def __deepcopy__(self, memo):
             raise ValueError("header cannot be copied")
@@ -220,7 +220,7 @@ class TestSuccessWithBody(unittest.TestCase):
     side effect on the connection, and the hook invocation contract.
     """
 
-    def test_returns_cosmos_dict_with_parsed_body(self):
+    def test_returns_cosmos_dict_with_parsed_body_rust(self):
         """2xx + JSON body -> ``CosmosDict`` whose dict content is the parsed body."""
         body = b'{"id":"order-42","total":99.5}'
         result = process_backend_response(
@@ -229,7 +229,7 @@ class TestSuccessWithBody(unittest.TestCase):
         self.assertIsInstance(result, CosmosDict)
         self.assertEqual(dict(result), {"id": "order-42", "total": 99.5})
 
-    def test_response_headers_attached_to_cosmos_dict(self):
+    def test_response_headers_attached_to_cosmos_dict_rust(self):
         """The per-call response headers are accessible via ``result.get_response_headers()``."""
         body = b'{"id":"x"}'
         result = process_backend_response(
@@ -242,7 +242,7 @@ class TestSuccessWithBody(unittest.TestCase):
         self.assertEqual(result.get_response_headers()["etag"], "\"00000\"")
         self.assertEqual(result.get_response_headers()["x-ms-request-charge"], "1.0")
 
-    def test_last_response_headers_updated_on_client_connection(self):
+    def test_last_response_headers_updated_on_client_connection_rust(self):
         """D2: response headers are stashed on ``client_connection.last_response_headers`` (legacy compat)."""
         cc = _FakeClientConnection()
         process_backend_response(
@@ -255,7 +255,7 @@ class TestSuccessWithBody(unittest.TestCase):
         )
         self.assertEqual(cc.last_response_headers["x-ms-request-charge"], "2.43")
 
-    def test_response_hook_invoked_once_on_success(self):
+    def test_response_hook_invoked_once_on_success_rust(self):
         """D4: ``response_hook(headers, parsed)`` fires exactly once on success with the right arguments."""
         captured = []
 
@@ -275,11 +275,11 @@ class TestSuccessWithBody(unittest.TestCase):
         self.assertEqual(captured_headers["etag"], "\"00000\"")
         self.assertEqual(captured_body, {"id": "x", "v": 1})
 
-    def test_no_response_hook_supplied_does_not_raise(self):
+    def test_no_response_hook_supplied_does_not_raise_rust(self):
         """The ``response_hook`` parameter is optional; omitting it must not raise."""
         process_backend_response(_make_response(status_code=201, body=b'{"id":"x"}'))
 
-    def test_concurrent_publication_and_hook_mutation_do_not_change_result_headers(self):
+    def test_concurrent_publication_and_hook_mutation_do_not_change_result_headers_rust(self):
         state = ClientLastResponseHeaders()
         incoming = CaseInsensitiveDict({"etag": "first", "nested": {"value": "original"}})
 
@@ -306,7 +306,7 @@ class TestSuccessWithBody(unittest.TestCase):
         self.assertEqual(result.get_response_headers()["nested"]["value"], "original")
         self.assertEqual(incoming["nested"]["value"], "original")
 
-    def test_diagnostic_header_mutation_does_not_change_retained_result(self):
+    def test_diagnostic_header_mutation_does_not_change_retained_result_rust(self):
         state = ClientLastResponseHeaders()
         result = process_backend_response(
             _make_response(headers={"etag": "first", "nested": {"value": "original"}}),
@@ -317,7 +317,7 @@ class TestSuccessWithBody(unittest.TestCase):
         self.assertEqual(result.get_response_headers()["etag"], "first")
         self.assertEqual(result.get_response_headers()["nested"]["value"], "original")
 
-    def test_backend_diagnostics_are_exposed_via_response_headers(self):
+    def test_backend_diagnostics_are_exposed_via_response_headers_rust(self):
         """Diagnostics payload from backend is surfaced via response headers and hooks."""
         cc = _FakeClientConnection()
         captured = []
@@ -360,18 +360,18 @@ class TestSuccessWithEmptyBody(unittest.TestCase):
     one does raise, matching legacy behaviour.
     """
 
-    def test_204_with_empty_body_returns_empty_cosmos_dict(self):
+    def test_204_with_empty_body_returns_empty_cosmos_dict_rust(self):
         """204 + empty body -> empty ``CosmosDict`` (never raises ``JSONDecodeError``, never returns ``None``)."""
         result = process_backend_response(_make_response(status_code=204, body=b""))
         self.assertIsInstance(result, CosmosDict)
         self.assertEqual(dict(result), {})
 
-    def test_200_with_empty_body_also_returns_empty_dict(self):
+    def test_200_with_empty_body_also_returns_empty_dict_rust(self):
         """200 + empty body is treated the same as 204 -- empty ``CosmosDict``, no parse attempted."""
         result = process_backend_response(_make_response(status_code=200, body=b""))
         self.assertEqual(dict(result), {})
 
-    def test_response_hook_receives_empty_dict_for_no_body_path(self):
+    def test_response_hook_receives_empty_dict_for_no_body_path_rust(self):
         """Hook still fires on the 204 path; it sees an empty parsed body."""
         captured = []
         process_backend_response(
@@ -380,7 +380,7 @@ class TestSuccessWithEmptyBody(unittest.TestCase):
         )
         self.assertEqual(captured, [{}])
 
-    def test_2xx_with_malformed_body_raises_jsondecodeerror(self):
+    def test_2xx_with_malformed_body_raises_jsondecodeerror_rust(self):
         """2xx + non-JSON body -> raises ``JSONDecodeError`` (legacy parity); the hook is not invoked."""
         captured = []
         with self.assertRaises(json.JSONDecodeError):
@@ -407,7 +407,7 @@ class TestFailurePath(unittest.TestCase):
     is populated *before* the raise).
     """
 
-    def test_409_raises_resource_exists_error(self):
+    def test_409_raises_resource_exists_error_rust(self):
         """409 -> ``CosmosResourceExistsError`` propagated by the parser."""
         with self.assertRaises(CosmosResourceExistsError):
             process_backend_response(
@@ -417,17 +417,17 @@ class TestFailurePath(unittest.TestCase):
                 ),
             )
 
-    def test_404_raises_resource_not_found(self):
+    def test_404_raises_resource_not_found_rust(self):
         """404 -> ``CosmosResourceNotFoundError`` propagated by the parser."""
         with self.assertRaises(CosmosResourceNotFoundError):
             process_backend_response(_make_response(status_code=404))
 
-    def test_500_raises_base_cosmos_http_response_error(self):
+    def test_500_raises_base_cosmos_http_response_error_rust(self):
         """500 (unmapped status) -> base ``CosmosHttpResponseError`` propagated by the parser."""
         with self.assertRaises(CosmosHttpResponseError):
             process_backend_response(_make_response(status_code=500))
 
-    def test_exception_carries_status_and_response_adapter(self):
+    def test_exception_carries_status_and_response_adapter_rust(self):
         """The raised exception's ``response`` exposes ``status_code`` and ``headers`` from the underlying response."""
         try:
             process_backend_response(
@@ -444,7 +444,7 @@ class TestFailurePath(unittest.TestCase):
         else:
             self.fail("expected CosmosResourceExistsError")
 
-    def test_failure_headers_and_typed_sub_status_survive_to_exception(self):
+    def test_failure_headers_and_typed_sub_status_survive_to_exception_rust(self):
         """Failed-call headers and the typed ``sub_status`` field remain visible on the exception path."""
         try:
             process_backend_response(
@@ -467,7 +467,7 @@ class TestFailurePath(unittest.TestCase):
         else:
             self.fail("expected CosmosHttpResponseError")
 
-    def test_response_hook_not_invoked_on_failure(self):
+    def test_response_hook_not_invoked_on_failure_rust(self):
         """The response hook is *not* called when the parser raises (it runs only on success)."""
         captured = []
 
@@ -481,7 +481,7 @@ class TestFailurePath(unittest.TestCase):
             )
         self.assertEqual(captured, [])
 
-    def test_last_response_headers_updated_even_on_failure(self):
+    def test_last_response_headers_updated_even_on_failure_rust(self):
         """``last_response_headers`` is stashed on the connection *before* the raise, so ``except`` blocks can read it."""
         cc = _FakeClientConnection()
         with self.assertRaises(CosmosResourceExistsError):
@@ -492,7 +492,7 @@ class TestFailurePath(unittest.TestCase):
         self.assertIsNotNone(cc.last_response_headers)
         self.assertEqual(cc.last_response_headers["x-ms-x"], "1")
 
-    def test_last_response_headers_keep_failed_call_metadata(self):
+    def test_last_response_headers_keep_failed_call_metadata_rust(self):
         """Failure-path headers like activity-id and retry-after are written before the raise."""
         cc = _FakeClientConnection()
         with self.assertRaises(CosmosHttpResponseError):
@@ -510,7 +510,7 @@ class TestFailurePath(unittest.TestCase):
         self.assertEqual(cc.last_response_headers["x-ms-activity-id"], "act-429")
         self.assertEqual(cc.last_response_headers["x-ms-retry-after-ms"], "200")
 
-    def test_backend_diagnostics_are_available_on_failure_headers(self):
+    def test_backend_diagnostics_are_available_on_failure_headers_rust(self):
         """Failure responses keep diagnostics on both exception headers and last-response headers."""
         cc = _FakeClientConnection()
         try:
@@ -554,7 +554,7 @@ class TestHeaderNormalization(unittest.TestCase):
     stable.
     """
 
-    def test_plain_dict_input_becomes_case_insensitive_in_output(self):
+    def test_plain_dict_input_becomes_case_insensitive_in_output_rust(self):
         """A plain-dict (mixed-case) input -> output supports case-insensitive header lookups."""
         backend_response = BackendResponse(
             status_code=201,
@@ -564,13 +564,13 @@ class TestHeaderNormalization(unittest.TestCase):
         result = process_backend_response(backend_response)
         self.assertEqual(result.get_response_headers()["x-ms-request-charge"], "1.0")
 
-    def test_none_headers_input_does_not_crash(self):
+    def test_none_headers_input_does_not_crash_rust(self):
         """A ``headers=None`` response (test fixture) -> empty headers map, no crash."""
         backend_response = BackendResponse(status_code=201, headers=None, body=b"{}")
         result = process_backend_response(backend_response)
         self.assertEqual(dict(result.get_response_headers()), {})
 
-    def test_numeric_request_charge_is_stringified(self):
+    def test_numeric_request_charge_is_stringified_rust(self):
         """A numeric-typed RU charge from the Rust path is coerced to a string for customer compatibility."""
         backend_response = BackendResponse(
             status_code=201,
@@ -580,7 +580,7 @@ class TestHeaderNormalization(unittest.TestCase):
         result = process_backend_response(backend_response)
         self.assertEqual(result.get_response_headers()["x-ms-request-charge"], "1.43")
 
-    def test_string_request_charge_is_left_alone(self):
+    def test_string_request_charge_is_left_alone_rust(self):
         """A string RU charge from the core-python path is preserved verbatim -- no round-trip drift."""
         backend_response = BackendResponse(
             status_code=201,
@@ -591,7 +591,7 @@ class TestHeaderNormalization(unittest.TestCase):
         # Kept exactly as the request-byte string -- including any trailing zero.
         self.assertEqual(result.get_response_headers()["x-ms-request-charge"], "2.50")
 
-    def test_case_insensitive_input_is_not_shared_with_client_diagnostics(self):
+    def test_case_insensitive_input_is_not_shared_with_client_diagnostics_rust(self):
         """Client diagnostic mutations must not modify the binding's response."""
         incoming = CaseInsensitiveDict({"x-ms-request-charge": "1.0"})
         cc = _FakeClientConnection()
@@ -603,7 +603,7 @@ class TestHeaderNormalization(unittest.TestCase):
         cc.last_response_headers["x-ms-request-charge"] = "99"
         self.assertEqual(incoming["x-ms-request-charge"], "1.0")
 
-    def test_numeric_charge_fix_does_not_leak_into_a_plain_mapping_caller(self):
+    def test_numeric_charge_fix_does_not_leak_into_a_plain_mapping_caller_rust(self):
         """When headers arrive as a non-``CaseInsensitiveDict`` mapping, the
         parser builds a fresh dict so the in-place request-charge fix cannot
         mutate the caller's object.

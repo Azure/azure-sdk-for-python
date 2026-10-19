@@ -15,8 +15,8 @@ The 12-row test data table is the flattening of the source's
 holds the read-route region followed by the write-route region, in
 that order.
 
-The class name and method name match the source so test IDs differ
-only by path.
+The class name and method name match the source (apart from the method's ``_rust``
+suffix) so test IDs differ by path and method suffix.
 
 This test runs against a live multi-region account; it is gated by
 ``cosmosMultiRegion`` / ``cosmosCircuitBreaker`` markers.
@@ -208,7 +208,7 @@ def setup_and_teardown():
 @pytest.mark.cosmosEmulator
 class TestExcludedLocations:
     @pytest.mark.parametrize("test_data", CREATE_ITEM_TEST_DATA)
-    def test_create_item(self, test_data):
+    def test_create_item_rust(self, test_data):
         # Source: tests/test_excluded_locations.py::TestExcludedLocations.test_create_item
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 

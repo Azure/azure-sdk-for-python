@@ -85,7 +85,7 @@ def container_id(database_id):
         client.close()
 
 
-def test_read_container_properties(database_id, container_id):
+def test_read_container_properties_rust(database_id, container_id):
     """read returns the same partition key and indexing policy on both engines."""
 
     def _do(client):
@@ -101,7 +101,7 @@ def test_read_container_properties(database_id, container_id):
 
 
 @pytest.mark.parametrize("quota,statistics", [(True, False), (False, True), (True, True), (False, False), (None, None)])
-def test_read_container_quota_and_statistics_use_selected_backend(database_id, container_id, quota, statistics):
+def test_read_container_quota_and_statistics_use_selected_backend_rust(database_id, container_id, quota, statistics):
     """Requested statistics and quota values match, with no Rust-to-Python fallback."""
     def read_metadata(client):
         container = client.get_database_client(database_id).get_container_client(container_id)
@@ -128,7 +128,7 @@ def test_read_container_quota_and_statistics_use_selected_backend(database_id, c
 
 
 @pytest.mark.parametrize("condition", [MatchConditions.IfPresent, MatchConditions.IfNotModified])
-def test_read_container_conditions(database_id, container_id, condition):
+def test_read_container_conditions_rust(database_id, container_id, condition):
     def read_conditionally(client):
         container = client.get_database_client(database_id).get_container_client(container_id)
         etag = container.read()["_etag"] if condition == MatchConditions.IfNotModified else '"unused"'
@@ -139,7 +139,7 @@ def test_read_container_conditions(database_id, container_id, condition):
     run_on_both_backends(read_conditionally, description="conditional container read").assert_functional_parity()
 
 
-def test_read_container_response_hook_cannot_change_cached_partition_key(database_id, container_id):
+def test_read_container_response_hook_cannot_change_cached_partition_key_rust(database_id, container_id):
     def read_with_hook(client):
         container = client.get_database_client(database_id).get_container_client(container_id)
         calls = []
@@ -162,7 +162,7 @@ def test_read_container_response_hook_cannot_change_cached_partition_key(databas
     run_on_both_backends(read_with_hook, description="container response-hook isolation").assert_functional_parity()
 
 
-def test_read_missing_container_raises_404(database_id):
+def test_read_missing_container_raises_404_rust(database_id):
     """Reading a container that is not there raises the same typed 404 on both engines."""
     missing_id = "never_created_" + uuid.uuid4().hex[:8]
 

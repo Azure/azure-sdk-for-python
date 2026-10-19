@@ -58,7 +58,7 @@ def test_targets(path, operation):
             if path.name == "test_cosmos_responses.py" and "container_replace_throughput" not in method.name:
                 continue
             if "read_container" in path.parts and method.name not in (
-                "test_partitioned_collection", "test_partitioned_collection_async",
+                "test_partitioned_collection_rust", "test_partitioned_collection_async_rust",
             ):
                 continue
             if operation == "replace" and path.name != "test_container_properties_cache.py" and not any(

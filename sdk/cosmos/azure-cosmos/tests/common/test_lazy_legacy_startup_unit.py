@@ -62,7 +62,7 @@ def make_client(monkeypatch, async_mode, backend_name="rust", consistency=None):
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_rust_startup_and_item_read_do_not_initialize_legacy(monkeypatch, async_mode):
+def test_rust_startup_and_item_read_do_not_initialize_legacy_rust(monkeypatch, async_mode):
     env = make_client(monkeypatch, async_mode)
     container = env.client.get_database_client("sales").get_container_client("orders")
 
@@ -84,7 +84,7 @@ def test_rust_startup_and_item_read_do_not_initialize_legacy(monkeypatch, async_
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("backend_name", ["core-python", "rust"])
 @pytest.mark.parametrize("consistency", [None, "Eventual"])
-def test_first_legacy_read_initializes_state_and_later_reads_reuse_it(
+def test_first_legacy_read_initializes_state_and_later_reads_reuse_it_rust(
     monkeypatch, async_mode, backend_name, consistency,
 ):
     env = make_client(monkeypatch, async_mode, backend_name, consistency)
@@ -122,7 +122,7 @@ def test_first_legacy_read_initializes_state_and_later_reads_reuse_it(
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("override", [None, "Eventual"])
-def test_first_legacy_request_merges_setup_defaults_without_changing_caller_headers(
+def test_first_legacy_request_merges_setup_defaults_without_changing_caller_headers_rust(
     monkeypatch, async_mode, override,
 ):
     env = make_client(monkeypatch, async_mode)
@@ -156,7 +156,7 @@ def test_first_legacy_request_merges_setup_defaults_without_changing_caller_head
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("query", [False, True])
 @pytest.mark.parametrize("override", [None, "Eventual"])
-def test_legacy_feed_setup_precedes_header_and_session_preparation(
+def test_legacy_feed_setup_precedes_header_and_session_preparation_rust(
     monkeypatch, async_mode, query, override,
 ):
     env = make_client(monkeypatch, async_mode)
@@ -200,7 +200,7 @@ def test_legacy_feed_setup_precedes_header_and_session_preparation(
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_throughput_rejection_does_not_initialize_legacy(monkeypatch, async_mode):
+def test_throughput_rejection_does_not_initialize_legacy_rust(monkeypatch, async_mode):
     from azure.cosmos._backend.capabilities import OperationRouting
     from azure.cosmos._backend.operations import OP_GET_THROUGHPUT
     from azure.cosmos._backend.cosmos_backend import CosmosBackend
@@ -238,7 +238,7 @@ def test_throughput_rejection_does_not_initialize_legacy(monkeypatch, async_mode
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_concurrent_legacy_initialization_is_shared(monkeypatch, async_mode):
+def test_concurrent_legacy_initialization_is_shared_rust(monkeypatch, async_mode):
     env = make_client(monkeypatch, async_mode)
 
     async def run():
@@ -287,7 +287,7 @@ def test_concurrent_legacy_initialization_is_shared(monkeypatch, async_mode):
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("stage", ["account", "refresh"])
-def test_failed_setup_is_not_published_and_can_be_retried(monkeypatch, async_mode, stage):
+def test_failed_setup_is_not_published_and_can_be_retried_rust(monkeypatch, async_mode, stage):
     env = make_client(monkeypatch, async_mode)
     call = env.manager._GetDatabaseAccount if stage == "account" else env.manager.force_refresh_on_startup
     call.side_effect = [RuntimeError("setup failed"), env.account if stage == "account" else None]
@@ -316,7 +316,7 @@ def test_failed_setup_is_not_published_and_can_be_retried(monkeypatch, async_mod
     assert env.manager._GetDatabaseAccount.call_count == 2
 
 
-def test_cancelled_legacy_setup_can_be_retried(monkeypatch):
+def test_cancelled_legacy_setup_can_be_retried_rust(monkeypatch):
     env = make_client(monkeypatch, True)
     env.manager.force_refresh_on_startup.side_effect = [asyncio.CancelledError(), None]
 

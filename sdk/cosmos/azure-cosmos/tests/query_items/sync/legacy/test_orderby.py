@@ -50,7 +50,7 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         self.client.delete_database(self.database_id)
         print(f"\nDeleted owned TOP database: {self.database_id}")
 
-    def test_orderby_top_query(self):
+    def test_orderby_top_query_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_top_query
         # test an order by query combined with top
 

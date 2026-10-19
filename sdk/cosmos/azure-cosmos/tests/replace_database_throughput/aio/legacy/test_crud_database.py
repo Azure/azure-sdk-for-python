@@ -56,7 +56,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 pass
         await self.key_client.close()
 
-    async def test_database_level_offer_throughput_async(self):
+    async def test_database_level_offer_throughput_async_rust(self):
         """Throughput on a database can be raised after creation and reports the new value.
 
         Created at 1000 request units, then moved to 2000 through

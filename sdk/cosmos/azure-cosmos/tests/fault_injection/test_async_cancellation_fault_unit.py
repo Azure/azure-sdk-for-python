@@ -10,7 +10,7 @@ from fault_injection._async_cancellation import assert_cancelled, cancellation_r
 
 
 @pytest.mark.parametrize("inject", [True, False])
-def test_cancellation_rule_is_scoped_delayed_and_consumed_once(inject):
+def test_cancellation_rule_is_scoped_delayed_and_consumed_once_rust(inject):
     rule, = _prepare_fault_injection_rules([cancellation_rule("cancel", "owned", inject)])
     assert rule.id == "cancel" and rule.container_id == "owned"
     assert rule.operation_type == "ReadItem" and rule.status_code == 503
@@ -19,23 +19,23 @@ def test_cancellation_rule_is_scoped_delayed_and_consumed_once(inject):
 
 
 @pytest.mark.parametrize("status", ["created", "scheduled", "running", "completed"])
-def test_python_cancellation_alone_is_not_native_cessation(status):
+def test_python_cancellation_alone_is_not_native_cessation_rust(status):
     with pytest.raises(AssertionError, match="native operation"):
         assert_cancelled(asyncio.CancelledError(), status, 0.02)
 
 
 @pytest.mark.parametrize("error", [None, TimeoutError(), exceptions.CosmosClientTimeoutError(),
                                   exceptions.CosmosHttpResponseError(503)])
-def test_cancellation_rejects_wrong_outcome(error):
+def test_cancellation_rejects_wrong_outcome_rust(error):
     with pytest.raises(AssertionError, match="CancelledError"):
         assert_cancelled(error, "dropped", 0.02)
 
 
 @pytest.mark.parametrize("elapsed", [-1, 1, 5, float("inf"), float("nan")])
-def test_cancellation_rejects_late_or_invalid_completion(elapsed):
+def test_cancellation_rejects_late_or_invalid_completion_rust(elapsed):
     with pytest.raises(AssertionError, match="prompt"):
         assert_cancelled(asyncio.CancelledError(), "dropped", elapsed)
 
 
-def test_cancellation_accepts_dropped_native_future():
+def test_cancellation_accepts_dropped_native_future_rust():
     assert_cancelled(asyncio.CancelledError(), "dropped", 0.02)

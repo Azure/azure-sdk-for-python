@@ -123,7 +123,7 @@ def dispatch(request):
     return state
 
 
-def test_dispatch_inventory_has_explicit_policy():
+def test_dispatch_inventory_has_explicit_policy_rust():
     """Every operation that can reach the Rust path has been given a stated policy.
 
     The three lists of operations the Rust path knows how to send are gathered and
@@ -142,7 +142,7 @@ def test_dispatch_inventory_has_explicit_policy():
 
 
 @pytest.mark.parametrize("op", sorted(CAPABILITIES))
-def test_request_support_does_not_override_operation_policy(dispatch, op):
+def test_request_support_does_not_override_operation_policy_rust(dispatch, op):
     """Every entry in the table behaves as its policy says, with no exceptions.
 
     Each operation is offered a request it cannot honor. The ones allowed to fall back
@@ -170,7 +170,7 @@ def test_request_support_does_not_override_operation_policy(dispatch, op):
 
 
 @pytest.mark.parametrize("supported", [False, True])
-def test_missing_policy_fails_closed(dispatch, supported):
+def test_missing_policy_fails_closed_rust(dispatch, supported):
     """An operation with no policy is refused, even when the request looks perfectly fine.
 
     The second case is the one that matters. A request needing nothing unusual would be
@@ -186,7 +186,7 @@ def test_missing_policy_fails_closed(dispatch, supported):
     dispatch.legacy.assert_not_called()
 
 
-def test_workflow_policy_cannot_authorize_an_unrelated_operation(dispatch):
+def test_workflow_policy_cannot_authorize_an_unrelated_operation_rust(dispatch):
     """A multi-step workflow's policy covers only its own steps.
 
     Some workflows are two operations together, such as read-then-create, and carry one
@@ -212,7 +212,7 @@ def test_workflow_policy_cannot_authorize_an_unrelated_operation(dispatch):
         asyncio.CancelledError,
     ],
 )
-def test_failures_never_replay_and_keep_the_original_error(
+def test_failures_never_replay_and_keep_the_original_error_rust(
     dispatch, paged, phase, error_type
 ):
     """Sixty combinations, and not one of them retries the call or alters the error.
@@ -252,7 +252,7 @@ def test_failures_never_replay_and_keep_the_original_error(
 @pytest.mark.parametrize(
     "op,allowed", [("query_items", True), ("list_databases", False)]
 )
-def test_only_static_preflight_can_fall_back(dispatch, op, allowed):
+def test_only_static_preflight_can_fall_back_rust(dispatch, op, allowed):
     """The one permitted late fallback: a refusal that depends only on which operation this is.
 
     Before a paged call starts, the backend checks whether it can serve this kind of page
@@ -278,7 +278,7 @@ def test_only_static_preflight_can_fall_back(dispatch, op, allowed):
     dispatch.process.assert_not_called()
 
 
-def test_mismatched_prepared_operation_is_a_protocol_error(dispatch):
+def test_mismatched_prepared_operation_is_a_protocol_error_rust(dispatch):
     """A request that was built for a different operation than the one asked for is refused.
 
     The caller asked to read a setting and the built request says replace it. This can
@@ -296,7 +296,7 @@ def test_mismatched_prepared_operation_is_a_protocol_error(dispatch):
     dispatch.legacy.assert_not_called()
 
 
-def test_preflight_failure_cannot_switch_a_resumed_page(dispatch):
+def test_preflight_failure_cannot_switch_a_resumed_page_rust(dispatch):
     """Once paging has started, even the permitted fallback is no longer available.
 
     Everything here matches the fallback case above except one detail: the request
@@ -317,7 +317,7 @@ def test_preflight_failure_cannot_switch_a_resumed_page(dispatch):
     assert dispatch.executed == 0
 
 
-def test_planning_failures_are_not_static_preflight_refusals(dispatch):
+def test_planning_failures_are_not_static_preflight_refusals_rust(dispatch):
     """A query this backend cannot plan is not the same as a page shape it cannot serve.
 
     The two refusals look alike and mean different things. One says "this operation is
@@ -334,7 +334,7 @@ def test_planning_failures_are_not_static_preflight_refusals(dispatch):
     dispatch.legacy.assert_not_called()
 
 
-def test_throughput_workflow_policy_applies_to_both_legs(monkeypatch):
+def test_throughput_workflow_policy_applies_to_both_legs_rust(monkeypatch):
     """Changing throughput is one workflow, so both its steps follow the workflow's policy.
 
     Changing throughput reads the current setting and then replaces it. The test replaces
@@ -355,7 +355,7 @@ def test_throughput_workflow_policy_applies_to_both_legs(monkeypatch):
         assert not OperationRouting(op, True, capability=REPLACE_THROUGHPUT).uses_legacy()
 
 
-def test_query_scope_is_typed_and_preserves_the_legacy_payload():
+def test_query_scope_is_typed_and_preserves_the_legacy_payload_rust():
     """How much of a container a query covers is a checked record, written out unchanged.
 
     By default a query may span the whole container. Narrowing it to one range is
@@ -378,7 +378,7 @@ def test_query_scope_is_typed_and_preserves_the_legacy_payload():
         QueryScope(["00", "FF"])
 
 
-def test_reserved_batch_and_legacy_port_are_absent():
+def test_reserved_batch_and_legacy_port_are_absent_rust():
     """Names reserved for work not yet done must not exist yet.
 
     Five names are checked to be absent: three record types, a routing table, and a

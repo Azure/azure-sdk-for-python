@@ -63,7 +63,7 @@ def evidence(tmp_path):
     return baseline, current, copy.deepcopy(report), dict(execution)
 
 
-def test_unchanged_failures_are_not_parity(evidence):
+def test_unchanged_failures_are_not_parity_rust(evidence):
     baseline, current, _, _ = evidence
     result = VERIFIER.compare(baseline, current)
     assert len(VERIFIER.EXPECTED_KEYS) == result["total_cases"] == 126
@@ -77,7 +77,7 @@ def test_unchanged_failures_are_not_parity(evidence):
     ("same_count", ["REGRESSION", "IMPROVEMENT_REQUIRES_REVIEW"]),
     ("error_type", ["CHANGED_FAILURE"]), ("error_detail", ["CHANGED_FAILURE"]),
 ])
-def test_outcome_changes_require_review(evidence, mutation, expected):
+def test_outcome_changes_require_review_rust(evidence, mutation, expected):
     baseline, current, report, execution = evidence
     passing = next(r for r in report["cases"] if r["outcome"] == "PASS")
     failing = next(r for r in report["cases"] if r["outcome"] == "FAIL")
@@ -104,7 +104,7 @@ def test_outcome_changes_require_review(evidence, mutation, expected):
     "cleanup_target", "independent_different", "independent_missing", "snapshot", "native",
     "source_missing", "source_hash", "copy_missing", "time", "timezone", "python", "head",
 ])
-def test_incomplete_or_inconsistent_evidence_is_invalid(evidence, mutation):
+def test_incomplete_or_inconsistent_evidence_is_invalid_rust(evidence, mutation):
     baseline, current, report, execution = evidence
     failing = next(r for r in report["cases"] if r["outcome"] == "FAIL")
     if mutation == "missing":
@@ -167,7 +167,7 @@ def test_incomplete_or_inconsistent_evidence_is_invalid(evidence, mutation):
 
 
 @pytest.mark.parametrize("field", ["native_sha256", "source_head", "python", "original_sources", "copied_source"])
-def test_identity_change_is_separate_from_outcome(evidence, field):
+def test_identity_change_is_separate_from_outcome_rust(evidence, field):
     baseline, current, report, execution = evidence
     if field == "original_sources":
         report["sources"]["test_crud.py"] = "e" * 64
@@ -186,7 +186,7 @@ def test_identity_change_is_separate_from_outcome(evidence, field):
     assert result["build_identity"] == "CHANGED"
 
 
-def test_baseline_cannot_silently_accept_another_failure(evidence):
+def test_baseline_cannot_silently_accept_another_failure_rust(evidence):
     baseline, current, report, execution = evidence
     next(r for r in report["cases"] if r["outcome"] == "FAIL")["detail"] = "different baseline"
     save_run(baseline, report, execution)
@@ -194,7 +194,7 @@ def test_baseline_cannot_silently_accept_another_failure(evidence):
         VERIFIER.compare(baseline, current)
 
 
-def test_verify_cli_never_runs_live(evidence, monkeypatch, capsys):
+def test_verify_cli_never_runs_live_rust(evidence, monkeypatch, capsys):
     baseline, current, _, _ = evidence
     monkeypatch.setattr(VERIFIER, "run_comparison", lambda *_: pytest.fail("unexpected live run"))
     assert VERIFIER.main(["--baseline", str(baseline), "--verify", str(current)]) == 0
@@ -204,13 +204,13 @@ def test_verify_cli_never_runs_live(evidence, monkeypatch, capsys):
     assert json.loads(capsys.readouterr().out)["baseline_comparison"] == "INVALID"
 
 
-def test_live_run_refuses_existing_directory(evidence):
+def test_live_run_refuses_existing_directory_rust(evidence):
     _, current, _, _ = evidence
     with pytest.raises(ValueError, match="already exists"):
         VERIFIER.run_comparison(current)
 
 
-def test_all_improvements_still_require_baseline_review(evidence, capsys):
+def test_all_improvements_still_require_baseline_review_rust(evidence, capsys):
     baseline, current, report, execution = evidence
     for row in report["cases"]:
         row["outcome"] = "PASS"
@@ -227,7 +227,7 @@ def test_all_improvements_still_require_baseline_review(evidence, capsys):
 @pytest.mark.parametrize("filename,value", [
     ("report.json", []), ("execution.json", []), ("independent_cleanup.json", {}),
 ])
-def test_malformed_objects_are_invalid(evidence, filename, value, capsys):
+def test_malformed_objects_are_invalid_rust(evidence, filename, value, capsys):
     baseline, current, _, _ = evidence
     write_json(current / filename, value)
     assert VERIFIER.main(["--baseline", str(baseline), "--verify", str(current)]) == 2
@@ -235,7 +235,7 @@ def test_malformed_objects_are_invalid(evidence, filename, value, capsys):
 
 
 @pytest.mark.parametrize("complete", [True, False])
-def test_live_wrapper_preserves_actual_execution(evidence, monkeypatch, complete):
+def test_live_wrapper_preserves_actual_execution_rust(evidence, monkeypatch, complete):
     baseline, current, report, execution = evidence
     root = current.parent / "package"
     runner = root / "scripts" / "v5" / "run_patch_item_parity.py"

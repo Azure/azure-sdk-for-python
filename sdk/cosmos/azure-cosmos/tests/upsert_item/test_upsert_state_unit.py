@@ -19,11 +19,14 @@ ROOT = Path(__file__).resolve().parents[2]
 COPY = ROOT / "tests" / "upsert_item" / "sync" / "legacy" / "test_crud.py"
 
 
-def test_upsert_copy_preserves_complete_original_method():
+def test_upsert_copy_preserves_complete_original_method_rust():
     def method(path):
         tree = ast.parse(path.read_text(encoding="utf-8"))
         cls = next(node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == "TestCRUDOperations")
-        return next(node for node in cls.body if getattr(node, "name", None) == "test_document_upsert")
+        name = "test_document_upsert" + ("_rust" if path == COPY else "")
+        node = next(node for node in cls.body if getattr(node, "name", None) == name)
+        node.name = "test_document_upsert"
+        return node
 
     assert ast.dump(method(COPY)) == ast.dump(method(ROOT / "tests" / "test_crud.py"))
 
@@ -37,7 +40,7 @@ def test_upsert_copy_preserves_complete_original_method():
      ("bad/id", ValueError, "Id contains illegal chars."),
      ("trailing ", ValueError, "Id ends with a space or newline.")],
 )
-def test_upsert_rejects_invalid_id_before_execution(asynchronous, item_id, error_type, message):
+def test_upsert_rejects_invalid_id_before_execution_rust(asynchronous, item_id, error_type, message):
     from azure.cosmos._helpers._item_operations import ItemHelper
     from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 
@@ -63,7 +66,7 @@ def test_upsert_rejects_invalid_id_before_execution(asynchronous, item_id, error
     [None, "create_not_saved", "replacement_not_saved", "wrong_stored_create", "wrong_stored_replacement",
      "database", "container", "delete", "close", "replacement_and_delete"],
 )
-def test_upsert_checks_both_stored_states_and_cleanup(monkeypatch, failure):
+def test_upsert_checks_both_stored_states_and_cleanup_rust(monkeypatch, failure):
     spec = importlib.util.spec_from_file_location("upsert_crud_copy", COPY)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -125,7 +128,7 @@ def test_upsert_checks_both_stored_states_and_cleanup(monkeypatch, failure):
     monkeypatch.setattr(module, "CosmosClient", MagicMock(return_value=client))
     monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
     monkeypatch.setenv("ACCOUNT_KEY", "unused")
-    case = module.TestCRUDOperations("test_document_upsert")
+    case = module.TestCRUDOperations("test_document_upsert_rust")
     result = unittest.TestResult()
     case.run(result)
 

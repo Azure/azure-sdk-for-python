@@ -65,7 +65,7 @@ def _check(client, before, pairs, target, result, expected):
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("name,pairs,expected", CASES, ids=[case[0] for case in CASES])
-def test_same_observations_on_both_backends(asynchronous, name, pairs, expected):
+def test_same_observations_on_both_backends_rust(asynchronous, name, pairs, expected):
     target = _range()
     results = {}
 

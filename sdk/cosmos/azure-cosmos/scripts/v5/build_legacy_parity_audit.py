@@ -7,6 +7,8 @@ Reads two ``pytest -v`` transcripts -- one from the originals
 (core-python column) and one from the ``tests/<op>/<surface>/legacy/``
 copies (rust column) -- pairs them by ``(surface, class name, method
 name)``, and emits the per-operation parity audit markdown.
+The migration-suite ``_rust`` suffix is ignored when pairing copied methods
+with originals; it does not identify the backend used by a comparison run.
 
 Usage::
 
@@ -118,6 +120,19 @@ class TestResult:
     reason: str = ""     # skip reason if any
 
 
+def _source_method_name(path: str, method_name: str) -> str:
+    """Pair renamed migration tests with originals without changing parameter IDs."""
+    normalized = path.replace("\\", "/")
+    name, bracket, parameters = method_name.partition("[")
+    if (
+        normalized.startswith("tests/") and len(normalized.split("/")) > 2
+        and not normalized.startswith("tests/workloads/")
+        or normalized.startswith("docs/V5/_parity_runs/")
+    ):
+        name = name.removesuffix("_rust")
+    return name + bracket + parameters
+
+
 def _surface_of(path: str, method_name: str) -> str:
     """Decide whether this nodeid belongs to the sync or aio surface.
 
@@ -137,7 +152,7 @@ def _surface_of(path: str, method_name: str) -> str:
     base = os.path.basename(norm)
     if base.endswith("_async.py"):
         return "aio"
-    if method_name.endswith("_async"):
+    if _source_method_name(path, method_name).partition("[")[0].endswith("_async"):
         return "aio"
     return "sync"
 
@@ -213,7 +228,7 @@ def parse_transcript(path: str) -> List[TestResult]:
                     surface=surface,
                     file_key=_file_key_of(m.group("path")),
                     class_name=m.group("cls"),
-                    method_name=m.group("method"),
+                    method_name=_source_method_name(m.group("path"), m.group("method")),
                     outcome=m.group("outcome"),
                     raw_path=m.group("path"),
                     reason=(m.group("reason") or "").strip(),
@@ -242,7 +257,7 @@ def parse_transcript(path: str) -> List[TestResult]:
                     surface=surface,
                     file_key=_file_key_of(pending["path"]),
                     class_name=pending["cls"],
-                    method_name=pending["method"],
+                    method_name=_source_method_name(pending["path"], pending["method"]),
                     outcome=om.group("outcome"),
                     raw_path=pending["path"],
                     reason=(om.group("reason") or "").strip(),
@@ -337,7 +352,7 @@ class CaptureBlock:
     @property
     def method_name(self) -> str:
         parts = self.nodeid.split("::")
-        return parts[2] if len(parts) >= 3 else parts[-1]
+        return _source_method_name(parts[0], parts[2] if len(parts) >= 3 else parts[-1])
 
 
 def _find_next_capture_block(text: str, pos: int) -> Optional[Tuple[int, int, int]]:

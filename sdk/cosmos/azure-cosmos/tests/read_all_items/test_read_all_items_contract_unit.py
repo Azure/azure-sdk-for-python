@@ -174,7 +174,7 @@ def feed(request, monkeypatch):
     ({}, "Low", 3),
     ({"priority": "High", "throughput_bucket": 5}, "High", 5),
 ])
-def test_read_all_inherits_client_priority_defaults(feed, kwargs, priority, bucket):
+def test_read_all_inherits_client_priority_defaults_rust(feed, kwargs, priority, bucket):
     """Client-level priority and throughput bucket apply to every page, unless overridden.
 
     The client is configured with a low priority and bucket 3. With no
@@ -193,7 +193,7 @@ def test_read_all_inherits_client_priority_defaults(feed, kwargs, priority, buck
     assert all(p.settings.throughput_bucket == bucket for p, _, _ in feed.calls)
 
 
-def test_complete_enumeration_retains_cursor_and_skips_empty_pages(feed):
+def test_complete_enumeration_retains_cursor_and_skips_empty_pages_rust(feed):
     """A full enumeration is lazy, reuses one cursor, and hides empty pages from the caller.
 
     Nothing is fetched until iteration starts. Draining the pager then walks
@@ -216,7 +216,7 @@ def test_complete_enumeration_retains_cursor_and_skips_empty_pages(feed):
 
 @pytest.mark.parametrize("status", [429, 503])
 @pytest.mark.parametrize("token", [None, "c1.a"])
-def test_initial_setup_service_error_can_retry_same_page_iterator(feed, status, token):
+def test_initial_setup_service_error_can_retry_same_page_iterator_rust(feed, status, token):
     hooks = []
     pages = feed.proxy.read_all_items(
         response_hook=lambda headers, body: hooks.append(body)
@@ -239,7 +239,7 @@ def test_initial_setup_service_error_can_retry_same_page_iterator(feed, status, 
     assert len(hooks) == 1
 
 
-def test_first_execution_service_error_still_invalidates(feed):
+def test_first_execution_service_error_still_invalidates_rust(feed):
     feed.status = 503
     pages = feed.proxy.read_all_items().by_page()
     with pytest.raises(CosmosHttpResponseError):
@@ -255,7 +255,7 @@ def test_first_execution_service_error_still_invalidates(feed):
     CosmosClientTimeoutError(),
     TimeoutError("setup timeout"),
 ])
-def test_setup_transport_error_can_retry_but_timeouts_remain_terminal(feed, error):
+def test_setup_transport_error_can_retry_but_timeouts_remain_terminal_rust(feed, error):
     pages = feed.proxy.read_all_items().by_page()
     fetch = (
         feed.binding.fetch_page_with_cursor_async
@@ -279,7 +279,7 @@ def test_setup_transport_error_can_retry_but_timeouts_remain_terminal(feed, erro
         assert feed.calls == []
 
 
-def test_stale_cursor_contract_fails_before_native_fetch(feed):
+def test_stale_cursor_contract_fails_before_native_fetch_rust(feed):
     feed.binding._ItemFeedCursor.side_effect = object
     pages = feed.proxy.read_all_items().by_page()
     with pytest.raises(RuntimeError, match="can_retry_setup.*rebuild"):
@@ -288,7 +288,7 @@ def test_stale_cursor_contract_fails_before_native_fetch(feed):
     assert pages.state.cursor is None
 
 
-def test_resume_and_independent_pagers_ignore_global_headers(feed):
+def test_resume_and_independent_pagers_ignore_global_headers_rust(feed):
     """Two pagers keep separate positions, and neither reads its position from the connection.
 
     One pager takes a page, then a second is resumed from its continuation
@@ -335,7 +335,7 @@ def test_resume_and_independent_pagers_ignore_global_headers(feed):
         ({"continuation": "legacy"}, ValueError),
     ],
 )
-def test_invalid_or_unsupported_settings_fail_without_dispatch(feed, kwargs, error):
+def test_invalid_or_unsupported_settings_fail_without_dispatch_rust(feed, kwargs, error):
     """Bad or unsupported arguments fail at the call, before any page is fetched.
 
     Three groups, each with its own exception type:
@@ -360,7 +360,7 @@ def test_invalid_or_unsupported_settings_fail_without_dispatch(feed, kwargs, err
     assert feed.calls == []
 
 
-def test_positional_settings_rejected(feed):
+def test_positional_settings_rejected_rust(feed):
     """Every option must be passed by name.
 
     ``read_all_items`` takes no positional arguments, so a stray positional is
@@ -373,7 +373,7 @@ def test_positional_settings_rejected(feed):
 
 
 @pytest.mark.parametrize("count", [None, -1, 1, 100])
-def test_page_size_is_a_hint_not_total_limit(feed, count):
+def test_page_size_is_a_hint_not_total_limit_rust(feed, count):
     """``max_item_count`` shapes pages; it never caps how many items come back.
 
     Whether the page size is unset, -1, 1, or 100, enumerating the container
@@ -384,7 +384,7 @@ def test_page_size_is_a_hint_not_total_limit(feed, count):
     assert len(feed.collect(feed.proxy.read_all_items(max_item_count=count))) == 2
 
 
-def test_options_snapshotted_and_false_callback_isolated(feed):
+def test_options_snapshotted_and_false_callback_isolated_rust(feed):
     """The options dict is copied at the call, and a falsey hook still runs but cannot do harm.
 
     The options are changed *after* the pager is built but before it is
@@ -420,7 +420,7 @@ def test_options_snapshotted_and_false_callback_isolated(feed):
     assert options == {"maxItemCount": 1, "initialHeaders": {"x-test": "after"}}
 
 
-def test_hook_error_not_replayed_and_bookmark_not_advanced(feed):
+def test_hook_error_not_replayed_and_bookmark_not_advanced_rust(feed):
     """If the caller's hook raises, the page is not retried and the position does not move.
 
     The hook raises on the first page. The caller gets their own exception
@@ -444,7 +444,7 @@ def test_hook_error_not_replayed_and_bookmark_not_advanced(feed):
     hook.assert_called_once()
 
 
-def test_new_budget_each_public_page_including_internal_empty_pages(feed):
+def test_new_budget_each_public_page_including_internal_empty_pages_rust(feed):
     """Each page the caller asks for gets a fresh timeout; internal pages share it.
 
     The clock jumps 500 seconds between the caller's two page requests, far
@@ -465,7 +465,7 @@ def test_new_budget_each_public_page_including_internal_empty_pages(feed):
     assert [timeout for _, _, timeout in feed.calls] == pytest.approx([1, 1, 0.7])
 
 
-def test_handle_initialization_is_in_page_budget(feed):
+def test_handle_initialization_is_in_page_budget_rust(feed):
     """Starting the driver counts against the page timeout.
 
     Driver start-up takes 1.1 seconds against a 1 second budget, so the call
@@ -481,7 +481,7 @@ def test_handle_initialization_is_in_page_budget(feed):
     assert feed.calls == []
 
 
-def test_internal_empty_pages_do_not_restart_budget(feed):
+def test_internal_empty_pages_do_not_restart_budget_rust(feed):
     """Skipping an empty page does not buy the next one a fresh timeout.
 
     The feed returns an empty page and then a real one, each taking 0.6
@@ -498,7 +498,7 @@ def test_internal_empty_pages_do_not_restart_budget(feed):
         feed.collect(feed.proxy.read_all_items(timeout=1))
 
 
-def test_backend_pinned_at_iterator_creation(feed):
+def test_backend_pinned_at_iterator_creation_rust(feed):
     """The backend is fixed when the pager is created, not looked up per page.
 
     After the pager exists, both the container's item context and the
@@ -515,7 +515,7 @@ def test_backend_pinned_at_iterator_creation(feed):
     assert len(feed.collect(pager)) == 2
 
 
-def test_wrong_backend_by_page_bookmark_rejected(feed):
+def test_wrong_backend_by_page_bookmark_rejected_rust(feed):
     """A legacy continuation token cannot be used to resume on the Rust path.
 
     Resuming with a token the Rust backend did not issue raises about an
@@ -530,7 +530,7 @@ def test_wrong_backend_by_page_bookmark_rejected(feed):
     assert feed.calls == []
 
 
-def test_internal_page_charges_accumulate_and_hook_failure_keeps_headers(feed):
+def test_internal_page_charges_accumulate_and_hook_failure_keeps_headers_rust(feed):
     """Charges add up across the internal pages behind one public page.
 
     The second public page needs two fetches because one internal page is
@@ -551,7 +551,7 @@ def test_internal_page_charges_accumulate_and_hook_failure_keeps_headers(feed):
     assert pager.get_response_headers()["x-ms-continuation"] == "c1.c"
 
 
-def test_hook_iteration_stop_is_a_failure_not_silent_exhaustion(feed):
+def test_hook_iteration_stop_is_a_failure_not_silent_exhaustion_rust(feed):
     """A hook raising StopIteration is reported as an error, not treated as the end of the feed.
 
     ``StopIteration`` is how Python signals a finished iterator, so a hook
@@ -571,7 +571,7 @@ def test_hook_iteration_stop_is_a_failure_not_silent_exhaustion(feed):
         feed.next_page(pages)
 
 
-def test_empty_container_hook_once_and_state_released(feed):
+def test_empty_container_hook_once_and_state_released_rust(feed):
     """An empty container ends cleanly, calls the hook once, and frees its cursor.
 
     Both pages are empty, so there is nothing to hand back and iteration stops
@@ -594,7 +594,7 @@ def test_empty_container_hook_once_and_state_released(feed):
     assert "x-ms-continuation" not in pager.get_response_headers()
 
 
-def test_async_cancellation_drains_work_and_prevents_replay(feed):
+def test_async_cancellation_drains_work_and_prevents_replay_rust(feed):
     """Cancelling an in-flight page cleans up and leaves the pager unusable.
 
     The fetch hangs, the caller cancels, and ``CancelledError`` propagates
@@ -729,7 +729,7 @@ def legacy_feed(request, monkeypatch):
     return context
 
 
-def test_legacy_remains_lazy_pinned_and_uses_per_pager_bookmarks(legacy_feed):
+def test_legacy_remains_lazy_pinned_and_uses_per_pager_bookmarks_rust(legacy_feed):
     """The legacy path keeps the same laziness, isolation and accounting guarantees.
 
     Building the pager fetches nothing and does not even load container
@@ -764,7 +764,7 @@ def test_legacy_remains_lazy_pinned_and_uses_per_pager_bookmarks(legacy_feed):
     assert options == {"maxItemCount": 1}
 
 
-def test_legacy_rejects_driver_bookmarks_before_metadata(legacy_feed):
+def test_legacy_rejects_driver_bookmarks_before_metadata_rust(legacy_feed):
     """A Rust continuation token cannot be used to resume on the legacy path.
 
     The mirror of the Rust-side check. Resuming with a driver token raises
@@ -776,7 +776,7 @@ def test_legacy_rejects_driver_bookmarks_before_metadata(legacy_feed):
     assert legacy_feed.metadata == []
 
 
-def test_legacy_resume_does_not_use_connection_headers(legacy_feed):
+def test_legacy_resume_does_not_use_connection_headers_rust(legacy_feed):
     """Resuming on the legacy path starts from the supplied token, not the connection's headers.
 
     The pager is resumed from the token for the second page, and returns the
@@ -792,7 +792,7 @@ def test_legacy_resume_does_not_use_connection_headers(legacy_feed):
 
 
 @pytest.mark.parametrize("method", ["fetch_page_with_cursor", "fetch_page_with_cursor_async"])
-def test_compiled_page_entrypoint_rejects_legacy_token_without_io(method):
+def test_compiled_page_entrypoint_rejects_legacy_token_without_io_rust(method):
     """The compiled driver itself refuses a legacy token, without opening a connection.
 
     The other token tests work through the Python wrapper. This one calls the
@@ -816,7 +816,7 @@ def test_compiled_page_entrypoint_rejects_legacy_token_without_io(method):
         getattr(native, method)("unused-handle", prepared, native._ItemFeedCursor())
 
 
-def test_hook_preserves_envelope_fields_and_does_not_alias_rows(feed):
+def test_hook_preserves_envelope_fields_and_does_not_alias_rows_rust(feed):
     """The hook sees the full response envelope, and editing its rows does not change the result.
 
     Each page is given the ``_rid`` and ``_count`` fields a real response

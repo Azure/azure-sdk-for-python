@@ -90,7 +90,7 @@ def requests(listing):
 
 
 @pytest.mark.asyncio
-async def test_bookmark_is_owned_by_pager_even_when_hook_runs_other_work(listing):
+async def test_bookmark_is_owned_by_pager_even_when_hook_runs_other_work_rust(listing):
     """The pager's continuation token comes from its own page, not from whatever the
     client did most recently.
 
@@ -115,7 +115,7 @@ async def test_bookmark_is_owned_by_pager_even_when_hook_runs_other_work(listing
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("status", [429, 410, 503])
-async def test_callback_service_error_is_not_retried_or_swallowed(listing, status):
+async def test_callback_service_error_is_not_retried_or_swallowed_rust(listing, status):
     """An error raised inside the customer's callback reaches them unchanged and does not
     cause a retry.
 
@@ -148,7 +148,7 @@ async def test_callback_service_error_is_not_retried_or_swallowed(listing, statu
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("kind", [StopIteration, StopAsyncIteration])
-async def test_iteration_stop_callback_cannot_hide_results(listing, kind):
+async def test_iteration_stop_callback_cannot_hide_results_rust(listing, kind):
     """A callback that raises one of the end-of-loop signals is reported as a real error
     rather than treated as the end of the list.
 
@@ -170,7 +170,7 @@ async def test_iteration_stop_callback_cannot_hide_results(listing, kind):
 
 
 @pytest.mark.parametrize("hook", [False, 0, "not callable", {}])
-def test_invalid_hook_rejected_without_request(listing, hook):
+def test_invalid_hook_rejected_without_request_rust(listing, hook):
     """A callback that cannot be called is refused before any request goes out.
 
     Four values that are not callable are covered, including two that are
@@ -198,7 +198,7 @@ def test_invalid_hook_rejected_without_request(listing, hook):
     ],
 )
 @pytest.mark.parametrize("value", [None, False, True, "customer-value"])
-def test_inapplicable_options_rejected_through_each_input_route(listing, source, name, key, value):
+def test_inapplicable_options_rejected_through_each_input_route_rust(listing, source, name, key, value):
     kwargs = {name: value} if source == "keyword" else {source: {key: value}}
     original = deepcopy(kwargs)
     with pytest.raises(TypeError, match=name):
@@ -209,7 +209,7 @@ def test_inapplicable_options_rejected_through_each_input_route(listing, source,
 
 @pytest.mark.parametrize("source", ["initial_headers", "request_options", "feed_options", "raw_option", "default"])
 @pytest.mark.parametrize("value", ["0", "-2", str(2**63), str(2**80), "True", "1.5", "invalid"])
-def test_invalid_header_page_size_rejected_before_iteration(listing, source, value):
+def test_invalid_header_page_size_rejected_before_iteration_rust(listing, source, value):
     client, connection, _, _, _ = listing
     headers = {"X-MS-MAX-ITEM-COUNT": value}
     if source == "default":
@@ -231,7 +231,7 @@ def test_invalid_header_page_size_rejected_before_iteration(listing, source, val
 @pytest.mark.asyncio
 @pytest.mark.parametrize("count", [-1, 1, 2**63 - 1])
 @pytest.mark.parametrize("typed", [False, True])
-async def test_effective_page_size_is_validated_and_forwarded(listing, count, typed):
+async def test_effective_page_size_is_validated_and_forwarded_rust(listing, count, typed):
     client, connection, backend, is_async, legacy = listing
     connection.default_headers["x-ms-max-item-count"] = "0"
     headers = {"X-MS-MAX-ITEM-COUNT": "invalid" if typed else str(count)}
@@ -252,7 +252,7 @@ async def test_effective_page_size_is_validated_and_forwarded(listing, count, ty
 
 
 @pytest.mark.asyncio
-async def test_raw_option_page_size_overrides_headers_without_mutation(listing):
+async def test_raw_option_page_size_overrides_headers_without_mutation_rust(listing):
     client, connection, backend, is_async, legacy = listing
     connection.default_headers["x-ms-max-item-count"] = "0"
     options = {"initialHeaders": {"X-MS-MAX-ITEM-COUNT": "-2"}, "X-MS-MAX-ITEM-COUNT": "3"}
@@ -266,7 +266,7 @@ async def test_raw_option_page_size_overrides_headers_without_mutation(listing):
 
 
 @pytest.mark.asyncio
-async def test_default_header_page_size_is_snapshotted(listing):
+async def test_default_header_page_size_is_snapshotted_rust(listing):
     client, connection, backend, is_async, legacy = listing
     connection.default_headers["X-MS-MAX-ITEM-COUNT"] = "2"
     pager = client.list_databases().by_page()
@@ -280,7 +280,7 @@ async def test_default_header_page_size_is_snapshotted(listing):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("named_count", [None, 3])
-async def test_effective_option_overrides_invalid_raw_page_sizes(listing, named_count):
+async def test_effective_option_overrides_invalid_raw_page_sizes_rust(listing, named_count):
     client, _, backend, is_async, legacy = listing
     options = {
         "initialHeaders": {"X-MS-MAX-ITEM-COUNT": "invalid"},
@@ -302,7 +302,7 @@ async def test_effective_option_overrides_invalid_raw_page_sizes(listing, named_
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("option_name", ["request_options", "feed_options"])
-async def test_nested_input_is_copied_before_iteration(listing, option_name):
+async def test_nested_input_is_copied_before_iteration_rust(listing, option_name):
     """Options handed in are copied deeply, so later edits by the caller change nothing,
     and the SDK never writes into them.
 
@@ -338,7 +338,7 @@ async def test_nested_input_is_copied_before_iteration(listing, option_name):
 
 
 @pytest.mark.asyncio
-async def test_replay_does_not_change_an_existing_pagers_bookmark(listing):
+async def test_replay_does_not_change_an_existing_pagers_bookmark_rust(listing):
     """Starting a second pager from a saved position leaves the first pager's position
     alone.
 
@@ -366,7 +366,7 @@ async def test_replay_does_not_change_an_existing_pagers_bookmark(listing):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("spent", [3.0, 4.75])
-async def test_empty_service_page_uses_remaining_budget(listing, monkeypatch, spent):
+async def test_empty_service_page_uses_remaining_budget_rust(listing, monkeypatch, spent):
     """Empty service pages share the timeout of the current public page fetch.
 
     The clock is controlled, and the service returns an empty first page that
@@ -419,7 +419,7 @@ async def test_empty_service_page_uses_remaining_budget(listing, monkeypatch, sp
 
 
 @pytest.mark.parametrize("timeout", [False, 0, 0.25, "5", float("nan"), float("inf"), 2**64])
-def test_invalid_timeout_rejected_before_iteration(listing, timeout):
+def test_invalid_timeout_rejected_before_iteration_rust(listing, timeout):
     """A time limit that is not a usable number is refused before any request goes out.
 
     Seven values are covered: false, zero, a fraction too small to be useful,
@@ -437,7 +437,7 @@ def test_invalid_timeout_rejected_before_iteration(listing, timeout):
 
 
 @pytest.mark.parametrize("count", [False, 0, -2, 2.5, "2", 2**63])
-def test_invalid_page_size_rejected_before_iteration(listing, count):
+def test_invalid_page_size_rejected_before_iteration_rust(listing, count):
     """A page size that is not a whole positive number is refused before any request goes
     out.
 
@@ -455,7 +455,7 @@ def test_invalid_page_size_rejected_before_iteration(listing, count):
 
 
 @pytest.mark.asyncio
-async def test_explicit_none_clears_nested_timeout(listing):
+async def test_explicit_none_clears_nested_timeout_rust(listing):
     """Passing no time limit directly beats a limit buried in the options, and the
     caller's options are left as they were.
 
@@ -477,7 +477,7 @@ async def test_explicit_none_clears_nested_timeout(listing):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("setup_seconds", [2, 4.75, 6])
-async def test_real_rust_backend_deducts_setup_before_binding(listing_client, monkeypatch, setup_seconds):
+async def test_real_rust_backend_deducts_setup_before_binding_rust(listing_client, monkeypatch, setup_seconds):
     """Time spent starting the driver comes out of the caller's limit, and if it uses the
     limit up the call is abandoned before any request is sent.
 
@@ -523,7 +523,7 @@ async def test_real_rust_backend_deducts_setup_before_binding(listing_client, mo
 
 
 @pytest.mark.asyncio
-async def test_async_cancellation_drains_page_work(listing_client):
+async def test_async_cancellation_drains_page_work_rust(listing_client):
     """Cancelling while a page is in flight unwinds the work and fires no callback.
 
     The fetch is made to hang, then cancelled. The cancellation reaches the
@@ -565,7 +565,7 @@ async def test_async_cancellation_drains_page_work(listing_client):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("seconds", [None, 0.25, 2])
-async def test_native_listing_accepts_remaining_duration(listing_client, seconds):
+async def test_native_listing_accepts_remaining_duration_rust(listing_client, seconds):
     """The driver's own listing entry point accepts the remaining time in the forms Python
     will hand it.
 
@@ -590,7 +590,7 @@ async def test_native_listing_accepts_remaining_duration(listing_client, seconds
 
 
 @pytest.mark.asyncio
-async def test_async_timeout_drains_page_and_prevents_hook(listing_client):
+async def test_async_timeout_drains_page_and_prevents_hook_rust(listing_client):
     """Running out of time mid-page unwinds the work and fires no callback.
 
     Only a fraction of the limit is left when the fetch starts, which is normal
@@ -625,7 +625,7 @@ async def test_async_timeout_drains_page_and_prevents_hook(listing_client):
 
 
 @pytest.mark.asyncio
-async def test_failed_fetch_does_not_advance_delivered_bookmark(listing):
+async def test_failed_fetch_does_not_advance_delivered_bookmark_rust(listing):
     """A failed fetch leaves the position where the last delivered page left it.
 
     One page is received, the next fetch is refused by the service, and the
@@ -649,7 +649,7 @@ async def test_failed_fetch_does_not_advance_delivered_bookmark(listing):
 
 
 @pytest.mark.asyncio
-async def test_concurrent_fetch_rejected_without_poisoning_first_fetch(listing_client):
+async def test_concurrent_fetch_rejected_without_poisoning_first_fetch_rust(listing_client):
     """Asking one pager for two pages at once is refused, and the fetch already running
     still completes normally.
 
@@ -688,7 +688,7 @@ async def test_concurrent_fetch_rejected_without_poisoning_first_fetch(listing_c
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("body", [b"{}", b'{"Databases":{}}', b'{"Databases":[3]}'])
-async def test_malformed_rust_page_is_an_explicit_error(listing_client, body):
+async def test_malformed_rust_page_is_an_explicit_error_rust(listing_client, body):
     """A page that does not hold a proper list of databases is an error, not an empty
     result.
 
@@ -710,7 +710,7 @@ async def test_malformed_rust_page_is_an_explicit_error(listing_client, body):
 
 
 @pytest.mark.asyncio
-async def test_terminal_empty_page_clears_public_bookmark(listing):
+async def test_terminal_empty_page_clears_public_bookmark_rust(listing):
     """Reaching the end of the list clears the position, so nothing is left to resume
     from.
 
@@ -739,7 +739,7 @@ async def test_terminal_empty_page_clears_public_bookmark(listing):
 
 
 @pytest.mark.asyncio
-async def test_repeated_empty_page_bookmark_is_an_explicit_error(listing):
+async def test_repeated_empty_page_bookmark_is_an_explicit_error_rust(listing):
     """A page that is empty and hands back the position it was given is treated as an
     error rather than followed.
 
@@ -761,7 +761,7 @@ async def test_repeated_empty_page_bookmark_is_an_explicit_error(listing):
     requests(listing).assert_called_once()
 
 
-def test_nested_public_sync_listing_preserves_outer_bookmark(listing):
+def test_nested_public_sync_listing_preserves_outer_bookmark_rust(listing):
     """A whole second listing run from inside the callback does not disturb the outer
     pager's position.
 
@@ -791,7 +791,7 @@ def test_nested_public_sync_listing_preserves_outer_bookmark(listing):
     assert pager.continuation_token == "next-db-page"
 
 
-def test_sync_guard_covers_public_bookmark_publication(listing):
+def test_sync_guard_covers_public_bookmark_publication_rust(listing):
     """The one-at-a-time protection is still in force while the position is being updated,
     not released a moment early.
 

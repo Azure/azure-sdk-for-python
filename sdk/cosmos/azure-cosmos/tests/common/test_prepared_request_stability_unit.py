@@ -22,7 +22,7 @@ from azure.cosmos._backend.binding_adapter import build_binding_request_from_pag
 from azure.cosmos.aio._backend.binding_adapter import build_binding_request_from_page as async_page
 
 
-def test_frozen_mapping_is_a_value_mapping_not_a_hash_key():
+def test_frozen_mapping_is_a_value_mapping_not_a_hash_key_rust():
     from azure.cosmos._backend._immutable import FrozenMapping
 
     value = FrozenMapping({"order": "order-42"})
@@ -46,7 +46,7 @@ def point(**kwargs):
     op="query_items", container_link="dbs/bank/colls/accounts", query="SELECT * FROM c", **kw
 )])
 @pytest.mark.parametrize("readonly_view", [False, True])
-def test_headers_are_owned_and_readonly(factory, readonly_view):
+def test_headers_are_owned_and_readonly_rust(factory, readonly_view):
     original = {"x-customer": "original"}
     prepared = factory(headers=MappingProxyType(original) if readonly_view else original)
     original["x-customer"] = "changed"
@@ -58,7 +58,7 @@ def test_headers_are_owned_and_readonly(factory, readonly_view):
 
 
 @pytest.mark.parametrize("adapter", [sync_page, async_page])
-def test_nested_query_parameters_keep_json_shape_and_previous_pages(adapter):
+def test_nested_query_parameters_keep_json_shape_and_previous_pages_rust(adapter):
     parameters = [{"name": "@values", "value": {"values": [1, {"flag": True}, None]}}]
     page = PreparedPageRequest(
         op="query_items", container_link="dbs/bank/colls/accounts",
@@ -83,7 +83,7 @@ def test_nested_query_parameters_keep_json_shape_and_previous_pages(adapter):
 
 
 @pytest.mark.parametrize("adapter", [sync_page, async_page])
-def test_change_feed_snapshot_and_cursor_ownership(adapter):
+def test_change_feed_snapshot_and_cursor_ownership_rust(adapter):
     settings = {"mode": "LatestVersion", "feed_range": ["", "FF"]}
     cursor = object()
     page = PreparedPageRequest(
@@ -99,7 +99,7 @@ def test_change_feed_snapshot_and_cursor_ownership(adapter):
     assert replace(page, continuation="next").cursor is cursor
 
 
-def test_retained_query_reuses_exact_bytes():
+def test_retained_query_reuses_exact_bytes_rust():
     body = b'{"query":"SELECT @p","parameters":[{"name":"@p","value":[1,2]}]}'
     page = PreparedPageRequest(
         op="query_items", container_link="dbs/bank/colls/accounts",
@@ -110,7 +110,7 @@ def test_retained_query_reuses_exact_bytes():
     assert async_page(replace(page, continuation="next")).body_bytes is body
 
 
-def test_nested_readonly_view_is_snapshotted_not_trusted():
+def test_nested_readonly_view_is_snapshotted_not_trusted_rust():
     nested = {"values": [1, 2]}
     page = PreparedPageRequest(
         op="query_items", container_link="", query="SELECT @p",
@@ -123,7 +123,7 @@ def test_nested_readonly_view_is_snapshotted_not_trusted():
 
 
 @pytest.mark.parametrize("kind", ["mapping", "list"])
-def test_cyclic_query_data_is_rejected_but_shared_children_are_allowed(kind):
+def test_cyclic_query_data_is_rejected_but_shared_children_are_allowed_rust(kind):
     value = {} if kind == "mapping" else []
     if kind == "mapping":
         value["self"] = value
@@ -141,7 +141,7 @@ def test_cyclic_query_data_is_rejected_but_shared_children_are_allowed(kind):
     ]
 
 
-def test_unsupported_nested_values_are_not_silently_stringified():
+def test_unsupported_nested_values_are_not_silently_stringified_rust():
     with pytest.raises(TypeError, match="Unsupported prepared JSON"):
         PreparedPageRequest(
             op="query_items", container_link="",
@@ -152,7 +152,7 @@ def test_unsupported_nested_values_are_not_silently_stringified():
 @pytest.mark.parametrize("factory", [point, lambda **kw: PreparedPageRequest(
     op="query_items", container_link="dbs/bank/colls/accounts", **kw
 )])
-def test_settings_are_typed_and_reused_without_revalidation(factory):
+def test_settings_are_typed_and_reused_without_revalidation_rust(factory):
     settings = RequestSettings(excluded_locations=("West US",))
     prepared = factory(settings=settings)
     assert prepared.settings is settings
@@ -163,18 +163,18 @@ def test_settings_are_typed_and_reused_without_revalidation(factory):
 
 
 @pytest.mark.parametrize("body", [bytearray(b"{}"), memoryview(b"{}"), {}])
-def test_point_body_must_already_be_immutable_bytes(body):
+def test_point_body_must_already_be_immutable_bytes_rust(body):
     with pytest.raises(TypeError, match="bytes"):
         point(body_bytes=body)
 
 
 @pytest.mark.parametrize("headers", [{"x": []}, {1: "value"}, []])
-def test_headers_reject_mutable_or_nonstring_values(headers):
+def test_headers_reject_mutable_or_nonstring_values_rust(headers):
     with pytest.raises(TypeError, match="headers"):
         point(headers=headers)
 
 
-def test_client_config_snapshots_sequences_and_rejects_mutable_rule_fields():
+def test_client_config_snapshots_sequences_and_rejects_mutable_rule_fields_rust():
     preferred, excluded = ["West US"], ["East US"]
     rule = PreparedFaultInjectionRule("test", "Read", 429)
     rules = [rule]
@@ -194,7 +194,7 @@ def test_client_config_snapshots_sequences_and_rejects_mutable_rule_fields():
         PreparedClientConfig(preferred_locations=[[]])
 
 
-def test_mutating_source_while_async_dispatch_waits_does_not_change_request():
+def test_mutating_source_while_async_dispatch_waits_does_not_change_request_rust():
     async def run():
         headers = {"x-customer": "original"}
         prepared = point(headers=headers)
@@ -214,7 +214,7 @@ def test_mutating_source_while_async_dispatch_waits_does_not_change_request():
     asyncio.run(run())
 
 
-def test_real_native_reader_accepts_snapshot_before_driver_lookup():
+def test_real_native_reader_accepts_snapshot_before_driver_lookup_rust():
     from azure.cosmos import _rust
 
     with pytest.raises(RuntimeError, match="no driver registered"):
@@ -222,7 +222,7 @@ def test_real_native_reader_accepts_snapshot_before_driver_lookup():
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_retained_native_reader_copies_body_without_python_iteration(async_mode):
+def test_retained_native_reader_copies_body_without_python_iteration_rust(async_mode):
     from azure.cosmos import _rust
 
     class Body(bytes):
@@ -251,7 +251,7 @@ def benchmark(monkeypatch):
     return importlib.import_module("benchmark_request_boundary")
 
 
-def test_benchmark_times_requested_invocations_in_microseconds(benchmark, monkeypatch):
+def test_benchmark_times_requested_invocations_in_microseconds_rust(benchmark, monkeypatch):
     ticks = iter([1000, 11000])
     monkeypatch.setattr(benchmark.time, "perf_counter_ns", lambda: next(ticks))
     calls = []
@@ -259,7 +259,7 @@ def test_benchmark_times_requested_invocations_in_microseconds(benchmark, monkey
     assert len(calls) == 5
 
 
-def test_benchmark_records_every_phase_and_repeated_samples(benchmark, monkeypatch, tmp_path):
+def test_benchmark_records_every_phase_and_repeated_samples_rust(benchmark, monkeypatch, tmp_path):
     output = tmp_path / "result.json"
     executable = tmp_path / "native-test.exe"
     executable.write_bytes(b"unit-test executable")
@@ -285,7 +285,7 @@ def test_benchmark_records_every_phase_and_repeated_samples(benchmark, monkeypat
     assert len(calls) == len(benchmark.cases()) * (1 + 2 * 2 + 2 * 2 * 2)
 
 
-def test_benchmark_rejects_empty_samples(benchmark, monkeypatch, tmp_path):
+def test_benchmark_rejects_empty_samples_rust(benchmark, monkeypatch, tmp_path):
     monkeypatch.setenv("COSMOS_BOUNDARY_BENCHMARK_OUTPUT", str(tmp_path / "result.json"))
     monkeypatch.setenv("COSMOS_BOUNDARY_BENCHMARK_ITERATIONS", "0")
     with pytest.raises(ValueError, match="positive"):

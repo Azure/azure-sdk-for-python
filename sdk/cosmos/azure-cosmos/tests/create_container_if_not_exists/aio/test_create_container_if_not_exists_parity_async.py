@@ -111,7 +111,7 @@ def existing_container_id(database_id):
         client.close()
 
 
-async def test_create_leg_async(database_id):
+async def test_create_leg_async_rust(database_id):
     """When the container is not there, both engines create it with the same settings."""
 
     async def _do(client):
@@ -137,7 +137,7 @@ async def test_create_leg_async(database_id):
     assert comparison.rust.return_value["settings"]["partitionKey"]["paths"] == ["/pk"]
 
 
-async def test_existing_leg_returns_existing_container_async(database_id, existing_container_id):
+async def test_existing_leg_returns_existing_container_async_rust(database_id, existing_container_id):
     """When the container is already there, both engines return it rather than a new one."""
     # Both engines use the same id on purpose here: neither of them should be
     # creating anything, so there is nothing to collide.
@@ -162,7 +162,7 @@ async def test_existing_leg_returns_existing_container_async(database_id, existi
     assert comparison.rust.return_value["id"] == existing_container_id
 
 
-async def test_existing_leg_preserves_settings_async(database_id, existing_container_id):
+async def test_existing_leg_preserves_settings_async_rust(database_id, existing_container_id):
     """The existing container keeps the settings it was created with on both engines."""
     # Request different settings to prove that the existing definition is not reconciled.
 
@@ -188,7 +188,7 @@ async def test_existing_leg_preserves_settings_async(database_id, existing_conta
     assert "/excluded/*" in comparison.rust.return_value["excludedPaths"]
 
 
-async def test_existing_leg_return_properties_shape_async(database_id, existing_container_id):
+async def test_existing_leg_return_properties_shape_async_rust(database_id, existing_container_id):
     """With return_properties set, the existing leg gives the same pair on both engines."""
     # The headers in the second half are where a customer reads what the call
     # cost, and the existing leg costs less than the create leg. If rust left

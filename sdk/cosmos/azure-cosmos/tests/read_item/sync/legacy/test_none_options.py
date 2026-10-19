@@ -4,7 +4,8 @@
 ``_backend="rust"`` path.
 
 Source: ``tests/test_none_options.py``. The class name and method name
-match the source so the parity reporter can pair the two runs by
+match the source (apart from the method's ``_rust`` suffix) so the parity reporter can
+pair the two runs by
 ``(file basename, class name, method name)``. The other methods in the
 source ``TestNoneOptions`` class cover ``create_item``, ``upsert_item``,
 ``replace_item``, etc.; they belong to their own operations' ``legacy/``
@@ -61,7 +62,7 @@ class TestNoneOptions(unittest.TestCase):
         )
         return item
 
-    def test_container_read_item_none_options(self):
+    def test_container_read_item_none_options_rust(self):
         """read_item accepts None for every optional argument.
 
         None means "not supplied". Customers commonly build one call site

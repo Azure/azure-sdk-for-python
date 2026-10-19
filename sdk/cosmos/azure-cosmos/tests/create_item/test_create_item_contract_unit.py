@@ -116,7 +116,7 @@ def point_create(point_read, monkeypatch):
 
 @pytest.mark.parametrize("name", ["populate_query_metrics", "etag", "match_condition"])
 @pytest.mark.parametrize("value", [None, False, True])
-def test_retired_options_are_rejected_before_metadata(point_create, name, value):
+def test_retired_options_are_rejected_before_metadata_rust(point_create, name, value):
     """Arguments that used to be accepted now raise ``TypeError``, naming the argument.
 
     ``etag`` and ``match_condition`` never applied to create, and
@@ -129,7 +129,7 @@ def test_retired_options_are_rejected_before_metadata(point_create, name, value)
     assert point_create.events == []
 
 
-def test_only_body_is_positional(point_create):
+def test_only_body_is_positional_rust(point_create):
     """``body`` is the one positional argument; everything else is keyword-only.
 
     This pins the calling shape so later argument additions or reordering cannot
@@ -157,7 +157,7 @@ def test_only_body_is_positional(point_create):
     ({"id": "item", "value": float("inf")}, ValueError),
     ({"id": "item", "value": object()}, TypeError),
 ])
-def test_invalid_input_has_same_early_error_on_both_backends(point_create, body, error):
+def test_invalid_input_has_same_early_error_on_both_backends_rust(point_create, body, error):
     """Bad bodies raise the same exception type on both backends, before any request.
 
     Covers a body that is not a mapping, a missing or empty or wrongly typed
@@ -175,7 +175,7 @@ def test_invalid_input_has_same_early_error_on_both_backends(point_create, body,
 
 
 @pytest.mark.parametrize("hierarchical", [False, True])
-def test_auto_id_precedes_partition_key_extraction_and_does_not_mutate_input(point_create, hierarchical):
+def test_auto_id_precedes_partition_key_extraction_and_does_not_mutate_input_rust(point_create, hierarchical):
     """A generated ``id`` is in place before the partition key is read, and the caller's dict is untouched.
 
     Both container shapes put ``/id`` in the partition key, so the ordering is
@@ -203,7 +203,7 @@ def test_auto_id_precedes_partition_key_extraction_and_does_not_mutate_input(poi
         assert point_create.native_calls == 1
 
 
-def test_mapping_and_request_options_are_not_mutated(point_create):
+def test_mapping_and_request_options_are_not_mutated_rust(point_create):
     """A read-only mapping is accepted as the body, and ``request_options`` is left alone.
 
     ``MappingProxyType`` cannot be written to, so it fails the test outright if
@@ -219,7 +219,7 @@ def test_mapping_and_request_options_are_not_mutated(point_create):
 
 
 @pytest.mark.parametrize("no_response", [False, True])
-def test_falsey_hook_gets_independent_body_and_headers(point_create, no_response):
+def test_falsey_hook_gets_independent_body_and_headers_rust(point_create, no_response):
     """A response hook is called even when it is falsey, and its edits stay in its own copy.
 
     ``Hook.__bool__`` returns ``False``, so any layer testing the hook with a
@@ -260,14 +260,14 @@ def test_falsey_hook_gets_independent_body_and_headers(point_create, no_response
 
 
 @pytest.mark.parametrize("hook", [False, 0, "not callable", {}])
-def test_invalid_hook_is_rejected_before_metadata(point_create, hook):
+def test_invalid_hook_is_rejected_before_metadata_rust(point_create, hook):
     with pytest.raises(TypeError, match="response_hook must be callable"):
         point_create.call({"id": "order-42"}, response_hook=hook)
     assert point_create.events == []
 
 
 @pytest.mark.parametrize("option_name", ["feed_options", "request_options"])
-def test_nested_options_reach_create_without_mutation(point_create, option_name):
+def test_nested_options_reach_create_without_mutation_rust(point_create, option_name):
     options = MappingProxyType({
         "timeout": 2,
         "responsePayloadOnWriteDisabled": True,
@@ -286,7 +286,7 @@ def test_nested_options_reach_create_without_mutation(point_create, option_name)
 
 
 @pytest.mark.parametrize("request_options,timeout", [(None, None), ({}, None), ({"timeout": 3}, 3)])
-def test_request_options_take_precedence_over_feed_options(point_create, request_options, timeout):
+def test_request_options_take_precedence_over_feed_options_rust(point_create, request_options, timeout):
     result = point_create.call(
         {"id": "order-42"},
         feed_options={"timeout": 2, "responsePayloadOnWriteDisabled": True},
@@ -297,7 +297,7 @@ def test_request_options_take_precedence_over_feed_options(point_create, request
 
 
 @pytest.mark.parametrize("timeout", [None, 3])
-def test_explicit_options_override_feed_options(point_create, timeout):
+def test_explicit_options_override_feed_options_rust(point_create, timeout):
     result = point_create.call(
         {"id": "order-42"},
         feed_options={"timeout": 2, "responsePayloadOnWriteDisabled": True},
@@ -308,13 +308,13 @@ def test_explicit_options_override_feed_options(point_create, timeout):
     assert point_create.events == [("metadata", timeout), ("write", timeout)]
 
 
-def test_invalid_feed_timeout_is_rejected_before_metadata(point_create):
+def test_invalid_feed_timeout_is_rejected_before_metadata_rust(point_create):
     with pytest.raises(ValueError, match="create_item timeout"):
         point_create.call({"id": "order-42"}, feed_options={"timeout": 0})
     assert point_create.events == []
 
 
-def test_explicit_body_response_overrides_client_default(point_create):
+def test_explicit_body_response_overrides_client_default_rust(point_create):
     """``no_response=False`` on the call beats a client configured to suppress bodies.
 
     The client default is switched on, then overridden per call. The created
@@ -326,7 +326,7 @@ def test_explicit_body_response_overrides_client_default(point_create):
     assert point_create.call({"id": "item"}, no_response=False)["id"] == "item"
 
 
-def test_hook_failure_does_not_replay_create(point_create):
+def test_hook_failure_does_not_replay_create_rust(point_create):
     """If the customer's hook raises, the item is not created a second time.
 
     The hook runs after the write has already succeeded, so treating its failure
@@ -343,7 +343,7 @@ def test_hook_failure_does_not_replay_create(point_create):
     assert [phase for phase, _ in point_create.events] == ["metadata", "write"]
 
 
-def test_service_conflict_remains_typed_and_does_not_invoke_success_hook(point_create):
+def test_service_conflict_remains_typed_and_does_not_invoke_success_hook_rust(point_create):
     """A 409 from the service surfaces as ``CosmosResourceExistsError`` and skips the hook.
 
     An item with that id already exists. The status must be translated into the
@@ -359,7 +359,7 @@ def test_service_conflict_remains_typed_and_does_not_invoke_success_hook(point_c
     assert [phase for phase, _ in point_create.events] == ["metadata", "write"]
 
 
-def test_remaining_subsecond_budget_reaches_create(point_create):
+def test_remaining_subsecond_budget_reaches_create_rust(point_create):
     """Time already spent on metadata is deducted, and the fraction left is passed on.
 
     A one second budget with a 0.75 second metadata lookup leaves 0.25 seconds.
@@ -377,7 +377,7 @@ def test_remaining_subsecond_budget_reaches_create(point_create):
 @pytest.mark.parametrize("metadata_delay,write_delay,phases", [
     (2, 0, ["metadata"]), (1, 0, ["metadata"]), (0.75, 0.5, ["metadata", "write"]),
 ])
-def test_metadata_and_write_share_one_budget(point_create, metadata_delay, write_delay, phases):
+def test_metadata_and_write_share_one_budget_rust(point_create, metadata_delay, write_delay, phases):
     """``timeout`` covers the whole call, not each phase, and expiry raises before the hook.
 
     Three cases: metadata alone overruns the budget; metadata consumes it
@@ -396,7 +396,7 @@ def test_metadata_and_write_share_one_budget(point_create, metadata_delay, write
     hook.assert_not_called()
 
 
-def test_create_charges_lazy_initialization_to_budget(point_create):
+def test_create_charges_lazy_initialization_to_budget_rust(point_create):
     """Rust only: starting the driver counts against the caller's timeout.
 
     The Rust backend builds its driver on first use. If that setup were not
@@ -414,7 +414,7 @@ def test_create_charges_lazy_initialization_to_budget(point_create):
     assert point_create.events == []
 
 
-def test_create_serializes_once_before_metadata(point_create, monkeypatch):
+def test_create_serializes_once_before_metadata_rust(point_create, monkeypatch):
     """Rust only: the body is turned into bytes exactly once per create.
 
     The bytes are needed both to read the partition key and to send, so the easy
@@ -429,7 +429,7 @@ def test_create_serializes_once_before_metadata(point_create, monkeypatch):
     serialize.assert_called_once()
 
 
-def test_partition_key_and_wire_body_use_the_same_nested_snapshot(point_create):
+def test_partition_key_and_wire_body_use_the_same_nested_snapshot_rust(point_create):
     """The body is captured once up front, so a caller editing it mid-call cannot split the write.
 
     The partition key path points into a nested dict. Another thread -- or, as
@@ -467,7 +467,7 @@ def test_partition_key_and_wire_body_use_the_same_nested_snapshot(point_create):
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("compact", [False, True])
 @pytest.mark.parametrize("op", ["create_item", "upsert_item", "replace_item", "patch_item"])
-def test_compact_utf8_applies_to_all_singleton_write_bodies(async_mode, compact, op):
+def test_compact_utf8_applies_to_all_singleton_write_bodies_rust(async_mode, compact, op):
     """The compact UTF-8 setting reaches every single-item write, not just create.
 
     With the setting off, a non-ASCII character is sent as an escape sequence

@@ -3,7 +3,8 @@
 """Sync ``test_replace_item_none_options`` on the ``_backend="rust"`` path.
 
 Copied from ``tests/test_none_options.py``; the class and method names
-match the source so the parity reporter can pair the core-python and
+match the source (apart from the method's ``_rust`` suffix) so the parity reporter can
+pair the core-python and
 Rust runs. Builds its own database + container and reads ``ACCOUNT_HOST``
 / ``ACCOUNT_KEY`` from the environment.
 Registers cleanup after acquisition so partial setup still releases resources.
@@ -51,7 +52,7 @@ class TestNoneOptions(unittest.TestCase):
         )
         return item
 
-    def test_replace_item_none_options(self):
+    def test_replace_item_none_options_rust(self):
         """Verify replace_item accepts None for every optional kwarg (pre_trigger_include, post_trigger_include, session_token, initial_headers, etag, match_condition, priority, no_response, retry_write, throughput_bucket) and returns the replaced item."""
         # Source: tests/test_none_options.py::TestNoneOptions.test_replace_item_none_options
         item = self._create_sample_item()

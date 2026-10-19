@@ -13,7 +13,7 @@ from azure.cosmos._backend.request_settings import (
 from azure.cosmos._helpers._request_settings import OPTION_FIELDS
 
 
-def test_every_normalized_option_targets_a_declared_field():
+def test_every_normalized_option_targets_a_declared_field_rust():
     groups = {
         "": RequestSettings, "item": ItemSettings,
         "query": QuerySettings, "resource": ResourceSettings,
@@ -22,7 +22,7 @@ def test_every_normalized_option_targets_a_declared_field():
         assert name in {field.name for field in fields(groups[group])}, option
 
 
-def test_native_inventory_matches_both_directions():
+def test_native_inventory_matches_both_directions_rust():
     native = pytest.importorskip("azure.cosmos._rust")
     assert binding_settings_contract_error(native) is None
     schema = _request_settings_schema()
@@ -31,7 +31,7 @@ def test_native_inventory_matches_both_directions():
 
 
 @pytest.mark.parametrize("extra", [False, True])
-def test_a_one_sided_field_change_requires_a_rebuild(extra):
+def test_a_one_sided_field_change_requires_a_rebuild_rust(extra):
     schema = _request_settings_schema()
     schema["RequestSettings"] = (
         schema["RequestSettings"] + ("unknown_future_field",)
@@ -40,5 +40,5 @@ def test_a_one_sided_field_change_requires_a_rebuild(extra):
     assert "rebuild" in binding_settings_contract_error(SimpleNamespace(_request_settings_schema=lambda: schema))
 
 
-def test_old_extensions_fail_explicitly_when_checked():
+def test_old_extensions_fail_explicitly_when_checked_rust():
     assert "rebuild" in binding_settings_contract_error(SimpleNamespace())

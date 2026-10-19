@@ -18,7 +18,7 @@ class TestCosmosResponses(unittest.TestCase):
         )
         self.addCleanup(self.client.close)
 
-    def test_create_database_if_not_exists_headers(self):
+    def test_create_database_if_not_exists_headers_rust(self):
         """First call creates the database and returns its id with populated headers.
 
         This is the create branch: nothing exists yet. The returned properties
@@ -34,7 +34,7 @@ class TestCosmosResponses(unittest.TestCase):
         finally:
             self.client.delete_database(database_id)
 
-    def test_create_database_if_not_exists_headers_negative(self):
+    def test_create_database_if_not_exists_headers_negative_rust(self):
         """Calls against an existing database return that same database, with headers.
 
         Despite the name, nothing fails here. "Negative" means the create was

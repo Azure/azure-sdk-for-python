@@ -35,7 +35,7 @@ def runner(monkeypatch, tmp_path):
     ["correct", "returned_value_changed", "stored_value_changed", "not_stored",
      "returned_id_changed", "stored_pk_changed", "stored_value_missing"],
 )
-def test_patch_checks_returned_and_stored_fields(scenario, execution, runner, monkeypatch):
+def test_patch_checks_returned_and_stored_fields_rust(scenario, execution, runner, monkeypatch):
     module = _load("original_patch_none_options", ROOT / "tests" / "test_none_options.py")
     case = module.TestNoneOptions("test_patch_item_none_options")
     container = MagicMock()
@@ -97,7 +97,7 @@ def test_patch_checks_returned_and_stored_fields(scenario, execution, runner, mo
 
 @pytest.mark.parametrize("mode", ["default", "supplemental", "none_options"])
 @pytest.mark.parametrize("asynchronous", [False, True])
-def test_runner_preserves_selections_and_closes_client(runner, monkeypatch, mode, asynchronous):
+def test_runner_preserves_selections_and_closes_client_rust(runner, monkeypatch, mode, asynchronous):
     monkeypatch.setenv("ACCOUNT_HOST", "https://unused.invalid")
     monkeypatch.setenv("ACCOUNT_KEY", "unused")
     monkeypatch.setattr(runner, "NONE_OPTIONS_ONLY", mode == "none_options")
@@ -137,7 +137,7 @@ def test_runner_preserves_selections_and_closes_client(runner, monkeypatch, mode
 
 
 @pytest.mark.parametrize("focused,expected_calls", [(False, 4), (True, 2)])
-def test_runner_owns_and_verifies_database_cleanup(runner, monkeypatch, focused, expected_calls):
+def test_runner_owns_and_verifies_database_cleanup_rust(runner, monkeypatch, focused, expected_calls):
     monkeypatch.setenv("ACCOUNT_HOST", "https://unused.invalid")
     monkeypatch.setenv("ACCOUNT_KEY", "unused")
     monkeypatch.setattr(runner, "NONE_OPTIONS_ONLY", focused)
@@ -158,7 +158,7 @@ def test_runner_owns_and_verifies_database_cleanup(runner, monkeypatch, focused,
         assert all(call.args[1] is False for call in execute.await_args_list)
 
 
-def test_runner_rejects_conflicting_selections(monkeypatch, tmp_path):
+def test_runner_rejects_conflicting_selections_rust(monkeypatch, tmp_path):
     output = tmp_path / "not_created"
     monkeypatch.setenv("PATCH_REVIEW_OUTPUT", str(output))
     monkeypatch.setenv("PATCH_REVIEW_NONE_OPTIONS", "1")
@@ -169,7 +169,7 @@ def test_runner_rejects_conflicting_selections(monkeypatch, tmp_path):
 
 
 @pytest.mark.parametrize("delta,fallback", [(0, 0), (1, 1)])
-def test_runner_rejects_wrong_rust_execution_evidence(runner, monkeypatch, delta, fallback):
+def test_runner_rejects_wrong_rust_execution_evidence_rust(runner, monkeypatch, delta, fallback):
     runner.CURRENT.update(backend="rust", surface="sync")
     monkeypatch.setattr(runner, "_binding_operation_count", MagicMock(side_effect=[0, delta]))
     monkeypatch.setattr(runner, "_rust_fallback_count", MagicMock(side_effect=[0, fallback]))
@@ -187,7 +187,7 @@ def test_runner_rejects_wrong_rust_execution_evidence(runner, monkeypatch, delta
     "correct", "returned_operation_missing", "stored_operation_missing",
     "not_stored", "original_field_changed", "unexpected_rejection",
 ])
-def test_ten_operations_checks_every_returned_and_stored_change(
+def test_ten_operations_checks_every_returned_and_stored_change_rust(
     runner, monkeypatch, backend, asynchronous, outcome,
 ):
     runner.CURRENT.update(backend=backend, surface="async" if asynchronous else "sync")
@@ -251,7 +251,7 @@ def test_ten_operations_checks_every_returned_and_stored_change(
     "wrong_stored_pk", "wrong_stored_status", "fallback", "unsupported",
     "http_412", "http_503", "rejected_but_changed", "rejected_but_version_changed",
 ])
-def test_if_none_match_records_version_states_and_checks_outcomes(
+def test_if_none_match_records_version_states_and_checks_outcomes_rust(
     runner, monkeypatch, backend, asynchronous, changed, outcome,
 ):
     runner.CURRENT.update(backend=backend, surface="async" if asynchronous else "sync")
@@ -361,7 +361,7 @@ def test_if_none_match_records_version_states_and_checks_outcomes(
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("changed", [False, True], ids=["same_version", "changed_version"])
 @pytest.mark.parametrize("invalid", ["wrong_version", "wrong_fields", "missing_etag"])
-def test_if_none_match_requires_verified_starting_state(runner, asynchronous, changed, invalid):
+def test_if_none_match_requires_verified_starting_state_rust(runner, asynchronous, changed, invalid):
     runner.CURRENT.update(backend="core-python", surface="async" if asynchronous else "sync")
     stored = {}
 
@@ -406,7 +406,7 @@ def test_if_none_match_requires_verified_starting_state(runner, asynchronous, ch
     (True, "pk_changed"), (True, "unexpected_success"), (True, "wrong_error"),
     (True, "field_added"),
 ])
-def test_atomic_patch_checks_valid_prefix_and_rejected_state(
+def test_atomic_patch_checks_valid_prefix_and_rejected_state_rust(
     runner, monkeypatch, backend, asynchronous, reject, outcome,
 ):
     runner.CURRENT.update(backend=backend, surface="async" if asynchronous else "sync")
@@ -492,7 +492,7 @@ def test_atomic_patch_checks_valid_prefix_and_rejected_state(
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("name", ["atomic_patch_control", "atomic_patch_rejection"])
 @pytest.mark.parametrize("invalid", ["wrong_fields", "field_exists"])
-def test_atomic_patch_requires_verified_starting_state(runner, asynchronous, name, invalid):
+def test_atomic_patch_requires_verified_starting_state_rust(runner, asynchronous, name, invalid):
     runner.CURRENT.update(backend="core-python", surface="async" if asynchronous else "sync")
     stored = {}
 
@@ -523,7 +523,7 @@ def test_atomic_patch_requires_verified_starting_state(runner, asynchronous, nam
     "returned_id_changed", "stored_status_changed", "rejected_400", "rejected_503",
     "rejected_but_changed", "fallback",
 ])
-def test_integer_increment_checks_numeric_states(
+def test_integer_increment_checks_numeric_states_rust(
     runner, monkeypatch, backend, asynchronous, fractional, outcome,
 ):
     runner.CURRENT.update(backend=backend, surface="async" if asynchronous else "sync")
@@ -613,7 +613,7 @@ def test_integer_increment_checks_numeric_states(
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("fractional", [False, True], ids=["integer", "fraction"])
 @pytest.mark.parametrize("invalid", ["wrong_number", "wrong_status"])
-def test_integer_increment_requires_verified_starting_state(runner, asynchronous, fractional, invalid):
+def test_integer_increment_requires_verified_starting_state_rust(runner, asynchronous, fractional, invalid):
     runner.CURRENT.update(backend="core-python", surface="async" if asynchronous else "sync")
     stored = {}
 
@@ -651,7 +651,7 @@ def test_integer_increment_requires_verified_starting_state(runner, asynchronous
     "not_stored", "returned_id_changed", "stored_status_changed",
     "unexpected_rejection", "rejected_but_changed", "fallback",
 ])
-def test_array_patch_checks_complete_returned_and_stored_arrays(
+def test_array_patch_checks_complete_returned_and_stored_arrays_rust(
     runner, monkeypatch, backend, asynchronous, operation, outcome,
 ):
     runner.CURRENT.update(backend=backend, surface="async" if asynchronous else "sync")
@@ -746,7 +746,7 @@ def test_array_patch_checks_complete_returned_and_stored_arrays(
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("operation", ["add", "set", "add_then_remove", "remove_then_add"])
 @pytest.mark.parametrize("invalid", ["wrong_order", "missing_labels", "wrong_status"])
-def test_array_patch_requires_verified_starting_state(runner, asynchronous, operation, invalid):
+def test_array_patch_requires_verified_starting_state_rust(runner, asynchronous, operation, invalid):
     runner.CURRENT.update(backend="core-python", surface="async" if asynchronous else "sync")
     stored = {}
 
@@ -784,7 +784,7 @@ def test_array_patch_requires_verified_starting_state(runner, asynchronous, oper
     "correct", "opposite_order", "skip_remove", "skip_add", "not_stored",
     "wrong_return", "wrong_stored_field", "wrong_error", "fallback",
 ])
-def test_array_patch_order_uses_updated_indexes(
+def test_array_patch_order_uses_updated_indexes_rust(
     runner, monkeypatch, backend, asynchronous, reverse, outcome,
 ):
     runner.CURRENT.update(backend=backend, surface="async" if asynchronous else "sync")
@@ -877,7 +877,7 @@ def test_array_patch_order_uses_updated_indexes(
     (True, "correct"), (True, "swallowed_error"), (True, "wrong_error"),
     (True, "changed_after_error"), (True, "missing_field_added"),
 ])
-def test_no_response_checks_public_result_and_stored_state(
+def test_no_response_checks_public_result_and_stored_state_rust(
     runner, monkeypatch, backend, asynchronous, reject, outcome,
 ):
     runner.CURRENT.update(backend=backend, surface="async" if asynchronous else "sync")
@@ -959,7 +959,7 @@ def test_no_response_checks_public_result_and_stored_state(
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("name", ["no_response", "no_response_rejection"])
 @pytest.mark.parametrize("invalid", ["wrong_fields", "field_exists"])
-def test_no_response_requires_verified_starting_state(runner, asynchronous, name, invalid):
+def test_no_response_requires_verified_starting_state_rust(runner, asynchronous, name, invalid):
     runner.CURRENT.update(backend="core-python", surface="async" if asynchronous else "sync")
     stored = {}
 
@@ -990,7 +990,7 @@ def test_no_response_requires_verified_starting_state(runner, asynchronous, name
     "corrected_after_callback", "mutated_after_callback",
     "wrong_returned_id", "not_stored", "wrong_stored_status",
 ])
-def test_response_hook_checks_expected_customer_fields(runner, monkeypatch, backend, asynchronous, outcome):
+def test_response_hook_checks_expected_customer_fields_rust(runner, monkeypatch, backend, asynchronous, outcome):
     runner.CURRENT.update(backend=backend, surface="async" if asynchronous else "sync")
     monkeypatch.setattr(runner, "_binding_operation_count", MagicMock(side_effect=[0, int(backend == "rust")]))
     monkeypatch.setattr(runner, "_rust_fallback_count", lambda: 0)
@@ -1067,7 +1067,7 @@ def test_response_hook_checks_expected_customer_fields(runner, monkeypatch, back
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("invalid", ["wrong_number", "wrong_id"])
-def test_response_hook_requires_verified_starting_state(runner, asynchronous, invalid):
+def test_response_hook_requires_verified_starting_state_rust(runner, asynchronous, invalid):
     runner.CURRENT.update(backend="core-python", surface="async" if asynchronous else "sync")
     stored = {}
 
@@ -1103,7 +1103,7 @@ def test_response_hook_requires_verified_starting_state(runner, asynchronous, in
         "changed_etag", "missing_etag", "wrong_status", "unexpected_success", "changed_number",
     )
 ])
-def test_if_match_checks_customer_fields_and_rejected_version(
+def test_if_match_checks_customer_fields_and_rejected_version_rust(
     runner, monkeypatch, backend, asynchronous, name, outcome,
 ):
     runner.CURRENT.update(backend=backend, surface="async" if asynchronous else "sync")
@@ -1205,7 +1205,7 @@ def test_if_match_checks_customer_fields_and_rejected_version(
     "wrong_number", "wrong_id", "missing_pk", "wrong_status", "wrong_version",
     "empty_saved_etag", "nonstring_saved_etag", "empty_before_etag", "nonstring_before_etag",
 ])
-def test_if_match_requires_verified_starting_state(runner, asynchronous, name, invalid):
+def test_if_match_requires_verified_starting_state_rust(runner, asynchronous, name, invalid):
     runner.CURRENT.update(backend="core-python", surface="async" if asynchronous else "sync")
     stored = {}
 
@@ -1259,7 +1259,7 @@ def test_if_match_requires_verified_starting_state(runner, asynchronous, name, i
     "correct", "ignore_filter", "ignore_etag", "always_reject", "always_accept",
     "not_stored", "changed_status", "changed_etag", "wrong_returned_id",
 ])
-def test_combined_conditions_require_both_predicate_and_version(
+def test_combined_conditions_require_both_predicate_and_version_rust(
     runner, monkeypatch, backend, asynchronous, name, behavior,
 ):
     runner.CURRENT.update(backend=backend, surface="async" if asynchronous else "sync")

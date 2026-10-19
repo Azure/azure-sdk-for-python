@@ -52,7 +52,7 @@ def _no_legacy_delete(client, backend):
 @pytest.mark.parametrize("mode", ["sync", "async"])
 @pytest.mark.parametrize("backend", ["core-python", "rust"])
 @pytest.mark.parametrize("target_kind", ["name", "mapping", "proxy"])
-def test_delete_owned_container_and_repeat_missing(owned_database, mode, backend, target_kind):
+def test_delete_owned_container_and_repeat_missing_rust(owned_database, mode, backend, target_kind):
     name = "container_" + uuid.uuid4().hex
     owned_database.create_container(name, PartitionKey(path="/id"))
     calls = []
@@ -101,7 +101,7 @@ def test_delete_owned_container_and_repeat_missing(owned_database, mode, backend
 
 @pytest.mark.parametrize("mode", ["sync", "async"])
 @pytest.mark.parametrize("condition", ["stale_etag", "if_missing"])
-def test_conditional_delete_matches_legacy_service_behavior(owned_database, mode, condition):
+def test_conditional_delete_matches_legacy_service_behavior_rust(owned_database, mode, condition):
     options = (
         {"etag": '"deliberately-stale"', "match_condition": MatchConditions.IfNotModified}
         if condition == "stale_etag" else {"match_condition": MatchConditions.IfMissing}
@@ -144,7 +144,7 @@ def test_conditional_delete_matches_legacy_service_behavior(owned_database, mode
 
 @pytest.mark.parametrize("mode", ["sync", "async"])
 @pytest.mark.parametrize("warm", [False, True])
-def test_rust_delete_after_metadata_resolution(owned_database, mode, warm):
+def test_rust_delete_after_metadata_resolution_rust(owned_database, mode, warm):
     name = "resolution_" + uuid.uuid4().hex
     if warm:
         owned_database.create_container(name, PartitionKey(path="/id"))

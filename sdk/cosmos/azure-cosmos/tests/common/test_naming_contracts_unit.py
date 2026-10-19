@@ -95,7 +95,7 @@ from azure.cosmos.exceptions import (
         (shared_rust, "BindingAdapterShared", "RustBackendShared"),
     ],
 )
-def test_binding_adapter_class_names_have_no_retired_aliases(module, current, retired):
+def test_binding_adapter_class_names_have_no_retired_aliases_rust(module, current, retired):
     backend_type = getattr(module, current)
     assert inspect.isclass(backend_type)
     assert backend_type.__name__ == current
@@ -109,7 +109,7 @@ def test_binding_adapter_class_names_have_no_retired_aliases(module, current, re
         (async_rust, async_rust.AsyncBindingAdapter, "azure.cosmos.aio._backend.binding_adapter"),
     ],
 )
-def test_binding_adapter_modules_match_their_role(module, backend_type, expected_module):
+def test_binding_adapter_modules_match_their_role_rust(module, backend_type, expected_module):
     assert module.__name__ == expected_module
     assert backend_type.__module__ == expected_module
     assert Path(module.__file__).name == "binding_adapter.py"
@@ -117,7 +117,7 @@ def test_binding_adapter_modules_match_their_role(module, backend_type, expected
     assert not Path(module.__file__).with_name("rust_backend.py").exists()
 
 
-def test_shared_adapter_module_identifies_which_implementations_share_it():
+def test_shared_adapter_module_identifies_which_implementations_share_it_rust():
     expected_module = "azure.cosmos._backend._binding_adapter_shared"
     assert shared_rust.__name__ == expected_module
     assert shared_rust.BindingAdapterShared.__module__ == expected_module
@@ -126,7 +126,7 @@ def test_shared_adapter_module_identifies_which_implementations_share_it():
     assert not Path(shared_rust.__file__).with_name("_rust_backend_shared.py").exists()
 
 
-def test_item_client_context_names_its_execution_reference_adapter():
+def test_item_client_context_names_its_execution_reference_adapter_rust():
     assert [field.name for field in fields(ItemClientContext)] == [
         "adapter", "defaults", "response_state", "telemetry_handlers",
     ]
@@ -146,7 +146,7 @@ def test_item_client_context_names_its_execution_reference_adapter():
         ("BackendPage", "QueryPage"),
     ],
 )
-def test_page_contracts_have_no_query_only_aliases(current, retired):
+def test_page_contracts_have_no_query_only_aliases_rust(current, retired):
     contract_type = getattr(backend_contracts, current)
     assert inspect.isclass(contract_type)
     assert contract_type.__name__ == current
@@ -165,7 +165,7 @@ def test_page_contracts_have_no_query_only_aliases(current, retired):
         ("_build_prepared_page_request", "_build_feed_request"),
     ],
 )
-def test_page_request_builders_name_the_record_they_return(current, retired):
+def test_page_request_builders_name_the_record_they_return_rust(current, retired):
     builder = getattr(page_helpers, current)
     assert callable(builder)
     assert get_type_hints(builder)["return"] is PreparedPageRequest
@@ -185,7 +185,7 @@ def test_page_request_builders_name_the_record_they_return(current, retired):
         (backend_operations, "RETAINED_PAGE_BINDING_FUNCTION_NAMES", "CURSOR_QUERY_TO_BINDING_METHOD"),
     ],
 )
-def test_binding_call_helpers_use_canonical_names_without_retired_aliases(module, current, retired):
+def test_binding_call_helpers_use_canonical_names_without_retired_aliases_rust(module, current, retired):
     assert hasattr(module, current)
     assert not hasattr(module, retired)
 
@@ -197,12 +197,12 @@ def test_binding_call_helpers_use_canonical_names_without_retired_aliases(module
         ("_driver_acquisition_finished", "_driver_initialization_finished"),
     ],
 )
-def test_async_acquisition_helpers_do_not_imply_new_driver_creation(current, retired):
+def test_async_acquisition_helpers_do_not_imply_new_driver_creation_rust(current, retired):
     assert callable(getattr(async_rust.AsyncBindingAdapter, current))
     assert not hasattr(async_rust.AsyncBindingAdapter, retired)
 
 
-def test_item_argument_module_is_not_named_as_binding_dispatch():
+def test_item_argument_module_is_not_named_as_binding_dispatch_rust():
     assert _item_arguments.__name__ == "azure.cosmos._helpers._item_arguments"
     assert Path(_item_arguments.__file__).name == "_item_arguments.py"
     assert not Path(_item_arguments.__file__).with_name("_item_dispatch.py").exists()
@@ -218,13 +218,13 @@ def test_item_argument_module_is_not_named_as_binding_dispatch():
         (ChangeFeedPageState, "encode_continuation_token", "bookmark"),
     ],
 )
-def test_helper_names_use_continuation_and_response_terms(module, current, retired):
+def test_helper_names_use_continuation_and_response_terms_rust(module, current, retired):
     assert callable(getattr(module, current))
     assert not hasattr(module, retired)
 
 
 @pytest.mark.parametrize("iterator_type", [_query_items.QueryPageIterator, AsyncQueryPageIterator])
-def test_query_iterator_exposes_last_delivered_continuation_not_pending_progress(iterator_type):
+def test_query_iterator_exposes_last_delivered_continuation_not_pending_progress_rust(iterator_type):
     config = SimpleNamespace(operation="query_items", decode=lambda token: token)
     iterator = iterator_type(config, CaseInsensitiveDict(), continuation_token="q1.saved")
     assert iterator.state.last_delivered_continuation_token == "q1.saved"
@@ -235,7 +235,7 @@ def test_query_iterator_exposes_last_delivered_continuation_not_pending_progress
     assert iterator.continuation_token == "q1.delivered"
 
 
-def test_response_header_accumulator_combines_charges_and_keeps_latest_headers():
+def test_response_header_accumulator_combines_charges_and_keeps_latest_headers_rust():
     headers = _read_items.ResponseHeaderAccumulator()
     headers({"x-ms-request-charge": "1.0", "x-ms-cosmos-sdk-diagnostics": "first", "etag": "old"}, None)
     headers({"x-ms-request-charge": "2.0", "x-ms-cosmos-sdk-diagnostics": "second", "etag": "new"}, None)
@@ -251,7 +251,7 @@ def test_response_header_accumulator_combines_charges_and_keeps_latest_headers()
         ("run_page_operation", PreparedPageRequest),
     ],
 )
-def test_sync_and_async_use_the_same_typed_builder(method, request_type):
+def test_sync_and_async_use_the_same_typed_builder_rust(method, request_type):
     """Both backends take a request builder of the same declared type, under one name.
 
     Single calls and paged ones each have their own request type, and both backends agree
@@ -269,7 +269,7 @@ def test_sync_and_async_use_the_same_typed_builder(method, request_type):
         assert "process_response" in inspect.signature(function).parameters
 
 
-def test_point_execution_is_direct_and_deadlines_belong_to_the_invocation():
+def test_point_execution_is_direct_and_deadlines_belong_to_the_invocation_rust():
     """There is one way to send a single request, and the time limit is not part of it.
 
     A separate method for items would be a second route to the same place, so it is
@@ -295,7 +295,7 @@ def test_point_execution_is_direct_and_deadlines_belong_to_the_invocation():
         assert "deadline" not in {field.name for field in fields(contract)}
 
 
-def test_retired_helpers_have_no_forwarding_modules():
+def test_retired_helpers_have_no_forwarding_modules_rust():
     """Ten replaced helper files are gone, and three that are still in use remain.
 
     Leaving a file behind that only points at the new one is the usual way a move gets
@@ -401,7 +401,7 @@ def point_request():
 @pytest.mark.parametrize(
     "init_delay,expires", [(0.75, False), (1.0, True), (2.0, True)]
 )
-def test_executor_converts_the_same_deadline_after_initialization(
+def test_executor_converts_the_same_deadline_after_initialization_rust(
     executor, paged, init_delay, expires
 ):
     """Time spent getting ready counts against the caller's limit, and is measured after.
@@ -439,7 +439,7 @@ def test_executor_converts_the_same_deadline_after_initialization(
     executor.handle.assert_called_once()
 
 
-def test_executor_rejects_none_before_acquiring_a_driver(executor):
+def test_executor_rejects_none_before_acquiring_a_driver_rust(executor):
     """Being handed nothing instead of a request fails before any driver is taken.
 
     Order is the whole point. Taking a driver commits process-wide settings, so doing it
@@ -452,7 +452,7 @@ def test_executor_rejects_none_before_acquiring_a_driver(executor):
     executor.binding.assert_not_called()
 
 
-def test_executor_enforces_its_response_postcondition(executor):
+def test_executor_enforces_its_response_postcondition_rust(executor):
     """A call that returns nothing at all is an internal error naming the operation.
 
     Sending and getting nothing back should be impossible, so it is reported as a fault
@@ -467,7 +467,7 @@ def test_executor_enforces_its_response_postcondition(executor):
 
 
 @pytest.mark.parametrize("deadline", [None, 101.0])
-def test_executor_maps_only_budgeted_native_timeouts(executor, deadline):
+def test_executor_maps_only_budgeted_native_timeouts_rust(executor, deadline):
     """A timeout is reported as the caller's timeout only when the caller set one.
 
     With a limit, the failure is presented as this SDK's timeout error, with the original
@@ -490,7 +490,7 @@ def test_executor_maps_only_budgeted_native_timeouts(executor, deadline):
         assert raised.value.__cause__ is error
 
 
-def test_no_response_write_still_returns_a_response_record(executor):
+def test_no_response_write_still_returns_a_response_record_rust(executor):
     """Asking not to get the item back still returns everything except the item.
 
     A caller who does not need the written item back can say so and save the service
@@ -514,7 +514,7 @@ def test_no_response_write_still_returns_a_response_record(executor):
     assert result.headers["etag"] == "written"
 
 
-def test_serializer_never_allocates_ids(monkeypatch):
+def test_serializer_never_allocates_ids_rust(monkeypatch):
     """Turning an item into bytes does not invent an identifier, and cannot be asked to.
 
     The function that would generate one is replaced with a trap, so this is proof rather
@@ -535,7 +535,7 @@ def test_serializer_never_allocates_ids(monkeypatch):
     generate.assert_not_called()
 
 
-def test_parser_does_not_mutate_owned_headers_or_accept_effects():
+def test_parser_does_not_mutate_owned_headers_or_accept_effects_rust():
     """Reading a reply leaves the reply alone and does nothing else.
 
     The headers belong to the reply and are not written into, not even to add diagnostic
@@ -570,7 +570,7 @@ def test_parser_does_not_mutate_owned_headers_or_accept_effects():
         (200, b"not JSON", json.JSONDecodeError),
     ],
 )
-def test_processor_publishes_headers_before_errors_without_hook(status, body, error):
+def test_processor_publishes_headers_before_errors_without_hook_rust(status, body, error):
     """Headers are recorded before a failure is raised, and the caller's hook is not run.
 
     Two failures: one the service reported, and one from a reply that is not readable at
@@ -590,7 +590,7 @@ def test_processor_publishes_headers_before_errors_without_hook(status, body, er
     hook.assert_not_called()
 
 
-def test_completion_checks_deadline_even_without_hook_and_has_no_read_alias(
+def test_completion_checks_deadline_even_without_hook_and_has_no_read_alias_rust(
     monkeypatch,
 ):
     """Finishing a call checks the time limit even when there is no hook to run.
@@ -613,7 +613,7 @@ def test_completion_checks_deadline_even_without_hook_and_has_no_read_alias(
     assert not hasattr(_item_prep, "complete_item_response")
 
 
-def test_patch_normalization_owns_mutation_and_validation_does_not():
+def test_patch_normalization_owns_mutation_and_validation_does_not_rust():
     """One step rearranges the caller's arguments; the next only looks.
 
     Sorting the arguments out turns the caller's write condition into the form used
@@ -650,7 +650,7 @@ ALL_PAGE_OPS = sorted(
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("uses_cursor", [False, True])
 @pytest.mark.parametrize("op", ALL_PAGE_OPS)
-def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
+def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode_rust(
     monkeypatch, caplog, async_mode, uses_cursor, op
 ):
     """Which Rust call serves a page is decided once, by the operation and whether it resumes.
@@ -742,7 +742,7 @@ def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
         cursor_factory.assert_not_called()
 
 
-def test_installed_native_cursor_exports_have_no_concept_aliases():
+def test_installed_native_cursor_exports_have_no_concept_aliases_rust():
     """The installed Rust module offers one way to fetch a page, under one set of names.
 
     One position tracker and one pair of fetching calls, each taking that tracker. The
@@ -770,7 +770,7 @@ def test_installed_native_cursor_exports_have_no_concept_aliases():
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_missing_cursor_export_is_a_rebuild_error_not_a_stateless_fallback(
+def test_missing_cursor_export_is_a_rebuild_error_not_a_stateless_fallback_rust(
     monkeypatch, async_mode
 ):
     """An out-of-date Rust module says so, rather than quietly serving pages another way.
@@ -811,14 +811,14 @@ def test_missing_cursor_export_is_a_rebuild_error_not_a_stateless_fallback(
     forbidden.assert_not_called()
 
 
-def test_query_execution_and_protocol_errors_are_not_page_preflight_errors():
+def test_query_execution_and_protocol_errors_are_not_page_preflight_errors_rust():
     assert not issubclass(UnsupportedQueryError, PagePreflightError)
     assert not issubclass(BindingProtocolError, PagePreflightError)
     from azure.core.exceptions import HttpResponseError
     assert not issubclass(BindingProtocolError, HttpResponseError)
 
 
-def test_native_observation_and_contract_exports_are_explicitly_private():
+def test_native_observation_and_contract_exports_are_explicitly_private_rust():
     native = pytest.importorskip("azure.cosmos._rust")
     for name in ("operation_count", "attempt_count", "retry_count", "fault_injection_rule_hit_count"):
         assert not hasattr(native, name)
@@ -833,7 +833,7 @@ def test_native_observation_and_contract_exports_are_explicitly_private():
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("method", sorted(set(OP_TO_BINDING_FUNCTION_NAME.values()) | set(STATELESS_PAGE_BINDING_FUNCTION_NAMES.values())))
-def test_native_entry_point_rejects_another_operations_request_before_work(method, async_mode):
+def test_native_entry_point_rejects_another_operations_request_before_work_rust(method, async_mode):
     native = pytest.importorskip("azure.cosmos._rust")
     request = PreparedRequest(
         op="not-the-called-operation",
@@ -848,7 +848,7 @@ def test_native_entry_point_rejects_another_operations_request_before_work(metho
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_handle_release_logs_do_not_disclose_handle_or_native_exception(monkeypatch, caplog, async_mode):
+def test_handle_release_logs_do_not_disclose_handle_or_native_exception_rust(monkeypatch, caplog, async_mode):
     handle = "https://sensitive.invalid/credential-fingerprint"
     module = async_rust if async_mode else sync_rust
     monkeypatch.setattr(
@@ -870,7 +870,7 @@ def test_handle_release_logs_do_not_disclose_handle_or_native_exception(monkeypa
     assert all(record.exc_info is None for record in caplog.records)
 
 
-def test_native_handle_lookup_error_does_not_disclose_the_handle():
+def test_native_handle_lookup_error_does_not_disclose_the_handle_rust():
     native = pytest.importorskip("azure.cosmos._rust")
     handle = "https://sensitive.invalid/credential-fingerprint"
     request = PreparedRequest(

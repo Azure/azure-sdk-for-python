@@ -67,7 +67,7 @@ class TestPartitionKeyRangeCacheInitReentrant(unittest.TestCase):
         # Cycle: client.cycle_ref -> cache -> cache._document_client -> client
         client.cycle_ref = cache
 
-    def test_init_survives_reentrant_release_via_gc_during_lock_alloc(self):
+    def test_init_survives_reentrant_release_via_gc_during_lock_alloc_rust(self):
         """Constructor should not raise when GC re-enters ``release()``."""
         # Create an orphan in a cycle so GC owns finalization.
         self._make_orphan_in_cycle()
@@ -128,7 +128,7 @@ class TestPartitionKeyRangeCacheInitReentrant(unittest.TestCase):
             "refcount must be 1 (orphan released by GC, new cache added one)",
         )
 
-    def test_init_setdefault_never_clobbers_live_inner_dicts(self):
+    def test_init_setdefault_never_clobbers_live_inner_dicts_rust(self):
         """``setdefault`` init should preserve uncleared shared entries."""
         cache1 = PartitionKeyRangeCache(_MockClient(_ENDPOINT))
         original_inner = cache1._collection_routing_map_by_item

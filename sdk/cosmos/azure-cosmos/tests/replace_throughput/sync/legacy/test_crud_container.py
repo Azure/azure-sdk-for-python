@@ -29,8 +29,9 @@ catches value drift (wrong RU/s), this catches contract drift (wrong return type
 a change that doesn't take) by reusing checks the team already trusts.
 
 Self-contained: builds its own database + container in ``setUp`` and deletes them in
-``tearDown``. The class name and method names match the source so the two test IDs
-differ only by path. The container is created with dedicated throughput because
+``tearDown``. The class name and method names match the source (apart from the method's
+``_rust`` suffix) so the two test IDs
+differ by path and method suffix. The container is created with dedicated throughput because
 ``replace_throughput`` only has an offer to change when the container owns one.
 
 Run with::
@@ -82,7 +83,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
         finally:
             self.client.close()
 
-    def test_replace_throughput_offer_with_int(self):
+    def test_replace_throughput_offer_with_int_rust(self):
         """Throughput can be changed by passing a plain number.
 
         The container starts at 400 request units and is moved to 2500 by
@@ -100,7 +101,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
         retrieve_throughput = collection.get_throughput()
         assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
 
-    def test_replace_throughput_offer_with_object(self):
+    def test_replace_throughput_offer_with_object_rust(self):
         """Throughput can be changed by passing a ``ThroughputProperties`` object.
 
         The same move from 400 to 2500 request units, expressed as an object
@@ -119,7 +120,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
         retrieve_throughput = collection.get_throughput()
         assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
 
-    def test_negative_replace_throughput_with_all_configs_set(self):
+    def test_negative_replace_throughput_with_all_configs_set_rust(self):
         """Mixing fixed and autoscale settings is refused before anything is sent.
 
         A ``ThroughputProperties`` carrying both a fixed throughput and

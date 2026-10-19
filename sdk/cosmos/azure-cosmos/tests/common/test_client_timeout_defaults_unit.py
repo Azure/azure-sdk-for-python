@@ -72,7 +72,7 @@ def clock(monkeypatch):
         ({"timeout": None, "request_options": {"timeout": 3}}, 1),
     ],
 )
-def test_default_override_and_next_call_reset(case, clock, options, expected):
+def test_default_override_and_next_call_reset_rust(case, clock, options, expected):
     original = json.loads(json.dumps(options))
     dispatch = case.install("create_database", result=_response())
     _complete(case.client.create_database("sales", **options))
@@ -81,7 +81,7 @@ def test_default_override_and_next_call_reset(case, clock, options, expected):
     assert options == original
 
 
-def test_driver_setup_consumes_default_budget_before_dispatch(case, clock):
+def test_driver_setup_consumes_default_budget_before_dispatch_rust(case, clock):
     def setup():
         clock[0] += 1.25
         return "test-driver"
@@ -94,7 +94,7 @@ def test_driver_setup_consumes_default_budget_before_dispatch(case, clock):
 
 
 @pytest.mark.parametrize("conflict", [False, True])
-def test_get_or_create_shares_default_across_read_create_and_recovery(case, clock, conflict):
+def test_get_or_create_shares_default_across_read_create_and_recovery_rust(case, clock, conflict):
     calls = []
 
     def read(*args, **kwargs):
@@ -114,7 +114,7 @@ def test_get_or_create_shares_default_across_read_create_and_recovery(case, cloc
     assert calls == [("read", 1), ("create", 0.75)] + ([("read", 0.5)] if conflict else [])
 
 
-def test_get_or_create_does_not_reset_default_after_not_found(case, clock):
+def test_get_or_create_does_not_reset_default_after_not_found_rust(case, clock):
     calls = []
 
     def dispatch(status, **kwargs):
@@ -129,7 +129,7 @@ def test_get_or_create_does_not_reset_default_after_not_found(case, clock):
     assert calls == [1, 0.25]
 
 
-def test_native_default_expiration_uses_public_exception(case):
+def test_native_default_expiration_uses_public_exception_rust(case):
     failure = TimeoutError("native operation deadline")
     case.install("create_database", side_effect=failure)
     with pytest.raises(CosmosClientTimeoutError) as caught:
@@ -137,7 +137,7 @@ def test_native_default_expiration_uses_public_exception(case):
     assert caught.value.__cause__ is failure
 
 
-def test_response_hook_timeout_is_not_reclassified(case):
+def test_response_hook_timeout_is_not_reclassified_rust(case):
     failure = TimeoutError("customer callback")
     hook = MagicMock(side_effect=failure)
     case.install("create_database", result=_response())
@@ -147,7 +147,7 @@ def test_response_hook_timeout_is_not_reclassified(case):
     hook.assert_called_once()
 
 
-def test_metadata_default_covers_setup_and_converts_native_expiration(case, clock):
+def test_metadata_default_covers_setup_and_converts_native_expiration_rust(case, clock):
     failure = TimeoutError("metadata deadline")
     dispatch = case.install("get_container_metadata", side_effect=failure)
     with pytest.raises(CosmosClientTimeoutError) as caught:
@@ -157,7 +157,7 @@ def test_metadata_default_covers_setup_and_converts_native_expiration(case, cloc
 
 
 @pytest.mark.parametrize("operation", ["create", "read", "upsert", "replace", "patch", "delete"])
-def test_item_operations_inherit_client_default(case, clock, operation):
+def test_item_operations_inherit_client_default_rust(case, clock, operation):
     body = {"id": "order-42", "customerId": "customer-17"}
     case.install("get_container_metadata", result=("orders-rid", ("/customerId",), "Hash", False))
     dispatch = case.install(operation + "_item", result=_response(200, body=body))
@@ -181,7 +181,7 @@ def test_item_operations_inherit_client_default(case, clock, operation):
     "options,expected",
     [({}, 1), ({"timeout": 3}, 3), ({"feed_options": {"timeout": 2}}, 2)],
 )
-def test_each_page_gets_fresh_default_after_application_delay(case, clock, options, expected):
+def test_each_page_gets_fresh_default_after_application_delay_rust(case, clock, options, expected):
     budgets = []
 
     def fetch(*args, **kwargs):
@@ -211,7 +211,7 @@ def test_each_page_gets_fresh_default_after_application_delay(case, clock, optio
     assert options == original
 
 
-def test_page_default_expiration_uses_public_exception(case):
+def test_page_default_expiration_uses_public_exception_rust(case):
     failure = TimeoutError("native page deadline")
     name = get_page_binding_function_name("list_databases", uses_cursor=False)
     case.install(name, side_effect=failure)
@@ -226,7 +226,7 @@ def test_page_default_expiration_uses_public_exception(case):
 
 @pytest.mark.parametrize("resource", ["database", "container"])
 @pytest.mark.parametrize("operation", ["get", "replace"])
-def test_default_does_not_become_unsupported_explicit_throughput_option(case, monkeypatch, resource, operation):
+def test_default_does_not_become_unsupported_explicit_throughput_option_rust(case, monkeypatch, resource, operation):
     database = case.client.get_database_client("sales")
     if resource == "container":
         if case.asynchronous:
@@ -250,7 +250,7 @@ def test_default_does_not_become_unsupported_explicit_throughput_option(case, mo
     assert case.client._adapter._client_config.operation_timeout_seconds == 1
 
 
-def test_async_cancellation_remains_cancellation(monkeypatch):
+def test_async_cancellation_remains_cancellation_rust(monkeypatch):
     async def run():
         client = AsyncCosmosClient(
             "https://alpha-bank.documents.azure.com", "key", timeout=1, _backend="rust"
@@ -282,7 +282,7 @@ def test_async_cancellation_remains_cancellation(monkeypatch):
     asyncio.run(run())
 
 
-def test_async_default_expires_while_waiting_for_driver_setup(monkeypatch):
+def test_async_default_expires_while_waiting_for_driver_setup_rust(monkeypatch):
     async def run():
         client = AsyncCosmosClient(
             "https://alpha-bank.documents.azure.com", "key", timeout=1, _backend="rust"

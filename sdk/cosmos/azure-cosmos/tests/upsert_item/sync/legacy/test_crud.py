@@ -21,7 +21,7 @@ class TestCRUDOperations(unittest.TestCase):
         self.configs = SimpleNamespace(TEST_MULTI_PARTITION_CONTAINER_ID="orders")
         self.databaseForTest.create_container(id="orders", partition_key=PartitionKey(path="/pk"))
 
-    def test_document_upsert(self):
+    def test_document_upsert_rust(self):
         # Source: tests/test_crud.py::TestCRUDOperations.test_document_upsert
         created_db = self.databaseForTest
         created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)

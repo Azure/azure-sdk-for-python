@@ -73,22 +73,22 @@ class TestStatusToExceptionMapping(unittest.TestCase):
     finer-grained discrimination.
     """
 
-    def test_409_maps_to_resource_exists(self):
+    def test_409_maps_to_resource_exists_rust(self):
         """409 → ``CosmosResourceExistsError`` (the duplicate-id contract customers ``except`` on)."""
         exc = map_backend_response_to_exception(_make_response(status_code=409))
         self.assertIsInstance(exc, CosmosResourceExistsError)
 
-    def test_404_maps_to_resource_not_found(self):
+    def test_404_maps_to_resource_not_found_rust(self):
         """404 → ``CosmosResourceNotFoundError``."""
         exc = map_backend_response_to_exception(_make_response(status_code=404))
         self.assertIsInstance(exc, CosmosResourceNotFoundError)
 
-    def test_412_maps_to_access_condition_failed(self):
+    def test_412_maps_to_access_condition_failed_rust(self):
         """412 → ``CosmosAccessConditionFailedError`` (etag / If-Match precondition)."""
         exc = map_backend_response_to_exception(_make_response(status_code=412))
         self.assertIsInstance(exc, CosmosAccessConditionFailedError)
 
-    def test_429_falls_back_to_base_class(self):
+    def test_429_falls_back_to_base_class_rust(self):
         """429 has no dedicated subclass today; it must be the base ``CosmosHttpResponseError``.
 
         If someone later adds a ``CosmosThrottlingError`` subclass,
@@ -101,7 +101,7 @@ class TestStatusToExceptionMapping(unittest.TestCase):
         self.assertNotIsInstance(exc, CosmosResourceExistsError)
         self.assertNotIsInstance(exc, CosmosResourceNotFoundError)
 
-    def test_500_falls_back_to_base_class(self):
+    def test_500_falls_back_to_base_class_rust(self):
         """500 (and any other unmapped status) → base ``CosmosHttpResponseError``."""
         exc = map_backend_response_to_exception(_make_response(status_code=500))
         self.assertIsInstance(exc, CosmosHttpResponseError)
@@ -118,12 +118,12 @@ class TestExceptionMetadataIsCopiedAcross(unittest.TestCase):
     surfaces an indistinguishable exception object.
     """
 
-    def test_status_code_is_propagated(self):
+    def test_status_code_is_propagated_rust(self):
         """``BackendResponse.status_code`` → ``exc.status_code``."""
         exc = map_backend_response_to_exception(_make_response(status_code=409))
         self.assertEqual(exc.status_code, 409)
 
-    def test_sub_status_from_typed_field_is_propagated(self):
+    def test_sub_status_from_typed_field_is_propagated_rust(self):
         """``BackendResponse.sub_status`` is honoured even when the headers map omits it.
 
         The Rust path fills the typed ``sub_status`` field directly
@@ -135,7 +135,7 @@ class TestExceptionMetadataIsCopiedAcross(unittest.TestCase):
         )
         self.assertEqual(exc.sub_status, 3200)
 
-    def test_response_adapter_exposes_status_code_and_headers(self):
+    def test_response_adapter_exposes_status_code_and_headers_rust(self):
         """``e.response.status_code`` and ``e.response.headers`` mirror the underlying response."""
         exc = map_backend_response_to_exception(
             _make_response(status_code=409, headers={"x-ms-x": "1"})
@@ -143,21 +143,21 @@ class TestExceptionMetadataIsCopiedAcross(unittest.TestCase):
         self.assertEqual(exc.response.status_code, 409)
         self.assertEqual(exc.response.headers["x-ms-x"], "1")
 
-    def test_response_adapter_text_decodes_body_as_utf8(self):
+    def test_response_adapter_text_decodes_body_as_utf8_rust(self):
         """``e.response.text()`` returns the body decoded as UTF-8 (the documented surface)."""
         exc = map_backend_response_to_exception(
             _make_response(status_code=400, body=b'{"message":"bad"}')
         )
         self.assertEqual(exc.response.text(), '{"message":"bad"}')
 
-    def test_response_adapter_body_returns_raw_bytes(self):
+    def test_response_adapter_body_returns_raw_bytes_rust(self):
         """``e.response.body()`` returns the raw bytes, undecoded."""
         exc = map_backend_response_to_exception(
             _make_response(status_code=400, body=b"raw")
         )
         self.assertEqual(exc.response.body(), b"raw")
 
-    def test_message_is_used_in_exception_text(self):
+    def test_message_is_used_in_exception_text_rust(self):
         """A ``message=`` argument shows up in ``str(exc)`` (used by logs and tracebacks)."""
         exc = map_backend_response_to_exception(
             _make_response(status_code=409),
@@ -177,7 +177,7 @@ class TestExtractMessageFromBody(unittest.TestCase):
     the underlying error.
     """
 
-    def test_json_body_with_message_field_returned(self):
+    def test_json_body_with_message_field_returned_rust(self):
         """Lower-case ``message`` field is extracted."""
         body = b'{"code":"Conflict","message":"Resource with specified id ..."}'
         self.assertEqual(
@@ -185,26 +185,26 @@ class TestExtractMessageFromBody(unittest.TestCase):
             "Resource with specified id ...",
         )
 
-    def test_json_body_with_capital_message_field_returned(self):
+    def test_json_body_with_capital_message_field_returned_rust(self):
         """Upper-case ``Message`` field is also extracted (older service variant)."""
         body = b'{"code":"Conflict","Message":"capital M variant"}'
         self.assertEqual(extract_message_from_body(body), "capital M variant")
 
-    def test_empty_body_returns_empty_string(self):
+    def test_empty_body_returns_empty_string_rust(self):
         """Empty body → empty string (no synthetic placeholder)."""
         self.assertEqual(extract_message_from_body(b""), "")
 
-    def test_non_json_body_falls_back_to_utf8_decoded_string(self):
+    def test_non_json_body_falls_back_to_utf8_decoded_string_rust(self):
         """A non-JSON body is returned as its UTF-8 decoded string."""
         self.assertEqual(extract_message_from_body(b"not json"), "not json")
 
-    def test_invalid_utf8_body_returns_repr(self):
+    def test_invalid_utf8_body_returns_repr_rust(self):
         """An undecodable body still produces a non-empty string and never raises."""
         result = extract_message_from_body(b"\xff\xfe invalid utf8")
         self.assertIsInstance(result, str)
         self.assertGreater(len(result), 0)
 
-    def test_json_body_without_message_field_falls_back_to_decoded_string(self):
+    def test_json_body_without_message_field_falls_back_to_decoded_string_rust(self):
         """JSON body with no ``message`` / ``Message`` field → the raw decoded body."""
         body = b'{"code":"Conflict"}'
         self.assertEqual(extract_message_from_body(body), '{"code":"Conflict"}')
@@ -218,27 +218,27 @@ class TestIsSuccessStatus(unittest.TestCase):
     Cosmos operations don't use it as a normal-path response.
     """
 
-    def test_200_is_success(self):
+    def test_200_is_success_rust(self):
         """200 OK → success."""
         self.assertTrue(is_success_status(200))
 
-    def test_204_is_success(self):
+    def test_204_is_success_rust(self):
         """204 No Content → success (this is what the ``no_response=True`` path returns)."""
         self.assertTrue(is_success_status(204))
 
-    def test_299_is_success(self):
+    def test_299_is_success_rust(self):
         """The whole 2xx range is success, including the upper edge."""
         self.assertTrue(is_success_status(299))
 
-    def test_300_is_not_success(self):
+    def test_300_is_not_success_rust(self):
         """3xx is not treated as success (Cosmos doesn't use redirects on the data plane)."""
         self.assertFalse(is_success_status(300))
 
-    def test_404_is_not_success(self):
+    def test_404_is_not_success_rust(self):
         """404 Not Found → failure."""
         self.assertFalse(is_success_status(404))
 
-    def test_500_is_not_success(self):
+    def test_500_is_not_success_rust(self):
         """500 Internal Server Error → failure."""
         self.assertFalse(is_success_status(500))
 
@@ -255,18 +255,18 @@ class TestResponseAdapterDirectly(unittest.TestCase):
     error inside the customer's handler.
     """
 
-    def test_adapter_status_code_matches_inner_response(self):
+    def test_adapter_status_code_matches_inner_response_rust(self):
         """``adapter.status_code`` mirrors the inner ``BackendResponse.status_code``."""
         adapter = _ResponseAdapter(_make_response(status_code=200))
         self.assertEqual(adapter.status_code, 200)
 
-    def test_adapter_headers_default_to_empty_dict_when_none(self):
+    def test_adapter_headers_default_to_empty_dict_when_none_rust(self):
         """A response with no headers still exposes a usable headers mapping (no ``AttributeError``)."""
         empty = BackendResponse(status_code=409)
         adapter = _ResponseAdapter(empty)
         self.assertEqual(dict(adapter.headers), {})
 
-    def test_adapter_text_falls_back_on_invalid_utf8_bytes(self):
+    def test_adapter_text_falls_back_on_invalid_utf8_bytes_rust(self):
         """``text()`` on invalid UTF-8 bytes returns a string (replacement chars), never raises.
 
         If this method raised inside a customer's
@@ -281,13 +281,13 @@ class TestResponseAdapterDirectly(unittest.TestCase):
         # The decodable substring round-trips so the body isn't lost entirely.
         self.assertIn("not valid utf-8", text)
 
-    def test_adapter_text_falls_back_on_invalid_encoding_name(self):
+    def test_adapter_text_falls_back_on_invalid_encoding_name_rust(self):
         """An unknown ``encoding=`` name still returns a string instead of raising."""
         adapter = _ResponseAdapter(BackendResponse(status_code=500, body=b"hello"))
         text = adapter.text(encoding="not-a-real-encoding")
         self.assertIsInstance(text, str)
 
-    def test_adapter_text_returns_empty_string_when_body_is_empty(self):
+    def test_adapter_text_returns_empty_string_when_body_is_empty_rust(self):
         """Empty body → empty string from ``text()``."""
         adapter = _ResponseAdapter(BackendResponse(status_code=204))
         self.assertEqual(adapter.text(), "")

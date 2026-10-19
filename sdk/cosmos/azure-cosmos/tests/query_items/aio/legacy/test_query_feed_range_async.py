@@ -49,7 +49,7 @@ class TestQueryFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.delete_database(self.database_id)
         print(f"Deleted owned async SUM database: {self.database_id}")
 
-    async def test_query_value_min_across_full_feed_range_returns_scalar_async(self):
+    async def test_query_value_min_across_full_feed_range_returns_scalar_async_rust(self):
         """MIN over a multi-partition feed_range should return one value (the smallest)."""
         # Source: tests/test_query_feed_range_async.py::TestQueryFeedRangeAsync.test_query_value_min_across_full_feed_range_returns_scalar_async
         container = self.container
@@ -77,7 +77,7 @@ class TestQueryFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
         )
         assert items[0] == 100
 
-    async def test_query_value_sum_across_full_feed_range_still_sums_async(self):
+    async def test_query_value_sum_across_full_feed_range_still_sums_async_rust(self):
         """SUM should still add per-partition totals together."""
         # Source: tests/test_query_feed_range_async.py::TestQueryFeedRangeAsync.test_query_value_sum_across_full_feed_range_still_sums_async
         container = self.container
@@ -105,7 +105,7 @@ class TestQueryFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
         )
         assert items[0] == 100 * len(PK_VALUES)
 
-    async def test_query_with_avg_aggregate_single_partition_feed_range_succeeds_async(self):
+    async def test_query_with_avg_aggregate_single_partition_feed_range_succeeds_async_rust(self):
         """AVG scoped to a single-partition feed_range must still succeed."""
         # Source: tests/test_query_feed_range_async.py::TestQueryFeedRangeAsync.test_query_with_avg_aggregate_single_partition_feed_range_succeeds_async
         container = self.container

@@ -5,7 +5,8 @@
 
 Self-contained: builds its own database + container in ``setUp`` and
 deletes them in ``tearDown``. The class name and method name match the
-source at ``tests/test_crud.py`` so test IDs differ only by path.
+source (apart from the method's ``_rust`` suffix) at ``tests/test_crud.py`` so test IDs
+differ by path and method suffix.
 
 Run with::
 
@@ -46,7 +47,7 @@ class TestCRUDOperations(unittest.TestCase):
         except Exception:  # pylint: disable=broad-except
             pass
 
-    def test_query_iterable_functionality(self):
+    def test_query_iterable_functionality_rust(self):
         """Enumerating a whole container works item by item and page by page.
 
         Three items are created, then read back three ways with a page size of

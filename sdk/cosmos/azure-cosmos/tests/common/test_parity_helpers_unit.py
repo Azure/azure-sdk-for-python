@@ -18,7 +18,7 @@ from common import _parity_helpers
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
-def test_header_pushback_references_match_reviewed_contract():
+def test_header_pushback_references_match_reviewed_contract_rust():
     """Pin report references in tracked code, not an ignored local document."""
     expected_headers = {
         "date", "server", "content-type", "content-length", "content-location",
@@ -35,7 +35,7 @@ def test_header_pushback_references_match_reviewed_contract():
     "header",
     sorted(_parity_helpers.BackendComparison._HEADER_TO_PUSHBACK),
 )
-def test_header_verdict_references_current_pushbacks(header):
+def test_header_verdict_references_current_pushbacks_rust(header):
     core = _parity_helpers.CallOutcome(backend="core-python", return_value={}, response_headers={header: "value"})
     rust = _parity_helpers.CallOutcome(backend="rust", return_value={}, response_headers={})
     comparison = _parity_helpers.BackendComparison(
@@ -47,7 +47,7 @@ def test_header_verdict_references_current_pushbacks(header):
 
 @pytest.mark.parametrize("name", ["x-ms-cosmos-sdk-diagnostics", "X-MS-COSMOS-SDK-DIAGNOSTICS"])
 @pytest.mark.parametrize("raised", [False, True])
-def test_rust_diagnostics_are_reported_as_an_accepted_addition(name, raised):
+def test_rust_diagnostics_are_reported_as_an_accepted_addition_rust(name, raised):
     error = ValueError("bad request") if raised else None
     core = _parity_helpers.CallOutcome(backend="core-python", response_headers={}, raised=error)
     rust = _parity_helpers.CallOutcome(
@@ -66,7 +66,7 @@ def test_rust_diagnostics_are_reported_as_an_accepted_addition(name, raised):
 
 
 @pytest.mark.parametrize("value", ["", " ", None])
-def test_empty_rust_diagnostics_are_not_exempted(value):
+def test_empty_rust_diagnostics_are_not_exempted_rust(value):
     core = _parity_helpers.CallOutcome(backend="core-python", response_headers={})
     rust = _parity_helpers.CallOutcome(
         backend="rust", response_headers={"x-ms-cosmos-sdk-diagnostics": value}
@@ -74,7 +74,7 @@ def test_empty_rust_diagnostics_are_not_exempted(value):
     assert _parity_helpers.diff_outcomes(core, rust)
 
 
-def test_accepted_diagnostics_do_not_hide_missing_service_headers():
+def test_accepted_diagnostics_do_not_hide_missing_service_headers_rust():
     core = _parity_helpers.CallOutcome(backend="core-python", response_headers={"content-type": "application/json"})
     rust = _parity_helpers.CallOutcome(
         backend="rust", response_headers={"x-ms-cosmos-sdk-diagnostics": "activity=abc"}
@@ -83,7 +83,7 @@ def test_accepted_diagnostics_do_not_hide_missing_service_headers():
     assert diffs == ["headers only on core-python: ['content-type']"]
 
 
-def test_rust_missing_diagnostics_are_not_exempted_if_core_exposes_them():
+def test_rust_missing_diagnostics_are_not_exempted_if_core_exposes_them_rust():
     core = _parity_helpers.CallOutcome(
         backend="core-python", response_headers={"x-ms-cosmos-sdk-diagnostics": "activity=abc"}
     )
@@ -101,7 +101,7 @@ def test_rust_missing_diagnostics_are_not_exempted_if_core_exposes_them():
         "x-ms-unrecognized-test-header",
     ],
 )
-def test_unrecorded_headers_remain_visible_without_claiming_a_known_defect(header):
+def test_unrecorded_headers_remain_visible_without_claiming_a_known_defect_rust(header):
     core = _parity_helpers.CallOutcome(backend="core-python", return_value={}, response_headers={header: "1"})
     rust = _parity_helpers.CallOutcome(backend="rust", return_value={}, response_headers={})
     comparison = _parity_helpers.BackendComparison(
@@ -126,7 +126,7 @@ def _without_docstrings(method):
 
 
 @pytest.mark.parametrize("prefix", ["", "async "])
-def test_executable_comparison_ignores_only_docstrings(prefix):
+def test_executable_comparison_ignores_only_docstrings_rust(prefix):
     source = (
         f"{prefix}def check(self):\n"
         '    """Original explanation."""\n'
@@ -157,7 +157,7 @@ def test_executable_comparison_ignores_only_docstrings(prefix):
         ("check(self)", "check(self, extra)"),
     ],
 )
-def test_executable_comparison_preserves_logic_changes(prefix, before, after):
+def test_executable_comparison_preserves_logic_changes_rust(prefix, before, after):
     source = (
         f"@marker\n{prefix}def check(self):\n"
         '    """Explanation."""\n'
@@ -174,7 +174,7 @@ def test_executable_comparison_preserves_logic_changes(prefix, before, after):
 
 
 @pytest.mark.parametrize("surface", ["sync", "aio"])
-def test_get_or_create_legacy_copies_preserve_preconditions_and_assertions(surface):
+def test_get_or_create_legacy_copies_preserve_preconditions_and_assertions_rust(surface):
     root = pathlib.Path(__file__).resolve().parents[1]
     suffix = "_async" if surface == "aio" else ""
     original = ast.parse((root / f"test_cosmos_responses{suffix}.py").read_text(encoding="utf-8"))
@@ -190,10 +190,11 @@ def test_get_or_create_legacy_copies_preserve_preconditions_and_assertions(surfa
         )
         copied_method = next(
             n for n in ast.walk(copied)
-            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == name
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == name + "_rust"
         )
         original_method = _without_docstrings(original_method)
         copied_method = _without_docstrings(copied_method)
+        copied_method.name = name
         assert ast.dump(original_method) == ast.dump(copied_method)
         if "negative" in stem:
             setup_calls = [
@@ -234,7 +235,7 @@ class _BindingAdapter:
         "wrong_backend", "close_error", "assertion_and_close_error", "capture_error",
     ]
 )
-def test_runner_closes_owned_clients(surface, scenario, monkeypatch):
+def test_runner_closes_owned_clients_rust(surface, scenario, monkeypatch):
     clients = []
     calls = []
     failure = {
@@ -320,7 +321,7 @@ def test_runner_closes_owned_clients(surface, scenario, monkeypatch):
 @pytest.mark.parametrize("surface", ["sync", "aio"])
 @pytest.mark.parametrize("failing_backend", ["core-python", "rust", "both"])
 @pytest.mark.parametrize("error_type", [AssertionError, ValueError])
-def test_runner_distinguishes_assertions_from_operation_errors(
+def test_runner_distinguishes_assertions_from_operation_errors_rust(
     surface, failing_backend, error_type, monkeypatch
 ):
     """A test assertion is not an SDK error that can satisfy parity."""
@@ -372,7 +373,7 @@ def test_runner_distinguishes_assertions_from_operation_errors(
 
 @pytest.mark.parametrize("surface", ["sync", "aio"])
 @pytest.mark.parametrize("source", ["headers", "empty_headers", "response", "empty_response", "local"])
-def test_runner_captures_failed_response_not_client_state(surface, source, monkeypatch):
+def test_runner_captures_failed_response_not_client_state_rust(surface, source, monkeypatch):
     errors = []
     expected = {"x-ms-activity-id": "failed-request"} if source in ("headers", "response") else {}
 
@@ -432,7 +433,7 @@ def test_runner_rejects_factory_that_returns_core_python_for_rust():
         )
 
 
-def test_runner_accepts_clients_with_the_requested_backends():
+def test_runner_accepts_clients_with_the_requested_backends_rust():
     """The backend identity check accepts one real label per column."""
 
     def factory(requested):
@@ -446,7 +447,7 @@ def test_runner_accepts_clients_with_the_requested_backends():
     assert comparison.is_parity
 
 
-def test_runner_does_not_swallow_process_control_exceptions():
+def test_runner_does_not_swallow_process_control_exceptions_rust():
     """KeyboardInterrupt and similar BaseException signals must escape."""
 
     def call(_client):
@@ -461,7 +462,7 @@ def test_runner_does_not_swallow_process_control_exceptions():
         )
 
 
-def test_exception_normalization_keeps_semantic_words_and_numbers():
+def test_exception_normalization_keeps_semantic_words_and_numbers_rust():
     """Ordinary error details must not be scrubbed as if they were diagnostics."""
 
     first = ValueError("Invalid partition key value 4")
@@ -473,7 +474,7 @@ def test_exception_normalization_keeps_semantic_words_and_numbers():
     )
 
 
-def test_exception_normalization_scrubs_service_replica_ids():
+def test_exception_normalization_scrubs_service_replica_ids_rust():
     """Different responding replicas do not change the customer error contract."""
     first = ValueError("Request URI: /partitions/abc/replicas/134135831941489642s")
     second = ValueError("Request URI: /partitions/abc/replicas/134203270553494317s")
@@ -484,7 +485,7 @@ def test_exception_normalization_scrubs_service_replica_ids():
     )
 
 
-def test_exception_assertion_checks_normalized_message():
+def test_exception_assertion_checks_normalized_message_rust():
     """Typed exceptions with different meanings must not pass parity."""
     comparison = _parity_helpers.BackendComparison(
         core_python=_parity_helpers.CallOutcome(
@@ -499,7 +500,7 @@ def test_exception_assertion_checks_normalized_message():
         comparison.assert_exception_parity()
 
 
-def test_target_operation_requires_binding_counter_movement(monkeypatch):
+def test_target_operation_requires_binding_counter_movement_rust(monkeypatch):
     """Setup Rust calls cannot stand in for the target operation."""
     counts = iter((10, 10))
     monkeypatch.setattr(
@@ -512,7 +513,7 @@ def test_target_operation_requires_binding_counter_movement(monkeypatch):
         )
 
 
-def test_target_operation_can_assert_intentional_fallback(monkeypatch):
+def test_target_operation_can_assert_intentional_fallback_rust(monkeypatch):
     """Fallback tests explicitly require that the target did not enter Rust."""
     counts = iter((10, 10))
     monkeypatch.setattr(
@@ -526,7 +527,7 @@ def test_target_operation_can_assert_intentional_fallback(monkeypatch):
     assert result == {"value": 1}
 
 
-def test_error_response_headers_are_compared():
+def test_error_response_headers_are_compared_rust():
     """Matching exceptions with different customer-visible headers are not parity."""
     core = _parity_helpers.CallOutcome(
         backend="core-python",
@@ -544,7 +545,7 @@ def test_error_response_headers_are_compared():
     assert any(diff.startswith("header x-ms-custom:") for diff in diffs)
 
 
-def test_functional_exception_parity_allows_header_surface_gap():
+def test_functional_exception_parity_allows_header_surface_gap_rust():
     """Known header gaps do not hide a matching typed exception contract."""
     core = _parity_helpers.CallOutcome(
         backend="core-python",
@@ -569,7 +570,7 @@ def test_functional_exception_parity_allows_header_surface_gap():
     assert "operation successfully" not in verdict
 
 
-def test_exception_message_suffix_is_not_truncated():
+def test_exception_message_suffix_is_not_truncated_rust():
     """Semantic differences after 240 characters must remain visible."""
     prefix = "x" * 300
     first = ValueError(prefix + " alpha")

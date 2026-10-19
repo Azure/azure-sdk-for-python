@@ -17,8 +17,9 @@ This is NOT the side-by-side parity comparison; that lives in
 Rust only and reuses checks the team already trusts.
 
 Self-contained: builds its own database + container in ``asyncSetUp`` and deletes
-them in ``asyncTearDown``. The class name and method names match the source so the
-two test IDs differ only by path. The container is created with dedicated throughput
+them in ``asyncTearDown``. The class name and method names match the source (apart from
+the method's ``_rust`` suffix) so the
+two test IDs differ by path and method suffix. The container is created with dedicated throughput
 because ``replace_throughput`` only has an offer to change when the container owns
 one.
 
@@ -72,7 +73,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.client.close()
 
-    async def test_replace_throughput_offer_with_int(self):
+    async def test_replace_throughput_offer_with_int_rust(self):
         """Throughput can be changed by passing a plain number.
 
         The container starts at 400 request units and is moved to 2500 by
@@ -90,7 +91,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         retrieve_throughput = await collection.get_throughput()
         assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
 
-    async def test_replace_throughput_offer_with_object(self):
+    async def test_replace_throughput_offer_with_object_rust(self):
         """Throughput can be changed by passing a ``ThroughputProperties`` object.
 
         The same move from 400 to 2500 request units, expressed as an object
@@ -109,7 +110,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         retrieve_throughput = await collection.get_throughput()
         assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
 
-    async def test_negative_replace_throughput_with_all_configs_set(self):
+    async def test_negative_replace_throughput_with_all_configs_set_rust(self):
         """Mixing fixed and autoscale settings is refused before anything is sent.
 
         A ``ThroughputProperties`` carrying both a fixed throughput and

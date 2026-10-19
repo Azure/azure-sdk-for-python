@@ -35,7 +35,7 @@ ASYNC_URL = "https://close-async.documents.azure.com"
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_finalizer_offloads_credential_shutdown_even_without_event_loop(async_mode):
+def test_finalizer_offloads_credential_shutdown_even_without_event_loop_rust(async_mode):
     from types import SimpleNamespace
     from azure.cosmos._backend.binding_adapter import BindingAdapter
 
@@ -66,7 +66,7 @@ def test_finalizer_offloads_credential_shutdown_even_without_event_loop(async_mo
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_finalizer_cleans_up_on_calling_thread_if_worker_start_fails(async_mode, monkeypatch, caplog):
+def test_finalizer_cleans_up_on_calling_thread_if_worker_start_fails_rust(async_mode, monkeypatch, caplog):
     from types import SimpleNamespace
     from azure.cosmos._backend import _binding_adapter_shared as shared
 
@@ -113,7 +113,7 @@ def test_finalizer_cleans_up_on_calling_thread_if_worker_start_fails(async_mode,
     ] == ["Could not start finalizer worker; cleaning up on the finalizing thread"]
 
 
-def test_async_initialization_pair_is_locked_across_event_loops(monkeypatch):
+def test_async_initialization_pair_is_locked_across_event_loops_rust(monkeypatch):
     from types import SimpleNamespace
 
     class CheckedBackend(async_rust_module.AsyncBindingAdapter):
@@ -159,7 +159,7 @@ def test_async_initialization_pair_is_locked_across_event_loops(monkeypatch):
     native.release_driver_handle.assert_called_once_with("cross-loop-handle")
 
 
-def test_cancelling_one_initialization_waiter_does_not_cancel_others(monkeypatch):
+def test_cancelling_one_initialization_waiter_does_not_cancel_others_rust(monkeypatch):
     from types import SimpleNamespace
 
     started, finish = threading.Event(), threading.Event()
@@ -255,7 +255,7 @@ def _record_async_backend_closes(monkeypatch, client):
     return calls
 
 
-def test_sync_close_releases_the_rust_backend(monkeypatch):
+def test_sync_close_releases_the_rust_backend_rust(monkeypatch):
     """``close()`` must reach the backend, not just the Python HTTP resources."""
     client = _make_sync_client(monkeypatch)
     calls = _record_backend_closes(monkeypatch, client)
@@ -265,7 +265,7 @@ def test_sync_close_releases_the_rust_backend(monkeypatch):
     assert calls == ["close"]
 
 
-def test_sync_context_manager_exit_releases_the_rust_backend(monkeypatch):
+def test_sync_context_manager_exit_releases_the_rust_backend_rust(monkeypatch):
     """Context-manager exit invokes the backend-close recorder once."""
     client = _make_sync_client(monkeypatch)
     calls = _record_backend_closes(monkeypatch, client)
@@ -276,7 +276,7 @@ def test_sync_context_manager_exit_releases_the_rust_backend(monkeypatch):
     assert calls == ["close"]
 
 
-def test_sync_close_is_safe_to_call_twice(monkeypatch):
+def test_sync_close_is_safe_to_call_twice_rust(monkeypatch):
     """Two public close calls invoke the replacement backend-close hook twice.
 
     The real backend's handle-release guard is not exercised by this recorder.
@@ -290,7 +290,7 @@ def test_sync_close_is_safe_to_call_twice(monkeypatch):
     assert calls == ["close", "close"]
 
 
-def test_sync_backend_close_failure_still_releases_the_routing_cache(monkeypatch):
+def test_sync_backend_close_failure_still_releases_the_routing_cache_rust(monkeypatch):
     """A failing backend close still reaches the mocked routing-cache release.
 
     The assertion checks that release was called, not the cache's refcount.
@@ -307,7 +307,7 @@ def test_sync_backend_close_failure_still_releases_the_routing_cache(monkeypatch
     assert client.client_connection._routing_map_provider.release.called
 
 
-def test_sync_transport_close_failure_still_releases_the_rust_backend(monkeypatch):
+def test_sync_transport_close_failure_still_releases_the_rust_backend_rust(monkeypatch):
     """A failing pipeline must not cancel the driver release that follows it.
 
     Transport shutdown runs before the backend release, so without the ``finally``
@@ -326,7 +326,7 @@ def test_sync_transport_close_failure_still_releases_the_rust_backend(monkeypatc
 
 
 @pytest.mark.asyncio
-async def test_async_close_releases_the_rust_backend(monkeypatch):
+async def test_async_close_releases_the_rust_backend_rust(monkeypatch):
     """Async ``close()`` must reach the backend owned by this client."""
     client = _make_async_client(monkeypatch)
     calls = _record_async_backend_closes(monkeypatch, client)
@@ -337,7 +337,7 @@ async def test_async_close_releases_the_rust_backend(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_async_context_manager_exit_releases_the_rust_backend(monkeypatch):
+async def test_async_context_manager_exit_releases_the_rust_backend_rust(monkeypatch):
     """Async context-manager exit awaits the backend-close recorder."""
     client = _make_async_client(monkeypatch)
     calls = _record_async_backend_closes(monkeypatch, client)
@@ -349,7 +349,7 @@ async def test_async_context_manager_exit_releases_the_rust_backend(monkeypatch)
 
 
 @pytest.mark.asyncio
-async def test_async_close_awaits_a_coroutine_backend_close(monkeypatch):
+async def test_async_close_awaits_a_coroutine_backend_close_rust(monkeypatch):
     """The awaitable returned by the async backend must actually be awaited.
 
     Async backend close hands its blocking work to a thread and awaits it, so a
@@ -374,7 +374,7 @@ async def test_async_close_awaits_a_coroutine_backend_close(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_async_close_is_safe_to_call_twice(monkeypatch):
+async def test_async_close_is_safe_to_call_twice_rust(monkeypatch):
     """Closing an already-closed async client must not raise."""
     client = _make_async_client(monkeypatch)
     calls = _record_async_backend_closes(monkeypatch, client)
@@ -385,7 +385,7 @@ async def test_async_close_is_safe_to_call_twice(monkeypatch):
     assert calls == ["close", "close"]
 
 
-def test_sync_close_uses_the_backend_owned_by_the_client(monkeypatch):
+def test_sync_close_uses_the_backend_owned_by_the_client_rust(monkeypatch):
     """Closing finds the backend on the client itself, not through the legacy connection.
 
     The reference held by the legacy connection is removed first, and closing
@@ -406,7 +406,7 @@ def test_sync_close_uses_the_backend_owned_by_the_client(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_async_close_uses_the_backend_owned_by_the_client(monkeypatch):
+async def test_async_close_uses_the_backend_owned_by_the_client_rust(monkeypatch):
     """The async client also closes the backend it owns rather than one found through the
     legacy connection.
 
@@ -438,7 +438,7 @@ def _install_async_close_resources(monkeypatch, client):
 
 
 @pytest.mark.parametrize("resources", ["driver-and-bridge", "bridge-only", "unused"])
-def test_async_close_after_executor_shutdown_releases_resources(
+def test_async_close_after_executor_shutdown_releases_resources_rust(
     monkeypatch, caplog, resources
 ):
     """With no worker threads left to run cleanup on, the async client cleans up on its
@@ -488,7 +488,7 @@ def test_async_close_after_executor_shutdown_releases_resources(
 
 
 @pytest.mark.parametrize("cancel_first", [False, True])
-def test_repeated_async_close_waits_for_original_cleanup(monkeypatch, cancel_first):
+def test_repeated_async_close_waits_for_original_cleanup_rust(monkeypatch, cancel_first):
     """A second close waits for the cleanup already running instead of starting its own or
     returning early.
 
@@ -553,7 +553,7 @@ def test_repeated_async_close_waits_for_original_cleanup(monkeypatch, cancel_fir
 
 
 @pytest.mark.parametrize("cancel_first", [False, True], ids=["waiting", "cancelled"])
-def test_async_close_observes_late_cleanup_errors(monkeypatch, caplog, cancel_first):
+def test_async_close_observes_late_cleanup_errors_rust(monkeypatch, caplog, cancel_first):
     """Late errors remain observable without leaving an abandoned future warning."""
     client = _make_async_client(monkeypatch)
     binding, _ = _install_async_close_resources(monkeypatch, client)
@@ -640,7 +640,7 @@ def test_async_close_observes_late_cleanup_errors(monkeypatch, caplog, cancel_fi
 @pytest.mark.asyncio
 @pytest.mark.parametrize("phase", ["account-refresh", "transport", "backend"])
 @pytest.mark.parametrize("context_manager", [False, True])
-async def test_cancelled_async_close_releases_only_its_routing_cache_share(
+async def test_cancelled_async_close_releases_only_its_routing_cache_share_rust(
     monkeypatch, phase, context_manager
 ):
     from types import SimpleNamespace
@@ -685,7 +685,7 @@ async def test_cancelled_async_close_releases_only_its_routing_cache_share(
         other_cache.release()
 
 
-def test_async_backend_close_completion_is_shared_across_event_loops(monkeypatch):
+def test_async_backend_close_completion_is_shared_across_event_loops_rust(monkeypatch):
     """Two closes from two different event loops still produce one cleanup, and the second
     waits for the first.
 
@@ -734,7 +734,7 @@ def test_async_backend_close_completion_is_shared_across_event_loops(monkeypatch
     credential._close_cosmos_async_bridge.assert_called_once_with()
 
 
-def test_completed_async_close_does_not_schedule_more_work(monkeypatch):
+def test_completed_async_close_does_not_schedule_more_work_rust(monkeypatch):
     """A second close submits no executor work and repeats no native/bridge release."""
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
@@ -752,7 +752,7 @@ def test_completed_async_close_does_not_schedule_more_work(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_async_close_preserves_logged_native_and_bridge_errors(
+async def test_async_close_preserves_logged_native_and_bridge_errors_rust(
     monkeypatch, caplog
 ):
     """When releasing resources fails, closing still succeeds and both failures are
@@ -788,7 +788,7 @@ async def test_async_close_preserves_logged_native_and_bridge_errors(
 
 
 @pytest.mark.asyncio
-async def test_async_transport_error_still_reaches_caller_after_backend_cleanup(
+async def test_async_transport_error_still_reaches_caller_after_backend_cleanup_rust(
     monkeypatch,
 ):
     """A failure closing the transport does reach the caller, and the backend is still
@@ -822,7 +822,7 @@ async def test_async_transport_error_still_reaches_caller_after_backend_cleanup(
         (async_cosmos_client_module.CosmosClient, True),
     ],
 )
-def test_close_public_signature_is_unchanged(client_type, asynchronous):
+def test_close_public_signature_is_unchanged_rust(client_type, asynchronous):
     """Check close's parameter list, None return annotation, and coroutine status.
 
     This is introspection, not an assertion about a runtime return value.
@@ -834,7 +834,7 @@ def test_close_public_signature_is_unchanged(client_type, asynchronous):
 
 @pytest.mark.parametrize("asynchronous", [False, True])
 @pytest.mark.parametrize("option", ["timeout", "response_hook", "initial_headers"])
-def test_close_rejects_request_options_before_cleanup(monkeypatch, asynchronous, option):
+def test_close_rejects_request_options_before_cleanup_rust(monkeypatch, asynchronous, option):
     make_client = _make_async_client if asynchronous else _make_sync_client
     client = make_client(monkeypatch)
     try:
@@ -850,7 +850,7 @@ def test_close_rejects_request_options_before_cleanup(monkeypatch, asynchronous,
 
 
 @pytest.mark.asyncio
-async def test_async_close_does_not_start_until_awaited(monkeypatch):
+async def test_async_close_does_not_start_until_awaited_rust(monkeypatch):
     client = _make_async_client(monkeypatch)
     closing = client.close()
     try:
@@ -863,7 +863,7 @@ async def test_async_close_does_not_start_until_awaited(monkeypatch):
     assert client._adapter._closing
 
 
-def test_sync_close_preserves_stateless_legacy_backend(monkeypatch):
+def test_sync_close_preserves_stateless_legacy_backend_rust(monkeypatch):
     """A client using the legacy backend can be closed repeatedly, and the transport is
     closed each time.
 
@@ -886,7 +886,7 @@ def test_sync_close_preserves_stateless_legacy_backend(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_async_close_preserves_stateless_legacy_backend(monkeypatch):
+async def test_async_close_preserves_stateless_legacy_backend_rust(monkeypatch):
     """The async legacy backend behaves the same way: every close reaches the transport.
 
     Checked separately from the sync case because the two have separate closing
@@ -903,7 +903,7 @@ async def test_async_close_preserves_stateless_legacy_backend(monkeypatch):
 
 @pytest.mark.parametrize("has_handle", [False, True], ids=["unused", "acquired"])
 @pytest.mark.parametrize("public_close", [False, True], ids=["adapter", "client"])
-def test_sync_cleanup_still_releases_driver_if_credential_lookup_raises(
+def test_sync_cleanup_still_releases_driver_if_credential_lookup_raises_rust(
     monkeypatch, caplog, has_handle, public_close
 ):
     """A cleanup lookup failure must not strand a detached handle or be suppressed."""
@@ -943,7 +943,7 @@ def test_sync_cleanup_still_releases_driver_if_credential_lookup_raises(
 
 
 @pytest.mark.asyncio
-async def test_async_cleanup_still_releases_driver_if_bridge_helper_raises(
+async def test_async_cleanup_still_releases_driver_if_bridge_helper_raises_rust(
     monkeypatch, caplog
 ):
     """If the helper that is supposed to swallow credential cleanup errors raises anyway,
@@ -974,7 +974,7 @@ async def test_async_cleanup_still_releases_driver_if_bridge_helper_raises(
 
 
 @pytest.mark.asyncio
-async def test_closed_async_backend_does_not_schedule_initialization(monkeypatch):
+async def test_closed_async_backend_does_not_schedule_initialization_rust(monkeypatch):
     """A closed client refuses to start a driver rather than quietly building one.
 
     After closing, an operation is attempted and fails with a message saying the
@@ -998,7 +998,7 @@ async def test_closed_async_backend_does_not_schedule_initialization(monkeypatch
 
 
 @pytest.mark.asyncio
-async def test_cleanup_runs_once_if_executor_queues_work_then_raises(monkeypatch):
+async def test_cleanup_runs_once_if_executor_queues_work_then_raises_rust(monkeypatch):
     """A simulated submit failure after queuing does not cause duplicate cleanup.
 
     The fallback runs first; the saved job is then invoked manually. Both
@@ -1023,7 +1023,7 @@ async def test_cleanup_runs_once_if_executor_queues_work_then_raises(monkeypatch
 
 
 @pytest.mark.asyncio
-async def test_cleanup_waits_for_worker_if_submission_raises_after_work_starts(monkeypatch):
+async def test_cleanup_waits_for_worker_if_submission_raises_after_work_starts_rust(monkeypatch):
     """A running worker keeps cleanup ownership when submission subsequently raises."""
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
@@ -1086,7 +1086,7 @@ async def test_cleanup_waits_for_worker_if_submission_raises_after_work_starts(m
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("cancelled", [False, True])
-async def test_cleanup_survives_worker_failure_before_job_starts(
+async def test_cleanup_survives_worker_failure_before_job_starts_rust(
     monkeypatch, caplog, cancelled
 ):
     """If the worker never runs the cleanup, the client does it instead rather than
@@ -1121,7 +1121,7 @@ async def test_cleanup_survives_worker_failure_before_job_starts(
 
 
 @pytest.mark.parametrize("transport_fails", [False, True])
-def test_sync_context_manager_preserves_existing_error_precedence(
+def test_sync_context_manager_preserves_existing_error_precedence_rust(
     monkeypatch, transport_fails
 ):
     """When leaving a block fails in more than one way, which error the caller sees is
@@ -1158,7 +1158,7 @@ def test_sync_context_manager_preserves_existing_error_precedence(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport_fails", [False, True])
-async def test_async_context_manager_preserves_existing_error_precedence(
+async def test_async_context_manager_preserves_existing_error_precedence_rust(
     monkeypatch, transport_fails
 ):
     """The async block follows the same order of precedence as the sync one.

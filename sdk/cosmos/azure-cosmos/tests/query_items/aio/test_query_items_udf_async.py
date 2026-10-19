@@ -17,7 +17,7 @@ from query_items._udf_fixture import deployed_review_band
 @skip_unless_rust_binding()
 class TestQueryDeployedUdfAsync:
     @pytest.mark.parametrize("scope", ["partition", "cross-partition"])
-    async def test_query_items_invokes_deployed_udf_async(self, scope):
+    async def test_query_items_invokes_deployed_udf_async_rust(self, scope):
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         with deployed_review_band() as database_id:
             async with CosmosClient(

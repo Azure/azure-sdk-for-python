@@ -64,7 +64,7 @@ def finish(value):
 
 
 @pytest.mark.parametrize("timeout", [None, 2.0])
-def test_create_prepares_once_even_without_a_timeout(
+def test_create_prepares_once_even_without_a_timeout_rust(
     point_create, monkeypatch, timeout
 ):
     """Working out the deadline happens exactly once per call, with and without a timeout.
@@ -92,7 +92,7 @@ def test_create_prepares_once_even_without_a_timeout(
     "helper_type",
     [ItemHelper, AsyncItemHelper, LegacyItemHelper, AsyncLegacyItemHelper],
 )
-def test_create_helper_requires_an_explicit_optional_budget(helper_type):
+def test_create_helper_requires_an_explicit_optional_budget_rust(helper_type):
     """All four helpers insist on being told the deadline, by name, with no default.
 
     Both clients and both paths are covered. The deadline may be nothing, but it
@@ -119,7 +119,7 @@ def test_create_helper_requires_an_explicit_optional_budget(helper_type):
     "normalize", [normalize_item_arguments, prepare_legacy_item_arguments]
 )
 @pytest.mark.parametrize("deadline", [None, 101.0])
-def test_create_budget_is_explicit_not_inferred_from_a_marker(normalize, deadline):
+def test_create_budget_is_explicit_not_inferred_from_a_marker_rust(normalize, deadline):
     """The deadline comes from the argument, and a stray internal marker in the options is
     ignored and removed.
 
@@ -146,7 +146,7 @@ def test_create_budget_is_explicit_not_inferred_from_a_marker(normalize, deadlin
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_rust_helper_never_repeats_public_create_preparation(monkeypatch, async_mode):
+def test_rust_helper_never_repeats_public_create_preparation_rust(monkeypatch, async_mode):
     """The helper does not redo the preparation the public method already did.
 
     The public preparation step is replaced with something that fails if called,
@@ -174,7 +174,7 @@ def test_rust_helper_never_repeats_public_create_preparation(monkeypatch, async_
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy(async_mode):
+def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy_rust(async_mode):
     """A container reuses one helper across calls, rebuilds it when its settings change, and
     does not keep the container alive.
 
@@ -226,7 +226,7 @@ def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy(async_mod
     assert reference() is None
 
 
-def test_legacy_helpers_are_not_cached_with_a_container_bound_callback(point_read):
+def test_legacy_helpers_are_not_cached_with_a_container_bound_callback_rust(point_read):
     """On the legacy path a fresh helper is built each time and nothing is cached.
 
     The legacy helper holds a callback tied to its container, so keeping one
@@ -247,7 +247,7 @@ def test_legacy_helpers_are_not_cached_with_a_container_bound_callback(point_rea
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_cached_helper_keeps_concurrent_request_and_result_state_local(async_mode):
+def test_cached_helper_keeps_concurrent_request_and_result_state_local_rust(async_mode):
     """Two writes running at once through one shared helper do not mix up their bodies,
     their results, or their headers.
 
@@ -335,7 +335,7 @@ def call_target(proxy, operation, item, **kwargs):
     "operation", ["read_item", "delete_item", "replace_item", "patch_item"]
 )
 @pytest.mark.parametrize("mapping", [False, True])
-def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once(
+def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once_rust(
     point_read, monkeypatch, operation, mapping
 ):
     """Only the legacy path builds an item link, and an item passed as a set of values has
@@ -426,7 +426,7 @@ def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once(
         if operation != "read_item" or missing == "_self"
     ],
 )
-def test_mapping_validation_still_precedes_item_io(
+def test_mapping_validation_still_precedes_item_io_rust(
     point_read, operation, item, missing
 ):
     """An item missing a field the call needs is refused before anything is sent.
@@ -447,7 +447,7 @@ def test_mapping_validation_still_precedes_item_io(
     assert point_read.native_calls == 0
 
 
-def test_rust_preparation_retains_no_legacy_address():
+def test_rust_preparation_retains_no_legacy_address_rust():
     """Preparation for the Rust path drops the legacy address entirely, even when one was
     supplied.
 
@@ -476,7 +476,7 @@ def test_rust_preparation_retains_no_legacy_address():
     "operation", ["read_item", "delete_item", "replace_item", "patch_item"]
 )
 @pytest.mark.parametrize("key", ["document_link", "_item_self_link"])
-def test_keyword_arguments_cannot_override_the_item_target(point_read, operation, key):
+def test_keyword_arguments_cannot_override_the_item_target_rust(point_read, operation, key):
     """Neither form of item address can be supplied as an extra argument to redirect a
     call.
 
@@ -500,7 +500,7 @@ def test_keyword_arguments_cannot_override_the_item_target(point_read, operation
 
 @pytest.mark.parametrize("has_hook", [False, True])
 @pytest.mark.parametrize("empty", [False, True])
-def test_completion_copies_only_nonempty_hook_bodies(monkeypatch, has_hook, empty):
+def test_completion_copies_only_nonempty_hook_bodies_rust(monkeypatch, has_hook, empty):
     """The customer's callback gets its own copy of the result to play with, and the copy
     is only made when there is something to copy.
 

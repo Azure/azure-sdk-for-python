@@ -29,7 +29,7 @@ pytestmark = pytest.mark.cosmosEmulator
 @pytest.mark.parametrize(
     "inject", [True, False], ids=["failure-after-page", "no-injection"]
 )
-def test_query_failure_resumes_from_delivered_bookmark(
+def test_query_failure_resumes_from_delivered_bookmark_rust(
     owned_target, monkeypatch, inject
 ):
     database_id, observer = owned_target

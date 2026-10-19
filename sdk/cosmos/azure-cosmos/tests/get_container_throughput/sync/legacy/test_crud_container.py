@@ -27,8 +27,9 @@ side of the contract is already guaranteed by the original test in
 contract drift (wrong offer body) by reusing a check the team already trusts.
 
 Self-contained: builds its own database + container in ``setUp`` and deletes
-them in ``tearDown``. The class name and method name match the source so the
-two test IDs differ only by path. The container is created with dedicated
+them in ``tearDown``. The class name and method name match the source (apart from the
+method's ``_rust`` suffix) so the
+two test IDs differ by path and method suffix. The container is created with dedicated
 throughput because ``get_throughput`` only returns an offer when the
 container owns one.
 
@@ -83,7 +84,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
         if (expected_offer_type):
             self.assertEqual(expected_offer_type, offer.properties.get('offerType'))
 
-    def test_offer_read_and_query(self):
+    def test_offer_read_and_query_rust(self):
         """Reading a container's offer returns a complete, correctly linked offer body.
 
         Checks the offer has an id, a resource id, a self link and a resource
@@ -102,7 +103,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
         collection_properties = collection.read()
         self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
 
-    def test_offer_replace(self):
+    def test_offer_replace_rust(self):
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_offer_replace
         collection = self.container
         expected_offer = collection.get_throughput()

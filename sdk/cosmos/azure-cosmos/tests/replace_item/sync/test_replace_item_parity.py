@@ -32,7 +32,7 @@ def container_for(request):
         pass
 
 
-def test_create_then_replace(container_for):
+def test_create_then_replace_rust(container_for):
     """create an item, replace its body -- parity on both backends."""
     item_id = uuid.uuid4().hex
 
@@ -46,7 +46,7 @@ def test_create_then_replace(container_for):
     cmp.assert_functional_parity()
 
 
-def test_replace_missing_raises(container_for):
+def test_replace_missing_raises_rust(container_for):
     """replacing a missing id raises CosmosResourceNotFoundError on both."""
     def _do(client):
         c = client.get_database_client("parity_db").get_container_client(container_for.id)

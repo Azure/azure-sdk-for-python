@@ -5,9 +5,9 @@ the ``_backend="rust"`` path. Async mirror of the sync sibling.
 
 The 12-row test data table is duplicated between sync and aio copies on
 purpose: a cross-folder import would couple two independent migration
-units together. The class name and method name match the source at
-``tests/test_excluded_locations_async.py`` so test IDs differ only by
-path.
+units together. The class name and method name match the source (apart from the method's
+``_rust`` suffix) at
+``tests/test_excluded_locations_async.py`` so test IDs differ by path and method suffix.
 
 This test runs against a live multi-region account; it is gated by
 ``cosmosMultiRegion`` / ``cosmosCircuitBreaker`` markers.
@@ -159,7 +159,7 @@ async def setup_and_teardown_async():
 @pytest.mark.cosmosEmulator
 class TestExcludedLocationsAsync:
     @pytest.mark.parametrize("test_data", CREATE_ITEM_TEST_DATA)
-    async def test_create_item(self, test_data):
+    async def test_create_item_rust(self, test_data):
         # Source: tests/test_excluded_locations_async.py::TestExcludedLocationsAsync.test_create_item
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 

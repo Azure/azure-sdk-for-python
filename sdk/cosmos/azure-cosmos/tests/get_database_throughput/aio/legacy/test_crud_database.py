@@ -20,7 +20,8 @@ run the same call on both engines and diff the numbers. This file runs on Rust
 only.
 
 Self-contained: it creates and deletes its own database. The class name and
-method name match the source; the file name drops the ``_async`` suffix, which
+method name match the source (apart from the method's ``_rust`` suffix); the file name
+drops the ``_async`` suffix, which
 is the naming the audit reporter expects for an aio legacy copy.
 
 Run with::
@@ -61,7 +62,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.key_client.close()
 
-    async def test_database_crud_async(self):
+    async def test_database_crud_async_rust(self):
         """Keep the original CRUD test's shared-throughput assertions."""
         # Source: tests/test_crud_database_async.py::TestCRUDDatabaseOperationsAsync.test_database_crud_async
         database_id = "get_db_crud_a_" + uuid.uuid4().hex
@@ -75,7 +76,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         db_throughput = await database_proxy.get_throughput()
         assert 5000 == db_throughput.offer_throughput
 
-    async def test_database_level_offer_throughput_async(self):
+    async def test_database_level_offer_throughput_async_rust(self):
         """Read provisioned throughput and check the replacement result.
 
         Creates a database at 1000 request units, confirms ``get_throughput``

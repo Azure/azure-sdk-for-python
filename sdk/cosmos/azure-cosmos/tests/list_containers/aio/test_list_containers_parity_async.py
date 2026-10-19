@@ -70,7 +70,7 @@ def populated_database_id():
             client.close()
 
 
-async def test_list_containers_returns_same_ids_async(populated_database_id):
+async def test_list_containers_returns_same_ids_async_rust(populated_database_id):
     """Both engines report the same set of containers for the same database."""
 
     async def _do(client):
@@ -89,7 +89,7 @@ async def test_list_containers_returns_same_ids_async(populated_database_id):
     assert comparison.rust.return_value == ["c0", "c1", "c2"]
 
 
-async def test_list_containers_on_empty_database_returns_empty_async(empty_database_id):
+async def test_list_containers_on_empty_database_returns_empty_async_rust(empty_database_id):
     """A database with no containers yields an empty list on both engines, not an error."""
 
     async def _do(client):
@@ -108,7 +108,7 @@ async def test_list_containers_on_empty_database_returns_empty_async(empty_datab
     assert comparison.rust.return_value == []
 
 
-async def test_list_containers_paged_matches_async(populated_database_id):
+async def test_list_containers_paged_matches_async_rust(populated_database_id):
     """Forcing several pages yields the same containers as a single-page read."""
     # One item per page checks that continuation tokens do not lose containers.
 
@@ -132,7 +132,7 @@ async def test_list_containers_paged_matches_async(populated_database_id):
     assert comparison.rust.return_value == ["c0", "c1", "c2"]
 
 
-async def test_list_containers_continuation_resume_async(populated_database_id):
+async def test_list_containers_continuation_resume_async_rust(populated_database_id):
     async def run(client):
         database = client.get_database_client(populated_database_id)
 
@@ -156,7 +156,7 @@ async def test_list_containers_continuation_resume_async(populated_database_id):
     assert comparison.rust.return_value == ["c0", "c1", "c2"]
 
 
-async def test_list_containers_options_and_page_hooks_async(populated_database_id):
+async def test_list_containers_options_and_page_hooks_async_rust(populated_database_id):
     async def run(client):
         database = client.get_database_client(populated_database_id)
 
