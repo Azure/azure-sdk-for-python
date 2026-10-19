@@ -1,0 +1,68 @@
+name: code-review-trigger-eval
+description: Trigger and anti-trigger tests for the Python SDK code-review skill
+type: capability
+
+environment: azsdk-mcp-mock
+
+tags:
+  area: code-review
+  type: ci-gate
+
+config:
+  runs: 1
+  timeout: "90s"
+  model: claude-opus-4.6
+  executor: copilot-sdk
+
+scoring:
+  threshold: 0.8
+
+stimuli:
+  - name: trigger-review-pr
+    prompt: "Review this Azure SDK for Python pull request for bugs and regressions."
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["code-review"]
+  - name: trigger-review-diff
+    prompt: "Please do a code review of my current diff."
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["code-review"]
+  - name: trigger-copilot-review
+    prompt: "Run GitHub Copilot code review on this PR and find high-confidence issues."
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["code-review"]
+  - name: trigger-cross-package
+    prompt: "Review these Python SDK changes for API compatibility, tests, and documentation."
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["code-review"]
+  - name: anti-trigger-fix-ci
+    prompt: "Fix the failing Azure SDK pipeline build."
+    graders:
+      - type: skill-invocation
+        config:
+          disallowed: ["code-review"]
+  - name: anti-trigger-implement
+    prompt: "Implement a new list_widgets method in this SDK package."
+    graders:
+      - type: skill-invocation
+        config:
+          disallowed: ["code-review"]
+  - name: anti-trigger-apiview
+    prompt: "Resolve APIView feedback on my pull request."
+    graders:
+      - type: skill-invocation
+        config:
+          disallowed: ["code-review"]
+  - name: anti-trigger-tests
+    prompt: "Run the tests for azure-storage-blob."
+    graders:
+      - type: skill-invocation
+        config:
+          disallowed: ["code-review"]
