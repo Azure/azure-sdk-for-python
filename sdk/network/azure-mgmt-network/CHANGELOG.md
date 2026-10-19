@@ -1,24 +1,5 @@
 # Release History
 
-## 33.2.0 (2026-10-19)
-
-tool can't generate changelog for this release, please update manually.
-
-## 34.0.0 (2026-10-19)
-
-### Features Added
-
-  - Client `NetworkManagementClient` added operation group `vmss_network_interfaces`
-  - Client `NetworkManagementClient` added operation group `vmss_public_ip_addresses`
-  - Added operation group `VmssNetworkInterfacesOperations`
-  - Added operation group `VmssPublicIPAddressesOperations`
-
-### Breaking Changes
-
-  - Deleted or renamed method `NetworkInterfacesOperations.list_virtual_machine_scale_set_vm_network_interfaces`
-  - Deleted or renamed method `PublicIPAddressesOperations.get_virtual_machine_scale_set_public_ip_address`
-  - Deleted or renamed method `PublicIPAddressesOperations.list_virtual_machine_scale_set_vm_public_ip_addresses`
-
 ## 33.1.0 (2026-10-09)
 
 ### Features Added
