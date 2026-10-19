@@ -232,6 +232,8 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         return envelopes
 
     def _should_collect_otel_resource_metric(self):
+        if self._enable_multi_endpoint_routing:
+            return False
         disabled = environ.get(_APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED)
         return disabled is None or disabled.lower() != "true"
 

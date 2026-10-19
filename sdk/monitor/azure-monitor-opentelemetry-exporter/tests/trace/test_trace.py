@@ -2038,6 +2038,38 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
 
+    def test_export_otel_resource_metric_routing(self):
+        span = trace.ReadableSpan(
+            name="test",
+            context=SpanContext(trace_id=1, span_id=2, is_remote=False),
+            start_time=1,
+            end_time=2,
+            attributes={},
+        )
+        variable = "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
+        for routing in (False, True):
+            exporter = AzureMonitorTraceExporter(
+                enable_multi_endpoint_routing=routing,
+                disable_offline_storage=True,
+                tracer_provider=trace.TracerProvider(),
+            )
+            self.addCleanup(exporter.client.close)
+            for disabled in (None, "false", "true", "TRUE"):
+                with self.subTest(routing=routing, disabled=disabled), mock.patch.dict(os.environ):
+                    if disabled is None:
+                        os.environ.pop(variable, None)
+                    else:
+                        os.environ[variable] = disabled
+                    with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                        self.assertEqual(exporter.export([span]), SpanExportResult.SUCCESS)
+                    transmit.assert_called_once()
+                    envelopes = transmit.call_args.args[0]
+                    collect_resource = not routing and disabled not in ("true", "TRUE")
+                    self.assertEqual(len(envelopes), 2 if collect_resource else 1)
+                    self.assertEqual(envelopes[-1].data.base_type, "RemoteDependencyData")
+                    if collect_resource:
+                        self.assertEqual(envelopes[0].data.base_data.metrics[0].name, "_OTELRESOURCE_")
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter.get_tracer_provider")
     def test_export_otel_resource_metric(self, mock_get_tracer_provider):
         del os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"]
