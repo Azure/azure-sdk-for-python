@@ -524,6 +524,8 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                     shutdown_event=asyncio.Event(),
                     shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
                 )
+                if restore_id is not None:
+                    self._task_manager._rehydrate_session_state(restore_id)  # pylint: disable=protected-access
                 self._task_manager_binding = binding
                 set_task_manager(self._task_manager)
             elif self._task_manager_binding != binding:

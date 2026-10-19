@@ -9,7 +9,9 @@ import contextlib
 import logging
 import os
 import socket
+import time
 from collections.abc import Iterator
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 from unittest.mock import Mock
@@ -402,8 +404,15 @@ async def test_list_failure_keeps_best_effort_startup_and_periodic_retry(
         assert "Temporary LIST failure" in caplog.text
 
 
-async def seed_expired_task(provider: LocalFileTaskProvider, name: str) -> None:
+async def seed_expired_task(provider: LocalFileTaskProvider, name: str, *, steering: bool = False) -> None:
     owner = derive_lease_owner("snapshot-agent", "session-1")
+    task_payload: dict[str, Any] = {"input": {"value": "saved-input"}, "schema_version": "1"}
+    if steering:
+        task_payload["steering"] = {
+            "cancel_requested": True,
+            "active_input": {"value": "saved-input"},
+            "pending_inputs": [{"value": "queued-input"}],
+        }
     await provider.create(
         TaskCreateRequest(
             id="existing-task",
@@ -411,7 +420,7 @@ async def seed_expired_task(provider: LocalFileTaskProvider, name: str) -> None:
             session_id="session-1",
             status="in_progress",
             title="Existing LRA",
-            payload={"input": {"value": "saved-input"}, "schema_version": "1"},
+            payload=task_payload,
             source={"type": "agentserver.task", "name": name},
             tags={"task_name": name},
             lease_owner=owner,
@@ -488,12 +497,14 @@ async def test_recovered_task_runs_before_hook_success(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("failure", ["cancel", "exception"])
-@pytest.mark.parametrize("kind", ["one_shot", "multi_turn"])
+@pytest.mark.parametrize("kind", ["one_shot", "multi_turn", "steerable"])
+@pytest.mark.parametrize("cooperative", [False, True])
 async def test_cancelled_recovery_stops_workers_before_binding_rollback_and_retries(
     provider_factory: tuple[LocalFileTaskProvider, Mock],
     monkeypatch: pytest.MonkeyPatch,
     failure: str,
     kind: str,
+    cooperative: bool,
 ) -> None:
     provider, factory = provider_factory
     running, finish = asyncio.Event(), asyncio.Event()
@@ -501,19 +512,26 @@ async def test_cancelled_recovery_stops_workers_before_binding_rollback_and_retr
     resumed_inputs: list[tuple[str, Any, str]] = []
     app = host()
 
-    decorator = multi_turn_task if kind == "multi_turn" else task
+    decorator = (
+        task(name="cancelled_lra")
+        if kind == "one_shot"
+        else multi_turn_task(name="cancelled_lra", steerable=kind == "steerable")
+    )
 
-    @decorator(name="cancelled_lra")
+    @decorator
     async def existing(ctx: TaskContext[dict[str, str]]) -> str:
         resumed_inputs.append((ctx.task_id, ctx.input, ctx.entry_mode))
         running.set()
         try:
+            if cooperative:
+                await ctx.shutdown.wait()
+                raise asyncio.CancelledError
             await finish.wait()
             return ctx.input["value"]
         finally:
             final_bindings.append(app.config.session_id)
 
-    await seed_expired_task(provider, existing.name)
+    await seed_expired_task(provider, existing.name, steering=kind == "steerable")
     original = TaskManager._recover_stale_tasks
     scans = 0
     managers: list[TaskManager] = []
@@ -538,6 +556,9 @@ async def test_cancelled_recovery_stops_workers_before_binding_rollback_and_retr
             first_instance = first._instance_id
             if failure == "cancel":
                 restore.cancel()
+            done, _ = await asyncio.wait({restore}, timeout=2)
+            assert restore in done, "Rollback did not finish after stopping the original execution"
+            if failure == "cancel":
                 with pytest.raises(asyncio.CancelledError):
                     await restore
             else:
@@ -553,6 +574,10 @@ async def test_cancelled_recovery_stops_workers_before_binding_rollback_and_retr
             assert stored is not None
             assert stored.status == "in_progress"
             assert stored.payload["input"] == {"value": "saved-input"}
+            assert stored.lease is not None
+            assert datetime.fromisoformat(stored.lease.expires_at).timestamp() <= time.time()
+            if kind == "steerable":
+                assert stored.payload["steering"]["pending_inputs"] == [{"value": "queued-input"}]
             running.clear()
             response = await http.post("/_agent/after-restore", json=payload())
             assert response.status_code == 200, response.text
@@ -572,6 +597,106 @@ async def test_cancelled_recovery_stops_workers_before_binding_rollback_and_retr
                 restore.cancel()
             with contextlib.suppress(asyncio.CancelledError):
                 await restore
+
+
+@pytest.mark.asyncio
+async def test_retry_with_unchanged_binding_keeps_live_worker_identity(
+    provider_factory: tuple[LocalFileTaskProvider, Mock], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "session-1")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
+    provider, _ = provider_factory
+    running, finish = asyncio.Event(), asyncio.Event()
+    app = host()
+
+    @task(name="same_binding_recovery")
+    async def existing(ctx: TaskContext[dict[str, str]]) -> str:
+        running.set()
+        await finish.wait()
+        return ctx.input["value"]
+
+    await seed_expired_task(provider, existing.name)
+    original = TaskManager._recover_stale_tasks
+    scans = 0
+
+    async def recovery(manager: TaskManager) -> None:
+        nonlocal scans
+        scans += 1
+        await original(manager)
+        if scans == 1:
+            await running.wait()
+            raise RuntimeError("Recovery failed after dispatch under an unchanged binding")
+
+    monkeypatch.setattr(TaskManager, "_recover_stale_tasks", recovery)
+    async with app.router.lifespan_context(app), client(app) as http:
+        try:
+            assert (await http.post("/_agent/after-restore", json=payload())).status_code == 500
+            manager = get_task_manager()
+            instance = manager._instance_id
+            response = await http.post("/_agent/after-restore", json=payload())
+            assert response.status_code == 200, response.text
+            assert get_task_manager() is manager
+            assert manager._instance_id == instance
+            stored = await provider.get("existing-task")
+            assert stored is not None and stored.lease is not None
+            assert stored.lease.instance_id == instance
+        finally:
+            finish.set()
+
+
+@pytest.mark.asyncio
+async def test_rollback_joins_renewal_after_handler_observes_shutdown(
+    provider_factory: tuple[LocalFileTaskProvider, Mock], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    provider, _ = provider_factory
+    running, renewal_started, renewal_cancelled, release = (asyncio.Event() for _ in range(4))
+    final_bindings: list[str] = []
+    app = host()
+
+    @task(name="cooperative_rollback")
+    async def existing(ctx: TaskContext[dict[str, str]]) -> str:
+        running.set()
+        await ctx.shutdown.wait()
+        raise asyncio.CancelledError
+
+    async def renewal(*_args: Any, **_kwargs: Any) -> None:
+        renewal_started.set()
+        try:
+            await release.wait()
+        except asyncio.CancelledError:
+            renewal_cancelled.set()
+            await release.wait()
+        finally:
+            final_bindings.append(app.config.session_id)
+
+    await seed_expired_task(provider, existing.name)
+    original = TaskManager._recover_stale_tasks
+
+    async def recovery(manager: TaskManager) -> None:
+        await original(manager)
+        await running.wait()
+        await renewal_started.wait()
+        raise RuntimeError("Recovery failed with renewal still in flight")
+
+    monkeypatch.setattr(_manager, "lease_renewal_loop", renewal)
+    monkeypatch.setattr(TaskManager, "_recover_stale_tasks", recovery)
+    async with app.router.lifespan_context(app), client(app) as http:
+        restore = asyncio.create_task(http.post("/_agent/after-restore", json=payload()))
+        try:
+            await asyncio.wait_for(renewal_started.wait(), 2)
+            done, _ = await asyncio.wait({restore}, timeout=0.1)
+            assert not done, "Configuration rolled back while a retained renewal worker was still running"
+            assert renewal_cancelled.is_set()
+            assert app.config.session_id == "session-1"
+        finally:
+            release.set()
+            response = await restore
+        assert response.status_code == 500
+        assert final_bindings == ["session-1"]
+        assert app.config.session_id == ""
+        stored = await provider.get("existing-task")
+        assert stored is not None and stored.lease is not None
+        assert datetime.fromisoformat(stored.lease.expires_at).timestamp() <= time.time()
 
 
 @pytest.mark.asyncio

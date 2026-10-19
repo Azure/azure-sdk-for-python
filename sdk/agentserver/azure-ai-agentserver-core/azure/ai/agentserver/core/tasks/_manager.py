@@ -839,25 +839,27 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning("Periodic recovery scan iteration failed", exc_info=True)
 
-    async def _cancel_workers(self, *, wait: bool) -> None:
+    async def _cancel_workers(self, *, wait: bool, retained_workers: set[asyncio.Task[Any]] | None = None) -> None:
         """Cancel owned execution, renewal, and watchdog tasks.
 
         :keyword wait: Whether to wait for the cancelled tasks to finish.
         :paramtype wait: bool
+        :keyword retained_workers: Workers retained before shutdown was signalled.
+        :paramtype retained_workers: set[asyncio.Task[Any]] | None
         """
-        workers: set[asyncio.Task[Any]] = set()
+        workers = set(retained_workers or ())
         for active in list(self._active_tasks.values()):
             active.renewal_cancel.set()
             if active.renewal_task and not active.renewal_task.done():
-                active.renewal_task.cancel()
                 workers.add(active.renewal_task)
             if not active.execution_task.done():
-                active.execution_task.cancel()
                 workers.add(active.execution_task)
         for watchdog in self._timeout_watchdogs.values():
             if not watchdog.done():
-                watchdog.cancel()
                 workers.add(watchdog)
+        for worker in workers:
+            if not worker.done():
+                worker.cancel()
         if not (wait and workers):
             return
         results = await asyncio.gather(*workers, return_exceptions=True)
@@ -884,6 +886,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         """
         logger.info("TaskManager shutting down")
         self._preserve_recoverable_tasks_on_shutdown = preserve_recoverable_tasks
+        retained_active = tuple(self._active_tasks.values()) if preserve_recoverable_tasks else ()
+        retained_workers: set[asyncio.Task[Any]] = (
+            set(self._timeout_watchdogs.values()) if preserve_recoverable_tasks else set()
+        )
+        for active in retained_active:
+            retained_workers.add(active.execution_task)
+            if active.renewal_task is not None:
+                retained_workers.add(active.renewal_task)
         self._shutdown_event.set()
 
         #   Layer 2: stop the periodic recovery scan task.
@@ -942,8 +952,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         remaining = list(self._active_tasks.values())
         if preserve_recoverable_tasks:
+            remaining = list({id(active): active for active in (*retained_active, *remaining)}.values())
             # Finish old-binding writes before making the records reclaimable.
-            await self._cancel_workers(wait=True)
+            await self._cancel_workers(wait=True, retained_workers=retained_workers)
 
         # Force-expire all leases. Tolerate cancellation here too.
         try:
@@ -2169,7 +2180,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
             except asyncio.CancelledError:
                 renewal_cancel.set()
-                if self._preserve_recoverable_tasks_on_shutdown and not ctx.cancel.is_set():
+                if self._preserve_recoverable_tasks_on_shutdown:
                     from ._exceptions import (  # pylint: disable=import-outside-toplevel
                         TaskDeferred,
                     )
@@ -2440,6 +2451,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # (detect-not-clobber) so a genuine cross-process write is detected;
         # cross-process conflicts retry OUTSIDE the lock via the recursion
         # below (the per-task ``asyncio.Lock`` is non-reentrant).
+        if self._preserve_recoverable_tasks_on_shutdown:
+            return None
+
         drain_conflict: BaseException | None = None
         async with self._get_task_write_lock(task_id):
             task_info = await self._provider_get_tracked(task_id)
