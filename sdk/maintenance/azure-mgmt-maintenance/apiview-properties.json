@@ -111,5 +111,5 @@
         "azure.mgmt.maintenance.operations.UpdatesOperations.list": "Microsoft.Maintenance.UpdatesOperationGroup.list",
         "azure.mgmt.maintenance.aio.operations.UpdatesOperations.list": "Microsoft.Maintenance.UpdatesOperationGroup.list"
     },
-    "CrossLanguageVersion": "14d43b8aaf3a"
+    "CrossLanguageVersion": "efed42f38c81"
 }
