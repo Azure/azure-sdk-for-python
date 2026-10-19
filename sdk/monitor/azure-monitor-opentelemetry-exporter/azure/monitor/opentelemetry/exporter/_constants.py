@@ -104,6 +104,7 @@ _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 _MICROSOFT_CUSTOM_MEASUREMENTS = "microsoft.custom_measurements"
 _MICROSOFT_INSTRUMENTATION_KEY = "microsoft.instrumentation_key"
+_MICROSOFT_INGESTION_ENDPOINT = "microsoft.ingestion_endpoint"
 
 # Track Availability telemetry constants
 _MICROSOFT_AVAILABILITY_ID = "microsoft.availability.id"
