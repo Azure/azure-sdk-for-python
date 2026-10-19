@@ -8,10 +8,6 @@ parameters:
   - name: TestPattern
     type: string
     default: ''
-  - name: EnvironmentVariableNames
-    type: object
-    default: []
-
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
@@ -51,11 +47,9 @@ extends:
                 env:
                   SYSTEM_ACCESSTOKEN: $(System.AccessToken)
                   AZURE_POD_IDENTITY_AUTHORITY_HOST: https://FakeAuthorityHost
-                  SAMPLE_ENVIRONMENT_VARIABLE_NAMES_JSON: ${{ convertToJson(parameters.EnvironmentVariableNames) }}
+                  SAMPLE_ENVIRONMENT_VARIABLES_JSON: $(SAMPLE_ENVIRONMENT_VARIABLES_JSON)
                   SAMPLE_PATTERN: ${{ parameters.SamplePattern }}
                   TEST_PATTERN: ${{ parameters.TestPattern }}
-                  ${{ each variableName in parameters.EnvironmentVariableNames }}:
-                    ${{ variableName }}: $(${{ variableName }})
                 inputs:
                   azureSubscription: azure-sdk-tests-public
                   azurePowerShellVersion: LatestVersion
@@ -70,8 +64,8 @@ extends:
                     $env:AZURESUBSCRIPTION_TENANT_ID = $context.Tenant.Id
 
                     $environmentVariables = @(
-                      foreach ($name in @($env:SAMPLE_ENVIRONMENT_VARIABLE_NAMES_JSON | ConvertFrom-Json)) {
-                        "$name=$([Environment]::GetEnvironmentVariable($name))"
+                      foreach ($property in ($env:SAMPLE_ENVIRONMENT_VARIABLES_JSON | ConvertFrom-Json).PSObject.Properties) {
+                        "$($property.Name)=$($property.Value)"
                       }
                     )
                     $arguments = @{

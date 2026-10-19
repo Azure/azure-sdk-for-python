@@ -6,6 +6,7 @@ param(
     [string]$Organization = "azure-sdk",
     [string]$Project = "internal",
     [int]$DefinitionId = 8392,
+    [int]$PipelineRevision,
     [Parameter(Mandatory = $true)]
     [string]$SourceBranch,
     [Parameter(Mandatory = $true)]
@@ -22,8 +23,7 @@ if (-not $SourceBranch.StartsWith("refs/heads/")) {
     $SourceBranch = "refs/heads/$SourceBranch"
 }
 
-$environmentVariableNames = [System.Collections.Generic.List[string]]::new()
-$buildVariables = [ordered]@{}
+$environmentVariables = [ordered]@{}
 foreach ($assignment in @($EnvironmentVariable | Where-Object { $null -ne $_ })) {
     $separatorIndex = $assignment.IndexOf("=")
     if ($separatorIndex -le 0) {
@@ -33,28 +33,40 @@ foreach ($assignment in @($EnvironmentVariable | Where-Object { $null -ne $_ }))
     if ($name -notmatch "^[A-Za-z_][A-Za-z0-9_]*$") {
         throw "EnvironmentVariable has an invalid name: '$name'"
     }
-    if ($buildVariables.Contains($name)) {
+    if ($environmentVariables.Contains($name)) {
         throw "EnvironmentVariable contains duplicate name '$name'."
     }
-    $environmentVariableNames.Add($name)
-    $buildVariables[$name] = [ordered]@{
-        value = $assignment.Substring($separatorIndex + 1)
-        isSecret = $true
+    $environmentVariables[$name] = $assignment.Substring($separatorIndex + 1)
+}
+
+$headers = @{ Authorization = "Bearer $BearerToken" }
+if ($PipelineRevision -le 0) {
+    $pipelineUri = "https://dev.azure.com/$Organization/$Project/_apis/pipelines/$DefinitionId`?api-version=7.1"
+    $pipeline = Invoke-RestMethod -Method Get -Uri $pipelineUri -Headers $headers
+    $PipelineRevision = [int]$pipeline.revision
+    if ($PipelineRevision -le 0) {
+        throw "Azure DevOps returned an invalid revision for pipeline $DefinitionId."
     }
 }
 
 $body = [ordered]@{
-    definition = @{ id = $DefinitionId }
-    sourceBranch = $SourceBranch
+    resources = @{
+        repositories = @{
+            self = @{ refName = $SourceBranch }
+        }
+    }
     templateParameters = [ordered]@{
         SamplePattern = $SamplePattern
         TestPattern = if ($TestPattern) { $TestPattern } else { "" }
-        EnvironmentVariableNames = @($environmentVariableNames)
     }
-    variables = $buildVariables
+    variables = @{
+        SAMPLE_ENVIRONMENT_VARIABLES_JSON = [ordered]@{
+            value = ($environmentVariables | ConvertTo-Json -Compress)
+            isSecret = $true
+        }
+    }
 }
-$uri = "https://dev.azure.com/$Organization/$Project/_apis/build/builds?api-version=7.1"
-$headers = @{ Authorization = "Bearer $BearerToken" }
+$uri = "https://dev.azure.com/$Organization/$Project/_apis/pipelines/$DefinitionId/runs?pipelineVersion=$PipelineRevision&api-version=7.1"
 if (-not $RequestInvoker) {
     $RequestInvoker = {
         param($RequestUri, $RequestHeaders, $RequestBody)

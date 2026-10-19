@@ -36,14 +36,13 @@ print(
 
         $actual.trigger | Should Be "none"
         $actual.pr | Should Be "none"
-        ($actual.parameters -join ",") | Should Be "SamplePattern,TestPattern,EnvironmentVariableNames"
+        ($actual.parameters -join ",") | Should Be "SamplePattern,TestPattern"
         $actual.template | Should Be "/eng/pipelines/templates/stages/1es-redirect.yml"
     }
 
     It "uses masked variable names and the renamed validation runner" {
         $content = Get-Content -LiteralPath $pipelinePath -Raw
-        $content | Should Match "EnvironmentVariableNames"
-        $content | Should Match '\$\{\{ variableName \}\}: \$\(\$\{\{ variableName \}\}\)'
+        $content | Should Match 'SAMPLE_ENVIRONMENT_VARIABLES_JSON: \$\(SAMPLE_ENVIRONMENT_VARIABLES_JSON\)'
         $content | Should Match "azure-ai-projects-sample-validation/scripts/InvokeSampleValidation.ps1"
         $content | Should Match 'HideEnvironmentValues = \$true'
         $oldSkillName = "azure-ai-projects-record" + "-sample"
