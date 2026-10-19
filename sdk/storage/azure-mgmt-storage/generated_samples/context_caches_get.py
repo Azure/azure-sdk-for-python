@@ -32,11 +32,11 @@ def main():
 
     response = client.context_caches.get(
         resource_group_name="testrg",
-        context_cache_name="testaccount",
+        context_cache_name="testcontextcache",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-06-01/StorageContextCacheCRUD/ContextCaches_Get.json
+# x-ms-original-file: 2026-09-01/StorageContextCacheCRUD/ContextCaches_Get.json
 if __name__ == "__main__":
     main()

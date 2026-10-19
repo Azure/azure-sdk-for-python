@@ -76,4 +76,5 @@ in_bundle = false
 [tool.azure-sdk-build]
 verifytypes = false
 latestdependency = false
-mindependency = true
+# azure-ai-agentserver-core>=2.3.0b1 is not yet on PyPI
+mindependency = false
