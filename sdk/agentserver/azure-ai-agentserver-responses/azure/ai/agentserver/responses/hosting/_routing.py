@@ -20,6 +20,7 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
     AgentServerHost,
     build_server_version,
 )
+from azure.ai.agentserver.core._middleware import _task_runtime_middleware
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
@@ -202,11 +203,7 @@ def _log_startup_configuration(
         runtime_options.shutdown_grace_period_seconds,
     )
 
-    from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
-        resilient_tasks_enabled,
-    )
-
-    if resilient_tasks_enabled():
+    if runtime_options.resilient_background or runtime_options.steerable_conversations:
         logger.info(
             "Responses resilience: ENABLED - store=true responses run inside durable "
             "tasks with crash recovery (in-flight responses are recovered/marked failed "
@@ -217,7 +214,7 @@ def _log_startup_configuration(
             "Responses resilience: DISABLED - store=true responses run in-process and are "
             "NOT durable across an ungraceful crash: a response in-flight when the process "
             "is hard-killed stays in_progress on a later GET (no mark-failed/recovery). "
-            "Enable durability via resilient_background, or set_resilient_tasks_enabled(True)."
+            "Enable the Responses task runtime with resilient_background or steerable_conversations."
         )
 
 
@@ -337,6 +334,9 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         # Build internal components
         runtime_options = options or ResponsesServerOptions()
+        task_middleware = _task_runtime_middleware(
+            self, kwargs, lambda: bool(runtime_options.resilient_background or runtime_options.steerable_conversations)
+        )
 
         # Server version string — the responses segment is built once and
         # registered on the host.  The full x-platform-server value is
@@ -475,30 +475,35 @@ class ResponsesAgentServerHost(AgentServerHost):
                 endpoint.handle_create,
                 methods=["POST"],
                 name="create_response",
+                middleware=task_middleware,
             ),
             Route(
                 f"{normalized_prefix}/responses/{{response_id}}",
                 endpoint.handle_get,
                 methods=["GET"],
                 name="get_response",
+                middleware=task_middleware,
             ),
             Route(
                 f"{normalized_prefix}/responses/{{response_id}}",
                 endpoint.handle_delete,
                 methods=["DELETE"],
                 name="delete_response",
+                middleware=task_middleware,
             ),
             Route(
                 f"{normalized_prefix}/responses/{{response_id}}/cancel",
                 endpoint.handle_cancel,
                 methods=["POST"],
                 name="cancel_response",
+                middleware=task_middleware,
             ),
             Route(
                 f"{normalized_prefix}/responses/{{response_id}}/input_items",
                 endpoint.handle_input_items,
                 methods=["GET"],
                 name="get_input_items",
+                middleware=task_middleware,
             ),
         ]
 

@@ -14,7 +14,9 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
 import traceback
-from collections.abc import Awaitable, Callable, Mapping
+from collections.abc import Awaitable, Callable, Iterator, Mapping
+from contextlib import contextmanager
+from contextvars import ContextVar
 from typing import Any, TypeVar
 
 from .._config import AgentConfig
@@ -283,15 +285,38 @@ def _lease_is_dead(
     return True
 
 
+_scoped_task_manager: ContextVar[Callable[[], TaskManager | None] | None] = ContextVar(
+    "agentserver_task_manager", default=None
+)
+
+
+@contextmanager
+def _task_manager_scope(get_manager: Callable[[], TaskManager | None]) -> Iterator[None]:
+    """Bind task access to the current host/protocol, including a disabled runtime.
+
+    :param get_manager: Resolve the current runtime, or None for disabled access.
+    :type get_manager: Callable[[], TaskManager | None]
+    :return: The scoped task access context.
+    :rtype: Iterator[None]
+    """
+    token = _scoped_task_manager.set(get_manager)
+    try:
+        yield
+    finally:
+        _scoped_task_manager.reset(token)
+
+
 def get_task_manager() -> TaskManager:
-    """Return the active TaskManager singleton.
+    """Return the current protocol's manager, or the installed standalone manager.
 
     :raises ~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized: If no
         manager has been initialized.
     :return: The active manager.
     :rtype: TaskManager
     """
-    if _manager is None:
+    scoped = _scoped_task_manager.get()
+    manager = scoped() if scoped is not None else _manager
+    if manager is None:
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             TaskManagerNotInitialized,
         )
@@ -299,11 +324,11 @@ def get_task_manager() -> TaskManager:
         raise TaskManagerNotInitialized(
             "TaskManager not initialized: the resilient task subsystem is not enabled. "
             "Durable tasks and crash recovery are opt-in - call "
-            "set_resilient_tasks_enabled(True) before host startup (e.g. at import time), "
-            "or, for the responses protocol, construct the host with "
-            "ResponsesServerOptions(resilient_background=True)."  # pylint: disable=implicit-str-concat
+            "set_resilient_tasks_enabled(True) for Invocations before host startup, "
+            "or enable resilient_background or steerable_conversations on "
+            "ResponsesServerOptions, and run the host lifespan."
         )
-    return _manager
+    return manager
 
 
 def set_task_manager(manager: TaskManager | None) -> None:
@@ -316,6 +341,17 @@ def set_task_manager(manager: TaskManager | None) -> None:
     """
     global _manager  # pylint: disable=global-statement
     _manager = manager
+
+
+def _clear_task_manager(manager: TaskManager | None) -> None:
+    """Clear only the compatibility singleton owned by this manager.
+
+    :param manager: The host's task manager.
+    :type manager: TaskManager | None
+    :rtype: None
+    """
+    if _manager is manager:
+        set_task_manager(None)
 
 
 class _ActiveTask:  # pylint: disable=too-many-instance-attributes
@@ -895,7 +931,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 active.execution_task.cancel()
 
         self._active_tasks.clear()
-        set_task_manager(None)
+        _clear_task_manager(self)
 
     async def create_and_run(
         self,

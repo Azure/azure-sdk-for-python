@@ -13,7 +13,7 @@ import asyncio
 
 import pytest
 
-from azure.ai.agentserver.core.tasks import TaskManagerNotInitialized
+from azure.ai.agentserver.core.tasks import TaskContext, TaskManagerNotInitialized
 from azure.ai.agentserver.core.tasks._manager import (
     TaskManager,
     get_task_manager,
@@ -68,3 +68,26 @@ def test_get_task_manager_returns_installed_manager(tmp_path) -> None:
     )
     set_task_manager(mgr)
     assert get_task_manager() is mgr
+
+
+def test_scoped_manager_masks_other_host_and_receives_late_registration(tmp_path) -> None:
+    from azure.ai.agentserver.core.tasks import task
+    from azure.ai.agentserver.core.tasks._manager import _task_manager_scope
+
+    first = TaskManager(config=_config_stub(), provider=LocalFileTaskProvider(tmp_path / "first"))
+    second = TaskManager(config=_config_stub(), provider=LocalFileTaskProvider(tmp_path / "second"))
+    set_task_manager(second)
+    with _task_manager_scope(lambda: first):
+        assert get_task_manager() is first
+
+        @task(name="scoped_late_registration")
+        async def late(ctx: TaskContext[dict]) -> dict:
+            return ctx.input
+
+        assert first._resume_callbacks[late.name] is late._fn
+        assert late.name not in second._resume_callbacks
+        with _task_manager_scope(lambda: None):
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
+        assert get_task_manager() is first
+    assert get_task_manager() is second

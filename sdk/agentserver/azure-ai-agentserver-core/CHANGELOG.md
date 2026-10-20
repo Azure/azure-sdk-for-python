@@ -4,6 +4,11 @@
 
 ### Features Added
 
+- Added protocol-scoped task-runtime startup requests so protocol hosts can
+  obtain scoped `TaskManager` access without mutating the process-wide
+  resilient-task switch. This prevents one protocol's enablement from
+  activating another protocol in a mixed host.
+
 ### Breaking Changes
 
 ### Bugs Fixed

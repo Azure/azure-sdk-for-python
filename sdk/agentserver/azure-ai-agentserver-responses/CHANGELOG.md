@@ -1,5 +1,27 @@
 # Release History
 
+## Unreleased
+
+### Features Added
+
+- Responses hosts now request the task runtime when either
+  `resilient_background` or `steerable_conversations` is enabled. Steering-only
+  hosts receive persistent queue/cancel behavior; after a crash the interrupted
+  response is marked failed without re-running its handler, while persisted
+  queued turns may continue as new steered turns.
+
+### Breaking Changes
+
+- Responses task-runtime activation is now protocol-scoped. The Core
+  `set_resilient_tasks_enabled` switch no longer force-enables Responses when
+  both Responses options are disabled, and Responses activation does not
+  activate another protocol in a mixed host.
+
+### Other Changes
+
+- Raised the minimum `azure-ai-agentserver-core` dependency to `2.3.0b2` for
+  protocol-scoped task-runtime support.
+
 ## 2.4.0b1 (2026-10-15)
 
 ### Bugs Fixed

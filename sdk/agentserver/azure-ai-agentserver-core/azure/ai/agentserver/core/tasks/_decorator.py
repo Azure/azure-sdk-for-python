@@ -36,6 +36,7 @@ import re
 
 from ._client import TransportClassifiedError as _TransportClassifiedError
 from ._context import TaskContext
+from ._exceptions import TaskManagerNotInitialized
 from ._exceptions_internal import _HostedConflict, _translate_hosted_conflict
 from ._retry import RetryPolicy
 from ._run import TaskRun
@@ -478,8 +479,10 @@ class Task(Generic[Input, Output]):
         # resume tables so _recover_stale_tasks / get_active_run can pick
         # up the multi-turn opts (_is_multi_turn).
         try:
-            from ._manager import _manager as _live_manager  # pylint: disable=import-outside-toplevel
-        except ImportError:  # pragma: no cover
+            from ._manager import get_task_manager  # pylint: disable=import-outside-toplevel
+
+            _live_manager = get_task_manager()
+        except (ImportError, TaskManagerNotInitialized):
             _live_manager = None  # type: ignore[assignment]
         if _live_manager is not None:
             try:
@@ -1798,28 +1801,28 @@ def multi_turn_task(
 ) -> Any:
     """Decorator producing a multi-turn resilient chain.
 
-        Multi-turn chains accept inputs across many turns against the same
-        ``task_id``. The handler's ``return X`` is the implicit-suspend
-        signal — there is no ``ctx.suspend``. The chain stays
-        alive across handler raises.
+    Multi-turn chains accept inputs across many turns against the same
+    ``task_id``. The handler's ``return X`` is the implicit-suspend
+    signal — there is no ``ctx.suspend``. The chain stays
+    alive across handler raises.
 
-        :param fn: The handler to decorate (parameterized form only; the bare
-            ``@multi_turn_task`` form is rejected because it cannot supply a
-            ``name``).
-        :type fn: Callable[..., Any] | None
-        :keyword name: **Required** stable chain-identity anchor (no
-            function-derived default; omitting it raises ``ValueError``).
-        :keyword title: Static human-readable string. Callable-factory form is
-            not supported.
-        :keyword timeout: Per-turn cooperative timeout. Defaults to 1 day when
-            unset; 7 days is a hard ceiling (larger/negative rejected at
-            decoration). This is a per-turn cap, not a chain-lifetime bound.
-        :keyword retry: Default retry policy.
-        :keyword steerable: When True, ``start()`` against an in-flight chain
-            queues the new input instead of raising ``TaskConflictError``.
-        :return: A :class:`MultiTurnTask` instance (distinct public class from
-            :class:`Task`).
-        :rtype: Any
+    :param fn: The handler to decorate (parameterized form only; the bare
+        ``@multi_turn_task`` form is rejected because it cannot supply a
+        ``name``).
+    :type fn: Callable[..., Any] | None
+    :keyword name: **Required** stable chain-identity anchor (no
+        function-derived default; omitting it raises ``ValueError``).
+    :keyword title: Static human-readable string. Callable-factory form is
+        not supported.
+    :keyword timeout: Per-turn cooperative timeout. Defaults to 1 day when
+        unset; 7 days is a hard ceiling (larger/negative rejected at
+        decoration). This is a per-turn cap, not a chain-lifetime bound.
+    :keyword retry: Default retry policy.
+    :keyword steerable: When True, ``start()`` against an in-flight chain
+        queues the new input instead of raising ``TaskConflictError``.
+    :return: A :class:`MultiTurnTask` instance (distinct public class from
+        :class:`Task`).
+    :rtype: Any
     """
     #  — reject unknown kwargs at decoration time
     _validate_multi_turn_task_kwargs(**_extra_kwargs)
