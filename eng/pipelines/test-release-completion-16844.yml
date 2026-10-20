@@ -1,0 +1,130 @@
+# TEST ONLY: replay one historical merged template event; never publish a package.
+trigger: none
+pr: none
+
+parameters:
+  - name: SecondaryPlanId
+    type: number
+    default: 0
+
+variables:
+  - name: AZSDKTOOLS_AGENT_TESTING
+    value: 'true'
+  - name: AZSDKTOOLS_NOTIFICATION_SERVICE_URL
+    value: ''
+
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: AutoReleasePrepare
+        displayName: TEST ONLY - resolve historical template PR
+        jobs:
+          - job: ResolveAutoReleasePackages
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+            steps:
+              - checkout: self
+                fetchDepth: 1
+                fetchTags: false
+
+              - task: UsePythonVersion@0
+                inputs:
+                  versionSpec: '3.12'
+
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  EnableTwineAuth: false
+                  EnablePipAuth: true
+                  EnableUvAuth: true
+
+              - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+                parameters:
+                  TokenRequest:
+                    repository_ids:
+                      - 4127088
+                    permissions:
+                      contents: read
+                      pull_requests: read
+                      issues: read
+
+              - template: /eng/common/pipelines/templates/steps/install-azsdk-cli.yml
+
+              - task: AzureCLI@2
+                displayName: Verify disposable fixture and released CLI
+                inputs:
+                  azureSubscription: opensource-api-connection
+                  scriptType: pscore
+                  scriptLocation: scriptPath
+                  scriptPath: eng/scripts/tests/Invoke-CompletionLiveTest.ps1
+                  arguments: -Phase BeforeResolve -SecondaryPlanId ${{ parameters.SecondaryPlanId }} -AzsdkExePath '$(AZSDK)'
+
+              # This is the unchanged production resolver: real GitHub association, labels,
+              # changed files, Python package detection, CLI progress write and output variable.
+              - task: AzureCLI@2
+                name: resolve
+                displayName: Resolve real merged template PR and mark progress
+                env:
+                  GH_TOKEN: $(GH_TOKEN)
+                inputs:
+                  azureSubscription: opensource-api-connection
+                  scriptType: pscore
+                  scriptLocation: scriptPath
+                  scriptPath: eng/common/scripts/Resolve-AutoReleasePackages.ps1
+                  arguments: >-
+                    -CommitSha c80a550d7e92809f396a4aa4ae2477130a7a7cf6
+                    -RepoId Azure/azure-sdk-for-python
+                    -Artifacts '[{"name":"azure-template","safeName":"azuretemplate"}]'
+                    -PipelineUrl "$(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
+                    -AzsdkExePath '$(AZSDK)'
+
+      - stage: Release_azuretemplate
+        displayName: TEST ONLY - completion without publication
+        dependsOn: AutoReleasePrepare
+        condition: and(succeeded(), eq(dependencies.AutoReleasePrepare.outputs['ResolveAutoReleasePackages.resolve.HasAutoReleaseArtifacts'], 'true'))
+        variables:
+          - name: AutoReleaseSdkPullRequestUrl
+            value: $[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs['resolve.AutoReleaseSdkPullRequestUrl'] ]
+        jobs:
+          - job: MarkPackageReleaseCompletion
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+            steps:
+              - checkout: self
+                fetchDepth: 1
+                fetchTags: false
+
+              - template: /eng/common/pipelines/templates/steps/install-azsdk-cli.yml
+
+              - task: AzureCLI@2
+                displayName: Verify output handoff and negative correlation
+                inputs:
+                  azureSubscription: opensource-api-connection
+                  scriptType: pscore
+                  scriptLocation: scriptPath
+                  scriptPath: eng/scripts/tests/Invoke-CompletionLiveTest.ps1
+                  arguments: >-
+                    -Phase BeforeCompletion -SecondaryPlanId ${{ parameters.SecondaryPlanId }}
+                    -AzsdkExePath '$(AZSDK)' -ResolvedSdkPr '$(AutoReleaseSdkPullRequestUrl)'
+
+              # Actual shared completion template. No PublishPackage, signing, tagging,
+              # release deployment, ARH write or package upload job exists in this test.
+              - template: /eng/common/pipelines/templates/steps/mark-release-completion.yml
+                parameters:
+                  ConfigFileDir: $(Pipeline.Workspace)/completion-fixture
+                  PackageArtifactName: azure-template
+                  ReleasePlanId: 0
+                  SdkPullRequest: $(AutoReleaseSdkPullRequestUrl)
+
+              - task: AzureCLI@2
+                displayName: Verify exact live ADO changes
+                inputs:
+                  azureSubscription: opensource-api-connection
+                  scriptType: pscore
+                  scriptLocation: scriptPath
+                  scriptPath: eng/scripts/tests/Invoke-CompletionLiveTest.ps1
+                  arguments: -Phase AfterCompletion -SecondaryPlanId ${{ parameters.SecondaryPlanId }} -AzsdkExePath '$(AZSDK)'
