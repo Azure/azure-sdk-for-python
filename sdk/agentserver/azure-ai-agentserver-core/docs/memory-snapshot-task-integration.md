@@ -234,6 +234,10 @@ A later hook first retries that cleanup under the original session binding,
 before rehydrating configuration or invoking restore callbacks. Only then is
 the stopped manager disposed and a replacement activated. Repeated cleanup
 failures remain failures; an already committed input promotion is not repeated.
+The host also retains the original environment/configuration rollback snapshots
+until cleanup and rollback finish. It restores those values before computing a
+retry's environment baseline, so omitted overrides cannot retain a failed value
+and repeated overrides cannot replace the captured baseline with that value.
 Ordinary host shutdown also finishes any pending rollback preservation rather
 than discarding its queued work.
 A newly restored manager records

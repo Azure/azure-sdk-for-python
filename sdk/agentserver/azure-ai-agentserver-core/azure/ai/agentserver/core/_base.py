@@ -24,7 +24,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import _config, _tracing
 from ._errors import create_error_response
-from ._lifecycle import AgentSessionContext, _LifecycleState
+from ._lifecycle import AgentSessionContext, _LifecycleRollback, _LifecycleState
 from ._middleware import InboundRequestLoggingMiddleware
 from ._request_context import (
     FoundryAgentRequestContext,
@@ -873,7 +873,9 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 self._lifecycle.assigned_session_id = context.session_id
 
             # Finish interrupted cleanup under its original binding before rehydration.
-            if await self._quiesce_tasks_before_rollback(self.config.session_id, self.config.session_guid):
+            interrupted = await self._quiesce_tasks_before_rollback(self.config.session_id, self.config.session_guid)
+            AgentServerHost._restore_lifecycle_environment(self)
+            if interrupted:
                 raise asyncio.CancelledError
 
             effective_environment = dict(context.session_env_overrides)
@@ -890,6 +892,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             )
             previous_config = vars(self.config).copy()
             task_manager = _get_active_task_manager()
+            self._lifecycle.pending_rollback = _LifecycleRollback(previous_environment, previous_config, task_manager)
 
             try:
                 for key in environment_variables:
@@ -920,21 +923,11 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                     reset_request_context(request_context_token)
             except asyncio.CancelledError:
                 await self._quiesce_tasks_before_rollback(previous_session_id, previous_session_guid)
-                AgentServerHost._restore_lifecycle_environment(
-                    self,
-                    previous_environment,
-                    previous_config,
-                    task_manager,
-                )
+                AgentServerHost._restore_lifecycle_environment(self)
                 raise
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 interrupted = await self._quiesce_tasks_before_rollback(previous_session_id, previous_session_guid)
-                AgentServerHost._restore_lifecycle_environment(
-                    self,
-                    previous_environment,
-                    previous_config,
-                    task_manager,
-                )
+                AgentServerHost._restore_lifecycle_environment(self)
                 if interrupted:
                     raise asyncio.CancelledError from exc
                 logger.exception("The after-restore lifecycle hook failed")
@@ -963,21 +956,21 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         self._lifecycle.captured_environment_values = captured_environment
         self._lifecycle.applied_environment_variables.update(effective_environment)
         self._lifecycle.before_snapshot_completed = False
+        self._lifecycle.pending_rollback = None
 
-    def _restore_lifecycle_environment(
-        self,
-        previous_environment: dict[str, object],
-        previous_config: dict[str, Any],
-        task_manager: Any,
-    ) -> None:
-        for key, value in previous_environment.items():
+    def _restore_lifecycle_environment(self) -> None:
+        rollback = self._lifecycle.pending_rollback
+        if rollback is None:
+            return
+        for key, value in rollback.environment.items():
             if value is _MISSING_ENV:
                 os.environ.pop(key, None)
             else:
                 os.environ[key] = str(value)
-        vars(self.config).update(previous_config)
-        if task_manager is not None:
-            task_manager._rehydrate_session_state()  # pylint: disable=protected-access
+        vars(self.config).update(rollback.config)
+        if rollback.task_manager is not None:
+            rollback.task_manager._rehydrate_session_state()  # pylint: disable=protected-access
+        self._lifecycle.pending_rollback = None
 
     # ------------------------------------------------------------------
     # Run helpers

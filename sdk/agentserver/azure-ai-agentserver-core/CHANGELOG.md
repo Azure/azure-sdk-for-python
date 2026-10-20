@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Preserve environment and configuration rollback snapshots across failed
+  restore cleanup retries so sparse overrides retain the captured baseline.
 - Retry interrupted restore rollback cleanup before activating a replacement
   TaskManager, retaining queued-input reconciliation handles across transient
   storage failures.
