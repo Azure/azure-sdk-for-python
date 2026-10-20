@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -32,9 +32,86 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class DetectorRenderingType(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The rendering type for a detector dataset."""
+
+    TABLE = 1
+    """A table rendering."""
+    TIME_SERIES_GRAPH = 2
+    """A time series graph rendering."""
+    TIME_SERIES_PER_INSTANCE_GRAPH = 3
+    """A time series per-instance graph rendering."""
+    PIE_CHART = 4
+    """A pie chart rendering."""
+    DATA_SUMMARY = 5
+    """A data summary rendering."""
+    EMAIL_SNIPPET = 6
+    """An email snippet rendering."""
+    INSIGHT = 7
+    """An insight rendering."""
+    DYNAMIC_INSIGHT = 8
+    """A dynamic insight rendering."""
+    MARKDOWN = 9
+    """A Markdown rendering."""
+
+
+class DetectorStatusId(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a detector result."""
+
+    CRITICAL = 0
+    """A critical issue was detected."""
+    WARNING = 1
+    """A warning was detected."""
+    INFO = 2
+    """An informational result was returned."""
+    SUCCESS = 3
+    """The detector completed without detecting an issue."""
+    NONE = 4
+    """The detector did not run or returned no insights."""
+
+
+class DetectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of diagnostic response."""
+
+    DETECTOR = "Detector"
+    """A diagnostic detector."""
+    ANALYSIS = "Analysis"
+    """A diagnostic analysis."""
+    CATEGORY_OVERVIEW = "CategoryOverview"
+    """A diagnostic category overview."""
+
+
+class FailoverState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of the failover operation."""
+
+    NONE = "None"
+    """No failover operation is active."""
+    IN_PROGRESS = "InProgress"
+    """The failover operation is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The failover operation completed successfully."""
+    FAILED = "Failed"
+    """The failover operation failed."""
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    """No managed identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned managed identity."""
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    """System and user assigned managed identity."""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -121,6 +198,15 @@ class RedundancyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource is zone redundant."""
 
 
+class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The replication role of the scheduler."""
+
+    PRIMARY = "Primary"
+    """The parent scheduler is the primary in the failover configuration."""
+    SECONDARY = "Secondary"
+    """The parent scheduler is the secondary in the failover configuration."""
+
+
 class SchedulerSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the Stock Keeping Unit (SKU) of a Durable Task Scheduler."""
 
@@ -128,3 +214,12 @@ class SchedulerSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Dedicated SKU."""
     CONSUMPTION = "Consumption"
     """Consumption SKU."""
+
+
+class TransparentDataEncryptionKeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The key source for the transparent data encryption."""
+
+    MICROSOFT_MANAGED = "MicrosoftManaged"
+    """The key source is Microsoft-managed."""
+    CUSTOMER_MANAGED = "CustomerManaged"
+    """The key source is customer-managed."""
