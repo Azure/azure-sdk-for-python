@@ -229,6 +229,13 @@ next-input transition was interrupted. Reconciliation uses the same fenced
 drain path with an explicit lease claim before that lease is expired for retry.
 If reconciliation fails, cleanup propagates the error rather than rolling
 configuration back while queued work is stranded.
+The stopped manager retains its reconciliation handles until cleanup succeeds.
+A later hook first retries that cleanup under the original session binding,
+before rehydrating configuration or invoking restore callbacks. Only then is
+the stopped manager disposed and a replacement activated. Repeated cleanup
+failures remain failures; an already committed input promotion is not repeated.
+Ordinary host shutdown also finishes any pending rollback preservation rather
+than discarding its queued work.
 A newly restored manager records
 its restore ID before recovery so a same-ID retry cannot rotate lease identity
 under retained live workers.

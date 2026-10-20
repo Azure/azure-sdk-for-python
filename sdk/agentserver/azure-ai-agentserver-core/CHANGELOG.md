@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Retry interrupted restore rollback cleanup before activating a replacement
+  TaskManager, retaining queued-input reconciliation handles across transient
+  storage failures.
 - Reset task startup admission when reusing a host across sequential lifespans.
 - Reconcile interrupted steering transitions before restore rollback completes,
   retaining queued work as recoverable without dispatching a new turn.

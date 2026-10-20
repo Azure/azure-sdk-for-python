@@ -872,6 +872,181 @@ async def test_rollback_defers_queued_input_after_current_turn_returns_normally(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("new_restore", [False, True], ids=["same-restore", "new-restore"])
+@pytest.mark.parametrize(
+    ("failure", "failures", "retry_mode"),
+    [
+        pytest.param("read", 1, "restore", id="read-once"),
+        pytest.param("read", 2, "restore", id="read-twice"),
+        pytest.param("claim", 1, "restore", id="claim-once"),
+        pytest.param("claim", 2, "restore", id="claim-twice"),
+        pytest.param("committed_claim", 1, "restore", id="committed-claim"),
+        pytest.param("read", 1, "cancel", id="cancelled-cleanup"),
+        pytest.param("read", 1, "shutdown", id="shutdown-cleanup"),
+    ],
+)
+async def test_restore_retries_pending_cleanup_without_losing_queued_inputs(
+    provider_factory: tuple[LocalFileTaskProvider, Mock],
+    monkeypatch: pytest.MonkeyPatch,
+    failure: str,
+    failures: int,
+    retry_mode: str,
+    new_restore: bool,
+) -> None:
+    monkeypatch.setenv("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", "0.2")
+    provider, factory = provider_factory
+    running, queued, finish, drain_cancelled = (asyncio.Event() for _ in range(4))
+    observed: list[Any] = []
+    callbacks: list[str] = []
+    in_reconciliation = False
+    block_reconciliation = False
+    cleanup_entered, release_cleanup = asyncio.Event(), asyncio.Event()
+    cleanup_request: asyncio.Task[httpx.Response] | None = None
+    remaining_failures = failures
+    scans = 0
+    app = host()
+
+    @app.after_restore_handler
+    async def dependencies(context: AgentSessionContext) -> None:
+        callbacks.append(context.restore_id)
+        assert app._task_manager is None
+
+    @multi_turn_task(name="retry_cleanup", steerable=True)
+    async def existing(ctx: TaskContext[dict[str, str]]) -> str:
+        observed.append(ctx.input)
+        if ctx.input["value"] == "saved-input":
+            running.set()
+            await ctx.shutdown.wait()
+            return "current turn finished"
+        queued.set()
+        await finish.wait()
+        return ctx.input["value"]
+
+    await seed_expired_task(provider, existing.name, steering=True)
+    stored = await provider.get("existing-task")
+    assert stored is not None and stored.payload is not None
+    steering = dict(stored.payload["steering"])
+    steering["pending_inputs"].append({"value": "later-input"})
+    await provider.update("existing-task", TaskPatchRequest(payload={"steering": steering}))
+    original_read = TaskManager._provider_get_tracked
+    original_update = provider.update
+    original_reconcile = TaskManager._reconcile_steering_for_rollback
+    original_recovery = TaskManager._recover_stale_tasks
+
+    async def read(manager: TaskManager, task_id: str) -> Any:
+        nonlocal remaining_failures
+        if in_reconciliation and failure == "read" and remaining_failures:
+            remaining_failures -= 1
+            raise RuntimeError("Temporary reconciliation read failure")
+        result = await original_read(manager, task_id)
+        if not in_reconciliation and result is not None and result.status == "suspended":
+            try:
+                await asyncio.Event().wait()
+            except asyncio.CancelledError:
+                drain_cancelled.set()
+                raise
+        return result
+
+    async def update(task_id: str, patch: TaskPatchRequest) -> Any:
+        nonlocal remaining_failures
+        if in_reconciliation and patch.status == "in_progress" and failure != "read" and remaining_failures:
+            remaining_failures -= 1
+            if failure == "committed_claim":
+                await original_update(task_id, patch)
+            raise RuntimeError("Temporary reconciliation claim failure")
+        return await original_update(task_id, patch)
+
+    async def reconcile(manager: TaskManager, active_tasks: list[Any]) -> None:
+        nonlocal in_reconciliation
+        assert manager._materialization_restore_id == "restore-1"
+        assert manager._config.session_guid == "a" * 32
+        in_reconciliation = True
+        try:
+            if block_reconciliation:
+                cleanup_entered.set()
+                await release_cleanup.wait()
+            await original_reconcile(manager, active_tasks)
+        finally:
+            in_reconciliation = False
+
+    async def recovery(manager: TaskManager) -> None:
+        nonlocal scans
+        scans += 1
+        await original_recovery(manager)
+        if scans == 1:
+            await asyncio.wait_for(running.wait(), 2)
+            raise RuntimeError("Trigger rollback with pending steering input")
+
+    monkeypatch.setattr(TaskManager, "_provider_get_tracked", read)
+    monkeypatch.setattr(provider, "update", update)
+    monkeypatch.setattr(TaskManager, "_reconcile_steering_for_rollback", reconcile)
+    monkeypatch.setattr(TaskManager, "_recover_stale_tasks", recovery)
+    retry_payload = payload(restore_id="restore-2" if new_restore else "restore-1")
+    if new_restore:
+        retry_payload["session_context"]["session_env_overrides"]["FOUNDRY_AGENT_SESSION_GUID"] = "b" * 32
+    async with (
+        app.router.lifespan_context(app),
+        httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app, raise_app_exceptions=False), base_url="http://test"
+        ) as http,
+    ):
+        try:
+            assert (await http.post("/_agent/after-restore", json=payload())).status_code == 500
+            stopped = app._task_manager
+            assert stopped is not None and stopped._shutdown_event.is_set()
+            assert stopped._pending_shutdown_tasks
+            assert drain_cancelled.is_set()
+            assert not queued.is_set()
+            for _ in range(failures - 1):
+                assert (await http.post("/_agent/after-restore", json=retry_payload)).status_code == 500
+                assert app._task_manager is get_task_manager() is stopped
+                assert callbacks == ["restore-1"]
+            if retry_mode == "shutdown":
+                await app._shutdown_task_manager()
+            elif retry_mode == "cancel":
+                block_reconciliation = True
+                cleanup_request = asyncio.create_task(http.post("/_agent/after-restore", json=retry_payload))
+                await asyncio.wait_for(cleanup_entered.wait(), 2)
+                cleanup_request.cancel()
+                await asyncio.sleep(0)
+                assert not cleanup_request.done()
+                cleanup_request.cancel()
+                release_cleanup.set()
+                with pytest.raises(asyncio.CancelledError):
+                    await asyncio.wait_for(cleanup_request, 2)
+                block_reconciliation = False
+            if retry_mode != "restore":
+                assert app._task_manager is None
+                assert not stopped._has_live_workers
+                assert callbacks == ["restore-1"]
+            response = await http.post("/_agent/after-restore", json=retry_payload)
+            assert response.status_code == 200, response.text
+            await asyncio.wait_for(queued.wait(), 2)
+            assert remaining_failures == 0
+            assert get_task_manager() is app._task_manager is not stopped
+            assert not stopped._has_live_workers
+            assert not stopped._pending_shutdown_tasks
+            assert observed == [{"value": "saved-input"}, {"value": "queued-input"}]
+            assert callbacks == ["restore-1", retry_payload["session_context"]["restore_id"]]
+            stored = await provider.get("existing-task")
+            assert stored is not None and stored.payload is not None
+            assert stored.payload["input"] == {"value": "queued-input"}
+            assert stored.payload["steering"]["pending_inputs"] == [{"value": "later-input"}]
+            assert (await http.post("/_agent/after-restore", json=retry_payload)).status_code == 200
+            assert len(callbacks) == 2
+            assert len(observed) == 2
+            assert scans == 2
+            assert factory.call_count == 2
+        finally:
+            release_cleanup.set()
+            finish.set()
+            if cleanup_request is not None:
+                if not cleanup_request.done():
+                    cleanup_request.cancel()
+                await asyncio.gather(cleanup_request, return_exceptions=True)
+
+
+@pytest.mark.asyncio
 async def test_http_timeout_continues_activation_and_retry_deduplicates(
     provider_factory: tuple[LocalFileTaskProvider, Mock],
 ) -> None:

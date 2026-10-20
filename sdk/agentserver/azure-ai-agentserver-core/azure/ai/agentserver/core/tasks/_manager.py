@@ -443,6 +443,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._materialization_restore_id: str | None = None
         self._shutdown_event = shutdown_event or asyncio.Event()
         self._preserve_recoverable_tasks_on_shutdown = False
+        self._pending_shutdown_tasks: dict[int, _ActiveTask] = {}
         self._shutdown_grace_seconds = shutdown_grace_seconds
         self._active_generation_future: dict[str, asyncio.Future[Any]] = {}
         self._pending_steering_futures: dict[str, list[asyncio.Future[Any]]] = {}
@@ -893,6 +894,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 result_future=active.result_future,
             )
 
+    def _retain_shutdown_workers(self) -> set[asyncio.Task[Any]]:
+        self._pending_shutdown_tasks.update((id(active), active) for active in self._active_tasks.values())
+        workers = {*self._owned_workers, *self._timeout_watchdogs.values()}
+        for active in self._pending_shutdown_tasks.values():
+            workers.add(active.execution_task)
+            if active.renewal_task is not None:
+                workers.add(active.renewal_task)
+        return workers
+
     async def shutdown(self, *, wait_for_workers: bool = False, preserve_recoverable_tasks: bool = False) -> None:
         """Signal shutdown on all active tasks and force-expire leases.
 
@@ -908,15 +918,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :paramtype preserve_recoverable_tasks: bool
         """
         logger.info("TaskManager shutting down")
+        preserve_recoverable_tasks = preserve_recoverable_tasks or self._preserve_recoverable_tasks_on_shutdown
         self._preserve_recoverable_tasks_on_shutdown = preserve_recoverable_tasks
-        retained_active = tuple(self._active_tasks.values()) if preserve_recoverable_tasks else ()
-        retained_workers: set[asyncio.Task[Any]] = (
-            {*self._owned_workers, *self._timeout_watchdogs.values()} if preserve_recoverable_tasks else set()
-        )
-        for active in retained_active:
-            retained_workers.add(active.execution_task)
-            if active.renewal_task is not None:
-                retained_workers.add(active.renewal_task)
+        retained_workers = self._retain_shutdown_workers() if preserve_recoverable_tasks else set()
         self._shutdown_event.set()
 
         #   Layer 2: stop the periodic recovery scan task.
@@ -975,7 +979,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         remaining = list(self._active_tasks.values())
         if preserve_recoverable_tasks:
-            remaining = list({id(active): active for active in (*retained_active, *remaining)}.values())
+            retained_workers.update(self._retain_shutdown_workers())
+            remaining = list(self._pending_shutdown_tasks.values())
             # Finish old-binding writes before making the records reclaimable.
             await self._cancel_workers(wait=True, retained_workers=retained_workers)
             await self._reconcile_steering_for_rollback(remaining)
@@ -1008,6 +1013,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         self._active_tasks.clear()
         self._timeout_watchdogs.clear()
+        self._pending_shutdown_tasks.clear()
         for phase in self._startup_phases.values():
             phase.completed = False
             phase.completed_restore_id = None
