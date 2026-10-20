@@ -4,6 +4,7 @@
 
 ### Features Added
 
+* Added preview GPT Live support through `beta.voice_agents.live`, with synchronous and asynchronous WebSocket clients, typed Live events, session controls, audio streaming, and Responses-delegation tool input/output.
 * Added generated GPT Live voice-agent configuration, delegation, and client/server event models.
 * Added persisted Live conversation, item, and audio REST operations under `beta.voice_agents.live_conversations`.
 * Added image-generation model options and the `xhigh` and `max` quality values from the updated OpenAI TypeSpec dependency.
@@ -11,6 +12,12 @@
 ### Bugs Fixed
 
 * Preserved concrete Live/Realtime voice-agent types on agent readback without inserting an omitted `sub_protocol`.
+
+### Sample updates
+
+* Added GPT Live connection, text conversation, asynchronous PCM audio streaming, and function-tool examples under `samples/agents/voice`.
+* Updated GPT Live text examples with synchronous/asynchronous headless multi-turn conversations that reuse one session and preserve the default single-turn example.
+* Fixed the GPT Live WAV sample to ignore silent/very-low-level PCM when detecting reply inactivity, reject silence-only replies, and preserve captured PCM in audio counts and optional WAV output.
 
 ## 2.9.0 (2026-10-16)
 

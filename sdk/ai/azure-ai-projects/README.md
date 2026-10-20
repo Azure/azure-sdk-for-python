@@ -225,6 +225,41 @@ async with async_project_client.beta.voice_agents.realtime.connect(
 the peer connection, media, and SDP offer/answer exchange using `rtc.call.sdp.create` and
 `rtc.call.sdp.created` events. Selecting this value does not automatically create a WebRTC media client.
 
+### Voice Agent GPT Live (preview)
+
+GPT Live is a separate protocol at `project_client.beta.voice_agents.live` (and the same namespace
+on the asynchronous client). Create a `VoiceAgentLiveDefinition` using your GPT Live **deployment
+name**; existing `VoiceAgentDefinition` and `.realtime` calls retain Realtime behavior.
+Creating the preview definition through `project_client.agents` requires constructing the client
+with `allow_preview=True`, as the samples do. The `.beta` namespace opts in automatically.
+
+Use `.live.connect(agent_name=..., agent_version=...)` as a context manager and receive
+`session.started` before sending commands. Foundry starts the session from the saved definition;
+do not send another `session.start`. Live uses `session.input_audio`, `session.instructions`,
+`session.thinking`, and `session.commentary`, while `response.item.create` and `response.create`
+require Responses delegation. Live has no Realtime `response.cancel`; cancel local receive tasks
+normally or request `session.close` and receive `session.closed`, then close the connection.
+
+Live conversation REST operations use the emitted implementation without handwritten paging overrides.
+The current emitter's REST pagers follow `last_id` without checking `has_more`; this known generation
+limitation does not affect WebSocket sessions.
+
+Connection, text, PCM audio-streaming, and function-tool examples are in `samples/agents/voice`
+in the [Samples][samples] folder. The optional `[voice]` dependencies are unchanged.
+
+The synchronous and asynchronous text examples accept quoted prompts for a headless multi-turn
+conversation in one session. Omit prompts to run the original single-turn example:
+
+```powershell
+python .\samples\agents\voice\sample_voice_agent_live_text_conversation.py "My name is Ada." "What is my name?"
+python .\samples\agents\voice\sample_voice_agent_live_text_conversation_async.py "My name is Ada." "What is my name?"
+```
+
+These text examples print Responses backend text, not completion of the voice frontend's speech.
+The WAV audio example uses a bounded speech-inactivity heuristic because Live has no speech-finished
+event. Continued silent PCM does not keep it waiting forever, and silence-only output is not a
+successful spoken reply. A long speech pause can still split a reply.
+
 ## Client-side tracing
 
 See [Add client-side tracing to Foundry agents (preview)](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python).
@@ -291,7 +326,8 @@ openai_logger.setLevel(logging.DEBUG)
 openai_logger.propagate = False
 openai_logger.addHandler(handler)
 
-# Optional: Voice Agent WebSocket transport logger.
+# Optional: Voice Agent Realtime WebSocket transport logger.
+# For GPT Live, use "azure.ai.projects.live" instead.
 voice_logger = logging.getLogger("azure.ai.projects.realtime")
 voice_logger.setLevel(logging.DEBUG)
 voice_logger.propagate = False
@@ -302,7 +338,7 @@ voice_logger.addHandler(handler)
 # handler.setFormatter(formatter)
 ```
 
-The `azure` logger includes logs from `azure-ai-projects` and `azure-core`, including Voice Agent WebSocket transport logs. The dedicated OpenAI and Voice Agent loggers shown above can be used when you want only those transport logs. At `DEBUG` level, the Voice Agent logger records connection and close events and the type and byte count of each event sent or received. It does not log event payloads, URL query strings, request headers, or authentication tokens.
+The `azure` logger includes logs from `azure-ai-projects` and `azure-core`, including Voice Agent WebSocket transport logs. The dedicated OpenAI and Voice Agent loggers shown above can be used when you want only those transport logs. The `azure.ai.projects.realtime` and `azure.ai.projects.live` loggers record connection and close events and the type and byte count of each event sent or received at `DEBUG` level. They do not log event payloads, URL query strings, request headers, or authentication tokens.
 
 By default, logs redact URL query values, some HTTP request and response headers (including `Authorization`), and request and response payloads. To create HTTP pipeline logs without redaction, add `logging_enable=True` to the client constructor:
 
