@@ -38,7 +38,7 @@ from azure.storage.filedatalake.aio import (
     FileSystemClient,
 )
 from test_helpers import CaptureAuthHeader, _find_session_policy
-from azure.storage.filedatalake.aio import AsyncContainerSessionProvider
+from azure.storage.filedatalake.aio import ContainerSessionProvider
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = "filesystem"
@@ -1556,7 +1556,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         blob_url = self.account_url(datalake_storage_account_name, "blob")
 
         async with (
-            AsyncContainerSessionProvider(blob_url, credential, api_version="2026-10-06") as session_provider,
+            ContainerSessionProvider(blob_url, credential, api_version="2026-10-06") as session_provider,
             DataLakeServiceClient(
                 dfs_url,
                 credential=credential,

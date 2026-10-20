@@ -17,7 +17,7 @@ from typing import (
 from types import TracebackType
 from typing_extensions import Self
 
-from azure.storage.filedatalake._shared.session_async import AsyncSessionProvider
+from azure.storage.filedatalake._shared.session_async import SessionProvider
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -57,7 +57,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         use_session: bool = False,
-        session_provider: Optional[AsyncSessionProvider] = None,
+        session_provider: Optional[SessionProvider] = None,
         session_account_name: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...

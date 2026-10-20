@@ -49,7 +49,7 @@ from .policies_async import (
 )
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .._shared_access_signature import _is_credential_sastoken
-from .session_async import AsyncContainerSessionProvider
+from .session_async import ContainerSessionProvider
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=C4756
@@ -154,7 +154,7 @@ class AsyncStorageAccountHostsMixin(object):
                 sub_kwargs.pop("pipeline", None)
                 sub_kwargs.pop("sdk_moniker", None)
                 sub_kwargs["transport"] = AsyncTransportWrapper(transport)
-                session_provider = AsyncContainerSessionProvider(
+                session_provider = ContainerSessionProvider(
                     f"{self.scheme}://{self.primary_hostname}".replace(".dfs.", ".blob.", 1),
                     cast(AsyncTokenCredential, credential),
                     audience=audience,

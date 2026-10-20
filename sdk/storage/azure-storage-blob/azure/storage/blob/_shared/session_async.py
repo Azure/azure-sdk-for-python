@@ -30,7 +30,7 @@ _LOGGER = logging.getLogger(__name__)
 UTC = timezone.utc
 
 
-class AsyncSessionProvider(Protocol):
+class SessionProvider(Protocol):
     """Creates, caches, and invalidates per-container sessions."""
 
     def is_request_eligible(self, request: "PipelineRequest") -> bool: ...
@@ -118,7 +118,7 @@ class AsyncSessionCache:
                 self._entry.pop(container_name, None)
 
 
-class AsyncContainerSessionProvider:
+class ContainerSessionProvider:
     """Creates, caches, and invalidates per-container sessions backed by an AsyncTokenCredential.
 
     A single provider may be shared across multiple clients to persist the session
@@ -137,13 +137,13 @@ class AsyncContainerSessionProvider:
 
         if not hasattr(credential, "get_token"):
             raise TypeError(
-                f"AsyncContainerSessionProvider requires an AsyncTokenCredential; "
+                f"ContainerSessionProvider requires an AsyncTokenCredential; "
                 f"received {type(credential).__name__}."
             )
         self._client = BlobServiceClient(_to_service_url(service_url), credential=credential, **kwargs)
         self._cache = AsyncSessionCache()
 
-    async def __aenter__(self) -> "AsyncContainerSessionProvider":
+    async def __aenter__(self) -> "ContainerSessionProvider":
         await self._client.__aenter__()
         return self
 

@@ -38,7 +38,7 @@ from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
 )
-from azure.storage.blob._shared.session_async import AsyncContainerSessionProvider
+from azure.storage.blob._shared.session_async import ContainerSessionProvider
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = "acontainer"
@@ -2783,7 +2783,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         account_url = self.account_url(storage_account_name, "blob")
 
         async with (
-            AsyncContainerSessionProvider(account_url, credential, api_version="2026-10-06") as session_provider,
+            ContainerSessionProvider(account_url, credential, api_version="2026-10-06") as session_provider,
             BlobServiceClient(
                 account_url,
                 credential=credential,

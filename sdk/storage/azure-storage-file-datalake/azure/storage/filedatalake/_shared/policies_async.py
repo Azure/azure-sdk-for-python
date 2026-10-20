@@ -28,7 +28,7 @@ from .policies import (
     StorageRetryPolicy,
 )
 from .session import Session
-from .session_async import AsyncSessionProvider
+from .session_async import SessionProvider
 from .streams_async import AsyncStructuredMessageDecoder
 from .validation import (
     calculate_content_md5,
@@ -356,14 +356,14 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         self,
         *,
         account_name: Optional[str],
-        session_provider: AsyncSessionProvider,
+        session_provider: SessionProvider,
     ) -> None:
         """Constructs an AsyncStorageSessionPolicy.
 
         :keyword str account_name: Storage account name; used as the signer
             identity when signing session-authenticated requests.
         :keyword session_provider: Creates, caches, and invalidates per-container sessions.
-        :paramtype session_provider: AsyncSessionProvider
+        :paramtype session_provider: SessionProvider
         :raises ValueError: if `account_name` is `None`.
         """
         if account_name is None:
