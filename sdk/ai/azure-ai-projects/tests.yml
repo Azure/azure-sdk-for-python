@@ -3,11 +3,12 @@ pr: none
 
 parameters:
   - name: SamplePattern
+    displayName: 'Sample pattern (example: samples\hosted_agents\sample_*.py)'
     type: string
     default: 'samples/**/*.py'
   - name: TestPattern
+    displayName: 'Test pattern (required: enter * for all, or e.g. *remote_build*)'
     type: string
-    default: ''
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:

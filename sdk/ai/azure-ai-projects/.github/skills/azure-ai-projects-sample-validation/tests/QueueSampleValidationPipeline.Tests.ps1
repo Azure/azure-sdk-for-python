@@ -51,7 +51,7 @@ Describe "QueueSampleValidationPipeline.ps1" {
         $caught.Exception.Message | Should Match "duplicate name"
     }
 
-    It "omits an empty test pattern so the YAML default applies" {
+    It "queues all nodes explicitly when no test pattern is provided" {
         $state = [pscustomobject]@{ Body = $null }
         $requestInvoker = {
             param($RequestUri, $RequestHeaders, $RequestBody)
@@ -67,6 +67,6 @@ Describe "QueueSampleValidationPipeline.ps1" {
             -BearerToken "ado-token" -PipelineRevision 3 -RequestInvoker $requestInvoker | Out-Null
 
         $state.Body.templateParameters.SamplePattern | Should Be "samples\**\*.py"
-        $state.Body.templateParameters.Contains("TestPattern") | Should Be $false
+        $state.Body.templateParameters.TestPattern | Should Be "*"
     }
 }

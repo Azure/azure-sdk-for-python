@@ -51,9 +51,7 @@ if ($PipelineRevision -le 0) {
 
 $templateParameters = [ordered]@{
     SamplePattern = $SamplePattern
-}
-if ($TestPattern) {
-    $templateParameters.TestPattern = $TestPattern
+    TestPattern = if ([string]::IsNullOrWhiteSpace($TestPattern)) { "*" } else { $TestPattern }
 }
 
 $body = [ordered]@{
