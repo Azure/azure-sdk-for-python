@@ -1,7 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import logging
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass
 from ipaddress import IPv6Address
 from urllib.parse import urlsplit
@@ -17,6 +19,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 
 _MAX_INSTRUMENTATION_KEY_LENGTH = 200
 _MAX_INGESTION_ENDPOINT_LENGTH = 2048
+_logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -38,11 +41,11 @@ class _Route:
         return self.ingestion_endpoint, self.is_aad
 
 
-def _get_instrumentation_key(attributes: Attributes) -> str:
+def _get_instrumentation_key(attributes: Mapping[str, object] | None) -> str:
     """Validate a routed key independently of connection-string UUID validation.
 
     :param attributes: The telemetry item's attributes.
-    :type attributes: ~opentelemetry.util.types.Attributes
+    :type attributes: ~collections.abc.Mapping[str, object] or None
     :return: The trimmed instrumentation key.
     :rtype: str
     :raises ValueError: If the key is missing, invalid, or longer than 200 characters.
@@ -58,13 +61,13 @@ def _get_instrumentation_key(attributes: Attributes) -> str:
     return key
 
 
-def _get_ingestion_endpoint(attributes: Attributes) -> str:
+def _get_ingestion_endpoint(attributes: Mapping[str, object] | None) -> str:
     """Validate a trusted HTTPS destination and normalize its route key.
 
     IDNA validation and conversion are left to the HTTP transport.
 
     :param attributes: The telemetry item's attributes.
-    :type attributes: ~opentelemetry.util.types.Attributes
+    :type attributes: ~collections.abc.Mapping[str, object] or None
     :return: The normalized ingestion endpoint with a trailing slash.
     :rtype: str
     :raises ValueError: If the endpoint is missing, invalid, or longer than 2048 characters.
@@ -95,6 +98,23 @@ def _get_ingestion_endpoint(attributes: Attributes) -> str:
         raise ValueError(
             "Routing ingestion endpoint must be an absolute HTTPS URL without credentials, query, or fragment."
         ) from None
+
+
+def _is_valid_route(attributes: Mapping[str, object] | None) -> bool:
+    """Check the required routing attributes before converting an item.
+
+    :param attributes: The telemetry item's attributes.
+    :type attributes: ~collections.abc.Mapping[str, object] or None
+    :return: Whether the instrumentation key and ingestion endpoint are valid.
+    :rtype: bool
+    """
+    try:
+        _get_instrumentation_key(attributes)
+        _get_ingestion_endpoint(attributes)
+    except ValueError as error:
+        _logger.debug("Dropping telemetry with invalid multi-endpoint routing attributes: %s", error)
+        return False
+    return True
 
 
 def _normalize_endpoint_host(host: str) -> str:

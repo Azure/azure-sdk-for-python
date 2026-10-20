@@ -12,12 +12,26 @@ from azure.monitor.opentelemetry.exporter._routing import (
     _get_instrumentation_key,
     _get_route,
     _is_aad_route,
+    _is_valid_route,
 )
 from azure.monitor.opentelemetry.exporter.export.logs._exporter import _is_ignored_attribute
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import _is_standard_attribute
 
 
 class TestRouting(unittest.TestCase):
+    def test_route_validation(self):
+        attributes = {
+            "microsoft.instrumentation_key": "customer-key",
+            "microsoft.ingestion_endpoint": "https://example.com/",
+        }
+        self.assertTrue(_is_valid_route(attributes))
+        for invalid in (None, {}, {**attributes, "microsoft.ingestion_endpoint": "http://example.com/"}):
+            with self.subTest(attributes=invalid):
+                with self.assertLogs("azure.monitor.opentelemetry.exporter._routing", level="DEBUG") as logs:
+                    self.assertFalse(_is_valid_route(invalid))
+                self.assertEqual(len(logs.output), 1)
+                self.assertIn("Dropping telemetry with invalid multi-endpoint routing attributes", logs.output[0])
+
     def test_instrumentation_key(self):
         for value, expected in (
             ("customer-key", "customer-key"),

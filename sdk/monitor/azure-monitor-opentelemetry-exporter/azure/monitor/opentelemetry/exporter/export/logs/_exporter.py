@@ -30,6 +30,7 @@ except ImportError:
     _session_attributes = None  # type: ignore
 
 from azure.monitor.opentelemetry.exporter import _utils
+from azure.monitor.opentelemetry.exporter._routing import _is_valid_route
 from azure.monitor.opentelemetry.exporter._constants import (
     _AVAILABILITY_ENVELOPE_NAME,
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
@@ -102,7 +103,11 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
         :return: The result of the export.
         :rtype: ~opentelemetry.sdk._logs.export.LogRecordExportResult
         """
-        envelopes = [self._log_to_envelope(log) for log in batch]
+        envelopes = [
+            self._log_to_envelope(log)
+            for log in batch
+            if not self._enable_multi_endpoint_routing or _is_valid_route(log.log_record.attributes)
+        ]
         try:
             result = self._transmit(envelopes)
             self._handle_transmit_from_storage(envelopes, result)
