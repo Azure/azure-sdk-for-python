@@ -4898,6 +4898,8 @@ class ShareOperations:  # pylint: disable=docstring-missing-param
         share_provisioned_iops: Optional[int] = None,
         share_provisioned_bandwidth_mibps: Optional[int] = None,
         enable_smb_directory_lease: Optional[bool] = None,
+        enable_change_feed: Optional[bool] = None,
+        change_feed_retention_in_days: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new share under the specified account. If the share with the same name already
@@ -4942,6 +4944,13 @@ class ShareOperations:  # pylint: disable=docstring-missing-param
         :keyword enable_smb_directory_lease: Optional. Used to enable SMB directory lease. Default
          value is None.
         :paramtype enable_smb_directory_lease: bool
+        :keyword enable_change_feed: Optional. Boolean. Default if not specified is false. This
+         property enables change feed on the share. Default value is None.
+        :paramtype enable_change_feed: bool
+        :keyword change_feed_retention_in_days: Optional. Integer. Specifies the number of days that
+         change feed records are retained, between 1 and 365. Default if not specified is 7 days.
+         Default value is None.
+        :paramtype change_feed_retention_in_days: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4974,6 +4983,8 @@ class ShareOperations:  # pylint: disable=docstring-missing-param
             share_provisioned_iops=share_provisioned_iops,
             share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
             enable_smb_directory_lease=enable_smb_directory_lease,
+            enable_change_feed=enable_change_feed,
+            change_feed_retention_in_days=change_feed_retention_in_days,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -5153,6 +5164,18 @@ class ShareOperations:  # pylint: disable=docstring-missing-param
         )
         response_headers["x-ms-enable-smb-directory-lease"] = self._deserialize(
             "bool", response.headers.get("x-ms-enable-smb-directory-lease")
+        )
+        response_headers["x-ms-share-creation-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-share-creation-time")
+        )
+        response_headers["x-ms-file-enable-change-feed"] = self._deserialize(
+            "bool", response.headers.get("x-ms-file-enable-change-feed")
+        )
+        response_headers["x-ms-file-change-feed-retention-in-days"] = self._deserialize(
+            "int", response.headers.get("x-ms-file-change-feed-retention-in-days")
+        )
+        response_headers["x-ms-file-blob-container-for-xfiles-change-feed"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-blob-container-for-xfiles-change-feed")
         )
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
@@ -6057,6 +6080,8 @@ class ShareOperations:  # pylint: disable=docstring-missing-param
         share_provisioned_iops: Optional[int] = None,
         share_provisioned_bandwidth_mibps: Optional[int] = None,
         enable_smb_directory_lease: Optional[bool] = None,
+        enable_change_feed: Optional[bool] = None,
+        change_feed_retention_in_days: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Sets properties for the specified share.
@@ -6099,6 +6124,13 @@ class ShareOperations:  # pylint: disable=docstring-missing-param
         :keyword enable_smb_directory_lease: Optional. Used to enable SMB directory lease. Default
          value is None.
         :paramtype enable_smb_directory_lease: bool
+        :keyword enable_change_feed: Optional. Boolean. Default if not specified is false. This
+         property enables change feed on the share. Default value is None.
+        :paramtype enable_change_feed: bool
+        :keyword change_feed_retention_in_days: Optional. Integer. Specifies the number of days that
+         change feed records are retained, between 1 and 365. Default if not specified is 7 days.
+         Default value is None.
+        :paramtype change_feed_retention_in_days: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6130,6 +6162,8 @@ class ShareOperations:  # pylint: disable=docstring-missing-param
             share_provisioned_iops=share_provisioned_iops,
             share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
             enable_smb_directory_lease=enable_smb_directory_lease,
+            enable_change_feed=enable_change_feed,
+            change_feed_retention_in_days=change_feed_retention_in_days,
             version=self._config.version,
             headers=_headers,
             params=_params,
