@@ -1,5 +1,31 @@
 # Release History
 
+## 18.0.0 (2026-10-20)
+
+### Features Added
+
+  - Model `AccountProperties` added property `ldap_configuration`
+  - Enum `NetAppProvisioningState` added member `CANCELED`
+  - Added model `AccountEncryptionPatch`
+  - Added model `AccountPropertiesPatch`
+  - Added model `ActiveDirectoryPatch`
+  - Added enum `BindAuthenticationLevel`
+  - Added model `BindPasswordAkvConfig`
+  - Added model `BindPasswordAkvConfigPatch`
+  - Added model `EncryptionIdentityPatch`
+  - Added model `KeyVaultPropertiesPatch`
+  - Added model `LdapConfiguration`
+  - Added model `LdapConfigurationPatch`
+  - Added enum `SecureLdapType`
+  - Model `AccountsOperations` added method `begin_refresh_ldap_bind_password`
+
+### Breaking Changes
+
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `id`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `location`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `name`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `type`
+
 ## 18.0.0b3 (2026-08-26)
 
 ### Features Added
