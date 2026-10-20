@@ -198,6 +198,10 @@ class BaseSampleExecutor:
         self.sample_path = sample_path
         self.print_calls: list[str] = []
         self.print_output_calls: list[str] = []
+        self.api_log_calls: list[str] = []
+        self.api_log_file_path: Optional[str] = None
+        self.print_output_file_path: Optional[str] = None
+        self._attachment_markers_emitted = False
         self._original_print = print
         self.allowed_llm_validation_failures = allowed_llm_validation_failures or set()
         self._validation_text_preprocessor = validation_text_preprocessor
@@ -241,7 +245,7 @@ class BaseSampleExecutor:
 
     @contextmanager
     def _capture_debug_logs(self):
-        """Capture logger DEBUG output into the same array used for print capture."""
+        """Capture logger DEBUG output into combined and API-only arrays."""
 
         bearer_token_pattern = re.compile(r"(?i)(Bearer\s+)([^\s\"',;]+)")
         # Matches raw JWT-like tokens assigned to an "authorization" JSON field
@@ -255,9 +259,10 @@ class BaseSampleExecutor:
             return message
 
         class _PrintCaptureLogHandler(logging.Handler):
-            def __init__(self, sink: list[str]):
+            def __init__(self, combined_sink: list[str], api_sink: list[str]):
                 super().__init__(level=logging.DEBUG)
-                self._sink = sink
+                self._combined_sink = combined_sink
+                self._api_sink = api_sink
                 self._included_logger_prefixes = (
                     "azure",
                     "msrest",
@@ -270,7 +275,9 @@ class BaseSampleExecutor:
                     message = self.format(record)
                 except Exception:  # pylint: disable=broad-exception-caught
                     message = record.getMessage()
-                self._sink.append(_sanitize_log_message(message))
+                sanitized_message = _sanitize_log_message(message)
+                self._combined_sink.append(sanitized_message)
+                self._api_sink.append(sanitized_message)
 
         root_logger = logging.getLogger()
         previous_root_level = root_logger.level
@@ -306,7 +313,7 @@ class BaseSampleExecutor:
             except Exception:  # pylint: disable=broad-exception-caught
                 continue
 
-        capture_handler = _PrintCaptureLogHandler(self.print_calls)
+        capture_handler = _PrintCaptureLogHandler(self.print_calls, self.api_log_calls)
         capture_handler.setFormatter(logging.Formatter("%(message)s"))
 
         root_logger.setLevel(logging.DEBUG)
@@ -376,7 +383,7 @@ class BaseSampleExecutor:
         if not log_file:
             return None
 
-        self._write_output_log()
+        self._write_attachment_logs()
         sample_display_path = self._get_sample_display_path()
 
         with open(log_file, "w", encoding="utf-8") as f:
@@ -404,7 +411,7 @@ class BaseSampleExecutor:
         if not log_file:
             return None
 
-        self._write_output_log()
+        self._write_attachment_logs()
         sample_display_path = self._get_sample_display_path()
 
         with open(log_file, "w", encoding="utf-8") as f:
@@ -428,7 +435,7 @@ class BaseSampleExecutor:
         if not log_file:
             return None
 
-        self._write_output_log()
+        self._write_attachment_logs()
         sample_display_path = self._get_sample_display_path()
 
         with open(log_file, "w", encoding="utf-8") as f:
@@ -441,9 +448,10 @@ class BaseSampleExecutor:
 
     def _write_output_log(self) -> Optional[str]:
         """Write captured print-only output to a live-mode temp log file."""
-        log_file = self._build_live_log_file_path("output")
+        log_file = self.print_output_file_path or self._build_live_log_file_path("print")
         if not log_file:
             return None
+        self.print_output_file_path = log_file
 
         sample_display_path = self._get_sample_display_path()
 
@@ -457,6 +465,39 @@ class BaseSampleExecutor:
             else:
                 file_handle.write("(No print() output was captured before the sample stopped.)\n")
         return log_file
+
+    def _write_api_log(self) -> Optional[str]:
+        """Write captured Azure SDK API logs to a live-mode temp log file."""
+        log_file = self.api_log_file_path or self._build_live_log_file_path("api")
+        if not log_file:
+            return None
+        self.api_log_file_path = log_file
+
+        sample_display_path = self._get_sample_display_path()
+        with open(log_file, "w", encoding="utf-8") as file_handle:
+            file_handle.write(f"Sample: {sample_display_path}\n")
+            file_handle.write("API Logs:\n")
+            file_handle.write("=" * 80 + "\n")
+            if self.api_log_calls:
+                for api_log_call in self.api_log_calls:
+                    file_handle.write(f"{api_log_call}\n")
+            else:
+                file_handle.write("(No Azure SDK API logs were captured before the sample stopped.)\n")
+        return log_file
+
+    def _write_attachment_logs(self) -> tuple[Optional[str], Optional[str]]:
+        """Write separate API/print logs and emit JUnit attachment markers in ADO."""
+        api_log_file = self._write_api_log()
+        print_output_file = self._write_output_log()
+
+        should_attach = os.environ.get("AZURE_TEST_ATTACH_SAMPLE_LOGS", "").strip().lower() == "true"
+        if should_attach and not self._attachment_markers_emitted:
+            for attachment_path in (api_log_file, print_output_file):
+                if attachment_path:
+                    self._original_print(f"[[ATTACHMENT|{os.path.abspath(attachment_path)}]]")
+            self._attachment_markers_emitted = True
+
+        return api_log_file, print_output_file
 
     def _write_numbered_print_calls(self, file_handle) -> None:
         """Write captured entries with numbering anchored to the first meaningful line."""
@@ -793,6 +834,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
                     if log_file:
                         print(f"\nSample execution failed! Print statements logged to: {log_file}")
                     raise
+            self._write_attachment_logs()
 
     def validate_print_calls_by_llm(self, *, instructions: Optional[str] = None):
         """Validate captured print output using synchronous OpenAI client."""
@@ -992,6 +1034,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
                 if log_file:
                     print(f"\nSample execution failed! Print statements logged to: {log_file}")
                 raise
+        self._write_attachment_logs()
 
     async def validate_print_calls_by_llm_async(
         self,

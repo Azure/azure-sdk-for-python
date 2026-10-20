@@ -470,9 +470,16 @@ try {
             & $RecordingCleanupScript -PackageRoot $packageRoot
             Write-Output "recording cleanup: completed"
         }
-        $pytestArguments = @("-m", "pytest") + @($resolvedNodes.NodeId) + @("-s")
+        $pytestArguments = @("-m", "pytest") + @($resolvedNodes.NodeId)
         if ($JUnitXml) {
-            $pytestArguments += "--junitxml=$JUnitXml"
+            $pytestArguments += @(
+                "--capture=tee-sys",
+                "--junitxml=$JUnitXml",
+                "-o", "junit_logging=system-out",
+                "-o", "junit_log_passing_tests=true"
+            )
+        } else {
+            $pytestArguments += "-s"
         }
         foreach ($entry in $commandLineValues.GetEnumerator()) {
             $pytestArguments += "--$($entry.Key)=$($entry.Value)"

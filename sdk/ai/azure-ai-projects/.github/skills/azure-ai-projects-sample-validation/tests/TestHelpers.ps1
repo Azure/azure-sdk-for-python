@@ -165,6 +165,7 @@ FAILURE_PROCESS_VALUE=real-failure-process-value
 
     @'
 from pathlib import Path
+import os
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -179,6 +180,11 @@ HOSTED = str(ROOT / "samples" / "hosted_agents" / "sample_hosted.py")
 def test_unique(sample_path, pytestconfig):
     live = pytestconfig.getoption("azure_test_run_live") == "true"
     skip_recording = pytestconfig.getoption("azure_skip_live_recording") == "true"
+    if os.environ.get("EXPECT_JUNIT_ATTACHMENTS") == "true":
+        assert pytestconfig.option.capture == "tee-sys"
+        assert pytestconfig.getini("junit_logging") == "system-out"
+        print("[[ATTACHMENT|/tmp/synthetic-api.log]]")
+        print("[[ATTACHMENT|/tmp/synthetic-print.log]]")
     if live and not skip_recording:
         assert (ROOT / "recording-conflict-check-called.txt").is_file()
         assert (ROOT / "recording-cleanup-called.txt").is_file()

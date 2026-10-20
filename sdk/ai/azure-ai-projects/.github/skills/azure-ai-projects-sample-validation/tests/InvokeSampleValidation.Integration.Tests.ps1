@@ -19,6 +19,19 @@ Describe "InvokeSampleValidation.ps1 integration" {
         ($actual -join "`n") | Should Match "playback result: 0"
     }
 
+    It "captures JUnit attachment markers while preserving console output" {
+        $junitPath = Join-Path $packageRoot "attachment-results.xml"
+        $actual = @(
+            & $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable `
+                -SamplePath "sample_unique.py" -Mode "playback-only" -Run -JUnitXml $junitPath `
+                -EnvironmentVariable "EXPECT_JUNIT_ATTACHMENTS=true"
+        )
+        $junitContent = Get-Content -LiteralPath $junitPath -Raw
+        ($actual -join "`n") | Should Match '\[\[ATTACHMENT\|/tmp/synthetic-api\.log\]\]'
+        $junitContent | Should Match '\[\[ATTACHMENT\|/tmp/synthetic-api\.log\]\]'
+        $junitContent | Should Match '\[\[ATTACHMENT\|/tmp/synthetic-print\.log\]\]'
+    }
+
     It "executes every node selected by sample and test wildcards" {
         $actual = @(
             & $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable `

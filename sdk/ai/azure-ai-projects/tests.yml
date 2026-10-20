@@ -53,6 +53,7 @@ extends:
                 env:
                   SYSTEM_ACCESSTOKEN: $(System.AccessToken)
                   AZURE_POD_IDENTITY_AUTHORITY_HOST: https://FakeAuthorityHost
+                  AZURE_TEST_ATTACH_SAMPLE_LOGS: 'true'
                   SAMPLE_ENVIRONMENT_VARIABLES_JSON: $(SAMPLE_ENVIRONMENT_VARIABLES_JSON)
                   SAMPLE_PATTERN: ${{ parameters.SamplePattern }}
                   TEST_PATTERN: ${{ parameters.TestPattern }}
@@ -96,3 +97,4 @@ extends:
                   testResultsFiles: '**/test-junit*.xml'
                   testRunTitle: azure-ai-projects live sample validation
                   failTaskOnFailedTests: true
+                  publishRunAttachments: true
