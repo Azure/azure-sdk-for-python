@@ -76,35 +76,6 @@ namespace azure.ai.agentserver.invocations.voice
 
     @experimental
     @dataclass(frozen=True, kw_only=True, repr=False)
-    class azure.ai.agentserver.invocations.voice.BargeIn(_InboundMessage):
-        heard_text: str
-        id: str
-        item_id: Optional[str]
-        response_id: str
-        ts: str
-        type: ClassVar[str] = barge_in
-
-        def __delattr__() -> None: ...
-
-        def __eq__() -> None: ...
-
-        def __hash__() -> None: ...
-
-        def __init__(
-                id: str,
-                ts: str,
-                response_id: str,
-                heard_text: str,
-                item_id: str | None = None
-            ) -> None: ...
-
-        def __setattr__() -> None: ...
-
-        def _voice_model_repr(self: Any) -> str: ...
-
-
-    @experimental
-    @dataclass(frozen=True, kw_only=True, repr=False)
     class azure.ai.agentserver.invocations.voice.EndCall(_OutboundMessage):
         id: str
         mode: EndCallMode = EndCallMode.DRAIN
@@ -716,6 +687,35 @@ namespace azure.ai.agentserver.invocations.voice
 
     @experimental
     @dataclass(frozen=True, kw_only=True, repr=False)
+    class azure.ai.agentserver.invocations.voice.UserBargeIn(_InboundMessage):
+        heard_text: str
+        id: str
+        item_id: Optional[str]
+        response_id: str
+        ts: str
+        type: ClassVar[str] = user.barge_in
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(
+                id: str,
+                ts: str,
+                response_id: str,
+                heard_text: str,
+                item_id: str | None = None
+            ) -> None: ...
+
+        def __setattr__() -> None: ...
+
+        def _voice_model_repr(self: Any) -> str: ...
+
+
+    @experimental
+    @dataclass(frozen=True, kw_only=True, repr=False)
     class azure.ai.agentserver.invocations.voice.UserMessage(_InboundMessage):
         content: tuple[Union[InputTextPart, InputDataPart], Ellipsis]
         id: str
@@ -821,8 +821,6 @@ namespace azure.ai.agentserver.invocations.voice
 
         def invoke_handler(self, fn: Callable[[Request], Awaitable[Response]]) -> Callable[[Request], Awaitable[Response]]: ...
 
-        def on_barge_in(self, callback: BargeInCallback) -> BargeInCallback: ...
-
         def on_connection_terminating(self, callback: ConnectionTerminatingCallback) -> ConnectionTerminatingCallback: ...
 
         def on_disconnect(self, callback: DisconnectCallback) -> DisconnectCallback: ...
@@ -838,6 +836,8 @@ namespace azure.ai.agentserver.invocations.voice
         def on_session_end(self, callback: SessionEndCallback) -> SessionEndCallback: ...
 
         def on_session_start(self, callback: SessionStartCallback) -> SessionStartCallback: ...
+
+        def on_user_barge_in(self, callback: UserBargeInCallback) -> UserBargeInCallback: ...
 
         def on_user_message(self, callback: UserMessageCallback) -> UserMessageCallback: ...
 

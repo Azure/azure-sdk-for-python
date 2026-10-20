@@ -8,6 +8,8 @@
 
 ### Breaking Changes
 
+- Renamed the experimental Voice caller-interruption event to `user.barge_in` and its public APIs to `UserBargeIn`, `UserBargeInCallback`, and `VoiceAgentServerHost.on_user_barge_in`. The former wire event and API names are no longer supported; update the Voice Live sender together with the SDK.
+
 ### Bugs Fixed
 
 ### Other Changes

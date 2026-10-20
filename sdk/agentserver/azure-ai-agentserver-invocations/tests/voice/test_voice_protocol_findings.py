@@ -24,6 +24,7 @@ from azure.ai.agentserver.invocations.voice import (
     SessionReady,
     SessionStart,
     SessionTermination,
+    UserBargeIn,
     UserSpeechStarted,
     UserMessage,
     VoiceAgentServerHost,
@@ -31,6 +32,61 @@ from azure.ai.agentserver.invocations.voice import (
 from azure.ai.agentserver.invocations.voice._codec import MAX_FRAME_BYTES, encode_outbound_message
 
 from conftest import _records_with_ws_extras
+
+
+class TestUserBargeInDispatch:
+    def test_only_user_barge_in_reaches_callback_with_playback_snapshot(self) -> None:
+        app = VoiceAgentServerHost(configure_observability=None)
+        interruptions: list[UserBargeIn] = []
+
+        @app.on_session_start
+        async def start(session: Session, _event: SessionStart) -> None:
+            await session.send(SessionReady())
+
+        @app.on_user_barge_in
+        async def interrupted(_session: Session, event: UserBargeIn) -> None:
+            interruptions.append(event)
+
+        @app.on_user_message
+        async def barrier(session: Session, event: UserMessage) -> None:
+            await session.send(ResponseNone(in_reply_to=(event.item_id,)))
+
+        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+            websocket.send_text(
+                _voice_frame(
+                    "session.start",
+                    "m_start",
+                    protocol_version="1.0",
+                    reconnect=False,
+                    response_timeouts={"first_output_ms": 1000, "idle_ms": 1000, "max_duration_ms": 5000},
+                )["text"]
+            )
+            assert websocket.receive_json()["type"] == "session.ready"
+            for message_type in ("barge_in", "user.barge_in"):
+                websocket.send_text(
+                    _voice_frame(
+                        message_type,
+                        f"m_{message_type}",
+                        response_id="r_reply",
+                        item_id="it_reply",
+                        heard_text="heard prefix",
+                    )["text"]
+                )
+            websocket.send_text(
+                _voice_frame(
+                    "user.message",
+                    "m_barrier",
+                    item_id="in_barrier",
+                    content=[{"type": "input_text", "text": "next"}],
+                )["text"]
+            )
+            assert websocket.receive_json()["type"] == "response.none"
+        assert len(interruptions) == 1
+        interruption = interruptions[0]
+        assert interruption.type == "user.barge_in"
+        assert interruption.response_id == "r_reply"
+        assert interruption.item_id == "it_reply"
+        assert interruption.heard_text == "heard prefix"
 
 
 @pytest.mark.parametrize("silent", [False, True])

@@ -4,6 +4,8 @@ This sample hosts a text-only agent for the Voice Live Bridge protocol `1.0`.
 The SDK relays typed events while the application owns response generation,
 task cancellation, correlation, and target-turn trace completion.
 
+Caller interruptions arrive as `user.barge_in` and are handled by `@app.on_user_barge_in` with a `UserBargeIn` event. The former event/model/callback names are not supported; update the Voice Live sender together with this sample. Interruption cancellation and `heard_text` remain part of the same Bridge message contract.
+
 ## Prerequisites
 
 - Python 3.10 or later

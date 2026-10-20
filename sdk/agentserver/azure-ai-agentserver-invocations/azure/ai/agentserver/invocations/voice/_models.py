@@ -351,7 +351,7 @@ class UserSpeechStarted(_InboundMessage):
 
 @experimental
 @dataclass(frozen=True, kw_only=True, repr=False)
-class BargeIn(_InboundMessage):
+class UserBargeIn(_InboundMessage):
     """Caller interruption and playback snapshot.
 
     :ivar id: Wire message identifier.
@@ -366,7 +366,7 @@ class BargeIn(_InboundMessage):
     :vartype item_id: str or None
     """
 
-    type: ClassVar[str] = "barge_in"
+    type: ClassVar[str] = "user.barge_in"
     response_id: str
     heard_text: str
     item_id: str | None = None
@@ -477,7 +477,7 @@ InboundVoiceMessage = (
     | UserMessage
     | UserNoInput
     | UserSpeechStarted
-    | BargeIn
+    | UserBargeIn
     | ResponseAccepted
     | ResponseDropped
     | ResponseCancelled
@@ -767,7 +767,7 @@ _document_dataclass_defaults(
     UserMessage,
     UserNoInput,
     UserSpeechStarted,
-    BargeIn,
+    UserBargeIn,
     ResponseAccepted,
     ResponseDropped,
     ResponseCancelled,

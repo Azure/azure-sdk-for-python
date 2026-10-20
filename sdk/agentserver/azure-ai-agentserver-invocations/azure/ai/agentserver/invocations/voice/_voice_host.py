@@ -45,7 +45,6 @@ from .._invocation import InvocationAgentServerHost
 from . import _session as _session_transport
 from ._codec import MAX_FRAME_BYTES, VoiceProtocolError, decode_inbound_message
 from ._models import (
-    BargeIn,
     InboundVoiceMessage,
     ResponseAccepted,
     ResponseCancelled,
@@ -54,6 +53,7 @@ from ._models import (
     SessionDisconnected,
     SessionEnd,
     SessionStart,
+    UserBargeIn,
     UserMessage,
     UserNoInput,
     UserSpeechStarted,
@@ -71,7 +71,7 @@ SessionStartCallback = Callable[[Session, SessionStart], Awaitable[None]]
 UserMessageCallback = Callable[[Session, UserMessage], Awaitable[None]]
 UserNoInputCallback = Callable[[Session, UserNoInput], Awaitable[None]]
 UserSpeechStartedCallback = Callable[[Session, UserSpeechStarted], Awaitable[None]]
-BargeInCallback = Callable[[Session, BargeIn], Awaitable[None]]
+UserBargeInCallback = Callable[[Session, UserBargeIn], Awaitable[None]]
 ResponseAcceptedCallback = Callable[[Session, ResponseAccepted], Awaitable[None]]
 ResponseDroppedCallback = Callable[[Session, ResponseDropped], Awaitable[None]]
 ResponseCancelledCallback = Callable[[Session, ResponseCancelled], Awaitable[None]]
@@ -1089,15 +1089,15 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         """
         return self._register_voice_callback(UserSpeechStarted.type, callback)
 
-    def on_barge_in(self, callback: BargeInCallback) -> BargeInCallback:
-        """Register the ``barge_in`` callback.
+    def on_user_barge_in(self, callback: UserBargeInCallback) -> UserBargeInCallback:
+        """Register the ``user.barge_in`` callback.
 
         :param callback: Async callback receiving the thin Session and event.
-        :type callback: BargeInCallback
+        :type callback: UserBargeInCallback
         :return: The callback, unchanged.
-        :rtype: BargeInCallback
+        :rtype: UserBargeInCallback
         """
-        return self._register_voice_callback(BargeIn.type, callback)
+        return self._register_voice_callback(UserBargeIn.type, callback)
 
     def on_response_accepted(self, callback: ResponseAcceptedCallback) -> ResponseAcceptedCallback:
         """Register the ``response.accepted`` callback.

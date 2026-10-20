@@ -17,7 +17,6 @@ from azure.ai.agentserver.core import experimental
 
 from ._models import (
     AgentError,
-    BargeIn,
     EndCall,
     EndCallMode,
     InboundVoiceMessage,
@@ -40,6 +39,7 @@ from ._models import (
     SessionReady,
     SessionRejected,
     SessionStart,
+    UserBargeIn,
     UserMessage,
     UserNoInput,
     UserSpeechStarted,
@@ -200,8 +200,8 @@ def decode_inbound_message(frame: str) -> InboundVoiceMessage | None:  # pylint:
         )
     if message_type == "user.speech_started":
         return UserSpeechStarted(**common)
-    if message_type == "barge_in":
-        return BargeIn(
+    if message_type == "user.barge_in":
+        return UserBargeIn(
             **common,
             response_id=_prefixed_identifier(payload, "response_id", "r_"),
             item_id=_optional_prefixed_identifier(payload, "item_id", "it_"),

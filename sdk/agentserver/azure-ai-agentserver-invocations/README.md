@@ -312,6 +312,8 @@ The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`.
 `invocations_ws` transport. Each callback receives an immutable event and a
 send-only `Session`:
 
+Caller interruptions use `user.barge_in`, the `UserBargeIn` event model, `UserBargeInCallback`, and `@app.on_user_barge_in`. The former `barge_in`, `BargeIn`, `BargeInCallback`, and `on_barge_in` names have been removed without compatibility aliases. Update the Voice Live sender together with the SDK. Generic raw WebSocket handlers and application-owned cancellation/history are unchanged.
+
 ```python
 import asyncio
 
@@ -479,7 +481,7 @@ code catches cancellation and returns normally, recovery is outside the SDK
 contract; the SDK does not forcibly terminate or retain that callback.
 
 For full-duplex streaming, the agent creates and owns a generation task, returns
-from `on_user_message`, and cancels that task from `on_barge_in`,
+from `on_user_message`, and cancels that task from `on_user_barge_in`,
 `on_response_cancelled`, `on_response_timeout`, or
 `on_connection_terminating`. Each task remains responsible for its own
 asynchronous resource cleanup. See the complete
