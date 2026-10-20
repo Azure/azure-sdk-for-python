@@ -13,7 +13,7 @@ Describe "InvokeSampleValidation.ps1 plan and guards" {
         $script:recordOnlyPlan = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -RecordingConflictCheckScript $conflictCheckScript -SamplePath "sample_unique.py" -Mode "record-only")
         $script:playbackOnlyPlan = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -SamplePath "sample_unique.py" -Mode "playback-only")
         $script:livePlan = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -SamplePath "sample_unique.py" -Mode "live-test-locally")
-        $script:pipelinePlan = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -PipelineQueueScript (Join-Path $packageRoot "synthetic-pipeline-queue.ps1") -PipelineSourceBranch "topic" -SamplePath "sample_unique.py" -Mode "live-test-by-pipeline")
+        $script:pipelinePlan = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -PipelineQueueScript (Join-Path $packageRoot "synthetic-pipeline-queue.ps1") -PipelineWaitScript (Join-Path $packageRoot "synthetic-pipeline-wait.ps1") -PipelineSourceBranch "topic" -SamplePath "sample_unique.py" -Mode "live-test-by-pipeline")
     }
 
     It "plans record followed by playback when explicitly selected" {
@@ -54,6 +54,7 @@ Describe "InvokeSampleValidation.ps1 plan and guards" {
                 PythonExecutable = $paths.PythonExecutable
                 RecordingConflictCheckScript = $conflictCheckScript
                 PipelineQueueScript = (Join-Path $packageRoot "synthetic-pipeline-queue.ps1")
+                PipelineWaitScript = (Join-Path $packageRoot "synthetic-pipeline-wait.ps1")
                 PipelineSourceBranch = "topic"
                 SamplePattern = "samples\multiple\sample_*.py"
                 TestPattern = "*variant-*"
@@ -134,6 +135,7 @@ Describe "InvokeSampleValidation.ps1 plan and guards" {
             PackageRoot = $packageRoot
             PythonExecutable = $paths.PythonExecutable
             PipelineQueueScript = (Join-Path $packageRoot "synthetic-pipeline-queue.ps1")
+            PipelineWaitScript = (Join-Path $packageRoot "synthetic-pipeline-wait.ps1")
             PipelineSourceBranch = "topic"
             PipelineBearerToken = "synthetic-token"
             SamplePath = "sample_unique.py"

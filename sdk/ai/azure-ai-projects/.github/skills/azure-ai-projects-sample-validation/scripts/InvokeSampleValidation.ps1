@@ -23,11 +23,14 @@ param(
     [string]$RecordingConflictCheckScript,
     [string]$RecordingCleanupScript,
     [string]$PipelineQueueScript,
+    [string]$PipelineWaitScript,
     [string]$PipelineOrganization = "azure-sdk",
     [string]$PipelineProject = "internal",
     [int]$PipelineDefinitionId = 8392,
     [string]$PipelineSourceBranch,
     [string]$PipelineBearerToken,
+    [int]$PipelinePollIntervalSeconds = 15,
+    [int]$PipelineTimeoutMinutes = 120,
     [string]$JUnitXml,
     [switch]$HideEnvironmentValues,
     [switch]$Run,
@@ -73,6 +76,9 @@ if (-not $RecordingConflictCheckScript) {
 }
 if ($Mode -eq "live-test-by-pipeline" -and -not $PipelineQueueScript) {
     $PipelineQueueScript = Join-Path $scriptRoot "QueueSampleValidationPipeline.ps1"
+}
+if ($Mode -eq "live-test-by-pipeline" -and -not $PipelineWaitScript) {
+    $PipelineWaitScript = Join-Path $scriptRoot "WaitSampleValidationPipeline.ps1"
 }
 
 $resolvedNodes = @(
@@ -438,6 +444,14 @@ if ($steps -contains "pipeline") {
     if ($pipelineResult.Url) {
         Write-Output "Pipeline URL: $($pipelineResult.Url)"
     }
+    $completedPipeline = & $PipelineWaitScript `
+        -Organization $PipelineOrganization `
+        -Project $PipelineProject `
+        -BuildId $pipelineResult.BuildId `
+        -BearerToken $adoAccessToken `
+        -PollIntervalSeconds $PipelinePollIntervalSeconds `
+        -TimeoutMinutes $PipelineTimeoutMinutes
+    Write-Output "pipeline completion result: $($completedPipeline.Result)"
     return
 }
 

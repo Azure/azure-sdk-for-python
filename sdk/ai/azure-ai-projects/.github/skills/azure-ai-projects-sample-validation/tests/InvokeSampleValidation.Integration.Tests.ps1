@@ -11,6 +11,7 @@ Describe "InvokeSampleValidation.ps1 integration" {
         $script:conflictCheckScript = Join-Path $packageRoot "synthetic-recording-conflict-check.ps1"
         $script:cleanupScript = Join-Path $packageRoot "synthetic-recording-cleanup.ps1"
         $script:pipelineQueueScript = Join-Path $packageRoot "synthetic-pipeline-queue.ps1"
+        $script:pipelineWaitScript = Join-Path $packageRoot "synthetic-pipeline-wait.ps1"
     }
 
     It "executes playback without live approval" {
@@ -35,11 +36,13 @@ Describe "InvokeSampleValidation.ps1 integration" {
         $actual = @(
             & $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable `
                 -PipelineQueueScript $pipelineQueueScript -PipelineSourceBranch "topic" `
+                -PipelineWaitScript $pipelineWaitScript `
                 -PipelineBearerToken "synthetic-token" -SamplePath "samples\multiple\sample_*.py" `
                 -NodeId "*variant-*" -EnvironmentVariable "MULTIPLE_REQUIRED=pipeline-value" `
                 -Mode "live-test-by-pipeline" -Run -ConfirmSelection -ConfirmPipeline
         )
         ($actual -join "`n") | Should Match "pipeline result: queued"
+        ($actual -join "`n") | Should Match "pipeline completion result: succeeded"
         $payload = Get-Content -LiteralPath (Join-Path $packageRoot "pipeline-queue.json") -Raw | ConvertFrom-Json
         $payload.DefinitionId | Should Be 8392
         $payload.SourceBranch | Should Be "refs/heads/topic"

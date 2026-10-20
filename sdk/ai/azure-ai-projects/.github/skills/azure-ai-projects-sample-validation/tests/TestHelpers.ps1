@@ -126,6 +126,25 @@ if ($BearerToken -ne "synthetic-token") {
 '@ | Set-Content -LiteralPath (Join-Path $Root "synthetic-pipeline-queue.ps1") -Encoding UTF8
 
     @'
+[CmdletBinding()]
+param(
+    [string]$Organization,
+    [string]$Project,
+    [int]$BuildId,
+    [string]$BearerToken,
+    [int]$PollIntervalSeconds,
+    [int]$TimeoutMinutes
+)
+
+[pscustomobject]@{
+    BuildId = $BuildId
+    Status = "completed"
+    Result = "succeeded"
+    Url = "https://dev.azure.com/example/build/$BuildId"
+}
+'@ | Set-Content -LiteralPath (Join-Path $Root "synthetic-pipeline-wait.ps1") -Encoding UTF8
+
+    @'
 def loader(**kwargs):
     return kwargs
 
