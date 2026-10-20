@@ -27,6 +27,13 @@ from .._realtime import (
     ConversationItem,
     ServerEvent,
 )
+from .._live import (
+    AsyncBetaLive,
+    AsyncBetaLiveConnection,
+    AsyncBetaLiveConnectionManager,
+    LiveClientEvent,
+    LiveServerEvent,
+)
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
@@ -36,6 +43,7 @@ from ._operations import (
     BetaSchedulesOperations,
     BetaSkillsOperations,
     BetaVoiceAgentsConversationsOperations,
+    BetaVoiceAgentsLiveConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
     BetaVoiceAgentsTelephonyOperations,
 )
@@ -57,6 +65,10 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations` operations"""
     realtime: AsyncBetaRealtime
     """:class:`~azure.ai.projects.aio.operations.AsyncBetaRealtime` operations"""
+    live: AsyncBetaLive
+    """:class:`~azure.ai.projects.aio.operations.AsyncBetaLive` operations"""
+    live_conversations: BetaVoiceAgentsLiveConversationsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -64,6 +76,7 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         # pipeline has no way to keep a WebSocket upgrade's resulting socket alive. Add our
         # hand-written client, which manages a real, long-lived connection, in its place.
         self.realtime = AsyncBetaRealtime(self)
+        self.live = AsyncBetaLive(self)
 
 
 class BetaOperations(GeneratedBetaOperations):
@@ -127,6 +140,11 @@ __all__: List[str] = [
     "AsyncBetaRealtime",
     "AsyncBetaRealtimeConnection",
     "AsyncBetaRealtimeConnectionManager",
+    "AsyncBetaLive",
+    "AsyncBetaLiveConnection",
+    "AsyncBetaLiveConnectionManager",
+    "LiveClientEvent",
+    "LiveServerEvent",
     "BetaAgentInsightMonitorsOperations",
     "BetaAgentsOperations",
     "BetaEvaluationTaxonomiesOperations",
@@ -139,6 +157,7 @@ __all__: List[str] = [
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
     "BetaVoiceAgentsConversationsOperations",
+    "BetaVoiceAgentsLiveConversationsOperations",
     "BetaVoiceAgentsOperations",
     "BetaVoiceAgentsTelephonyOperations",
     "ClientEvent",

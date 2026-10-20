@@ -20,6 +20,7 @@ from .._realtime import (
     ConversationItem,
     ServerEvent,
 )
+from .._live import BetaLive, BetaLiveConnection, BetaLiveConnectionManager, LiveClientEvent, LiveServerEvent
 from ._patch_agents import AgentsOperations, BetaAgentsOperations
 from ._patch_agent_insights import BetaAgentInsightMonitorsOperations
 from ._patch_datasets import DatasetsOperations
@@ -38,6 +39,7 @@ from ._operations import (
     BetaSchedulesOperations,
     BetaSkillsOperations,
     BetaVoiceAgentsConversationsOperations,
+    BetaVoiceAgentsLiveConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
     BetaVoiceAgentsTelephonyOperations,
 )
@@ -137,6 +139,10 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
     """:class:`~azure.ai.projects.operations.BetaVoiceAgentsTelephonyOperations` operations"""
     realtime: BetaRealtime
     """:class:`~azure.ai.projects.operations.BetaRealtime` operations"""
+    live: BetaLive
+    """:class:`~azure.ai.projects.operations.BetaLive` operations"""
+    live_conversations: BetaVoiceAgentsLiveConversationsOperations
+    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -144,6 +150,7 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         # pipeline has no way to keep a WebSocket upgrade's resulting socket alive. Add our
         # hand-written client, which manages a real, long-lived connection, in its place.
         self.realtime = BetaRealtime(self)
+        self.live = BetaLive(self)
 
 
 class BetaOperations(GeneratedBetaOperations):
@@ -216,6 +223,7 @@ __all__: List[str] = [
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
     "BetaVoiceAgentsConversationsOperations",
+    "BetaVoiceAgentsLiveConversationsOperations",
     "BetaVoiceAgentsOperations",
     "BetaVoiceAgentsTelephonyOperations",
     "ClientEvent",
@@ -227,6 +235,11 @@ __all__: List[str] = [
     "BetaRealtime",
     "BetaRealtimeConnection",
     "BetaRealtimeConnectionManager",
+    "BetaLive",
+    "BetaLiveConnection",
+    "BetaLiveConnectionManager",
+    "LiveClientEvent",
+    "LiveServerEvent",
     "ServerEvent",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level

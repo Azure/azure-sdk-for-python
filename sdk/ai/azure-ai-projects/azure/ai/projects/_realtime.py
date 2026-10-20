@@ -24,6 +24,7 @@ from urllib.parse import quote, urlencode, urlparse
 from typing import (
     Any,
     Dict,
+    Generic,
     Iterator,
     List,
     Mapping,
@@ -31,6 +32,7 @@ from typing import (
     Protocol,
     Tuple,
     Type,
+    TypeVar,
     TYPE_CHECKING,
     Union,
     cast,
@@ -551,7 +553,130 @@ class ResponseResource(_BaseResource):
         )
 
 
-class BetaRealtimeConnection:  # pylint: disable=too-many-instance-attributes
+_ServerEventT = TypeVar("_ServerEventT")
+_ClientEventT = TypeVar("_ClientEventT")
+
+
+class _BaseWebSocketConnection(Generic[_ServerEventT, _ClientEventT]):
+    """Shared synchronous WebSocket transport for the two voice protocols."""
+
+    _logger = _LOGGER
+    _server_event_types = _SERVER_EVENT_TYPES
+    _protocol_name = "realtime"
+
+    def __init__(self, connection: "ClientConnection") -> None:
+        self._connection = connection
+        self._closed = False
+
+    def __enter__(self) -> "_BaseWebSocketConnection[_ServerEventT, _ClientEventT]":
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self.close()
+
+    def __repr__(self) -> str:
+        state = "closed" if self.closed else "open"
+        return f"<{type(self).__name__} [{state}]>"
+
+    @property
+    def closed(self) -> bool:
+        """Whether the underlying WebSocket connection has been closed.
+
+        :rtype: bool
+        """
+        return self._closed
+
+    def __iter__(self) -> Iterator[_ServerEventT]:
+        return self._iter()
+
+    def _iter(self) -> Iterator[_ServerEventT]:
+        while True:
+            try:
+                yield self.recv()
+            except ConnectionResetError as exc:
+                if exc.__cause__ is None:
+                    return
+                raise
+
+    def recv(self, *, timeout: Optional[float] = None) -> _ServerEventT:
+        """Receive a typed event, or a mapping for an unknown event.
+
+        :keyword timeout: Maximum receive wait in seconds; None waits indefinitely.
+        :paramtype timeout: float or None
+        :return: The server event.
+        :rtype: object
+        :raises ConnectionResetError: On graceful or abnormal socket closure.
+        :raises TimeoutError: When the receive deadline expires.
+        """
+        from websockets.exceptions import (
+            ConnectionClosed,
+            ConnectionClosedOK,
+        )  # pylint: disable=import-outside-toplevel
+
+        try:
+            raw = self._connection.recv(timeout=timeout)
+        except ConnectionClosedOK:
+            self._closed = True
+            raise ConnectionResetError(f"The {self._protocol_name} connection was closed.") from None
+        except ConnectionClosed as exc:
+            self._closed = True
+            raise ConnectionResetError(f"The {self._protocol_name} connection was closed abnormally: {exc}") from exc
+        data = raw.decode("utf-8") if isinstance(raw, (bytes, bytearray)) else raw
+        payload: Dict[str, Any] = json.loads(data)
+        if not isinstance(payload, dict):
+            raise ValueError("The WebSocket server event must be a JSON object.")
+        event_type = payload.get("type")
+        self._logger.debug(
+            "WebSocket RECEIVE type=%s bytes=%d",
+            event_type if isinstance(event_type, str) else "unknown",
+            len(data.encode("utf-8")),
+        )
+        event_cls = self._server_event_types.get(event_type) if isinstance(event_type, str) else None
+        return cast(_ServerEventT, event_cls(payload) if event_cls else payload)
+
+    def send(self, event: _ClientEventT) -> None:
+        """Send a generated event, mapping, or JSON string.
+
+        :param event: The client event.
+        :type event: object
+        :raises ValueError: If the JSON string is invalid.
+        """
+        payload: str
+        if isinstance(event, str):
+            try:
+                event_payload = json.loads(event)
+            except ValueError as exc:
+                raise ValueError(f"'event' is not valid JSON: {exc}") from exc
+            payload = event
+        else:
+            payload = json.dumps(event, cls=SdkJSONEncoder)
+            event_payload = json.loads(payload)
+        event_type = event_payload.get("type") if isinstance(event_payload, dict) else None
+        self._logger.debug(
+            "WebSocket SEND type=%s bytes=%d",
+            event_type if isinstance(event_type, str) else "unknown",
+            len(payload.encode("utf-8")),
+        )
+        self._connection.send(payload)
+
+    def close(self, *, code: int = 1000, reason: str = "") -> None:
+        """Close the socket once.
+
+        :keyword int code: WebSocket close code.
+        :keyword str reason: WebSocket close reason.
+        """
+        if self._closed:
+            return
+        self._logger.debug("WebSocket CLOSE code=%d", code)
+        try:
+            self._connection.close(code=code, reason=reason)
+        finally:
+            self._closed = True
+
+
+class BetaRealtimeConnection(
+    _BaseWebSocketConnection[ServerEvent, ClientEvent]
+):  # pylint: disable=too-many-instance-attributes
     """An open realtime WebSocket connection to a voice agent.
 
     Iterate over the connection to receive strongly-typed server events, and use the
@@ -564,8 +689,7 @@ class BetaRealtimeConnection:  # pylint: disable=too-many-instance-attributes
     """
 
     def __init__(self, connection: "ClientConnection") -> None:
-        self._connection = connection
-        self._closed = False
+        super().__init__(connection)
         self.session: SessionResource = SessionResource(self)
         self.input_audio_buffer: InputAudioBufferResource = InputAudioBufferResource(self)
         self.output_audio_buffer: OutputAudioBufferResource = OutputAudioBufferResource(self)
@@ -577,10 +701,6 @@ class BetaRealtimeConnection:  # pylint: disable=too-many-instance-attributes
 
     def __exit__(self, *exc_details: Any) -> None:
         self.close()
-
-    def __repr__(self) -> str:
-        state = "closed" if self.closed else "open"
-        return f"<BetaRealtimeConnection [{state}]>"
 
     @property
     def closed(self) -> bool:
@@ -625,33 +745,7 @@ class BetaRealtimeConnection:  # pylint: disable=too-many-instance-attributes
          closure as end-of-stream and re-raises this for an abnormal one.
         :raises TimeoutError: If ``timeout`` elapses before an event is received.
         """
-        from websockets.exceptions import (  # pylint: disable=import-outside-toplevel
-            ConnectionClosed,
-            ConnectionClosedOK,
-        )
-
-        try:
-            raw = self._connection.recv(timeout=timeout)
-        except ConnectionClosedOK:
-            self._closed = True
-            raise ConnectionResetError("The realtime connection was closed.") from None
-        except ConnectionClosed as exc:
-            self._closed = True
-            raise ConnectionResetError(f"The realtime connection was closed abnormally: {exc}") from exc
-        data = raw.decode("utf-8") if isinstance(raw, (bytes, bytearray)) else raw
-        payload: Dict[str, Any] = json.loads(data)
-        event_type = payload.get("type")
-        _LOGGER.debug(
-            "WebSocket RECEIVE type=%s bytes=%d",
-            event_type if isinstance(event_type, str) else "unknown",
-            len(data.encode("utf-8")),
-        )
-        if not isinstance(event_type, str):
-            return payload
-        event_cls = _SERVER_EVENT_TYPES.get(event_type)
-        if event_cls is None:
-            return payload
-        return event_cls(payload)
+        return super().recv(timeout=timeout)
 
     def send(self, event: ClientEvent) -> None:
         """Send a client event over the connection.
@@ -660,39 +754,13 @@ class BetaRealtimeConnection:  # pylint: disable=too-many-instance-attributes
         :type event: ~azure.ai.projects.ClientEvent or str
         :raises ValueError: If ``event`` is a ``str`` that is not valid JSON.
         """
-        if isinstance(event, str):
-            try:
-                event_payload = json.loads(event)
-            except ValueError as exc:
-                raise ValueError(f"'event' is not valid JSON: {exc}") from exc
-            payload = event
-        else:
-            payload = json.dumps(event, cls=SdkJSONEncoder)
-            event_payload = json.loads(payload)
-        event_type = event_payload.get("type") if isinstance(event_payload, dict) else None
-        _LOGGER.debug(
-            "WebSocket SEND type=%s bytes=%d",
-            event_type if isinstance(event_type, str) else "unknown",
-            len(payload.encode("utf-8")),
-        )
-        self._connection.send(payload)
-
-    def close(self, *, code: int = 1000, reason: str = "") -> None:
-        """Close the connection.
-
-        :keyword int code: The WebSocket close code.
-        :keyword str reason: The close reason.
-        """
-        if self._closed:
-            return
-        _LOGGER.debug("WebSocket CLOSE code=%d", code)
-        try:
-            self._connection.close(code=code, reason=reason)
-        finally:
-            self._closed = True
+        super().send(event)
 
 
-class BetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
+_ConnectionT = TypeVar("_ConnectionT", bound=_BaseWebSocketConnection)
+
+
+class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable=too-many-instance-attributes
     """Context manager that opens a :class:`BetaRealtimeConnection`.
 
     Returned by :meth:`BetaRealtime.connect`; you normally use it as
@@ -747,12 +815,16 @@ class BetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-attrib
         self._extra_query = dict(extra_query or {})
         self._extra_headers = dict(extra_headers or {})
         self._kwargs = kwargs
-        self._connection: Optional[BetaRealtimeConnection] = None
+        self._connection: Optional[_ConnectionT] = None
 
-    def __enter__(self) -> BetaRealtimeConnection:
+    _logger = _LOGGER
+    _subprotocol: Optional[str] = "realtime"
+    _protocol_name = "realtime"
+
+    def __enter__(self) -> _ConnectionT:
         return self.enter()
 
-    def enter(self) -> BetaRealtimeConnection:  # pylint: disable=too-many-locals
+    def enter(self) -> _ConnectionT:  # pylint: disable=too-many-locals
         """Open the connection.
 
         :return: The live realtime connection.
@@ -767,19 +839,65 @@ class BetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-attrib
             from websockets.typing import Subprotocol  # pylint: disable=import-outside-toplevel
         except ImportError as exc:  # pragma: no cover - dependency guard
             raise RuntimeError(
-                "The realtime client requires `websockets`. Install it with `pip install websockets`."
+                f"The {self._protocol_name} client requires `websockets`. Install it with `pip install websockets`."
             ) from exc
 
         # ``connection_url`` fully overrides the computed route (scheme/host/path). This is the
         # escape hatch used to reach a specific data-plane host/path directly.
         if self._connection_url is not None:
             _assert_trusted_connection_url(self._connection_url, self._endpoint)
-        url = self._connection_url or _to_ws_url(self._endpoint, self._agent_name)
+        url = self._connection_url or self._get_url()
         if self._transport is not None:
             url = _without_transport_query(url)
         if not url.startswith("wss://"):
-            raise ValueError("The realtime WebSocket URL must use wss:// to protect credentials in transit.")
+            raise ValueError(
+                f"The {self._protocol_name} WebSocket URL must use wss:// to protect credentials in transit."
+            )
 
+        params = self._get_query()
+        if params:
+            delimiter = "&" if urlparse(url).query else "?"
+            full_url = f"{url}{delimiter}{urlencode(params)}"
+        else:
+            full_url = url
+
+        target_url = urlparse(url)._replace(query="", fragment="").geturl()
+        self._logger.debug("WebSocket CONNECT target=%s", target_url)
+
+        token = self._credential.get_token(*self._credential_scopes)
+        headers: Dict[str, str] = {
+            "Authorization": "Bearer " + token.token,
+            _FOUNDRY_FEATURES_HEADER_NAME: _VOICE_AGENT_FEATURE_HEADER,
+        }
+        headers.update(self._extra_headers)
+        if not _has_header_case_insensitive(headers, "User-Agent"):
+            headers["User-Agent"] = _USER_AGENT
+
+        try:
+            ws_connect_kwargs = dict(self._kwargs)
+            ws_connect_kwargs.pop("subprotocols", None)
+            connection = _ws_connect(
+                full_url,
+                additional_headers=headers,
+                subprotocols=[Subprotocol(self._subprotocol)] if self._subprotocol else None,
+                user_agent_header=None,
+                **ws_connect_kwargs,
+            )
+        except BaseException as exc:
+            if not isinstance(exc, Exception) or isinstance(exc, (ValueError, RuntimeError)):
+                raise
+            raise ConnectionError(
+                f"Failed to open the {self._protocol_name} WebSocket connection to voice agent "
+                f"'{self._agent_name}' at '{url}': {exc}"
+            ) from exc
+        self._logger.debug("WebSocket CONNECTED target=%s", target_url)
+        self._connection = self._create_connection(connection)
+        return self._connection
+
+    def _get_url(self) -> str:
+        return _to_ws_url(self._endpoint, self._agent_name)
+
+    def _get_query(self) -> Dict[str, str]:
         params: Dict[str, str] = {"api-version": self._api_version, "x-ms-client-sdk": _USER_AGENT}
         if self._agent_session_id is not None:
             params["agent_session_id"] = self._agent_session_id
@@ -792,63 +910,33 @@ class BetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-attrib
         if self._transport is not None:
             params["transport"] = self._transport
 
-        if params:
-            # Preserve an existing query string on a `connection_url` override (for example a
-            # SAS-style `?sig=...`) instead of unconditionally appending a second `?`.
-            delimiter = "&" if urlparse(url).query else "?"
-            full_url = f"{url}{delimiter}{urlencode(params)}"
-        else:
-            full_url = url
+        return params
 
-        target_url = urlparse(url)._replace(query="", fragment="").geturl()
-        _LOGGER.debug("WebSocket CONNECT target=%s", target_url)
-
-        token = self._credential.get_token(*self._credential_scopes)
-        headers: Dict[str, str] = {
-            "Authorization": "Bearer " + token.token,
-            _FOUNDRY_FEATURES_HEADER_NAME: _VOICE_AGENT_FEATURE_HEADER,
-        }
-        headers.update(self._extra_headers)
-        if not _has_header_case_insensitive(headers, "User-Agent"):
-            # Only set our default if the caller didn't supply their own (in any casing) --
-            # a plain dict merge would otherwise leave both as separate keys (HTTP header names
-            # are case-insensitive, but Python dict keys are not), sending two User-Agent-like
-            # headers instead of cleanly honoring the caller's override.
-            headers["User-Agent"] = _USER_AGENT
-
-        try:
-            # Force the "realtime" WebSocket subprotocol regardless of any caller-supplied
-            # override in ``self._kwargs``: the service requires this exact subprotocol, so
-            # silently accepting a different one here would just move the failure to a less
-            # clear error inside the handshake. Also disable ``websockets``' own
-            # ``user_agent_header`` default: unlike aiohttp, it is a wholly separate mechanism
-            # from ``additional_headers`` -- passing our own "User-Agent" there does not
-            # override it, so without this the connection would carry two distinct
-            # User-Agent-like values.
-            ws_connect_kwargs = dict(self._kwargs)
-            ws_connect_kwargs.pop("subprotocols", None)
-            connection = _ws_connect(
-                full_url,
-                additional_headers=headers,
-                subprotocols=[Subprotocol("realtime")],
-                user_agent_header=None,
-                **ws_connect_kwargs,
-            )
-        except BaseException as exc:
-            if not isinstance(exc, Exception) or isinstance(exc, (ValueError, RuntimeError)):
-                raise
-            raise ConnectionError(
-                f"Failed to open the realtime WebSocket connection to voice agent "
-                f"'{self._agent_name}' at '{url}': {exc}"
-            ) from exc
-        _LOGGER.debug("WebSocket CONNECTED target=%s", target_url)
-        self._connection = BetaRealtimeConnection(connection)
-        return self._connection
+    def _create_connection(self, connection: "ClientConnection") -> _ConnectionT:
+        raise NotImplementedError
 
     def __exit__(self, *exc_details: Any) -> None:
         if self._connection is not None:
             self._connection.close()
             self._connection = None
+
+
+class BetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[BetaRealtimeConnection]):
+    """Context manager for a synchronous Realtime connection."""
+
+    def __enter__(self) -> BetaRealtimeConnection:
+        return self.enter()
+
+    def enter(self) -> BetaRealtimeConnection:
+        """Open the Realtime connection.
+
+        :return: The Realtime connection.
+        :rtype: ~azure.ai.projects.operations.BetaRealtimeConnection
+        """
+        return super().enter()
+
+    def _create_connection(self, connection: "ClientConnection") -> BetaRealtimeConnection:
+        return BetaRealtimeConnection(connection)
 
 
 class BetaRealtime:  # pylint: disable=too-few-public-methods

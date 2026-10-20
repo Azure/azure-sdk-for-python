@@ -1,5 +1,15 @@
 # Release History
 
+## 2.11.0 (Unreleased)
+
+### Features Added
+
+* Added preview GPT Live clients at `beta.voice_agents.live` for text and audio streaming, typed events, session controls, and Responses function-tool results. Both synchronous and asynchronous clients are available.
+
+### Sample updates
+
+* Added GPT Live connection, text conversation, asynchronous PCM audio streaming, and function-tool examples under `samples/agents/voice`.
+
 ## 2.10.0 (2026-10-30)
 
 ### Features Added
