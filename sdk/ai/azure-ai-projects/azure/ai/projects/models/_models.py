@@ -32317,7 +32317,9 @@ class VoiceAgentDefinition(VoiceAgentBaseDefinition):  # pylint: disable=docstri
     :vartype subagent_config: ~azure.ai.projects.models.VoiceAgentSubagentConfig
     """
 
-    sub_protocol: Optional[Literal["realtime"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    sub_protocol: Optional[Literal["realtime"]] = rest_field(  # type: ignore[reportIncompatibleVariableOverride]
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Selects Realtime. May be omitted for legacy agents. Default value is \"realtime\"."""
     model_type: Optional[Union[str, "_models.VoiceModelType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -33150,7 +33152,9 @@ class VoiceAgentLiveDefinition(VoiceAgentBaseDefinition):  # pylint: disable=doc
      ~azure.ai.projects.models.VoiceAgentLiveManagedAgentDelegation
     """
 
-    sub_protocol: Literal["live"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    sub_protocol: Literal["live"] = rest_field(  # type: ignore[reportIncompatibleVariableOverride]
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Selects the Live protocol. Required. Default value is \"live\"."""
     model_type: Literal["self_deployed"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Uses a Foundry model deployment. Required. Default value is \"self_deployed\"."""
