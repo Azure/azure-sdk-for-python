@@ -154,6 +154,24 @@ class TestTraceRouting(unittest.TestCase):
                 self.assertEqual(exporter.export(spans), SpanExportResult.SUCCESS)
         self.transport.send.assert_not_called()
 
+    @mock.patch.dict(os.environ)
+    def test_routing_without_host_connection_string(self):
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        exporter = self._exporter(connection_string=None)
+        self.assertIsNone(exporter.application_id)
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = "invalid"
+        self.assertEqual(exporter.export([self._span()]), SpanExportResult.SUCCESS)
+        request = self.transport.send.call_args.args[0]
+        self.assertTrue(request.url.startswith("https://one.example/proxy/"))
+        self.assertEqual([item["iKey"] for item in json.loads(request.body)], ["customer-key"] * 3)
+
+    def test_configured_application_id_is_preserved(self):
+        exporter = self._exporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;ApplicationId=host-app"
+        )
+        self.assertEqual(exporter.application_id, "host-app")
+
     def test_authentication_groups_include_parent_events(self):
         credential = mock.Mock(spec=["get_token"])
         credential.get_token.return_value = AccessToken("test-token", int(time.time()) + 3600)

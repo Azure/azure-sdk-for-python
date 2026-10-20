@@ -120,6 +120,23 @@ class TestLogRouting(unittest.TestCase):
             ["1234abcd-5678-4efa-8abc-1234567890ab"] * 2,
         )
 
+    @mock.patch.dict(os.environ)
+    def test_routing_without_host_connection_string(self):
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        credential = mock.Mock(spec=["get_token"])
+        credential.get_token.return_value = AccessToken("test-token", int(time.time()) + 3600)
+        exporter = self._exporter(connection_string=None, credential=credential)
+        self.assertIsNone(exporter._instrumentation_key)
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = "invalid"
+        self.assertEqual(exporter.export([self._record(), self._record(auth="aad")]), LogRecordExportResult.SUCCESS)
+        requests = [call.args[0] for call in self.transport.send.call_args_list]
+        self.assertEqual(len(requests), 2)
+        self.assertTrue(all(request.url.startswith("https://one.example/proxy/") for request in requests))
+        self.assertEqual([json.loads(request.body)[0]["iKey"] for request in requests], ["customer-key"] * 2)
+        self.assertNotIn("Authorization", requests[0].headers)
+        self.assertEqual(requests[1].headers["Authorization"], f"Bearer {credential.get_token.return_value.token}")
+
     def test_route_creation_preserves_resolved_host_configuration(self):
         with mock.patch.dict(
             os.environ,
@@ -133,6 +150,35 @@ class TestLogRouting(unittest.TestCase):
             os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = "invalid"
             self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
         self.assertTrue(self.transport.send.call_args.args[0].url.startswith("https://one.example/proxy/"))
+
+    @mock.patch.dict(os.environ)
+    def test_routing_without_host_preserves_retry_storage(self):
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir", return_value=self.directory.name
+        ):
+            exporter = AzureMonitorLogExporter(
+                enable_multi_endpoint_routing=True, transport=self.transport, retry_total=0
+            )
+        self.addCleanup(exporter.shutdown)
+        self.assertIsNone(exporter.storage)
+        self.assertFalse(Path(exporter._storage_directory).exists())
+        now = datetime.datetime(2026, 10, 20, tzinfo=datetime.timezone.utc)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            self.assertEqual(exporter.export([self._record(key="old-key")]), LogRecordExportResult.FAILURE)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=61)
+        ):
+            self.assertEqual(exporter.export([self._record(key="new-key")]), LogRecordExportResult.SUCCESS)
+        requests = [call.args[0] for call in self.transport.send.call_args_list]
+        self.assertEqual(len(requests), 2)
+        self.assertEqual([json.loads(request.body)[0]["iKey"] for request in requests], ["new-key", "old-key"])
+        self.assertTrue(all(request.url.startswith("https://one.example/proxy/") for request in requests))
+        self.assertFalse(Path(exporter._storage_directory).exists())
 
     def test_authentication_groups_and_client_reuse(self):
         credential = mock.Mock(spec=["get_token"])
