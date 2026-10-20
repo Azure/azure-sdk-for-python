@@ -5,6 +5,7 @@ extends:
     parameters:
       Location: westcentralus
       ServiceDirectory: agrifood
+      BuildTargetingString: azure-agrifood-farming
       Clouds: Public_FarmBeats
       CloudConfig:
         Public_Farmbeats:

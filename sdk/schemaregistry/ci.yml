@@ -30,6 +30,4 @@ extends:
     Artifacts:
     - name: azure-schemaregistry
       safeName: azureschemaregistry
-    - name: azure-schemaregistry-avroencoder
-      safeName: azureschemaregistryavroencoder
     TestProxy: true

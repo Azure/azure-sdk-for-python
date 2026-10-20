@@ -67,6 +67,28 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 #  - This will also affect usage of get_package_properties.py (Save-Package-Properties stage of CI), so please be aware of this!
 PATHS_EXCLUDED_FROM_DISCOVERY = [
     "sdk/textanalytics/azure-ai-textanalytics",
+    # SDKs last released in 2022: retain source without repository-wide CI discovery.
+    "sdk/agrifood/azure-mgmt-agrifood",
+    "sdk/anomalydetector/azure-ai-anomalydetector",
+    "sdk/app/azure-mgmt-app",
+    "sdk/automanage/azure-mgmt-automanage",
+    "sdk/compute/azure-mgmt-vmwarecloudsimple",
+    "sdk/datalake/azure-mgmt-datalake-analytics",
+    "sdk/fluidrelay/azure-mgmt-fluidrelay",
+    "sdk/labservices/azure-mgmt-labservices",
+    "sdk/logic/azure-mgmt-logic",
+    "sdk/machinelearning/azure-mgmt-machinelearningcompute",
+    "sdk/oep/azure-mgmt-oep",
+    "sdk/personalizer/azure-ai-personalizer",
+    "sdk/purview/azure-purview-catalog",
+    "sdk/schemaregistry/azure-schemaregistry-avroencoder",
+    "sdk/securitydevops/azure-mgmt-securitydevops",
+    "sdk/storage/azure-mgmt-storageimportexport",
+    "sdk/storagepool/azure-mgmt-storagepool",
+    "sdk/testbase/azure-mgmt-testbase",
+    "sdk/timeseriesinsights/azure-mgmt-timeseriesinsights",
+    "sdk/videoanalyzer/azure-media-videoanalyzer-edge",
+    "sdk/videoanalyzer/azure-mgmt-videoanalyzer",
 ]
 
 TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}

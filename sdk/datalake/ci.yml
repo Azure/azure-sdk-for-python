@@ -29,7 +29,5 @@ extends:
     ServiceDirectory: datalake
     TestProxy: true
     Artifacts:
-    - name: azure-mgmt-datalake-analytics
-      safeName: azuremgmtdatalakeanalytics
     - name: azure-mgmt-datalake-store
       safeName: azuremgmtdatalakestore
