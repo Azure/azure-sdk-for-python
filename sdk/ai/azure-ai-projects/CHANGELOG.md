@@ -2,6 +2,16 @@
 
 ## 2.10.0 (Unreleased)
 
+### Features Added
+
+* Added generated GPT Live voice-agent configuration, delegation, and client/server event models.
+* Added persisted Live conversation, item, and audio REST operations under `beta.voice_agents.live_conversations`.
+* Added image-generation model options and the `xhigh` and `max` quality values from the updated OpenAI TypeSpec dependency.
+
+### Bugs Fixed
+
+* Preserved concrete Live/Realtime voice-agent types on agent readback without inserting an omitted `sub_protocol`.
+
 ## 2.9.0 (2026-10-16)
 
 ### Features Added
