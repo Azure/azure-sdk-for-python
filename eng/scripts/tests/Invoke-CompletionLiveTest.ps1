@@ -68,12 +68,13 @@ function Invoke-NegativeCorrelation([string]$Name, [string]$SdkPr, [string]$Expe
     $before = @(Get-TestFixture $primaryId; Get-TestFixture $SecondaryPlanId)
     $scriptPath = Join-Path $PSScriptRoot '../../common/scripts/Mark-ReleasePlanCompletion.ps1'
     $messages = @(& $scriptPath -PackageInfoFilePath (Join-Path $evidenceDirectory 'azure-template.json') `
-        -AzsdkExePath $AzsdkExePath -SdkPullRequest $SdkPr -PipelineUrl $pipelineUrl 3>&1 6>&1)
-    $details = @($messages | ForEach-Object { if ([string]$_ -match '^Details: (\{.*\})$') { $Matches[1] | ConvertFrom-Json } })
-    if ($details.Count -ne 1 -or $details[0].operation_status -ne 'Failed' -or $details[0].response_error -notmatch $ExpectedError) {
+        -AzsdkExePath $AzsdkExePath -SdkPullRequest $SdkPr -PipelineUrl $pipelineUrl 2>&1 3>&1 6>&1)
+    # The unchanged completion script uses the released CLI's default plain output.
+    $text = $messages | Out-String
+    if ($text -notmatch $ExpectedError -or $text -notmatch 'Exit code: 1') {
         throw "Negative case '$Name' did not produce its expected correlation rejection."
     }
-    if (($messages | Out-String) -match 'LEGACY_RELEASE_PLAN_LOOKUP') { throw 'A correlated failure fell back to package lookup.' }
+    if ($text -match 'LEGACY_RELEASE_PLAN_LOOKUP') { throw 'A correlated failure fell back to package lookup.' }
     $after = @(Get-TestFixture $primaryId; Get-TestFixture $SecondaryPlanId)
     for ($i = 0; $i -lt $before.Count; $i++) {
         if ($before[$i].rev -ne $after[$i].rev -or (Get-BusinessSnapshot $before[$i]) -cne (Get-BusinessSnapshot $after[$i])) {
@@ -101,7 +102,7 @@ try {
             @{ Name = 'azure-template'; Version = '1.0.0b1'; SdkType = 'client'; TestOnly = $true } |
                 ConvertTo-Json | Set-Content -LiteralPath (Join-Path $evidenceDirectory 'azure-template.json')
             Write-Host 'LIVE_COMPLETION_ASSERTION {"case":"real-pr-resolution-and-stage-output","result":"Passed","sdkPr":48030}'
-            Invoke-NegativeCorrelation -Name 'unmatched-sdk-pr' -SdkPr 'https://github.com/Azure/azure-sdk-for-python/pull/49390' -ExpectedError 'found 0'
+            Invoke-NegativeCorrelation -Name 'unmatched-sdk-pr' -SdkPr 'https://github.com/Azure/azure-sdk-for-python/pull/49362' -ExpectedError 'found 0'
             Invoke-NegativeCorrelation -Name 'invalid-spec-pr-repository' -SdkPr 'https://github.com/Azure/azure-rest-api-specs/pull/48030' -ExpectedError 'SDK pull request must'
             $originalPr = [string]$secondary.fields.'Custom.SDKPullRequestForPython'
             $duplicate = Set-TestPr $secondary $expectedPr
