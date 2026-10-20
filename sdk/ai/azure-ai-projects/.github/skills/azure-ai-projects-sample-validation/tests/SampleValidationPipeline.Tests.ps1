@@ -45,6 +45,7 @@ print(
         $content | Should Match 'SAMPLE_ENVIRONMENT_VARIABLES_JSON: \$\(SAMPLE_ENVIRONMENT_VARIABLES_JSON\)'
         $content | Should Match "Push-Location sdk/ai/azure-ai-projects"
         $content | Should Match '\$\(PIP_EXE\) install -e \. -r dev_requirements\.txt'
+        $content | Should Match '(?m)^\s*azureSubscription: azure-sdk-tests\r?$'
         $content | Should Match "azure-ai-projects-sample-validation/scripts/InvokeSampleValidation.ps1"
         $content | Should Match 'HideEnvironmentValues = \$true'
         $oldSkillName = "azure-ai-projects-record" + "-sample"

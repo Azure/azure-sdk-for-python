@@ -57,7 +57,7 @@ extends:
                   SAMPLE_PATTERN: ${{ parameters.SamplePattern }}
                   TEST_PATTERN: ${{ parameters.TestPattern }}
                 inputs:
-                  azureSubscription: azure-sdk-tests-public
+                  azureSubscription: azure-sdk-tests
                   azurePowerShellVersion: LatestVersion
                   pwsh: true
                   ScriptType: InlineScript
