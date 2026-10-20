@@ -4,7 +4,7 @@ The `azure-ai-agentserver-invocations` package provides the invocation protocol 
 
 - **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`, `GET /invocations/docs/asyncapi.{json,yaml}`.
 - **WebSocket** (`invocations_ws` protocol) — full-duplex streaming at `/invocations_ws`, registered with `@app.ws_handler`.
-- **Voice Live Bridge** — an experimental typed event relay in the `azure.ai.agentserver.invocations.voice` submodule, layered on `invocations_ws`.
+- **Voice Live Bridge** — an experimental typed event relay in the `azure.ai.agentserver.invocations.voice` submodule, available at both `/conversation_engine` and the existing `/invocations_ws` endpoint.
 
 ## Getting started
 
@@ -308,9 +308,19 @@ The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`.
 
 ## Typed Voice Live Bridge submodule (preview)
 
-`VoiceAgentServerHost` provides typed `on_<event>` decorators over the existing
-`invocations_ws` transport. Each callback receives an immutable event and a
-send-only `Session`:
+`VoiceAgentServerHost` provides typed `on_<event>` decorators at both `/invocations_ws` and `/conversation_engine`, using the same `VoiceAgentServerHost()` construction. Existing legacy protocol declarations and metadata do not need migration. To use standalone CE, declare `conversation_engine` version `1.0.0` on the deployed hosted agent. Neither legacy Bridge metadata flag is required for CE. The SDK does not create or modify hosted agent protocol declarations; registering the container route alone does not enable the public Foundry CE endpoint.
+
+Both endpoints reuse the same typed Bridge messages, callbacks, transport limits,
+tracing, and application-owned lifecycle. The message handshake remains
+`session.start.protocol_version="1.0"`, independent of the container protocol
+version `1.0.0`. The generic `InvocationAgentServerHost.ws_handler` and independent
+`invocations_ws` routes are unchanged. The typed host reserves both paths, applying
+the existing same-scope conflict detection and Host/Mount authority rules to each.
+Use a locally built SDK containing CE support
+until a release containing it is available; enabling CE also requires the Foundry
+CE route and CE-aware Voice Live to be deployed.
+
+Each callback receives an immutable event and a send-only `Session`:
 
 Caller interruptions use `user.barge_in`, the `UserBargeIn` event model, `UserBargeInCallback`, and `@app.on_user_barge_in`. The former `barge_in`, `BargeIn`, `BargeInCallback`, and `on_barge_in` names have been removed without compatibility aliases. Update the Voice Live sender together with the SDK. Generic raw WebSocket handlers and application-owned cancellation/history are unchanged.
 
@@ -492,7 +502,7 @@ sample.
 
 | Environment variable | Default | Description |
 |---|---|---|
-| `SSE_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected interval, in seconds, for SSE comments on idle `POST /invocations` streams. `0` disables keep-alive. Surfaced on `app.config.sse_keepalive_interval`. |
+| `SSE_KEEPALIVE_INTERVAL` | `15` | Interval, in seconds, for SSE comments on idle `POST /invocations` streams. `0` disables keep-alive. Surfaced on `app.config.sse_keepalive_interval`. |
 | `WS_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected WebSocket Ping interval, in seconds. `0` disables keep-alive. Surfaced on `app.config.ws_ping_interval` and wired into Hypercorn's `websocket_ping_interval` by `AgentServerHost`. |
 
 ### Reference: close codes

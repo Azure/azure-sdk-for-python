@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added immutable `InputDataPart` and `ResponseOutputDataDone` for structured application data in Bridge protocol `1.0`. Existing callbacks and explicit `ResponseNone` silent completion remain application-owned.
+- Added a standalone `/conversation_engine` WebSocket route to the experimental `VoiceAgentServerHost`, reusing the existing typed Bridge event relay alongside `/invocations_ws`. Existing `invocations_ws` behavior and generic `InvocationAgentServerHost` raw WebSocket handlers are unchanged.
 
 ### Breaking Changes
 

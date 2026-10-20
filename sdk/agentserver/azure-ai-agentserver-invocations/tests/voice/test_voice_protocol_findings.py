@@ -35,7 +35,8 @@ from conftest import _records_with_ws_extras
 
 
 class TestUserBargeInDispatch:
-    def test_only_user_barge_in_reaches_callback_with_playback_snapshot(self) -> None:
+    @pytest.mark.parametrize("protocol", ["invocations_ws", "conversation_engine"])
+    def test_only_user_barge_in_reaches_callback_with_playback_snapshot(self, protocol: str) -> None:
         app = VoiceAgentServerHost(configure_observability=None)
         interruptions: list[UserBargeIn] = []
 
@@ -51,7 +52,7 @@ class TestUserBargeInDispatch:
         async def barrier(session: Session, event: UserMessage) -> None:
             await session.send(ResponseNone(in_reply_to=(event.item_id,)))
 
-        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        with TestClient(app).websocket_connect(f"/{protocol}") as websocket:
             websocket.send_text(
                 _voice_frame(
                     "session.start",
@@ -90,7 +91,8 @@ class TestUserBargeInDispatch:
 
 
 @pytest.mark.parametrize("silent", [False, True])
-def test_data_and_silent_completion_over_websocket(silent: bool) -> None:
+@pytest.mark.parametrize("protocol", ["invocations_ws", "conversation_engine"])
+def test_data_and_silent_completion_over_websocket(silent: bool, protocol: str) -> None:
     app = VoiceAgentServerHost(configure_observability=None)
 
     @app.on_session_start
@@ -109,7 +111,7 @@ def test_data_and_silent_completion_over_websocket(silent: bool) -> None:
         await session.send(ResponseOutputDataDone(response_id="r_data", item_id="it_data", data=part.data))
         await session.send(ResponseDone(response_id="r_data"))
 
-    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+    with TestClient(app).websocket_connect(f"/{protocol}") as websocket:
         websocket.send_text(
             _voice_frame(
                 "session.start",
