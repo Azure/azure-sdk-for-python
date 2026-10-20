@@ -145,7 +145,8 @@
   - `azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedStreamEvent`
   - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedStreamEvent`
   - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStreamEvent`
-- Below models, properties, and enum members are added for Content Understanding:
+- Below models, properties, and enum members are added for Content Understanding
+  ([#48555](https://github.com/Azure/azure-sdk-for-python/issues/48555)):
   - `azure.search.documents.indexes.models.ContentUnderstandingSkill.model_deployment`
   - `azure.search.documents.indexes.models.ContentUnderstandingSkill.model_name`
   - `azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingMethod`
@@ -176,7 +177,12 @@
 - Fixed search continuation tokens using a hardcoded API version instead of the client's configured
   version.
 - Fixed semantic answer and caption options serializing enum names instead of wire values, and
-  threshold-only answer options using an incorrect separator.
+  threshold-only answer options using an incorrect separator
+  ([#40497](https://github.com/Azure/azure-sdk-for-python/issues/40497)).
+- Improved large document upload and merge performance by avoiding redundant serialization
+  ([#46860](https://github.com/Azure/azure-sdk-for-python/issues/46860)).
+- Made `SearchFieldDataType.Collection` visible to static type checkers
+  ([#47929](https://github.com/Azure/azure-sdk-for-python/issues/47929)).
 - Fixed `IndexDocumentsBatch` action replacement, dequeue, and enqueue sending stale document
   actions instead of the batch's current contents.
 - Fixed buffered senders requeueing only the first action after a request failure and asynchronous
