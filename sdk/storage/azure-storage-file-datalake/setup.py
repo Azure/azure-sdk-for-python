@@ -78,7 +78,7 @@ setup(
     python_requires=">=3.10",
     install_requires=[
         "azure-core>=1.37.0",
-        "azure-storage-blob>=12.31.0",
+        "azure-storage-blob>=12.31.1",
         "typing-extensions>=4.6.0",
         "isodate>=0.6.1",
     ],

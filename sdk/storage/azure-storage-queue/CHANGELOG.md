@@ -1,5 +1,11 @@
 # Release History
 
+## 12.18.1 (2026-10-20)
+
+### Bugs Fixed
+- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_queue_sas`, and `QueueServiceClient.get_user_delegation_key` (sync and async). Datetimes without timezone information continue to be treated as UTC.
+- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
+
 ## 12.18.0 (2026-09-30)
 
 This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
