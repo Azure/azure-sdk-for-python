@@ -82,7 +82,6 @@ extends:
                       ConfirmLive = $true
                       EnvironmentVariable = $environmentVariables
                       JUnitXml = "$(Build.SourcesDirectory)/sdk/ai/azure-ai-projects/test-junit-samples.xml"
-                      HideEnvironmentValues = $true
                     }
                     if ($env:TEST_PATTERN) {
                       $arguments.TestPattern = $env:TEST_PATTERN

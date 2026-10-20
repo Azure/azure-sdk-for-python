@@ -40,14 +40,14 @@ print(
         $actual.template | Should Be "/eng/pipelines/templates/stages/1es-redirect.yml"
     }
 
-    It "uses masked variable names and the renamed validation runner" {
+    It "uses secret variable transport and the renamed validation runner" {
         $content = Get-Content -LiteralPath $pipelinePath -Raw
         $content | Should Match 'SAMPLE_ENVIRONMENT_VARIABLES_JSON: \$\(SAMPLE_ENVIRONMENT_VARIABLES_JSON\)'
         $content | Should Match "Push-Location sdk/ai/azure-ai-projects"
         $content | Should Match '\$\(PIP_EXE\) install -e \. -r dev_requirements\.txt'
         $content | Should Match '(?m)^\s*azureSubscription: azure-sdk-tests\r?$'
         $content | Should Match "azure-ai-projects-sample-validation/scripts/InvokeSampleValidation.ps1"
-        $content | Should Match 'HideEnvironmentValues = \$true'
+        $content | Should Not Match 'HideEnvironmentValues'
         $oldSkillName = "azure-ai-projects-record" + "-sample"
         $oldRunnerName = "InvokeSample" + "Test.ps1"
         $content | Should Not Match "$oldSkillName|$oldRunnerName"
