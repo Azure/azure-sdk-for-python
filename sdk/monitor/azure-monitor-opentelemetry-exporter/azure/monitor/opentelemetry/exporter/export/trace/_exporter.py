@@ -52,7 +52,12 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATION_ID_RESOURCE_KEY,
 )
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._routing import _is_valid_route
+from azure.monitor.opentelemetry.exporter._routing import (
+    _get_ingestion_endpoint,
+    _get_instrumentation_key,
+    _is_aad_route,
+    _is_valid_route,
+)
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MessageData,
@@ -152,6 +157,8 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         :return: The result of the export.
         :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
         """
+        if self._enable_multi_endpoint_routing:
+            return self._export_routed_spans(spans)
         envelopes = []
 
         if spans and self._should_collect_otel_resource_metric():
@@ -163,8 +170,6 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             except AttributeError as e:
                 _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)  # pylint: disable=C4769
         for span in spans:
-            if self._enable_multi_endpoint_routing and not _is_valid_route(span.attributes):
-                continue
             envelopes.append(self._span_to_envelope(span))
             envelopes.extend(self._span_events_to_envelopes(span))
         try:
@@ -175,13 +180,32 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
+    def _export_routed_spans(self, spans: Sequence[ReadableSpan]) -> SpanExportResult:
+        try:
+            groups: Dict[tuple[str, bool], List[TelemetryItem]] = {}
+            for span in spans:
+                if not _is_valid_route(span.attributes):
+                    continue
+                key = _get_ingestion_endpoint(span.attributes), _is_aad_route(span.attributes)
+                envelopes = groups.setdefault(key, [])
+                envelopes.append(self._span_to_envelope(span))
+                envelopes.extend(self._span_events_to_envelopes(span))
+            return _get_trace_export_result(self._transmit_routed(groups))
+        except Exception:  # pylint: disable=broad-except
+            _logger.exception("Exception occurred while exporting routed spans.")  # pylint: disable=C4769
+            return SpanExportResult.FAILURE
+
     def shutdown(self) -> None:
         """Shuts down the exporter.
 
         Called when the SDK is shut down.
         """
-        if self.storage:
-            self.storage.close()
+        try:
+            if self._enable_multi_endpoint_routing:
+                self._shutdown_route_exporters()
+        finally:
+            if self.storage:
+                self.storage.close()
 
     # pylint: disable=protected-access
     def _get_otel_resource_envelope(self, resource: Resource, application_id: Optional[str]) -> TelemetryItem:
@@ -222,7 +246,11 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
             exclude_routing_attributes=self._enable_multi_endpoint_routing,
         )
-        envelope.instrumentation_key = self._instrumentation_key
+        envelope.instrumentation_key = (
+            _get_instrumentation_key(span.attributes)
+            if self._enable_multi_endpoint_routing
+            else self._instrumentation_key
+        )
         return envelope  # type: ignore
 
     def _span_events_to_envelopes(self, span: ReadableSpan) -> Sequence[TelemetryItem]:
@@ -233,8 +261,13 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
             exclude_routing_attributes=self._enable_multi_endpoint_routing,
         )
+        instrumentation_key = (
+            _get_instrumentation_key(span.attributes)
+            if self._enable_multi_endpoint_routing
+            else self._instrumentation_key
+        )
         for envelope in envelopes:
-            envelope.instrumentation_key = self._instrumentation_key
+            envelope.instrumentation_key = instrumentation_key
         return envelopes
 
     def _should_collect_otel_resource_metric(self):
