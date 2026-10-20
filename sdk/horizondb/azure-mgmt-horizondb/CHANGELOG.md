@@ -4,27 +4,6 @@
 
 ### Features Added
 
-  - Client `HorizonDBMgmtClient` added operation group `authentications`
-  - Client `HorizonDBMgmtClient` added operation group `capabilities`
-  - Client `HorizonDBMgmtClient` added operation group `change_data_capture_capabilities`
-  - Client `HorizonDBMgmtClient` added operation group `change_data_capture_configurations`
-  - Client `HorizonDBMgmtClient` added operation group `change_data_capture_destinations`
-  - Client `HorizonDBMgmtClient` added operation group `clusters`
-  - Client `HorizonDBMgmtClient` added operation group `default_parameter_groups`
-  - Client `HorizonDBMgmtClient` added operation group `endpoints`
-  - Client `HorizonDBMgmtClient` added operation group `firewall_rules`
-  - Client `HorizonDBMgmtClient` added operation group `identity_assignments`
-  - Client `HorizonDBMgmtClient` added operation group `log_capture_configurations`
-  - Client `HorizonDBMgmtClient` added operation group `log_files`
-  - Client `HorizonDBMgmtClient` added operation group `maintenance_events`
-  - Client `HorizonDBMgmtClient` added operation group `microsoft_entra_administrators`
-  - Client `HorizonDBMgmtClient` added operation group `microsoft_entra_authentications`
-  - Client `HorizonDBMgmtClient` added operation group `nodes`
-  - Client `HorizonDBMgmtClient` added operation group `parameter_groups`
-  - Client `HorizonDBMgmtClient` added operation group `password_authentications`
-  - Client `HorizonDBMgmtClient` added operation group `pools`
-  - Client `HorizonDBMgmtClient` added operation group `private_endpoint_connections`
-  - Client `HorizonDBMgmtClient` added operation group `private_link_resources`
   - Model `ParameterProperties` added property `default_value`
   - Model `ParameterProperties` added property `value_source`
   - Added model `ActivateChangeDataCaptureIdentityRequest`
@@ -173,10 +152,8 @@
   - Added operation group `ChangeDataCaptureCapabilitiesOperations`
   - Added operation group `ChangeDataCaptureConfigurationsOperations`
   - Added operation group `ChangeDataCaptureDestinationsOperations`
-  - Added operation group `ClustersOperations`
   - Added operation group `DefaultParameterGroupsOperations`
   - Added operation group `EndpointsOperations`
-  - Added operation group `FirewallRulesOperations`
   - Added operation group `IdentityAssignmentsOperations`
   - Added operation group `LogCaptureConfigurationsOperations`
   - Added operation group `LogFilesOperations`
@@ -184,22 +161,10 @@
   - Added operation group `MicrosoftEntraAdministratorsOperations`
   - Added operation group `MicrosoftEntraAuthenticationsOperations`
   - Added operation group `NodesOperations`
-  - Added operation group `ParameterGroupsOperations`
   - Added operation group `PasswordAuthenticationsOperations`
-  - Added operation group `PoolsOperations`
-  - Added operation group `PrivateEndpointConnectionsOperations`
-  - Added operation group `PrivateLinkResourcesOperations`
 
 ### Breaking Changes
 
-  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_administrators`
-  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_clusters`
-  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_firewall_rules`
-  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_parameter_groups`
-  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_pools`
-  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_private_endpoint_connections`
-  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_private_link_resources`
-  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_replicas`
   - Model `Network` deleted or renamed its instance variable `public_network_access`
   - Deleted or renamed model `CreateModeCluster`
   - Deleted or renamed model `CreateModePool`
@@ -235,14 +200,14 @@
   - Deleted or renamed model `ReplicaRole`
   - Deleted or renamed model `State`
   - Deleted or renamed model `ZonePlacementPolicy`
-  - Deleted or renamed model `HorizonDbAdministratorsOperations`
-  - Deleted or renamed model `HorizonDbClustersOperations`
-  - Deleted or renamed model `HorizonDbFirewallRulesOperations`
-  - Deleted or renamed model `HorizonDbParameterGroupsOperations`
-  - Deleted or renamed model `HorizonDbPoolsOperations`
-  - Deleted or renamed model `HorizonDbPrivateEndpointConnectionsOperations`
-  - Deleted or renamed model `HorizonDbPrivateLinkResourcesOperations`
-  - Deleted or renamed model `HorizonDbReplicasOperations`
+  - Deleted or renamed operation group `HorizonDbAdministratorsOperations`
+  - Deleted or renamed operation group `HorizonDbReplicasOperations`
+  - Renamed operation group `HorizonDbClustersOperations` to `ClustersOperations`
+  - Renamed operation group `HorizonDbFirewallRulesOperations` to `FirewallRulesOperations`
+  - Renamed operation group `HorizonDbParameterGroupsOperations` to `ParameterGroupsOperations`
+  - Renamed operation group `HorizonDbPoolsOperations` to `PoolsOperations`
+  - Renamed operation group `HorizonDbPrivateEndpointConnectionsOperations` to `PrivateEndpointConnectionsOperations`
+  - Renamed operation group `HorizonDbPrivateLinkResourcesOperations` to `PrivateLinkResourcesOperations`
 
 ## 1.0.0b2 (2026-08-20)
 
