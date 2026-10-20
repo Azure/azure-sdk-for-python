@@ -16,6 +16,8 @@
   explicit per-route authentication, and destination-isolated retry storage.
   Span events follow their parent span's route; metrics use each data point's route.
   Routing-enabled exporters can be created without a host connection string.
+  Routed offline storage is limited to 64 endpoint/authentication partitions per
+  exporter; additional destinations still transmit without persistence.
 
 ### Breaking Changes
 

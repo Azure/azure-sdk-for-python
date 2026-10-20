@@ -306,6 +306,48 @@ class TestLogRouting(unittest.TestCase):
         self.assertEqual(sorted(bool(list(partition.iterdir())) for partition in partitions), [False, True])
         self.assertTrue(exporter.storage._check_storage_size())
 
+    def test_offline_storage_is_limited_to_64_endpoint_auth_partitions(self):
+        credential = mock.Mock(spec=["get_token"])
+        credential.get_token.return_value = AccessToken("test-token", int(time.time()) + 3600)
+        exporter = self._exporter(disable_offline_storage=False, credential=credential)
+        records = [self._record(endpoint=f"https://route-{index}.example/") for index in range(63)]
+        records.extend(
+            [
+                self._record(endpoint="https://route-0.example/", auth="aad"),
+                self._record(endpoint="https://overflow.example/"),
+                self._record(endpoint="HTTPS://ROUTE-0.EXAMPLE:443", key="another-key"),
+            ]
+        )
+        with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="WARNING") as logs:
+            self.assertEqual(exporter.export(records), LogRecordExportResult.SUCCESS)
+        self.assertIn("64", logs.output[0])
+        self.assertIn("offline storage", logs.output[0])
+        self.assertEqual(self.transport.send.call_count, 65)
+        partitions = list((Path(self.directory.name) / "host-routes").iterdir())
+        self.assertEqual(len(partitions), 64)
+        requests = [call.args[0] for call in self.transport.send.call_args_list]
+        self.assertEqual([item["iKey"] for item in json.loads(requests[0].body)], ["customer-key", "another-key"])
+        self.assertNotIn("Authorization", requests[0].headers)
+        self.assertIn("Authorization", requests[63].headers)
+        self.assertTrue(requests[64].url.startswith("https://overflow.example/"))
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429)
+        retries = [records[0], records[63], records[64]]
+        self.assertEqual(exporter.export(retries), LogRecordExportResult.FAILURE)
+        self.assertEqual(self.transport.send.call_count, 3)
+        self.assertEqual(len(list(Path(self.directory.name).rglob("*.lock"))), 2)
+        exporter._local_storage_configuration_callback({_ONE_SETTINGS_FEATURE_LOCAL_STORAGE: {"default": "disabled"}})
+        exporter._local_storage_configuration_callback({_ONE_SETTINGS_FEATURE_LOCAL_STORAGE: {"default": "enabled"}})
+        self.assertEqual(len(list((Path(self.directory.name) / "host-routes").iterdir())), 64)
+        self.assertIsNone(exporter._route_exporters[("https://overflow.example/", False)].storage)
+
+    def test_disabled_offline_storage_does_not_create_partitions_past_limit(self):
+        exporter = self._exporter()
+        records = [self._record(endpoint=f"https://route-{index}.example/") for index in range(65)]
+        self.assertEqual(exporter.export(records), LogRecordExportResult.SUCCESS)
+        self.assertEqual(self.transport.send.call_count, 65)
+        self.assertFalse((Path(self.directory.name) / "host-routes").exists())
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export._rate_limiter.time.monotonic", return_value=0)
     def test_rate_limit_is_shared_by_routes(self, _monotonic):
         exporter = self._exporter(max_envelopes_per_second=1)
