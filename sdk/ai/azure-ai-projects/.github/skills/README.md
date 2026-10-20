@@ -59,7 +59,7 @@ This skill updates existing pytest coverage and authors complete sync/async Test
 
 ### azure-ai-projects-sample-validation
 
-This skill validates exact or wildcard-selected recorded samples through recording, playback, local live execution, or the azure-ai-projects Azure DevOps live-test pipeline. It resolves every matching pytest node and supports repeatable command-line environment overrides.
+This skill validates exact or wildcard-selected recorded samples through recording, playback, local live execution, or the azure-ai-projects Azure DevOps live-test pipeline. It resolves every matching pytest node, supports repeatable command-line environment overrides, and waits for queued ADO validation to complete.
 
 ### azure-ai-projects-model-reference-graph
 

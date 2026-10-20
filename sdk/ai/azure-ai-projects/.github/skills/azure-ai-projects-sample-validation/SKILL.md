@@ -18,7 +18,7 @@ Before previewing, always use the question tool to ask the user to choose exactl
 | `record-only` | `true` | `false` | Record without running playback. |
 | `playback-only` | `false` | `true` | Run only from an existing recording. |
 | `live-test-locally` | `true` | `true` | Contact the live service locally without creating or updating a recording. |
-| `live-test-by-pipeline` | `true` | `true` | Queue ADO definition `8392` to run selected nodes live without recording. |
+| `live-test-by-pipeline` | `true` | `true` | Queue ADO definition `8392`, run selected nodes live without recording, and wait for completion. |
 
 Do not silently substitute one mode for another. Include the selected mode in the final report.
 
@@ -90,7 +90,7 @@ For wildcard validation, preserve the same sample pattern, test pattern, and env
    -Run -ConfirmSelection -ConfirmPipeline
 ```
 
-The orchestrator loads only relevant `.env` names and handles all mode flags. Immediately before recording, it stops `*testproxy*` processes and deletes `.pytest_cache`. `record-and-playback` proceeds to playback even when recording fails. After successful hosted-agent recordings it runs `tests\samples\repair_hosted_agent_sample_recording.py` for every selected hosted-agent node before playback or completion. ADO selectors use runtime parameters; values use masked secret build variables.
+The orchestrator loads only relevant `.env` names and handles all mode flags. Immediately before recording, it stops `*testproxy*` processes and deletes `.pytest_cache`. `record-and-playback` proceeds to playback even when recording fails. After successful hosted-agent recordings it runs `tests\samples\repair_hosted_agent_sample_recording.py` for every selected hosted-agent node before playback or completion. ADO selectors use runtime parameters; values use masked secret build variables. Pipeline mode waits until ADO completes and fails when the run fails or times out.
 
 Recording modes invoke `scripts\TestRecordingGitConflicts.ps1` during preview and again immediately before cleanup. Treat that script's result as authoritative; do not reproduce its conflict checks in the skill workflow.
 
