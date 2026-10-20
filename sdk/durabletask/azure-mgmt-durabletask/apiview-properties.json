@@ -147,5 +147,5 @@
         "azure.mgmt.durabletask.operations.FailoverInstancesOperations.begin_force_failover_allow_data_loss": "Microsoft.DurableTask.FailoverInstances.forceFailoverAllowDataLoss",
         "azure.mgmt.durabletask.aio.operations.FailoverInstancesOperations.begin_force_failover_allow_data_loss": "Microsoft.DurableTask.FailoverInstances.forceFailoverAllowDataLoss"
     },
-    "CrossLanguageVersion": "cbc588f0f984"
+    "CrossLanguageVersion": "1df18bc0d591"
 }

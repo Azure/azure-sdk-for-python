@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0b1 (2026-10-15)
+## 1.2.0b1 (2026-10-20)
 
 ### Features Added
 
@@ -36,7 +36,7 @@
   - Added enum `TransparentDataEncryptionKeySource`
   - Added model `TransparentDataEncryptionProperties`
   - Added model `UserAssignedIdentity`
-  - Operation group `SchedulersOperations` added method `restart`
+  - Model `SchedulersOperations` added method `restart`
   - Added operation group `DetectorsOperations`
   - Added operation group `FailoverInstancesOperations`
   - Added operation group `TaskQueuesOperations`
