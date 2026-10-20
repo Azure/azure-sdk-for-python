@@ -7,6 +7,10 @@
 - Added `ODataV4Format.as_dict()` to convert parsed OData V4 errors, including nested details and model-valued inner errors, to JSON-compatible dictionaries for generated model serialization, preserving `None` values and empty collections.
 - Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.
 
+### Bugs Fixed
+
+- Fixed `RetryPolicy` and `AsyncRetryPolicy` retrying requests whose body is a generator or other iterator, which sent an empty body on the retry. Such requests are no longer retried. #49587
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added
