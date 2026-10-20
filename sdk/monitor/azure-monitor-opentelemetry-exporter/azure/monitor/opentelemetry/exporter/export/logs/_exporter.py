@@ -30,7 +30,12 @@ except ImportError:
     _session_attributes = None  # type: ignore
 
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._routing import _is_valid_route
+from azure.monitor.opentelemetry.exporter._routing import (
+    _get_ingestion_endpoint,
+    _get_instrumentation_key,
+    _is_aad_route,
+    _is_valid_route,
+)
 from azure.monitor.opentelemetry.exporter._constants import (
     _AVAILABILITY_ENVELOPE_NAME,
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
@@ -103,11 +108,9 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
         :return: The result of the export.
         :rtype: ~opentelemetry.sdk._logs.export.LogRecordExportResult
         """
-        envelopes = [
-            self._log_to_envelope(log)
-            for log in batch
-            if not self._enable_multi_endpoint_routing or _is_valid_route(log.log_record.attributes)
-        ]
+        if self._enable_multi_endpoint_routing:
+            return self._export_routed_logs(batch)
+        envelopes = [self._log_to_envelope(log) for log in batch]
         try:
             result = self._transmit(envelopes)
             self._handle_transmit_from_storage(envelopes, result)
@@ -115,6 +118,20 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE)
+
+    def _export_routed_logs(self, batch: Sequence[ReadableLogRecord]) -> LogRecordExportResult:
+        try:
+            groups: Dict[tuple[str, bool], list[TelemetryItem]] = {}
+            for log in batch:
+                attributes = log.log_record.attributes
+                if not _is_valid_route(attributes):
+                    continue
+                key = _get_ingestion_endpoint(attributes), _is_aad_route(attributes)
+                groups.setdefault(key, []).append(self._log_to_envelope(log))
+            return _get_log_export_result(self._transmit_routed(groups))
+        except Exception:  # pylint: disable=broad-except
+            _logger.exception("Exception occurred while exporting routed logs.")
+            return LogRecordExportResult.FAILURE
 
     def force_flush(self, timeout_millis: float = 10_000) -> bool:
         # Ensure that export of any received log records completes as soon as possible.
@@ -126,8 +143,12 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
 
         Called when the SDK is shut down.
         """
-        if self.storage:
-            self.storage.close()
+        try:
+            if self._enable_multi_endpoint_routing:
+                self._shutdown_route_exporters()
+        finally:
+            if self.storage:
+                self.storage.close()
 
     def _log_to_envelope(self, readable_log_record: ReadableLogRecord) -> TelemetryItem:
         envelope = _convert_log_to_envelope(
@@ -135,7 +156,11 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
             increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
             exclude_routing_attributes=self._enable_multi_endpoint_routing,
         )
-        envelope.instrumentation_key = self._instrumentation_key
+        envelope.instrumentation_key = (
+            _get_instrumentation_key(readable_log_record.log_record.attributes)
+            if self._enable_multi_endpoint_routing
+            else self._instrumentation_key
+        )
         return envelope
 
     # pylint: disable=docstring-keyword-should-match-keyword-only

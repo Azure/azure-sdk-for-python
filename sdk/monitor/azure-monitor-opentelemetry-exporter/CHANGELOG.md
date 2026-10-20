@@ -10,6 +10,8 @@
   `gen_ai_input_output_limit_increase` experimental feature is enabled; otherwise the
   existing limits apply (256kb for GenAI attributes and 8kb for all other custom properties)
   ([#49648](https://github.com/Azure/azure-sdk-for-python/pull/49648))
+- Add opt-in multi-endpoint log routing with per-item instrumentation keys,
+  explicit per-route authentication, and destination-isolated retry storage.
 
 ### Breaking Changes
 

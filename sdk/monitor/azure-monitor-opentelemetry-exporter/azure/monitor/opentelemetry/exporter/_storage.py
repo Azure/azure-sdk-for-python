@@ -114,8 +114,10 @@ class LocalFileStorage:
         write_timeout: int = 60,  # 1 minute,
         name: Optional[str] = None,
         lease_period: int = 60,  # 1 minute
+        capacity_path: Optional[str] = None,
     ) -> None:
         self._path = os.path.abspath(path)
+        self._capacity_path = os.path.abspath(capacity_path) if capacity_path is not None else self._path
         self._max_size = max_size
         self._retention_period = retention_period
         self._write_timeout = write_timeout
@@ -317,7 +319,7 @@ class LocalFileStorage:
     def _check_storage_size(self) -> bool:
         size = 0
         # pylint: disable=unused-variable
-        for dirpath, dirnames, filenames in os.walk(self._path):
+        for dirpath, dirnames, filenames in os.walk(self._capacity_path):
             for filename in filenames:
                 path = os.path.join(dirpath, filename)
                 # skip if it is symbolic link

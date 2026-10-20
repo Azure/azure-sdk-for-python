@@ -384,7 +384,11 @@ class TestAzureLogExporter(unittest.TestCase):
                     enable_multi_endpoint_routing=routing, disable_offline_storage=True
                 )
                 self.addCleanup(exporter.client.close)
-                with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                self.addCleanup(exporter.shutdown)
+                with mock.patch(
+                    "azure.monitor.opentelemetry.exporter.export._base.BaseExporter._transmit",
+                    return_value=ExportResult.SUCCESS,
+                ) as transmit:
                     self.assertEqual(exporter.export([record]), LogRecordExportResult.SUCCESS)
                 transmit.assert_called_once()
                 envelopes = transmit.call_args.args[0]
@@ -419,17 +423,25 @@ class TestAzureLogExporter(unittest.TestCase):
         for routing in (False, True):
             exporter = type(self)._exporter_class(enable_multi_endpoint_routing=routing, disable_offline_storage=True)
             self.addCleanup(exporter.client.close)
+            self.addCleanup(exporter.shutdown)
             for attributes in ([valid, *invalid, valid], invalid):
                 with self.subTest(routing=routing, attributes=attributes):
                     records = [
                         _logs.ReadWriteLogRecord(LogRecord(body=str(index), attributes=item), resource=Resource({}))
                         for index, item in enumerate(attributes)
                     ]
-                    with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                    with mock.patch(
+                        "azure.monitor.opentelemetry.exporter.export._base.BaseExporter._transmit",
+                        return_value=ExportResult.SUCCESS,
+                    ) as transmit:
                         self.assertEqual(exporter.export(records), LogRecordExportResult.SUCCESS)
-                    transmit.assert_called_once()
-                    envelopes = transmit.call_args.args[0]
                     expected = sum(item == valid for item in attributes) if routing else len(attributes)
+                    if expected or not routing:
+                        transmit.assert_called_once()
+                        envelopes = transmit.call_args.args[0]
+                    else:
+                        transmit.assert_not_called()
+                        envelopes = []
                     self.assertEqual(len(envelopes), expected)
                     self.assertEqual(
                         [envelope.data.base_data.message for envelope in envelopes],
