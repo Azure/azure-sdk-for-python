@@ -28,7 +28,6 @@ from .operations import (
     EnrollmentsOperations,
     GoalAssignmentsOperations,
     GoalResourcesOperations,
-    GoalTemplatesOperations,
     OperationStatusOperations,
     Operations,
     RecoveryJobResourcesOperations,
@@ -61,8 +60,6 @@ class ResilienceManagementClient:  # pylint: disable=too-many-instance-attribute
     :ivar goal_assignments: GoalAssignmentsOperations operations
     :vartype goal_assignments:
      azure.mgmt.resiliencemanagement.aio.operations.GoalAssignmentsOperations
-    :ivar goal_templates: GoalTemplatesOperations operations
-    :vartype goal_templates: azure.mgmt.resiliencemanagement.aio.operations.GoalTemplatesOperations
     :ivar goal_resources: GoalResourcesOperations operations
     :vartype goal_resources: azure.mgmt.resiliencemanagement.aio.operations.GoalResourcesOperations
     :ivar recovery_plans: RecoveryPlansOperations operations
@@ -104,10 +101,9 @@ class ResilienceManagementClient:  # pylint: disable=too-many-instance-attribute
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-08-31-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-10-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -169,7 +165,6 @@ class ResilienceManagementClient:  # pylint: disable=too-many-instance-attribute
         self.goal_assignments = GoalAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.goal_templates = GoalTemplatesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.goal_resources = GoalResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.recovery_plans = RecoveryPlansOperations(self._client, self._config, self._serialize, self._deserialize)
         self.recovery_plan_actions = RecoveryPlanActionsOperations(

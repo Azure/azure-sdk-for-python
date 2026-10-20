@@ -278,16 +278,20 @@ Describe 'Python template completion correlation' {
         $completion.parameters.ConfigFileDir | Should -BeExactly '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo'
         $completion.parameters.PackageArtifactName | Should -BeExactly '${{parameters.Artifact.name}}'
         $common = ConvertFrom-Yaml (Get-Content -LiteralPath (Join-Path $root 'eng/common/pipelines/templates/steps/mark-release-completion.yml') -Raw)
-        @($common.parameters.Keys | Sort-Object) | Should -Be @('ConfigFileDir', 'PackageArtifactName', 'SourceRootPath')
+        @($common.parameters.Keys | Sort-Object) | Should -Be @('ConfigFileDir', 'PackageArtifactName', 'ReleasePlanId', 'SdkPullRequest', 'SourceRootPath')
         $common.parameters.ConfigFileDir | Should -BeExactly ''
         $common.parameters.PackageArtifactName | Should -BeExactly ''
         $common.parameters.SourceRootPath | Should -BeExactly '$(Build.SourcesDirectory)'
+        $common.parameters.ReleasePlanId | Should -Be 0
+        $common.parameters.SdkPullRequest | Should -BeExactly ''
         $mark = @(Find-YamlMap $common task 'AzureCLI@2')
         $mark.Count | Should -Be 1
         $mark[0].condition | Should -BeExactly 'and(succeeded(), ne(variables[''Skip.MarkReleaseCompletion''], ''true''))'
         $mark[0].continueOnError | Should -BeTrue
         $mark[0].inputs.scriptPath | Should -BeExactly '${{ parameters.SourceRootPath }}/eng/common/scripts/Mark-ReleasePlanCompletion.ps1'
-        $mark[0].inputs.arguments.Trim() | Should -BeExactly '-PackageInfoFilePath ''${{ parameters.ConfigFileDir }}/${{ parameters.PackageArtifactName }}.json'' -AzsdkExePath ''$(AZSDK)'''
+        ($mark[0].inputs.arguments -replace '\s+', ' ').Trim() | Should -BeExactly ('-PackageInfoFilePath ''${{ parameters.ConfigFileDir }}/${{ parameters.PackageArtifactName }}.json'' -AzsdkExePath ''$(AZSDK)'' ' +
+            '-ReleasePlanId ''${{ parameters.ReleasePlanId }}'' -SdkPullRequest ''${{ parameters.SdkPullRequest }}'' ' +
+            '-PipelineUrl "$(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"')
         $common = ConvertFrom-Yaml (Get-Content -LiteralPath (Join-Path $root 'eng/common/pipelines/templates/stages/archetype-auto-release-prepare.yml') -Raw)
         $prepare = @(Find-YamlMap $common stage AutoReleasePrepare)
         $prepare.Count | Should -Be 1

@@ -81,7 +81,7 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
     - Update a topic
     - List topic
     - Get topic properties
-    - Get topic runtime information
+    - Get topic runtime information, including SQL and correlation filter counts with API version 2024-05
 - [mgmt_subscription](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_subscription_async.py)) - Examples to manage subscription entities under a given servicebus namespace:
     - Create a subscription
     - Delete a subscription

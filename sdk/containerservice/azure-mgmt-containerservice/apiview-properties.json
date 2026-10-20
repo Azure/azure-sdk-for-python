@@ -163,6 +163,7 @@
         "azure.mgmt.containerservice.models.MeshUpgradeProfileProperties": "Microsoft.ContainerService.MeshUpgradeProfileProperties",
         "azure.mgmt.containerservice.models.NamespaceProperties": "Microsoft.ContainerService.NamespaceProperties",
         "azure.mgmt.containerservice.models.NetworkPolicies": "Microsoft.ContainerService.NetworkPolicies",
+        "azure.mgmt.containerservice.models.NvidiaGPUProfile": "Microsoft.ContainerService.NvidiaGPUProfile",
         "azure.mgmt.containerservice.models.OperationValue": "Microsoft.ContainerService.OperationValue",
         "azure.mgmt.containerservice.models.OperationValueDisplay": "Microsoft.ContainerService.OperationValueDisplay",
         "azure.mgmt.containerservice.models.OutboundEnvironmentEndpoint": "Microsoft.ContainerService.OutboundEnvironmentEndpoint",
@@ -220,6 +221,7 @@
         "azure.mgmt.containerservice.models.DRANETMode": "Microsoft.ContainerService.DRANETMode",
         "azure.mgmt.containerservice.models.AgentPoolSSHAccess": "Microsoft.ContainerService.AgentPoolSSHAccess",
         "azure.mgmt.containerservice.models.GPUDriver": "Microsoft.ContainerService.GPUDriver",
+        "azure.mgmt.containerservice.models.ManagementMode": "Microsoft.ContainerService.ManagementMode",
         "azure.mgmt.containerservice.models.LocalDNSMode": "Microsoft.ContainerService.LocalDNSMode",
         "azure.mgmt.containerservice.models.LocalDNSState": "Microsoft.ContainerService.LocalDNSState",
         "azure.mgmt.containerservice.models.LocalDNSQueryLogging": "Microsoft.ContainerService.LocalDNSQueryLogging",
@@ -416,5 +418,5 @@
         "azure.mgmt.containerservice.operations.TrustedAccessRolesOperations.list": "Microsoft.ContainerService.TrustedAccessRolesOperationGroup.list",
         "azure.mgmt.containerservice.aio.operations.TrustedAccessRolesOperations.list": "Microsoft.ContainerService.TrustedAccessRolesOperationGroup.list"
     },
-    "CrossLanguageVersion": "f5b5a0dac83d"
+    "CrossLanguageVersion": "56064badd067"
 }

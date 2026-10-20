@@ -186,6 +186,7 @@ class TestVoiceAgentConversations(TestBase):
             responses = list(conversations.list_responses(_AGENT_NAME, conversation_id))
             assert len(responses) >= 1
             first_response = responses[0]
+            assert first_response.id, "Expected a persisted response to carry an ID"
             response_detail = conversations.get_response(_AGENT_NAME, conversation_id, first_response.id)
             assert response_detail.id == first_response.id
 

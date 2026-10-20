@@ -24,13 +24,11 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry portal.
     2) FOUNDRY_AGENT_NAME       - Required. The name of the agent to optimize.
-    3) DATASET_NAME             - Required. The name of the registered training dataset.
-    4) EVALUATOR_NAME           - Required. The name of a registered project evaluator.
-    5) DATASET_VERSION          - Optional. Version of the training dataset. Defaults to "1".
-    6) POLL_INTERVAL_SECONDS    - Optional. Seconds between status polls. Defaults to 10.
-    7) EVAL_MODEL               - Required. The evaluation model deployment in
+    3) EVALUATOR_NAME           - Required. The name of a registered project evaluator.
+    4) POLL_INTERVAL_SECONDS    - Optional. Seconds between status polls. Defaults to 10.
+    5) EVAL_MODEL               - Required. The evaluation model deployment in
                                   "{connectionName}/{deploymentName}" format.
-    8) OPTIMIZATION_MODEL       - Optional. The model used for optimization. Defaults to "gpt-5.1".
+    6) OPTIMIZATION_MODEL       - Optional. The model used for optimization. Defaults to "gpt-5.1".
 """
 
 import os
@@ -49,8 +47,9 @@ from azure.ai.projects.models import (
     AgentOptimizationJob,
     AgentOptimizationModelConfiguration,
     AgentOptimizationSpace,
-    AgentOptimizationTargetCompletionDatasetReferenceDataSource,
     AgentOptimizationTargetCompletionEvaluationSet,
+    AgentOptimizationTargetCompletionInlineDataSource,
+    AgentOptimizationTargetCompletionTestCase,
     EvaluationModelConfiguration,
     JobStatus,
 )
@@ -59,9 +58,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ["FOUNDRY_AGENT_NAME"]
-dataset_name = os.environ["DATASET_NAME"]
 evaluator_name = os.environ["EVALUATOR_NAME"]
-dataset_version = os.environ.get("DATASET_VERSION", "1")
 poll_interval = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 eval_model = os.environ["EVAL_MODEL"]
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
@@ -84,9 +81,21 @@ with (
         optimization_configuration=AgentOptimizationConfiguration(
             evaluation_configuration=AgentOptimizationEvaluationConfiguration(
                 training_set=AgentOptimizationTargetCompletionEvaluationSet(
-                    source=AgentOptimizationTargetCompletionDatasetReferenceDataSource(
-                        name=dataset_name,
-                        version=dataset_version,
+                    source=AgentOptimizationTargetCompletionInlineDataSource(
+                        test_cases=[
+                            AgentOptimizationTargetCompletionTestCase(
+                                query="What is the capital of France?",
+                                ground_truth="Paris",
+                            ),
+                            AgentOptimizationTargetCompletionTestCase(
+                                query="What is 2 + 2?",
+                                ground_truth="4",
+                            ),
+                            AgentOptimizationTargetCompletionTestCase(
+                                query="Name the largest ocean on Earth.",
+                                ground_truth="Pacific Ocean",
+                            ),
+                        ],
                     )
                 ),
                 evaluators=[AgentOptimizationEvaluator(name=evaluator_name)],

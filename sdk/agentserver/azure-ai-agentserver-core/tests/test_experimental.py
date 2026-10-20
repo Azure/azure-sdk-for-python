@@ -5,7 +5,7 @@ import asyncio
 import inspect
 import logging
 
-from azure.ai.agentserver.core import experimental
+from azure.ai.agentserver.core import AgentSessionContext, experimental
 from azure.ai.agentserver.core._experimental import (
     DISABLE_EXPERIMENTAL_WARNING_ENV_VAR,
     EXPERIMENTAL_CLASS_MESSAGE,
@@ -13,7 +13,25 @@ from azure.ai.agentserver.core._experimental import (
     EXPERIMENTAL_METHOD_MESSAGE,
     _warning_cache,
 )
-from azure.ai.agentserver.core.tasks import multi_turn_task, resilient_tasks_enabled, task
+from azure.ai.agentserver.core.tasks import (
+    InputTooLarge,
+    LastInputIdPreconditionFailed,
+    MultiTurnTask,
+    RetryPolicy,
+    SteeringQueueFull,
+    Task,
+    TaskCancelled,
+    TaskConflictError,
+    TaskContext,
+    TaskDeferred,
+    TaskFailed,
+    TaskManagerNotInitialized,
+    TaskRun,
+    multi_turn_task,
+    resilient_tasks_enabled,
+    set_resilient_tasks_enabled,
+    task,
+)
 
 
 @experimental
@@ -146,24 +164,55 @@ def test_experimental_decorator_env_var_suppresses_warning(monkeypatch, caplog) 
     assert len(caplog.records) == 0
 
 
-def test_resilient_task_public_api_is_experimental(caplog) -> None:
+def test_resilient_task_public_api_is_not_experimental(caplog) -> None:
     _warning_cache.clear()
 
     with caplog.at_level(logging.WARNING, logger=experimental.__module__):
         resilient_tasks_enabled()
 
-    assert resilient_tasks_enabled.__doc__.startswith(".. note::")
-    assert EXPERIMENTAL_METHOD_MESSAGE in resilient_tasks_enabled.__doc__
-    assert len(caplog.records) == 1
+    public_apis = (
+        TaskContext,
+        TaskRun,
+        Task,
+        MultiTurnTask,
+        set_resilient_tasks_enabled,
+        resilient_tasks_enabled,
+        TaskFailed,
+        TaskCancelled,
+        TaskConflictError,
+        TaskManagerNotInitialized,
+        SteeringQueueFull,
+        LastInputIdPreconditionFailed,
+        InputTooLarge,
+        TaskDeferred,
+        RetryPolicy,
+    )
+    for public_api in public_apis:
+        assert not (public_api.__doc__ or "").startswith(".. note::")
+        assert not hasattr(public_api, "_azure_agentserver_experimental_cache_key")
+        assert not hasattr(public_api, "_azure_agentserver_experimental_message")
+
+    assert len(caplog.records) == 0
 
 
-def test_resilient_task_decorator_factories_are_experimental(caplog) -> None:
+def test_resilient_task_decorator_factories_are_not_experimental(caplog) -> None:
     _warning_cache.clear()
 
     with caplog.at_level(logging.WARNING, logger=experimental.__module__):
         task(name="test-task")
         multi_turn_task(name="test-multi-turn-task")
 
-    assert task.__doc__.startswith(".. note::")
-    assert multi_turn_task.__doc__.startswith(".. note::")
-    assert len(caplog.records) == 2
+    assert not (task.__doc__ or "").startswith(".. note::")
+    assert not (multi_turn_task.__doc__ or "").startswith(".. note::")
+    assert len(caplog.records) == 0
+
+
+def test_agent_session_context_is_experimental(caplog) -> None:
+    _warning_cache.clear()
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        AgentSessionContext("session", "restore")
+
+    assert AgentSessionContext.__doc__.startswith(".. note::")
+    assert EXPERIMENTAL_CLASS_MESSAGE in AgentSessionContext.__doc__
+    assert len(caplog.records) == 1
