@@ -155,9 +155,10 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         # key: the registry data-plane api-version returns it snake_case, newer api-versions return it camelCase.
         model_system_metadata = getattr(rest_model_version, "system_metadata", None)
         if model_system_metadata is None and isinstance(rest_model_version, Mapping):
-            model_system_metadata = rest_model_version.get("system_metadata") or rest_model_version.get(
-                "systemMetadata"
-            )
+            # Compare against None rather than truthiness so an explicitly empty mapping is preserved.
+            model_system_metadata = rest_model_version.get("system_metadata")
+            if model_system_metadata is None:
+                model_system_metadata = rest_model_version.get("systemMetadata")
         if hasattr(rest_model_version, "flavors"):
             flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
 
