@@ -50,8 +50,7 @@ if ($PipelineRevision -le 0) {
 }
 
 $templateParameters = [ordered]@{
-    SamplePattern = $SamplePattern
-    TestPattern = if ([string]::IsNullOrWhiteSpace($TestPattern)) { "*" } else { $TestPattern }
+    Selection = "$SamplePattern | $(if ([string]::IsNullOrWhiteSpace($TestPattern)) { '*' } else { $TestPattern })"
 }
 
 $body = [ordered]@{

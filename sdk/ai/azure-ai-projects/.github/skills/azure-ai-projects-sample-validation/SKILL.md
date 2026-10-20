@@ -39,6 +39,8 @@ For wildcard selections, the same plan includes every matching sample path and p
 
 `-SamplePattern` supports exact paths/names and PowerShell wildcards; `samples/**/*.py` selects the complete recorded-sample harness. Optional `-TestPattern` filters pytest node IDs. Every match runs in every mode. Add repeatable `-EnvironmentVariable "NAME=VALUE"` overrides; they take precedence over `.env`.
 
+The manual ADO form combines both selectors into one required `Selection` parameter using `sample pattern | test pattern` syntax. For example, `samples\hosted_agents\sample_*.py | *` runs every hosted-agent node, while `samples\hosted_agents\sample_*.py | *remote_build*` filters those nodes. The queue script creates this combined value automatically.
+
 If a required name is missing or empty, report the name and remind the user to check `.env`; do not invent a value.
 
 Lower-level scripts under `scripts\` are for diagnosing the orchestrator only. Do not repeat their work manually during a normal run.

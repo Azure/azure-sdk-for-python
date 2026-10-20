@@ -32,8 +32,7 @@ Describe "QueueSampleValidationPipeline.ps1" {
         $state.Uri | Should Be "https://dev.azure.com/azure-sdk/internal/_apis/pipelines/8392/runs?pipelineVersion=3&api-version=7.1"
         $state.Headers.Authorization | Should Be "Bearer ado-token"
         $state.Body.resources.repositories.self.refName | Should Be "refs/heads/topic"
-        $state.Body.templateParameters.SamplePattern | Should Be "samples\agents\*.py"
-        $state.Body.templateParameters.TestPattern | Should Be "*basic*"
+        $state.Body.templateParameters.Selection | Should Be "samples\agents\*.py | *basic*"
         $environmentPayload = $state.Body.variables.SAMPLE_ENVIRONMENT_VARIABLES_JSON.value | ConvertFrom-Json
         $environmentPayload.TOKEN | Should Be "secret=value"
         $environmentPayload.ENDPOINT | Should Be "https://example"
@@ -66,7 +65,6 @@ Describe "QueueSampleValidationPipeline.ps1" {
         & $queueScript -SourceBranch "topic" -SamplePattern "samples\**\*.py" `
             -BearerToken "ado-token" -PipelineRevision 3 -RequestInvoker $requestInvoker | Out-Null
 
-        $state.Body.templateParameters.SamplePattern | Should Be "samples\**\*.py"
-        $state.Body.templateParameters.TestPattern | Should Be "*"
+        $state.Body.templateParameters.Selection | Should Be "samples\**\*.py | *"
     }
 }

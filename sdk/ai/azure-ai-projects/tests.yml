@@ -2,12 +2,8 @@ trigger: none
 pr: none
 
 parameters:
-  - name: SamplePattern
-    displayName: 'Sample pattern (example: samples\hosted_agents\sample_*.py)'
-    type: string
-    default: 'samples/**/*.py'
-  - name: TestPattern
-    displayName: 'Test pattern (required: enter * for all, or e.g. *remote_build*)'
+  - name: Selection
+    displayName: 'Selection: sample pattern | test pattern (example: samples\hosted_agents\sample_*.py | *remote_build*)'
     type: string
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -56,8 +52,7 @@ extends:
                   AZURE_POD_IDENTITY_AUTHORITY_HOST: https://FakeAuthorityHost
                   AZURE_TEST_ATTACH_SAMPLE_LOGS: 'true'
                   SAMPLE_ENVIRONMENT_VARIABLES_JSON: $(SAMPLE_ENVIRONMENT_VARIABLES_JSON)
-                  SAMPLE_PATTERN: ${{ parameters.SamplePattern }}
-                  TEST_PATTERN: ${{ parameters.TestPattern }}
+                  SAMPLE_TEST_SELECTION: ${{ parameters.Selection }}
                 inputs:
                   azureSubscription: azure-sdk-tests
                   azurePowerShellVersion: LatestVersion
@@ -71,22 +66,30 @@ extends:
                     $env:AZURESUBSCRIPTION_CLIENT_ID = $context.Account.Id
                     $env:AZURESUBSCRIPTION_TENANT_ID = $context.Tenant.Id
 
+                    $separatorIndex = $env:SAMPLE_TEST_SELECTION.IndexOf('|')
+                    if ($separatorIndex -lt 1) {
+                      throw "Selection must use 'sample pattern | test pattern' syntax."
+                    }
+                    $samplePattern = $env:SAMPLE_TEST_SELECTION.Substring(0, $separatorIndex).Trim()
+                    $testPattern = $env:SAMPLE_TEST_SELECTION.Substring($separatorIndex + 1).Trim()
+                    if (-not $samplePattern -or -not $testPattern) {
+                      throw "Selection must include both a sample pattern and test pattern. Use '*' for all test nodes."
+                    }
+
                     $environmentVariables = @(
                       foreach ($property in ($env:SAMPLE_ENVIRONMENT_VARIABLES_JSON | ConvertFrom-Json).PSObject.Properties) {
                         "$($property.Name)=$($property.Value)"
                       }
                     )
                     $arguments = @{
-                      SamplePattern = $env:SAMPLE_PATTERN
+                      SamplePattern = $samplePattern
+                      TestPattern = $testPattern
                       Mode = 'live-test-locally'
                       Run = $true
                       ConfirmSelection = $true
                       ConfirmLive = $true
                       EnvironmentVariable = $environmentVariables
                       JUnitXml = "$(Build.SourcesDirectory)/sdk/ai/azure-ai-projects/test-junit-samples.xml"
-                    }
-                    if ($env:TEST_PATTERN) {
-                      $arguments.TestPattern = $env:TEST_PATTERN
                     }
 
                     ./sdk/ai/azure-ai-projects/.github/skills/azure-ai-projects-sample-validation/scripts/InvokeSampleValidation.ps1 @arguments
