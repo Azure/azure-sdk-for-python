@@ -51,8 +51,7 @@ def main():
             ],
         },
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
 # x-ms-original-file: 2026-05-01-preview/queryCarbonEmissionsResourceGroupItemDetailsReport.json

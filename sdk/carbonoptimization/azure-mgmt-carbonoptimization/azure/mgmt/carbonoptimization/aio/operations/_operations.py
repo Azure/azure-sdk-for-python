@@ -180,9 +180,9 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def query_carbon_emission_reports(
+    async def query_carbon_emission_reports(
         self, query_parameters: _models.QueryFilter, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncItemPaged["_models.CarbonEmissionData"]:
+    ) -> _models.CarbonEmissionDataListResult:
         """API for Carbon Emissions Reports.
 
         :param query_parameters: Query parameters. Required.
@@ -190,16 +190,16 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An iterator like instance of CarbonEmissionData
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.carbonoptimization.models.CarbonEmissionData]
+        :return: CarbonEmissionDataListResult. The CarbonEmissionDataListResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.carbonoptimization.models.CarbonEmissionDataListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def query_carbon_emission_reports(
+    async def query_carbon_emission_reports(
         self, query_parameters: _types.QueryFilter, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncItemPaged["_models.CarbonEmissionData"]:
+    ) -> _models.CarbonEmissionDataListResult:
         """API for Carbon Emissions Reports.
 
         :param query_parameters: Query parameters. Required.
@@ -207,16 +207,16 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An iterator like instance of CarbonEmissionData
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.carbonoptimization.models.CarbonEmissionData]
+        :return: CarbonEmissionDataListResult. The CarbonEmissionDataListResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.carbonoptimization.models.CarbonEmissionDataListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def query_carbon_emission_reports(
+    async def query_carbon_emission_reports(
         self, query_parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncItemPaged["_models.CarbonEmissionData"]:
+    ) -> _models.CarbonEmissionDataListResult:
         """API for Carbon Emissions Reports.
 
         :param query_parameters: Query parameters. Required.
@@ -224,33 +224,27 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An iterator like instance of CarbonEmissionData
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.carbonoptimization.models.CarbonEmissionData]
+        :return: CarbonEmissionDataListResult. The CarbonEmissionDataListResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.carbonoptimization.models.CarbonEmissionDataListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def query_carbon_emission_reports(
+    @distributed_trace_async
+    async def query_carbon_emission_reports(
         self, query_parameters: Union[_models.QueryFilter, _types.QueryFilter, IO[bytes]], **kwargs: Any
-    ) -> AsyncItemPaged["_models.CarbonEmissionData"]:
+    ) -> _models.CarbonEmissionDataListResult:
         """API for Carbon Emissions Reports.
 
         :param query_parameters: Query parameters. Is either a QueryFilter type or a IO[bytes] type.
          Required.
         :type query_parameters: ~azure.mgmt.carbonoptimization.models.QueryFilter or
          ~azure.mgmt.carbonoptimization.types.QueryFilter or IO[bytes]
-        :return: An iterator like instance of CarbonEmissionData
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.carbonoptimization.models.CarbonEmissionData]
+        :return: CarbonEmissionDataListResult. The CarbonEmissionDataListResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.carbonoptimization.models.CarbonEmissionDataListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.CarbonEmissionData]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -258,6 +252,13 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CarbonEmissionDataListResult] = kwargs.pop("cls", None)
+
         content_type = content_type or "application/json"
         _content = None
         if isinstance(query_parameters, (IOBase, bytes)):
@@ -265,78 +266,48 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
         else:
             _content = json.dumps(query_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _request = build_carbon_service_query_carbon_emission_reports_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-                _request = build_carbon_service_query_carbon_emission_reports_request(
-                    content_type=content_type,
-                    api_version=self._config.api_version,
-                    content=_content,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        response = pipeline_response.http_response
 
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.CarbonEmissionData],
-                deserialized.get("value", []),
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
             )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CarbonEmissionDataListResult, response.json())
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def query_carbon_emission_data_available_date_range(  # pylint: disable=name-too-long
@@ -404,14 +375,14 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @overload
-    def query_carbon_emission_reports_by_billing_account(  # pylint: disable=name-too-long
+    async def query_carbon_emission_reports_by_billing_account(  # pylint: disable=name-too-long
         self,
         scope: str,
         query_parameters: _models.BillingAccountQueryFilter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.CarbonEmissionData"]:
+    ) -> _models.CarbonEmissionDataListResult:
         """API for Carbon Emissions Reports scoped to a billing account.
 
         :param scope: The scope associated with carbon emission report operations. This includes
@@ -423,21 +394,21 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An iterator like instance of CarbonEmissionData
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.carbonoptimization.models.CarbonEmissionData]
+        :return: CarbonEmissionDataListResult. The CarbonEmissionDataListResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.carbonoptimization.models.CarbonEmissionDataListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def query_carbon_emission_reports_by_billing_account(  # pylint: disable=name-too-long
+    async def query_carbon_emission_reports_by_billing_account(  # pylint: disable=name-too-long
         self,
         scope: str,
         query_parameters: _types.BillingAccountQueryFilter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.CarbonEmissionData"]:
+    ) -> _models.CarbonEmissionDataListResult:
         """API for Carbon Emissions Reports scoped to a billing account.
 
         :param scope: The scope associated with carbon emission report operations. This includes
@@ -449,16 +420,16 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An iterator like instance of CarbonEmissionData
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.carbonoptimization.models.CarbonEmissionData]
+        :return: CarbonEmissionDataListResult. The CarbonEmissionDataListResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.carbonoptimization.models.CarbonEmissionDataListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def query_carbon_emission_reports_by_billing_account(  # pylint: disable=name-too-long
+    async def query_carbon_emission_reports_by_billing_account(  # pylint: disable=name-too-long
         self, scope: str, query_parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncItemPaged["_models.CarbonEmissionData"]:
+    ) -> _models.CarbonEmissionDataListResult:
         """API for Carbon Emissions Reports scoped to a billing account.
 
         :param scope: The scope associated with carbon emission report operations. This includes
@@ -470,24 +441,24 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An iterator like instance of CarbonEmissionData
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.carbonoptimization.models.CarbonEmissionData]
+        :return: CarbonEmissionDataListResult. The CarbonEmissionDataListResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.carbonoptimization.models.CarbonEmissionDataListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
+    @distributed_trace_async
     @api_version_validation(
         method_added_on="2026-05-01-preview",
         params_added_on={"2026-05-01-preview": ["api_version", "scope", "content_type", "accept"]},
         api_versions_list=["2026-05-01-preview"],
     )
-    def query_carbon_emission_reports_by_billing_account(  # pylint: disable=name-too-long
+    async def query_carbon_emission_reports_by_billing_account(  # pylint: disable=name-too-long
         self,
         scope: str,
         query_parameters: Union[_models.BillingAccountQueryFilter, _types.BillingAccountQueryFilter, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.CarbonEmissionData"]:
+    ) -> _models.CarbonEmissionDataListResult:
         """API for Carbon Emissions Reports scoped to a billing account.
 
         :param scope: The scope associated with carbon emission report operations. This includes
@@ -498,17 +469,11 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
          IO[bytes] type. Required.
         :type query_parameters: ~azure.mgmt.carbonoptimization.models.BillingAccountQueryFilter or
          ~azure.mgmt.carbonoptimization.types.BillingAccountQueryFilter or IO[bytes]
-        :return: An iterator like instance of CarbonEmissionData
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.carbonoptimization.models.CarbonEmissionData]
+        :return: CarbonEmissionDataListResult. The CarbonEmissionDataListResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.carbonoptimization.models.CarbonEmissionDataListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.CarbonEmissionData]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -516,6 +481,13 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CarbonEmissionDataListResult] = kwargs.pop("cls", None)
+
         content_type = content_type or "application/json"
         _content = None
         if isinstance(query_parameters, (IOBase, bytes)):
@@ -523,76 +495,46 @@ class CarbonServiceOperations:  # pylint: disable=docstring-missing-param
         else:
             _content = json.dumps(query_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _request = build_carbon_service_query_carbon_emission_reports_by_billing_account_request(
+            scope=scope,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-                _request = build_carbon_service_query_carbon_emission_reports_by_billing_account_request(
-                    scope=scope,
-                    content_type=content_type,
-                    api_version=self._config.api_version,
-                    content=_content,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        response = pipeline_response.http_response
 
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.CarbonEmissionData],
-                deserialized.get("value", []),
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
             )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CarbonEmissionDataListResult, response.json())
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore

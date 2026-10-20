@@ -49,8 +49,7 @@ def main():
             "topItems": 5,
         },
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
 # x-ms-original-file: 2026-05-01-preview/queryCarbonEmissionsTopNLocationItemsReport.json

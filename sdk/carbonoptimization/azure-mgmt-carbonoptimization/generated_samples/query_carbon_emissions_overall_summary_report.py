@@ -37,8 +37,7 @@ def main():
             "subscriptionList": ["00000000-0000-0000-0000-000000000000"],
         },
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
 # x-ms-original-file: 2026-05-01-preview/queryCarbonEmissionsOverallSummaryReport.json

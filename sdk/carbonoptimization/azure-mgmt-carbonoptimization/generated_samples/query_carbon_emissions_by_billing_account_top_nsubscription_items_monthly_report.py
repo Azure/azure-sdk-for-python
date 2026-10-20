@@ -39,8 +39,7 @@ def main():
             "topItems": 2,
         },
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
 # x-ms-original-file: 2026-05-01-preview/queryCarbonEmissionsByBillingAccountTopNSubscriptionItemsMonthlyReport.json
