@@ -1,6 +1,6 @@
 # Release History
 
-## Unreleased
+## 1.2.1b1 (Unreleased)
 
 ### Other Changes
 
