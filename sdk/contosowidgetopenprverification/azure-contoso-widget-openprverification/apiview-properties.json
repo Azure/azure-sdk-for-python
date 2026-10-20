@@ -1,0 +1,20 @@
+{
+    "CrossLanguagePackageId": "Azure.Contoso.WidgetOpenPrVerification",
+    "CrossLanguageDefinitionId": {
+        "azure.contoso.widgetopenprverification.models.FakedSharedModel": "Azure.Contoso.WidgetOpenPrVerification.FakedSharedModel",
+        "azure.contoso.widgetopenprverification.models.ResourceOperationStatusWidgetSuiteWidgetSuiteError": "Azure.Core.ResourceOperationStatus",
+        "azure.contoso.widgetopenprverification.models.WidgetSuite": "Azure.Contoso.WidgetOpenPrVerification.WidgetSuite",
+        "azure.contoso.widgetopenprverification.models.OperationState": "Azure.Core.Foundations.OperationState",
+        "azure.contoso.widgetopenprverification.operations.WidgetsOperations.get_widget": "Azure.Contoso.WidgetOpenPrVerification.Widgets.getWidget",
+        "azure.contoso.widgetopenprverification.aio.operations.WidgetsOperations.get_widget": "Azure.Contoso.WidgetOpenPrVerification.Widgets.getWidget",
+        "azure.contoso.widgetopenprverification.operations.WidgetsOperations.get_widget_operation_status": "Azure.Contoso.WidgetOpenPrVerification.Widgets.getWidgetOperationStatus",
+        "azure.contoso.widgetopenprverification.aio.operations.WidgetsOperations.get_widget_operation_status": "Azure.Contoso.WidgetOpenPrVerification.Widgets.getWidgetOperationStatus",
+        "azure.contoso.widgetopenprverification.operations.WidgetsOperations.begin_create_or_update_widget": "Azure.Contoso.WidgetOpenPrVerification.Widgets.createOrUpdateWidget",
+        "azure.contoso.widgetopenprverification.aio.operations.WidgetsOperations.begin_create_or_update_widget": "Azure.Contoso.WidgetOpenPrVerification.Widgets.createOrUpdateWidget",
+        "azure.contoso.widgetopenprverification.operations.WidgetsOperations.begin_delete_widget": "Azure.Contoso.WidgetOpenPrVerification.Widgets.deleteWidget",
+        "azure.contoso.widgetopenprverification.aio.operations.WidgetsOperations.begin_delete_widget": "Azure.Contoso.WidgetOpenPrVerification.Widgets.deleteWidget",
+        "azure.contoso.widgetopenprverification.operations.WidgetsOperations.list_widgets": "Azure.Contoso.WidgetOpenPrVerification.Widgets.listWidgets",
+        "azure.contoso.widgetopenprverification.aio.operations.WidgetsOperations.list_widgets": "Azure.Contoso.WidgetOpenPrVerification.Widgets.listWidgets"
+    },
+    "CrossLanguageVersion": "0ab0f3d53567"
+}
