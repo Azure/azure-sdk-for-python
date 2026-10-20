@@ -591,10 +591,12 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
 
     async def _quiesce_tasks_before_rollback(self, previous_session_id: str, previous_session_guid: str) -> bool:
         async with self._task_manager_lock:
-            if (
-                self._task_manager is None
-                or self._task_manager_binding == (previous_session_id, previous_session_guid)
-                or not self._task_manager._has_live_workers  # pylint: disable=protected-access
+            if self._task_manager is None or (
+                not self._task_manager._preserve_recoverable_tasks_on_shutdown  # pylint: disable=protected-access
+                and (
+                    self._task_manager_binding == (previous_session_id, previous_session_guid)
+                    or not self._task_manager._has_live_workers  # pylint: disable=protected-access
+                )
             ):
                 return False
         logger.warning("Stopping task runtime before restoring its previous session binding")
@@ -891,6 +893,10 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 return JSONResponse({"status": "ok"})
             if assigned_session_id is None:
                 self._lifecycle.assigned_session_id = context.session_id
+
+            # Finish interrupted cleanup under its original binding before rehydration.
+            if await self._quiesce_tasks_before_rollback(self.config.session_id, self.config.session_guid):
+                raise asyncio.CancelledError
 
             effective_environment = dict(context.session_env_overrides)
             effective_environment.setdefault(_SESSION_ID_ENV, context.session_id)
