@@ -99,6 +99,7 @@ logger = logging.getLogger(__name__)
 _AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
+_MAX_ROUTE_STORAGE_PARTITIONS = 64
 
 _enabled_experimental_features: Optional[FrozenSet[str]] = None
 _experimental_features_lock = Lock()
@@ -305,11 +306,19 @@ class BaseExporter:
             "max_envelopes_per_second": 0,
         }
         if not self._disable_offline_storage:
-            assert self._storage_directory is not None
-            options["storage_directory"] = os.path.join(
-                os.path.abspath(self._storage_directory) + "-routes",
-                _get_sha256_hash(f"{endpoint}|{is_aad}"),
-            )
+            if len(self._route_exporters) >= _MAX_ROUTE_STORAGE_PARTITIONS:
+                options["disable_offline_storage"] = True
+                logger.warning(
+                    "The %s routed offline storage partition limit has been reached. "
+                    "This destination will transmit without offline storage.",
+                    _MAX_ROUTE_STORAGE_PARTITIONS,
+                )
+            else:
+                assert self._storage_directory is not None
+                options["storage_directory"] = os.path.join(
+                    os.path.abspath(self._storage_directory) + "-routes",
+                    _get_sha256_hash(f"{endpoint}|{is_aad}"),
+                )
         exporter = BaseExporter(_route=key, _connection_string_parser=self._connection_string_parser, **options)
         exporter._rate_limiter = self._rate_limiter
         if self._local_storage_enabled is False:

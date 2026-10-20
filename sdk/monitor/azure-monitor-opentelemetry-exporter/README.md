@@ -180,6 +180,9 @@ Retry storage is separate from the host storage, partitioned by endpoint and
 authentication mode, and shares the configured storage capacity across routed
 partitions. Pending items are retried after a subsequent successful send to the
 same endpoint/authentication group, preserving their original instrumentation keys.
+Each exporter supports up to 64 offline-storage partitions. Different keys using
+the same normalized endpoint and authentication mode share a partition.
+Additional destinations still transmit, but without offline persistence.
 The option defaults to `False`.
 
 ## Examples
