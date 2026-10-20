@@ -15,6 +15,7 @@
 - Add opt-in multi-endpoint log, trace, and metric routing with per-item instrumentation keys,
   explicit per-route authentication, and destination-isolated retry storage.
   Span events follow their parent span's route; metrics use each data point's route.
+  Routing-enabled exporters can be created without a host connection string.
 
 ### Breaking Changes
 

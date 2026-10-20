@@ -210,6 +210,18 @@ class TestMetricRouting(unittest.TestCase):
                 self.assertEqual(exporter.export(data), MetricExportResult.SUCCESS)
         self.transport.send.assert_not_called()
 
+    @mock.patch.dict(os.environ)
+    def test_routing_without_host_connection_string(self):
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        exporter = self._exporter(connection_string=None)
+        self.assertIsNone(exporter._instrumentation_key)
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = "invalid"
+        self.assertEqual(exporter.export(self._data(self._metric([self._point()]))), MetricExportResult.SUCCESS)
+        request = self.transport.send.call_args.args[0]
+        self.assertTrue(request.url.startswith("https://one.example/proxy/"))
+        self.assertEqual(json.loads(request.body)[0]["iKey"], "customer-key")
+
     def test_existing_metric_filters_are_preserved(self):
         exporter = self._exporter()
         exporter._metrics_to_log_analytics = False

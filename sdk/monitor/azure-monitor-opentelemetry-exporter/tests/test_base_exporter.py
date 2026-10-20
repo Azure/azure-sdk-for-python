@@ -18,6 +18,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     _get_storage_directory,
 )
 from azure.monitor.opentelemetry.exporter._utils import _get_retry_delay_from_headers
+from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
@@ -180,6 +181,82 @@ class TestBaseExporter(unittest.TestCase):
                 with self.assertRaisesRegex(TypeError, "enable_multi_endpoint_routing must be a boolean"):
                     BaseExporter(enable_multi_endpoint_routing=value)
         mock_parser.assert_not_called()
+
+    @mock.patch.dict(os.environ)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.LocalFileStorage")
+    def test_routing_without_host_connection_string(self, mock_storage, mock_client):
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        for exporter_type in (
+            BaseExporter,
+            AzureMonitorLogExporter,
+            AzureMonitorTraceExporter,
+            AzureMonitorMetricExporter,
+        ):
+            with self.subTest(exporter_type=exporter_type):
+                exporter = exporter_type(enable_multi_endpoint_routing=True)
+                self.addCleanup(exporter.client.close)
+                self.assertIsNone(exporter._instrumentation_key)
+                self.assertIsNone(exporter._connection_string)
+                self.assertIsNone(exporter.storage)
+                self.assertIsNotNone(exporter._storage_directory)
+                self.assertFalse(exporter._should_collect_stats())
+                self.assertFalse(exporter._should_collect_customer_sdkstats())
+                if isinstance(exporter, AzureMonitorTraceExporter):
+                    self.assertIsNone(exporter.application_id)
+                with self.assertRaisesRegex(ValueError, "Instrumentation key cannot be none or empty"):
+                    exporter_type()
+        mock_storage.assert_not_called()
+        self.assertEqual(mock_client.call_count, 4)
+
+    @mock.patch.dict(os.environ)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.is_statsbeat_enabled", return_value=True)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_statsbeat_shutdown", return_value=False)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_customer_stats_manager")
+    def test_routing_without_host_does_not_initialize_stats(
+        self, mock_customer_manager, _shutdown, _enabled, mock_config_manager
+    ):
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        mock_customer_manager.return_value.is_enabled = True
+        mock_customer_manager.return_value.is_shutdown = False
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics"
+        ) as statsbeat, mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat.customer.collect_customer_sdkstats"
+        ) as customer_stats:
+            exporter = BaseExporter(enable_multi_endpoint_routing=True)
+            self.addCleanup(exporter.client.close)
+        statsbeat.assert_not_called()
+        customer_stats.assert_not_called()
+        mock_config_manager.return_value.register_callback.assert_called_once_with(
+            exporter._local_storage_configuration_callback
+        )
+        self.assertEqual(mock_config_manager.return_value.initialize.call_args.kwargs["ikey"], "")
+        exporter._local_storage_configuration_callback(self._make_local_storage_settings(True))
+        self.assertIsNone(exporter.storage)
+
+    @mock.patch.dict(os.environ)
+    @mock.patch.multiple(_ConfigurationProfile, ikey="", region="")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_routing_without_host_preserves_later_configuration_profile(self, mock_config_manager):
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        mock_config_manager.return_value.initialize.side_effect = _ConfigurationProfile.fill
+        routed = BaseExporter(enable_multi_endpoint_routing=True, disable_offline_storage=True)
+        self.addCleanup(routed.client.close)
+        self.assertEqual(_ConfigurationProfile.ikey, "")
+        self.assertEqual(_ConfigurationProfile.region, "")
+        configured = BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=True,
+        )
+        self.addCleanup(configured.client.close)
+        self.assertEqual(_ConfigurationProfile.ikey, "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertEqual(_ConfigurationProfile.region, "westus")
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
     def test_constructor_no_storage_directory(self, mock_get_temp_dir):

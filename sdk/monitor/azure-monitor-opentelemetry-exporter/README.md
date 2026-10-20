@@ -162,7 +162,10 @@ or metric data points using their
 attributes. Both attributes are required; the endpoint must be HTTPS. Obtain
 destinations from trusted, server-owned configuration, not request headers or baggage.
 Invalid or missing destinations are dropped without falling back to the exporter's
-connection string. The exporter's existing host-configuration requirements still apply.
+connection string. With routing enabled, a host connection string is optional.
+If supplied explicitly or through the environment, it is still parsed and validated
+normally. Without host configuration, host retry storage, Statsbeat, and customer
+SDK statistics are not initialized; destination-specific retry storage still works.
 
 Items are grouped by normalized endpoint and authentication mode. Set
 `microsoft.ingestion_auth` to `"aad"` to use the exporter's configured credential;

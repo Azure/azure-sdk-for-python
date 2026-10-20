@@ -127,7 +127,7 @@ class BaseExporter:
         """Azure Monitor base exporter for OpenTelemetry.
 
         :keyword str api_version: The service API version used. Defaults to latest.
-        :keyword str connection_string: The connection string used for your Application Insights resource.
+        :keyword str connection_string: The connection string used for your Application Insights resource. Optional when multi-endpoint routing is enabled.
         :keyword bool enable_multi_endpoint_routing: Opt in to per-item multi-endpoint routing. Defaults to `False`. Items with missing or invalid routing keys or ingestion endpoints are dropped.
         :keyword ManagedIdentityCredential/ClientSecretCredential credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
         :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry records for retry. Defaults to `False`.
@@ -146,7 +146,9 @@ class BaseExporter:
         self._routing_shutdown = False
         self._route_options = kwargs.copy()
         self._local_storage_enabled: Optional[bool] = None
-        parsed_connection_string = _connection_string_parser or ConnectionStringParser(kwargs.get("connection_string"))
+        parsed_connection_string = _connection_string_parser or ConnectionStringParser(
+            kwargs.get("connection_string"), _allow_missing=enable_routing
+        )
         self._connection_string_parser = parsed_connection_string
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
@@ -253,8 +255,8 @@ class BaseExporter:
                     attach=_get_attach_type_name(),
                     component="ext",
                     version=ext_version,
-                    region=self._region,
-                    ikey=self._instrumentation_key,
+                    region=self._region or "",
+                    ikey=self._instrumentation_key or "",
                 )
                 # register_callback also replays any already-cached configuration to this callback,
                 # so a late-created exporter immediately honors an existing kill-switch. The replay is
@@ -806,6 +808,8 @@ class BaseExporter:
                 exporter._local_storage_configuration_callback(settings)
 
     def _enable_local_storage(self) -> None:
+        if self._route is None and self._instrumentation_key is None:
+            return
         # Construct the local file storage once (on first enable / exporter init), then keep the
         # instance for the exporter's lifetime. A remote re-enable just flips the toggle back on
         # rather than recreating storage or its maintenance thread.
@@ -838,6 +842,7 @@ class BaseExporter:
     def _should_collect_stats(self):
         return (
             self._route is None
+            and self._instrumentation_key is not None
             and is_statsbeat_enabled()
             and not get_statsbeat_shutdown()
             and not self._is_stats_exporter()
@@ -850,6 +855,7 @@ class BaseExporter:
         manager = get_customer_stats_manager()
         return (
             self._route is None
+            and self._instrumentation_key is not None
             and manager.is_enabled
             and not manager.is_shutdown
             and not self._is_stats_exporter()
