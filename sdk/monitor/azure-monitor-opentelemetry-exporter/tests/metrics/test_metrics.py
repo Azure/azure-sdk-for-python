@@ -212,6 +212,54 @@ class TestAzureMetricExporter(unittest.TestCase):
                     self.assertEqual(properties, attributes)
                 self.assertEqual(point.attributes, attributes)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter._utils._is_on_aks", return_value=False)
+    def test_export_invalid_routing_attributes(self, _is_on_aks):
+        valid = {
+            "microsoft.instrumentation_key": "customer-key",
+            "microsoft.ingestion_endpoint": "https://example.com/",
+        }
+        invalid = (
+            {},
+            {"microsoft.instrumentation_key": "customer-key"},
+            {"microsoft.ingestion_endpoint": "https://example.com/"},
+            {**valid, "microsoft.instrumentation_key": " "},
+            {**valid, "microsoft.instrumentation_key": 42},
+            {**valid, "microsoft.ingestion_endpoint": "http://example.com/"},
+            {**valid, "microsoft.ingestion_endpoint": ("https://example.com/",)},
+        )
+        for routing in (False, True):
+            exporter = AzureMonitorMetricExporter(enable_multi_endpoint_routing=routing, disable_offline_storage=True)
+            self.addCleanup(exporter.client.close)
+            for attributes in ([valid, *invalid, valid], invalid):
+                with self.subTest(routing=routing, attributes=attributes):
+                    metric = Metric(
+                        name="custom",
+                        description="",
+                        unit="",
+                        data=Sum(
+                            data_points=[
+                                NumberDataPoint(attributes=item, start_time_unix_nano=1, time_unix_nano=2, value=index)
+                                for index, item in enumerate(attributes)
+                            ],
+                            aggregation_temporality=AggregationTemporality.CUMULATIVE,
+                            is_monotonic=False,
+                        ),
+                    )
+                    scope = ScopeMetrics(scope=InstrumentationScope("test"), metrics=[metric], schema_url="")
+                    data = MetricsData(
+                        resource_metrics=[ResourceMetrics(resource=Resource({}), scope_metrics=[scope], schema_url="")]
+                    )
+                    with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                        self.assertEqual(exporter.export(data), MetricExportResult.SUCCESS)
+                    transmit.assert_called_once()
+                    envelopes = transmit.call_args.args[0]
+                    expected = sum(item == valid for item in attributes) if routing else len(attributes)
+                    self.assertEqual(len(envelopes), expected)
+                    self.assertEqual(
+                        [envelope.data.base_data.metrics[0].value for envelope in envelopes],
+                        [index for index, item in enumerate(attributes) if not routing or item == valid],
+                    )
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._logger")
     def test_export_exception(self, logger_mock):
         exporter = self._exporter

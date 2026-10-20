@@ -218,6 +218,48 @@ class TestAzureTraceExporter(unittest.TestCase):
                 for event in span.events:
                     self.assertEqual(event.attributes, attributes)
 
+    @mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED": "true"})
+    def test_export_invalid_routing_attributes(self):
+        valid = {
+            "microsoft.instrumentation_key": "customer-key",
+            "microsoft.ingestion_endpoint": "https://example.com/",
+        }
+        invalid = (
+            {},
+            {"microsoft.instrumentation_key": "customer-key"},
+            {"microsoft.ingestion_endpoint": "https://example.com/"},
+            {**valid, "microsoft.instrumentation_key": " "},
+            {**valid, "microsoft.instrumentation_key": 42},
+            {**valid, "microsoft.ingestion_endpoint": "http://example.com/"},
+            {**valid, "microsoft.ingestion_endpoint": ("https://example.com/",)},
+        )
+        for routing in (False, True):
+            exporter = AzureMonitorTraceExporter(enable_multi_endpoint_routing=routing, disable_offline_storage=True)
+            self.addCleanup(exporter.client.close)
+            for attributes in ([valid, *invalid, valid], invalid):
+                with self.subTest(routing=routing, attributes=attributes):
+                    spans = [
+                        trace.ReadableSpan(
+                            name=str(index),
+                            context=SpanContext(trace_id=1, span_id=2, is_remote=False),
+                            start_time=1,
+                            end_time=2,
+                            attributes=item,
+                            events=(trace.Event("event", attributes=valid), trace.Event("exception", attributes=valid)),
+                        )
+                        for index, item in enumerate(attributes)
+                    ]
+                    with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                        self.assertEqual(exporter.export(spans), SpanExportResult.SUCCESS)
+                    transmit.assert_called_once()
+                    envelopes = transmit.call_args.args[0]
+                    expected = sum(item == valid for item in attributes) if routing else len(attributes)
+                    self.assertEqual(len(envelopes), expected * 3)
+                    self.assertEqual(
+                        [envelope.data.base_data.name for envelope in envelopes[::3]],
+                        [str(index) for index, item in enumerate(attributes) if not routing or item == valid],
+                    )
+
     def test_export_with_tracer_provider(self):
         mock_resource = mock.Mock()
         tp = trace.TracerProvider(
@@ -2094,7 +2136,10 @@ class TestAzureTraceExporter(unittest.TestCase):
             context=SpanContext(trace_id=1, span_id=2, is_remote=False),
             start_time=1,
             end_time=2,
-            attributes={},
+            attributes={
+                "microsoft.instrumentation_key": "customer-key",
+                "microsoft.ingestion_endpoint": "https://example.com/",
+            },
         )
         variable = "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
         for routing in (False, True):

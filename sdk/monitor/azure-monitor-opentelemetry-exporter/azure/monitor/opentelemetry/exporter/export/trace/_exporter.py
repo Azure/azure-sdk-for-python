@@ -52,6 +52,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATION_ID_RESOURCE_KEY,
 )
 from azure.monitor.opentelemetry.exporter import _utils
+from azure.monitor.opentelemetry.exporter._routing import _is_valid_route
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MessageData,
@@ -162,6 +163,8 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             except AttributeError as e:
                 _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)  # pylint: disable=C4769
         for span in spans:
+            if self._enable_multi_endpoint_routing and not _is_valid_route(span.attributes):
+                continue
             envelopes.append(self._span_to_envelope(span))
             envelopes.extend(self._span_events_to_envelopes(span))
         try:

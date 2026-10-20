@@ -402,6 +402,40 @@ class TestAzureLogExporter(unittest.TestCase):
                     self.assertEqual(properties, attributes)
                 self.assertEqual(record.log_record.attributes, attributes)
 
+    def test_export_invalid_routing_attributes(self):
+        valid = {
+            "microsoft.instrumentation_key": "customer-key",
+            "microsoft.ingestion_endpoint": "https://example.com/",
+        }
+        invalid = (
+            {},
+            {"microsoft.instrumentation_key": "customer-key"},
+            {"microsoft.ingestion_endpoint": "https://example.com/"},
+            {**valid, "microsoft.instrumentation_key": " "},
+            {**valid, "microsoft.instrumentation_key": 42},
+            {**valid, "microsoft.ingestion_endpoint": "http://example.com/"},
+            {**valid, "microsoft.ingestion_endpoint": ["https://example.com/"]},
+        )
+        for routing in (False, True):
+            exporter = type(self)._exporter_class(enable_multi_endpoint_routing=routing, disable_offline_storage=True)
+            self.addCleanup(exporter.client.close)
+            for attributes in ([valid, *invalid, valid], invalid):
+                with self.subTest(routing=routing, attributes=attributes):
+                    records = [
+                        _logs.ReadWriteLogRecord(LogRecord(body=str(index), attributes=item), resource=Resource({}))
+                        for index, item in enumerate(attributes)
+                    ]
+                    with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                        self.assertEqual(exporter.export(records), LogRecordExportResult.SUCCESS)
+                    transmit.assert_called_once()
+                    envelopes = transmit.call_args.args[0]
+                    expected = sum(item == valid for item in attributes) if routing else len(attributes)
+                    self.assertEqual(len(envelopes), expected)
+                    self.assertEqual(
+                        [envelope.data.base_data.message for envelope in envelopes],
+                        [str(index) for index, item in enumerate(attributes) if not routing or item == valid],
+                    )
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export.logs._exporter._logger")
     def test_export_exception(self, logger_mock):
         exporter = self._exporter

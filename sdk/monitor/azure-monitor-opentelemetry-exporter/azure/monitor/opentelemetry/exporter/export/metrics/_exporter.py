@@ -46,6 +46,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _STATSBEAT_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter import _utils
+from azure.monitor.opentelemetry.exporter._routing import _is_valid_route
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MetricDataPoint,
@@ -115,6 +116,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                 for metric in scope_metric.metrics:
                     for point in metric.data.data_points:
                         if point is not None:
+                            if self._enable_multi_endpoint_routing and not _is_valid_route(point.attributes):
+                                continue
                             envelope = self._point_to_envelope(
                                 point,
                                 metric.name,
