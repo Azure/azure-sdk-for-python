@@ -6,6 +6,8 @@ import os
 import tempfile
 import time
 import sys
+import threading
+from contextlib import ExitStack
 from pathlib import Path
 from enum import Enum
 from threading import Lock
@@ -115,7 +117,13 @@ class ExportResult(Enum):
 class BaseExporter:
     """Azure Monitor base exporter for OpenTelemetry."""
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        _route: Optional[tuple[str, bool]] = None,
+        _connection_string_parser: Optional[ConnectionStringParser] = None,
+        **kwargs: Any,
+    ) -> None:
         """Azure Monitor base exporter for OpenTelemetry.
 
         :keyword str api_version: The service API version used. Defaults to latest.
@@ -132,7 +140,14 @@ class BaseExporter:
         if not isinstance(enable_routing, bool):
             raise TypeError("enable_multi_endpoint_routing must be a boolean.")
         self._enable_multi_endpoint_routing = enable_routing
-        parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
+        self._route = _route
+        self._route_exporters: Dict[tuple[str, bool], BaseExporter] = {}
+        self._route_lock = threading.RLock()
+        self._routing_shutdown = False
+        self._route_options = kwargs.copy()
+        self._local_storage_enabled: Optional[bool] = None
+        parsed_connection_string = _connection_string_parser or ConnectionStringParser(kwargs.get("connection_string"))
+        self._connection_string_parser = parsed_connection_string
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
         # We do not need to use entra Id if this is a sdkStats exporter
@@ -144,7 +159,7 @@ class BaseExporter:
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
         self._connection_string = parsed_connection_string._connection_string
-        self._endpoint = parsed_connection_string.endpoint
+        self._endpoint = _route[0].rstrip("/") if _route is not None else parsed_connection_string.endpoint
         self._region = parsed_connection_string.region
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._aad_audience = parsed_connection_string.aad_audience
@@ -227,7 +242,7 @@ class BaseExporter:
         # get_configuration_manager() returns None when the control plane is disabled via env var,
         # in which case OneSettings is skipped entirely and storage keeps its statically configured
         # state.
-        if not self._is_stats_exporter():
+        if not self._is_stats_exporter() and self._route is None:
             config_manager = get_configuration_manager()
             if config_manager:
                 # Start the control-plane worker (idempotent) and describe this process to OneSettings
@@ -272,6 +287,66 @@ class BaseExporter:
     def _is_experimental_feature_enabled(self, feature_name: str) -> bool:
         # Return whether the named experimental feature was explicitly enabled at startup.
         return feature_name.strip().lower() in _get_experimental_features()
+
+    def _get_route_exporter(self, endpoint: str, is_aad: bool) -> "BaseExporter":
+        # pylint: disable=protected-access
+        key = endpoint, is_aad
+        if key in self._route_exporters:
+            return self._route_exporters[key]
+        if is_aad and self._credential is None:
+            raise ValueError("An AAD route requires an exporter credential.")
+        options = {
+            **self._route_options,
+            "connection_string": self._connection_string,
+            "credential": self._credential if is_aad else None,
+            "authentication_policy": None,
+            "max_envelopes_per_second": 0,
+        }
+        if not self._disable_offline_storage:
+            assert self._storage_directory is not None
+            options["storage_directory"] = os.path.join(
+                os.path.abspath(self._storage_directory) + "-routes",
+                _get_sha256_hash(f"{endpoint}|{is_aad}"),
+            )
+        exporter = BaseExporter(_route=key, _connection_string_parser=self._connection_string_parser, **options)
+        exporter._rate_limiter = self._rate_limiter
+        if self._local_storage_enabled is False:
+            exporter._disable_local_storage()
+        self._route_exporters[key] = exporter
+        return exporter
+
+    def _transmit_routed(self, groups: Dict[tuple[str, bool], List[TelemetryItem]]) -> ExportResult:
+        # pylint: disable=protected-access
+        result = ExportResult.SUCCESS
+        with self._route_lock:
+            if self._routing_shutdown:
+                logger.error("Cannot export routed telemetry after shutdown.")
+                return ExportResult.FAILED_NOT_RETRYABLE
+            for (endpoint, is_aad), envelopes in groups.items():
+                try:
+                    exporter = self._get_route_exporter(endpoint, is_aad)
+                except ValueError as error:
+                    logger.error("Cannot initialize a routed exporter: %s", error)
+                    result = ExportResult.FAILED_NOT_RETRYABLE
+                    continue
+                route_result = exporter._transmit(envelopes)
+                exporter._handle_transmit_from_storage(envelopes, route_result)
+                if route_result != ExportResult.SUCCESS:
+                    result = ExportResult.FAILED_NOT_RETRYABLE
+        return result
+
+    def _shutdown_route_exporters(self) -> None:
+        with self._route_lock:
+            if self._routing_shutdown:
+                return
+            self._routing_shutdown = True
+            with ExitStack() as cleanup:
+                cleanup.callback(self.client.close)
+                for exporter in self._route_exporters.values():
+                    cleanup.callback(exporter.client.close)
+                    if exporter.storage:
+                        cleanup.callback(exporter.storage.close)
+                self._route_exporters.clear()
 
     # Maximum number of blobs to drain from storage per invocation.
     # Prevents a retry storm when many blobs have accumulated during
@@ -607,7 +682,7 @@ class BaseExporter:
                         # Track dropped items in customer sdkstats, non-retryable scenario
                         if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
                             track_dropped_items(envelopes, response_error.status_code)
-                        if _is_invalid_code(response_error.status_code):
+                        if _is_invalid_code(response_error.status_code) and self._route is None:
                             # Shutdown statsbeat on invalid code from customer endpoint
                             # Import here to avoid circular dependencies
                             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
@@ -703,6 +778,7 @@ class BaseExporter:
 
     # OneSettings configuration-change callback: toggles local (offline) storage.
     def _local_storage_configuration_callback(self, settings: Dict[str, str]) -> None:
+        # pylint: disable=protected-access
         """Toggle local (offline) storage in response to a OneSettings configuration change.
 
         OneSettings acts as a remote kill-switch via the FEATURE_LOCAL_STORAGE feature flag:
@@ -720,10 +796,14 @@ class BaseExporter:
         # None means the flag is absent/invalid; leave the current storage state unchanged.
         if local_storage_enabled is None:
             return
-        if local_storage_enabled:
-            self._enable_local_storage()
-        else:
-            self._disable_local_storage()
+        with self._route_lock:
+            self._local_storage_enabled = local_storage_enabled
+            if local_storage_enabled:
+                self._enable_local_storage()
+            else:
+                self._disable_local_storage()
+            for exporter in self._route_exporters.values():
+                exporter._local_storage_configuration_callback(settings)
 
     def _enable_local_storage(self) -> None:
         # Construct the local file storage once (on first enable / exporter init), then keep the
@@ -734,6 +814,9 @@ class BaseExporter:
             return
         if self._storage_directory is None:
             self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
+        storage_options: Dict[str, Any] = {}
+        if self._route is not None:
+            storage_options["capacity_path"] = os.path.dirname(self._storage_directory)
         self.storage = LocalFileStorage(  # pyright: ignore
             path=self._storage_directory,  # type: ignore
             max_size=self._storage_max_size,
@@ -741,6 +824,7 @@ class BaseExporter:
             retention_period=self._storage_retention_period,
             name="{} Storage".format(self.__class__.__name__),
             lease_period=self._storage_min_retry_interval,
+            **storage_options,
         )
 
     def _disable_local_storage(self) -> None:
@@ -753,7 +837,8 @@ class BaseExporter:
     # check to see whether its the case of stats collection
     def _should_collect_stats(self):
         return (
-            is_statsbeat_enabled()
+            self._route is None
+            and is_statsbeat_enabled()
             and not get_statsbeat_shutdown()
             and not self._is_stats_exporter()
             and not self._is_customer_sdkstats_exporter()
@@ -764,7 +849,8 @@ class BaseExporter:
     def _should_collect_customer_sdkstats(self):
         manager = get_customer_stats_manager()
         return (
-            manager.is_enabled
+            self._route is None
+            and manager.is_enabled
             and not manager.is_shutdown
             and not self._is_stats_exporter()
             and not self._is_customer_sdkstats_exporter()

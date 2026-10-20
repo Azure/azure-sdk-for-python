@@ -153,6 +153,27 @@ ignored. Unset or empty values enable no experimental features. Unknown names ar
 The selection is shared across exporters in the same Python interpreter and cannot be changed after
 the first exporter is constructed. Experimental features may change or be removed in future releases.
 
+### Multi-endpoint log routing (preview)
+
+Set `enable_multi_endpoint_routing=True` on `AzureMonitorLogExporter` to route logs
+using their `microsoft.instrumentation_key` and `microsoft.ingestion_endpoint`
+attributes. Both attributes are required; the endpoint must be HTTPS. Obtain
+destinations from trusted, server-owned configuration, not request headers or baggage.
+Invalid or missing destinations are dropped without falling back to the exporter's
+connection string. The exporter's existing host-configuration requirements still apply.
+
+Logs are grouped by normalized endpoint and authentication mode. Set
+`microsoft.ingestion_auth` to `"aad"` to use the exporter's configured credential;
+other values use key-only authentication. AAD groups without a credential fail.
+Cloud-role tags continue to come from the log record's resource.
+
+Retry storage is separate from the host storage, partitioned by endpoint and
+authentication mode, and shares the configured storage capacity across routed
+partitions. Pending items are retried after a subsequent successful send to the
+same endpoint/authentication group, preserving their original instrumentation keys.
+This dispatch path currently supports logs only; trace and metric dispatch will
+be added separately. The option defaults to `False`.
+
 ## Examples
 
 ### Logging (experimental)

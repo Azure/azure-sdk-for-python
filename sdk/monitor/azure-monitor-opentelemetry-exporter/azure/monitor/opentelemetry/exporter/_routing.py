@@ -140,11 +140,11 @@ def _get_cloud_role(attributes: Attributes) -> str:
     return role.strip() or "unknown_service"
 
 
-def _is_aad_route(attributes: Attributes) -> bool:
+def _is_aad_route(attributes: Mapping[str, object] | None) -> bool:
     """Read the explicit per-item AAD marker; this does not validate credentials.
 
     :param attributes: The telemetry item's attributes.
-    :type attributes: ~opentelemetry.util.types.Attributes
+    :type attributes: ~collections.abc.Mapping[str, object] or None
     :return: Whether the authentication value is a trimmed, case-insensitive ``aad`` string.
     :rtype: bool
     """
