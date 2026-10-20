@@ -9,10 +9,10 @@ Publish these files under `sdk/ai/azure-ai-projects/rle`, matching public PR #49
 
 - `install_rle_sdk.py`
 - `registry.json`
-- `wheels/2.7.0b5/azure_ai_projects-2.7.0b5-py3-none-any.whl`
+- `wheels/2.7.0b6/azure_ai_projects-2.7.0b6-py3-none-any.whl`
 
-The registry pins the wheel checksum. This build uses `2.7.0b5`; published
-`2.7.0b2`, `2.7.0b3` and `2.7.0b4` wheels remain unchanged. Subsequent development builds
+The registry pins the wheel checksum. This build uses `2.7.0b6`; published
+`2.7.0b2` through `2.7.0b5` wheels remain unchanged. Subsequent development builds
 should increment the beta number and update the registry checksum. The installer
 also explicitly reinstalls the verified wheel if the installed version matches.
 
@@ -22,7 +22,7 @@ For a development installation:
 curl --fail --location \
   https://raw.githubusercontent.com/Azure/azure-sdk-for-python/rle-dev-releases/sdk/ai/azure-ai-projects/rle/install_rle_sdk.py \
   --output install_rle_sdk.py
-python install_rle_sdk.py --version 2.7.0b5
+python install_rle_sdk.py --version 2.7.0b6
 ```
 
 Use `--requirements runtime-requirements.txt` to install command-job dependencies
@@ -33,7 +33,20 @@ command. Run the installer before installing recipe dependencies, which declare
 `azure-ai-projects` without a conflicting version or direct wheel URL. Changing
 the SDK requires rebuilding the image; existing images do not update at runtime.
 
-Beta `2.7.0b5` adds graceful deployment handoff to the shared async rollout client.
+Beta `2.7.0b6` adds best-effort disconnect recovery to the shared async rollout
+client, with admission managed internally at 32 awaiting calls. A single worker
+checks the original rollout IDs every 30 seconds after their socket closes;
+healthy and still-connected draining sockets are not polled. Later disconnects
+join the same schedule. Recovery preserves the original execution deadline and
+never replays execution. An unresolved outcome affects only its awaiting call:
+retain its rollout ID, release its local slot, and allow subsequent work.
+Stored results are best-effort, so recovery can still end in an unknown outcome.
+
+This wheel was built from SDK source commit
+`35dc288df5722aed4cc3a364baef408d74b6d082` in
+`sujit-kamireddy/azure-sdk-for-python`.
+
+Earlier beta `2.7.0b5` added graceful deployment handoff to the shared async rollout client.
 On `server-draining`, old rollouts retain their original receiver while new
 submissions open a replacement with fresh credentials. One admission limit covers
 all connections. Only the explicit pre-execution `ServerDraining` rejection is
@@ -53,6 +66,7 @@ It retains the opt-in `server_managed_token_renewal=True` for async rollout clie
 keeping a healthy socket open past its age and token expiry.
 This requires RLE caller-token renewal, Capture Proxy model-call token renewal,
 and service support for long-lived sockets and the requested rollout duration.
-It does not remove server limits or implement durable disconnect recovery.
+It does not remove server limits or guarantee recovery when stored results
+are unavailable.
 Deployment handoff works with either renewal setting. The SDK default continues
 to replace sockets based on age/token expiry.
