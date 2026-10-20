@@ -1,5 +1,17 @@
 # Release History
 
+## 1.26.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed `AzureDeveloperCliCredential` reading the UTC `expiresOn` value from `azd auth token` as local time, which made the token's `expires_on` off by the local UTC offset. ([#49589](https://github.com/Azure/azure-sdk-for-python/issues/49589))
+
+### Other Changes
+
 ## 1.26.0 (2026-09-30)
 
 ### Features Added

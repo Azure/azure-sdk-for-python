@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 import re
 import sys
@@ -107,7 +107,7 @@ async def test_get_token(get_token_method):
     expected_expires_on = 1602015811
     successful_output = json.dumps(
         {
-            "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "expiresOn": datetime.fromtimestamp(expected_expires_on, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "token": access_token,
             "subscription": "some-guid",
             "tenant": "some-guid",
@@ -132,7 +132,7 @@ async def test_command_list(get_token_method):
     expected_expires_on = 1602015811
     successful_output = json.dumps(
         {
-            "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "expiresOn": datetime.fromtimestamp(expected_expires_on, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "token": access_token,
             "subscription": "some-guid",
             "tenant": "some-guid",
@@ -373,7 +373,7 @@ async def test_empty_claims_does_not_raise_error(get_token_method):
     expected_expires_on = 1602015811
     successful_output = json.dumps(
         {
-            "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "expiresOn": datetime.fromtimestamp(expected_expires_on, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "token": access_token,
             "subscription": "some-guid",
             "tenant": "some-guid",
@@ -425,7 +425,7 @@ async def test_claims_command_line_argument(get_token_method):
 
         output = json.dumps(
             {
-                "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "expiresOn": datetime.fromtimestamp(expected_expires_on, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 "token": access_token,
                 "subscription": "some-guid",
                 "tenant": "some-guid",
