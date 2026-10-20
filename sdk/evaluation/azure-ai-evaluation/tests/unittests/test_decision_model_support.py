@@ -687,8 +687,9 @@ class TestSharedBaseSelection:
 
     def test_chat_configuration_selects_the_prompty_runner_without_a_decision_runner(self):
         flow = AsyncMock()
-        with patch.object(_model_runners.AsyncPrompty, "load", return_value=flow), patch.object(
-            _model_runners, "DecisionModelRunner", side_effect=AssertionError("decision runner built")
+        with (
+            patch.object(_model_runners.AsyncPrompty, "load", return_value=flow),
+            patch.object(_model_runners, "DecisionModelRunner", side_effect=AssertionError("decision runner built")),
         ):
             evaluator = ProbeModelEvaluator(result_key="probe", prompty_file="probe.prompty", model_config=CHAT_CONFIG)
         assert isinstance(evaluator._model_runner, PromptyModelRunner)
@@ -1123,6 +1124,142 @@ class TestDecisionConversationUsage:
         persisted = converted["results"][0]
         assert persisted["sample"]["usage"] == {"prompt_tokens": 46, "completion_tokens": 8, "total_tokens": 54}
         assert persisted["sample"]["model"] == "microsoft-decision-1"
+        properties = result["tool_call_accuracy_properties"]
+        assert {field: properties[field] for field in ("prompt_tokens", "completion_tokens", "total_tokens")} == {
+            "prompt_tokens": 46,
+            "completion_tokens": 8,
+            "total_tokens": 54,
+        }
+        assert properties["model"] == "microsoft-decision-1"
+        assert properties["decision_model"]["result_usage_scope"] == "reported_turns_only"
+        assert "execution" not in properties["decision_model"]
+        assert persisted["properties"] == properties
+        turns = result["evaluation_per_turn"]["tool_call_accuracy_properties"]
+        assert [turn["total_tokens"] for turn in turns] == [15, 39]
+        assert all("native_answer" in turn["decision_model"] for turn in turns)
+        assert properties["decision_model"]["native_answer"] == turns[-1]["decision_model"]["native_answer"]
+
+        payloads[1]["model"] = "another-model"
+        client.post = AsyncMock(side_effect=[FakeResponse(body=json.dumps(payload).encode()) for payload in payloads])
+        mixed = evaluator(
+            conversation={
+                "messages": [
+                    {"role": "user", "content": "first"},
+                    {"role": "assistant", "content": "one"},
+                    {"role": "user", "content": "second"},
+                    {"role": "assistant", "content": "two"},
+                ]
+            }
+        )
+        mixed_properties = mixed["tool_call_accuracy_properties"]
+        assert mixed_properties["total_tokens"] == mixed["tool_call_accuracy_total_tokens"] == 54
+        assert "tool_call_accuracy_model" not in mixed
+        assert "model" not in mixed_properties and "model" not in mixed_properties["decision_model"]
+        converted = _convert_single_row_to_aoai_format(
+            {f"outputs.judge.{key}": value for key, value in mixed.items()},
+            0,
+            None,
+            None,
+            0,
+            {"judge": {"metrics": ["tool_call_accuracy"], "type": "azure_ai_evaluator"}},
+            None,
+            logging.getLogger("test"),
+        )
+        persisted = converted["results"][0]
+        assert persisted["properties"] == mixed_properties
+        assert persisted["sample"]["usage"]["total_tokens"] == 54
+        assert persisted["sample"].get("model") is None
+
+    @pytest.mark.parametrize(
+        "case",
+        [
+            "same_model",
+            "mixed_models",
+            "missing_model",
+            "partial_usage",
+            "unknown_usage",
+            "last_free_skip",
+            "all_free_skips",
+            "first_free_skip",
+            "final_paid_skip",
+        ],
+    )
+    def test_aggregate_properties_match_known_usage_without_mutating_turns(self, case):
+        from copy import deepcopy
+
+        evaluator = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        turns = []
+        for index, count in enumerate((15, 39)):
+            model = "model-b" if case == "mixed_models" and index else "model-a"
+            if case == "missing_model" and index:
+                model = None
+            usage = {"prompt_tokens": count - 3, "completion_tokens": 3, "total_tokens": count}
+            if case == "partial_usage":
+                usage = {"prompt_tokens": 0} if index == 0 else {"completion_tokens": 3}
+            elif case == "unknown_usage":
+                usage = {}
+            native = {
+                "deployment": "Decision-1",
+                "model": model,
+                "rubric_hash": "a" * 64,
+                "status_rubric_hash": "b" * 64,
+                "status_probability_threshold": 0.5,
+                "status_completion_probability": 0.9,
+                "native_answer": {"type": "noul", "noul": 0.8},
+                "execution": {"attempt_count": 1},
+            }
+            properties = {**usage, "model": model, "decision_model": native}
+            turn = {
+                "probe": index + 1,
+                **{f"probe_{field}": value for field, value in usage.items()},
+                "probe_model": model,
+                "probe_properties": properties,
+            }
+            if case == "final_paid_skip" and index:
+                turn["probe"] = None
+                native.pop("native_answer")
+                native["status_completion_probability"] = 0.1
+                native["native_status_answer"] = {"type": "noul", "noul": 0.1}
+            if (
+                case == "all_free_skips"
+                or (case == "last_free_skip" and index)
+                or (case == "first_free_skip" and index == 0)
+            ):
+                turn = {"probe": None, "probe_properties": None}
+            turns.append(turn)
+        original = deepcopy(turns)
+        result = evaluator._aggregate_results(turns)
+        properties = result["probe_properties"]
+        assert turns == original
+        assert result["evaluation_per_turn"]["probe_properties"] == [turn["probe_properties"] for turn in original]
+        if case in ("last_free_skip", "all_free_skips"):
+            assert properties is None
+            if case == "last_free_skip":
+                assert result["probe_total_tokens"] == 15
+            return
+        for field in ("prompt_tokens", "completion_tokens", "total_tokens"):
+            if f"probe_{field}" in result:
+                assert properties[field] == result[f"probe_{field}"]
+            else:
+                assert field not in properties
+        if "probe_model" in result:
+            assert properties["model"] == result["probe_model"]
+            assert properties["decision_model"]["model"] == result["probe_model"]
+        else:
+            assert "model" not in properties and "model" not in properties["decision_model"]
+        assert properties["decision_model"]["usage_available"] is bool(
+            {"prompt_tokens", "completion_tokens", "total_tokens"}.intersection(properties)
+        )
+        assert properties["decision_model"]["result_usage_scope"] == "reported_turns_only"
+        assert "execution" not in properties["decision_model"]
+        assert properties["decision_model"]["status_completion_probability"] == (
+            original[-1]["probe_properties"]["decision_model"]["status_completion_probability"]
+        )
+        if case == "final_paid_skip":
+            assert properties["decision_model"]["native_status_answer"] == {"type": "noul", "noul": 0.1}
+            assert "native_answer" not in properties["decision_model"]
+        else:
+            assert properties["decision_model"]["native_answer"] == {"type": "noul", "noul": 0.8}
 
     @pytest.mark.parametrize("models", [("first", "second"), ("first", None)])
     def test_different_or_unknown_models_remain_per_turn(self, models):
@@ -1154,6 +1291,28 @@ class TestDecisionConversationUsage:
 
 
 class TestDecisionExecutionControls:
+    @pytest.mark.parametrize(
+        "value",
+        [
+            pytest.param(10**309, id="oversized_positive"),
+            pytest.param(-(10**309), id="oversized_negative"),
+        ],
+    )
+    @pytest.mark.parametrize("control", ["probability_threshold", "timeout_seconds", "timeout", "call_timeout"])
+    def test_oversized_numeric_controls_raise_typed_user_error(self, client, control, value):
+        with pytest.raises(EvaluationException) as raised:
+            if control == "probability_threshold":
+                DecisionModelRunner({**DECISION_CONFIG, control: value}, binary=True)
+            elif control == "timeout_seconds":
+                DecisionModelRunner(DECISION_CONFIG, timeout_seconds=value)
+            elif control == "timeout":
+                ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG, timeout=value)
+            else:
+                asyncio.run(DecisionModelRunner(DECISION_CONFIG)(state={}, questions=QUESTIONS, timeout=value))
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+        assert raised.value.category == ErrorCategory.INVALID_VALUE
+        assert not client.calls
+
     def test_overall_timeout_defaults_are_backend_specific(self):
         decision = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
         with patch.object(_model_runners.AsyncPrompty, "load"):

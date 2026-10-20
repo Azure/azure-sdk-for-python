@@ -12,6 +12,7 @@ from . import EvaluatorBase
 from ._model_runners import (
     DecisionModelRunner,
     PromptyModelRunner,
+    _is_finite_number,
     is_decision_model_config,
 )
 
@@ -127,12 +128,7 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
                     target=ErrorTarget.EVALUATE,
                 )
             if timeout is not None:
-                if (
-                    isinstance(timeout, bool)
-                    or not isinstance(timeout, (int, float))
-                    or not math.isfinite(timeout)
-                    or timeout <= 0
-                ):
+                if not _is_finite_number(timeout) or timeout <= 0:
                     raise EvaluationException(
                         message="'timeout' must be a positive finite number.",
                         blame=ErrorBlame.USER_ERROR,
@@ -206,7 +202,9 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         """Aggregate scores normally, but sum independently known Decision usage across turns.
 
         A single shared model is promoted for attribution. Mixed or missing model identities remain per-turn
-        rather than attributing all usage to the last model. Prompty aggregation is unchanged.
+        rather than attributing all usage to the last model. Root properties use the same usage and model,
+        without a single-request execution summary; other diagnostics retain their final-turn semantics.
+        Prompty aggregation is unchanged.
         """
         aggregated: Dict[str, Any] = super()._aggregate_results(per_turn_results)
         if not self._uses_decision_model:
@@ -233,6 +231,15 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
                     aggregated[metric] = models[0]
                 else:
                     aggregated.pop(metric, None)
+        properties_key = f"{self._result_key}_properties"
+        properties = aggregated.get(properties_key)
+        if len(per_turn_results) > 1 and isinstance(properties, dict):
+            usage = self._known_turn_usage(
+                aggregated, ("prompt_tokens", "completion_tokens", "total_tokens"), prefix=f"{self._result_key}_"
+            )
+            aggregated[properties_key] = self._reconcile_decision_properties(
+                properties, usage, aggregated.get(f"{self._result_key}_model")
+            )
         return aggregated
 
     def _on_evaluation_error(self, error: EvaluationException, per_turn_results: List[Dict[str, T]]) -> None:
@@ -255,29 +262,42 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         failing_usage = self._known_turn_usage(properties, fields)
         if failing_usage:
             contributions.append((failing_usage, properties.get("model")))
+        usage = {}
         for field in fields:
-            known = [usage[field] for usage, _ in contributions if field in usage]
+            known = [item[field] for item, _ in contributions if field in item]
             if known:
-                properties[field] = sum(known)
-            else:
-                properties.pop(field, None)
+                usage[field] = sum(known)
         models = [model for _, model in contributions]
         common_model = models[0] if isinstance(models[0], str) and models[0].strip() else None
-        if common_model is not None and all(model == common_model for model in models):
-            properties["model"] = common_model
+        if not all(model == common_model for model in models):
+            common_model = None
+        error.properties = self._reconcile_decision_properties(properties, usage, common_model)
+
+    @staticmethod
+    def _reconcile_decision_properties(
+        properties: Dict[str, Any], usage: Dict[str, int], model: Optional[str]
+    ) -> Dict[str, Any]:
+        reconciled = dict(properties)
+        for field in ("prompt_tokens", "completion_tokens", "total_tokens"):
+            if field in usage:
+                reconciled[field] = usage[field]
+            else:
+                reconciled.pop(field, None)
+        if isinstance(model, str) and model.strip():
+            reconciled["model"] = model
         else:
-            properties.pop("model", None)
-        native = properties.get("decision_model")
+            reconciled.pop("model", None)
+        native = reconciled.get("decision_model")
         native = dict(native) if isinstance(native, dict) else {}
         native.pop("execution", None)
-        if "model" in properties:
-            native["model"] = properties["model"]
+        if "model" in reconciled:
+            native["model"] = reconciled["model"]
         else:
             native.pop("model", None)
-        native["usage_available"] = True
+        native["usage_available"] = bool(usage)
         native["result_usage_scope"] = "reported_turns_only"
-        properties["decision_model"] = native
-        error.properties = properties
+        reconciled["decision_model"] = native
+        return reconciled
 
     @staticmethod
     def _known_turn_usage(values: Dict[str, Any], fields: tuple, *, prefix: str = "") -> Dict[str, int]:

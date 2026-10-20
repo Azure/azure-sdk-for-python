@@ -116,6 +116,47 @@ class TestDecisionBatchPersistence:
         "usage_completeness": "all_attempts_reported",
     }
 
+    @pytest.mark.parametrize("field", ["status_completion_probability", "status_probability_threshold"])
+    @pytest.mark.parametrize(
+        "value",
+        [
+            pytest.param(10**309, id="oversized_positive"),
+            pytest.param(-(10**309), id="oversized_negative"),
+            pytest.param(float("nan"), id="nan"),
+            pytest.param(float("inf"), id="infinity"),
+            pytest.param(True, id="boolean"),
+            pytest.param("0.5", id="string"),
+        ],
+    )
+    def test_invalid_failure_probability_preserves_batch_error_and_usage(self, batch_client, tmp_path, field, value):
+        error = EvaluationException(
+            "original custom evaluator failure",
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+            properties={
+                "prompt_tokens": 41,
+                "completion_tokens": 3,
+                "total_tokens": 44,
+                "model": "custom-judge",
+                "decision_model": {"deployment": "Decision-1", field: value, "usage_available": True},
+            },
+        )
+
+        async def judge(query):
+            raise error
+
+        summaries, rows = convert_batch(batch_client, judge, tmp_path)
+        metric = next(item for item in rows[0]["results"] if item["name"] == "judge")
+        assert summaries["judge"]["failed_lines"] == 1
+        assert metric["status"] == "error" and metric["score"] is None and metric["passed"] is None
+        assert metric["sample"]["error"]["code"] == "FAILED_EXECUTION"
+        assert metric["sample"]["error"]["blame"] == "UserError"
+        assert metric["sample"]["usage"] == {"prompt_tokens": 41, "completion_tokens": 3, "total_tokens": 44}
+        assert metric["sample"]["model"] == "custom-judge"
+        assert field not in metric["properties"]["decision_model"]
+        assert error.properties["decision_model"][field] is value
+
     @pytest.mark.parametrize(
         "backend,known,attempted",
         [("system_one", False, False), ("foundry_decision", False, True), ("system_one", True, True)],

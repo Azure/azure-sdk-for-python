@@ -7,7 +7,6 @@ import logging
 import pandas as pd
 import sys
 import itertools
-import math
 from collections import defaultdict
 from concurrent.futures import Future
 from os import PathLike
@@ -23,7 +22,7 @@ from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExec
 from ..._evaluate._utils import _has_aggregator
 from ..._constants import Prefixes, PF_BATCH_TIMEOUT_SEC
 from ..._exceptions import EvaluationException
-from ..._evaluators._common._model_runners import validated_execution
+from ..._evaluators._common._model_runners import _is_finite_number, validated_execution
 
 from .._utils import get_int_env_var as get_int
 
@@ -51,12 +50,7 @@ def _decision_error_metadata(exception: EvaluationException) -> Dict[str, Any]:
         }
         for key in ("status_completion_probability", "status_probability_threshold"):
             value = native.get(key)
-            if (
-                isinstance(value, (int, float))
-                and not isinstance(value, bool)
-                and math.isfinite(value)
-                and 0 <= value <= 1
-            ):
+            if _is_finite_number(value) and 0 <= value <= 1:
                 provenance[key] = value
         for key, accepted in (
             ("backend", ("foundry_decision", "system_one")),

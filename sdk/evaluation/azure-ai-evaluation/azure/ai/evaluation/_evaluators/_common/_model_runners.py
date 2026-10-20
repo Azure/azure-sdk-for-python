@@ -331,8 +331,17 @@ def _failed(message: str, blame: ErrorBlame = ErrorBlame.SYSTEM_ERROR) -> Evalua
     )
 
 
+def _is_finite_number(value: Any) -> bool:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return False
+    try:
+        return math.isfinite(value)
+    except OverflowError:
+        return False
+
+
 def _probability(value: Any) -> float:
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+    if not _is_finite_number(value):
         raise ValueError("Decision probabilities must be finite numbers.")
     if not 0 <= value <= 1:
         raise ValueError("Decision probabilities must be in [0, 1].")
@@ -374,7 +383,7 @@ def validate_score_answer(answer: Dict[str, Any], levels: int) -> List[float]:
     if not math.isclose(math.fsum(distribution), 1.0, rel_tol=0.0, abs_tol=tolerance):
         raise ValueError("score probabilities must sum to one within the precision-aware rounding tolerance.")
     mean = answer.get("score")
-    if isinstance(mean, bool) or not isinstance(mean, (int, float)) or not math.isfinite(mean):
+    if not _is_finite_number(mean):
         raise ValueError("the score mean must be finite.")
     _probability(answer.get("confidence"))
     return distribution
@@ -422,12 +431,7 @@ class DecisionModelRunner:
         max_state_question_bytes: Optional[int] = None,
         max_response_bytes: Optional[int] = None,
     ) -> None:
-        if timeout_seconds is not None and (
-            isinstance(timeout_seconds, bool)
-            or not isinstance(timeout_seconds, (int, float))
-            or not math.isfinite(timeout_seconds)
-            or timeout_seconds <= 0
-        ):
+        if timeout_seconds is not None and (not _is_finite_number(timeout_seconds) or timeout_seconds <= 0):
             raise _invalid_config("'timeout_seconds' must be a positive finite number.")
         if isinstance(max_retries, bool) or not isinstance(max_retries, int) or max_retries < 0:
             raise _invalid_config("'max_retries' must be a nonnegative integer.")
@@ -543,12 +547,7 @@ class DecisionModelRunner:
         :return: ``{"model", "answers", "usage"}`` with the response's structure checked against the questions.
         :rtype: Dict[str, Any]
         """
-        if (
-            isinstance(timeout, bool)
-            or not isinstance(timeout, (int, float))
-            or not math.isfinite(timeout)
-            or timeout <= 0
-        ):
+        if not _is_finite_number(timeout) or timeout <= 0:
             raise _invalid_config("'timeout' must be a positive finite number.")
         deadline = time.monotonic() + timeout
         execution = DecisionExecution(self._execution_logger, self._max_response_bytes)
