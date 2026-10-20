@@ -54,8 +54,11 @@ print(
         $content | Should Match '\$\(PIP_EXE\) install -e \. -r dev_requirements\.txt'
         $content | Should Match '(?m)^\s*azureSubscription: azure-sdk-tests\r?$'
         $content | Should Match "azure-ai-projects-sample-validation/scripts/InvokeSampleValidation.ps1"
+        $content | Should Match "azure-ai-projects-sample-validation/scripts/PublishSampleValidationSummary.ps1"
         $content | Should Not Match 'HideEnvironmentValues'
         $content | Should Match 'publishRunAttachments: true'
+        $content | Should Match '##vso\[task\.uploadsummary\]\$summaryPath'
+        $content | Should Match 'displayName: Publish all test results summary'
         $oldSkillName = "azure-ai-projects-record" + "-sample"
         $oldRunnerName = "InvokeSample" + "Test.ps1"
         $content | Should Not Match "$oldSkillName|$oldRunnerName"

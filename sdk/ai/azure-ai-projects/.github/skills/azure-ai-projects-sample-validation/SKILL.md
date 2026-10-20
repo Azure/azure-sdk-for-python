@@ -92,7 +92,7 @@ For wildcard validation, preserve the same sample pattern, test pattern, and env
    -Run -ConfirmSelection -ConfirmPipeline
 ```
 
-The orchestrator loads only relevant `.env` names and handles all mode flags. Immediately before recording, it stops `*testproxy*` processes and deletes `.pytest_cache`. `record-and-playback` proceeds to playback even when recording fails. After successful hosted-agent recordings it runs `tests\samples\repair_hosted_agent_sample_recording.py` for every selected hosted-agent node before playback or completion. ADO selectors use runtime parameters; values use masked secret build variables. Pipeline mode attaches separate Azure SDK API and `print()` output logs to each JUnit test result, waits until ADO completes, and fails when the run fails or times out.
+The orchestrator loads only relevant `.env` names and handles all mode flags. Immediately before recording, it stops `*testproxy*` processes and deletes `.pytest_cache`. `record-and-playback` proceeds to playback even when recording fails. After successful hosted-agent recordings it runs `tests\samples\repair_hosted_agent_sample_recording.py` for every selected hosted-agent node before playback or completion. ADO selectors use runtime parameters; values use masked secret build variables. Pipeline mode attaches separate Azure SDK API and `print()` output logs to each JUnit test result, publishes an unfiltered Markdown summary containing every test outcome, waits until ADO completes, and fails when the run fails or times out.
 
 Recording modes invoke `scripts\TestRecordingGitConflicts.ps1` during preview and again immediately before cleanup. Treat that script's result as authoritative; do not reproduce its conflict checks in the skill workflow.
 
