@@ -33,7 +33,7 @@ try:
 except ImportError:
     # azure.core.instrumentation is not available in older versions of azure-core
     get_azure_sdk_tracer = None
-from azure.monitor.opentelemetry.exporter.export._base import ExportResult
+from azure.monitor.opentelemetry.exporter.export._base import BaseExporter, ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     AzureMonitorTraceExporter,
     _check_instrumentation_span,
@@ -195,7 +195,8 @@ class TestAzureTraceExporter(unittest.TestCase):
                     enable_multi_endpoint_routing=routing, disable_offline_storage=True
                 )
                 self.addCleanup(exporter.client.close)
-                with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                self.addCleanup(exporter.shutdown)
+                with mock.patch.object(BaseExporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
                     self.assertEqual(exporter.export([span]), SpanExportResult.SUCCESS)
                 transmit.assert_called_once()
                 envelopes = transmit.call_args.args[0]
@@ -236,6 +237,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         for routing in (False, True):
             exporter = AzureMonitorTraceExporter(enable_multi_endpoint_routing=routing, disable_offline_storage=True)
             self.addCleanup(exporter.client.close)
+            self.addCleanup(exporter.shutdown)
             for attributes in ([valid, *invalid, valid], invalid):
                 with self.subTest(routing=routing, attributes=attributes):
                     spans = [
@@ -249,8 +251,11 @@ class TestAzureTraceExporter(unittest.TestCase):
                         )
                         for index, item in enumerate(attributes)
                     ]
-                    with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                    with mock.patch.object(BaseExporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
                         self.assertEqual(exporter.export(spans), SpanExportResult.SUCCESS)
+                    if routing and not any(item == valid for item in attributes):
+                        transmit.assert_not_called()
+                        continue
                     transmit.assert_called_once()
                     envelopes = transmit.call_args.args[0]
                     expected = sum(item == valid for item in attributes) if routing else len(attributes)
@@ -2149,13 +2154,14 @@ class TestAzureTraceExporter(unittest.TestCase):
                 tracer_provider=trace.TracerProvider(),
             )
             self.addCleanup(exporter.client.close)
+            self.addCleanup(exporter.shutdown)
             for disabled in (None, "false", "true", "TRUE"):
                 with self.subTest(routing=routing, disabled=disabled), mock.patch.dict(os.environ):
                     if disabled is None:
                         os.environ.pop(variable, None)
                     else:
                         os.environ[variable] = disabled
-                    with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                    with mock.patch.object(BaseExporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
                         self.assertEqual(exporter.export([span]), SpanExportResult.SUCCESS)
                     transmit.assert_called_once()
                     envelopes = transmit.call_args.args[0]

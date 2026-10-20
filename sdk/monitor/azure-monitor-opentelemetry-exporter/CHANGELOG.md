@@ -11,7 +11,9 @@
   existing limits apply (256kb for GenAI attributes and 8kb for all other custom properties)
   ([#49648](https://github.com/Azure/azure-sdk-for-python/pull/49648))
 - Add opt-in multi-endpoint log routing with per-item instrumentation keys,
+- Add opt-in multi-endpoint log and trace routing with per-item instrumentation keys,
   explicit per-route authentication, and destination-isolated retry storage.
+  Span events follow their parent span's route.
 
 ### Breaking Changes
 
