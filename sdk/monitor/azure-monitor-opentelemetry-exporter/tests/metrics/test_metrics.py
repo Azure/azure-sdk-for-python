@@ -22,7 +22,7 @@ from opentelemetry.sdk.metrics.export import (
     Sum,
 )
 
-from azure.monitor.opentelemetry.exporter.export._base import ExportResult
+from azure.monitor.opentelemetry.exporter.export._base import BaseExporter, ExportResult
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import (
     AzureMonitorMetricExporter,
     _get_metric_export_result,
@@ -194,7 +194,8 @@ class TestAzureMetricExporter(unittest.TestCase):
                     enable_multi_endpoint_routing=routing, disable_offline_storage=True
                 )
                 self.addCleanup(exporter.client.close)
-                with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                self.addCleanup(exporter.shutdown)
+                with mock.patch.object(BaseExporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
                     self.assertEqual(exporter.export(data), MetricExportResult.SUCCESS)
                 transmit.assert_called_once()
                 envelopes = transmit.call_args.args[0]
@@ -230,6 +231,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         for routing in (False, True):
             exporter = AzureMonitorMetricExporter(enable_multi_endpoint_routing=routing, disable_offline_storage=True)
             self.addCleanup(exporter.client.close)
+            self.addCleanup(exporter.shutdown)
             for attributes in ([valid, *invalid, valid], invalid):
                 with self.subTest(routing=routing, attributes=attributes):
                     metric = Metric(
@@ -249,8 +251,11 @@ class TestAzureMetricExporter(unittest.TestCase):
                     data = MetricsData(
                         resource_metrics=[ResourceMetrics(resource=Resource({}), scope_metrics=[scope], schema_url="")]
                     )
-                    with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                    with mock.patch.object(BaseExporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
                         self.assertEqual(exporter.export(data), MetricExportResult.SUCCESS)
+                    if routing and not any(item == valid for item in attributes):
+                        transmit.assert_not_called()
+                        continue
                     transmit.assert_called_once()
                     envelopes = transmit.call_args.args[0]
                     expected = sum(item == valid for item in attributes) if routing else len(attributes)

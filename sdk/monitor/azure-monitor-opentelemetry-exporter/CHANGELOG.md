@@ -12,8 +12,9 @@
   ([#49648](https://github.com/Azure/azure-sdk-for-python/pull/49648))
 - Add opt-in multi-endpoint log routing with per-item instrumentation keys,
 - Add opt-in multi-endpoint log and trace routing with per-item instrumentation keys,
+- Add opt-in multi-endpoint log, trace, and metric routing with per-item instrumentation keys,
   explicit per-route authentication, and destination-isolated retry storage.
-  Span events follow their parent span's route.
+  Span events follow their parent span's route; metrics use each data point's route.
 
 ### Breaking Changes
 

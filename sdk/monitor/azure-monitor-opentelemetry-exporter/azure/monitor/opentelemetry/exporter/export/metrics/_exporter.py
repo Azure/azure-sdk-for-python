@@ -3,7 +3,7 @@
 import logging
 import os
 
-from typing import Dict, Optional, Union, Any
+from typing import Dict, List, Optional, Union, Any
 
 from opentelemetry.environment_variables import OTEL_METRICS_EXPORTER
 from opentelemetry.util.types import Attributes
@@ -46,7 +46,12 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _STATSBEAT_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._routing import _is_valid_route
+from azure.monitor.opentelemetry.exporter._routing import (
+    _get_ingestion_endpoint,
+    _get_instrumentation_key,
+    _is_aad_route,
+    _is_valid_route,
+)
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MetricDataPoint,
@@ -109,6 +114,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         :rtype: ~opentelemetry.sdk.metrics.export.MetricExportResult
         """
         envelopes = []
+        groups: Dict[tuple[str, bool], List[TelemetryItem]] = {}
         if metrics_data is None:
             return MetricExportResult.SUCCESS
         for resource_metric in metrics_data.resource_metrics:
@@ -125,10 +131,17 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                                 scope_metric.scope,
                             )
                             if envelope is not None:
-                                envelopes.append(envelope)
+                                if self._enable_multi_endpoint_routing:
+                                    key = _get_ingestion_endpoint(point.attributes), _is_aad_route(point.attributes)
+                                    groups.setdefault(key, []).append(envelope)
+                                else:
+                                    envelopes.append(envelope)
         try:
-            result = self._transmit(envelopes)
-            self._handle_transmit_from_storage(envelopes, result)
+            if self._enable_multi_endpoint_routing:
+                result = self._transmit_routed(groups)
+            else:
+                result = self._transmit(envelopes)
+                self._handle_transmit_from_storage(envelopes, result)
             return _get_metric_export_result(result)
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
@@ -154,8 +167,12 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         :param timeout_millis: The maximum amount of time to wait for shutdown. Not currently used.
         :type timeout_millis: float
         """
-        if self.storage:
-            self.storage.close()
+        try:
+            if self._enable_multi_endpoint_routing:
+                self._shutdown_route_exporters()
+        finally:
+            if self.storage:
+                self.storage.close()
 
     # pylint: disable=protected-access
     def _point_to_envelope(
@@ -189,7 +206,11 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes)  # type: ignore
         if envelope is not None:
-            envelope.instrumentation_key = self._instrumentation_key
+            envelope.instrumentation_key = (
+                _get_instrumentation_key(point.attributes)
+                if self._enable_multi_endpoint_routing
+                else self._instrumentation_key
+            )
             # Only set SentToAMW on AKS Attach
             if _utils._is_on_aks() and _utils._is_attach_enabled() and not self._is_stats_exporter():
                 if OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ and "otlp" in os.environ.get(

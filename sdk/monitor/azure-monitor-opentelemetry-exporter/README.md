@@ -153,10 +153,11 @@ ignored. Unset or empty values enable no experimental features. Unknown names ar
 The selection is shared across exporters in the same Python interpreter and cannot be changed after
 the first exporter is constructed. Experimental features may change or be removed in future releases.
 
-### Multi-endpoint log and trace routing (preview)
+### Multi-endpoint routing (preview)
 
-Set `enable_multi_endpoint_routing=True` on `AzureMonitorLogExporter` or
-`AzureMonitorTraceExporter` to route logs or spans using their
+Set `enable_multi_endpoint_routing=True` on `AzureMonitorLogExporter`,
+`AzureMonitorTraceExporter`, or `AzureMonitorMetricExporter` to route logs, spans,
+or metric data points using their
 `microsoft.instrumentation_key` and `microsoft.ingestion_endpoint`
 attributes. Both attributes are required; the endpoint must be HTTPS. Obtain
 destinations from trusted, server-owned configuration, not request headers or baggage.
@@ -168,14 +169,15 @@ Items are grouped by normalized endpoint and authentication mode. Set
 other values use key-only authentication. AAD groups without a credential fail.
 Span events follow their parent span's destination, instrumentation key, and
 authentication mode, not routing attributes on the events themselves.
-Cloud-role tags continue to come from the log record's or span's resource.
+Metrics use routing attributes on each data point, not the resource or
+instrumentation scope. Points without valid routing attributes are dropped.
+Cloud-role tags continue to come from the telemetry's resource.
 
 Retry storage is separate from the host storage, partitioned by endpoint and
 authentication mode, and shares the configured storage capacity across routed
 partitions. Pending items are retried after a subsequent successful send to the
 same endpoint/authentication group, preserving their original instrumentation keys.
-This dispatch path currently supports logs and traces; metric dispatch will
-be added separately. The option defaults to `False`.
+The option defaults to `False`.
 
 ## Examples
 
