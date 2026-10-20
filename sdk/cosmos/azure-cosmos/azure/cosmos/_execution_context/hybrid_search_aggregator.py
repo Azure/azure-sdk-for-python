@@ -84,11 +84,17 @@ def _get_document_rid(rid):
 
 
 def _rank_results(drained_results, hybrid_search_query_info, use_competition_ranking=False):
+    # Use the query-plan weights, defaulting to equal contributions from all components.
     component_query_infos = hybrid_search_query_info['componentQueryInfos']
     component_weights = hybrid_search_query_info.get('componentWeights') or [1.0] * len(component_query_infos)
+
     # Parse once per result, retaining the full RID for identity and deduplication.
     document_rids = {result['_rid']: _get_document_rid(result['_rid']) for result in drained_results}
+
+    # Build (score, result index) lists so component ranks map back to the original results.
     component_scores = _retrieve_component_scores(drained_results)
+
+    # Sort each component by score, breaking ties by numeric RID in the same direction.
     for index, score_tuples in enumerate(component_scores):
         # Query-plan directions already account for normalized negative weights.
         ordering = component_query_infos[index].get('orderBy') or ['Descending']
@@ -97,8 +103,13 @@ def _rank_results(drained_results, hybrid_search_query_info, use_competition_ran
             reverse=ordering[0].lower() != 'ascending',
         )
 
+    # Assign ordinal ranks by default, or competition ranks that share ranks for tied scores.
     ranks = _compute_ranks(component_scores, use_competition_ranking)
+
+    # Combine weighted component contributions into each result's RRF score.
     _compute_rrf_scores(ranks, component_weights, drained_results)
+
+    # Return highest fused scores first, breaking final ties by numeric RID descending.
     drained_results.sort(key=lambda result: (result['Score'], document_rids[result['_rid']]), reverse=True)
 
 
