@@ -872,6 +872,7 @@ async def test_rollback_defers_queued_input_after_current_turn_returns_normally(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("repeat_override", [False, True], ids=["omitted-override", "repeated-override"])
 @pytest.mark.parametrize("new_restore", [False, True], ids=["same-restore", "new-restore"])
 @pytest.mark.parametrize(
     ("failure", "failures", "retry_mode"),
@@ -892,8 +893,12 @@ async def test_restore_retries_pending_cleanup_without_losing_queued_inputs(
     failures: int,
     retry_mode: str,
     new_restore: bool,
+    repeat_override: bool,
 ) -> None:
     monkeypatch.setenv("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", "0.2")
+    captured_endpoint = "https://captured.example.invalid/project"
+    failed_endpoint = "https://failed.example.invalid/project"
+    monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", captured_endpoint)
     provider, factory = provider_factory
     running, queued, finish, drain_cancelled = (asyncio.Event() for _ in range(4))
     observed: list[Any] = []
@@ -909,7 +914,12 @@ async def test_restore_retries_pending_cleanup_without_losing_queued_inputs(
     @app.after_restore_handler
     async def dependencies(context: AgentSessionContext) -> None:
         callbacks.append(context.restore_id)
-        assert app._task_manager is None
+        endpoint = (
+            failed_endpoint if len(callbacks) == 1 or (len(callbacks) == 2 and repeat_override) else captured_endpoint
+        )
+        assert os.environ["FOUNDRY_PROJECT_ENDPOINT"] == app.config.project_endpoint == endpoint
+        if len(callbacks) < 3:
+            assert app._task_manager is None
 
     @multi_turn_task(name="retry_cleanup", steerable=True)
     async def existing(ctx: TaskContext[dict[str, str]]) -> str:
@@ -984,6 +994,10 @@ async def test_restore_retries_pending_cleanup_without_losing_queued_inputs(
     retry_payload = payload(restore_id="restore-2" if new_restore else "restore-1")
     if new_restore:
         retry_payload["session_context"]["session_env_overrides"]["FOUNDRY_AGENT_SESSION_GUID"] = "b" * 32
+    if repeat_override:
+        retry_payload["session_context"]["session_env_overrides"]["FOUNDRY_PROJECT_ENDPOINT"] = failed_endpoint
+    first_payload = payload()
+    first_payload["session_context"]["session_env_overrides"]["FOUNDRY_PROJECT_ENDPOINT"] = failed_endpoint
     async with (
         app.router.lifespan_context(app),
         httpx.AsyncClient(
@@ -991,15 +1005,20 @@ async def test_restore_retries_pending_cleanup_without_losing_queued_inputs(
         ) as http,
     ):
         try:
-            assert (await http.post("/_agent/after-restore", json=payload())).status_code == 500
+            assert (await http.post("/_agent/after-restore", json=first_payload)).status_code == 500
             stopped = app._task_manager
             assert stopped is not None and stopped._shutdown_event.is_set()
             assert stopped._pending_shutdown_tasks
+            rollback = app._lifecycle.pending_rollback
+            assert rollback is not None
+            assert rollback.environment["FOUNDRY_PROJECT_ENDPOINT"] == captured_endpoint
+            assert rollback.config["project_endpoint"] == captured_endpoint
             assert drain_cancelled.is_set()
             assert not queued.is_set()
             for _ in range(failures - 1):
                 assert (await http.post("/_agent/after-restore", json=retry_payload)).status_code == 500
                 assert app._task_manager is get_task_manager() is stopped
+                assert app._lifecycle.pending_rollback is rollback
                 assert callbacks == ["restore-1"]
             if retry_mode == "shutdown":
                 await app._shutdown_task_manager()
@@ -1015,12 +1034,15 @@ async def test_restore_retries_pending_cleanup_without_losing_queued_inputs(
                 with pytest.raises(asyncio.CancelledError):
                     await asyncio.wait_for(cleanup_request, 2)
                 block_reconciliation = False
+                assert os.environ["FOUNDRY_PROJECT_ENDPOINT"] == app.config.project_endpoint == captured_endpoint
+                assert app._lifecycle.pending_rollback is None
             if retry_mode != "restore":
                 assert app._task_manager is None
                 assert not stopped._has_live_workers
                 assert callbacks == ["restore-1"]
             response = await http.post("/_agent/after-restore", json=retry_payload)
             assert response.status_code == 200, response.text
+            assert app._lifecycle.pending_rollback is None
             await asyncio.wait_for(queued.wait(), 2)
             assert remaining_failures == 0
             assert get_task_manager() is app._task_manager is not stopped
@@ -1036,6 +1058,17 @@ async def test_restore_retries_pending_cleanup_without_losing_queued_inputs(
             assert len(callbacks) == 2
             assert len(observed) == 2
             assert scans == 2
+            assert factory.call_count == 2
+            later_payload = payload(restore_id="restore-3")
+            later_payload["session_context"]["session_env_overrides"][
+                "FOUNDRY_AGENT_SESSION_GUID"
+            ] = app.config.session_guid
+            later_response = await http.post("/_agent/after-restore", json=later_payload)
+            assert later_response.status_code == 200, later_response.text
+            assert os.environ["FOUNDRY_PROJECT_ENDPOINT"] == app.config.project_endpoint == captured_endpoint
+            assert len(callbacks) == 3
+            assert len(observed) == 2
+            assert scans == 3
             assert factory.call_count == 2
         finally:
             release_cleanup.set()
