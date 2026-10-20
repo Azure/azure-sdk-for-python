@@ -152,6 +152,7 @@ The client exposes a `begin_deidentify_documents` method that returns a [LROPoll
 <!-- SNIPPET: deidentify_documents.sample -->
 
 ```python
+from azure.core.exceptions import HttpResponseError
 from azure.health.deidentification import DeidentificationClient
 from azure.health.deidentification.models import (
     DeidentificationJob,
@@ -183,7 +184,13 @@ job = DeidentificationJob(
     target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix, overwrite=True),
 )
 
-finished_job: DeidentificationJob = client.begin_deidentify_documents(jobname, job).result(timeout=120)
+try:
+    finished_job: DeidentificationJob = client.begin_deidentify_documents(jobname, job).result(timeout=120)
+except HttpResponseError:
+    # A failed or canceled job surfaces as a generic polling error; the job's own error explains why.
+    failed_job = client.get_job(jobname)
+    print(f"Job {jobname} ended with status {failed_job.status}: {failed_job.error}")
+    raise
 
 print(f"Job Name:   {finished_job.job_name}")
 print(f"Job Status: {finished_job.status}")
