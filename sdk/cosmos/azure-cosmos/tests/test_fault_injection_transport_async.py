@@ -27,6 +27,10 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError
 from _client_transport import create_client_with_transport
 
+pytestmark = pytest.mark.skip(
+    reason="Legacy Python fault-injection suite is disabled; targeted Rust-path coverage runs separately."
+)
+
 MGMT_TIMEOUT = 5.0
 logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)

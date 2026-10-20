@@ -243,17 +243,20 @@ class sphinx(Check):
 
             self.install_dev_reqs(executable, args, package_dir)
 
-            create_package_and_install(
+            install_wheel = bool(parsed.ext_modules) or parsed.uses_cibuildwheel
+            package_options = dict(
                 distribution_directory=staging_directory,
                 target_setup=package_dir,
-                skip_install=False,
                 cache_dir=None,
                 work_dir=staging_directory,
                 force_create=False,
-                package_type="sdist",
                 pre_download_disabled=False,
                 python_executable=executable,
             )
+            # Keep source documentation without recompiling a native package during installation.
+            create_package_and_install(package_type="sdist", skip_install=install_wheel, **package_options)
+            if install_wheel:
+                create_package_and_install(package_type="wheel", skip_install=False, **package_options)
 
             # install sphinx
             try:

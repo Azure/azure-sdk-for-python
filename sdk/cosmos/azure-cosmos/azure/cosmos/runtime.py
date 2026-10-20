@@ -39,6 +39,25 @@ class ConnectionPoolOptions:
     max_idle_connections_per_endpoint: Optional[int] = None
     proxy_allowed: Optional[bool] = None
 
+    # APIView needs constructor source to distinguish keyword-only parameters.
+    def __init__(
+        self,
+        *,
+        connection_timeout: Optional[float] = None,
+        data_http_request_timeout: Optional[float] = None,
+        metadata_http_request_timeout: Optional[float] = None,
+        idle_connection_timeout: Optional[float] = None,
+        max_idle_connections_per_endpoint: Optional[int] = None,
+        proxy_allowed: Optional[bool] = None,
+    ) -> None:
+        object.__setattr__(self, "connection_timeout", connection_timeout)
+        object.__setattr__(self, "data_http_request_timeout", data_http_request_timeout)
+        object.__setattr__(self, "metadata_http_request_timeout", metadata_http_request_timeout)
+        object.__setattr__(self, "idle_connection_timeout", idle_connection_timeout)
+        object.__setattr__(self, "max_idle_connections_per_endpoint", max_idle_connections_per_endpoint)
+        object.__setattr__(self, "proxy_allowed", proxy_allowed)
+        self.__post_init__()
+
     def __post_init__(self) -> None:
         for name, minimum, maximum in (
             ("connection_timeout", 0.1, 6),

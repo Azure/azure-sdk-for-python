@@ -58,7 +58,7 @@ impl From<QueryTarget> for ReadAllItemsExecution {
 /// page timeout covers metadata resolution and execution together.
 pub(crate) fn run_query_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,
@@ -93,7 +93,7 @@ pub(crate) fn run_query_operation<'py>(
 /// Async sibling of `run_query_operation`.
 pub(crate) fn run_query_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,
@@ -129,7 +129,7 @@ pub(crate) fn run_query_operation_async<'py>(
 /// Typed `BindingPartitionKey` selects a full-container query or partition read-feed.
 pub(crate) fn run_read_all_items_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,
@@ -162,7 +162,7 @@ pub(crate) fn run_read_all_items_operation<'py>(
 /// Async sibling of `run_read_all_items_operation`.
 pub(crate) fn run_read_all_items_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,

@@ -42,6 +42,34 @@ def point(**kwargs):
     )
 
 
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("item_id", [None, "different-name"])
+def test_delete_native_self_link_precedes_item_id_rust(asynchronous, item_id):
+    from azure.cosmos import _rust
+
+    prepared = replace(
+        point(),
+        op="delete_item",
+        item_id=item_id,
+        item_self_link="dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
+    )
+    function = _rust.delete_item_async if asynchronous else _rust.delete_item
+    # Target validation succeeds before the invalid owning-handle argument fails.
+    with pytest.raises(TypeError, match="_DriverHandle"):
+        function("not-an-owning-handle", prepared)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("link", ["", "dbs/db/colls/c", "dbs/db/colls/c/docs/"])
+def test_delete_native_rejects_malformed_self_link_before_driver_lookup_rust(asynchronous, link):
+    from azure.cosmos import _rust
+
+    prepared = replace(point(), op="delete_item", item_self_link=link)
+    function = _rust.delete_item_async if asynchronous else _rust.delete_item
+    with pytest.raises(ValueError, match="target _self"):
+        function("not-an-owning-handle", prepared)
+
+
 @pytest.mark.parametrize("factory", [point, lambda **kw: PreparedPageRequest(
     op="query_items", container_link="dbs/bank/colls/accounts", query="SELECT * FROM c", **kw
 )])
@@ -214,11 +242,11 @@ def test_mutating_source_while_async_dispatch_waits_does_not_change_request_rust
     asyncio.run(run())
 
 
-def test_real_native_reader_accepts_snapshot_before_driver_lookup_rust():
+def test_real_native_reader_accepts_snapshot_before_driver_handle_validation_rust():
     from azure.cosmos import _rust
 
-    with pytest.raises(RuntimeError, match="no driver registered"):
-        _rust.read_item("unregistered-stability-test", point(headers={"x-test": "True"}))
+    with pytest.raises(TypeError, match="_DriverHandle"):
+        _rust.read_item(None, point(headers={"x-test": "True"}))
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
@@ -238,8 +266,8 @@ def test_retained_native_reader_copies_body_without_python_iteration_rust(async_
         _rust.fetch_page_with_cursor_async if async_mode
         else _rust.fetch_page_with_cursor
     )
-    with pytest.raises(RuntimeError, match="no driver registered"):
-        dispatch("unregistered-stability-test", sync_page(page), cursor)
+    with pytest.raises(TypeError, match="_DriverHandle"):
+        dispatch(None, sync_page(page), cursor)
 
 
 @pytest.fixture

@@ -73,6 +73,7 @@ def _make_backend(
     *,
     rust_backend_type: Callable[..., _BackendT],
     legacy_backend: _LegacyBackendT,
+    allow_async_credential: bool = False,
     url: Optional[str] = None,
     credential: Any = None,
     runtime: Optional[CosmosRuntime] = None,
@@ -102,9 +103,8 @@ def _make_backend(
             raise ValueError(
                 "The Rust binding requires the account endpoint URL."
             )
-        # Release the async credential bridge if later validation or construction
-        # fails. Its thread may not have started, but it already holds the credential.
-        with resolved_credential(credential) as (master_key, token_credential):
+        # Async adapters bind caller-owned credentials to their loop on first use.
+        with resolved_credential(credential, allow_async=allow_async_credential) as (master_key, token_credential):
             return rust_backend_type(
                 endpoint=url,
                 master_key=master_key,

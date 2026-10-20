@@ -10,6 +10,7 @@ from .package_utils import (
     modify_file,
 )
 from .sdk_changelog import get_changelog_content, is_valid_changelog_content, is_arm_sdk, log_failed_message
+from ci_tools.versioning.version_shared import synchronized_version_update
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -97,6 +98,24 @@ def main(
     release_type: Optional[str] = None,
     version: Optional[str] = None,
     release_date: Optional[str] = None,
+    package_result: Optional[dict] = None,
+):
+    with synchronized_version_update(package_path):
+        return _update_version(
+            package_path,
+            release_type=release_type,
+            version=version,
+            release_date=release_date,
+            package_result=package_result if package_result is not None else {},
+        )
+
+
+def _update_version(
+    package_path: Path,
+    *,
+    release_type: Optional[str] = None,
+    version: Optional[str] = None,
+    release_date: Optional[str] = None,
     package_result: dict = {},
 ):
     package_name = package_path.name
@@ -177,8 +196,9 @@ def main(
         version_line = f"## {version} ({release_date})\n"
         first_version_index = -1
         for i in range(0, len(content)):
-            if re.match(r"^## \d+\.\d+\.\d+(b\d+)?", content[i]):
-                content[i] = version_line
+            heading = re.match(r"^(#{2,3}) \d+\.\d+\.\d+(b\d+)?", content[i])
+            if heading:
+                content[i] = f"{heading.group(1)} {version} ({release_date})\n"
                 unchanged = False
                 first_version_index = i
                 _LOGGER.info(f"Updated version line in CHANGELOG.md to: {version_line.strip()}")
@@ -189,7 +209,7 @@ def main(
         # This handles re-generation where the same changelog content is inserted again.
         if first_version_index >= 0:
             # Capture the version token from each version header (e.g., "1.2.3" or "1.2.3b1").
-            version_pattern = re.compile(r"^## (?P<ver>\d+\.\d+\.\d+(b\d+)?)")
+            version_pattern = re.compile(r"^#{2,3} (?P<ver>\d+\.\d+\.\d+(b\d+)?)")
             duplicate_start = -1
             for j in range(first_version_index + 1, len(content)):
                 match = version_pattern.match(content[j])

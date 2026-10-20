@@ -312,9 +312,8 @@ def test_native_driver_handle_exports_and_keyword_contract_rust(runtime_kwargs):
     request. Omitting the runtime or explicitly passing None selects the default
     runtime contract without bypassing that credential check.
 
-    Releasing a handle nobody knows succeeds quietly. Cleanup runs while things
-    are already going wrong, so it must not raise over a handle that is already
-    gone.
+    Release requires an owning handle, not an arbitrary string. Idempotent
+    release of real acquisitions is covered by the native ownership tests.
     """
     native = pytest.importorskip("azure.cosmos._rust")
     assert not hasattr(native, "init_client")
@@ -329,4 +328,5 @@ def test_native_driver_handle_exports_and_keyword_contract_rust(runtime_kwargs):
             endpoint="https://unused.invalid", master_key=None, config=None, credential=None,
             **runtime_kwargs,
         )
-    assert native.release_driver_handle(driver_handle="unused-protocol-test-handle") is None
+    with pytest.raises(TypeError, match="_DriverHandle"):
+        native.release_driver_handle(driver_handle="unused-protocol-test-handle")

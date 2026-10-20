@@ -184,6 +184,28 @@ class TestContainerDeleteItemBackendRouting(unittest.TestCase):
     """When a Rust backend is set, it handles the delete and the existing
     client is not used."""
 
+    def test_mapping_preserves_self_link_even_without_item_id_rust(self):
+        for include_id in (False, True):
+            with self.subTest(include_id=include_id):
+                proxy, cc, _ = _make_proxy_with_mock_connection()
+                backend = _CapturingBackend()
+                proxy._item_context = ItemClientContext(backend)
+                target = {"_self": "dbs/old-db/colls/old-container/docs/old-item/"}
+                if include_id:
+                    target["id"] = "same-id"
+                self.assertIsNone(proxy.delete_item(target, "a"))
+                self.assertEqual(backend.prepared.item_self_link, target["_self"])
+                self.assertIsNone(backend.prepared.item_id)
+                cc.DeleteItem.assert_not_called()
+
+    def test_non_string_self_link_fails_before_dispatch_rust(self):
+        proxy, _, _ = _make_proxy_with_mock_connection()
+        backend = _CapturingBackend()
+        proxy._item_context = ItemClientContext(backend)
+        with self.assertRaisesRegex(TypeError, "target _self must be a string"):
+            proxy.delete_item({"id": "same-id", "_self": None}, "a")
+        self.assertFalse(backend.executed)
+
     def test_delete_routes_to_backend_with_item_id_rust(self):
         """A delete goes to the Rust backend with the item id; the
         existing client is not called and the call returns nothing."""

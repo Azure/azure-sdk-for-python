@@ -2,20 +2,29 @@
 # Licensed under the MIT License.
 """Original stale-container throughput assertions with test-owned resources."""
 
+from contextlib import ExitStack
 from copy import deepcopy
 import os
 import unittest
 import uuid
 
+import pytest
+
+from common.throughput_fixtures import owned_database
+
 from azure.cosmos import CosmosClient, PartitionKey
 
 
+@pytest.mark.cosmosEmulator
 class TestContainerPropertiesCache(unittest.TestCase):
     def setUp(self):
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
         self.addCleanup(self.client.close)
-        self.database = self.client.create_database("throughput_recreate_" + uuid.uuid4().hex)
-        self.addCleanup(self.client.delete_database, self.database.id)
+        cleanup = ExitStack()
+        self.addCleanup(cleanup.close)
+        self.database = cleanup.enter_context(owned_database(
+            self.client, "throughput_recreate_" + uuid.uuid4().hex,
+        ))
 
     def _check_recreation(self, old_paths, new_paths):
         container_name = "orders"

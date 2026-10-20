@@ -35,7 +35,7 @@ use super::response::{
 /// Create a container and convert the response for synchronous Python code.
 pub(crate) fn run_create_container_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     body_bytes: Vec<u8>,
@@ -70,7 +70,7 @@ pub(crate) fn run_create_container_operation<'py>(
 /// Create a container and return a Python awaitable.
 pub(crate) fn run_create_container_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     body_bytes: Vec<u8>,
@@ -105,7 +105,7 @@ pub(crate) fn run_create_container_operation_async<'py>(
 /// Read a container and convert the response for synchronous Python code.
 pub(crate) fn run_read_container_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
@@ -140,7 +140,7 @@ pub(crate) fn run_read_container_operation<'py>(
 /// Read a container and return a Python awaitable.
 pub(crate) fn run_read_container_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
@@ -175,7 +175,7 @@ pub(crate) fn run_read_container_operation_async<'py>(
 /// Delete a container and convert the response for synchronous Python code.
 pub(crate) fn run_delete_container_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
@@ -198,7 +198,7 @@ pub(crate) fn run_delete_container_operation<'py>(
 /// Delete a container and return a Python awaitable.
 pub(crate) fn run_delete_container_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
@@ -221,7 +221,7 @@ pub(crate) fn run_delete_container_operation_async<'py>(
 /// Replace a container and convert its response for synchronous Python code.
 pub(crate) fn run_replace_container_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
@@ -247,7 +247,7 @@ pub(crate) fn run_replace_container_operation<'py>(
 /// Replace a container and return a Python awaitable.
 pub(crate) fn run_replace_container_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
@@ -273,7 +273,7 @@ pub(crate) fn run_replace_container_operation_async<'py>(
 /// Read one page of containers and convert it for synchronous Python code.
 pub(crate) fn run_list_containers_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
@@ -297,7 +297,7 @@ pub(crate) fn run_list_containers_operation<'py>(
 /// Read one page of containers and return a Python awaitable.
 pub(crate) fn run_list_containers_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
@@ -321,7 +321,7 @@ pub(crate) fn run_list_containers_operation_async<'py>(
 /// Run one page of a container query for synchronous Python code.
 pub(crate) fn run_query_containers_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     body_bytes: Vec<u8>,
@@ -346,7 +346,7 @@ pub(crate) fn run_query_containers_operation<'py>(
 /// Run one page of a container query and return a Python awaitable.
 pub(crate) fn run_query_containers_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     body_bytes: Vec<u8>,
@@ -449,16 +449,13 @@ fn with_container_timeout<T>(
 }
 
 /// Ask the Rust driver to resolve metadata; one timeout covers lookup and deletion.
-async fn run_delete_container_future(
+fn run_delete_container_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
-) -> Result<CosmosResponse, CosmosError> {
-    let timeout = modifiers
-        .driver_timeout_policy
-        .as_ref()
-        .map(|policy| policy.timeout());
+) -> impl Future<Output = Result<CosmosResponse, CosmosError>> {
+    let timeout = container_operation_timeout(&modifiers);
     let resolution_options = container_resolution_options(&modifiers);
     with_container_timeout(
         timeout,
@@ -475,7 +472,6 @@ async fn run_delete_container_future(
             driver.execute_singleton_operation(op, options).await
         },
     )
-    .await
 }
 
 /// One timeout covers metadata lookup and PUT; only PUT receives the replacement conditions.
@@ -486,7 +482,7 @@ fn run_replace_container_future(
     container_id: String,
     body_bytes: Vec<u8>,
 ) -> impl Future<Output = Result<CosmosResponse, CosmosError>> {
-    let timeout = replacement_timeout(&modifiers);
+    let timeout = container_operation_timeout(&modifiers);
     let resolution_options = container_resolution_options(&modifiers);
     with_container_timeout(
         timeout,
@@ -505,7 +501,7 @@ fn run_replace_container_future(
     )
 }
 
-fn replacement_timeout(modifiers: &RequestHeadersAndOptions) -> Option<Duration> {
+fn container_operation_timeout(modifiers: &RequestHeadersAndOptions) -> Option<Duration> {
     let configured = modifiers
         .driver_timeout_policy
         .as_ref()
@@ -586,7 +582,7 @@ mod tests {
     }
 
     #[test]
-    fn replacement_uses_remaining_budget_without_rounding_or_extension() {
+    fn container_mutation_uses_remaining_budget_without_rounding_or_extension() {
         let mut modifiers = RequestHeadersAndOptions {
             activity_header: None,
             session_header: None,
@@ -599,19 +595,28 @@ mod tests {
             patch_strategy: None,
             custom_headers: Default::default(),
         };
-        assert_eq!(replacement_timeout(&modifiers), None);
+        assert_eq!(container_operation_timeout(&modifiers), None);
         modifiers.driver_timeout_policy =
             Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(2)));
-        assert_eq!(replacement_timeout(&modifiers), Some(Duration::from_secs(2)));
+        assert_eq!(
+            container_operation_timeout(&modifiers),
+            Some(Duration::from_secs(2))
+        );
         modifiers.operation_timeout = Some(Duration::from_millis(125));
         assert_eq!(
-            replacement_timeout(&modifiers),
+            container_operation_timeout(&modifiers),
             Some(Duration::from_millis(125))
         );
         modifiers.operation_timeout = Some(Duration::from_secs(3));
-        assert_eq!(replacement_timeout(&modifiers), Some(Duration::from_secs(2)));
+        assert_eq!(
+            container_operation_timeout(&modifiers),
+            Some(Duration::from_secs(2))
+        );
         modifiers.driver_timeout_policy = None;
-        assert_eq!(replacement_timeout(&modifiers), Some(Duration::from_secs(3)));
+        assert_eq!(
+            container_operation_timeout(&modifiers),
+            Some(Duration::from_secs(3))
+        );
     }
 
     #[tokio::test(start_paused = true)]

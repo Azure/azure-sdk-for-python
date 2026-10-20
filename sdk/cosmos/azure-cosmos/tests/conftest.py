@@ -17,6 +17,41 @@ cosmos_sync_client = None
 _live_resources_initialized = False
 
 
+@pytest.fixture
+def credential_owner_loop():
+    """Provide a caller-owned running loop for blocking bridge unit tests."""
+    import asyncio
+    import threading
+
+    loop = asyncio.new_event_loop()
+    started = threading.Event()
+
+    def run():
+        asyncio.set_event_loop(loop)
+        loop.call_soon(started.set)
+        try:
+            loop.run_forever()
+        finally:
+            pending = asyncio.all_tasks(loop)
+            for task in pending:
+                task.cancel()
+            loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+            loop.run_until_complete(loop.shutdown_asyncgens())
+            asyncio.set_event_loop(None)
+            loop.close()
+
+    thread = threading.Thread(target=run, name="test-credential-owner", daemon=True)
+    thread.start()
+    try:
+        assert started.wait(5), "credential owner loop did not start"
+        yield loop
+    finally:
+        if loop.is_running():
+            loop.call_soon_threadsafe(loop.stop)
+        thread.join(5)
+        assert not thread.is_alive(), "credential owner loop did not stop"
+
+
 def _get_setup_client():
     """Build the shared setup client the first time something actually needs it.
 

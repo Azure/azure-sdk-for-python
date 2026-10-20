@@ -241,21 +241,10 @@ def test_native_registry_binding_uses_driver_handle_parameter_rust(method):
 
 
 def test_native_close_accepts_driver_handle_keyword_rust():
-    """Releasing a driver takes the agreed name, ignores one it never registered, and
-    refuses the old name.
-
-    The test above only reads signatures. This one actually calls, because a signature can
-    say one thing while the code behind it expects another.
-
-    Releasing something unknown must quietly do nothing. Release runs during cleanup,
-    often after an error, and raising there would replace whatever went wrong originally
-    with a complaint about tidying up.
-
-    The old name must be refused outright rather than accepted and ignored, which would
-    silently leak the driver it was meant to release.
-    """
+    """The current keyword requires an owning handle, not a cache-key string."""
     binding = pytest.importorskip("azure.cosmos._rust")
-    assert binding.release_driver_handle(driver_handle="unregistered-test-driver") is None
+    with pytest.raises(TypeError, match="_DriverHandle"):
+        binding.release_driver_handle(driver_handle="unregistered-test-driver")
     with pytest.raises(TypeError):
         binding.release_driver_handle(handle="unregistered-test-driver")
 
@@ -2552,30 +2541,22 @@ def test_resolve_credential_sync_token_credential_rust():
     assert token_credential is cred
 
 
-def test_resolve_credential_async_token_credential_wrapped_rust():
-    """An async credential is accepted: it is wrapped in a bridge that
-    drives its coroutine and exposes a synchronous get_token."""
+def test_resolve_credential_async_token_credential_requires_async_client_rust():
+    """Only async clients retain async credentials; binding is deferred to first use."""
     cred = _AsyncTokenCredential()
-    master_key, token_credential = resolve_credential(cred)
+    with pytest.raises(TypeError, match="Synchronous CosmosClient"):
+        resolve_credential(cred)
+    master_key, token_credential = resolve_credential(cred, allow_async=True)
     assert master_key is None
-    assert isinstance(token_credential, AsyncTokenCredentialBridge)
-    try:
-        # The bridge runs the coroutine on its own loop thread and returns the
-        # result synchronously -- exactly what the driver's sync get_token needs.
-        assert token_credential.get_token("https://cosmos.azure.com/.default") == (
-            "token-value",
-            9999999999,
-        )
-    finally:
-        token_credential._close_cosmos_async_bridge()
+    assert token_credential is cred
 
 
-def test_resolve_credential_async_get_token_info_only_wrapped_rust():
-    """An async credential exposing only get_token_info (no get_token) is wrapped
-    too; the bridge drives get_token_info."""
+def test_resolve_credential_async_get_token_info_only_wrapped_rust(credential_owner_loop):
+    """The owner-loop bridge also supports credentials exposing only get_token_info."""
     cred = _AsyncTokenInfoCredential()
-    master_key, token_credential = resolve_credential(cred)
+    master_key, credential = resolve_credential(cred, allow_async=True)
     assert master_key is None
+    token_credential = AsyncTokenCredentialBridge.acquire(credential, loop=credential_owner_loop)
     assert isinstance(token_credential, AsyncTokenCredentialBridge)
     try:
         assert token_credential.get_token("https://cosmos.azure.com/.default") == (
@@ -2586,26 +2567,24 @@ def test_resolve_credential_async_get_token_info_only_wrapped_rust():
         token_credential._close_cosmos_async_bridge()
 
 
-def test_resolve_credential_async_context_manager_credential_wrapped_rust():
-    """The azure.identity.aio shape (async context manager + async get_token) is
-    wrapped via the async detector."""
+def test_resolve_credential_async_context_manager_credential_retained_rust():
+    """Async context-manager credentials are retained without relocating their work."""
     cred = _AsyncContextManagerCredential()
-    master_key, token_credential = resolve_credential(cred)
+    master_key, token_credential = resolve_credential(cred, allow_async=True)
     assert master_key is None
-    assert isinstance(token_credential, AsyncTokenCredentialBridge)
-    token_credential._close_cosmos_async_bridge()
+    assert token_credential is cred
 
 
-def test_async_credential_bridge_close_is_idempotent_rust():
+def test_async_credential_bridge_close_is_idempotent_rust(credential_owner_loop):
     """A directly constructed, unshared bridge tolerates repeated close calls.
 
     Close before first use is also exercised. This does not test duplicate
     releases of an acquired bridge that still has other holders.
     """
-    bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential())
-    # Close before first use: no loop thread was started, still a no-op.
+    bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential(), loop=credential_owner_loop)
+    # Closing before first use leaves the application's loop running.
     bridge._close_cosmos_async_bridge()
-    bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential())
+    bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential(), loop=credential_owner_loop)
     assert bridge.get_token("scope") == ("token-value", 9999999999)
     bridge._close_cosmos_async_bridge()
     bridge._close_cosmos_async_bridge()  # second close is a no-op
@@ -2630,16 +2609,16 @@ class _HangingAsyncCredential:
         had begun and pass without exercising anything.
         """
         self.started.set()
-        # Block until the bridge's loop is torn down and cancels this task.
+        # Wait until this request is cancelled, without stopping the owner loop.
         await asyncio.Event().wait()
         return ("never", 0)  # pragma: no cover - unreachable
 
 
-def test_async_credential_bridge_close_unblocks_in_flight_get_token_rust():
+def test_async_credential_bridge_close_unblocks_in_flight_get_token_rust(credential_owner_loop):
     """Closing the bridge while a get_token is waiting must release the caller,
     not hang it forever."""
     cred = _HangingAsyncCredential()
-    bridge = AsyncTokenCredentialBridge(cred)
+    bridge = AsyncTokenCredentialBridge(cred, loop=credential_owner_loop)
     result: list = []
 
     def _call():
@@ -2661,12 +2640,12 @@ def test_async_credential_bridge_close_unblocks_in_flight_get_token_rust():
     assert "closed" in result[0][2].lower()
 
 
-def test_async_credential_bridge_token_timeout_bounds_the_wait_rust():
+def test_async_credential_bridge_token_timeout_bounds_the_wait_rust(credential_owner_loop):
     """A finite token_timeout caps the wait and raises TimeoutError instead of
     blocking forever on a hung credential."""
 
     cred = _HangingAsyncCredential()
-    bridge = AsyncTokenCredentialBridge(cred, token_timeout=0.5)
+    bridge = AsyncTokenCredentialBridge(cred, token_timeout=0.5, loop=credential_owner_loop)
     try:
         start = time.monotonic()
         with pytest.raises(concurrent.futures.TimeoutError):
@@ -2676,13 +2655,13 @@ def test_async_credential_bridge_token_timeout_bounds_the_wait_rust():
         bridge._close_cosmos_async_bridge()
 
 
-def test_async_credential_bridge_rejects_call_from_loop_thread_rust():
-    """Calling get_token from the bridge's own background thread must raise instead of
+def test_async_credential_bridge_rejects_call_from_loop_thread_rust(credential_owner_loop):
+    """Calling get_token from the application's loop thread must raise instead of
     deadlocking."""
     cred = _AsyncTokenCredential()
-    bridge = AsyncTokenCredentialBridge(cred)
+    bridge = AsyncTokenCredentialBridge(cred, loop=credential_owner_loop)
     try:
-        # Prime the background thread.
+        # A worker-thread wait can obtain a token from the owner loop.
         assert bridge.get_token("scope") == ("token-value", 9999999999)
         outcome: list = []
 
@@ -2693,7 +2672,7 @@ def test_async_credential_bridge_rejects_call_from_loop_thread_rust():
             except Exception as exc:  # noqa: BLE001
                 outcome.append(("error", exc))
 
-        # Schedule the re-entrant call on the bridge's own background thread.
+        # Schedule the re-entrant call on the application's loop thread.
         bridge._loop.call_soon_threadsafe(_reenter)
         # Give the background thread a moment to run the callback.
         for _ in range(50):
@@ -2721,12 +2700,12 @@ class _SlowAsyncCredential:
         return ("token-value", 9999999999)
 
 
-def test_async_credential_bridge_dedups_same_credential_with_refcount_rust():
+def test_async_credential_bridge_dedups_same_credential_with_refcount_rust(credential_owner_loop):
     """The same async credential reused across clients yields one shared bridge,
-    refcounted so only the last close tears the loop down."""
+    refcounted so only the last close releases the bridge, not the loop."""
     cred = _AsyncTokenCredential()
-    _, b1 = resolve_credential(cred)
-    _, b2 = resolve_credential(cred)
+    b1 = AsyncTokenCredentialBridge.acquire(cred, loop=credential_owner_loop)
+    b2 = AsyncTokenCredentialBridge.acquire(cred, loop=credential_owner_loop)
     assert b1 is b2, "same credential should map to the same bridge"
     assert b1._refcount == 2
     try:
@@ -2736,11 +2715,12 @@ def test_async_credential_bridge_dedups_same_credential_with_refcount_rust():
         assert b1._refcount == 1
         assert b1._loop is not None
         assert b1.get_token("scope") == ("token-value", 9999999999)
-        # Last close: now the loop is torn down.
+        # Last close releases the bridge, not the application's loop.
         b2._close_cosmos_async_bridge()
-        assert b2._loop is None
+        assert b2._closed
+        assert credential_owner_loop.is_running()
         # A fresh acquire after teardown builds a new bridge, not the closed one.
-        _, b3 = resolve_credential(cred)
+        b3 = AsyncTokenCredentialBridge.acquire(cred, loop=credential_owner_loop)
         assert b3 is not b1
         b3._close_cosmos_async_bridge()
     finally:
@@ -2748,12 +2728,12 @@ def test_async_credential_bridge_dedups_same_credential_with_refcount_rust():
         b1._close_cosmos_async_bridge()
 
 
-def test_async_credential_bridge_distinct_credentials_get_distinct_bridges_rust():
+def test_async_credential_bridge_distinct_credentials_get_distinct_bridges_rust(credential_owner_loop):
     """Two credential objects produce distinct Python bridges; no drivers are built."""
     c1 = _AsyncTokenCredential()
     c2 = _AsyncTokenCredential()
-    _, b1 = resolve_credential(c1)
-    _, b2 = resolve_credential(c2)
+    b1 = AsyncTokenCredentialBridge.acquire(c1, loop=credential_owner_loop)
+    b2 = AsyncTokenCredentialBridge.acquire(c2, loop=credential_owner_loop)
     try:
         assert b1 is not b2
     finally:
@@ -2761,11 +2741,11 @@ def test_async_credential_bridge_distinct_credentials_get_distinct_bridges_rust(
         b2._close_cosmos_async_bridge()
 
 
-def test_async_credential_bridge_concurrent_get_token_and_close_race_rust():
+def test_async_credential_bridge_concurrent_get_token_and_close_race_rust(credential_owner_loop):
     """Many threads calling get_token while another closes must all finish; calls
     after the close fail cleanly instead of hanging."""
     cred = _SlowAsyncCredential()
-    bridge = AsyncTokenCredentialBridge(cred)
+    bridge = AsyncTokenCredentialBridge(cred, loop=credential_owner_loop)
     stop = threading.Event()
     successes: list = []
     outcomes: list = []
@@ -2795,21 +2775,11 @@ def test_async_credential_bridge_concurrent_get_token_and_close_race_rust():
     assert len(outcomes) == len(threads)
 
 
-def test_async_credential_bridge_join_timeout_is_configurable_rust(monkeypatch):
-    """The loop-thread join timeout honors the env var, and a constructor arg wins."""
-    monkeypatch.setenv("COSMOS_ASYNC_CREDENTIAL_CLOSE_TIMEOUT", "0.25")
-    b = AsyncTokenCredentialBridge(_AsyncTokenCredential())
-    assert b._join_timeout == 0.25
-    b._close_cosmos_async_bridge()
-    # Explicit constructor value overrides the env var.
-    b2 = AsyncTokenCredentialBridge(_AsyncTokenCredential(), join_timeout=1.5)
-    assert b2._join_timeout == 1.5
-    b2._close_cosmos_async_bridge()
-    # A bad env value falls back to the 5s default.
-    monkeypatch.setenv("COSMOS_ASYNC_CREDENTIAL_CLOSE_TIMEOUT", "not-a-number")
-    b3 = AsyncTokenCredentialBridge(_AsyncTokenCredential())
-    assert b3._join_timeout == 5.0
-    b3._close_cosmos_async_bridge()
+def test_async_credential_bridge_close_does_not_own_the_loop_rust(credential_owner_loop):
+    bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential(), loop=credential_owner_loop)
+    bridge._close_cosmos_async_bridge()
+    assert credential_owner_loop.is_running()
+    assert not credential_owner_loop.is_closed()
 
 
 def test_resolve_credential_sync_credential_not_misclassified_rust():
@@ -2874,25 +2844,20 @@ def test_async_make_backend_carries_sync_token_credential_rust(monkeypatch):
     assert backend._token_credential is cred
 
 
-def test_make_backend_wraps_async_token_credential_rust(monkeypatch):
-    """The factory stores a bridge and no master key for an async credential.
-
-    Constructing the backend does not prove that the credential can authenticate.
-    """
+def test_make_backend_rejects_async_token_credential_rust(monkeypatch):
+    """The synchronous factory cannot relocate async credentials to another loop."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     cred = _AsyncTokenCredential()
-    backend = make_backend(
-        BACKEND_NAME_RUST,
-        url="https://x.documents.azure.com",
-        credential=cred,
-    )
-    assert isinstance(backend, BindingAdapter)
-    assert backend._master_key is None
-    assert isinstance(backend._token_credential, AsyncTokenCredentialBridge)
+    with pytest.raises(TypeError, match="Synchronous CosmosClient"):
+        make_backend(
+            BACKEND_NAME_RUST,
+            url="https://x.documents.azure.com",
+            credential=cred,
+        )
 
 
-def test_async_make_backend_wraps_async_token_credential_rust(monkeypatch):
-    """The async factory wraps an async credential the same way."""
+def test_async_make_backend_retains_async_credential_until_first_use_rust(monkeypatch):
+    """Construction outside a running loop retains the credential without binding it."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     cred = _AsyncTokenCredential()
     backend = make_async_backend(
@@ -2902,7 +2867,7 @@ def test_async_make_backend_wraps_async_token_credential_rust(monkeypatch):
     )
     assert isinstance(backend, AsyncBindingAdapter)
     assert backend._master_key is None
-    assert isinstance(backend._token_credential, AsyncTokenCredentialBridge)
+    assert backend._token_credential is cred
 
 
 def test_rust_backend_passes_token_credential_to_acquire_driver_handle_rust(monkeypatch):
@@ -4061,20 +4026,16 @@ class _FakeAsyncCredential:
         {"preferred_locations": "West US"},
     ],
 )
-def test_failed_construction_releases_the_async_credential_bridge_rust(bad_kwargs):
-    """Invalid constructor options leave no bridge registration for this credential.
-
-    Wrapping/acquiring a bridge is lazy and need not start its loop thread.
-    This assertion inspects the registry, not native or thread cleanup.
-    """
+def test_failed_construction_does_not_acquire_an_async_credential_bridge_rust(bad_kwargs):
+    """Invalid async-client options fail before acquiring an owner-loop bridge."""
     from azure.cosmos._backend import _async_credential_bridge as bridge_module
 
     credential = _FakeAsyncCredential()
     with pytest.raises(ValueError):
-        make_backend(
+        make_async_backend(
             BACKEND_NAME_RUST,
             url="https://bridge-leak.documents.azure.com",
             credential=credential,
             **bad_kwargs,
         )
-    assert id(credential) not in bridge_module._REGISTRY
+    assert all(key[0] != id(credential) for key in bridge_module._REGISTRY)

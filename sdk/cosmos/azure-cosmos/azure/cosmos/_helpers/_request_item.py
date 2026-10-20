@@ -79,12 +79,13 @@ def build_create_item_request(
 def build_delete_item_request(
     *,
     container_link: str,
-    item_id: str,
+    item_id: Optional[str],
     partition_key_value: Any,
     container_rid: Optional[str],
     request_options: Mapping[str, Any],
+    item_self_link: Optional[str] = None,
 ) -> PreparedRequest:
-    """Build a delete using normalized options and resolved target/key metadata."""
+    """Preserve a returned resource address; otherwise delete by the explicit ID."""
     headers, settings = _build_item_headers_and_settings(request_options, container_rid)
     return PreparedRequest(
         op=OP_DELETE_ITEM,
@@ -94,6 +95,7 @@ def build_delete_item_request(
         headers=headers,
         settings=settings,
         item_id=item_id,
+        item_self_link=item_self_link,
     )
 
 

@@ -1747,7 +1747,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options = kwargs.setdefault("request_options", {})
         request_options["partitionKey"] = self._set_item_partition_key(partition_key)
         prepare_item_target(kwargs, item)
-        item_id = item if isinstance(item, str) else item["id"]
+        item_id = item if isinstance(item, str) else None
 
         return self._get_item_helper().delete_item(
             container_link=self.container_link,
@@ -2107,6 +2107,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs=kwargs,
         )
 
+    @trace_operation(binding_operation=())
     def get_latest_session_token(
             self,
             feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]],
@@ -2143,6 +2144,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         return get_latest_session_token(feed_ranges_to_session_tokens, target_feed_range)
 
+    @trace_operation(
+        binding_operation=BindingAlternatives((
+            ("read_container", "feed_range_from_partition_key"),
+            ("feed_range_from_partition_key",),
+        ))
+    )
     def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> dict[str, Any]:
         """Gets the feed range for a given partition key.
 
@@ -2159,7 +2166,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
           are present. It therefore should only be treated as an opaque value.
 
         """
-        partition_key_value = self._set_partition_key(partition_key)
+        with delegate_operation(self, "read"):
+            partition_key_value = self._set_partition_key(partition_key)
         return _feed_range_from_partition_key(
             client_connection=self.client_connection,
             container_link=self.container_link,

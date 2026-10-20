@@ -12,15 +12,11 @@ visible. Customers rely on read-back values to confirm shared capacity changes.
 """
 from __future__ import annotations
 
-import os
-import uuid
-from contextlib import ExitStack
-
 import pytest
 
-from azure.cosmos import CosmosClient, ThroughputProperties, exceptions
+from azure.cosmos import ThroughputProperties, exceptions
 from common._parity_helpers import _observed_backend_name, run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
-from common.parity_provisioning import create_owned_database
+from replace_database_throughput._fixtures import database_per_backend as database_per_backend
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding(), pytest.mark.asyncio]
 
@@ -34,46 +30,6 @@ def _normalize_throughput(throughput_properties):
         "auto_scale_max_throughput": throughput_properties.auto_scale_max_throughput,
         "auto_scale_increment_percent": throughput_properties.auto_scale_increment_percent,
     }
-
-
-@pytest.fixture
-def database_per_backend():
-    """Use separate databases for changes and one shared database for missing offers.
-
-    Neither engine can replace a missing offer, so that case can share a
-    database and compare the complete error message, including its target.
-    Setup runs on the sync client on purpose: it is only scaffolding, the call
-    under test is the async one inside each test, and a sync fixture avoids
-    holding an event loop open across the fixture boundary.
-    """
-    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
-    created = {}
-
-    def _make(offer_throughput):
-        """Create isolated targets for writes, or a shared target for rejection."""
-        backends = ("core-python",) if offer_throughput is None else ("core-python", "rust")
-        for backend_name in backends:
-            database_id = "parity_repl_db_a_{}_{}".format(
-                backend_name.replace("-", ""), uuid.uuid4().hex[:6]
-            )
-            created[backend_name] = database_id
-            create_owned_database(client, id=database_id, offer_throughput=offer_throughput)
-        if offer_throughput is None:
-            created["rust"] = created["core-python"]
-        return created
-
-    yield _make
-
-    def delete_owned_database(database_id):
-        try:
-            client.delete_database(database_id)
-        except exceptions.CosmosResourceNotFoundError:
-            pass
-
-    with ExitStack() as cleanup:
-        cleanup.callback(client.close)
-        for database_id in set(created.values()):
-            cleanup.callback(delete_owned_database, database_id)
 
 
 def _database_for(client, created):

@@ -16,7 +16,7 @@ use super::*;
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn get_throughput<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -25,7 +25,7 @@ pub(crate) fn get_throughput<'py>(
     let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     run_get_throughput_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         body_bytes,
         "get_throughput",
@@ -42,7 +42,7 @@ pub(crate) fn get_throughput<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn replace_throughput<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -51,7 +51,7 @@ pub(crate) fn replace_throughput<'py>(
     let (modifiers, offer_id, body_bytes) = extract_replace_throughput_inputs(prepared)?;
     run_replace_throughput_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         offer_id,
         body_bytes,
@@ -65,7 +65,7 @@ pub(crate) fn replace_throughput<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn get_throughput_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -74,7 +74,7 @@ pub(crate) fn get_throughput_async<'py>(
     let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     run_get_throughput_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         body_bytes,
         "get_throughput",
@@ -88,7 +88,7 @@ pub(crate) fn get_throughput_async<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn replace_throughput_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -97,7 +97,7 @@ pub(crate) fn replace_throughput_async<'py>(
     let (modifiers, offer_id, body_bytes) = extract_replace_throughput_inputs(prepared)?;
     run_replace_throughput_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         offer_id,
         body_bytes,

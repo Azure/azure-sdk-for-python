@@ -182,7 +182,12 @@ def test_factory_forwards_every_declared_option_to_shared_construction_rust(monk
     sync_parameters = inspect.signature(sync_factory.make_backend).parameters
     assert sync_parameters == inspect.signature(async_factory.make_async_backend).parameters
     shared_parameters = inspect.signature(sync_factory._make_backend).parameters
-    assert set(shared_parameters) == set(sync_parameters) | {"rust_backend_type", "legacy_backend"}
+    assert set(shared_parameters) == set(sync_parameters) | {
+        "rust_backend_type",
+        "legacy_backend",
+        "allow_async_credential",
+    }
+    assert shared_parameters["allow_async_credential"].default is False
     options = {name: object() for name in sync_parameters if name != "explicit"}
     shared = MagicMock(return_value=object())
     monkeypatch.setattr(module, "_make_backend", shared)
@@ -192,15 +197,14 @@ def test_factory_forwards_every_declared_option_to_shared_construction_rust(monk
         "rust",
         rust_backend_type=module.AsyncBindingAdapter if async_mode else module.BindingAdapter,
         legacy_backend=module.ASYNC_LEGACY_BACKEND if async_mode else module.LEGACY_BACKEND,
+        **({"allow_async_credential": True} if async_mode else {}),
         **options,
     )
 
 
 @pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("failure_stage", [None, "config", "constructor"])
-def test_factory_keeps_credential_guard_active_through_construction_rust(
-    monkeypatch, async_mode, failure_stage
-):
+def test_factory_keeps_credential_guard_active_through_construction_rust(monkeypatch, async_mode, failure_stage):
     from contextlib import contextmanager
     from azure.cosmos._backend import factory as sync_factory
     from azure.cosmos.aio._backend import factory as async_factory
@@ -212,8 +216,9 @@ def test_factory_keeps_credential_guard_active_through_construction_rust(
     error = RuntimeError("construction failed")
 
     @contextmanager
-    def guard(value):
+    def guard(value, *, allow_async):
         assert value is credential
+        assert allow_async is async_mode
         events.append("enter")
         try:
             yield "master-key", None
@@ -227,13 +232,12 @@ def test_factory_keeps_credential_guard_active_through_construction_rust(
             if name == failure_stage:
                 raise error
             return value
+
         return run
 
     monkeypatch.setattr(sync_factory, "resolved_credential", guard)
     monkeypatch.setattr(sync_factory, "build_client_config", stage("config", PreparedClientConfig()))
-    monkeypatch.setattr(
-        module, "AsyncBindingAdapter" if async_mode else "BindingAdapter", stage("constructor", result)
-    )
+    monkeypatch.setattr(module, "AsyncBindingAdapter" if async_mode else "BindingAdapter", stage("constructor", result))
     if failure_stage is None:
         assert factory("rust", url="https://startup.invalid", credential=credential) is result
         assert events == ["enter", "config", "constructor", "exit"]
@@ -242,7 +246,7 @@ def test_factory_keeps_credential_guard_active_through_construction_rust(
             factory("rust", url="https://startup.invalid", credential=credential)
         assert caught.value is error
         stages = ["config", "constructor"]
-        assert events == ["enter", *stages[:stages.index(failure_stage) + 1], "exit"]
+        assert events == ["enter", *stages[: stages.index(failure_stage) + 1], "exit"]
 
 
 @pytest.mark.parametrize("value", [-1, True, 1.5, "3", 2**32])
@@ -411,7 +415,7 @@ def test_failed_driver_build_leaves_runtime_validation_to_binding_rust(monkeypat
 class AsyncCredential:
     """A credential that returns a token without contacting anything.
 
-    Used to reach the bridge that lets a sync client use an async credential,
+    Used to reach the bridge that lets an async client use an async credential,
     which is what the credential-sharing test below inspects. The token's expiry
     is far in the future so nothing tries to refresh it mid-test.
     """
@@ -421,18 +425,13 @@ class AsyncCredential:
         return AccessToken("test-token", 9999999999)
 
 
-def test_failed_constructor_does_not_release_another_clients_credential_hold_rust(module, monkeypatch):
-    """Failed construction releases only the failed adapter's credential bridge use.
-
-    Check the shared count before explicitly closing the failed adapter, then
-    confirm that closing it again preserves the working client's bridge use.
-    The bridge thread stops only when the working client's adapter closes.
-    """
+def test_failed_constructor_does_not_release_another_clients_credential_hold_rust(monkeypatch):
+    """Failed construction acquires no bridge and cannot release another client's use."""
+    module = async_client
     credential = AsyncCredential()
     first = module.CosmosClient("https://first.invalid", credential, _backend="rust")
-    bridge = first._adapter._token_credential
     retained = []
-    factory_name = "make_backend" if module is sync_client else "make_async_backend"
+    factory_name = "make_async_backend"
     factory = getattr(module, factory_name)
 
     def capture(*args, **kwargs):
@@ -440,25 +439,40 @@ def test_failed_constructor_does_not_release_another_clients_credential_hold_rus
         retained.append(adapter)
         return adapter
 
-    try:
-        bridge.get_token("test-scope")
-        thread = bridge._thread
-        monkeypatch.setattr(module, factory_name, capture)
-        error = RuntimeError("startup")
-        monkeypatch.setattr(module, "CosmosClientConnection", MagicMock(side_effect=error))
-        with pytest.raises(RuntimeError, match="startup") as raised:
-            module.CosmosClient("https://second.invalid", credential, _backend="rust")
-        assert raised.value is error
-        assert len(retained) == 1
-        assert bridge._refcount == 1 and thread.is_alive()
-        assert retained[0]._token_credential is None
-        close_backend(retained[0])
-        assert bridge._refcount == 1 and thread.is_alive()
-    finally:
-        for adapter in retained:
-            close_backend(adapter)
-        close_backend(first._adapter)
-    assert bridge._closed and not thread.is_alive()
+    monkeypatch.setattr(
+        async_backend,
+        "_rust_module",
+        SimpleNamespace(
+            acquire_driver_handle=MagicMock(return_value=object()),
+            release_driver_handle=MagicMock(),
+        ),
+    )
+
+    async def run():
+        try:
+            await first._adapter.initialize()
+            bridge = first._adapter._token_credential
+            token = await asyncio.wrap_future(bridge._start_token_request("test-scope"))
+            assert token.token == "test-token"
+            monkeypatch.setattr(module, factory_name, capture)
+            error = RuntimeError("startup")
+            monkeypatch.setattr(module, "CosmosClientConnection", MagicMock(side_effect=error))
+            with pytest.raises(RuntimeError, match="startup") as raised:
+                module.CosmosClient("https://second.invalid", credential, _backend="rust")
+            assert raised.value is error
+            assert len(retained) == 1
+            assert bridge._refcount == 1 and not bridge._closed
+            assert retained[0]._token_credential is None
+            await retained[0].close()
+            assert bridge._refcount == 1 and not bridge._closed
+        finally:
+            for adapter in retained:
+                await adapter.close()
+            await first.close()
+        assert bridge._closed
+        assert asyncio.get_running_loop().is_running()
+
+    asyncio.run(run())
 
 
 @pytest.mark.parametrize("cancelled", [False, True])

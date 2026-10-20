@@ -43,13 +43,18 @@ class TestNoneOptions(unittest.TestCase):
         )
 
     def test_upsert_item_none_options_rust(self):
-        """Verify upsert_item accepts None for every optional kwarg (pre_trigger_include, post_trigger_include, session_token, initial_headers, etag, match_condition, priority, no_response, retry_write, throughput_bucket) and returns the upserted item."""
+        """Verify upsert_item accepts None for every optional kwarg (session_token, initial_headers, etag, match_condition, priority, no_response, retry_write, throughput_bucket) and returns the upserted item."""
         # Source: tests/test_none_options.py::TestNoneOptions.test_upsert_item_none_options
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 5}
         upserted = self.container.upsert_item(
-            item, pre_trigger_include=None, post_trigger_include=None,
-            session_token=None, initial_headers=None, etag=None,
-            match_condition=None, priority=None, no_response=None,
-            retry_write=None, throughput_bucket=None,
+            item,
+            session_token=None,
+            initial_headers=None,
+            etag=None,
+            match_condition=None,
+            priority=None,
+            no_response=None,
+            retry_write=None,
+            throughput_bucket=None,
         )
         assert upserted["id"] == item["id"]

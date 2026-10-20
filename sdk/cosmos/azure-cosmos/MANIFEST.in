@@ -1,5 +1,7 @@
 include *.md
 include LICENSE
+include azure_cosmos_build_metadata.py
+include api.metadata.yml
 include azure/__init__.py
 recursive-include samples *.py *.md
 recursive-include tests *.py

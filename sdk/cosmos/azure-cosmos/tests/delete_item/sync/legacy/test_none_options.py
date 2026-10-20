@@ -55,30 +55,43 @@ class TestNoneOptions(unittest.TestCase):
     def _create_sample_item(self):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
         self.container.create_item(
-            item, pre_trigger_include=None, post_trigger_include=None,
-            indexing_directive=None, enable_automatic_id_generation=False,
-            session_token=None, initial_headers=None, priority=None,
-            no_response=None, retry_write=None, throughput_bucket=None,
+            item,
+            indexing_directive=None,
+            enable_automatic_id_generation=False,
+            session_token=None,
+            initial_headers=None,
+            priority=None,
+            no_response=None,
+            retry_write=None,
+            throughput_bucket=None,
         )
         return item
 
     def test_delete_item_none_options_rust(self):
-        """Verify delete_item accepts None for every optional kwarg (pre_trigger_include, post_trigger_include, session_token, initial_headers, etag, match_condition, priority, retry_write, throughput_bucket) and removes the item."""
+        """Verify delete_item accepts None for every optional kwarg (session_token, initial_headers, etag, match_condition, priority, retry_write, throughput_bucket) and removes the item."""
         # Source: tests/test_none_options.py::TestNoneOptions.test_delete_item_none_options
         item = self._create_sample_item()
         before_delete = self.container.read_item(item["id"], partition_key=item["pk"])
         self.assertEqual({key: before_delete[key] for key in item}, item)
         self.container.delete_item(
-            item["id"], partition_key=item["pk"], pre_trigger_include=None,
-            post_trigger_include=None, session_token=None, initial_headers=None,
-            etag=None, match_condition=None, priority=None, retry_write=None,
+            item["id"],
+            partition_key=item["pk"],
+            session_token=None,
+            initial_headers=None,
+            etag=None,
+            match_condition=None,
+            priority=None,
+            retry_write=None,
             throughput_bucket=None,
         )
         with self.assertRaises(CosmosHttpResponseError) as caught:
             self.container.read_item(
-                item["id"], partition_key=item["pk"], post_trigger_include=None,
-                session_token=None, initial_headers=None,
-                max_integrated_cache_staleness_in_ms=None, priority=None,
+                item["id"],
+                partition_key=item["pk"],
+                session_token=None,
+                initial_headers=None,
+                max_integrated_cache_staleness_in_ms=None,
+                priority=None,
                 throughput_bucket=None,
             )
         self.assertEqual(caught.exception.status_code, 404)

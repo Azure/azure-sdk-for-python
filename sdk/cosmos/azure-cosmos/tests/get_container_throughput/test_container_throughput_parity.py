@@ -9,23 +9,24 @@ import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey, ThroughputProperties, exceptions
-from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from common._parity_helpers import (
     run_on_both_backends, run_on_both_backends_async,
     run_target_operation, run_target_operation_async,
     skip_unless_emulator, skip_unless_rust_binding,
 )
+from common.throughput_fixtures import owned_database
+
+from azure.cosmos import CosmosClient, PartitionKey, ThroughputProperties, exceptions
+from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 
 
-pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
+pytestmark = [pytest.mark.cosmosEmulator, skip_unless_emulator(), skip_unless_rust_binding()]
 
 
-@pytest.fixture(scope="module")
-def resources():
-    with CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="core-python") as client:
-        db = client.create_database("container_read_parity_" + uuid.uuid4().hex, offer_throughput=400)
-        try:
+@pytest.fixture(scope="module", name="resources")
+def throughput_resources():
+    with CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust") as client:
+        with owned_database(client, "container_read_parity_" + uuid.uuid4().hex, offer_throughput=400) as db:
             db.create_container("manual", partition_key=PartitionKey(path="/pk"), offer_throughput=400)
             db.create_container(
                 "autoscale", partition_key=PartitionKey(path="/pk"),
@@ -33,8 +34,6 @@ def resources():
             )
             db.create_container("shared", partition_key=PartitionKey(path="/pk"))
             yield db
-        finally:
-            client.delete_database(db.id)
 
 
 def fields(result):
@@ -54,6 +53,23 @@ def comparison_for(asynchronous, sync_call, async_call, description):
     comparison.print_report()
     comparison.assert_functional_parity()
     return comparison
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+def test_explicit_none_response_hook_returns_same_offer_rust(resources, asynchronous):
+    def sync_call(client):
+        container = client.get_database_client(resources.id).get_container_client("manual")
+        result = run_target_operation(client, lambda: container.get_throughput(response_hook=None))
+        assert result.offer_throughput == 400
+        return fields(result)
+
+    async def async_call(client):
+        container = client.get_database_client(resources.id).get_container_client("manual")
+        result = await run_target_operation_async(client, lambda: container.get_throughput(response_hook=None))
+        assert result.offer_throughput == 400
+        return fields(result)
+
+    comparison_for(asynchronous, sync_call, async_call, "container throughput with response_hook=None")
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])

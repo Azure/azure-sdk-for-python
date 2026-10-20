@@ -28,10 +28,12 @@ Run with::
 import os
 import unittest
 import uuid
+from contextlib import AsyncExitStack
 
 import pytest
 
 from azure.cosmos.aio import CosmosClient
+from replace_database_throughput._fixtures import owned_database_async
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -46,15 +48,9 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self) -> None:
         self.key_client = CosmosClient(HOST, KEY, _backend="rust")
-        self._created_db_ids = []
-
-    async def asyncTearDown(self) -> None:
-        for database_id in self._created_db_ids:
-            try:
-                await self.key_client.delete_database(database_id)
-            except Exception:  # pylint: disable=broad-except
-                pass
-        await self.key_client.close()
+        self.addAsyncCleanup(self.key_client.close)
+        self._databases = AsyncExitStack()
+        self.addAsyncCleanup(self._databases.aclose)
 
     async def test_database_level_offer_throughput_async_rust(self):
         """Throughput on a database can be raised after creation and reports the new value.
@@ -71,11 +67,9 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Create a database with throughput
         offer_throughput = 1000
         database_id = str(uuid.uuid4())
-        self._created_db_ids.append(database_id)
-        created_db = await self.key_client.create_database(
-            id=database_id,
-            offer_throughput=offer_throughput
-        )
+        created_db = await self._databases.enter_async_context(owned_database_async(
+            self.key_client, database_id, offer_throughput=offer_throughput,
+        ))
         assert created_db.id == database_id
 
         # Verify offer throughput for database
@@ -88,7 +82,6 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert offer.offer_throughput == new_offer_throughput
 
         await self.key_client.delete_database(database_id)
-        self._created_db_ids.remove(database_id)
 
 
 if __name__ == "__main__":

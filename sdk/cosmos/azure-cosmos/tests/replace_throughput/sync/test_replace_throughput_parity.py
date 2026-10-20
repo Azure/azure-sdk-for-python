@@ -19,9 +19,9 @@ throwaway containers initially set to the same capacity. Both returned settings
 and a fresh read must confirm the target; a no-op write cannot inherit the other
 backend's change. ``_normalize_throughput`` reduces the returned
 ``ThroughputProperties`` to the customer-visible numbers so server-stamped fields
-don't cause false mismatches. ``assert_functional_parity`` ignores the known rust
-gap where it reports fewer response headers than core-python -- a reporting
-difference, not a behaviour difference.
+don't cause false mismatches. ``assert_functional_parity`` checks functional
+results, not complete header equality. Header differences remain separate
+audit evidence.
 
 How this differs from the legacy tests: the ``legacy/`` copies re-run the old v4
 tests on rust only and catch *contract* drift (wrong return type, a change that
@@ -42,7 +42,7 @@ from azure.cosmos import ThroughputProperties
 from common._parity_helpers import run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
 from common.throughput_fixtures import container_for, autoscale_container_for, container_for_backend
 
-pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
+pytestmark = [pytest.mark.cosmosEmulator, skip_unless_emulator(), skip_unless_rust_binding()]
 
 
 def _normalize_throughput(throughput_properties):

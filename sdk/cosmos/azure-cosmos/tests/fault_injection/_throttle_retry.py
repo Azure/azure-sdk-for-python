@@ -1,10 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""F07: Python's throttle retry count controls a persistently throttled order read.
+"""F07: Public throttle limits control a persistently throttled Rust-backed order read.
 
 Select retry_throttle_total, its precedence over retry_total, and the cumulative
 waiting budget with a fixed Retry-After header from the paired retry_policy
-tests. This does not claim wait-option precedence, connection retry, or query coverage.
+tests. Waiting follows the driver's accepted forced-final retry behavior.
+This does not claim wait-option precedence, connection retry, or query coverage.
 """
 import math
 
@@ -12,7 +13,7 @@ import pytest
 
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
-OPERATION_TIMEOUT = 30.0  # A hang guard, not an alternative to exhausting the retry count.
+OPERATION_TIMEOUT = 30.0  # Also determines the driver's forced-final retry delay.
 
 THROTTLE_RETRY_CASES = [
     pytest.param({"retry_throttle_total": 0}, 0, id="zero-retries"),
@@ -56,10 +57,15 @@ def assert_throttle_failure(error, elapsed, hits, retry_limit):
     ), "Throttle retries must exhaust before the operation budget expires"
 
 
-def assert_throttle_wait_failure(error, elapsed, hits, expected_retries):
+def assert_throttle_wait_failure(error, elapsed, hits, expected_retries, *, max_retries):
     assert_throttle_failure(error, elapsed, hits, expected_retries)
-    # Legacy Python tests the accumulated wait before admitting the next one:
-    # a 2.5-second threshold permits three one-second waits, not two.
-    assert expected_retries - 0.1 <= elapsed < expected_retries + 0.4, (
-        "Expected one second per allowed retry, with bounded scheduling overhead"
+    expected_wait = float(expected_retries)
+    if expected_retries < max_retries:
+        # The wait budget stops ordinary one-second retries before the count cap.
+        # The last retry instead waits for half the remaining operation budget.
+        ordinary_wait = float(expected_retries - 1)
+        expected_wait = ordinary_wait + (OPERATION_TIMEOUT - ordinary_wait) / 2
+    assert expected_wait - 0.1 <= elapsed < expected_wait + 0.4, (
+        f"Expected driver throttle waiting near {expected_wait:.1f}s with bounded scheduling overhead; "
+        f"observed {elapsed:.3f}s, {hits} attempts, maximum {max_retries} retries"
     )

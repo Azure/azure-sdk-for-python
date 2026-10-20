@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Separate, test-owned replacement targets for the two comparison backends."""
+"""Own throughput fixtures; share read targets and isolate replacement targets."""
 
-from contextlib import contextmanager
+from contextlib import asynccontextmanager, contextmanager
 import os
 import uuid
 
@@ -14,13 +14,64 @@ from common.parity_provisioning import create_owned_database
 
 
 @contextmanager
+def owned_database(client, database_id, **kwargs):
+    """Clean up a unique ID even when creation loses its response, but not on conflict."""
+    owned = True
+    try:
+        try:
+            database = create_owned_database(client, id=database_id, **kwargs)
+        except exceptions.CosmosResourceExistsError:
+            owned = False
+            raise
+        yield database
+    finally:
+        if owned:
+            try:
+                client.delete_database(database_id)
+            except exceptions.CosmosResourceNotFoundError:
+                pass
+
+
+@asynccontextmanager
+async def owned_database_async(client, database_id, **kwargs):
+    """Async ownership also covers setup failure and cancellation."""
+    owned = True
+    try:
+        try:
+            database = await client.create_database(id=database_id, **kwargs)
+        except exceptions.CosmosResourceExistsError:
+            owned = False
+            raise
+        yield database
+    finally:
+        if owned:
+            try:
+                await client.delete_database(database_id)
+            except exceptions.CosmosResourceNotFoundError:
+                pass
+
+
+@pytest.fixture
+def shared_container_for():
+    """Compare reads on one dedicated-throughput container in a test-owned database."""
+    with CosmosClient(
+        os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust"
+    ) as client:
+        database_id = "parity_get_throughput_" + uuid.uuid4().hex
+        with owned_database(client, database_id) as database:
+            container = database.create_container(
+                id="orders", partition_key=PartitionKey(path="/pk"), offer_throughput=400,
+            )
+            yield database_id, container.id
+
+
+@contextmanager
 def _container_pair(throughput):
     database_id = "parity_throughput_" + uuid.uuid4().hex
     with CosmosClient(
         os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust"
     ) as client:
-        try:
-            database = create_owned_database(client, id=database_id)
+        with owned_database(client, database_id) as database:
             containers = {}
             for backend in ("core-python", "rust"):
                 container_id = backend.replace("-", "")
@@ -31,11 +82,6 @@ def _container_pair(throughput):
                 )
                 containers[backend] = container_id
             yield database_id, containers
-        finally:
-            try:
-                client.delete_database(database_id)
-            except exceptions.CosmosResourceNotFoundError:
-                pass
 
 
 @pytest.fixture

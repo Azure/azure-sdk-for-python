@@ -17,7 +17,7 @@ from common.throughput_fixtures import (
 )
 
 
-pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
+pytestmark = [pytest.mark.cosmosEmulator, skip_unless_emulator(), skip_unless_rust_binding()]
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])

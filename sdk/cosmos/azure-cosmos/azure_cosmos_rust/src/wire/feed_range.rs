@@ -4,6 +4,7 @@
 use super::partition_key_input::BindingPartitionKey;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
+use std::time::{Duration, Instant};
 
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
@@ -15,13 +16,17 @@ use azure_data_cosmos_driver::{
     models::{FeedRange, PartitionKey, PartitionKeyDefinition, PartitionKeyKind},
 };
 
+use super::deadline::{with_local_deadline, with_operation_timeout};
 use super::diagnostics::BINDING_OP_COUNT;
+use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync};
 use super::request::parse_container_link;
 use super::response::{
-    tuple_from_feed_range_from_partition_key_result, tuple_from_is_feed_range_subset_result,
-    tuple_from_partition_key_ranges_result,
+    tuple_from_feed_range_from_partition_key_result,
+    tuple_from_feed_range_from_partition_key_result_with_attempts,
+    tuple_from_is_feed_range_subset_result, tuple_from_partition_key_ranges_result,
+    tuple_from_partition_key_ranges_result_with_attempts, with_attempt_diagnostics,
 };
-use super::{lookup_driver, AbortOnDrop};
+use super::AbortOnDrop;
 use crate::feed_range_subset::compute_is_feed_range_subset;
 use crate::runtime::require_runtime_context;
 
@@ -88,131 +93,129 @@ pub(super) fn maybe_handle_feed_range_partition_key_special_case(
 /// on the Rust path (sync version).
 pub(crate) fn run_read_feed_ranges_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     force_refresh: bool,
     op_name: &str,
+    timeout: Option<Duration>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let response_result = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(run_read_feed_ranges_future(
-            driver,
-            database_name,
-            container_name,
-            force_refresh,
-        ))
-    });
-
-    tuple_from_partition_key_ranges_result(py, response_result)
+    run_driver_operation_sync(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            with_operation_timeout(
+                timeout,
+                run_read_feed_ranges_future(driver, database_name, container_name, force_refresh),
+            )
+        },
+        if include_attempts {
+            |py, result| tuple_from_partition_key_ranges_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_partition_key_ranges_result(py, result?)
+        },
+    )
 }
 
 /// Async sibling of `run_read_feed_ranges_operation`.
 pub(crate) fn run_read_feed_ranges_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     force_refresh: bool,
     op_name: &str,
+    timeout: Option<Duration>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let join = runtime_ctx.tokio_rt.spawn(run_read_feed_ranges_future(
-        driver,
-        database_name,
-        container_name,
-        force_refresh,
-    ));
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_partition_key_ranges_result(py, response_result)
-                .map(|tuple| tuple.into_any().unbind())
-        })
-    })
+    run_driver_operation_async(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            with_operation_timeout(
+                timeout,
+                run_read_feed_ranges_future(driver, database_name, container_name, force_refresh),
+            )
+        },
+        if include_attempts {
+            |py, result| tuple_from_partition_key_ranges_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_partition_key_ranges_result(py, result?)
+        },
+    )
 }
 
 /// Entry point that computes the feed range one partition key falls into.
 pub(crate) fn run_feed_range_from_partition_key_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     partition_key_input: BindingPartitionKey,
     op_name: &str,
+    timeout: Option<Duration>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
     let partition_key_input = partition_key_input.into_feed_range_key()?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let response_result = py.allow_threads(|| {
-        runtime_ctx
-            .tokio_rt
-            .block_on(run_feed_range_from_partition_key_future(
-                driver,
-                database_name,
-                container_name,
-                partition_key_input,
-            ))
-    });
-
-    tuple_from_feed_range_from_partition_key_result(py, response_result)
+    run_driver_operation_sync(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            with_operation_timeout(
+                timeout,
+                run_feed_range_from_partition_key_future(
+                    driver,
+                    database_name,
+                    container_name,
+                    partition_key_input,
+                ),
+            )
+        },
+        if include_attempts {
+            |py, result| tuple_from_feed_range_from_partition_key_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_feed_range_from_partition_key_result(py, result?)
+        },
+    )
 }
 
 /// Async sibling of `run_feed_range_from_partition_key_operation`.
 pub(crate) fn run_feed_range_from_partition_key_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     partition_key_input: BindingPartitionKey,
     op_name: &str,
+    timeout: Option<Duration>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
     let partition_key_input = partition_key_input.into_feed_range_key()?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let join = runtime_ctx
-        .tokio_rt
-        .spawn(run_feed_range_from_partition_key_future(
-            driver,
-            database_name,
-            container_name,
-            partition_key_input,
-        ));
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_feed_range_from_partition_key_result(py, response_result)
-                .map(|tuple| tuple.into_any().unbind())
-        })
-    })
+    run_driver_operation_async(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            with_operation_timeout(
+                timeout,
+                run_feed_range_from_partition_key_future(
+                    driver,
+                    database_name,
+                    container_name,
+                    partition_key_input,
+                ),
+            )
+        },
+        if include_attempts {
+            |py, result| tuple_from_feed_range_from_partition_key_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_feed_range_from_partition_key_result(py, result?)
+        },
+    )
 }
 /// Resolve the container and ask the Rust driver for its partition-key ranges.
 /// Pass force_refresh to the Rust driver; cache lookup and range ordering are
@@ -291,10 +294,26 @@ async fn run_feed_range_from_partition_key_future(
 pub(crate) fn run_is_feed_range_subset_operation<'py>(
     py: Python<'py>,
     body_bytes: Vec<u8>,
+    timeout: Option<Duration>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let result = compute_is_feed_range_subset(&body_bytes);
-    tuple_from_is_feed_range_subset_result(py, result)
+    let deadline = timeout.map(|duration| Instant::now() + duration);
+    let result = with_local_deadline(deadline, || compute_is_feed_range_subset(&body_bytes))?;
+    subset_response(py, result, include_attempts)
+}
+
+fn subset_response<'py>(
+    py: Python<'py>,
+    result: Result<bool, String>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let response = tuple_from_is_feed_range_subset_result(py, result);
+    if include_attempts {
+        with_attempt_diagnostics(py, response, None, true)
+    } else {
+        response
+    }
 }
 
 /// Schedule the local subset comparison on the Tokio runtime and return an awaitable.
@@ -304,13 +323,16 @@ pub(crate) fn run_is_feed_range_subset_operation_async<'py>(
     py: Python<'py>,
     body_bytes: Vec<u8>,
     op_name: &str,
+    timeout: Option<Duration>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let deadline = timeout.map(|duration| Instant::now() + duration);
     let runtime_ctx = require_runtime_context(op_name)?;
 
-    let join = runtime_ctx
-        .tokio_rt
-        .spawn(async move { compute_is_feed_range_subset(&body_bytes) });
+    let join = runtime_ctx.tokio_rt.spawn(async move {
+        with_local_deadline(deadline, || compute_is_feed_range_subset(&body_bytes))
+    });
     let abort_guard = AbortOnDrop(join.abort_handle());
 
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
@@ -321,10 +343,9 @@ pub(crate) fn run_is_feed_range_subset_operation_async<'py>(
             } else {
                 PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
             }
-        })?;
+        })??;
         Python::with_gil(|py| {
-            tuple_from_is_feed_range_subset_result(py, result)
-                .map(|tuple| tuple.into_any().unbind())
+            subset_response(py, result, include_attempts).map(|tuple| tuple.into_any().unbind())
         })
     })
 }

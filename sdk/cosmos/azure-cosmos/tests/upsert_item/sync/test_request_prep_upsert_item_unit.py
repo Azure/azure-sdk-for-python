@@ -225,7 +225,7 @@ def test_initial_headers_are_flattened_into_outer_headers_rust():
     assert "initial_headers" not in wire_headers(prepared)
 
 
-def test_trigger_priority_bucket_no_response_land_as_option_keys_rust():
+def test_priority_bucket_no_response_land_as_option_keys_rust():
     """The body-carrying option set reaches the headers map under the
     internal option-key names (the binding then renders each on the wire).
     ``no_response`` is kept on upsert, unlike delete / read."""
@@ -285,8 +285,6 @@ def test_merge_omits_none_entries_rust():
     kwargs: dict = {}
     merge_upsert_item_explicit_kwargs(
         kwargs,
-        pre_trigger_include=None,
-        post_trigger_include=None,
         session_token="0:1#42",
         initial_headers=None,
         etag=None,

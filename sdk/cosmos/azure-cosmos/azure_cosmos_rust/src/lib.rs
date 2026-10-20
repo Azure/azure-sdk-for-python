@@ -93,6 +93,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<wire::lifecycle::AsyncOperationProbe>()?;
     m.add_class::<wire::item_feed::ItemFeedCursor>()?;
     m.add_class::<driver_runtime::RuntimeHandle>()?;
+    m.add_class::<runtime::DriverHandle>()?;
     add_pyfn!(m, driver_runtime::create_runtime);
     add_pyfn!(m, driver_runtime::create_runtime_async);
     add_pyfn!(m, wire::item_feed::fetch_page_with_cursor);

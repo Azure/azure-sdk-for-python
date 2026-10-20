@@ -56,6 +56,7 @@ def make_async_backend(
         explicit,
         rust_backend_type=AsyncBindingAdapter,
         legacy_backend=ASYNC_LEGACY_BACKEND,
+        allow_async_credential=True,
         url=url,
         credential=credential,
         runtime=runtime,
@@ -69,7 +70,6 @@ def make_async_backend(
         consistency_level=consistency_level,
         proxy_allowed=proxy_allowed,
         connection_timeout_seconds=connection_timeout_seconds,
-
         fault_injection_rules=fault_injection_rules,
         headers=headers,
     )

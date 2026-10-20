@@ -2,20 +2,29 @@
 # Licensed under the MIT License.
 """Original hierarchical-container throughput and partition-definition assertions."""
 
+from contextlib import ExitStack
 import os
 import unittest
 import uuid
+
+import pytest
+
+from common.throughput_fixtures import owned_database
 
 from azure.cosmos import CosmosClient, documents, exceptions
 from azure.cosmos.http_constants import StatusCodes
 
 
+@pytest.mark.cosmosEmulator
 class TestCRUDOperationsSubPartition(unittest.TestCase):
     def setUp(self):
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
         self.addCleanup(self.client.close)
-        self.database = self.client.create_database("throughput_hpk_" + uuid.uuid4().hex)
-        self.addCleanup(self.client.delete_database, self.database.id)
+        cleanup = ExitStack()
+        self.addCleanup(cleanup.close)
+        self.database = cleanup.enter_context(owned_database(
+            self.client, "throughput_hpk_" + uuid.uuid4().hex,
+        ))
 
     def test_partitioned_collection_subpartition_rust(self):
         # Source: tests/test_crud_subpartition.py::TestSubpartitionCrud.test_partitioned_collection_subpartition

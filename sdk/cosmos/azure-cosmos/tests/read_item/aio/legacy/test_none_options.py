@@ -53,10 +53,15 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
     async def _create_sample_item(self):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
         await self.container.create_item(
-            item, pre_trigger_include=None, post_trigger_include=None,
-            indexing_directive=None, enable_automatic_id_generation=False,
-            session_token=None, initial_headers=None, priority=None,
-            no_response=None, retry_write=None, throughput_bucket=None,
+            item,
+            indexing_directive=None,
+            enable_automatic_id_generation=False,
+            session_token=None,
+            initial_headers=None,
+            priority=None,
+            no_response=None,
+            retry_write=None,
+            throughput_bucket=None,
         )
         return item
 
@@ -68,16 +73,19 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
         of them None, so each must behave as if it had been omitted: no
         header, no error, and the item comes back unchanged.
 
-        The options covered are post_trigger_include, session_token,
+        The options covered are session_token,
         initial_headers, max_integrated_cache_staleness_in_ms, priority and
         throughput_bucket.
         """
         # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_container_read_item_none_options_async
         item = await self._create_sample_item()
         read_back = await self.container.read_item(
-            item["id"], partition_key=item["pk"], post_trigger_include=None,
-            session_token=None, initial_headers=None,
-            max_integrated_cache_staleness_in_ms=None, priority=None,
+            item["id"],
+            partition_key=item["pk"],
+            session_token=None,
+            initial_headers=None,
+            max_integrated_cache_staleness_in_ms=None,
+            priority=None,
             throughput_bucket=None,
         )
         assert read_back["id"] == item["id"]

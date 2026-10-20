@@ -32,7 +32,7 @@ class TestFeedRangeMultiPartition(unittest.TestCase):
 
     def test_prefix_partition_key_query_pagination_resume_rust(self):
         """Prefix query resumes all matching items and preserves the COUNT result."""
-        # Source: tests/test_query_feed_range_multipartition.py, same class and method.
+        # Source: tests/test_query_feed_range_multipartition.py::TestFeedRangeMultiPartition.test_prefix_partition_key_query_pagination_resume
         db = self.database
         container_id = "FeedRangeMultiPartitionPrefixPK-" + str(uuid.uuid4())
         created_container = db.create_container_if_not_exists(

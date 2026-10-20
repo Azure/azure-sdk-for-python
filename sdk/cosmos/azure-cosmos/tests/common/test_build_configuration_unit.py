@@ -16,8 +16,14 @@ files takes no time and catches them in every run.
 """
 
 from pathlib import Path
+from functools import partial
 import runpy
+import shutil
 from unittest.mock import patch
+
+import pytest
+import azure_cosmos_build_backend as build_backend
+import azure_cosmos_build_metadata as build_metadata
 
 try:
     import tomllib
@@ -59,6 +65,7 @@ def test_python_metadata_stays_aligned_rust(monkeypatch):
     assert project["dependencies"] == legacy["install_requires"]
     assert project["optional-dependencies"] == legacy["extras_require"]
     assert project["classifiers"] == legacy["classifiers"]
+    assert build_metadata.validate_version_metadata(PACKAGE_ROOT) == version
 
 
 def test_prototype_wheel_targets_rust():
@@ -156,6 +163,56 @@ def test_source_archive_declares_its_build_bootstrap_inputs_rust():
         entry["path"] for entry in config["tool"]["maturin"]["include"]
         if entry["format"] == "sdist"
     }
-    assert {"azure_cosmos_build_backend.py", "rust-toolchain.toml", "scripts/*.sh"} <= source_inputs
+    assert {
+        "azure_cosmos_build_backend.py",
+        "azure_cosmos_build_metadata.py",
+        "api.metadata.yml",
+        "CHANGELOG.md",
+        "rust-toolchain.toml",
+        "scripts/*.sh",
+    } <= source_inputs
     for name in ("install-msrustup.sh", "configure-cargo-feed.sh"):
         assert (PACKAGE_ROOT / "scripts" / name).is_file()
+
+
+@pytest.mark.parametrize(
+    "stale_file",
+    [
+        "pyproject.toml",
+        "api.metadata.yml",
+        "CHANGELOG.md",
+        Path("azure") / "cosmos" / "_version.py",
+    ],
+)
+@pytest.mark.parametrize(
+    "build_hook",
+    [
+        "build_wheel",
+        "build_sdist",
+        "build_editable",
+        "prepare_metadata_for_build_wheel",
+        "prepare_metadata_for_build_editable",
+        "setup",
+    ],
+)
+def test_build_routes_reject_version_drift_rust(monkeypatch, tmp_path, stale_file, build_hook):
+    version = build_metadata.validate_version_metadata(PACKAGE_ROOT)
+    for relative in ("pyproject.toml", "api.metadata.yml", "CHANGELOG.md", Path("azure") / "cosmos" / "_version.py"):
+        destination = tmp_path / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(PACKAGE_ROOT / relative, destination)
+    stale_path = tmp_path / stale_file
+    stale_path.write_text(stale_path.read_text(encoding="utf-8").replace(version, "0.0.0"), encoding="utf-8")
+    validate = partial(build_metadata.validate_version_metadata, tmp_path)
+    if build_hook == "setup":
+        monkeypatch.setattr(build_metadata, "validate_version_metadata", validate)
+        monkeypatch.chdir(PACKAGE_ROOT)
+        with patch("setuptools.setup") as builder:
+            with pytest.raises(RuntimeError, match="Package version mismatch"):
+                runpy.run_path(str(PACKAGE_ROOT / "setup.py"))
+    else:
+        monkeypatch.setattr(build_backend, "validate_version_metadata", validate)
+        with patch.object(build_backend.maturin, build_hook) as builder:
+            with pytest.raises(RuntimeError, match="Package version mismatch"):
+                getattr(build_backend, build_hook)(str(tmp_path))
+    builder.assert_not_called()

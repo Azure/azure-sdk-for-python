@@ -19,7 +19,7 @@ import time
 from contextlib import contextmanager
 from dataclasses import replace
 from pathlib import Path
-from typing import Any, Callable, Iterator, Optional, Tuple, Type, Union
+from typing import TYPE_CHECKING, Any, Callable, Iterator, Optional, Tuple, Type, Union
 
 from azure.core.exceptions import ServiceResponseError
 from azure.core.utils import CaseInsensitiveDict
@@ -30,6 +30,9 @@ from .errors import PagePreflightError, UnsupportedQueryError
 from .operations import get_page_binding_function_name
 from ..exceptions import CosmosClientTimeoutError
 from ..runtime import CosmosRuntime
+
+if TYPE_CHECKING:
+    from .._rust import _DriverHandle
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -200,7 +203,7 @@ def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
     """Release this client's use of an async credential bridge.
 
     The bridge runs async token requests for the binding. Its last user requests
-    shutdown of the background thread. Log cleanup failures, and never close
+    cancellation of its pending token calls. Log cleanup failures, and never close
     the customer's credential: the customer app owns it.
     """
     closer = getattr(credential, "_close_cosmos_async_bridge", None)
@@ -211,7 +214,7 @@ def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
             _LOGGER.debug("Failed closing async-credential bridge", exc_info=True)
 
 
-def finalize_adapter_resources(credential: Optional[Any], driver_handle: Optional[str], binding: Any) -> None:
+def finalize_adapter_resources(credential: Optional[Any], driver_handle: Optional[_DriverHandle], binding: Any) -> None:
     """Attempt last-resort cleanup of an abandoned Python adapter's resources.
 
     Explicit close is the normal path. If an adapter is discarded with
@@ -297,15 +300,15 @@ class BindingAdapterShared:
         """
         self._endpoint = endpoint
         self._master_key = master_key
-        # Async credentials arrive in an async credential bridge that runs token
-        # requests on its own thread. Master-key clients have no token credential.
+        # The async adapter binds async credentials to the application loop on first use.
+        # Master-key clients have no token credential.
         self._token_credential = token_credential
         # Pass these settings, such as preferred regions, when acquiring a driver.
         self._client_config = client_config
         self._runtime = runtime
         # Acquire during async __aenter__() or the first operation needing the driver.
         # Reuse the handle until close; subclasses coordinate changes with this lock.
-        self._driver_handle: Optional[str] = None
+        self._driver_handle: Optional[_DriverHandle] = None
         self._driver_handle_lock = threading.Lock()
         # Once close sets this flag, do not acquire another driver for the client.
         self._closing = False
@@ -314,6 +317,11 @@ class BindingAdapterShared:
                 raise TypeError("runtime must be CosmosRuntime or None.")
             from azure.cosmos import _rust
 
+            if not hasattr(_rust, "_DriverHandle"):
+                raise RuntimeError(
+                    "The compiled azure.cosmos._rust extension lacks owning driver handles; "
+                    "rebuild it from the current source."
+                )
             validate_runtime = getattr(_rust, "_validate_runtime_configuration", None)
             if not callable(validate_runtime):
                 raise RuntimeError(
@@ -351,7 +359,7 @@ class BindingAdapterShared:
             timeout = self._client_config.operation_timeout_seconds
         return None if timeout is None else time.monotonic() + timeout
 
-    def _initialize_driver(self, binding: Any, runtime: Optional[CosmosRuntime] = None) -> str:
+    def _initialize_driver(self, binding: Any, runtime: Optional[CosmosRuntime] = None) -> _DriverHandle:
         """Ask the binding to acquire a driver handle using this client's saved inputs.
 
         Pass the saved account address, credential, PreparedClientConfig, and
@@ -360,16 +368,16 @@ class BindingAdapterShared:
         a CosmosDriver or reuse one for that runtime and client configuration;
         this method's name does not imply a new object.
 
-        The returned handle identifies the retained driver. After the caller
-        retains it, the references look like this::
+        The returned handle owns the retained driver. After the caller
+        stores it, the references look like this::
 
             Python wrapper                         Binding
-            _driver_handle = "H"                    driver cache
-                                                       "H" -> DriverEntry
-                                                                  -> CosmosDriver
+            _driver_handle = H                     driver cache
+                             |                         key -> DriverEntry
+                             +-> CosmosDriver <----------------+
 
-        "H" is an illustration, not an actual handle. The handle is a lookup
-        key, not the DriverEntry or CosmosDriver object itself.
+        H is an illustrative opaque handle, not a string or the cache key.
+        A caller retaining H keeps that exact driver alive across cache eviction.
 
         This method returns the handle without storing it. The caller decides
         whether to retain it and coordinates acquisition with a concurrent close.

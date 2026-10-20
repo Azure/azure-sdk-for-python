@@ -26,7 +26,7 @@ What this file pins for async ``delete_item``:
 * **``item`` is polymorphic.** Delete by passing the document dict
   (which carries ``_self``) rather than the bare id.
 * **header-bearing kwargs**, one per test so a failure attributes
-  cleanly: ``pre_trigger_include``, ``post_trigger_include``,
+  cleanly:
   ``session_token``, ``initial_headers``, ``priority``, ``throughput_bucket``.
 * **``timeout``.** Honoured on both backends.
 * **``response_hook`` fires exactly once per backend.**
@@ -43,6 +43,7 @@ Deliberately NOT mirrored from the sync suite: the ``populate_query_metrics``
 deprecation test. That keyword is sync-only; the async ``delete_item``
 signature does not expose it, so there is no async behaviour to pin.
 """
+
 from __future__ import annotations
 
 import os
@@ -57,6 +58,46 @@ from azure.cosmos import CosmosClient, PartitionKey
 from common._parity_helpers import BackendComparison, run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
+
+
+@pytest.mark.parametrize("self_link_only", [False, True])
+def test_stale_mapping_does_not_delete_recreated_container_item_rust(self_link_only):
+    import asyncio
+    from azure.cosmos.exceptions import CosmosResourceNotFoundError
+
+    name = "delete_stale_aio_" + uuid.uuid4().hex
+
+    async def run(client):
+        db = await client.create_database_if_not_exists("parity_db")
+        container = await db.create_container(name, partition_key=PartitionKey(path="/pk"))
+        try:
+            old = await container.create_item({"id": "same-id", "pk": "a", "generation": "old"})
+            await db.delete_container(name)
+            replacement = await db.create_container(name, partition_key=PartitionKey(path="/pk"))
+            new = await replacement.create_item({"id": "same-id", "pk": "a", "generation": "new"})
+            assert old["_self"] != new["_self"]
+            target = {"_self": old["_self"]} if self_link_only else old
+            with pytest.raises(CosmosResourceNotFoundError) as caught:
+                await replacement.delete_item(target, partition_key="a")
+            assert caught.value.status_code == 404
+            surviving = await replacement.read_item("same-id", partition_key="a")
+            assert surviving["_self"] == new["_self"]
+            assert surviving["generation"] == "new"
+            return {"status": caught.value.status_code, "generation": surviving["generation"]}
+        finally:
+            await db.delete_container(name)
+
+    comparison = asyncio.run(
+        run_on_both_backends_async(
+            run,
+            description="Stale async delete mapping preserves replacement item",
+        )
+    )
+    comparison.print_report()
+    for outcome in (comparison.core_python, comparison.rust):
+        assert outcome.succeeded, f"{outcome.backend}: {outcome.raised!r}"
+        assert outcome.return_value == {"status": 404, "generation": "new"}
+    comparison.assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
@@ -165,31 +206,6 @@ async def test_delete_by_document_dict_rust(container_for):
 # ---------------------------------------------------------------------------
 # Header-bearing kwargs, one at a time
 # ---------------------------------------------------------------------------
-
-@pytest.mark.asyncio
-async def test_pre_trigger_include_rust(container_for):
-    """Baseline call plus ``pre_trigger_include='auditDelete'``.
-
-    No trigger by that name is registered, so the service returns the same
-    "trigger not found" error to both backends -- which still proves the
-    keyword reached the wire on the async path.
-    """
-    cmp = await _run_delete(container_for, summary="baseline + pre_trigger_include",
-                            pre_trigger_include="auditDelete")
-    cmp.assert_functional_exception_parity()
-
-
-@pytest.mark.asyncio
-async def test_post_trigger_include_rust(container_for):
-    """Baseline call plus ``post_trigger_include='auditDelete'``.
-
-    Same contract as the pre-trigger case above: the typed exception must
-    match across backends.
-    """
-    cmp = await _run_delete(container_for, summary="baseline + post_trigger_include",
-                            post_trigger_include="auditDelete")
-    cmp.assert_functional_exception_parity()
-
 
 @pytest.mark.asyncio
 async def test_session_token_rust(container_for):

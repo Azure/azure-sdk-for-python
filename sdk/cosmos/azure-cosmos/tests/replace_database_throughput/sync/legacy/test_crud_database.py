@@ -30,10 +30,12 @@ Run with::
 import os
 import unittest
 import uuid
+from contextlib import ExitStack
 
 import pytest
 
 from azure.cosmos import CosmosClient
+from replace_database_throughput._fixtures import owned_database
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -48,15 +50,9 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
 
     def setUp(self) -> None:
         self.key_client = CosmosClient(HOST, KEY, _backend="rust")
-        self._created_db_ids = []
-
-    def tearDown(self) -> None:
-        for database_id in self._created_db_ids:
-            try:
-                self.key_client.delete_database(database_id)
-            except Exception:  # pylint: disable=broad-except
-                pass
-        self.key_client.close()
+        self.addCleanup(self.key_client.close)
+        self._databases = ExitStack()
+        self.addCleanup(self._databases.close)
 
     def test_database_level_offer_throughput_rust(self):
         """Throughput on a database can be raised after creation and reports the new value.
@@ -73,11 +69,9 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         # Create a database with throughput
         offer_throughput = 1000
         database_id = str(uuid.uuid4())
-        self._created_db_ids.append(database_id)
-        created_db = self.key_client.create_database(
-            id=database_id,
-            offer_throughput=offer_throughput
-        )
+        created_db = self._databases.enter_context(owned_database(
+            self.key_client, database_id, offer_throughput=offer_throughput,
+        ))
         self.assertEqual(created_db.id, database_id)
 
         # Verify offer throughput for database
@@ -89,7 +83,6 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         offer = created_db.replace_throughput(new_offer_throughput)
         self.assertEqual(offer.offer_throughput, new_offer_throughput)
         self.key_client.delete_database(created_db.id)
-        self._created_db_ids.remove(database_id)
 
 
 if __name__ == "__main__":

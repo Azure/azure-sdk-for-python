@@ -14,19 +14,25 @@ use super::*;
 /// refresh. An illustrative response body is
 /// `{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}`.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn read_feed_ranges<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "read_feed_ranges")?;
     let (container_link, force_refresh) = extract_read_feed_ranges_inputs(prepared)?;
+    let timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_read_feed_ranges_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         force_refresh,
         "read_feed_ranges",
+        timeout,
+        include_attempts,
     )
 }
 
@@ -35,19 +41,25 @@ pub(crate) fn read_feed_ranges<'py>(
 /// Return a response tuple whose body contains Range with min, max,
 /// isMinInclusive, and isMaxInclusive fields.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn feed_range_from_partition_key<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "feed_range_from_partition_key")?;
     let (container_link, partition_key) = extract_feed_range_from_partition_key_inputs(prepared)?;
+    let timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_feed_range_from_partition_key_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         "feed_range_from_partition_key",
+        timeout,
+        include_attempts,
     )
 }
 
@@ -57,64 +69,90 @@ pub(crate) fn feed_range_from_partition_key<'py>(
 /// `{"IsSubset": <bool>}`. The binding normalizes both ranges to `[min, max)`
 /// bounds before calling the driver's local subset comparison.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn is_feed_range_subset<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "is_feed_range_subset")?;
     let _ = driver_handle;
     crate::wire::settings::validate_request_protocol(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    run_is_feed_range_subset_operation(py, body_bytes)
+    let timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    run_is_feed_range_subset_operation(py, body_bytes, timeout, include_attempts)
 }
 
 /// Return an awaitable that reads a container's partition-key ranges.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn read_feed_ranges_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "read_feed_ranges")?;
     let (container_link, force_refresh) = extract_read_feed_ranges_inputs(prepared)?;
+    let timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_read_feed_ranges_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         force_refresh,
         "read_feed_ranges",
+        timeout,
+        include_attempts,
     )
 }
 
 /// Async twin of `feed_range_from_partition_key`.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn feed_range_from_partition_key_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "feed_range_from_partition_key")?;
     let (container_link, partition_key) = extract_feed_range_from_partition_key_inputs(prepared)?;
+    let timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_feed_range_from_partition_key_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         "feed_range_from_partition_key",
+        timeout,
+        include_attempts,
     )
 }
 
 /// Async twin of `is_feed_range_subset`.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn is_feed_range_subset_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "is_feed_range_subset")?;
     let _ = driver_handle;
     crate::wire::settings::validate_request_protocol(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    run_is_feed_range_subset_operation_async(py, body_bytes, "is_feed_range_subset")
+    let timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    run_is_feed_range_subset_operation_async(
+        py,
+        body_bytes,
+        "is_feed_range_subset",
+        timeout,
+        include_attempts,
+    )
 }

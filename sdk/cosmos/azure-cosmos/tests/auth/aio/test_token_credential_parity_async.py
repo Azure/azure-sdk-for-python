@@ -8,12 +8,13 @@
 Signs the rust async client in with an async token credential and diffs its
 create/read results against a core-python baseline that uses the account key.
 This exercises the async sign-in path, where the client fetches each token on a
-background loop.
+the customer application's loop.
 
 Uses asyncio.run directly (no pytest-asyncio). Skips unless an account and the
 rust binding are present; builds the token from ACCOUNT_KEY unless COSMOS_AAD_*
 is set for a real Entra run.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -60,10 +61,14 @@ def test_async_token_credential_parity_rust():
     """rust with an async token credential must match the core-python baseline."""
     async def main():
         base_c, base_r = await _run(uuid.uuid4().hex, "core-python", os.environ["ACCOUNT_KEY"])
-        rust_c, rust_r = await _run(uuid.uuid4().hex, "rust", make_async_token_credential())
+        credential = make_async_token_credential()
+        try:
+            rust_c, rust_r = await _run(uuid.uuid4().hex, "rust", credential)
+        finally:
+            if hasattr(credential, "close"):
+                await credential.close()
         # ids differ by construction; compare every other field.
         for field in (base_c.keys() | rust_c.keys()) - {"id"}:
             assert base_c.get(field) == rust_c.get(field), "create field {!r} diverged".format(field)
         assert rust_r["pk"] == rust_c["pk"], "read must return the item we just created"
     asyncio.run(main())
-

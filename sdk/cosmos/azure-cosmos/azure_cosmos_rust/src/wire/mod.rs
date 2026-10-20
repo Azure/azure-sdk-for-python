@@ -21,12 +21,9 @@
 
 use std::sync::Arc;
 
-use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 
 use azure_data_cosmos_driver::driver::CosmosDriver;
-
-use crate::runtime::drivers;
 
 // Extracted sub-modules --------------------------------------------------
 mod container_metadata;
@@ -68,19 +65,75 @@ impl Drop for AbortOnDrop {
     }
 }
 
-/// Retain the cached CosmosDriver object for an operation, or reject an absent handle.
-/// A shared handle can remain cached after one client closes; the Python wrapper
-/// is responsible for rejecting operations on that closed client.
-fn lookup_driver(driver_handle: &str) -> PyResult<Arc<CosmosDriver>> {
-    drivers()
-        .read()
-        .get(driver_handle)
-        .map(|entry| Arc::clone(&entry.driver))
-        .ok_or_else(|| {
-            PyRuntimeError::new_err(
-                "no driver registered for handle; call acquire_driver_handle first",
-            )
-        })
+/// Retain the exact driver owned by the supplied handle, independently of cache eviction.
+/// The Python wrapper rejects new operations on a closed adapter.
+fn lookup_driver(driver_handle: &crate::runtime::DriverHandle) -> PyResult<Arc<CosmosDriver>> {
+    Ok(driver_handle.driver())
+}
+
+#[cfg(test)]
+mod handle_ownership_tests {
+    use super::*;
+    use crate::driver_runtime::RuntimeHandle;
+    use crate::runtime::{acquire_driver_handle, drivers, release_driver_handle, runtime_context};
+    use azure_data_cosmos_driver::in_memory_emulator::{
+        InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion,
+    };
+    use url::Url;
+
+    #[test]
+    fn handle_retains_original_driver_before_lookup_across_close_and_recreation() {
+        pyo3::prepare_freethreaded_python();
+        let endpoint = Url::parse("https://owning-handle.emulator.local").unwrap();
+        let config = VirtualAccountConfig::new(vec![
+            VirtualRegion::new("East US", endpoint.clone()),
+        ]).unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(config));
+        let runtime = runtime_context().tokio_rt
+            .block_on(emulator.runtime_builder().build()).unwrap();
+        Python::with_gil(|py| {
+            let runtime = Py::new(py, RuntimeHandle::new(runtime)).unwrap();
+            let acquire = || acquire_driver_handle(
+                py, endpoint.as_str(), Some("ZW11bGF0b3Ita2V5"), None, None,
+                Some(runtime.borrow(py)),
+            ).unwrap();
+            let first = acquire();
+            let second = acquire();
+            let key = first.cache_key().to_owned();
+            let original = Arc::downgrade(&first.driver());
+            assert!(Arc::ptr_eq(&first.driver(), &second.driver()));
+
+            // Python dispatch already copied the handle, but native lookup has not run.
+            let first = Py::new(py, first).unwrap();
+            let pending_call = first.clone_ref(py);
+            release_driver_handle(&first.borrow(py)).unwrap();
+            release_driver_handle(&first.borrow(py)).unwrap();
+            assert!(drivers().read().contains_key(&key));
+            release_driver_handle(&second).unwrap();
+            drop(second);
+            drop(first);
+            assert!(!drivers().read().contains_key(&key));
+            assert!(original.upgrade().is_some());
+
+            let before_recreation = lookup_driver(&pending_call.borrow(py)).unwrap();
+            let replacement = acquire();
+            assert_eq!(replacement.cache_key(), key);
+            let after_recreation = lookup_driver(&pending_call.borrow(py)).unwrap();
+            assert!(Arc::ptr_eq(&before_recreation, &after_recreation));
+            assert!(!Arc::ptr_eq(&after_recreation, &replacement.driver()));
+
+            // Old cleanup must not consume the replacement's acquisition.
+            release_driver_handle(&pending_call.borrow(py)).unwrap();
+            assert!(drivers().read().contains_key(&key));
+            drop(pending_call);
+            drop(before_recreation);
+            drop(after_recreation);
+            assert!(original.upgrade().is_none());
+            // Dropping an unreleased handle also balances its cache acquisition.
+            drop(replacement);
+            assert!(!drivers().read().contains_key(&key));
+        });
+    }
 }
 
 // Operation modules ------------------------------------------------------

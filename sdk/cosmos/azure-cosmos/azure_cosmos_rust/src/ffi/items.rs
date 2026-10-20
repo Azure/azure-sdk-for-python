@@ -14,7 +14,7 @@ use azure_data_cosmos_driver::models::{ItemReference, Precondition};
 use azure_data_cosmos_driver::options::PatchStrategy;
 use pyo3::exceptions::{PyNotImplementedError, PyValueError};
 
-fn item_target(
+pub(super) fn item_target(
     prepared: &Bound<'_, PyAny>,
     item_id: impl FnOnce() -> PyResult<String>,
 ) -> PyResult<ItemTarget> {
@@ -35,14 +35,11 @@ fn extract_read_item_inputs(
     RequestHeadersAndOptions,
     ItemTarget,
 )> {
-    let (container_link, partition_key, modifiers) = extract_common_prepared_inputs(prepared)?;
-    if matches!(partition_key, BindingPartitionKey::Extract) {
-        return Err(PyValueError::new_err(READ_ITEM_PARTITION_KEY_REQUIRED));
-    }
-    let target = item_target(prepared, || {
-        extract_required_item_id(prepared, READ_ITEM_ID_REQUIRED)
-    })?;
-    Ok((container_link, partition_key, modifiers, target))
+    extract_item_inputs(
+        prepared,
+        READ_ITEM_ID_REQUIRED,
+        READ_ITEM_PARTITION_KEY_REQUIRED,
+    )
 }
 
 fn patch_precondition(
@@ -101,7 +98,7 @@ fn patch_operation(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
 pub(crate) fn create_item<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -114,7 +111,7 @@ pub(crate) fn create_item<'py>(
 
     execute_item_operation_sync(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -134,20 +131,22 @@ pub(crate) fn create_item<'py>(
 /// existence check in the binding. Prepared `If-Match` / `If-None-Match`
 /// headers remain in `custom_headers`; their enforcement is not done here.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn upsert_item<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "upsert_item")?;
-    let (container_link, partition_key, modifiers, item_id, body_bytes) =
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_sync(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -173,7 +172,7 @@ pub(crate) fn upsert_item<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn replace_item<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -188,7 +187,7 @@ pub(crate) fn replace_item<'py>(
 
     execute_item_operation_sync(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -202,32 +201,34 @@ pub(crate) fn replace_item<'py>(
     )
 }
 
-/// Delete the item named by PreparedRequest.item_id with an explicit partition key.
+/// Delete the prepared resource address or item name with an explicit partition key.
 /// Send no body and leave the write-content-response option unset.
 ///
 /// On success the driver returns HTTP 204 with an empty body.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn delete_item<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "delete_item")?;
-    let (container_link, partition_key, modifiers, item_id) = extract_item_inputs(
+    let (container_link, partition_key, mut modifiers, target) = extract_item_inputs(
         prepared,
         DELETE_ITEM_ID_REQUIRED,
         DELETE_ITEM_PARTITION_KEY_REQUIRED,
     )?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_sync(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
-        item_id.into(),
+        target,
         Vec::new(),
         "delete_item",
         false,
@@ -252,7 +253,7 @@ pub(crate) fn delete_item<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
 pub(crate) fn read_item<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -266,7 +267,7 @@ pub(crate) fn read_item<'py>(
 
     execute_item_operation_sync(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -295,7 +296,7 @@ pub(crate) fn read_item<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn patch_item<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -315,7 +316,7 @@ pub(crate) fn patch_item<'py>(
 
     execute_item_operation_sync(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -335,7 +336,7 @@ pub(crate) fn patch_item<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
 pub(crate) fn create_item_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -348,7 +349,7 @@ pub(crate) fn create_item_async<'py>(
 
     execute_item_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -366,20 +367,22 @@ pub(crate) fn create_item_async<'py>(
 /// Async twin of `upsert_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn upsert_item_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "upsert_item")?;
-    let (container_link, partition_key, modifiers, item_id, body_bytes) =
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -400,7 +403,7 @@ pub(crate) fn upsert_item_async<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn replace_item_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -413,7 +416,7 @@ pub(crate) fn replace_item_async<'py>(
 
     execute_item_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -431,27 +434,29 @@ pub(crate) fn replace_item_async<'py>(
 /// Async twin of `delete_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn delete_item_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "delete_item")?;
-    let (container_link, partition_key, modifiers, item_id) = extract_item_inputs(
+    let (container_link, partition_key, mut modifiers, target) = extract_item_inputs(
         prepared,
         DELETE_ITEM_ID_REQUIRED,
         DELETE_ITEM_PARTITION_KEY_REQUIRED,
     )?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
-        item_id.into(),
+        target,
         Vec::new(),
         "delete_item",
         false,
@@ -469,7 +474,7 @@ pub(crate) fn delete_item_async<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false, _debug_lifecycle=None))]
 pub(crate) fn read_item_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -484,7 +489,7 @@ pub(crate) fn read_item_async<'py>(
 
     execute_item_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -506,7 +511,7 @@ pub(crate) fn read_item_async<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn patch_item_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -526,7 +531,7 @@ pub(crate) fn patch_item_async<'py>(
 
     execute_item_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -627,14 +632,14 @@ mod tests {
                 ));
                 for asynchronous in [false, true] {
                     let error = if asynchronous {
-                        read_item_async(py, "invalid-driver-handle", &prepared, None, false, false, None).map(|_| ())
+                        read_item_async(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false, None).map(|_| ())
                     } else {
-                        read_item(py, "invalid-driver-handle", &prepared, None, false, false).map(|_| ())
+                        read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
                     }
                     .unwrap_err();
                     assert!(error
                         .to_string()
-                        .contains("no driver registered for handle"));
+                        .contains("_DriverHandle"));
                 }
             }
             prepared.delattr("item_id").unwrap();
@@ -648,9 +653,9 @@ mod tests {
                 prepared.setattr("item_self_link", link).unwrap();
                 for asynchronous in [false, true] {
                     let error = if asynchronous {
-                        read_item_async(py, "invalid-driver-handle", &prepared, None, false, false, None).map(|_| ())
+                        read_item_async(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false, None).map(|_| ())
                     } else {
-                        read_item(py, "invalid-driver-handle", &prepared, None, false, false).map(|_| ())
+                        read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
                     }
                     .unwrap_err();
                     assert!(error.is_instance_of::<PyValueError>(py));
@@ -661,9 +666,9 @@ mod tests {
             prepared.setattr("item_id", py.None()).unwrap();
             for asynchronous in [false, true] {
                 let error = if asynchronous {
-                    read_item_async(py, "invalid-driver-handle", &prepared, None, false, false, None).map(|_| ())
+                    read_item_async(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false, None).map(|_| ())
                 } else {
-                    read_item(py, "invalid-driver-handle", &prepared, None, false, false).map(|_| ())
+                    read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
                 }
                 .unwrap_err();
                 assert!(error.is_instance_of::<PyValueError>(py));
@@ -728,10 +733,10 @@ mod tests {
                     .setattr("body_bytes", PyBytes::new_bound(py, body))
                     .unwrap();
                 for include_attempts in [false, true] {
-                    assert!(patch_item(py, "unused-handle", &prepared, None, include_attempts)
+                    assert!(patch_item(py, pyo3::types::PyString::new_bound(py, "unused-handle").as_any(), &prepared, None, include_attempts)
                         .unwrap_err()
                         .is_instance_of::<PyNotImplementedError>(py));
-                    assert!(patch_item_async(py, "unused-handle", &prepared, None, include_attempts)
+                    assert!(patch_item_async(py, pyo3::types::PyString::new_bound(py, "unused-handle").as_any(), &prepared, None, include_attempts)
                         .unwrap_err()
                         .is_instance_of::<PyNotImplementedError>(py));
                 }

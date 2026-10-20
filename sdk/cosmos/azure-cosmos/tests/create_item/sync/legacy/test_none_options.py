@@ -49,8 +49,6 @@ class TestNoneOptions(unittest.TestCase):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 1}
         created = self.container.create_item(
             item,
-            pre_trigger_include=None,
-            post_trigger_include=None,
             indexing_directive=None,
             enable_automatic_id_generation=False,
             session_token=None,

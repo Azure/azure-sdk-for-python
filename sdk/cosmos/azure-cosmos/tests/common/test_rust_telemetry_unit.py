@@ -1646,6 +1646,533 @@ def item_runtime_harness(request, recording):  # pylint: disable=unused-argument
     return harness
 
 
+@pytest.fixture(name="partition_key_range")
+def partition_key_range_harness(item_runtime, monkeypatch):
+    harness = item_runtime
+    cache = {}
+    harness.connection = SimpleNamespace(
+        _backend=harness.backend,
+        default_headers={},
+        last_response_headers={},
+        _container_properties_cache=cache,
+        _set_container_properties_cache=Mock(side_effect=cache.__setitem__),
+        ReadContainer=Mock(side_effect=AssertionError("Unexpected legacy read")),
+    )
+    harness.container.client_connection = harness.connection
+    harness.properties = deepcopy(CONTAINER_PROPERTIES)
+    harness.range_body = {"Range": {"min": "ab", "max": "ab", "isMinInclusive": True, "isMaxInclusive": True}}
+    harness.expected_range = {"Range": {**harness.range_body["Range"], "min": "AB", "max": "AB"}}
+    harness.range_payload = None
+    harness.failure_stage = "feed_range_from_partition_key"
+    harness.status = 200
+    harness.gate = None
+    harness.states = []
+    asynchronous = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
+    module = binding_adapter if asynchronous else sync_binding_adapter
+    suffix = "_async" if asynchronous else ""
+
+    def dispatch(handle, prepared, timeout_seconds, include_attempts):
+        assert handle == "test-driver"
+        harness.calls.append((prepared.op, include_attempts, timeout_seconds))
+        harness.prepared_requests.append(prepared)
+        harness.states.append(telemetry._OPERATION.get())
+
+    def complete(prepared, include_attempts):
+        metadata = prepared.op == "read_container"
+        _, payload = contribution_response(5, time.time_ns())
+        if not metadata:
+            payload = deepcopy(harness.range_payload)
+        if prepared.op == harness.failure_stage and harness.error is not None:
+            if include_attempts and payload is not None:
+                harness.error._cosmos_attempt_payload = payload
+            raise harness.error
+        body = harness.properties if metadata else harness.range_body
+        status = harness.status if prepared.op == harness.failure_stage else 200
+        response = (status, 0, {"etag": "range-etag"}, json.dumps(body).encode(), None)
+        response, payload = harness.transform((response, payload))
+        return (response, payload) if include_attempts else response
+
+    def native(handle, prepared, *, timeout_seconds=None, include_attempts=False):
+        dispatch(handle, prepared, timeout_seconds, include_attempts)
+        return complete(prepared, include_attempts)
+
+    async def native_async(handle, prepared, *, timeout_seconds=None, include_attempts=False):
+        dispatch(handle, prepared, timeout_seconds, include_attempts)
+        if harness.gate is not None and prepared.op == harness.failure_stage:
+            harness.gate.set()
+            await asyncio.Future()
+        await asyncio.sleep(0)
+        return complete(prepared, include_attempts)
+
+    for operation in ("read_container", "feed_range_from_partition_key"):
+        monkeypatch.setattr(
+            module._rust_module, operation + suffix, native_async if asynchronous else native, raising=False
+        )
+    harness.calculate = lambda key: harness.invoke(harness.container.feed_range_from_partition_key, key)
+    return harness
+
+
+@pytest.mark.parametrize("mode", ["enabled", "disabled", "sampled-out", "handler-only", "no-handlers"])
+@pytest.mark.parametrize("key_shape", ["scalar", "prefix", "null", "undefined-cold", "undefined-cached", "system"])
+def test_partition_key_range_owns_executed_steps(partition_key_range, recording, mode, key_shape):
+    from azure.cosmos.partition_key import NonePartitionKeyValue
+
+    harness = partition_key_range
+    key = {"scalar": "customer-17", "prefix": ["customer-17"], "null": None}.get(key_shape, NonePartitionKeyValue)
+    original = deepcopy(key)
+    if key_shape == "system":
+        harness.properties["partitionKey"]["systemKey"] = True
+    if key_shape == "undefined-cached":
+        harness.connection._container_properties_cache[harness.container.container_link] = harness.properties
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context,
+        telemetry_handlers=(
+            ()
+            if mode == "no-handlers"
+            else (telemetry.CompletionHandler(seen.append, collect_attempts=mode != "disabled"),)
+        ),
+    )
+    if mode in ("disabled", "handler-only"):
+        settings.tracing_enabled = False
+    if mode == "sampled-out":
+        recording.provider.sampler = ALWAYS_OFF
+    with trace.get_tracer("customer").start_as_current_span("choose_range") as parent:
+        assert harness.calculate(key) == harness.expected_range
+        assert trace.get_current_span() is parent
+    assert key == original
+    metadata = key_shape in ("undefined-cold", "system")
+    assert [call[0] for call in harness.calls] == (
+        ["read_container", "feed_range_from_partition_key"] if metadata else ["feed_range_from_partition_key"]
+    )
+    assert all(call[1] == (mode != "disabled") for call in harness.calls)
+    assert all(call[2] is None for call in harness.calls)
+    assert harness.connection.last_response_headers["etag"] == "range-etag"
+    assert all(state is harness.states[0] and state.closed for state in harness.states)
+    assert len(seen) == int(mode != "no-handlers")
+    if seen:
+        completion = seen[0]
+        assert completion.operation == "feed_range_from_partition_key" and completion.outcome == "success"
+        if metadata and mode != "disabled":
+            assert completion.diagnostics is not None and not completion.diagnostics.complete
+            assert len(completion.diagnostics.attempts) == 2
+        else:
+            assert completion.diagnostics is None
+    spans = [span for span in recording.exporter.get_finished_spans() if span.name.startswith("ContainerProxy.")]
+    assert len(spans) == int(mode in ("enabled", "no-handlers"))
+    if spans:
+        span = spans[0]
+        assert span.name == "ContainerProxy.feed_range_from_partition_key"
+        assert span.parent.span_id == parent.get_span_context().span_id
+        assert span.status.status_code is trace.StatusCode.UNSET
+        assert not any(key.startswith("cosmos.poc.") for key in span.attributes)
+        assert "customer-17" not in repr((span.attributes, span.events))
+        assert all(child.parent.span_id == span.context.span_id for child in attempt_spans(recording))
+    assert len(attempt_spans(recording)) == (2 if metadata and spans else 0)
+    harness.connection.ReadContainer.assert_not_called()
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("metadata", [False, True])
+@pytest.mark.parametrize("failure", ["service", "transport", "timeout", "validation", "malformed", "payload"])
+def test_partition_key_range_failure_keeps_prior_diagnostics(partition_key_range, recording, metadata, failure):
+    from azure.cosmos.partition_key import NonePartitionKeyValue
+
+    harness = partition_key_range
+    _, payload = contribution_response(5, time.time_ns())
+    payload["complete"] = False
+    harness.range_payload = payload
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    expected = None
+    if failure == "service":
+        harness.status = 404
+        expected = CosmosResourceNotFoundError
+    elif failure in ("transport", "timeout", "validation"):
+        error_type = {"transport": DriverTransportError, "timeout": TimeoutError, "validation": ValueError}[failure]
+        harness.error = error_type("controlled calculation failure")
+        expected = ServiceResponseError if failure == "transport" else error_type
+    elif failure == "malformed":
+        harness.range_body = {"Range": {"min": "ab"}}
+        expected = ValueError
+    else:
+        harness.range_payload = {"schema_version": 99}
+    key = NonePartitionKeyValue if metadata else "customer-17"
+    if expected is None:
+        assert harness.calculate(key) == harness.expected_range
+    else:
+        with pytest.raises(expected) as caught:
+            harness.calculate(key)
+        if failure in ("timeout", "validation"):
+            assert caught.value is harness.error
+        elif failure == "transport":
+            assert caught.value.__cause__ is harness.error
+    assert len(harness.calls) == 1 + metadata
+    assert len(seen) == 1 and seen[0].outcome == ("success" if expected is None else "error")
+    (span,) = [
+        s for s in recording.exporter.get_finished_spans() if s.name == "ContainerProxy.feed_range_from_partition_key"
+    ]
+    assert (span.status.status_code is trace.StatusCode.ERROR) == (expected is not None)
+    assert not any(key.startswith("cosmos.poc.") for key in span.attributes)
+    # Validation errors have no attached diagnostic conversion; malformed telemetry is rejected.
+    expected_attempts = 2 * (metadata + (failure not in ("validation", "payload")))
+    assert len(attempt_spans(recording)) == expected_attempts
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("failure", ["metadata", "preparation", "driver", "parse"])
+def test_partition_key_range_stops_at_failure(partition_key_range, monkeypatch, failure):
+    from azure.cosmos.partition_key import NonePartitionKeyValue
+    from azure.cosmos import _feed_ranges_rust_routing
+
+    harness = partition_key_range
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    error = ValueError("controlled failure")
+    key = "customer-17"
+    if failure == "metadata":
+        key = NonePartitionKeyValue
+        harness.failure_stage = "read_container"
+        harness.error = error
+    elif failure == "preparation":
+        key = object()
+        error = None
+    elif failure == "driver":
+        harness.backend._ensure_driver_handle.side_effect = error
+    else:
+
+        def parse(_):
+            assert telemetry._OPERATION.get() is not None and not seen
+            raise error
+
+        monkeypatch.setattr(_feed_ranges_rust_routing, "parse_feed_range_from_partition_key_payload", parse)
+        from azure.cosmos._helpers import _feed_range_operations
+
+        monkeypatch.setattr(_feed_range_operations, "parse_feed_range_from_partition_key_payload", parse)
+    with pytest.raises((TypeError, ValueError)) as caught:
+        harness.calculate(key)
+    if error is not None:
+        assert caught.value is error
+    assert len(harness.calls) == int(failure in ("metadata", "parse"))
+    assert len(seen) == 1 and seen[0].outcome == "error"
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("failure", ["handler", "emitter", "unavailable"])
+@pytest.mark.parametrize("raises", [False, True])
+def test_partition_key_range_reporting_does_not_replay(partition_key_range, monkeypatch, failure, raises):
+    harness = partition_key_range
+    seen = []
+    handlers = (telemetry.CompletionHandler(seen.append, collect_attempts=True),)
+    if failure == "handler":
+        handlers = (telemetry.CompletionHandler(Mock(side_effect=ValueError("reporter"))),) + handlers
+    elif failure == "emitter":
+        monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=ValueError("reporter")))
+    else:
+        importer = builtins.__import__
+
+        def without_otel(name, *args, **kwargs):
+            if name == "opentelemetry":
+                raise ImportError("optional tracing unavailable")
+            return importer(name, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "__import__", without_otel)
+    harness.container._item_context = replace(harness.container._item_context, telemetry_handlers=handlers)
+    if raises:
+        harness.error = ValueError("original calculation failure")
+        with pytest.raises(ValueError) as caught:
+            harness.calculate("customer-17")
+        assert caught.value is harness.error
+    else:
+        assert harness.calculate("customer-17") == harness.expected_range
+    assert len(harness.calls) == 1 and len(seen) == 1
+    assert seen[0].outcome == ("error" if raises else "success")
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_partition_key_range_preserves_read_override_and_signature(partition_key_range, monkeypatch, enabled):
+    import inspect
+    from azure.cosmos.partition_key import NonePartitionKeyValue
+
+    harness = partition_key_range
+    method = harness.container.feed_range_from_partition_key
+    assert inspect.signature(method) == inspect.signature(method.__wrapped__).replace(
+        parameters=list(inspect.signature(method.__wrapped__).parameters.values())[1:]
+    )
+    asynchronous = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
+    assert inspect.iscoroutinefunction(method) is asynchronous
+    settings.tracing_enabled = enabled
+    original = harness.container.read
+    override = AsyncMock(wraps=original) if asynchronous else Mock(wraps=original)
+    monkeypatch.setattr(harness.container, "read", override)
+    assert harness.calculate(NonePartitionKeyValue) == harness.expected_range
+    override.assert_called_once_with()
+    assert [call[0] for call in harness.calls] == ["read_container", "feed_range_from_partition_key"]
+    assert telemetry._OPERATION.get() is None
+
+
+def test_partition_key_range_cancellation_preserves_completed_metadata(partition_key_range):
+    from azure.cosmos.partition_key import NonePartitionKeyValue
+
+    harness = partition_key_range
+    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
+        pytest.skip("Async cancellation")
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+
+    async def run():
+        harness.gate = asyncio.Event()
+        task = asyncio.create_task(harness.container.feed_range_from_partition_key(NonePartitionKeyValue))
+        await harness.gate.wait()
+        task.cancel("range cancellation")
+        with pytest.raises(asyncio.CancelledError, match="range cancellation"):
+            await task
+        assert telemetry._OPERATION.get() is None
+
+    asyncio.run(run())
+    assert len(harness.calls) == 2 and len(seen) == 1
+    assert seen[0].outcome == "cancelled"
+    assert seen[0].diagnostics is not None and not seen[0].diagnostics.complete
+    assert len(seen[0].diagnostics.attempts) == 2
+
+
+@pytest.fixture(name="local_token")
+def local_token_harness(item_runtime, monkeypatch):
+    from azure.cosmos import container as sync_module
+    from azure.cosmos.aio import _container as async_module
+    from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
+    from azure.cosmos._routing.routing_range import Range
+
+    harness = item_runtime
+    harness.module = async_module if isinstance(harness.backend, binding_adapter.AsyncBindingAdapter) else sync_module
+    harness.target = FeedRangeInternalEpk(Range("AA", "DD", True, False)).to_dict()
+    harness.pairs = [(deepcopy(harness.target), "0:1#54#3=50"), (deepcopy(harness.target), "0:1#51#3=52")]
+    harness.connection = SimpleNamespace(last_response_headers={"untouched": "response"}, session=Mock())
+    harness.container.client_connection = harness.connection
+    harness.forbidden = Mock(side_effect=AssertionError("Local calculation accessed backend or metadata"))
+    for owner, name in (
+        (harness.backend, "_ensure_driver_handle"),
+        (harness.backend, "run_operation"),
+        (harness.container, "read"),
+        (harness.container, "_get_properties"),
+    ):
+        monkeypatch.setattr(owner, name, harness.forbidden)
+    harness.combine = lambda: harness.invoke(harness.container.get_latest_session_token, harness.pairs, harness.target)
+    return harness
+
+
+@pytest.mark.parametrize("mode", ["enabled", "disabled", "sampled-out", "handler-only", "no-handlers"])
+@pytest.mark.parametrize("outcome", ["vector", "simple", "compound", "malformed", "no-overlap", "type", "regions"])
+def test_latest_session_token_records_only_local_execution(  # pylint: disable=too-many-statements
+    local_token, recording, monkeypatch, mode, outcome
+):
+    harness = local_token
+    expected = "0:1#54#3=52"
+    if outcome == "simple":
+        harness.pairs = [(harness.target, "0:54"), (harness.target, "0:60")]
+        expected = "0:60"
+    elif outcome == "compound":
+        harness.pairs = [(harness.target, "0:1#54#3=50,1:40"), (harness.target, "0:1#51#3=52,1:30")]
+        expected += ",1:40"
+    elif outcome == "malformed":
+        harness.pairs[0] = (harness.target, "private-token-invalid")
+    elif outcome == "no-overlap":
+        harness.pairs = []
+    elif outcome == "type":
+        harness.pairs[0] = (harness.target, 17)
+    elif outcome == "regions":
+        harness.pairs = [(harness.target, "0:1#54#3=50"), (harness.target, "0:1#51#4=52")]
+    before = deepcopy((harness.pairs, harness.target, harness.connection.last_response_headers))
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context,
+        telemetry_handlers=(
+            () if mode == "no-handlers" else (telemetry.CompletionHandler(seen.append, collect_attempts=True),)
+        ),
+    )
+    if mode in ("disabled", "handler-only"):
+        settings.tracing_enabled = False
+    elif mode == "sampled-out":
+        recording.provider.sampler = ALWAYS_OFF
+    original = harness.module.get_latest_session_token
+    states = []
+
+    def merge(pairs, target):
+        state = telemetry._OPERATION.get()
+        assert state and not state.closed and state.binding_operation == ()
+        assert state.collector.contribution_limit == 0 and state.begin_contribution() is None
+        for operation in ("get_latest_session_token", "read_container", "create_item"):
+            assert telemetry.get_operation(harness.backend, operation) is None
+        states.append(state)
+        return original(pairs, target)
+
+    monkeypatch.setattr(harness.module, "get_latest_session_token", merge)
+    failed = outcome in ("malformed", "no-overlap", "type", "regions")
+    with trace.get_tracer("customer").start_as_current_span("combine_observations") as parent:
+        if failed:
+            exception = {"type": TypeError, "regions": CosmosHttpResponseError}.get(outcome, ValueError)
+            with pytest.raises(exception):
+                harness.combine()
+        else:
+            assert harness.combine() == expected
+        assert trace.get_current_span() is parent
+    assert len(states) == 1 and states[0].closed
+    if mode == "no-handlers":
+        assert not seen
+    else:
+        assert len(seen) == 1 and seen[0].operation == "get_latest_session_token"
+        assert seen[0].outcome == ("error" if failed else "success")
+        assert seen[0].execution_duration_ns >= 0 and seen[0].diagnostics is None
+    assert (harness.pairs, harness.target, harness.connection.last_response_headers) == before
+    harness.connection.session.assert_not_called()
+    harness.forbidden.assert_not_called()
+    assert not harness.calls and not attempt_spans(recording)
+    spans = [span for span in recording.exporter.get_finished_spans() if span.name.startswith("ContainerProxy.")]
+    assert len(spans) == int(mode in ("enabled", "no-handlers"))
+    if spans:
+        span = spans[0]
+        assert span.name == "ContainerProxy.get_latest_session_token" and span.kind == trace.SpanKind.INTERNAL
+        assert span.parent.span_id == parent.get_span_context().span_id
+        assert span.context.trace_id == parent.get_span_context().trace_id
+        assert (span.status.status_code == trace.StatusCode.ERROR) is failed
+        assert not any(key.startswith("cosmos.poc.") for key in span.attributes)
+        exported = repr((span.attributes, span.events, span.status.description))
+        for value in ("private-token-invalid", "1#54#3=50", "1#51#4=52", "1#51#3=52", expected):
+            assert value not in exported
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("failure", ["handler", "emitter", "unavailable"])
+@pytest.mark.parametrize("raises", [False, True])
+def test_latest_session_token_reporting_preserves_original(local_token, recording, monkeypatch, failure, raises):
+    harness = local_token
+    seen = []
+    handlers = (telemetry.CompletionHandler(seen.append, collect_attempts=True),)
+    if failure == "handler":
+        handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("reporter"))),) + handlers
+    elif failure == "emitter":
+        monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=RuntimeError("reporter")))
+    else:
+        importer = builtins.__import__
+
+        def without_otel(name, *args, **kwargs):
+            if name == "opentelemetry":
+                raise ImportError("optional tracing absent")
+            return importer(name, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "__import__", without_otel)
+    harness.container._item_context = replace(harness.container._item_context, telemetry_handlers=handlers)
+    cause = ValueError("private-cause")
+    original = CosmosHttpResponseError(status_code=500, message="private-token")
+    original.__cause__ = cause
+    original.__context__ = cause
+    helper = Mock(side_effect=original) if raises else Mock(wraps=harness.module.get_latest_session_token)
+    monkeypatch.setattr(harness.module, "get_latest_session_token", helper)
+    if raises:
+        with pytest.raises(CosmosHttpResponseError) as caught:
+            harness.combine()
+        assert caught.value is original and caught.value.__cause__ is cause and caught.value.__context__ is cause
+        assert "private-token" in str(caught.value)
+    else:
+        assert harness.combine() == "0:1#54#3=52"
+    helper.assert_called_once()
+    assert len(seen) == 1 and seen[0].outcome == ("error" if raises else "success")
+    assert seen[0].diagnostics is None
+    for span in recording.exporter.get_finished_spans():
+        exported = repr((span.attributes, span.events, span.status.description))
+        assert "private-token" not in exported and "private-cause" not in exported
+    harness.forbidden.assert_not_called()
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_latest_session_token_masks_and_restores_outer_operation(local_token, monkeypatch, enabled):
+    harness = local_token
+    settings.tracing_enabled = enabled
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context,
+        telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=True),),
+    )
+    helper = harness.module.get_latest_session_token
+    states = []
+
+    def merge(pairs, target):
+        states.append(telemetry._OPERATION.get())
+        assert telemetry.get_operation(harness.backend, "create_item") is None
+        return helper(pairs, target)
+
+    monkeypatch.setattr(harness.module, "get_latest_session_token", merge)
+
+    async def run():
+        with telemetry._operation_scope(harness.container, "create_item", {}, "create_item"):
+            outer = telemetry._OPERATION.get()
+            assert outer
+            value = harness.container.get_latest_session_token(harness.pairs, harness.target)
+            if isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
+                value = await value
+            assert value == "0:1#54#3=52"
+            assert states[0] is not outer and states[0].closed
+            assert telemetry._OPERATION.get() is outer and not outer.closed
+            assert outer.collector.contributions == 0
+            outer.finish()
+
+    asyncio.run(run())
+    assert [completion.operation for completion in seen] == ["get_latest_session_token", "create_item"]
+    assert all(completion.diagnostics is None for completion in seen)
+
+
+def test_latest_session_token_signature_and_coroutine_are_preserved(local_token):
+    import inspect
+
+    method = local_token.container.get_latest_session_token
+    assert list(inspect.signature(method).parameters) == ["feed_ranges_to_session_tokens", "target_feed_range"]
+    assert inspect.iscoroutinefunction(method) is isinstance(local_token.backend, binding_adapter.AsyncBindingAdapter)
+
+
+def test_latest_session_token_disabled_needs_no_tracing_dependency(local_token, recording, monkeypatch):
+    harness = local_token
+    settings.tracing_enabled = False
+    importer = builtins.__import__
+
+    def forbid_otel(name, *args, **kwargs):
+        if name.startswith("opentelemetry"):
+            raise AssertionError("Disabled local calculation imported tracing")
+        return importer(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", forbid_otel)
+    assert harness.combine() == "0:1#54#3=52"
+    assert not recording.exporter.get_finished_spans()
+    harness.forbidden.assert_not_called()
+    assert telemetry._OPERATION.get() is None
+
+
+def test_async_latest_session_token_cancellation_preserves_identity(local_token, monkeypatch):
+    harness = local_token
+    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
+        pytest.skip("Async cancellation")
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    original = asyncio.CancelledError()
+    helper = Mock(side_effect=original)
+    monkeypatch.setattr(harness.module, "get_latest_session_token", helper)
+    with pytest.raises(asyncio.CancelledError) as caught:
+        harness.combine()
+    assert caught.value is original
+    assert len(seen) == 1 and seen[0].outcome == "cancelled" and seen[0].diagnostics is None
+    helper.assert_called_once()
+    assert telemetry._OPERATION.get() is None
+
+
 @pytest.fixture(name="delete")
 def delete_harness(item_runtime):
     item_runtime.response_status = 204

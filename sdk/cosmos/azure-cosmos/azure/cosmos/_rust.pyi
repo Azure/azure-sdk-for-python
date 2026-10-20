@@ -20,6 +20,18 @@ class _CosmosRuntime:
     @property
     def timeouts(self) -> tuple[float, float, float]: ...
 
+class _DriverHandle:
+    """Own a specific Rust driver independently of its cache membership."""
+
+def acquire_driver_handle(
+    endpoint: str, master_key: str | None = None, config: Any = None,
+    credential: Any = None, runtime: _CosmosRuntime | None = None,
+) -> _DriverHandle: ...
+
+def release_driver_handle(driver_handle: _DriverHandle) -> None:
+    """Release this handle's cache acquisition without revoking outstanding references."""
+    ...
+
 def _create_runtime(options: ConnectionPoolOptions | None = None) -> _CosmosRuntime: ...
 def _create_runtime_async(options: ConnectionPoolOptions | None = None) -> Awaitable[_CosmosRuntime]: ...
 

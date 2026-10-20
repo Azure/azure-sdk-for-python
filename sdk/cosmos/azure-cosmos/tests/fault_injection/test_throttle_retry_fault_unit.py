@@ -63,21 +63,46 @@ def test_wait_rule_uses_response_header_not_injected_delay_rust(inject):
     assert prepared.probability == (1.0 if inject else 0.0)
 
 
-@pytest.mark.parametrize("retries", [3, 5])
-def test_throttle_wait_accepts_expected_count_and_wait_rust(retries):
-    assert_throttle_wait_failure(exceptions.CosmosHttpResponseError(429), retries + 0.02, retries + 1, retries)
+@pytest.mark.parametrize("retries,elapsed", [(3, 16.02), (5, 5.02)])
+def test_throttle_wait_accepts_driver_final_retry_and_count_limited_wait_rust(retries, elapsed):
+    assert_throttle_wait_failure(
+        exceptions.CosmosHttpResponseError(429), elapsed, retries + 1, retries, max_retries=5,
+    )
 
 
 @pytest.mark.parametrize("retries,elapsed,hits", [
-    (3, 0.002, 4), (3, 2.0, 3), (3, 2.5, 4), (3, 4.0, 5), (3, 16.0, 4),
-    (5, 0.005, 6), (5, 2.0, 3), (5, 10.0, 6), (5, float("nan"), 6),
+    (3, 0.002, 4), (3, 2.0, 3), (3, 2.5, 4), (3, 3.02, 4), (3, 4.0, 5),
+    (3, 16.02, 3), (3, 16.02, 5), (3, 15.8, 4), (3, 16.4, 4), (3, 29.0, 4),
+    (3, OPERATION_TIMEOUT, 4), (3, float("nan"), 4), (3, float("inf"), 4),
+    (5, 0.005, 6), (5, 2.0, 3), (5, 4.8, 6), (5, 5.4, 6), (5, 10.0, 6),
+    (5, 16.02, 6), (5, float("nan"), 6),
 ])
-def test_throttle_wait_rejects_wrong_count_skipped_wait_and_budget_filling_rust(retries, elapsed, hits):
+def test_throttle_wait_rejects_wrong_count_legacy_timing_and_incorrect_driver_wait_rust(retries, elapsed, hits):
     with pytest.raises(AssertionError):
-        assert_throttle_wait_failure(exceptions.CosmosHttpResponseError(429), elapsed, hits, retries)
+        assert_throttle_wait_failure(
+            exceptions.CosmosHttpResponseError(429), elapsed, hits, retries, max_retries=5,
+        )
 
 
-def test_wait_expectation_matches_unmodified_legacy_policy_rust():
+@pytest.mark.parametrize("error", [
+    None, exceptions.CosmosClientTimeoutError(), exceptions.CosmosHttpResponseError(408),
+    exceptions.CosmosHttpResponseError(503), ServiceResponseError("response failure"),
+])
+def test_driver_final_wait_still_requires_terminal_throttling_rust(error):
+    with pytest.raises(AssertionError):
+        assert_throttle_wait_failure(error, 16.02, 4, 3, max_retries=5)
+
+
+def test_final_wait_uses_operation_budget_not_fixed_sixteen_seconds_rust(monkeypatch):
+    from fault_injection import _throttle_retry
+
+    monkeypatch.setattr(_throttle_retry, "OPERATION_TIMEOUT", 10.0)
+    assert_throttle_wait_failure(exceptions.CosmosHttpResponseError(429), 6.02, 4, 3, max_retries=5)
+    with pytest.raises(AssertionError):
+        assert_throttle_wait_failure(exceptions.CosmosHttpResponseError(429), 3.02, 4, 3, max_retries=5)
+
+
+def test_unmodified_legacy_policy_retains_three_waits_as_characterization_rust():
     from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
 
     policy = ResourceThrottleRetryPolicy(5, 0, 2.5)

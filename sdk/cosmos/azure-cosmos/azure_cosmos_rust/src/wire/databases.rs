@@ -30,7 +30,7 @@ use super::response::{
 /// Create a database and convert the response for synchronous Python code.
 pub(crate) fn run_create_database_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,
@@ -64,7 +64,7 @@ pub(crate) fn run_create_database_operation<'py>(
 /// Create a database and return a Python awaitable.
 pub(crate) fn run_create_database_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,
@@ -98,7 +98,7 @@ pub(crate) fn run_create_database_operation_async<'py>(
 /// Read a database and convert the response for synchronous Python code.
 pub(crate) fn run_read_database_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
@@ -132,7 +132,7 @@ pub(crate) fn run_read_database_operation<'py>(
 /// Read a database and return a Python awaitable.
 pub(crate) fn run_read_database_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
@@ -166,7 +166,7 @@ pub(crate) fn run_read_database_operation_async<'py>(
 /// Delete a database and convert the response for synchronous Python code.
 pub(crate) fn run_delete_database_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
@@ -200,7 +200,7 @@ pub(crate) fn run_delete_database_operation<'py>(
 /// Delete a database and return a Python awaitable.
 pub(crate) fn run_delete_database_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
@@ -234,7 +234,7 @@ pub(crate) fn run_delete_database_operation_async<'py>(
 /// Read one page of databases and convert it for synchronous Python code.
 pub(crate) fn run_list_databases_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     operation_name: &str,
     timeout_seconds: Option<f64>,
@@ -258,7 +258,7 @@ pub(crate) fn run_list_databases_operation<'py>(
 /// page is in flight.
 pub(crate) fn run_list_databases_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     operation_name: &str,
     timeout_seconds: Option<f64>,
@@ -280,7 +280,7 @@ pub(crate) fn run_list_databases_operation_async<'py>(
 /// Run one page of a database query for synchronous Python code.
 pub(crate) fn run_query_databases_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,
@@ -304,7 +304,7 @@ pub(crate) fn run_query_databases_operation<'py>(
 /// Run one page of a database query and return a Python awaitable.
 pub(crate) fn run_query_databases_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,

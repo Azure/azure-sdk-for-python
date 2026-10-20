@@ -54,9 +54,15 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_container_create_item_none_options_async_rust(self):
         # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_container_create_item_none_options_async
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 1}
-        created = await self.container.create_item(item, pre_trigger_include=None, post_trigger_include=None,
-                                               indexing_directive=None, enable_automatic_id_generation=False,
-                                               session_token=None, initial_headers=None, priority=None, no_response=None,
-                                               retry_write=None, throughput_bucket=None)
+        created = await self.container.create_item(
+            item,
+            indexing_directive=None,
+            enable_automatic_id_generation=False,
+            session_token=None,
+            initial_headers=None,
+            priority=None,
+            no_response=None,
+            retry_write=None,
+            throughput_bucket=None,
+        )
         assert created["id"] == item["id"]
-

@@ -28,6 +28,8 @@ use pyo3::types::PyTuple;
 use pyo3::{exceptions::PyValueError, prelude::*};
 
 #[cfg(test)]
+mod adapter_contract_tests;
+#[cfg(test)]
 mod request_boundary_benchmark;
 
 use azure_data_cosmos_driver::models::CosmosOperation;
@@ -61,7 +63,12 @@ const READ_ITEM_PARTITION_KEY_REQUIRED: &str = "read_item requires an explicit p
 const PATCH_ITEM_ID_REQUIRED: &str = "patch_item: PreparedRequest.item_id is required (the id of the document to patch, resolved from the `item` argument)";
 
 type CommonInputs = (String, BindingPartitionKey, RequestHeadersAndOptions);
-type ItemInputs = (String, BindingPartitionKey, RequestHeadersAndOptions, String);
+type ItemInputs = (
+    String,
+    BindingPartitionKey,
+    RequestHeadersAndOptions,
+    crate::wire::ItemTarget,
+);
 type ItemBodyInputs = (
     String,
     BindingPartitionKey,
@@ -85,9 +92,8 @@ fn validate_prepared_operation(prepared: &Bound<'_, PyAny>, expected: &str) -> P
     Ok(())
 }
 
-/// Extract read/delete inputs: container link, typed partition key, settings,
-/// and the required item id. For example, "order-42" comes from `item_id`,
-/// not a body. The caller supplies errors that name its operation.
+/// Extract read/delete inputs, preserving a resource address before considering
+/// the item name. The caller supplies errors that name its operation.
 fn extract_item_inputs(
     prepared: &Bound<'_, PyAny>,
     item_id_error: &'static str,
@@ -98,8 +104,8 @@ fn extract_item_inputs(
     if matches!(partition_key, BindingPartitionKey::Extract) {
         return Err(PyValueError::new_err(partition_key_error));
     }
-    let item_id = extract_required_item_id(prepared, item_id_error)?;
-    Ok((container_link, partition_key, modifiers, item_id))
+    let target = items::item_target(prepared, || extract_required_item_id(prepared, item_id_error))?;
+    Ok((container_link, partition_key, modifiers, target))
 }
 
 /// Extract create/upsert inputs, preferring `PreparedRequest.item_id`.

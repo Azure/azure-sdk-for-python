@@ -38,6 +38,7 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping, Optional
 
 import maturin
+from azure_cosmos_build_metadata import validate_version_metadata
 
 if os.name == "nt":
     import msvcrt
@@ -255,6 +256,7 @@ def build_wheel(
     metadata_directory: Optional[str] = None,
 ) -> str:
     """Build a wheel after temporarily staging configured native sidecars."""
+    validate_version_metadata()
     with _staged_query_plan_interop():
         return maturin.build_wheel(
             wheel_directory,
@@ -268,6 +270,7 @@ def build_sdist(
     config_settings: Optional[Mapping[str, Any]] = None,
 ) -> str:
     """Build a source distribution without native sidecars."""
+    validate_version_metadata()
     return maturin.build_sdist(sdist_directory, config_settings=config_settings)
 
 
@@ -277,6 +280,7 @@ def build_editable(
     metadata_directory: Optional[str] = None,
 ) -> str:
     """Delegate editable builds without copying release sidecars into the source tree."""
+    validate_version_metadata()
     with _without_packaging_source():
         return maturin.build_editable(
             wheel_directory,
@@ -290,6 +294,7 @@ def prepare_metadata_for_build_wheel(
     config_settings: Optional[Mapping[str, Any]] = None,
 ) -> str:
     """Prepare wheel metadata through Maturin."""
+    validate_version_metadata()
     return maturin.prepare_metadata_for_build_wheel(
         metadata_directory,
         config_settings=config_settings,
@@ -301,6 +306,7 @@ def prepare_metadata_for_build_editable(
     config_settings: Optional[Mapping[str, Any]] = None,
 ) -> str:
     """Prepare editable-build metadata through Maturin."""
+    validate_version_metadata()
     return maturin.prepare_metadata_for_build_editable(
         metadata_directory,
         config_settings=config_settings,

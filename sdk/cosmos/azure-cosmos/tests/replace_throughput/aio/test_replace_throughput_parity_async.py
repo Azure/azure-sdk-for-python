@@ -25,7 +25,7 @@ from azure.cosmos import ThroughputProperties
 from common._parity_helpers import run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
 from common.throughput_fixtures import container_for, autoscale_container_for, container_for_backend
 
-pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
+pytestmark = [pytest.mark.cosmosEmulator, skip_unless_emulator(), skip_unless_rust_binding()]
 
 
 def _normalize_throughput(throughput_properties):

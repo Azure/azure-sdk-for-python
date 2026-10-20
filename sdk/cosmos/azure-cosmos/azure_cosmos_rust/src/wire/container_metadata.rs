@@ -62,7 +62,7 @@ pub(super) fn metadata_error(py: Python<'_>, error: CosmosError) -> PyErr {
 /// Resolve a container and return its resource id and partition key definition.
 pub(crate) fn get_container_metadata<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
@@ -89,7 +89,7 @@ pub(crate) fn get_container_metadata<'py>(
 /// Return an awaitable that resolves a container's metadata.
 pub(crate) fn get_container_metadata_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {

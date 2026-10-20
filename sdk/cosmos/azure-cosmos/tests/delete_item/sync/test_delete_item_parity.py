@@ -26,8 +26,7 @@ What this file pins for ``delete_item``:
 * **``item`` is polymorphic.** Pass the read-back document dict
   (which carries ``_self``) instead of the bare id; the SDK resolves
   it via ``Container._get_document_link``.
-* **header-bearing kwargs.** One per test: ``pre_trigger_include``,
-  ``post_trigger_include``, ``session_token``, ``initial_headers``,
+* **header-bearing kwargs.** One per test: ``session_token``, ``initial_headers``,
   ``priority``, ``throughput_bucket``. Each is the baseline shape + exactly
   one kwarg so a failure attributes cleanly to that kwarg.
 * **behavioural / Python-only kwargs.** ``timeout`` is honoured
@@ -51,6 +50,7 @@ What this file pins for ``delete_item``:
     "Asking the server for detailed query metrics it can't actually
     produce here: ``populate_query_metrics``".
 """
+
 from __future__ import annotations
 
 import uuid
@@ -164,6 +164,41 @@ def test_baseline_delete_by_id_rust(container_for):
     _run_delete(container_for, summary="baseline delete by id").assert_functional_parity()
 
 
+@pytest.mark.parametrize("self_link_only", [False, True])
+def test_stale_mapping_does_not_delete_recreated_container_item_rust(self_link_only):
+    from azure.cosmos import PartitionKey
+    from azure.cosmos.exceptions import CosmosResourceNotFoundError
+
+    name = "delete_stale_" + uuid.uuid4().hex
+
+    def run(client):
+        db = client.create_database_if_not_exists("parity_db")
+        container = db.create_container(name, partition_key=PartitionKey(path="/pk"))
+        try:
+            old = container.create_item({"id": "same-id", "pk": "a", "generation": "old"})
+            db.delete_container(name)
+            replacement = db.create_container(name, partition_key=PartitionKey(path="/pk"))
+            new = replacement.create_item({"id": "same-id", "pk": "a", "generation": "new"})
+            assert old["_self"] != new["_self"]
+            target = {"_self": old["_self"]} if self_link_only else old
+            with pytest.raises(CosmosResourceNotFoundError) as caught:
+                replacement.delete_item(target, partition_key="a")
+            assert caught.value.status_code == 404
+            surviving = replacement.read_item("same-id", partition_key="a")
+            assert surviving["_self"] == new["_self"]
+            assert surviving["generation"] == "new"
+            return {"status": caught.value.status_code, "generation": surviving["generation"]}
+        finally:
+            db.delete_container(name)
+
+    comparison = run_on_both_backends(run, description="Stale delete mapping preserves replacement item")
+    comparison.print_report()
+    for outcome in (comparison.core_python, comparison.rust):
+        assert outcome.succeeded, f"{outcome.backend}: {outcome.raised!r}"
+        assert outcome.return_value == {"status": 404, "generation": "new"}
+    comparison.assert_functional_parity()
+
+
 # ---------------------------------------------------------------------------
 # Polymorphic ``item`` shape: pass the read-back document dict.
 # Exercises ``Container._get_document_link`` resolving ``item["_self"]``.
@@ -185,32 +220,6 @@ def test_delete_by_document_dict_rust(container_for):
 # ---------------------------------------------------------------------------
 # Header-bearing kwargs, one at a time.
 # ---------------------------------------------------------------------------
-
-def test_pre_trigger_include_rust(container_for):
-    """Baseline call plus ``pre_trigger_include='validateOrder'`` (header kwarg).
-
-    There is no registered trigger by that name on the parity
-    container; the server returns the same well-defined "trigger not
-    found" 400 to both backends. The parity contract is that both
-    backends raise the *same typed exception* (header reached the
-    wire, server validated it). The closure swallows the resulting
-    ``CosmosHttpResponseError`` so the harness can still compare
-    bodies / headers on the deterministic create+failed-delete path.
-    """
-    cmp = _run_delete(container_for, summary="baseline + pre_trigger_include",
-                      pre_trigger_include="validateOrder")
-    # Both backends should exhibit the same outcome (either both raise
-    # the typed "trigger not found" error, or both succeed on accounts
-    # where the trigger is present). The diff catches a divergence.
-    cmp.assert_functional_exception_parity()
-
-
-def test_post_trigger_include_rust(container_for):
-    """Baseline call plus ``post_trigger_include='auditOrder'`` (header kwarg)."""
-    cmp = _run_delete(container_for, summary="baseline + post_trigger_include",
-                      post_trigger_include="auditOrder")
-    cmp.assert_functional_exception_parity()
-
 
 def test_session_token_rust(container_for):
     """Baseline call plus ``session_token=<token>`` (Session-consistency header kwarg).
@@ -564,5 +573,3 @@ def test_etag_meaningful_not_deprecated_rust(container_for):
         "Got: {}".format([str(w.message) for w in offending])
     )
     cmp.assert_functional_parity()
-
-

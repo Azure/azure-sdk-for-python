@@ -183,14 +183,6 @@ def test_pk_explicit_none_rust(container_for):
 # ---------------------------------------------------------------------------
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_pre_trigger_include_rust(container_for):
-    """Baseline call plus ``pre_trigger_include='validateOrder'`` (header kwarg)."""
-    body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, summary="baseline + pre_trigger_include",
-         pre_trigger_include="validateOrder").assert_functional_parity()
-
-
-# Binding forwards the per-request header through the driver's custom-headers channel.
 def test_indexing_directive_rust(container_for):
     """Baseline call plus ``indexing_directive=Exclude`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -268,14 +260,6 @@ def test_priority_high_rust(container_for):
 # weren't covered above. Each is the baseline + EXACTLY ONE kwarg.
 # (Historical note: these all used to be skipped while the binding still dropped per-request headers; the binding now forwards them.)
 # ---------------------------------------------------------------------------
-
-# Binding forwards the per-request header through the driver's custom-headers channel.
-def test_post_trigger_include_rust(container_for):
-    """Baseline call plus ``post_trigger_include='auditOrder'`` (header kwarg)."""
-    body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, summary="baseline + post_trigger_include",
-         post_trigger_include="auditOrder").assert_functional_parity()
-
 
 # Binding routes the session token to the driver's typed setter.
 def test_session_token_rust(container_for):

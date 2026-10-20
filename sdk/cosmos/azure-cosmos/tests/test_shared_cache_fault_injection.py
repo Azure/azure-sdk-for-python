@@ -20,6 +20,10 @@ from azure.cosmos import CosmosClient
 from azure.cosmos._routing.routing_range import PKRange
 from _client_transport import create_client_with_transport
 
+pytestmark = pytest.mark.skip(
+    reason="Legacy Python fault-injection suite is disabled; targeted Rust-path coverage runs separately."
+)
+
 
 @pytest.mark.cosmosEmulator
 class TestSharedCacheFaultInjection(unittest.TestCase):

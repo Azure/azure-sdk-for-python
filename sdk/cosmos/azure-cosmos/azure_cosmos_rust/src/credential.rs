@@ -618,6 +618,17 @@ class Credential:
     def __init__(self):
         self.started = threading.Event()
         self.cancelled = threading.Event()
+        self.loop = asyncio.new_event_loop()
+        ready = threading.Event()
+        self.loop.call_soon(ready.set)
+        self.owner = threading.Thread(target=self.loop.run_forever, daemon=True)
+        self.owner.start()
+        assert ready.wait(2)
+    def close_owner_loop(self):
+        self.loop.call_soon_threadsafe(self.loop.stop)
+        self.owner.join(2)
+        assert not self.owner.is_alive()
+        self.loop.close()
     async def get_token(self, *scopes):
         self.started.set()
         try:
@@ -634,10 +645,14 @@ class Credential:
                 "credential_bridge_test",
             )
             .unwrap();
+            let kwargs = pyo3::types::PyDict::new_bound(py);
+            kwargs
+                .set_item("loop", customer.bind(py).getattr("loop").unwrap())
+                .unwrap();
             let bridge = module
                 .getattr("AsyncTokenCredentialBridge")
                 .unwrap()
-                .call1((customer.bind(py),))
+                .call((customer.bind(py),), Some(&kwargs))
                 .unwrap()
                 .unbind();
             (bridge, customer)
@@ -670,14 +685,18 @@ class Credential:
                 .bind(py)
                 .call_method0("_close_cosmos_async_bridge")
                 .unwrap();
-            assert!(!bridge
+            assert!(bridge
                 .bind(py)
-                .getattr("_thread")
+                .getattr("_loop")
                 .unwrap()
-                .call_method0("is_alive")
+                .call_method0("is_running")
                 .unwrap()
                 .extract::<bool>()
                 .unwrap());
+            customer
+                .bind(py)
+                .call_method0("close_owner_loop")
+                .unwrap();
         });
     }
 }

@@ -13,7 +13,7 @@ Python wrappers use these conversions.
 from __future__ import annotations
 
 import json
-from typing import Any, Mapping, Optional
+from typing import TYPE_CHECKING, Any, Mapping, Optional
 from dataclasses import replace
 
 from azure.core.utils import CaseInsensitiveDict
@@ -30,6 +30,9 @@ from .operations import (
 )
 from ..exceptions import CosmosHttpResponseError
 from .._operation_deadline import remaining_timeout
+
+if TYPE_CHECKING:
+    from .._rust import _DriverHandle
 
 
 _PARAMETERLESS_FEED_OPS = frozenset({OP_READ_ALL_ITEMS, OP_LIST_DATABASES, OP_LIST_CONTAINERS})
@@ -86,7 +89,7 @@ def build_binding_request_from_page(prepared: PreparedPageRequest) -> PreparedRe
 
 
 def page_binding_call_arguments(
-    driver_handle: str,
+    driver_handle: _DriverHandle,
     request: PreparedRequest,
     prepared: PreparedPageRequest,
     deadline: Optional[float],

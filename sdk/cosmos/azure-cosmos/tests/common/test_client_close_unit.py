@@ -18,6 +18,7 @@ import concurrent.futures
 import inspect
 import logging
 import threading
+from contextlib import closing
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -32,6 +33,130 @@ from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 
 SYNC_URL = "https://close-sync.documents.azure.com"
 ASYNC_URL = "https://close-async.documents.azure.com"
+
+
+@pytest.mark.parametrize("async_mode", [False, True])
+def test_adapter_rejects_binding_without_owning_handles_rust(monkeypatch, async_mode):
+    from azure.cosmos import _rust
+
+    monkeypatch.delattr(_rust, "_DriverHandle")
+    adapter_type = async_rust_module.AsyncBindingAdapter if async_mode else sync_rust_module.BindingAdapter
+    with pytest.raises(RuntimeError, match="lacks owning driver handles"):
+        adapter_type(SYNC_URL, master_key="key")
+
+
+@pytest.mark.parametrize("async_mode", [False, True])
+@pytest.mark.parametrize("recreate", [False, True])
+@pytest.mark.parametrize("operation", ["execute", "metadata", "page"])
+def test_dispatch_keeps_owning_handle_across_close_rust(monkeypatch, async_mode, recreate, operation):
+    """Real adapters pass the selected owning object, not a later cache lookup.
+
+    The binding and its owning handles are simulated here. The native
+    handle-generation test separately covers real Rust driver ownership.
+    """
+    from types import SimpleNamespace
+    from azure.cosmos._backend.contracts import PreparedPageRequest, PreparedRequest
+    from azure.cosmos._backend.partition_key_input import BindingPartitionKey
+
+    selected, resume = threading.Event(), threading.Event()
+    cache = []
+    received = []
+
+    def acquire(*args, **kwargs):
+        if not cache:
+            cache.append(object())
+        return SimpleNamespace(driver=cache[0], released=False)
+
+    def release(handle):
+        if not handle.released:
+            handle.released = True
+            if cache and cache[0] is handle.driver:
+                cache.clear()
+
+    def dispatch(handle, *args, **kwargs):
+        received.append(handle)
+        if operation == "metadata":
+            return "container-rid", ("/customerId",), "Hash", False
+        return 200, 0, {}, b'{"Databases":[]}'
+
+    native = SimpleNamespace(
+        acquire_driver_handle=acquire, release_driver_handle=MagicMock(side_effect=release)
+    )
+    for name in ("read_database", "get_container_metadata", "list_databases"):
+        setattr(native, name, dispatch)
+        setattr(native, name + "_async", AsyncMock(side_effect=dispatch))
+    module = async_rust_module if async_mode else sync_rust_module
+    adapter_type = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
+    monkeypatch.setattr(module, "_rust_module", native)
+    adapter = adapter_type(SYNC_URL, master_key="key")
+    ensure = adapter._ensure_driver_handle
+    chosen = []
+
+    def pause(handle):
+        chosen.append(handle)
+        selected.set()
+        assert resume.wait(5), "close did not resume the pending operation"
+        return handle
+
+    if async_mode:
+        async def paused_ensure():
+            return await asyncio.to_thread(pause, await ensure())
+    else:
+        def paused_ensure():
+            return pause(ensure())
+    monkeypatch.setattr(adapter, "_ensure_driver_handle", paused_ensure)
+    request = PreparedRequest(
+        op="read_database", container_link="", body_bytes=b"",
+        partition_key=BindingPartitionKey("cross_partition"), item_id="db",
+    )
+
+    def run_operation():
+        if operation == "execute":
+            result = adapter.execute(request)
+        elif operation == "metadata":
+            result = adapter.get_container_metadata("dbs/db/colls/c")
+        else:
+            pages = adapter.execute_pages(PreparedPageRequest(op="list_databases", container_link=""))
+            if async_mode:
+                async def read_page():
+                    try:
+                        return await anext(pages)
+                    finally:
+                        await pages.aclose()
+                return asyncio.run(read_page())
+            with closing(pages):
+                return next(pages)
+        return asyncio.run(result) if async_mode else result
+
+    def close(client_adapter):
+        result = client_adapter.close()
+        if async_mode:
+            asyncio.run(result)
+
+    replacement = None
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        pending = executor.submit(run_operation)
+        try:
+            assert selected.wait(5), "operation did not select its handle"
+            close(adapter)
+            assert adapter._driver_handle is None
+            assert not cache
+            if recreate:
+                replacement = adapter_type(SYNC_URL, master_key="key")
+                result = replacement._ensure_driver_handle()
+                new_handle = asyncio.run(result) if async_mode else result
+                assert new_handle.driver is not chosen[0].driver
+            resume.set()
+            pending.result(timeout=5)
+            assert received == chosen
+            assert received[0] is chosen[0]
+            close(adapter)
+            native.release_driver_handle.assert_called_once_with(chosen[0])
+        finally:
+            resume.set()
+            close(adapter)
+            if replacement is not None:
+                close(replacement)
 
 
 @pytest.mark.parametrize("async_mode", [False, True])

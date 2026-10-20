@@ -60,7 +60,7 @@ from .constants import BACKEND_NAME_RUST
 from .request_settings import binding_settings_contract_error
 
 if TYPE_CHECKING:
-    from azure.cosmos._rust import _ItemFeedCursor
+    from azure.cosmos._rust import _DriverHandle, _ItemFeedCursor
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -140,8 +140,8 @@ def _binding_function_by_name(binding_function_name: Optional[str]) -> Optional[
 class BindingAdapter(BindingAdapterShared, CosmosBackend):
     """Retain one client's settings and execute its prepared requests.
 
-    A driver handle is a string identifying a CosmosDriver retained by the
-    binding. This backend acquires one on first use and reuses it::
+    A driver handle is an opaque binding object retaining a specific CosmosDriver.
+    This adapter acquires one on first use and reuses it::
 
         construct -> store settings, no driver handle
         first operation -> acquire handle H -> execute
@@ -178,7 +178,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             endpoint, master_key, client_config, token_credential, runtime
         )
 
-    def _ensure_driver_handle(self) -> str:
+    def _ensure_driver_handle(self) -> _DriverHandle:
         """Acquire a handle on first use; reuse it on subsequent calls.
 
         Two initial callers on this adapter must share one acquisition::
@@ -189,7 +189,8 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
 
         The binding may create a CosmosDriver or reuse a matching one. A failed
         acquisition leaves no handle and can be attempted again. Closing blocks
-        new acquisition, but cannot revoke a handle another call already read.
+        new acquisition. A call that already read the owning handle retains the
+        same driver even if close removes its entry from the binding's cache.
         """
         # Reject incompatible request settings even if a driver was already acquired.
         if _REQUEST_CONTRACT_ERROR is not None:

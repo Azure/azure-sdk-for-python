@@ -414,11 +414,10 @@ def _new_operation(
     backend = getattr(context, "adapter", None)
     if backend is None or not is_rust_backend(backend):
         return None
+    binding_operation = operation if binding_operation is None else binding_operation
     state = None
     if handlers or not tracing:
-        state = _Operation(
-            operation, backend, None, _current_task(), get_ident(), binding_operation or operation, handlers=handlers
-        )
+        state = _Operation(operation, backend, None, _current_task(), get_ident(), binding_operation, handlers=handlers)
     if not tracing:
         # Azure Core retains validation of its own tracing options.
         return state
@@ -430,7 +429,7 @@ def _new_operation(
     try:
         caller = trace.get_current_span().get_span_context()
         if state is None:
-            state = _Operation(operation, backend, caller, _current_task(), get_ident(), binding_operation or operation)
+            state = _Operation(operation, backend, caller, _current_task(), get_ident(), binding_operation)
         else:
             state.caller = caller
         return state
@@ -476,12 +475,21 @@ def _record_operation() -> Iterator[None]:
             operation.finish(outcome)
 
 
+class _LocalOperationError(Exception):
+    """A tracing-only error; the original exception is restored outside the SDK span."""
+
+    def __init__(self, error: Exception) -> None:
+        super().__init__(f"Local SDK operation failed ({type(error).__name__})")
+        self.original = error
+
+
 def trace_operation(*, binding_operation: _BindingOperation) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]:
     """Reuse Azure Core's span while owning diagnostics until public completion.
 
     :keyword binding_operation: One binding operation, or the ordered steps of a bounded
         composed call. A tuple allows a prefix of that sequence, not arbitrary repeated calls.
         BindingAlternatives narrows permitted paths with each actual binding call.
+        An empty tuple records local execution without accepting binding contributions.
     :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives
     :return: A decorator with operation-scoped diagnostic collection.
     :rtype: callable
@@ -490,8 +498,13 @@ def trace_operation(*, binding_operation: _BindingOperation) -> Callable[[Callab
     def decorate(func: Callable[_P, _T]) -> Callable[_P, _T]:
         @wraps(func)
         def record(*args: _P.args, **kwargs: _P.kwargs) -> _T:
-            with _record_operation():
-                return func(*args, **kwargs)
+            try:
+                with _record_operation():
+                    return func(*args, **kwargs)
+            except Exception as error:
+                if binding_operation == ():
+                    raise _LocalOperationError(error) from None
+                raise
 
         traced = distributed_trace(record)
 
@@ -501,7 +514,13 @@ def trace_operation(*, binding_operation: _BindingOperation) -> Callable[[Callab
             if _consume_delegated_call(owner, func.__name__):
                 return func(*args, **kwargs)
             with _operation_scope(owner, func.__name__, kwargs, binding_operation):
-                return traced(*args, **kwargs)
+                try:
+                    return traced(*args, **kwargs)
+                except _LocalOperationError as error:
+                    if binding_operation != ():
+                        raise
+                    original = error.original
+                raise original.with_traceback(original.__traceback__)
 
         return wrapper
 
@@ -516,6 +535,7 @@ def trace_operation_async(
     :keyword binding_operation: One binding operation, or the ordered steps of a bounded
         composed call. A tuple allows a prefix of that sequence, not arbitrary repeated calls.
         BindingAlternatives narrows permitted paths with each actual binding call.
+        An empty tuple records local execution without accepting binding contributions.
     :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives
     :return: A decorator with operation-scoped diagnostic collection.
     :rtype: callable
@@ -524,8 +544,13 @@ def trace_operation_async(
     def decorate(func: Callable[_P, Awaitable[_T]]) -> Callable[_P, Awaitable[_T]]:
         @wraps(func)
         async def record(*args: _P.args, **kwargs: _P.kwargs) -> _T:
-            with _record_operation():
-                return await func(*args, **kwargs)
+            try:
+                with _record_operation():
+                    return await func(*args, **kwargs)
+            except Exception as error:
+                if binding_operation == ():
+                    raise _LocalOperationError(error) from None
+                raise
 
         traced = distributed_trace_async(record)
 
@@ -535,7 +560,13 @@ def trace_operation_async(
             if _consume_delegated_call(owner, func.__name__):
                 return await func(*args, **kwargs)
             with _operation_scope(owner, func.__name__, kwargs, binding_operation):
-                return await traced(*args, **kwargs)
+                try:
+                    return await traced(*args, **kwargs)
+                except _LocalOperationError as error:
+                    if binding_operation != ():
+                        raise
+                    original = error.original
+                raise original.with_traceback(original.__traceback__)
 
         return wrapper
 

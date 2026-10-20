@@ -34,7 +34,7 @@ class TestFeedRangeMultiPartitionAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_prefix_partition_key_query_pagination_resume_async_rust(self):
         """Prefix query resumes all matching items and preserves the COUNT result."""
-        # Source: tests/test_query_feed_range_multipartition_async.py, same class and method.
+        # Source: tests/test_query_feed_range_multipartition_async.py::TestFeedRangeMultiPartitionAsync.test_prefix_partition_key_query_pagination_resume_async
         db = self.database
         container_id = "FeedRangeMultiPartitionAsyncPrefixPK-" + str(uuid.uuid4())
         created_container = await db.create_container_if_not_exists(

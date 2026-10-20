@@ -65,6 +65,28 @@ class _CapturingAsyncBackend(AsyncCosmosBackend):
 class TestAsyncContainerDeleteItemRouting(unittest.IsolatedAsyncioTestCase):
     """The async delete behaves the same as the sync delete."""
 
+    async def test_mapping_preserves_self_link_even_without_item_id_rust(self):
+        for include_id in (False, True):
+            with self.subTest(include_id=include_id):
+                proxy, cc = _make_async_proxy()
+                backend = _CapturingAsyncBackend()
+                proxy._item_context = ItemClientContext(backend)
+                target = {"_self": "dbs/old-db/colls/old-container/docs/old-item/"}
+                if include_id:
+                    target["id"] = "same-id"
+                self.assertIsNone(await proxy.delete_item(target, "a"))
+                self.assertEqual(backend.prepared.item_self_link, target["_self"])
+                self.assertIsNone(backend.prepared.item_id)
+                cc.DeleteItem.assert_not_awaited()
+
+    async def test_non_string_self_link_fails_before_dispatch_rust(self):
+        proxy, _ = _make_async_proxy()
+        backend = _CapturingAsyncBackend()
+        proxy._item_context = ItemClientContext(backend)
+        with self.assertRaisesRegex(TypeError, "target _self must be a string"):
+            await proxy.delete_item({"id": "same-id", "_self": None}, "a")
+        self.assertFalse(backend.executed)
+
     async def test_string_item_resolves_to_document_link_rust(self):
         """A delete by id string targets that item."""
         proxy, cc = _make_async_proxy()

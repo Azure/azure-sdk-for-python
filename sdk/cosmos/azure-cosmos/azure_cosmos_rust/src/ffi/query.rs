@@ -21,7 +21,7 @@ use super::*;
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn query_items<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
@@ -29,7 +29,7 @@ pub(crate) fn query_items<'py>(
     let (container_link, partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     run_query_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -46,7 +46,7 @@ pub(crate) fn query_items<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_all_items<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
@@ -54,7 +54,7 @@ pub(crate) fn read_all_items<'py>(
     let (container_link, partition_key, modifiers) = extract_read_all_inputs(prepared)?;
     run_read_all_items_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -68,7 +68,7 @@ pub(crate) fn read_all_items<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn query_items_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
@@ -76,7 +76,7 @@ pub(crate) fn query_items_async<'py>(
     let (container_link, partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     run_query_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,
@@ -92,7 +92,7 @@ pub(crate) fn query_items_async<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_all_items_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
@@ -100,7 +100,7 @@ pub(crate) fn read_all_items_async<'py>(
     let (container_link, partition_key, modifiers) = extract_read_all_inputs(prepared)?;
     run_read_all_items_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         &container_link,
         partition_key,
         modifiers,

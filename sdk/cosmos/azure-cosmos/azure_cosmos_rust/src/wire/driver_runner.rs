@@ -30,7 +30,7 @@ pub(super) type ResponseTupleConverter<R> =
 /// Release the GIL while waiting; this still blocks the calling thread.
 pub(super) fn run_driver_operation_sync<'py, R, F, Fut>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     operation_name: &str,
     operation_future_factory: F,
     convert_response: ResponseTupleConverter<R>,
@@ -52,7 +52,7 @@ where
 /// Prepare after driver lookup, preserving synchronous validation errors.
 pub(super) fn run_prepared_driver_operation_sync<'py, R, F, Fut>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     operation_name: &str,
     prepare: F,
     convert_response: ResponseTupleConverter<R>,
@@ -75,7 +75,7 @@ where
 /// dropped. Merely discarding a Python reference is not a cancellation contract.
 pub(super) fn run_driver_operation_async<'py, R, F, Fut>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     operation_name: &str,
     operation_future_factory: F,
     convert_response: ResponseTupleConverter<R>,
@@ -97,7 +97,7 @@ where
 /// Preparation errors are raised before returning the awaitable, not on await.
 pub(super) fn run_prepared_driver_operation_async<'py, R, F, Fut>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     operation_name: &str,
     prepare: F,
     convert_response: ResponseTupleConverter<R>,

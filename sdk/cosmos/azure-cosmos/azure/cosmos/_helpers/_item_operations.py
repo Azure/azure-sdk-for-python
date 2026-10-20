@@ -64,8 +64,10 @@ def normalize_item_arguments(
     Rust path after the prepared request reaches the binding.
     """
     kwargs = dict(arguments)
-    if op in ("read_item", "replace_item", "patch_item") and "_item_self_link" in kwargs and not isinstance(
-        kwargs["_item_self_link"], str
+    if (
+        op in ("read_item", "replace_item", "patch_item", "delete_item")
+        and "_item_self_link" in kwargs
+        and not isinstance(kwargs["_item_self_link"], str)
     ):
         raise TypeError(f"{op} target _self must be a string.")
     item_self_link = kwargs.pop("_item_self_link", None)
@@ -80,7 +82,7 @@ def normalize_item_arguments(
     args = {
         "container_link": kwargs.pop("container_link"),
         "item_id": kwargs.pop("item_id", None),
-        "item_self_link": item_self_link if op in ("read_item", "replace_item", "patch_item") else None,
+        "item_self_link": item_self_link if op in ("read_item", "replace_item", "patch_item", "delete_item") else None,
         "filter_predicate": kwargs.pop("filter_predicate", None),
         "indexing_directive": kwargs.pop("indexing_directive", None),
         "deadline": deadline if op == "create_item" else inherited_deadline,
@@ -204,7 +206,9 @@ def build_item_request(
         return _request_item.build_read_item_request(
             item_id=args["item_id"], item_self_link=args["item_self_link"], **common
         )
-    return _request_item.build_delete_item_request(item_id=args["item_id"], **common)
+    return _request_item.build_delete_item_request(
+        item_id=args["item_id"], item_self_link=args["item_self_link"], **common
+    )
 
 
 class ItemHelper:

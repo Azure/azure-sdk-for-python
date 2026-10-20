@@ -552,7 +552,7 @@ fn inputs(
 #[pyo3(signature = (driver_handle, prepared, cursor, *, timeout_seconds=None))]
 pub(crate) fn fetch_page_with_cursor<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     prepared: &Bound<'py, PyAny>,
     cursor: PyRef<'py, ItemFeedCursor>,
     timeout_seconds: Option<f64>,
@@ -563,7 +563,7 @@ pub(crate) fn fetch_page_with_cursor<'py>(
     BINDING_OP_COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
     let driver = lookup_driver(driver_handle)?;
     let state = cursor.state.clone();
-    let identity = (driver_handle.to_owned(), link);
+    let identity = (driver_handle.cache_key().to_owned(), link);
     let runtime = require_runtime_context("fetch_page_with_cursor")?;
     let future = page_timeout(
         timeout,
@@ -585,7 +585,7 @@ pub(crate) fn fetch_page_with_cursor<'py>(
 #[pyo3(signature = (driver_handle, prepared, cursor, *, timeout_seconds=None))]
 pub(crate) fn fetch_page_with_cursor_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     prepared: &Bound<'py, PyAny>,
     cursor: PyRef<'py, ItemFeedCursor>,
     timeout_seconds: Option<f64>,
@@ -596,7 +596,7 @@ pub(crate) fn fetch_page_with_cursor_async<'py>(
     BINDING_OP_COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
     let driver = lookup_driver(driver_handle)?;
     let state = cursor.state.clone();
-    let identity = (driver_handle.to_owned(), link);
+    let identity = (driver_handle.cache_key().to_owned(), link);
     let runtime = require_runtime_context("fetch_page_with_cursor_async")?;
     let future = page_timeout(
         timeout,

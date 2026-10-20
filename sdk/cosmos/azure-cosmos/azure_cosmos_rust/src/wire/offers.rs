@@ -37,7 +37,7 @@ use crate::runtime::require_runtime_context;
 /// Wait on the calling thread with Python's global interpreter lock (GIL) released.
 pub(crate) fn run_get_throughput_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     op_name: &str,
@@ -62,7 +62,7 @@ pub(crate) fn run_get_throughput_operation<'py>(
 /// Async sibling of `run_get_throughput_operation`.
 pub(crate) fn run_get_throughput_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     op_name: &str,
@@ -108,7 +108,7 @@ pub(crate) fn run_get_throughput_operation_async<'py>(
 /// Wait on the calling thread with the GIL released; the body contains one record.
 pub(crate) fn run_replace_throughput_operation<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     offer_id: String,
     body_bytes: Vec<u8>,
@@ -140,7 +140,7 @@ pub(crate) fn run_replace_throughput_operation<'py>(
 /// Async sibling of `run_replace_throughput_operation`.
 pub(crate) fn run_replace_throughput_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     modifiers: RequestHeadersAndOptions,
     offer_id: String,
     body_bytes: Vec<u8>,

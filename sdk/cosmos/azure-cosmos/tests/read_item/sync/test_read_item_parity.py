@@ -29,7 +29,7 @@ What this file pins for ``read_item``:
   the two failure modes (the server returns 404 either way), so parity
   here is "same typed exception with the same status code", not "same
   reason text".
-* **header-bearing kwargs.** ``post_trigger_include``,
+* **header-bearing kwargs.**
   ``session_token``, ``initial_headers``, ``priority``,
   ``throughput_bucket``. One kwarg per test so a failure attributes
   cleanly.
@@ -54,6 +54,7 @@ What this file pins for ``read_item``:
   * ``populate_query_metrics`` is rejected whenever supplied, including
     None/False, on both clients and both backends.
 """
+
 from __future__ import annotations
 
 import uuid
@@ -268,18 +269,6 @@ def test_wrong_partition_key_raises_typed_not_found_rust(container_for):
 # ---------------------------------------------------------------------------
 # Header-bearing kwargs, one at a time
 # ---------------------------------------------------------------------------
-
-def test_post_trigger_include_rust(container_for):
-    """Baseline call plus ``post_trigger_include='auditRead'`` (header kwarg).
-
-    There is no registered trigger by that name; the server returns
-    the same "trigger not found" error to both backends. The parity
-    contract is that the typed exception matches.
-    """
-    cmp = _run_read(container_for, summary="baseline + post_trigger_include",
-                    post_trigger_include="auditRead")
-    cmp.assert_functional_exception_parity()
-
 
 def test_session_token_rust(container_for):
     """Baseline call plus ``session_token=<token>``.

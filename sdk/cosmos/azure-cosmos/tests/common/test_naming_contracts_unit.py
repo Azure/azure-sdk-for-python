@@ -877,7 +877,7 @@ def test_native_handle_lookup_error_does_not_disclose_the_handle_rust():
         op="read_item", container_link="dbs/d/colls/c", body_bytes=b"",
         item_id="i", partition_key=BindingPartitionKey("components", ("p",)),
     )
-    with pytest.raises(RuntimeError, match="no driver registered") as caught:
+    with pytest.raises(TypeError, match="_DriverHandle") as caught:
         native.read_item(handle, request)
     assert handle not in str(caught.value)
     assert "credential-fingerprint" not in str(caught.value)

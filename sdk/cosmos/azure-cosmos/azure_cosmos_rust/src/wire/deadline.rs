@@ -61,10 +61,29 @@ pub(super) fn with_operation_timeout<T>(
     async move {
         timed.await.map_err(|error| {
             PyTimeoutError::new_err(format!(
-                "Item operation timed out during metadata resolution or execution: {error}"
+                "Operation timed out during metadata resolution or execution: {error}"
             ))
         })
     }
+}
+
+/// Local CPU work cannot be preempted; reject expired work and late completion.
+/// The caller records this deadline before scheduling, just as for async I/O.
+pub(super) fn with_local_deadline<T>(
+    deadline: Option<std::time::Instant>,
+    operation: impl FnOnce() -> T,
+) -> PyResult<T> {
+    let check = || {
+        if deadline.is_some_and(|deadline| deadline <= std::time::Instant::now()) {
+            Err(PyTimeoutError::new_err("Local operation timed out"))
+        } else {
+            Ok(())
+        }
+    };
+    check()?;
+    let result = operation();
+    check()?;
+    Ok(result)
 }
 
 pub(super) fn with_page_timeout<T>(
@@ -161,6 +180,25 @@ mod tests {
             parse_remaining_timeout(Some(0.125)).unwrap(),
             Some(Duration::from_millis(125))
         );
+    }
+
+    #[test]
+    fn local_work_checks_expiration_before_and_after_computation() {
+        pyo3::prepare_freethreaded_python();
+        let ran = AtomicBool::new(false);
+        let expired = Some(std::time::Instant::now());
+        let error = with_local_deadline(expired, || ran.store(true, Ordering::SeqCst)).unwrap_err();
+        assert!(!ran.load(Ordering::SeqCst));
+        pyo3::Python::with_gil(|py| assert!(error.is_instance_of::<PyTimeoutError>(py)));
+
+        let deadline = Some(std::time::Instant::now() + Duration::from_millis(10));
+        let error = with_local_deadline(deadline, || {
+            std::thread::sleep(Duration::from_millis(20));
+            42
+        })
+        .unwrap_err();
+        pyo3::Python::with_gil(|py| assert!(error.is_instance_of::<PyTimeoutError>(py)));
+        assert_eq!(with_local_deadline(None, || 42).unwrap(), 42);
     }
 
     #[tokio::test(start_paused = true)]

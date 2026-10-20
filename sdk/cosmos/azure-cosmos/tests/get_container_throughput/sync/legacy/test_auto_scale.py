@@ -2,23 +2,28 @@
 # Licensed under the MIT License.
 """Retain legacy autoscale-container assertions with owned fixtures and Rust selection."""
 
+from contextlib import ExitStack
 import os
 import unittest
 import uuid
 
+import pytest
+
+from common.throughput_fixtures import owned_database
+
 from azure.cosmos import CosmosClient, PartitionKey, ThroughputProperties, exceptions
 
 
+@pytest.mark.cosmosEmulator
 class TestAutoScale(unittest.TestCase):
     def setUp(self):
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
-        self.database = self.client.create_database("container_autoscale_" + uuid.uuid4().hex)
-
-    def tearDown(self):
-        try:
-            self.client.delete_database(self.database.id)
-        finally:
-            self.client.close()
+        self.addCleanup(self.client.close)
+        cleanup = ExitStack()
+        self.addCleanup(cleanup.close)
+        self.database = cleanup.enter_context(owned_database(
+            self.client, "container_autoscale_" + uuid.uuid4().hex,
+        ))
 
     def test_autoscale_create_container_rust(self):
         # Source: tests/test_auto_scale.py::TestAutoScale.test_autoscale_create_container

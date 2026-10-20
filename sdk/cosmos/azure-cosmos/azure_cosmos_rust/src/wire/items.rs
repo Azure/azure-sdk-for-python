@@ -83,7 +83,7 @@ impl ItemTarget {
 /// the supplied binding timeout; neither gets a fresh timeout after waiting.
 pub(crate) fn execute_item_operation_sync<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,
@@ -141,7 +141,7 @@ pub(crate) fn execute_item_operation_sync<'py>(
 /// guarantee of immediate cleanup or cancellation of work already at the service backend.
 pub(crate) fn execute_item_operation_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,

@@ -16,6 +16,7 @@ from ci_tools.versioning.version_shared import (
     get_packages,
     set_version_py,
     set_dev_classifier,
+    synchronized_version_update,
 )
 
 from ci_tools.variables import discover_repo_root
@@ -102,13 +103,16 @@ def set_dev_version(target_packages: List[ParsedSetup], build_id: str):
         try:
             new_version = get_dev_version(target_package.version, build_id)
             print(f"Processing {target_package.name}.")
-            process_requires(target_package.setup_filename, True)
-            set_version_py(target_package.setup_filename, new_version)
-            set_dev_classifier(target_package.setup_filename, new_version)
+            with synchronized_version_update(target_package.setup_filename, update_changelog=True):
+                process_requires(target_package.setup_filename, True)
+                set_version_py(target_package.setup_filename, new_version)
+                set_dev_classifier(target_package.setup_filename, new_version)
             print("{0}: {1} -> {2}".format(target_package.name, target_package.version, new_version))
         except Exception as e:
             print("Could not set dev version for package: {0}".format(target_package.name))
             logger.error(str(e))
+            if target_package.get_config_setting("synchronize-version-metadata", False):
+                raise
 
 
 if __name__ == "__main__":

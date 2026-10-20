@@ -11,33 +11,35 @@ replace_item and delete_item select their original test or Rust copy. Upsert sel
 None-options test and test_document_upsert (two tests). Other original selections expect one test;
 --suite copied supports read_item only and expects seven. Copied-suite baseline
 files change only the explicit backend.
-query_items defaults to the None-parameters/filter test or its Rust copy
-(one test with four query calls). --query-test ordering selects the original
-partition-scoped ORDER BY/paging test or its Rust copy instead.
---query-test offset selects the original seven OFFSET LIMIT queries or their
-self-contained copy; --surface aio selects its async counterpart (sync is default).
---query-test distinct selects the original four DISTINCT queries or their
-self-contained copy, also supporting --surface aio.
---query-test count selects the original partition-scoped COUNT/metrics test
-or its copy on either surface.
---query-test metrics selects the original query-execution-metrics header
-test or its self-contained copy on either surface.
---query-test index-metrics selects the original index-utilization diagnostics
-test or its self-contained copy on either surface.
---query-test advice selects the original seven-query advisor test or its
-copy on either surface. Both retain an unconditional emulator-related skip;
+All query_items selections use the retained owned test on both backends,
+changing only its explicit backend pin for core Python. Duplicate original
+query methods are retired only where explicitly approved; shared original setup is not audited.
+query_items defaults to the None-parameters/filter test (four query calls).
+--query-test none-options selects the optional-arguments test on either surface.
+--query-test feed-ranges selects two original-derived all-ranges query cases
+per surface, with owned 400 and 30,000 RU/s containers. These originals remain.
+Use --expected-count 2 for each surface's comparison report.
+--query-test partition-feed-range uses those same two configurations to
+query each logical key via feed_range_from_partition_key. It also expects
+two test cases per surface, with three key-scoped queries in each case.
+--query-test ordering selects partition-scoped ORDER BY/paging.
+--query-test offset selects seven OFFSET LIMIT queries; --surface aio selects
+the async counterpart (sync is default).
+--query-test distinct selects four DISTINCT queries on either surface.
+--query-test count selects partition-scoped COUNT/metrics.
+--query-test metrics and index-metrics select their diagnostics tests.
+--query-test advice selects the seven-query advisor test on either surface.
+Both retain an unconditional emulator-related skip;
 selection is not runtime parity until enabled on a supported target.
---query-test continuation selects the original partition-scoped continuation
-replay test or its owned copy on either surface.
---query-test cross-continuation selects the original cross-partition replay
-test or its owned copy; both surfaces omit the enable flag.
---query-test token-limit selects the original one-kilobyte continuation
-token test or its owned copy on either surface.
+--query-test continuation selects partition-scoped continuation replay.
+--query-test cross-continuation selects cross-partition replay; both surfaces
+omit the enable flag.
+--query-test token-limit selects the one-kilobyte continuation-token test.
 --query-test prefix-continuation compares owned copies of the original
 hierarchical-prefix replay/COUNT test. Both columns omit the unrelated
 shared fixture and preserve the test's own 400 RU/s hierarchical container.
---query-test max selects the original MAX-result test or its Rust copy,
-including its async counterpart. Original item bodies omit the partition key.
+--query-test max selects the MAX-result test, including its async counterpart.
+The preserved item bodies omit the partition key.
 --query-test sum compares adapted full-feed-range SUM copies on either
 surface. Both columns omit the original shared high-throughput provisioning;
 three logical keys do not guarantee multiple physical partitions.
@@ -67,6 +69,9 @@ from azure.cosmos import CosmosClient, PartitionKey  # pylint: disable=wrong-imp
 
 
 QUERY_METHODS = {
+    "feed-ranges": "::TestQueryFeedRange::test_query_with_feed_range_for_all_partitions",
+    "partition-feed-range": "::TestQueryFeedRange::test_query_with_feed_range_for_partition_key",
+    "none-options": "::TestNoneOptions::test_container_query_items_none_options_partition",
     "parameters": "::TestQuery::test_query_items_with_parameters_none",
     "ordering": "::TestQuery::test_query_pagination_with_max_item_count",
     "top": "::TestCrossPartitionTopOrderBy::test_orderby_top_query",
@@ -87,6 +92,9 @@ QUERY_METHODS = {
 }
 
 ASYNC_QUERY_METHODS = {
+    "feed-ranges": "::TestQueryFeedRangeAsync::test_query_with_feed_range_for_all_partitions_async",
+    "partition-feed-range": "::TestQueryFeedRangeAsync::test_query_with_feed_range_for_partition_key_async",
+    "none-options": "::TestNoneOptionsAsync::test_container_query_items_none_options_partition_async",
     "offset": "::TestQueryAsync::test_offset_limit_async",
     "distinct": "::TestQueryAsync::test_distinct_async",
     "count": "::TestQueryAsync::test_partition_scoped_count_is_index_only_async",
@@ -157,9 +165,9 @@ def main(argv=None):
         parser.error("--query-test requires --op query_items")
     if args.surface == "aio" and not (args.op == "query_items" and args.query_test in ASYNC_QUERY_METHODS):
         parser.error(
-            "--surface aio requires --op query_items --query-test offset, distinct, count, "
+            "--surface aio requires --op query_items --query-test none-options, offset, distinct, count, "
             "metrics, index-metrics, advice, continuation, cross-continuation, token-limit, "
-            "prefix-continuation, sum, avg, max, or min"
+            "prefix-continuation, feed-ranges, partition-feed-range, sum, avg, max, or min"
         )
     for name in ("ACCOUNT_HOST", "ACCOUNT_KEY"):
         if not os.environ.get(name):
@@ -178,8 +186,15 @@ def main(argv=None):
     if args.surface == "aio":
         source_file = "test_query_async.py"
         method = ASYNC_QUERY_METHODS[args.query_test]
+    if args.query_test == "none-options":
+        source_file = "test_none_options_async.py" if args.surface == "aio" else "test_none_options.py"
     if args.query_test in ("sum", "avg", "min"):
         source_file = "test_query_feed_range_async.py" if args.surface == "aio" else "test_query_feed_range.py"
+    if args.query_test in ("feed-ranges", "partition-feed-range"):
+        source_file = (
+            "test_query_feed_range_discovery_async.py"
+            if args.surface == "aio" else "test_query_feed_range_discovery.py"
+        )
     if args.query_test == "prefix-continuation":
         source_file = (
             "test_query_feed_range_multipartition_async.py"
@@ -198,7 +213,7 @@ def main(argv=None):
         folder = ROOT / "tests" / args.op / args.surface / "legacy"
         return pytest.main(options + [str(folder / filename) + node + "_rust" for filename, node in selections])
 
-    if args.query_test in ("top", "sum", "avg", "min", "prefix-continuation"):
+    if args.op == "query_items":
         from run_database_throughput_parity import _source_for_backend
 
         source = ROOT / "tests" / "query_items" / args.surface / "legacy" / source_file
@@ -227,9 +242,7 @@ def main(argv=None):
             database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
             config.TEST_DATABASE_ID = database_id
             config.TEST_SINGLE_PARTITION_CONTAINER_ID = container_id
-            if args.op == "upsert_item" or args.query_test in (
-                "count", "max", "continuation", "cross-continuation", "token-limit"
-            ):
+            if args.op == "upsert_item":
                 config.TEST_MULTI_PARTITION_CONTAINER_ID = container_id
             return pytest.main(options + [
                 str(ROOT / "tests" / filename) + node for filename, node in selections

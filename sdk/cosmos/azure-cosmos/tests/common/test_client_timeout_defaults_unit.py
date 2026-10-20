@@ -4,10 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 """Client budgets at the public boundary, with no service requests."""
+
 import asyncio
 import inspect
 import json
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
@@ -17,7 +20,9 @@ from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos._backend import binding_adapter as sync_binding
 from azure.cosmos.aio._backend import binding_adapter as async_binding
-from azure.cosmos._backend.operations import get_page_binding_function_name
+from azure.cosmos._backend.operations import OP_TO_BINDING_FUNCTION_NAME, get_page_binding_function_name
+from azure.cosmos._backend.contracts import PreparedPageRequest, PreparedRequest
+from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 from azure.cosmos.exceptions import CosmosClientTimeoutError
 
 
@@ -27,6 +32,294 @@ def _complete(value):
 
 def _response(status=201, headers=None, body=None):
     return status, 0, headers or {}, json.dumps(body or {"id": "sales"}).encode(), None
+
+
+@pytest.fixture
+def cold_async_client(monkeypatch):
+    client = AsyncCosmosClient("https://alpha-bank.documents.azure.com", "key", timeout=1, _backend="rust")
+    entered = threading.Event()
+    finish = threading.Event()
+    handle = object()
+
+    def acquire(*_args):
+        entered.set()
+        assert finish.wait(10), "test did not release acquisition"
+        return handle
+
+    native = SimpleNamespace(
+        acquire_driver_handle=MagicMock(side_effect=acquire),
+        release_driver_handle=MagicMock(),
+    )
+    monkeypatch.setattr(async_binding, "_rust_module", native)
+    yield SimpleNamespace(client=client, entered=entered, finish=finish, handle=handle, native=native)
+    finish.set()
+    asyncio.run(client.close())
+
+
+@pytest.mark.parametrize(
+    "operation", ["create_item", "read_item", "upsert_item", "replace_item", "patch_item", "delete_item"]
+)
+@pytest.mark.parametrize("client_default", [False, True], ids=["per-call", "client-default"])
+def test_cold_async_item_timeout_returns_before_acquisition_finishes_rust(cold_async_client, operation, client_default):
+    case = cold_async_client
+    dispatch = AsyncMock(return_value=_response())
+    setattr(case.native, operation + "_async", dispatch)
+    container = case.client.get_database_client("sales").get_container_client("orders")
+    body = {"id": "order-42", "pk": "A"}
+    arguments = {
+        "create_item": (body,),
+        "read_item": ("order-42",),
+        "upsert_item": (body,),
+        "replace_item": ("order-42", body),
+        "patch_item": ("order-42",),
+        "delete_item": ("order-42",),
+    }
+    options = {} if client_default else {"timeout": 1}
+    if operation not in ("create_item", "upsert_item"):
+        options["partition_key"] = "A"
+    if operation == "patch_item":
+        options["patch_operations"] = [{"op": "set", "path": "/value", "value": 1}]
+
+    async def run():
+        try:
+            with pytest.raises(CosmosClientTimeoutError):
+                await asyncio.wait_for(getattr(container, operation)(*arguments[operation], **options), 2)
+            assert not case.finish.is_set()
+            pending = case.client._adapter._init_future
+            assert pending is not None and not pending.done()
+            dispatch.assert_not_called()
+            # A later caller shares initialization rather than starting another worker.
+            survivor = asyncio.create_task(case.client._adapter.initialize())
+            case.finish.set()
+            await asyncio.wait_for(survivor, 2)
+            assert case.client._adapter._driver_handle is case.handle
+            case.native.acquire_driver_handle.assert_called_once()
+        finally:
+            case.finish.set()
+            pending = case.client._adapter._init_future
+            if pending is not None:
+                await asyncio.gather(pending, return_exceptions=True)
+            await case.client.close()
+        case.native.release_driver_handle.assert_called_once_with(case.handle)
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("outcome", ["reuse", "close", "failure"])
+def test_timed_out_async_acquisition_preserves_late_worker_ownership_rust(cold_async_client, outcome):
+    case = cold_async_client
+    adapter = case.client._adapter
+    request = PreparedRequest(
+        op="read_item",
+        container_link="dbs/sales/colls/orders",
+        body_bytes=b"",
+        partition_key=BindingPartitionKey("components", ("A",)),
+        item_id="order-42",
+    )
+    case.native.read_item_async = AsyncMock(return_value=_response(200))
+    error = RuntimeError("late acquisition failure")
+    if outcome == "failure":
+
+        def fail(*_args):
+            case.entered.set()
+            assert case.finish.wait(10)
+            raise error
+
+        case.native.acquire_driver_handle.side_effect = fail
+
+    async def run():
+        loop_errors = []
+        loop = asyncio.get_running_loop()
+        loop.set_exception_handler(lambda _loop, context: loop_errors.append(context))
+        pending = None
+        try:
+            with pytest.raises(CosmosClientTimeoutError):
+                await asyncio.wait_for(adapter.execute(request, deadline=time.monotonic() + 0.05), 2)
+            pending = adapter._init_future
+            assert pending is not None and not pending.done()
+            case.native.read_item_async.assert_not_called()
+            if outcome == "close":
+                await adapter.close()
+            case.finish.set()
+            result = (await asyncio.gather(pending, return_exceptions=True))[0]
+            await asyncio.sleep(0)
+            if outcome == "reuse":
+                assert result is case.handle
+                await adapter.execute(request, deadline=time.monotonic() + 2)
+                case.native.acquire_driver_handle.assert_called_once()
+                assert 0 < case.native.read_item_async.call_args.kwargs["timeout_seconds"] <= 2
+            elif outcome == "close":
+                assert isinstance(result, RuntimeError)
+                assert adapter._driver_handle is None
+                case.native.release_driver_handle.assert_called_once_with(case.handle)
+            else:
+                assert result is error
+                assert adapter._driver_handle is None
+                case.native.acquire_driver_handle.side_effect = None
+                case.native.acquire_driver_handle.return_value = case.handle
+                await adapter.execute(request)
+                assert case.native.acquire_driver_handle.call_count == 2
+            assert not loop_errors
+        finally:
+            case.finish.set()
+            if pending is not None:
+                await asyncio.gather(pending, return_exceptions=True)
+            await adapter.close()
+            loop.set_exception_handler(None)
+        case.native.release_driver_handle.assert_called_once_with(case.handle)
+
+    asyncio.run(run())
+
+
+def test_async_deadline_bounds_executor_queue_wait_rust(cold_async_client):
+    case = cold_async_client
+    case.native.read_item_async = AsyncMock(return_value=_response(200))
+    occupied = threading.Event()
+    unblock = threading.Event()
+
+    def occupy():
+        occupied.set()
+        assert unblock.wait(10)
+
+    async def run():
+        loop = asyncio.get_running_loop()
+        loop.set_default_executor(ThreadPoolExecutor(max_workers=1))
+        blocker = loop.run_in_executor(None, occupy)
+        try:
+            while not occupied.is_set():
+                await asyncio.sleep(0)
+            container = case.client.get_database_client("sales").get_container_client("orders")
+            with pytest.raises(CosmosClientTimeoutError):
+                await asyncio.wait_for(container.read_item("order-42", partition_key="A", timeout=1), 2)
+            pending = case.client._adapter._init_future
+            assert pending is not None and not pending.cancelled()
+            assert not case.entered.is_set()
+            await case.client.close()
+            unblock.set()
+            await blocker
+            await asyncio.gather(pending, return_exceptions=True)
+            case.native.acquire_driver_handle.assert_not_called()
+            case.native.release_driver_handle.assert_not_called()
+            case.native.read_item_async.assert_not_called()
+        finally:
+            unblock.set()
+            case.finish.set()
+            await blocker
+            await case.client.close()
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("cancel_first", [False, True], ids=["timeout", "cancellation"])
+def test_one_async_waiter_leaving_does_not_cancel_shared_acquisition_rust(cold_async_client, cancel_first):
+    case = cold_async_client
+    adapter = case.client._adapter
+    request = PreparedRequest(
+        op="read_item",
+        container_link="dbs/sales/colls/orders",
+        body_bytes=b"",
+        partition_key=BindingPartitionKey("components", ("A",)),
+        item_id="order-42",
+    )
+    dispatch = AsyncMock(return_value=_response(200))
+    case.native.read_item_async = dispatch
+
+    async def run():
+        first = asyncio.create_task(adapter.execute(request, deadline=time.monotonic() + (5 if cancel_first else 0.1)))
+        survivor = asyncio.create_task(adapter.execute(request, deadline=time.monotonic() + 5))
+        try:
+            while not case.entered.is_set():
+                await asyncio.sleep(0)
+            if cancel_first:
+                first.cancel()
+            with pytest.raises(asyncio.CancelledError if cancel_first else CosmosClientTimeoutError):
+                await asyncio.wait_for(first, 2)
+            assert not survivor.done()
+            assert adapter._init_future is not None and not adapter._init_future.done()
+            dispatch.assert_not_called()
+            case.finish.set()
+            await asyncio.wait_for(survivor, 2)
+            case.native.acquire_driver_handle.assert_called_once()
+            dispatch.assert_awaited_once()
+            assert dispatch.call_args.args[0] is case.handle
+        finally:
+            case.finish.set()
+            await asyncio.gather(first, survivor, return_exceptions=True)
+            await adapter.close()
+        case.native.release_driver_handle.assert_called_once_with(case.handle)
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("path", ["execute", "metadata", "page"])
+@pytest.mark.parametrize("expired", [False, True])
+def test_async_auxiliary_paths_bound_acquisition_with_same_deadline_rust(cold_async_client, path, expired):
+    case = cold_async_client
+    adapter = case.client._adapter
+    dispatch = AsyncMock()
+    name = {
+        "execute": "read_item_async",
+        "metadata": "get_container_metadata_async",
+        "page": get_page_binding_function_name("list_databases", uses_cursor=False) + "_async",
+    }[path]
+    setattr(case.native, name, dispatch)
+
+    async def run():
+        deadline = time.monotonic() + (-1 if expired else 0.05)
+        pages = None
+        try:
+            if path == "execute":
+                operation = adapter.execute(
+                    PreparedRequest(
+                        op="read_item",
+                        container_link="dbs/sales/colls/orders",
+                        body_bytes=b"",
+                        partition_key=BindingPartitionKey("components", ("A",)),
+                        item_id="order-42",
+                    ),
+                    deadline=deadline,
+                )
+            elif path == "metadata":
+                operation = adapter.get_container_metadata("dbs/sales/colls/orders", deadline=deadline)
+            else:
+                pages = adapter.execute_pages(
+                    PreparedPageRequest(op="list_databases", container_link=""), deadline=deadline
+                )
+                operation = pages.__anext__()
+            with pytest.raises(CosmosClientTimeoutError):
+                await asyncio.wait_for(operation, 2)
+            dispatch.assert_not_called()
+            if expired:
+                assert adapter._init_future is None
+                case.native.acquire_driver_handle.assert_not_called()
+            else:
+                assert adapter._init_future is not None and not adapter._init_future.done()
+        finally:
+            case.finish.set()
+            if adapter._init_future is not None:
+                await asyncio.gather(adapter._init_future, return_exceptions=True)
+            if pages is not None:
+                await pages.aclose()
+            await adapter.close()
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("name", sorted(OP_TO_BINDING_FUNCTION_NAME.values()))
+def test_native_execute_exports_accept_generic_adapter_keywords_rust(name, asynchronous):
+    from azure.cosmos import _rust
+
+    function = getattr(_rust, name + ("_async" if asynchronous else ""))
+    parameters = inspect.signature(function).parameters
+    for keyword, default in (("timeout_seconds", None), ("include_attempts", False)):
+        assert keyword in parameters, f"{function.__name__} must accept {keyword}"
+        assert parameters[keyword].kind == inspect.Parameter.KEYWORD_ONLY
+        assert parameters[keyword].default is default
+    # Reach request validation through the real export, not a permissive mock.
+    prepared = SimpleNamespace(protocol_version=PreparedRequest.protocol_version, op="wrong-operation")
+    with pytest.raises(ValueError, match="PreparedRequest.op"):
+        function(None, prepared, timeout_seconds=0.125, include_attempts=True)
 
 
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
@@ -47,8 +340,11 @@ def case(request, monkeypatch):
         return function
 
     yield SimpleNamespace(
-        client=client, install=install, asynchronous=asynchronous,
-        acquisition=acquisition, native=native,
+        client=client,
+        install=install,
+        asynchronous=asynchronous,
+        acquisition=acquisition,
+        native=native,
     )
     _complete(client.close())
 
@@ -58,6 +354,34 @@ def clock(monkeypatch):
     now = [100.0]
     monkeypatch.setattr(time, "monotonic", lambda: now[0])
     return now
+
+
+def test_local_feed_range_uses_real_export_with_timeout_and_telemetry_rust(case, monkeypatch):
+    from azure.cosmos import _rust
+
+    module = async_binding if case.asynchronous else sync_binding
+    monkeypatch.setattr(module, "_rust_module", _rust)
+    if case.asynchronous:
+        _rust._create_runtime()
+    contribution = MagicMock()
+    contribution.response.side_effect = lambda envelope: envelope[0]
+    operation = MagicMock()
+    operation.begin_contribution.return_value = contribution
+    monkeypatch.setattr(module, "get_operation", lambda *_: operation)
+    feed_range = {"Range": {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}}
+    prepared = PreparedRequest(
+        op="is_feed_range_subset",
+        container_link="dbs/sales/colls/orders",
+        body_bytes=json.dumps({"parent": feed_range, "child": feed_range}).encode(),
+        partition_key=BindingPartitionKey("cross_partition"),
+    )
+    response = _complete(case.client._adapter.execute(prepared))
+    assert json.loads(response.body) == {"IsSubset": True}
+    contribution.response.assert_called_once()
+    envelope = contribution.response.call_args.args[0]
+    assert len(envelope) == 2
+    assert envelope[1] is None
+    contribution.error.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -168,7 +492,8 @@ def test_item_operations_inherit_client_default_rust(case, clock, operation):
         kwargs = {"item": "order-42", "body": body}
     elif operation == "patch":
         kwargs = {
-            "item": "order-42", "partition_key": "customer-17",
+            "item": "order-42",
+            "partition_key": "customer-17",
             "patch_operations": [{"op": "add", "path": "/processed", "value": True}],
         }
     else:
@@ -188,7 +513,8 @@ def test_each_page_gets_fresh_default_after_application_delay_rust(case, clock, 
         budgets.append(kwargs["timeout_seconds"])
         clock[0] += 0.25
         return _response(
-            200, {"x-ms-continuation": "next"} if len(budgets) == 1 else {},
+            200,
+            {"x-ms-continuation": "next"} if len(budgets) == 1 else {},
             {"Databases": [{"id": "sales"}]},
         )
 
@@ -252,9 +578,7 @@ def test_default_does_not_become_unsupported_explicit_throughput_option_rust(cas
 
 def test_async_cancellation_remains_cancellation_rust(monkeypatch):
     async def run():
-        client = AsyncCosmosClient(
-            "https://alpha-bank.documents.azure.com", "key", timeout=1, _backend="rust"
-        )
+        client = AsyncCosmosClient("https://alpha-bank.documents.azure.com", "key", timeout=1, _backend="rust")
         started = asyncio.Event()
         cancelled = asyncio.Event()
 
@@ -265,9 +589,7 @@ def test_async_cancellation_remains_cancellation_rust(monkeypatch):
             finally:
                 cancelled.set()
 
-        monkeypatch.setattr(
-            async_binding, "_rust_module", SimpleNamespace(create_database_async=dispatch)
-        )
+        monkeypatch.setattr(async_binding, "_rust_module", SimpleNamespace(create_database_async=dispatch))
         monkeypatch.setattr(client._adapter, "_ensure_driver_handle", AsyncMock(return_value="test-driver"))
         task = asyncio.create_task(client.create_database("sales"))
         try:
@@ -284,9 +606,7 @@ def test_async_cancellation_remains_cancellation_rust(monkeypatch):
 
 def test_async_default_expires_while_waiting_for_driver_setup_rust(monkeypatch):
     async def run():
-        client = AsyncCosmosClient(
-            "https://alpha-bank.documents.azure.com", "key", timeout=1, _backend="rust"
-        )
+        client = AsyncCosmosClient("https://alpha-bank.documents.azure.com", "key", timeout=1, _backend="rust")
         cancelled = asyncio.Event()
         dispatch = AsyncMock(return_value=_response())
 
@@ -296,9 +616,7 @@ def test_async_default_expires_while_waiting_for_driver_setup_rust(monkeypatch):
             finally:
                 cancelled.set()
 
-        monkeypatch.setattr(
-            async_binding, "_rust_module", SimpleNamespace(create_database_async=dispatch)
-        )
+        monkeypatch.setattr(async_binding, "_rust_module", SimpleNamespace(create_database_async=dispatch))
         monkeypatch.setattr(client._adapter, "_ensure_driver_handle", setup)
         try:
             with pytest.raises(CosmosClientTimeoutError):

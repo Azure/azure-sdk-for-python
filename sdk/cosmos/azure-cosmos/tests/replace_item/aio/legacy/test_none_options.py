@@ -53,23 +53,33 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
     async def _create_sample_item(self):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
         await self.container.create_item(
-            item, pre_trigger_include=None, post_trigger_include=None,
-            indexing_directive=None, enable_automatic_id_generation=False,
-            session_token=None, initial_headers=None, priority=None,
-            no_response=None, retry_write=None, throughput_bucket=None,
+            item,
+            indexing_directive=None,
+            enable_automatic_id_generation=False,
+            session_token=None,
+            initial_headers=None,
+            priority=None,
+            no_response=None,
+            retry_write=None,
+            throughput_bucket=None,
         )
         return item
 
     async def test_replace_item_none_options_async_rust(self):
-        """Verify the async replace_item accepts None for every optional kwarg (pre_trigger_include, post_trigger_include, session_token, initial_headers, etag, match_condition, priority, no_response, retry_write, throughput_bucket) and returns the replaced item."""
+        """Verify the async replace_item accepts None for every optional kwarg (session_token, initial_headers, etag, match_condition, priority, no_response, retry_write, throughput_bucket) and returns the replaced item."""
         # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_replace_item_none_options_async
         item = await self._create_sample_item()
         new_body = {"id": item["id"], "pk": item["pk"], "value": 999}
         replaced = await self.container.replace_item(
-            item["id"], new_body, pre_trigger_include=None,
-            post_trigger_include=None, session_token=None,
-            initial_headers=None, etag=None, match_condition=None,
-            priority=None, no_response=None, retry_write=None,
+            item["id"],
+            new_body,
+            session_token=None,
+            initial_headers=None,
+            etag=None,
+            match_condition=None,
+            priority=None,
+            no_response=None,
+            retry_write=None,
             throughput_bucket=None,
         )
         assert replaced["value"] == 999

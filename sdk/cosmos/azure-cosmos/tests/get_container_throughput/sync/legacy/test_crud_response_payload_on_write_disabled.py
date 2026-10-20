@@ -2,21 +2,30 @@
 # Licensed under the MIT License.
 """Original container offer assertions with write responses disabled."""
 
+from contextlib import ExitStack
 import os
 import unittest
 import uuid
 
+import pytest
+
+from common.throughput_fixtures import owned_database
+
 from azure.cosmos import CosmosClient, PartitionKey, documents
 
 
+@pytest.mark.cosmosEmulator
 class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     def setUp(self):
         self.client = CosmosClient(
             os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust", no_response_on_write=True,
         )
         self.addCleanup(self.client.close)
-        self.database = self.client.create_database("throughput_noresponse_" + uuid.uuid4().hex)
-        self.addCleanup(self.client.delete_database, self.database.id)
+        cleanup = ExitStack()
+        self.addCleanup(cleanup.close)
+        self.database = cleanup.enter_context(owned_database(
+            self.client, "throughput_noresponse_" + uuid.uuid4().hex,
+        ))
         self.container = self.database.create_container(
             "orders", partition_key=PartitionKey(path="/id"), offer_throughput=400,
         )

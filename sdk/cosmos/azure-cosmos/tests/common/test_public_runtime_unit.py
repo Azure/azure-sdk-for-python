@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 """Runtime construction is real; client operation dispatch is isolated from Azure."""
 import asyncio
-from dataclasses import FrozenInstanceError
+from dataclasses import FrozenInstanceError, asdict, replace
 import gc
 import inspect
 import threading
@@ -20,6 +20,34 @@ def close(client):
     result = client.close()
     if inspect.isawaitable(result):
         asyncio.run(result)
+
+
+def test_connection_options_constructor_preserves_keyword_only_fields_rust():
+    values = {
+        "connection_timeout": 2,
+        "data_http_request_timeout": 8,
+        "metadata_http_request_timeout": 20,
+        "idle_connection_timeout": 300,
+        "max_idle_connections_per_endpoint": 10,
+        "proxy_allowed": False,
+    }
+    parameters = inspect.signature(ConnectionPoolOptions).parameters
+    assert list(parameters) == list(values)
+    assert all(parameter.kind == inspect.Parameter.KEYWORD_ONLY for parameter in parameters.values())
+    assert all(parameter.default is None for parameter in parameters.values())
+    assert asdict(ConnectionPoolOptions()) == dict.fromkeys(values)
+    options = ConnectionPoolOptions(**values)
+    assert asdict(options) == values
+    assert replace(options, connection_timeout=3) == ConnectionPoolOptions(
+        **{**values, "connection_timeout": 3}
+    )
+    with pytest.raises(TypeError):
+        ConnectionPoolOptions(2)  # pylint: disable=too-many-function-args
+    with pytest.raises(TypeError):
+        ConnectionPoolOptions(unknown_option=True)  # pylint: disable=unexpected-keyword-arg
+    for name in values:
+        with pytest.raises(FrozenInstanceError):
+            setattr(options, name, None)
 
 
 @pytest.mark.parametrize("field,value", [

@@ -6,11 +6,10 @@
 """In-process unit tests for ``_helpers/_request_settings.py`` — no network, no Cosmos emulator.
 
 Cosmos SDK methods accept a long list of customer-facing keyword
-arguments (``pre_trigger_include=``, ``priority=``, ``no_response=``,
+arguments (``priority=``, ``no_response=``,
 ``session_token=``, …). The protocol that builds the request does not use
 those names — it expects a separate "options" dictionary keyed by the
-internal strings the service understands (``"preTriggerInclude"``,
-``"priorityLevel"``, ``"responsePayloadOnWriteDisabled"``,
+internal strings the service understands (``"priorityLevel"``, ``"responsePayloadOnWriteDisabled"``,
 ``"sessionToken"``, …).
 
 The translation table lives in this one helper, ``_helpers/_request_settings.py``:
@@ -26,10 +25,8 @@ emit different request headers than the core-python path, and customer
 options get silently dropped on one of the two backends. This file
 covers that exact contract:
 
-* The mapping table content is *exactly* what was carried over from
-  the legacy ``_base._COMMON_OPTIONS`` on day one of the helper
-  refactor — adding or renaming any entry must show up as a test
-  diff so it gets reviewed.
+* The mapping covers supported options. Legacy-only trigger entries are
+  excluded from this inventory; Rust rejects them before request preparation.
 * ``compose_options_from_kwargs`` translates correctly, pops
   recognised kwargs out of the input dict (so they aren't forwarded
   twice), leaves unknown kwargs alone, and accepts a pre-built
@@ -38,6 +35,7 @@ covers that exact contract:
 * The kwarg-mapping subset of the new helper agrees byte-for-byte
   with the same subset in the legacy ``_base.build_options``.
 """
+
 import unittest
 
 from azure.cosmos import _base
@@ -46,19 +44,17 @@ from azure.cosmos._helpers._request_settings import COMMON_OPTIONS, compose_opti
 
 
 class TestCommonOptionsTableContent(unittest.TestCase):
-    """Cover every entry in the kwarg → internal-option-key mapping table.
+    """Cover supported entries in the kwarg → internal-option-key mapping table.
 
     The table is the contract. A typo in a customer-facing kwarg name
     would silently make the option drop out of the request; a typo in
     an internal-option-key would silently make the service ignore the
-    option. Locking down the whole table here forces any change to come
+    option. Locking down the supported subset here forces any change to come
     in as a reviewable test diff.
     """
 
     EXPECTED_ENTRIES = {
         "initial_headers": "initialHeaders",
-        "pre_trigger_include": "preTriggerInclude",
-        "post_trigger_include": "postTriggerInclude",
         "access_condition": "accessCondition",
         "session_token": "sessionToken",
         "offer_enable_ru_per_minute_throughput": "offerEnableRUPerMinuteThroughput",
@@ -81,9 +77,14 @@ class TestCommonOptionsTableContent(unittest.TestCase):
         "max_integrated_cache_staleness_in_ms": "maxIntegratedCacheStaleness",
     }
 
-    def test_table_has_exactly_the_documented_entries_rust(self):
-        """``COMMON_OPTIONS`` must equal the fixed table exactly — no add / remove / rename slips through."""
-        self.assertEqual(COMMON_OPTIONS, self.EXPECTED_ENTRIES)
+    def test_table_has_exactly_the_documented_supported_entries_rust(self):
+        """Exclude legacy-only triggers without weakening the other mapping checks."""
+        supported = {
+            key: value
+            for key, value in COMMON_OPTIONS.items()
+            if key not in ("pre_trigger_include", "post_trigger_include")
+        }
+        self.assertEqual(supported, self.EXPECTED_ENTRIES)
 
     def test_legacy_alias_in_base_module_is_the_same_object_rust(self):
         """``_base._COMMON_OPTIONS`` is the same dict object — catches a future contributor forking it."""
@@ -112,9 +113,9 @@ class TestComposeOptionsFromKwargs(unittest.TestCase):
 
     def test_known_kwarg_is_translated_to_internal_key_rust(self):
         """A recognised kwarg becomes its internal option key in the returned dict."""
-        kwargs = {"pre_trigger_include": "validateOrder"}
+        kwargs = {"priority": "High"}
         options = compose_options_from_kwargs(kwargs)
-        self.assertEqual(options, {"preTriggerInclude": "validateOrder"})
+        self.assertEqual(options, {"priorityLevel": "High"})
 
     def test_known_kwarg_is_popped_out_of_kwargs_rust(self):
         """A recognised kwarg is removed from the input dict (not forwarded twice).
@@ -123,9 +124,9 @@ class TestComposeOptionsFromKwargs(unittest.TestCase):
         the recognised one in place it would be sent both as an
         option dict entry and as an azure-core kwarg.
         """
-        kwargs = {"pre_trigger_include": "validateOrder", "extra": 1}
+        kwargs = {"priority": "High", "extra": 1}
         compose_options_from_kwargs(kwargs)
-        self.assertNotIn("pre_trigger_include", kwargs)
+        self.assertNotIn("priority", kwargs)
         # Unrecognised kwargs are left alone.
         self.assertEqual(kwargs, {"extra": 1})
 
@@ -139,8 +140,6 @@ class TestComposeOptionsFromKwargs(unittest.TestCase):
     def test_multiple_known_kwargs_all_translated_rust(self):
         """A realistic multi-kwarg call (the common ``create_item`` shape) — all recognised entries translated and popped."""
         kwargs = {
-            "pre_trigger_include": "validateOrder",
-            "post_trigger_include": "auditOrder",
             "priority": "High",
             "throughput_bucket": 2,
             "no_response": True,
@@ -150,8 +149,6 @@ class TestComposeOptionsFromKwargs(unittest.TestCase):
         self.assertEqual(
             options,
             {
-                "preTriggerInclude": "validateOrder",
-                "postTriggerInclude": "auditOrder",
                 "priorityLevel": "High",
                 "throughputBucket": 2,
                 "responsePayloadOnWriteDisabled": True,
@@ -167,13 +164,13 @@ class TestComposeOptionsFromKwargs(unittest.TestCase):
         the convenience kwargs in the same call.
         """
         kwargs = {
-            "request_options": {"preTriggerInclude": "OLD", "extra_seed": 1},
-            "pre_trigger_include": "NEW",
+            "request_options": {"priorityLevel": "Low", "extra_seed": 1},
+            "priority": "High",
         }
         options = compose_options_from_kwargs(kwargs)
         self.assertEqual(
             options,
-            {"preTriggerInclude": "NEW", "extra_seed": 1},
+            {"priorityLevel": "High", "extra_seed": 1},
         )
         # The request_options key itself is consumed too.
         self.assertNotIn("request_options", kwargs)
@@ -206,10 +203,8 @@ class TestParityWithLegacyBuildOptions(unittest.TestCase):
 
     KWARG_INPUTS = [
         {},
-        {"pre_trigger_include": "validateOrder"},
+        {"priority": "High"},
         {
-            "pre_trigger_include": "validateOrder",
-            "post_trigger_include": "auditOrder",
             "priority": "High",
             "throughput_bucket": 2,
             "no_response": True,

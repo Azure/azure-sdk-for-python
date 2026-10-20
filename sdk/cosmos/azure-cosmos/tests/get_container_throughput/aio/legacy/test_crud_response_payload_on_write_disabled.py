@@ -2,22 +2,31 @@
 # Licensed under the MIT License.
 """Original async container offer assertions with write responses disabled."""
 
+from contextlib import AsyncExitStack
 import os
 import unittest
 import uuid
+
+import pytest
+
+from common.throughput_fixtures import owned_database_async
 
 from azure.cosmos import PartitionKey, documents
 from azure.cosmos.aio import CosmosClient
 
 
+@pytest.mark.cosmosEmulator
 class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(
             os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust", no_response_on_write=True,
         )
         self.addAsyncCleanup(self.client.close)
-        self.database = await self.client.create_database("throughput_noresponse_" + uuid.uuid4().hex)
-        self.addAsyncCleanup(self.client.delete_database, self.database.id)
+        cleanup = AsyncExitStack()
+        self.addAsyncCleanup(cleanup.aclose)
+        self.database = await cleanup.enter_async_context(owned_database_async(
+            self.client, "throughput_noresponse_" + uuid.uuid4().hex,
+        ))
         self.container = await self.database.create_container(
             "orders", partition_key=PartitionKey(path="/id"), offer_throughput=400,
         )

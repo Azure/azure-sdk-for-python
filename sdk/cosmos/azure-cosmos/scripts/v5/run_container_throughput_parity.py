@@ -28,7 +28,7 @@ def test_files(operation):
     if operation == "replace":
         excluded = {
             "test_auto_scale.py", "test_auto_scale_async.py",
-            "test_backwards_compatibility.py", "test_crud_subpartition.py",
+            "test_backwards_compatibility.py", "test_crud_subpartition.py", "test_none_options.py",
         }
         files = [path for path in files if path.name not in excluded]
         files.extend(sorted((ROOT / "tests" / "replace_throughput").glob("*/legacy/test_*.py")))

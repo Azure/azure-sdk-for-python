@@ -31,7 +31,7 @@ What this file pins for async ``read_item``:
   (the service answers 404 either way), so the contract is "same typed
   exception with the same status code", not "same reason text".
 * **header-bearing kwargs**, one per test so a failure attributes
-  cleanly: ``post_trigger_include``, ``session_token``, ``initial_headers``,
+  cleanly: ``session_token``, ``initial_headers``,
   ``priority``, ``throughput_bucket``.
 * **``max_integrated_cache_staleness_in_ms``.** Positive emits
   ``x-ms-dedicatedgateway-max-age``; ``0`` is a silent no-op; negative raises
@@ -46,6 +46,7 @@ What this file pins for async ``read_item``:
 * **``populate_query_metrics``** is rejected by presence on both clients,
   including None/False, rather than forwarded or treated as a warning.
 """
+
 from __future__ import annotations
 
 import os
@@ -253,20 +254,6 @@ async def test_wrong_partition_key_raises_typed_not_found_rust(container_for):
 # ---------------------------------------------------------------------------
 # Header-bearing kwargs, one at a time
 # ---------------------------------------------------------------------------
-
-@pytest.mark.asyncio
-async def test_post_trigger_include_rust(container_for):
-    """Baseline call plus ``post_trigger_include='auditRead'``.
-
-    No trigger by that name is registered, so the service returns the same
-    "trigger not found" error to both backends. The parity contract is that
-    the typed exception matches -- which still proves the keyword reached
-    the wire on the async path.
-    """
-    cmp = await _run_read(container_for, summary="baseline + post_trigger_include",
-                          post_trigger_include="auditRead")
-    cmp.assert_functional_exception_parity()
-
 
 @pytest.mark.asyncio
 async def test_session_token_rust(container_for):

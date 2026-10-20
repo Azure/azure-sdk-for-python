@@ -219,6 +219,40 @@ an explicit timeout without changing cancellation or response hook behavior.
 Patch can produce multiple driver attempts within its one binding result;
 recording does not impose a server-side or Read-Modify-Replace strategy.
 
+`ContainerProxy.get_latest_session_token` is a local Python calculation, not a
+binding export. Its sync/async decorators use an empty binding sequence to
+record public execution with zero permitted contributions. No Rust handle,
+request-attempt span or driver total is created. For this local path, a
+tracing-only error keeps token-bearing exception messages out of the SDK span;
+the original exception is re-raised outside that span. Token inputs, output
+and client session state are not changed or added to telemetry.
+
+`ContainerProxy.feed_range_from_partition_key` owns sync/async telemetry
+through key preparation and returned-range parsing. Its bounded binding paths
+allow either calculation alone or `read_container` followed by calculation
+when an uncached missing-key marker needs wrapper metadata. The delegated read
+contributes to the same public operation. Binding signatures, timeout behavior
+and range calculation are unchanged.
+
+Successful calculation returns no attempt diagnostics. Available calculation
+error diagnostics are marked incomplete; the wrapper preserves retained
+attempts without claiming complete request totals or inventing metadata spans.
+Unlike session-token calculation, an operation-only trace here does not prove
+that no service request occurred.
+
+Bite 46's compiled loopback proof completed 200 comparisons across sync/async,
+legacy/Rust and tracing enabled/disabled, plus 16 retained original assertions.
+It reproduced 36 pre-existing differences: nine scalar hierarchical-key cases
+per Rust runtime under each tracing setting. Their returned bounds matched
+the pre-change evidence. The owned database and both containers were deleted;
+no Azure export was exercised. This establishes telemetry behavior, not full
+migration parity. The approved telemetry-only scope preserves the
+[existing range-calculation difference](../docs/V5/testing/rust-telemetry.md#keep-the-existing-hierarchical-key-difference-visible).
+Later reruns with additional binding-counter and no-fallback assertions could
+not provision the first container: the loopback service returned 503/1007.
+Those additional live assertions remain unverified. Both reruns deleted their
+owned databases and created no containers.
+
 Exports are registered in `src/lib.rs` (`#[pymodule] fn _rust(...)`).
 Current surface:
 

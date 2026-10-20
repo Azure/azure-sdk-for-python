@@ -10,8 +10,8 @@ through its own code path. Neither the sync autoscale test nor the async
 fixed-number test would catch Rust dropping the new ceiling here.
 
 What it does: the real legacy test copied from
-``tests/test_auto_scale_async.py``, changed in one place -- the client is built
-with ``_backend="rust"``. It creates a database with a 5000 ceiling and 0%
+``tests/test_auto_scale_async.py``, with a Rust-pinned client and failure-safe
+owned-resource setup. It creates a database with a 5000 ceiling and 0%
 step, changes it to a 7000 ceiling and 20% step, reads it back and checks both
 new values. It then does the same change on a container, which is the
 neighbouring operation that shares the offer document format.
@@ -30,11 +30,13 @@ Run with::
 import os
 import unittest
 import uuid
+from contextlib import AsyncExitStack
 
 import pytest
 
 from azure.cosmos import PartitionKey, ThroughputProperties
 from azure.cosmos.aio import CosmosClient
+from replace_database_throughput._fixtures import owned_database_async
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -49,15 +51,13 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self) -> None:
         self.key_client = CosmosClient(HOST, KEY, _backend="rust")
+        self.addAsyncCleanup(self.key_client.close)
+        self._databases = AsyncExitStack()
+        self.addAsyncCleanup(self._databases.aclose)
         self._host_db_id = "legacy_replace_db_tp_a_" + uuid.uuid4().hex[:8]
-        self.created_database = await self.key_client.create_database(self._host_db_id)
-
-    async def asyncTearDown(self) -> None:
-        try:
-            await self.key_client.delete_database(self._host_db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        await self.key_client.close()
+        self.created_database = await self._databases.enter_async_context(
+            owned_database_async(self.key_client, self._host_db_id)
+        )
 
     async def test_replace_throughput_async_rust(self):
         """Autoscale settings can be changed after creation, on a database and a container.
@@ -73,35 +73,27 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         """
         # Source: tests/test_auto_scale_async.py::TestAutoScaleAsync.test_replace_throughput_async
         database_id = "replace_db" + str(uuid.uuid4())
-        container_id = None
-        try:
-            created_database = await self.key_client.create_database(
-                database_id,
-                offer_throughput=ThroughputProperties(
-                    auto_scale_max_throughput=5000,
-                    auto_scale_increment_percent=0))
-            await created_database.replace_throughput(
-                throughput=ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=20))
-            created_db_properties = await created_database.get_throughput()
-            # Testing the replaced value of the max_throughput
-            assert created_db_properties.auto_scale_max_throughput == 7000
-            # Testing the replaced value of the increment_percentage
-            assert created_db_properties.auto_scale_increment_percent == 20
-            await self.key_client.delete_database(database_id)
+        created_database = await self._databases.enter_async_context(owned_database_async(
+            self.key_client, database_id, offer_throughput=ThroughputProperties(
+                auto_scale_max_throughput=5000, auto_scale_increment_percent=0),
+        ))
+        await created_database.replace_throughput(
+            throughput=ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=20))
+        created_db_properties = await created_database.get_throughput()
+        assert created_db_properties.auto_scale_max_throughput == 7000
+        assert created_db_properties.auto_scale_increment_percent == 20
+        await self.key_client.delete_database(database_id)
 
-            container_id = "container_with_auto_scale_settings" + str(uuid.uuid4())
-            created_container = await self.created_database.create_container(
-                id=container_id,
-                partition_key=PartitionKey(path="/id"),
-                offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0))
-            await created_container.replace_throughput(
-                throughput=ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=20))
-            created_container_properties = await created_container.get_throughput()
-            # Testing the input value of the replaced auto_scale settings
-            assert created_container_properties.auto_scale_max_throughput == 7000
-            assert created_container_properties.auto_scale_increment_percent == 20
-        finally:
-            await self.created_database.delete_container(container_id)
+        container_id = "container_with_auto_scale_settings" + str(uuid.uuid4())
+        created_container = await self.created_database.create_container(
+            id=container_id,
+            partition_key=PartitionKey(path="/id"),
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0))
+        await created_container.replace_throughput(
+            throughput=ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=20))
+        created_container_properties = await created_container.get_throughput()
+        assert created_container_properties.auto_scale_max_throughput == 7000
+        assert created_container_properties.auto_scale_increment_percent == 20
 
 
 if __name__ == "__main__":

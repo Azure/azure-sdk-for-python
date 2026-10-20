@@ -194,7 +194,7 @@ def test_initial_headers_are_flattened_into_outer_headers_rust():
     assert wire_headers(prepared)["x-trace-id"] == "abc-123"
 
 
-def test_trigger_priority_bucket_no_response_land_as_option_keys_rust():
+def test_priority_bucket_no_response_land_as_option_keys_rust():
     """The option set reaches the headers map under the internal option-key
     names. ``no_response`` is kept on patch (a patch returns the patched
     item, unlike delete / read)."""
@@ -289,11 +289,11 @@ def test_merge_explicit_kwargs_omits_none_and_keeps_no_response_rust():
     kwargs: dict = {}
     merge_patch_item_explicit_kwargs(
         kwargs,
-        pre_trigger_include="validateOrder",
+        priority="High",
         no_response=True,
         session_token=None,  # omitted
     )
-    assert kwargs == {"pre_trigger_include": "validateOrder", "no_response": True}
+    assert kwargs == {"priority": "High", "no_response": True}
 
 
 if __name__ == "__main__":

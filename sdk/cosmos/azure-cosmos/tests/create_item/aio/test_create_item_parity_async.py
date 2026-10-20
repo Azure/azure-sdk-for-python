@@ -28,7 +28,7 @@ What this file pins for async ``create_item``:
   (the undefined-PK wire shape) and an explicit ``pk: None`` (the JSON-null
   wire shape).
 * **header-bearing kwargs**, one per test so a failure attributes
-  cleanly: ``pre_trigger_include``, ``post_trigger_include``,
+  cleanly:
   ``indexing_directive``, ``session_token``, ``initial_headers``,
   ``priority``, ``throughput_bucket``.
 * **behavioural kwargs.** ``enable_automatic_id_generation``,
@@ -46,6 +46,7 @@ Deliberately NOT mirrored from the sync suite:
   rather than the async entry point, so running them again here would diff the
   same code twice and add nothing.
 """
+
 from __future__ import annotations
 
 import copy
@@ -171,24 +172,6 @@ async def test_async_pk_explicit_none_rust(container_for):
 # ---------------------------------------------------------------------------
 # Header-bearing kwargs, exactly one per test
 # ---------------------------------------------------------------------------
-
-@pytest.mark.asyncio
-async def test_async_pre_trigger_include_rust(container_for):
-    """Baseline call plus ``pre_trigger_include`` -- forwarded as a request header."""
-    body = {"id": uuid.uuid4().hex, "pk": "a"}
-    cmp = await _run_create(container_for, body, summary="baseline + pre_trigger_include",
-                            pre_trigger_include="validateOrder")
-    cmp.assert_functional_parity()
-
-
-@pytest.mark.asyncio
-async def test_async_post_trigger_include_rust(container_for):
-    """Baseline call plus ``post_trigger_include`` -- forwarded as a request header."""
-    body = {"id": uuid.uuid4().hex, "pk": "a"}
-    cmp = await _run_create(container_for, body, summary="baseline + post_trigger_include",
-                            post_trigger_include="auditOrder")
-    cmp.assert_functional_parity()
-
 
 @pytest.mark.asyncio
 async def test_async_indexing_directive_rust(container_for):

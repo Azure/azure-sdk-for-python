@@ -68,7 +68,9 @@ async def test_point_read_throttle_retry_limit_async_rust(owned_target, retry_se
         if inject:
             assert returned is None
             if wait_budget:
-                assert_throttle_wait_failure(error, elapsed, hits, retry_limit)
+                assert_throttle_wait_failure(
+                    error, elapsed, hits, retry_limit, max_retries=retry_settings["retry_throttle_total"],
+                )
             else:
                 assert_throttle_failure(error, elapsed, hits, retry_limit)
         else:

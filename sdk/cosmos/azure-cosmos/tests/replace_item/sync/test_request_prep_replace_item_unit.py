@@ -228,7 +228,7 @@ def test_initial_headers_are_flattened_into_outer_headers_rust():
     assert "initial_headers" not in wire_headers(prepared)
 
 
-def test_trigger_priority_bucket_no_response_land_as_option_keys_rust():
+def test_priority_bucket_no_response_land_as_option_keys_rust():
     """The body-carrying option set reaches the headers map under the
     internal option-key names. ``no_response`` is kept on replace (a replace
     returns a body, unlike delete / read)."""

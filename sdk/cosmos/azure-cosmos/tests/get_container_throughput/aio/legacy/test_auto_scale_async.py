@@ -2,24 +2,29 @@
 # Licensed under the MIT License.
 """Retain legacy async autoscale-container assertions with isolated Rust-selected fixtures."""
 
+from contextlib import AsyncExitStack
 import os
 import unittest
 import uuid
+
+import pytest
+
+from common.throughput_fixtures import owned_database_async
 
 from azure.cosmos import PartitionKey, ThroughputProperties, exceptions
 from azure.cosmos.aio import CosmosClient
 
 
+@pytest.mark.cosmosEmulator
 class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
-        self.database = await self.client.create_database("container_autoscale_" + uuid.uuid4().hex)
-
-    async def asyncTearDown(self):
-        try:
-            await self.client.delete_database(self.database.id)
-        finally:
-            await self.client.close()
+        self.addAsyncCleanup(self.client.close)
+        cleanup = AsyncExitStack()
+        self.addAsyncCleanup(cleanup.aclose)
+        self.database = await cleanup.enter_async_context(owned_database_async(
+            self.client, "container_autoscale_" + uuid.uuid4().hex,
+        ))
 
     async def test_autoscale_create_container_async_rust(self):
         # Source: tests/test_auto_scale_async.py::TestAutoScaleAsync.test_autoscale_create_container_async

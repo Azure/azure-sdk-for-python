@@ -31,11 +31,11 @@ const CREATE_CONTAINER_DATABASE_REQUIRED: &str =
 #[pyo3(signature = (driver_handle, container_link, *, timeout_seconds=None))]
 pub(crate) fn get_container_metadata<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     container_link: &str,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    run_get_container_metadata(py, driver_handle, container_link, timeout_seconds)
+    run_get_container_metadata(py, &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?, container_link, timeout_seconds)
 }
 
 /// Return an awaitable that resolves a container's metadata.
@@ -43,11 +43,11 @@ pub(crate) fn get_container_metadata<'py>(
 #[pyo3(signature = (driver_handle, container_link, *, timeout_seconds=None))]
 pub(crate) fn get_container_metadata_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     container_link: &str,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    run_get_container_metadata_async(py, driver_handle, container_link, timeout_seconds)
+    run_get_container_metadata_async(py, &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?, container_link, timeout_seconds)
 }
 
 /// Create a container from the definition prepared by Python.
@@ -56,7 +56,7 @@ pub(crate) fn get_container_metadata_async<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn create_container<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -67,7 +67,7 @@ pub(crate) fn create_container<'py>(
     let body_bytes = extract_body_bytes(prepared)?;
     run_create_container_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         body_bytes,
@@ -82,7 +82,7 @@ pub(crate) fn create_container<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn create_container_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -93,7 +93,7 @@ pub(crate) fn create_container_async<'py>(
     let body_bytes = extract_body_bytes(prepared)?;
     run_create_container_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         body_bytes,
@@ -108,7 +108,7 @@ pub(crate) fn create_container_async<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn read_container<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -117,7 +117,7 @@ pub(crate) fn read_container<'py>(
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
     run_read_container_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         container_id,
@@ -132,7 +132,7 @@ pub(crate) fn read_container<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn read_container_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -141,7 +141,7 @@ pub(crate) fn read_container_async<'py>(
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
     run_read_container_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         container_id,
@@ -153,18 +153,21 @@ pub(crate) fn read_container_async<'py>(
 
 /// Delete a container identified by database and container name.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn delete_container<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "delete_container")?;
-    let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
+    let (database_id, container_id, mut modifiers) =
+        extract_container_point_prepared_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_delete_container_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         container_id,
@@ -175,18 +178,21 @@ pub(crate) fn delete_container<'py>(
 
 /// Return an awaitable that deletes a container.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn delete_container_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "delete_container")?;
-    let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
+    let (database_id, container_id, mut modifiers) =
+        extract_container_point_prepared_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_delete_container_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         container_id,
@@ -200,7 +206,7 @@ pub(crate) fn delete_container_async<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn replace_container<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -211,7 +217,7 @@ pub(crate) fn replace_container<'py>(
     let body_bytes = extract_body_bytes(prepared)?;
     run_replace_container_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         container_id,
@@ -226,7 +232,7 @@ pub(crate) fn replace_container<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn replace_container_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
@@ -237,7 +243,7 @@ pub(crate) fn replace_container_async<'py>(
     let body_bytes = extract_body_bytes(prepared)?;
     run_replace_container_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         container_id,
@@ -252,7 +258,7 @@ pub(crate) fn replace_container_async<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn list_containers<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
@@ -260,7 +266,7 @@ pub(crate) fn list_containers<'py>(
     let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
     run_list_containers_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         "list_containers",
@@ -273,7 +279,7 @@ pub(crate) fn list_containers<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn list_containers_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
@@ -281,7 +287,7 @@ pub(crate) fn list_containers_async<'py>(
     let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
     run_list_containers_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         "list_containers_async",
@@ -294,7 +300,7 @@ pub(crate) fn list_containers_async<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn query_containers<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
@@ -303,7 +309,7 @@ pub(crate) fn query_containers<'py>(
     let body_bytes = extract_body_bytes(prepared)?;
     run_query_containers_operation(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         body_bytes,
@@ -317,7 +323,7 @@ pub(crate) fn query_containers<'py>(
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn query_containers_async<'py>(
     py: Python<'py>,
-    driver_handle: &str,
+    driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
@@ -326,7 +332,7 @@ pub(crate) fn query_containers_async<'py>(
     let body_bytes = extract_body_bytes(prepared)?;
     run_query_containers_operation_async(
         py,
-        driver_handle,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
         modifiers,
         database_id,
         body_bytes,

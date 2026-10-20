@@ -184,8 +184,7 @@ def test_truthy_option_produces_identical_header_on_both_engines_rust(option_key
 
     This is the check that catches a wrong wire name in the Rust table (say
     ``x-ms-max-items`` instead of ``x-ms-max-item-count``) and a value the two
-    paths format differently -- notably a list of trigger ids, which legacy
-    comma-joins and the binding would otherwise stringify as a Python list.
+    paths format differently.
     """
     _assert_header_parity({option_key: option_value})
 
@@ -279,7 +278,7 @@ def test_many_options_at_once_stay_in_parity_rust():
 
     Per-key tests can all pass while the combination diverges -- for instance if
     one path let a later option overwrite an earlier one. This is the shape of a
-    real ``create_item`` with triggers, an etag, and routing hints.
+    real ``create_item`` with an etag and routing hints.
     """
     _assert_header_parity({
         "indexingDirective": "Include",

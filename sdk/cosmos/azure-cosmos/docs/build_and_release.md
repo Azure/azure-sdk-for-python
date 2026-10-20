@@ -173,6 +173,7 @@ The following paths are relative to the package source directory:
 | Both `Cargo.toml` files and `Cargo.lock` | Rust dependencies and the selections used by builds |
 | `rust-toolchain.toml`, `scripts\*.sh` | Selected Rust tools and the prototype's setup scripts |
 | `azure_cosmos_build_backend.py` | SDK-specific preparation around the wheel build |
+| `azure_cosmos_build_metadata.py` | Version checks shared by the Rust-backed and setuptools build routes |
 | `azure_cosmos_rust\build.rs`, `query_plan_binary.rs` | Checks on supplied compiled libraries |
 | `tests` | Packaging checks and tests of installed SDK behavior |
 
@@ -296,6 +297,71 @@ The Python package information matters because the internal Rust binding has
 its own name and version. Customers are installing `azure-cosmos`, not a
 separately named Rust package.
 
+### How both build routes keep the same package version
+
+Suppose Customer installs `azure-cosmos==4.17.2`. The version recorded in the
+wheel must agree with the SDK's runtime version. Otherwise the installer can
+report one release while the application is running code labelled as another.
+
+**`azure\cosmos\_version.py` is the version authority.** The other release
+files carry copies or descriptions of that version:
+
+| File | What its version means |
+|---|---|
+| `azure\cosmos\_version.py` | The Python SDK version, currently `4.17.2` |
+| `pyproject.toml`, `[project].version` | The package version Maturin puts in distribution metadata |
+| `api.metadata.yml`, `packageVersion` | The package version associated with the API metadata |
+| The first release heading in `CHANGELOG.md` | The release described by the newest notes |
+
+`setup.py` obtains the version from the shared version-check helper, which
+reads `_version.py` without importing the SDK. Maturin still reads the static
+copy in `pyproject.toml`. The Rust binding crate's version is separate and
+does not determine the Python package release.
+
+### Updating a release without leaving stale copies
+
+Cosmos opts into the repository's synchronized updates:
+
+```toml
+[tool.azure-sdk-build]
+synchronize-version-metadata = true
+```
+
+With the repository tools installed, the release owner uses a version command
+rather than editing only `_version.py`. For example, after approving a
+`4.17.3` release for November 1, 2026, run this from the package directory:
+
+```powershell
+sdk_update_version --package-path . --version 4.17.3 --release-date 2026-11-01
+```
+
+The updater changes the Python version and release notes, then synchronizes
+the static package version and API metadata. It also keeps the stability
+classifier in `setup.py` and `pyproject.toml` aligned for stable or beta releases.
+This example does not publish a package.
+
+The shared `sdk_set_version` and `sdk_increment_version` commands use the same
+synchronization step after their existing changelog update. `sdk_set_dev_version`
+also synchronizes the copies, including the newest changelog heading in the
+development-build checkout.
+
+An updater or metadata-validation failure restores the original file contents
+and fails the command. This is rollback for ordinary execution errors, not a
+filesystem transaction that survives process termination or concurrent edits.
+Complete the version update before starting builds.
+
+### What happens if someone changes only one file?
+
+Before calling Maturin, our build backend checks all four versions. The
+setuptools route performs the same check before calling `setup()`. A mismatch
+stops the build with the disagreeing filenames and versions; it does not
+silently select one copy or repair the checkout during packaging.
+
+The check also runs for source archives, editable builds, and metadata-only
+requests. Source archives include the helper and its metadata inputs so that
+a later build from the archive can perform the same check. The packaging
+regressions exercise rejection before either builder is called.
+
 
 ### What the SDK-owned build helper does
 
@@ -326,6 +392,8 @@ query plans. Its detailed purpose and delivery are covered in
 For a wheel build, the helper's added work is:
 
 ```text
+Check that the Python version and release metadata agree
+
 If matching QueryPlanInterop files were supplied:
     temporarily copy them into the Python package directory
 
@@ -982,7 +1050,9 @@ python -m build --wheel
 ```
 
 Calling `maturin build` directly bypasses our helper. Use the configured Python
-build path when checking the wheel workflow, including its optional staging.
+build path when checking the wheel workflow, including its version checks and
+optional staging. Direct `maturin develop` remains a local-development shortcut;
+it does not run these release-metadata checks.
 
 The helper also delegates source-archive, editable-build, and package-information
 requests to Maturin. Its extra QueryPlanInterop staging is specific to the
@@ -1542,6 +1612,7 @@ Paths in this table are relative to the Python repository root:
 | `eng\pipelines\templates\steps\install-msrust-toolchain.yml` | Installs the Microsoft Rust toolchain |
 | `eng\tools\azure-sdk-tools\ci_tools\parsing\parse_functions.py` | Reads package information and recognizes the `cibuildwheel` configuration |
 | `eng\tools\azure-sdk-tools\ci_tools\build.py` | Selects and invokes the package-build route |
+| `eng\tools\azure-sdk-tools\azpysdk\sphinx.py` | Prepares documentation sources and installs the package used to generate API documentation |
 
 The parser's `ParsedSetup` object is the shared code's representation of the
 package configuration. It selects the Python package information from a
@@ -1555,6 +1626,37 @@ is absent.
 `sdk_build`, the shared build command, then invokes `cibuildwheel`.
 This does not replace the helper or Maturin; it arranges their repeated
 execution in the selected environments.
+
+### Why documentation generation installs the built wheel
+
+The package build has already compiled the Rust extension. The later
+documentation check needs to import the SDK to describe its public API,
+not compile that extension again.
+
+**Sphinx**, the documentation generator, needs two different inputs:
+
+| Input | What the documentation check uses it for |
+|---|---|
+| Source distribution, or **sdist** | An archive supplying the README and source files used to prepare documentation pages |
+| Compatible wheel | The installed SDK, including its compiled extension, that Sphinx imports |
+
+The shared Sphinx check identifies compiled packages using the same
+`ext_modules` or `cibuildwheel` configuration as the package build.
+For those packages, it stages the sdist without installing it, then installs
+the wheel. In CI, `PREBUILT_WHEEL_DIR` points to the existing artifacts;
+wheel selection checks compatibility with the invoking Python environment.
+If a compatible wheel is missing, the check fails rather than falling back
+to a source installation.
+
+Installing the sdist instead would ask the build backend to create a new
+wheel. For our package that invokes Maturin and Cargo, which require the
+selected Microsoft Rust toolchain. Installing Maturin alone does not supply
+that toolchain.
+
+Ordinary Python packages retain the existing sdist-installation path.
+Building a compiled package locally without prebuilt artifacts still
+requires its build tools. Using a wheel for documentation does not establish
+that customer installation from source is supported.
 
 ### How three build-machine types serve five targets
 

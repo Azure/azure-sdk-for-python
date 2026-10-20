@@ -378,6 +378,41 @@ pub(super) fn tuple_from_partition_key_ranges_result<'py>(
     }
 }
 
+/// Resolution APIs expose diagnostics on errors, not on successful metadata
+/// values. Do not invent attempt counts or claim complete lookup coverage.
+pub(super) fn tuple_from_partition_key_ranges_result_with_attempts<'py>(
+    py: Python<'py>,
+    result: Result<
+        Option<Vec<azure_data_cosmos_driver::models::partition_key_range::PartitionKeyRange>>,
+        CosmosError,
+    >,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let diagnostics = result.as_ref().err().and_then(CosmosError::diagnostics);
+    // Error diagnostics cannot account for every earlier metadata lookup.
+    with_attempt_diagnostics(
+        py,
+        tuple_from_partition_key_ranges_result(py, result),
+        diagnostics,
+        false,
+    )
+}
+
+pub(super) fn tuple_from_feed_range_from_partition_key_result_with_attempts<'py>(
+    py: Python<'py>,
+    result: Result<FeedRangeFromPartitionKeyPayload, FeedRangeFromPartitionKeyError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let diagnostics = match &result {
+        Err(FeedRangeFromPartitionKeyError::Cosmos(error)) => error.diagnostics(),
+        _ => None,
+    };
+    with_attempt_diagnostics(
+        py,
+        tuple_from_feed_range_from_partition_key_result(py, result),
+        diagnostics,
+        false,
+    )
+}
+
 /// Return a computed feed range in a binding response tuple.
 /// Its body contains Range with min, max, isMinInclusive, and isMaxInclusive fields.
 pub(super) fn tuple_from_feed_range_from_partition_key_result<'py>(

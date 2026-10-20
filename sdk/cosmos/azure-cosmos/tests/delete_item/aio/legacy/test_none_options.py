@@ -61,27 +61,40 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
     async def _create_sample_item(self):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
         await self.container.create_item(
-            item, pre_trigger_include=None, post_trigger_include=None,
-            indexing_directive=None, enable_automatic_id_generation=False,
-            session_token=None, initial_headers=None, priority=None,
-            no_response=None, retry_write=None, throughput_bucket=None,
+            item,
+            indexing_directive=None,
+            enable_automatic_id_generation=False,
+            session_token=None,
+            initial_headers=None,
+            priority=None,
+            no_response=None,
+            retry_write=None,
+            throughput_bucket=None,
         )
         return item
 
     async def test_delete_item_none_options_async_rust(self):
-        """Verify the async delete_item accepts None for every optional kwarg (pre_trigger_include, post_trigger_include, session_token, initial_headers, etag, match_condition, priority, retry_write, throughput_bucket) and removes the item."""
+        """Verify the async delete_item accepts None for every optional kwarg (session_token, initial_headers, etag, match_condition, priority, retry_write, throughput_bucket) and removes the item."""
         # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_delete_item_none_options_async
         item = await self._create_sample_item()
         await self.container.delete_item(
-            item["id"], partition_key=item["pk"], pre_trigger_include=None,
-            post_trigger_include=None, session_token=None, initial_headers=None,
-            etag=None, match_condition=None, priority=None, retry_write=None,
+            item["id"],
+            partition_key=item["pk"],
+            session_token=None,
+            initial_headers=None,
+            etag=None,
+            match_condition=None,
+            priority=None,
+            retry_write=None,
             throughput_bucket=None,
         )
         with self.assertRaises(CosmosHttpResponseError):
             await self.container.read_item(
-                item["id"], partition_key=item["pk"], post_trigger_include=None,
-                session_token=None, initial_headers=None,
-                max_integrated_cache_staleness_in_ms=None, priority=None,
+                item["id"],
+                partition_key=item["pk"],
+                session_token=None,
+                initial_headers=None,
+                max_integrated_cache_staleness_in_ms=None,
+                priority=None,
                 throughput_bucket=None,
             )

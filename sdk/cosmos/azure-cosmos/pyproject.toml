@@ -5,10 +5,10 @@ requires      = ["maturin==1.15.0"]
 build-backend = "azure_cosmos_build_backend"
 backend-path = ["."]
 
-# Keep the version and shared metadata aligned with _version.py and setup.py.
+# _version.py is authoritative; repository release tools synchronize this copy.
 [project]
 name = "azure-cosmos"
-version = "4.17.1"
+version = "4.17.2"
 description = "Microsoft Azure Cosmos Client Library for Python"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -104,6 +104,9 @@ include = [
     { path = "azure/cosmos/_rust.pyi", format = "sdist" },
     { path = "azure/cosmos/.libs/*", format = "wheel" },
     { path = "azure_cosmos_build_backend.py", format = "sdist" },
+    { path = "azure_cosmos_build_metadata.py", format = "sdist" },
+    { path = "api.metadata.yml", format = "sdist" },
+    { path = "CHANGELOG.md", format = "sdist" },
     { path = "rust-toolchain.toml", format = "sdist" },
     { path = "scripts/*.sh", format = "sdist" },
 ]
@@ -118,6 +121,7 @@ exclude = [
 ]
 
 [tool.azure-sdk-build]
+synchronize-version-metadata = true
 mypy = true
 pyright = false
 pylint = true

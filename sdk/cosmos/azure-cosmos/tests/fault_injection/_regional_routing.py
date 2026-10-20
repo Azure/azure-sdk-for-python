@@ -11,9 +11,10 @@ import sys
 import time
 from urllib.parse import urlsplit
 
+import pytest
+
 from azure.cosmos import CosmosClient, exceptions
 from _fault_injection_transport import FaultInjectionTransport
-from _fault_injection_transport_async import FaultInjectionTransportAsync
 
 from fault_injection._delayed_create import emit
 from _client_transport import create_client_with_transport
@@ -22,6 +23,12 @@ WRITE_REGION = "East US"
 READ_REGION = "West US"
 READ_SECONDS = 2
 TIMEOUT = 30
+
+REGIONAL_ROUTING_CASES = [
+    pytest.param("routing", id="routing-rust"),
+    pytest.param("guard", id="guard-rust"),
+    pytest.param("guard-disabled", id="guard-disabled-rust"),
+]
 
 
 def emulator_endpoints(endpoint):
@@ -115,85 +122,17 @@ def native_records(payload):
     return records
 
 
-def assert_guard(error, records, read_endpoint, hits, rule_id, backend):
+def assert_guard(error, records, read_endpoint, hits, rule_id):
     assert isinstance(error, exceptions.CosmosHttpResponseError), "Guard did not reject the create"
     assert error.status_code == 403 and error.sub_status == 3, "Expected WriteForbidden 403/3"
     assert hits > 0, "Forbidden-write rule was not applied"
     assert_destination(records, read_endpoint, 403)
-    if backend == "rust":
-        applied = sum(
-            entry["rule_id"] == rule_id and entry["applied"]
-            for record in records for entry in record["evaluations"]
-        )
-        assert applied == hits, "Named guard hits do not match the operation's attempts"
-        assert all(record["sub_status"] == 3 for record in records)
-
-
-def legacy_transport(account, read_endpoint, container_id, inject, records, asynchronous=False):
-    state = {"hits": 0}
-    path = f"/colls/{container_id}/docs"
-
-    def begin(request):
-        if path not in urlsplit(request.url).path:
-            return None
-        entry = {"endpoint": request.url, "status": None}
-        records.append(entry)
-        return entry
-
-    class SyncTransport(FaultInjectionTransport):
-        def send(self, request, **kwargs):
-            entry = begin(request)
-            try:
-                response = super().send(request, **kwargs)
-            except exceptions.CosmosHttpResponseError as error:
-                if entry is not None:
-                    entry["status"] = error.status_code
-                raise
-            if entry is not None:
-                entry["status"] = response.status_code
-            return response
-
-    class AsyncTransport(FaultInjectionTransportAsync):
-        async def send(self, request, **kwargs):
-            entry = begin(request)
-            try:
-                response = await super().send(request, **kwargs)
-            except exceptions.CosmosHttpResponseError as error:
-                if entry is not None:
-                    entry["status"] = error.status_code
-                raise
-            if entry is not None:
-                entry["status"] = response.status_code
-            return response
-
-    def forbidden(request):
-        state["hits"] += 1
-        return exceptions.CosmosHttpResponseError(403, message="Injected write-forbidden guard", sub_status=3)
-
-    async def forbidden_async(request):
-        return forbidden(request)
-
-    def transform(request, inner):
-        response = inner()
-        assert response.status_code == 200
-        return FaultInjectionTransport.MockHttpResponse(request, 200, account)
-
-    async def transform_async(request, inner):
-        response = await inner()
-        assert response.status_code == 200
-        return FaultInjectionTransportAsync.MockHttpResponse(request, 200, account)
-
-    transport = AsyncTransport() if asynchronous else SyncTransport()
-    transport.add_fault(
-        lambda request: inject and path in urlsplit(request.url).path
-        and FaultInjectionTransport.predicate_is_write_operation(request, read_endpoint),
-        forbidden_async if asynchronous else forbidden,
+    applied = sum(
+        entry["rule_id"] == rule_id and entry["applied"]
+        for record in records for entry in record["evaluations"]
     )
-    transport.add_response_transformation(
-        FaultInjectionTransport.predicate_is_database_account_call,
-        transform_async if asynchronous else transform,
-    )
-    return transport, state
+    assert applied == hits, "Named guard hits do not match the operation's attempts"
+    assert all(record["sub_status"] == 3 for record in records)
 
 
 def capture_native(monkeypatch, records, asynchronous=False):

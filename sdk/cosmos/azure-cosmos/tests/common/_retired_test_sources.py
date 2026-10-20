@@ -223,7 +223,68 @@ RETIRED_SESSION_TOKEN_SUPPORT_SOURCES = {
     ),
 }
 
+RETIRED_QUERY_SOURCES = {
+    f"tests/{filename}::{class_name}.{method}": (
+        f"tests/query_items/{surface}/legacy/{filename}::{class_name}.{method}_rust"
+    )
+    for surface, filename, class_name, methods in (
+        ("sync", "test_query.py", "TestQuery", (
+            "test_query_items_with_parameters_none",
+            "test_query_pagination_with_max_item_count",
+            "test_offset_limit",
+            "test_distinct",
+            "test_partition_scoped_count_is_index_only",
+            "test_value_max_query_results",
+            "test_populate_query_metrics",
+            "test_populate_index_metrics",
+            "test_populate_query_advice",
+            "test_paging_with_continuation_token",
+            "test_cross_partition_query_with_continuation_token",
+            "test_continuation_token_size_limit_query",
+        )),
+        ("aio", "test_query_async.py", "TestQueryAsync", (
+            "test_offset_limit_async",
+            "test_distinct_async",
+            "test_partition_scoped_count_is_index_only_async",
+            "test_value_max_query_results_async",
+            "test_populate_query_metrics_async",
+            "test_populate_index_metrics_async",
+            "test_populate_query_advice_async",
+            "test_paging_with_continuation_token_async",
+            "test_cross_partition_query_with_continuation_token_async",
+            "test_continuation_token_size_limit_query_async",
+        )),
+        ("sync", "test_none_options.py", "TestNoneOptions", (
+            "test_container_query_items_none_options_partition",
+        )),
+        ("aio", "test_none_options_async.py", "TestNoneOptionsAsync", (
+            "test_container_query_items_none_options_partition_async",
+        )),
+        ("sync", "test_orderby.py", "TestCrossPartitionTopOrderBy", (
+            "test_orderby_top_query",
+        )),
+        ("sync", "test_query_feed_range.py", "TestQueryFeedRange", (
+            "test_query_value_sum_across_full_feed_range_still_sums",
+            "test_query_value_min_across_full_feed_range_returns_scalar",
+            "test_query_with_avg_aggregate_single_partition_feed_range_succeeds",
+        )),
+        ("aio", "test_query_feed_range_async.py", "TestQueryFeedRangeAsync", (
+            "test_query_value_sum_across_full_feed_range_still_sums_async",
+            "test_query_value_min_across_full_feed_range_returns_scalar_async",
+            "test_query_with_avg_aggregate_single_partition_feed_range_succeeds_async",
+        )),
+        ("sync", "test_query_feed_range_multipartition.py", "TestFeedRangeMultiPartition", (
+            "test_prefix_partition_key_query_pagination_resume",
+        )),
+        ("aio", "test_query_feed_range_multipartition_async.py", "TestFeedRangeMultiPartitionAsync", (
+            "test_prefix_partition_key_query_pagination_resume_async",
+        )),
+    )
+    for method in methods
+}
+
 RETIRED_TEST_SOURCES = {
     **RETIRED_THROUGHPUT_SOURCES,
     **RETIRED_SESSION_TOKEN_SOURCES,
+    **RETIRED_QUERY_SOURCES,
 }

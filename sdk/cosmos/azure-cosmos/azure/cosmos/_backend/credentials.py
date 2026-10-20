@@ -6,8 +6,8 @@
 """Prepare the customer's credential in the Python wrapper for the binding.
 
 Accept an account key or an object that obtains access tokens. An asynchronous
-token credential needs an async credential bridge: a Python object that runs
-token requests on a background event loop and lets the binding wait for results.
+token credential is accepted only by the async client. Its adapter acquires a
+bridge on first use, using the customer app's running event loop.
 
 Both client types use this resolver. Unsupported credential forms, including
 resource tokens that grant access to particular resources, fail during
@@ -24,7 +24,6 @@ from collections.abc import Sequence as _AbcSequence
 from contextlib import contextmanager
 from typing import Any, Iterator, Optional, Tuple
 
-from ._async_credential_bridge import AsyncTokenCredentialBridge
 from ._binding_adapter_shared import close_credential_bridge_quietly
 
 _RESOURCE_TOKEN_ERROR = (
@@ -41,12 +40,12 @@ def reject_resource_token_fields(credential: Mapping[str, Any]) -> None:
 
 
 def _is_async_credential(credential: Any) -> bool:
-    """Detect credentials that need a background event loop for token requests.
+    """Detect credentials that need their application's event loop for token requests.
 
     Check for async get_token or get_token_info, including methods wrapped by
     decorators that expose __wrapped__. Also recognize credentials supporting
-    async context entry. The resolver then wraps the credential rather than
-    passing an async method where a synchronous token result is expected.
+    async context entry. The async adapter wraps the retained credential on
+    first use rather than passing an async method as a synchronous token method.
     """
     for attr in ("get_token", "get_token_info"):
         method = getattr(credential, attr, None)
@@ -116,30 +115,39 @@ def validate_credential(credential: Any) -> None:
     )
 
 
-def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
-    """Return a supported key or token credential, bridging async token methods."""
+def resolve_credential(
+    credential: Any,
+    *,
+    allow_async: bool = False,
+) -> Tuple[Optional[str], Optional[Any]]:
+    """Retain a supported credential; async adapters bind its loop on first use."""
     validate_credential(credential)
     if isinstance(credential, str):
         return credential, None
     if isinstance(credential, Mapping) and "masterKey" in credential:
         return credential["masterKey"], None
     if _is_async_credential(credential):
-        return None, AsyncTokenCredentialBridge.acquire(credential)
+        if not allow_async:
+            raise TypeError(
+                "Synchronous CosmosClient requires a synchronous token credential. "
+                "Use azure.cosmos.aio.CosmosClient with an async credential."
+            )
+        return None, credential
     return None, credential
 
 
 @contextmanager
 def resolved_credential(
     credential: Any,
+    *,
+    allow_async: bool = False,
 ) -> Iterator[Tuple[Optional[str], Optional[Any]]]:
-    """Prepare a credential and release its async credential bridge if setup fails.
+    """Validate factory inputs without acquiring a loop or fetching a token.
 
-    An async credential bridge retains the credential even before its thread
-    starts. On success, the Python wrapper object must release its use
-    of that bridge. On failure, release it here and propagate the original error
-    without closing the customer's credential.
+    Async credentials remain caller-owned. If an internal bridge was supplied
+    directly, release that acquired use on failure, never the customer's credential.
     """
-    master_key, token_credential = resolve_credential(credential)
+    master_key, token_credential = resolve_credential(credential, allow_async=allow_async)
     try:
         yield master_key, token_credential
     except BaseException:

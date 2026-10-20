@@ -10,8 +10,18 @@ from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import exceptions
 from azure.cosmos._backend.client_config import _prepare_fault_injection_rules
 from fault_injection._regional_routing import (
-    assert_destination, assert_fields, assert_guard, emulator_endpoints, native_records, rules, topology,
+    REGIONAL_ROUTING_CASES, assert_destination, assert_fields, assert_guard,
+    emulator_endpoints, native_records, rules, topology,
 )
+
+
+def test_regional_cases_only_select_enabled_rust_scenarios_rust():
+    assert [(case.values, case.id) for case in REGIONAL_ROUTING_CASES] == [
+        (("routing",), "routing-rust"),
+        (("guard",), "guard-rust"),
+        (("guard-disabled",), "guard-disabled-rust"),
+    ]
+    assert all(not case.marks for case in REGIONAL_ROUTING_CASES)
 
 
 @pytest.mark.parametrize("endpoint", [
@@ -108,16 +118,16 @@ def test_missing_truncated_or_metadata_only_diagnostics_fail_rust(change):
 def test_guard_requires_rejection_named_application_and_matching_destination_rust():
     error = exceptions.CosmosHttpResponseError(403, message="guard", sub_status=3)
     records = native_records(payload())
-    assert_guard(error, records, "https://localhost:8081/", 1, "guard", "rust")
+    assert_guard(error, records, "https://localhost:8081/", 1, "guard")
     for error_value, hits, name in [(None, 1, "guard"), (error, 0, "guard"), (error, 1, "other")]:
         with pytest.raises(AssertionError):
-            assert_guard(error_value, records, "https://localhost:8081/", hits, name, "rust")
+            assert_guard(error_value, records, "https://localhost:8081/", hits, name)
 
 
 def test_write_forbidden_exhaustion_is_not_silently_accepted_as_403_rust():
     with pytest.raises(AssertionError, match="Guard did not reject"):
         assert_guard(ServiceResponseError("503/20311"), native_records(payload()),
-                     "https://localhost:8081/", 1, "guard", "rust")
+                     "https://localhost:8081/", 1, "guard")
 
 
 @pytest.mark.parametrize("actual", [None, {}, {"id": "wrong"}, {"id": "order", "total": 0}])

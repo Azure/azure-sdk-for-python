@@ -7,10 +7,9 @@
 # pylint:disable=missing-docstring
 
 # Shared metadata must match pyproject.toml; Maturin does not read setup.py.
-import re
-import os
 from io import open
 from setuptools import find_packages, setup
+from azure_cosmos_build_metadata import validate_version_metadata
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-cosmos"
@@ -21,13 +20,7 @@ PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")
 # a-b-c => a.b.c
 NAMESPACE_NAME = PACKAGE_NAME.replace("-", ".")
 
-# Version extraction inspired from 'requests'
-with open(os.path.join(PACKAGE_FOLDER_PATH, '_version.py'), 'r') as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
-                        fd.read(), re.MULTILINE).group(1)
-
-if not version:
-    raise RuntimeError("Cannot find version information")
+version = validate_version_metadata()
 
 with open("README.md", encoding="utf-8") as f:
     readme = f.read()
