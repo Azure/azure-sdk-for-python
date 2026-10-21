@@ -56,6 +56,7 @@ if TYPE_CHECKING:
         MySqlMigrationType,
         OpenAuthenticationProviderType,
         ParameterType,
+        PlatformReleaseChannel,
         ProvisioningState,
         PublicCertificateLocation,
         PublishingProfileFormat,
@@ -97,9 +98,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -125,18 +126,112 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
+
+
+class TrackedResource(Resource):
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    location: Required[str]
+    """The geo-location where the resource lives. Required."""
+
+
+class AiGateway(TrackedResource):
+    """An AI gateway resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "AiGatewayProperties"
+    """
+
+    properties: "AiGatewayProperties"
+    """The resource-specific properties for this resource."""
+
+
+class AiGatewayProperties(TypedDict, total=False):
+    """The properties of an AI gateway.
+
+    :ivar aiGatewayId: The description of the resource.
+    :vartype aiGatewayId: str
+    """
+
+    aiGatewayId: str
+    """The description of the resource."""
+
+
+class AiGatewayTagsUpdate(TypedDict, total=False):
+    """The type used for updating tags in AiGateway resources.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+
+
+class AiIntegration(TypedDict, total=False):
+    """AI integration configuration for the app.
+
+    :ivar apiSpecPath: Relative path to the API specification file from /home in site files.
+    :vartype apiSpecPath: str
+    :ivar mcp: MCP configuration.
+    :vartype mcp: "McpSettings"
+    :ivar siteAuth: External auth configuration for the MCP endpoint (used when EasyAuth is not
+     enabled).
+    :vartype siteAuth: "SiteAuthInfo"
+    """
+
+    apiSpecPath: str
+    """Relative path to the API specification file from /home in site files."""
+    mcp: "McpSettings"
+    """MCP configuration."""
+    siteAuth: "SiteAuthInfo"
+    """External auth configuration for the MCP endpoint (used when EasyAuth is not enabled)."""
 
 
 class AllowedAudiencesValidation(TypedDict, total=False):
     """The configuration settings of the Allowed Audiences validation flow.
 
-    :ivar allowed_audiences: The configuration settings of the allowed list of audiences from which
+    :ivar allowedAudiences: The configuration settings of the allowed list of audiences from which
      to validate the JWT token.
-    :vartype allowed_audiences: list[str]
+    :vartype allowedAudiences: list[str]
     """
 
     allowedAudiences: list[str]
@@ -205,10 +300,10 @@ class Apple(TypedDict, total=False):
 class AppleRegistration(TypedDict, total=False):
     """The configuration settings of the registration for the Apple provider.
 
-    :ivar client_id: The Client ID of the app used for login.
-    :vartype client_id: str
-    :ivar client_secret_setting_name: The app setting name that contains the client secret.
-    :vartype client_secret_setting_name: str
+    :ivar clientId: The Client ID of the app used for login.
+    :vartype clientId: str
+    :ivar clientSecretSettingName: The app setting name that contains the client secret.
+    :vartype clientSecretSettingName: str
     """
 
     clientId: str
@@ -220,12 +315,12 @@ class AppleRegistration(TypedDict, total=False):
 class ApplicationLogsConfig(TypedDict, total=False):
     """Application logs configuration.
 
-    :ivar file_system: Application logs to file system configuration.
-    :vartype file_system: "FileSystemApplicationLogsConfig"
-    :ivar azure_table_storage: Application logs to azure table storage configuration.
-    :vartype azure_table_storage: "AzureTableStorageApplicationLogsConfig"
-    :ivar azure_blob_storage: Application logs to blob storage configuration.
-    :vartype azure_blob_storage: "AzureBlobStorageApplicationLogsConfig"
+    :ivar fileSystem: Application logs to file system configuration.
+    :vartype fileSystem: "FileSystemApplicationLogsConfig"
+    :ivar azureTableStorage: Application logs to azure table storage configuration.
+    :vartype azureTableStorage: "AzureTableStorageApplicationLogsConfig"
+    :ivar azureBlobStorage: Application logs to blob storage configuration.
+    :vartype azureBlobStorage: "AzureBlobStorageApplicationLogsConfig"
     """
 
     fileSystem: "FileSystemApplicationLogsConfig"
@@ -264,8 +359,8 @@ class AppLogsConfiguration(TypedDict, total=False):
 
     :ivar destination:
     :vartype destination: str
-    :ivar log_analytics_configuration:
-    :vartype log_analytics_configuration: "LogAnalyticsConfiguration"
+    :ivar logAnalyticsConfiguration:
+    :vartype logAnalyticsConfiguration: "LogAnalyticsConfiguration"
     """
 
     destination: str
@@ -276,10 +371,10 @@ class AppRegistration(TypedDict, total=False):
     """The configuration settings of the app registration for providers that have app ids and app
     secrets.
 
-    :ivar app_id: The App ID of the app used for login.
-    :vartype app_id: str
-    :ivar app_secret_setting_name: The app setting name that contains the app secret.
-    :vartype app_secret_setting_name: str
+    :ivar appId: The App ID of the app used for login.
+    :vartype appId: str
+    :ivar appSecretSettingName: The app setting name that contains the app secret.
+    :vartype appSecretSettingName: str
     """
 
     appId: str
@@ -291,56 +386,56 @@ class AppRegistration(TypedDict, total=False):
 class AppServiceEnvironment(TypedDict, total=False):
     """Description of an App Service Environment.
 
-    :ivar provisioning_state: Provisioning state of the App Service Environment. Known values are:
+    :ivar provisioningState: Provisioning state of the App Service Environment. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", and "Deleting".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar status: Current status of the App Service Environment. Known values are: "Preparing",
      "Ready", "Scaling", and "Deleting".
     :vartype status: Union[str, "HostingEnvironmentStatus"]
-    :ivar virtual_network: Description of the Virtual Network. Required.
-    :vartype virtual_network: "VirtualNetworkProfile"
-    :ivar internal_load_balancing_mode: Specifies which endpoints to serve internally in the
-     Virtual Network for the App Service Environment. Known values are: "None", "Web", "Publishing",
-     and "Web, Publishing".
-    :vartype internal_load_balancing_mode: Union[str, "LoadBalancingMode"]
-    :ivar multi_size: Front-end VM size, e.g. "Medium", "Large".
-    :vartype multi_size: str
-    :ivar multi_role_count: Number of front-end instances.
-    :vartype multi_role_count: int
-    :ivar ipssl_address_count: Number of IP SSL addresses reserved for the App Service Environment.
-    :vartype ipssl_address_count: int
-    :ivar dns_suffix: DNS suffix of the App Service Environment.
-    :vartype dns_suffix: str
-    :ivar maximum_number_of_machines: Maximum number of VMs in the App Service Environment.
-    :vartype maximum_number_of_machines: int
-    :ivar front_end_scale_factor: Scale factor for front-ends.
-    :vartype front_end_scale_factor: int
+    :ivar virtualNetwork: Description of the Virtual Network. Required.
+    :vartype virtualNetwork: "VirtualNetworkProfile"
+    :ivar internalLoadBalancingMode: Specifies which endpoints to serve internally in the Virtual
+     Network for the App Service Environment. Known values are: "None", "Web", "Publishing", and
+     "Web, Publishing".
+    :vartype internalLoadBalancingMode: Union[str, "LoadBalancingMode"]
+    :ivar multiSize: Front-end VM size, e.g. "Medium", "Large".
+    :vartype multiSize: str
+    :ivar multiRoleCount: Number of front-end instances.
+    :vartype multiRoleCount: int
+    :ivar ipsslAddressCount: Number of IP SSL addresses reserved for the App Service Environment.
+    :vartype ipsslAddressCount: int
+    :ivar dnsSuffix: DNS suffix of the App Service Environment.
+    :vartype dnsSuffix: str
+    :ivar maximumNumberOfMachines: Maximum number of VMs in the App Service Environment.
+    :vartype maximumNumberOfMachines: int
+    :ivar frontEndScaleFactor: Scale factor for front-ends.
+    :vartype frontEndScaleFactor: int
     :ivar suspended: <code>true</code> if the App Service Environment is suspended; otherwise,
      <code>false</code>. The environment can be suspended, e.g. when the management endpoint is no
      longer available (most likely because NSG blocked the incoming traffic).
     :vartype suspended: bool
-    :ivar cluster_settings: Custom settings for changing the behavior of the App Service
+    :ivar clusterSettings: Custom settings for changing the behavior of the App Service
      Environment.
-    :vartype cluster_settings: list["NameValuePair"]
-    :ivar user_whitelisted_ip_ranges: User added ip ranges to whitelist on ASE db.
-    :vartype user_whitelisted_ip_ranges: list[str]
-    :ivar has_linux_workers: Flag that displays whether an ASE has linux workers or not.
-    :vartype has_linux_workers: bool
-    :ivar upgrade_preference: Upgrade Preference. Known values are: "None", "Early", "Late", and
+    :vartype clusterSettings: list["NameValuePair"]
+    :ivar userWhitelistedIpRanges: User added ip ranges to whitelist on ASE db.
+    :vartype userWhitelistedIpRanges: list[str]
+    :ivar hasLinuxWorkers: Flag that displays whether an ASE has linux workers or not.
+    :vartype hasLinuxWorkers: bool
+    :ivar upgradePreference: Upgrade Preference. Known values are: "None", "Early", "Late", and
      "Manual".
-    :vartype upgrade_preference: Union[str, "UpgradePreference"]
-    :ivar dedicated_host_count: Dedicated Host Count.
-    :vartype dedicated_host_count: int
-    :ivar zone_redundant: Whether or not this App Service Environment is zone-redundant.
-    :vartype zone_redundant: bool
-    :ivar custom_dns_suffix_configuration: Full view of the custom domain suffix configuration for
+    :vartype upgradePreference: Union[str, "UpgradePreference"]
+    :ivar dedicatedHostCount: Dedicated Host Count.
+    :vartype dedicatedHostCount: int
+    :ivar zoneRedundant: Whether or not this App Service Environment is zone-redundant.
+    :vartype zoneRedundant: bool
+    :ivar customDnsSuffixConfiguration: Full view of the custom domain suffix configuration for
      ASEv3.
-    :vartype custom_dns_suffix_configuration: "CustomDnsSuffixConfiguration"
-    :ivar networking_configuration: Full view of networking configuration for an ASE.
-    :vartype networking_configuration: "AseV3NetworkingConfiguration"
-    :ivar upgrade_availability: Whether an upgrade is available for this App Service Environment.
+    :vartype customDnsSuffixConfiguration: "CustomDnsSuffixConfiguration"
+    :ivar networkingConfiguration: Full view of networking configuration for an ASE.
+    :vartype networkingConfiguration: "AseV3NetworkingConfiguration"
+    :ivar upgradeAvailability: Whether an upgrade is available for this App Service Environment.
      Known values are: "None" and "Ready".
-    :vartype upgrade_availability: Union[str, "UpgradeAvailability"]
+    :vartype upgradeAvailability: Union[str, "UpgradeAvailability"]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -410,32 +505,6 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
     """Core resource properties."""
 
 
-class TrackedResource(Resource):
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: dict[str, str]
-    """Resource tags."""
-    location: Required[str]
-    """The geo-location where the resource lives. Required."""
-
-
 class AppServiceEnvironmentResource(TrackedResource):
     """App Service Environment ARM resource.
 
@@ -447,9 +516,9 @@ class AppServiceEnvironmentResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -483,9 +552,9 @@ class AppServicePlan(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -494,8 +563,8 @@ class AppServicePlan(TrackedResource):
     :vartype properties: "AppServicePlanProperties"
     :ivar sku: Description of a SKU for a scalable resource.
     :vartype sku: "SkuDescription"
-    :ivar extended_location: Extended Location.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Extended Location.
+    :vartype extendedLocation: "ExtendedLocation"
     :ivar kind: Kind of resource. If the resource is an app, you can refer to
      `https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
      <https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference>`_
@@ -546,65 +615,65 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
 class AppServicePlanPatchResourceProperties(TypedDict, total=False):
     """AppServicePlanPatchResource resource specific properties.
 
-    :ivar worker_tier_name: Target worker tier assigned to the App Service plan.
-    :vartype worker_tier_name: str
+    :ivar workerTierName: Target worker tier assigned to the App Service plan.
+    :vartype workerTierName: str
     :ivar status: App Service plan status. Known values are: "Ready", "Pending", and "Creating".
     :vartype status: Union[str, "StatusOptions"]
     :ivar subscription: App Service plan subscription.
     :vartype subscription: str
-    :ivar hosting_environment_profile: Specification for the App Service Environment to use for the
+    :ivar hostingEnvironmentProfile: Specification for the App Service Environment to use for the
      App Service plan.
-    :vartype hosting_environment_profile: "HostingEnvironmentProfile"
-    :ivar maximum_number_of_workers: Maximum number of instances that can be assigned to this App
+    :vartype hostingEnvironmentProfile: "HostingEnvironmentProfile"
+    :ivar maximumNumberOfWorkers: Maximum number of instances that can be assigned to this App
      Service plan.
-    :vartype maximum_number_of_workers: int
-    :ivar number_of_workers: The number of instances that are assigned to this App Service plan.
-    :vartype number_of_workers: int
-    :ivar geo_region: Geographical location for the App Service plan.
-    :vartype geo_region: str
-    :ivar per_site_scaling: If <code>true</code>, apps assigned to this App Service plan can be
+    :vartype maximumNumberOfWorkers: int
+    :ivar numberOfWorkers: The number of instances that are assigned to this App Service plan.
+    :vartype numberOfWorkers: int
+    :ivar geoRegion: Geographical location for the App Service plan.
+    :vartype geoRegion: str
+    :ivar perSiteScaling: If <code>true</code>, apps assigned to this App Service plan can be
      scaled independently. If <code>false</code>, apps assigned to this App Service plan will scale
      to all instances of the plan.
-    :vartype per_site_scaling: bool
-    :ivar elastic_scale_enabled: ServerFarm supports ElasticScale. Apps in this plan will scale as
-     if the ServerFarm was ElasticPremium sku.
-    :vartype elastic_scale_enabled: bool
-    :ivar maximum_elastic_worker_count: Maximum number of total workers allowed for this
+    :vartype perSiteScaling: bool
+    :ivar elasticScaleEnabled: ServerFarm supports ElasticScale. Apps in this plan will scale as if
+     the ServerFarm was ElasticPremium sku.
+    :vartype elasticScaleEnabled: bool
+    :ivar maximumElasticWorkerCount: Maximum number of total workers allowed for this
      ElasticScaleEnabled App Service Plan.
-    :vartype maximum_elastic_worker_count: int
-    :ivar number_of_sites: Number of apps assigned to this App Service plan.
-    :vartype number_of_sites: int
-    :ivar is_spot: If <code>true</code>, this App Service Plan owns spot instances.
-    :vartype is_spot: bool
-    :ivar spot_expiration_time: The time when the server farm expires. Valid only if it is a spot
+    :vartype maximumElasticWorkerCount: int
+    :ivar numberOfSites: Number of apps assigned to this App Service plan.
+    :vartype numberOfSites: int
+    :ivar isSpot: If <code>true</code>, this App Service Plan owns spot instances.
+    :vartype isSpot: bool
+    :ivar spotExpirationTime: The time when the server farm expires. Valid only if it is a spot
      server farm.
-    :vartype spot_expiration_time: str
-    :ivar free_offer_expiration_time: The time when the server farm free offer expires.
-    :vartype free_offer_expiration_time: str
-    :ivar resource_group: Resource group of the App Service plan.
-    :vartype resource_group: str
+    :vartype spotExpirationTime: str
+    :ivar freeOfferExpirationTime: The time when the server farm free offer expires.
+    :vartype freeOfferExpirationTime: str
+    :ivar resourceGroup: Resource group of the App Service plan.
+    :vartype resourceGroup: str
     :ivar reserved: If Linux app service plan <code>true</code>, <code>false</code> otherwise.
     :vartype reserved: bool
-    :ivar is_xenon: Obsolete: If Hyper-V container app service plan <code>true</code>,
+    :ivar isXenon: Obsolete: If Hyper-V container app service plan <code>true</code>,
      <code>false</code> otherwise.
-    :vartype is_xenon: bool
-    :ivar hyper_v: If Hyper-V container app service plan <code>true</code>, <code>false</code>
+    :vartype isXenon: bool
+    :ivar hyperV: If Hyper-V container app service plan <code>true</code>, <code>false</code>
      otherwise.
-    :vartype hyper_v: bool
-    :ivar target_worker_count: Scaling worker count.
-    :vartype target_worker_count: int
-    :ivar target_worker_size_id: Scaling worker size ID.
-    :vartype target_worker_size_id: int
-    :ivar provisioning_state: Provisioning state of the App Service Plan. Known values are:
+    :vartype hyperV: bool
+    :ivar targetWorkerCount: Scaling worker count.
+    :vartype targetWorkerCount: int
+    :ivar targetWorkerSizeId: Scaling worker size ID.
+    :vartype targetWorkerSizeId: int
+    :ivar provisioningState: Provisioning state of the App Service Plan. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", and "Deleting".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar kube_environment_profile: Specification for the Kubernetes Environment to use for the App
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar kubeEnvironmentProfile: Specification for the Kubernetes Environment to use for the App
      Service plan.
-    :vartype kube_environment_profile: "KubeEnvironmentProfile"
-    :ivar zone_redundant: If <code>true</code>, this App Service Plan will perform availability
-     zone balancing. If <code>false</code>, this App Service Plan will not perform availability zone
+    :vartype kubeEnvironmentProfile: "KubeEnvironmentProfile"
+    :ivar zoneRedundant: If <code>true</code>, this App Service Plan will perform availability zone
+     balancing. If <code>false</code>, this App Service Plan will not perform availability zone
      balancing.
-    :vartype zone_redundant: bool
+    :vartype zoneRedundant: bool
     """
 
     workerTierName: str
@@ -664,85 +733,85 @@ class AppServicePlanPatchResourceProperties(TypedDict, total=False):
 class AppServicePlanProperties(TypedDict, total=False):
     """AppServicePlan resource specific properties.
 
-    :ivar worker_tier_name: Target worker tier assigned to the App Service plan.
-    :vartype worker_tier_name: str
+    :ivar workerTierName: Target worker tier assigned to the App Service plan.
+    :vartype workerTierName: str
     :ivar status: App Service plan status. Known values are: "Ready", "Pending", and "Creating".
     :vartype status: Union[str, "StatusOptions"]
     :ivar subscription: App Service plan subscription.
     :vartype subscription: str
-    :ivar hosting_environment_profile: Specification for the App Service Environment to use for the
+    :ivar hostingEnvironmentProfile: Specification for the App Service Environment to use for the
      App Service plan.
-    :vartype hosting_environment_profile: "HostingEnvironmentProfile"
-    :ivar maximum_number_of_workers: Maximum number of instances that can be assigned to this App
+    :vartype hostingEnvironmentProfile: "HostingEnvironmentProfile"
+    :ivar maximumNumberOfWorkers: Maximum number of instances that can be assigned to this App
      Service plan.
-    :vartype maximum_number_of_workers: int
-    :ivar number_of_workers: The number of instances that are assigned to this App Service plan.
-    :vartype number_of_workers: int
-    :ivar geo_region: Geographical location for the App Service plan.
-    :vartype geo_region: str
-    :ivar per_site_scaling: If <code>true</code>, apps assigned to this App Service plan can be
+    :vartype maximumNumberOfWorkers: int
+    :ivar numberOfWorkers: The number of instances that are assigned to this App Service plan.
+    :vartype numberOfWorkers: int
+    :ivar geoRegion: Geographical location for the App Service plan.
+    :vartype geoRegion: str
+    :ivar perSiteScaling: If <code>true</code>, apps assigned to this App Service plan can be
      scaled independently. If <code>false</code>, apps assigned to this App Service plan will scale
      to all instances of the plan.
-    :vartype per_site_scaling: bool
-    :ivar elastic_scale_enabled: ServerFarm supports ElasticScale. Apps in this plan will scale as
-     if the ServerFarm was ElasticPremium sku.
-    :vartype elastic_scale_enabled: bool
-    :ivar maximum_elastic_worker_count: Maximum number of total workers allowed for this
+    :vartype perSiteScaling: bool
+    :ivar elasticScaleEnabled: ServerFarm supports ElasticScale. Apps in this plan will scale as if
+     the ServerFarm was ElasticPremium sku.
+    :vartype elasticScaleEnabled: bool
+    :ivar maximumElasticWorkerCount: Maximum number of total workers allowed for this
      ElasticScaleEnabled App Service Plan.
-    :vartype maximum_elastic_worker_count: int
-    :ivar number_of_sites: Number of apps assigned to this App Service plan.
-    :vartype number_of_sites: int
-    :ivar is_spot: If <code>true</code>, this App Service Plan owns spot instances.
-    :vartype is_spot: bool
-    :ivar spot_expiration_time: The time when the server farm expires. Valid only if it is a spot
+    :vartype maximumElasticWorkerCount: int
+    :ivar numberOfSites: Number of apps assigned to this App Service plan.
+    :vartype numberOfSites: int
+    :ivar isSpot: If <code>true</code>, this App Service Plan owns spot instances.
+    :vartype isSpot: bool
+    :ivar spotExpirationTime: The time when the server farm expires. Valid only if it is a spot
      server farm.
-    :vartype spot_expiration_time: str
-    :ivar free_offer_expiration_time: The time when the server farm free offer expires.
-    :vartype free_offer_expiration_time: str
-    :ivar resource_group: Resource group of the App Service plan.
-    :vartype resource_group: str
+    :vartype spotExpirationTime: str
+    :ivar freeOfferExpirationTime: The time when the server farm free offer expires.
+    :vartype freeOfferExpirationTime: str
+    :ivar resourceGroup: Resource group of the App Service plan.
+    :vartype resourceGroup: str
     :ivar reserved: If Linux app service plan <code>true</code>, <code>false</code> otherwise.
     :vartype reserved: bool
-    :ivar is_xenon: Obsolete: If Hyper-V container app service plan <code>true</code>,
+    :ivar isXenon: Obsolete: If Hyper-V container app service plan <code>true</code>,
      <code>false</code> otherwise.
-    :vartype is_xenon: bool
-    :ivar hyper_v: If Hyper-V container app service plan <code>true</code>, <code>false</code>
+    :vartype isXenon: bool
+    :ivar hyperV: If Hyper-V container app service plan <code>true</code>, <code>false</code>
      otherwise.
-    :vartype hyper_v: bool
-    :ivar target_worker_count: Scaling worker count.
-    :vartype target_worker_count: int
-    :ivar target_worker_size_id: Scaling worker size ID.
-    :vartype target_worker_size_id: int
-    :ivar provisioning_state: Provisioning state of the App Service Plan. Known values are:
+    :vartype hyperV: bool
+    :ivar targetWorkerCount: Scaling worker count.
+    :vartype targetWorkerCount: int
+    :ivar targetWorkerSizeId: Scaling worker size ID.
+    :vartype targetWorkerSizeId: int
+    :ivar provisioningState: Provisioning state of the App Service Plan. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", and "Deleting".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar kube_environment_profile: Specification for the Kubernetes Environment to use for the App
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar kubeEnvironmentProfile: Specification for the Kubernetes Environment to use for the App
      Service plan.
-    :vartype kube_environment_profile: "KubeEnvironmentProfile"
-    :ivar zone_redundant: If <code>true</code>, this App Service Plan will perform availability
-     zone balancing. If <code>false</code>, this App Service Plan will not perform availability zone
+    :vartype kubeEnvironmentProfile: "KubeEnvironmentProfile"
+    :ivar zoneRedundant: If <code>true</code>, this App Service Plan will perform availability zone
+     balancing. If <code>false</code>, this App Service Plan will not perform availability zone
      balancing.
-    :vartype zone_redundant: bool
-    :ivar async_scaling_enabled: If <code>true</code>, this App Service Plan will attempt to scale
+    :vartype zoneRedundant: bool
+    :ivar asyncScalingEnabled: If <code>true</code>, this App Service Plan will attempt to scale
      asynchronously if there are insufficient workers to scale synchronously. If <code>false</code>,
      this App Service Plan will only attempt sync scaling.
-    :vartype async_scaling_enabled: bool
-    :ivar plan_default_identity: Identity to use by platform for various features and integrations
+    :vartype asyncScalingEnabled: bool
+    :ivar planDefaultIdentity: Identity to use by platform for various features and integrations
      using managed identity.
-    :vartype plan_default_identity: "DefaultIdentity"
-    :ivar is_custom_mode: Whether this server farm is in custom mode.
-    :vartype is_custom_mode: bool
-    :ivar registry_adapters: Registry adapters associated with this App Service plan.
-    :vartype registry_adapters: list["RegistryAdapter"]
-    :ivar install_scripts: Install scripts associated with this App Service plan.
-    :vartype install_scripts: list["InstallScript"]
+    :vartype planDefaultIdentity: "DefaultIdentity"
+    :ivar isCustomMode: Whether this server farm is in custom mode.
+    :vartype isCustomMode: bool
+    :ivar registryAdapters: Registry adapters associated with this App Service plan.
+    :vartype registryAdapters: list["RegistryAdapter"]
+    :ivar installScripts: Install scripts associated with this App Service plan.
+    :vartype installScripts: list["InstallScript"]
     :ivar network: All network settings for the server farm.
     :vartype network: "ServerFarmNetworkSettings"
-    :ivar storage_mounts: Storage mounts associated with this App Service plan.
-    :vartype storage_mounts: list["StorageMount"]
-    :ivar rdp_enabled: If <code>true</code>, RDP access is enabled for this App Service plan. Only
+    :ivar storageMounts: Storage mounts associated with this App Service plan.
+    :vartype storageMounts: list["StorageMount"]
+    :ivar rdpEnabled: If <code>true</code>, RDP access is enabled for this App Service plan. Only
      applicable for IsCustomMode ASPs. If <code>false</code>, RDP access is disabled.
-    :vartype rdp_enabled: bool
+    :vartype rdpEnabled: bool
     """
 
     workerTierName: str
@@ -821,20 +890,20 @@ class AppServicePlanProperties(TypedDict, total=False):
 class ArcConfiguration(TypedDict, total=False):
     """ArcConfiguration.
 
-    :ivar artifacts_storage_type: Known values are: "LocalNode" and "NetworkFileSystem".
-    :vartype artifacts_storage_type: Union[str, "StorageType"]
-    :ivar artifact_storage_class_name:
-    :vartype artifact_storage_class_name: str
-    :ivar artifact_storage_mount_path:
-    :vartype artifact_storage_mount_path: str
-    :ivar artifact_storage_node_name:
-    :vartype artifact_storage_node_name: str
-    :ivar artifact_storage_access_mode:
-    :vartype artifact_storage_access_mode: str
-    :ivar front_end_service_configuration:
-    :vartype front_end_service_configuration: "FrontEndConfiguration"
-    :ivar kube_config:
-    :vartype kube_config: str
+    :ivar artifactsStorageType: Known values are: "LocalNode" and "NetworkFileSystem".
+    :vartype artifactsStorageType: Union[str, "StorageType"]
+    :ivar artifactStorageClassName:
+    :vartype artifactStorageClassName: str
+    :ivar artifactStorageMountPath:
+    :vartype artifactStorageMountPath: str
+    :ivar artifactStorageNodeName:
+    :vartype artifactStorageNodeName: str
+    :ivar artifactStorageAccessMode:
+    :vartype artifactStorageAccessMode: str
+    :ivar frontEndServiceConfiguration:
+    :vartype frontEndServiceConfiguration: "FrontEndConfiguration"
+    :ivar kubeConfig:
+    :vartype kubeConfig: str
     """
 
     artifactsStorageType: Union[str, "StorageType"]
@@ -866,8 +935,8 @@ class ArmPlan(TypedDict, total=False):
     :vartype publisher: str
     :ivar product: The product.
     :vartype product: str
-    :ivar promotion_code: The promotion code.
-    :vartype promotion_code: str
+    :ivar promotionCode: The promotion code.
+    :vartype promotionCode: str
     :ivar version: Version of product.
     :vartype version: str
     """
@@ -895,9 +964,9 @@ class AseV3NetworkingConfiguration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: AseV3NetworkingConfiguration resource specific properties.
     :vartype properties: "AseV3NetworkingConfigurationProperties"
     :ivar kind: Kind of resource.
@@ -913,24 +982,24 @@ class AseV3NetworkingConfiguration(ProxyResource):
 class AseV3NetworkingConfigurationProperties(TypedDict, total=False):
     """AseV3NetworkingConfiguration resource specific properties.
 
-    :ivar windows_outbound_ip_addresses:
-    :vartype windows_outbound_ip_addresses: list[str]
-    :ivar linux_outbound_ip_addresses:
-    :vartype linux_outbound_ip_addresses: list[str]
-    :ivar external_inbound_ip_addresses:
-    :vartype external_inbound_ip_addresses: list[str]
-    :ivar internal_inbound_ip_addresses:
-    :vartype internal_inbound_ip_addresses: list[str]
-    :ivar allow_new_private_endpoint_connections: Property to enable and disable new private
-     endpoint connection creation on ASE.
-    :vartype allow_new_private_endpoint_connections: bool
-    :ivar ftp_enabled: Property to enable and disable FTP on ASEV3.
-    :vartype ftp_enabled: bool
-    :ivar remote_debug_enabled: Property to enable and disable Remote Debug on ASEV3.
-    :vartype remote_debug_enabled: bool
-    :ivar inbound_ip_address_override: Customer provided Inbound IP Address. Only able to be set on
+    :ivar windowsOutboundIpAddresses:
+    :vartype windowsOutboundIpAddresses: list[str]
+    :ivar linuxOutboundIpAddresses:
+    :vartype linuxOutboundIpAddresses: list[str]
+    :ivar externalInboundIpAddresses:
+    :vartype externalInboundIpAddresses: list[str]
+    :ivar internalInboundIpAddresses:
+    :vartype internalInboundIpAddresses: list[str]
+    :ivar allowNewPrivateEndpointConnections: Property to enable and disable new private endpoint
+     connection creation on ASE.
+    :vartype allowNewPrivateEndpointConnections: bool
+    :ivar ftpEnabled: Property to enable and disable FTP on ASEV3.
+    :vartype ftpEnabled: bool
+    :ivar remoteDebugEnabled: Property to enable and disable Remote Debug on ASEV3.
+    :vartype remoteDebugEnabled: bool
+    :ivar inboundIpAddressOverride: Customer provided Inbound IP Address. Only able to be set on
      Ase create.
-    :vartype inbound_ip_address_override: str
+    :vartype inboundIpAddressOverride: str
     """
 
     windowsOutboundIpAddresses: list[str]
@@ -953,13 +1022,13 @@ class AuthPlatform(TypedDict, total=False):
     :ivar enabled: <code>true</code> if the Authentication / Authorization feature is enabled for
      the current app; otherwise, <code>false</code>.
     :vartype enabled: bool
-    :ivar runtime_version: The RuntimeVersion of the Authentication / Authorization feature in use
+    :ivar runtimeVersion: The RuntimeVersion of the Authentication / Authorization feature in use
      for the current app. The setting in this value can control the behavior of certain features in
      the Authentication / Authorization module.
-    :vartype runtime_version: str
-    :ivar config_file_path: The path of the config file containing auth settings if they come from
-     a file. If the path is relative, base will the site's root directory.
-    :vartype config_file_path: str
+    :vartype runtimeVersion: str
+    :ivar configFilePath: The path of the config file containing auth settings if they come from a
+     file. If the path is relative, base will the site's root directory.
+    :vartype configFilePath: str
     """
 
     enabled: bool
@@ -977,14 +1046,13 @@ class AuthPlatform(TypedDict, total=False):
 class AutoHealActions(TypedDict, total=False):
     """Actions which to take by the auto-heal module when a rule is triggered.
 
-    :ivar action_type: Predefined action to be taken. Known values are: "Recycle", "LogEvent", and
+    :ivar actionType: Predefined action to be taken. Known values are: "Recycle", "LogEvent", and
      "CustomAction".
-    :vartype action_type: Union[str, "AutoHealActionType"]
-    :ivar custom_action: Custom action to be taken.
-    :vartype custom_action: "AutoHealCustomAction"
-    :ivar min_process_execution_time: Minimum time the process must execute before taking the
-     action.
-    :vartype min_process_execution_time: str
+    :vartype actionType: Union[str, "AutoHealActionType"]
+    :ivar customAction: Custom action to be taken.
+    :vartype customAction: "AutoHealCustomAction"
+    :ivar minProcessExecutionTime: Minimum time the process must execute before taking the action.
+    :vartype minProcessExecutionTime: str
     """
 
     actionType: Union[str, "AutoHealActionType"]
@@ -1031,16 +1099,16 @@ class AutoHealTriggers(TypedDict, total=False):
 
     :ivar requests: A rule based on total requests.
     :vartype requests: "RequestsBasedTrigger"
-    :ivar private_bytes_in_kb: A rule based on private bytes.
-    :vartype private_bytes_in_kb: int
-    :ivar status_codes: A rule based on status codes.
-    :vartype status_codes: list["StatusCodesBasedTrigger"]
-    :ivar slow_requests: A rule based on request execution time.
-    :vartype slow_requests: "SlowRequestsBasedTrigger"
-    :ivar slow_requests_with_path: A rule based on multiple Slow Requests Rule with path.
-    :vartype slow_requests_with_path: list["SlowRequestsBasedTrigger"]
-    :ivar status_codes_range: A rule based on status codes ranges.
-    :vartype status_codes_range: list["StatusCodesRangeBasedTrigger"]
+    :ivar privateBytesInKB: A rule based on private bytes.
+    :vartype privateBytesInKB: int
+    :ivar statusCodes: A rule based on status codes.
+    :vartype statusCodes: list["StatusCodesBasedTrigger"]
+    :ivar slowRequests: A rule based on request execution time.
+    :vartype slowRequests: "SlowRequestsBasedTrigger"
+    :ivar slowRequestsWithPath: A rule based on multiple Slow Requests Rule with path.
+    :vartype slowRequestsWithPath: list["SlowRequestsBasedTrigger"]
+    :ivar statusCodesRange: A rule based on status codes ranges.
+    :vartype statusCodesRange: list["StatusCodesRangeBasedTrigger"]
     """
 
     requests: "RequestsBasedTrigger"
@@ -1070,10 +1138,10 @@ class AzureActiveDirectory(TypedDict, total=False):
     :ivar validation: The configuration settings of the Azure Active Directory token validation
      flow.
     :vartype validation: "AzureActiveDirectoryValidation"
-    :ivar is_auto_provisioned: Gets a value indicating whether the Azure AD configuration was
+    :ivar isAutoProvisioned: Gets a value indicating whether the Azure AD configuration was
      auto-provisioned using 1st party tooling. This is an internal flag primarily intended to
      support the Azure Management Portal. Users should not read or write to this property.
-    :vartype is_auto_provisioned: bool
+    :vartype isAutoProvisioned: bool
     """
 
     enabled: bool
@@ -1094,12 +1162,12 @@ class AzureActiveDirectory(TypedDict, total=False):
 class AzureActiveDirectoryLogin(TypedDict, total=False):
     """The configuration settings of the Azure Active Directory login flow.
 
-    :ivar login_parameters: Login parameters to send to the OpenID Connect authorization endpoint
+    :ivar loginParameters: Login parameters to send to the OpenID Connect authorization endpoint
      when a user logs in. Each parameter must be in the form "key=value".
-    :vartype login_parameters: list[str]
-    :ivar disable_www_authenticate: <code>true</code> if the www-authenticate provider should be
+    :vartype loginParameters: list[str]
+    :ivar disableWWWAuthenticate: <code>true</code> if the www-authenticate provider should be
      omitted from the request; otherwise, <code>false</code>.
-    :vartype disable_www_authenticate: bool
+    :vartype disableWWWAuthenticate: bool
     """
 
     loginParameters: list[str]
@@ -1113,35 +1181,35 @@ class AzureActiveDirectoryLogin(TypedDict, total=False):
 class AzureActiveDirectoryRegistration(TypedDict, total=False):
     """The configuration settings of the Azure Active Directory app registration.
 
-    :ivar open_id_issuer: The OpenID Connect Issuer URI that represents the entity which issues
+    :ivar openIdIssuer: The OpenID Connect Issuer URI that represents the entity which issues
      access tokens for this application. When using Azure Active Directory, this value is the URI of
      the directory tenant, e.g. ``https://login.microsoftonline.com/v2.0/{tenant-guid}/``. This URI
      is a case-sensitive identifier for the token issuer. More information on OpenID Connect
      Discovery: `http://openid.net/specs/openid-connect-discovery-1_0.html
      <http://openid.net/specs/openid-connect-discovery-1_0.html>`_.
-    :vartype open_id_issuer: str
-    :ivar client_id: The Client ID of this relying party application, known as the client_id. This
+    :vartype openIdIssuer: str
+    :ivar clientId: The Client ID of this relying party application, known as the client_id. This
      setting is required for enabling OpenID Connection authentication with Azure Active Directory
      or other 3rd party OpenID Connect providers. More information on OpenID Connect:
      `http://openid.net/specs/openid-connect-core-1_0.html
      <http://openid.net/specs/openid-connect-core-1_0.html>`_.
-    :vartype client_id: str
-    :ivar client_secret_setting_name: The app setting name that contains the client secret of the
+    :vartype clientId: str
+    :ivar clientSecretSettingName: The app setting name that contains the client secret of the
      relying party application.
-    :vartype client_secret_setting_name: str
-    :ivar client_secret_certificate_thumbprint: An alternative to the client secret, that is the
+    :vartype clientSecretSettingName: str
+    :ivar clientSecretCertificateThumbprint: An alternative to the client secret, that is the
      thumbprint of a certificate used for signing purposes. This property acts as a replacement for
      the Client Secret. It is also optional.
-    :vartype client_secret_certificate_thumbprint: str
-    :ivar client_secret_certificate_subject_alternative_name: An alternative to the client secret
+    :vartype clientSecretCertificateThumbprint: str
+    :ivar clientSecretCertificateSubjectAlternativeName: An alternative to the client secret
      thumbprint, that is the subject alternative name of a certificate used for signing purposes.
      This property acts as a replacement for the Client Secret Certificate Thumbprint. It is also
      optional.
-    :vartype client_secret_certificate_subject_alternative_name: str
-    :ivar client_secret_certificate_issuer: An alternative to the client secret thumbprint, that is
+    :vartype clientSecretCertificateSubjectAlternativeName: str
+    :ivar clientSecretCertificateIssuer: An alternative to the client secret thumbprint, that is
      the issuer of a certificate used for signing purposes. This property acts as a replacement for
      the Client Secret Certificate Thumbprint. It is also optional.
-    :vartype client_secret_certificate_issuer: str
+    :vartype clientSecretCertificateIssuer: str
     """
 
     openIdIssuer: str
@@ -1175,15 +1243,15 @@ class AzureActiveDirectoryRegistration(TypedDict, total=False):
 class AzureActiveDirectoryValidation(TypedDict, total=False):
     """The configuration settings of the Azure Active Directory token validation flow.
 
-    :ivar jwt_claim_checks: The configuration settings of the checks that should be made while
+    :ivar jwtClaimChecks: The configuration settings of the checks that should be made while
      validating the JWT Claims.
-    :vartype jwt_claim_checks: "JwtClaimChecks"
-    :ivar allowed_audiences: The list of audiences that can make successful
+    :vartype jwtClaimChecks: "JwtClaimChecks"
+    :ivar allowedAudiences: The list of audiences that can make successful
      authentication/authorization requests.
-    :vartype allowed_audiences: list[str]
-    :ivar default_authorization_policy: The configuration settings of the default authorization
+    :vartype allowedAudiences: list[str]
+    :ivar defaultAuthorizationPolicy: The configuration settings of the default authorization
      policy.
-    :vartype default_authorization_policy: "DefaultAuthorizationPolicy"
+    :vartype defaultAuthorizationPolicy: "DefaultAuthorizationPolicy"
     """
 
     jwtClaimChecks: "JwtClaimChecks"
@@ -1200,11 +1268,11 @@ class AzureBlobStorageApplicationLogsConfig(TypedDict, total=False):
     :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", and
      "Error".
     :vartype level: Union[str, "LogLevel"]
-    :ivar sas_url: SAS url to a azure blob container with read/write/list/delete permissions.
-    :vartype sas_url: str
-    :ivar retention_in_days: Retention in days. Remove blobs older than X days. 0 or lower means no
+    :ivar sasUrl: SAS url to a azure blob container with read/write/list/delete permissions.
+    :vartype sasUrl: str
+    :ivar retentionInDays: Retention in days. Remove blobs older than X days. 0 or lower means no
      retention.
-    :vartype retention_in_days: int
+    :vartype retentionInDays: int
     """
 
     level: Union[str, "LogLevel"]
@@ -1218,11 +1286,11 @@ class AzureBlobStorageApplicationLogsConfig(TypedDict, total=False):
 class AzureBlobStorageHttpLogsConfig(TypedDict, total=False):
     """Http logs to azure blob storage configuration.
 
-    :ivar sas_url: SAS url to a azure blob container with read/write/list/delete permissions.
-    :vartype sas_url: str
-    :ivar retention_in_days: Retention in days. Remove blobs older than X days. 0 or lower means no
+    :ivar sasUrl: SAS url to a azure blob container with read/write/list/delete permissions.
+    :vartype sasUrl: str
+    :ivar retentionInDays: Retention in days. Remove blobs older than X days. 0 or lower means no
      retention.
-    :vartype retention_in_days: int
+    :vartype retentionInDays: int
     :ivar enabled: True if configuration is enabled, false if it is disabled and null if
      configuration is not set.
     :vartype enabled: bool
@@ -1256,8 +1324,8 @@ class AzureStaticWebApps(TypedDict, total=False):
 class AzureStaticWebAppsRegistration(TypedDict, total=False):
     """The configuration settings of the registration for the Azure Static Web Apps provider.
 
-    :ivar client_id: The Client ID of the app used for login.
-    :vartype client_id: str
+    :ivar clientId: The Client ID of the app used for login.
+    :vartype clientId: str
     """
 
     clientId: str
@@ -1269,14 +1337,14 @@ class AzureStorageInfoValue(TypedDict, total=False):
 
     :ivar type: Type of storage. Known values are: "AzureFiles" and "AzureBlob".
     :vartype type: Union[str, "AzureStorageType"]
-    :ivar account_name: Name of the storage account.
-    :vartype account_name: str
-    :ivar share_name: Name of the file share (container name, for Blob storage).
-    :vartype share_name: str
-    :ivar access_key: Access key for the storage account.
-    :vartype access_key: str
-    :ivar mount_path: Path to mount the storage within the site's runtime environment.
-    :vartype mount_path: str
+    :ivar accountName: Name of the storage account.
+    :vartype accountName: str
+    :ivar shareName: Name of the file share (container name, for Blob storage).
+    :vartype shareName: str
+    :ivar accessKey: Access key for the storage account.
+    :vartype accessKey: str
+    :ivar mountPath: Path to mount the storage within the site's runtime environment.
+    :vartype mountPath: str
     :ivar state: State of the storage account. Known values are: "Ok", "InvalidCredentials",
      "InvalidShare", and "NotValidated".
     :vartype state: Union[str, "AzureStorageState"]
@@ -1328,8 +1396,8 @@ class AzureTableStorageApplicationLogsConfig(TypedDict, total=False):
     :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", and
      "Error".
     :vartype level: Union[str, "LogLevel"]
-    :ivar sas_url: SAS URL to an Azure table with add/query/delete permissions. Required.
-    :vartype sas_url: str
+    :ivar sasUrl: SAS URL to an Azure table with add/query/delete permissions. Required.
+    :vartype sasUrl: str
     """
 
     level: Union[str, "LogLevel"]
@@ -1360,15 +1428,15 @@ class BackupRequest(ProxyOnlyResource):
 class BackupRequestProperties(TypedDict, total=False):
     """BackupRequest resource specific properties.
 
-    :ivar backup_name: Name of the backup.
-    :vartype backup_name: str
+    :ivar backupName: Name of the backup.
+    :vartype backupName: str
     :ivar enabled: True if the backup schedule is enabled (must be included in that case), false if
      the backup schedule should be disabled.
     :vartype enabled: bool
-    :ivar storage_account_url: SAS URL to the container. Required.
-    :vartype storage_account_url: str
-    :ivar backup_schedule: Schedule for the backup if it is executed periodically.
-    :vartype backup_schedule: "BackupSchedule"
+    :ivar storageAccountUrl: SAS URL to the container. Required.
+    :vartype storageAccountUrl: str
+    :ivar backupSchedule: Schedule for the backup if it is executed periodically.
+    :vartype backupSchedule: "BackupSchedule"
     :ivar databases: Databases included in the backup.
     :vartype databases: list["DatabaseBackupSetting"]
     """
@@ -1390,22 +1458,22 @@ class BackupSchedule(TypedDict, total=False):
     """Description of a backup schedule. Describes how often should be the backup performed and what
     should be the retention policy.
 
-    :ivar frequency_interval: How often the backup should be executed (e.g. for weekly backup, this
+    :ivar frequencyInterval: How often the backup should be executed (e.g. for weekly backup, this
      should be set to 7 and FrequencyUnit should be set to Day). Required.
-    :vartype frequency_interval: int
-    :ivar frequency_unit: The unit of time for how often the backup should be executed (e.g. for
+    :vartype frequencyInterval: int
+    :ivar frequencyUnit: The unit of time for how often the backup should be executed (e.g. for
      weekly backup, this should be set to Day and FrequencyInterval should be set to 7). Required.
      Known values are: "Day" and "Hour".
-    :vartype frequency_unit: Union[str, "FrequencyUnit"]
-    :ivar keep_at_least_one_backup: True if the retention policy should always keep at least one
-     backup in the storage account, regardless how old it is; false otherwise. Required.
-    :vartype keep_at_least_one_backup: bool
-    :ivar retention_period_in_days: After how many days backups should be deleted. Required.
-    :vartype retention_period_in_days: int
-    :ivar start_time: When the schedule should start working.
-    :vartype start_time: str
-    :ivar last_execution_time: Last time when this schedule was triggered.
-    :vartype last_execution_time: str
+    :vartype frequencyUnit: Union[str, "FrequencyUnit"]
+    :ivar keepAtLeastOneBackup: True if the retention policy should always keep at least one backup
+     in the storage account, regardless how old it is; false otherwise. Required.
+    :vartype keepAtLeastOneBackup: bool
+    :ivar retentionPeriodInDays: After how many days backups should be deleted. Required.
+    :vartype retentionPeriodInDays: int
+    :ivar startTime: When the schedule should start working.
+    :vartype startTime: str
+    :ivar lastExecutionTime: Last time when this schedule was triggered.
+    :vartype lastExecutionTime: str
     """
 
     frequencyInterval: Required[int]
@@ -1429,9 +1497,9 @@ class BackupSchedule(TypedDict, total=False):
 class BlobStorageTokenStore(TypedDict, total=False):
     """The configuration settings of the storage of the tokens if blob storage is used.
 
-    :ivar sas_url_setting_name: The name of the app setting containing the SAS URL of the blob
-     storage containing the tokens.
-    :vartype sas_url_setting_name: str
+    :ivar sasUrlSettingName: The name of the app setting containing the SAS URL of the blob storage
+     containing the tokens.
+    :vartype sasUrlSettingName: str
     """
 
     sasUrlSettingName: str
@@ -1468,9 +1536,9 @@ class Certificate(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1517,52 +1585,52 @@ class CertificatePatchResourceProperties(TypedDict, total=False):
 
     :ivar password: Certificate password.
     :vartype password: str
-    :ivar friendly_name: Friendly name of the certificate.
-    :vartype friendly_name: str
-    :ivar subject_name: Subject name of the certificate.
-    :vartype subject_name: str
-    :ivar host_names: Host names the certificate applies to.
-    :vartype host_names: list[str]
-    :ivar pfx_blob: Pfx blob.
-    :vartype pfx_blob: str
-    :ivar site_name: App name.
-    :vartype site_name: str
-    :ivar self_link: Self link.
-    :vartype self_link: str
+    :ivar friendlyName: Friendly name of the certificate.
+    :vartype friendlyName: str
+    :ivar subjectName: Subject name of the certificate.
+    :vartype subjectName: str
+    :ivar hostNames: Host names the certificate applies to.
+    :vartype hostNames: list[str]
+    :ivar pfxBlob: Pfx blob.
+    :vartype pfxBlob: str
+    :ivar siteName: App name.
+    :vartype siteName: str
+    :ivar selfLink: Self link.
+    :vartype selfLink: str
     :ivar issuer: Certificate issuer.
     :vartype issuer: str
-    :ivar issue_date: Certificate issue Date.
-    :vartype issue_date: str
-    :ivar expiration_date: Certificate expiration date.
-    :vartype expiration_date: str
+    :ivar issueDate: Certificate issue Date.
+    :vartype issueDate: str
+    :ivar expirationDate: Certificate expiration date.
+    :vartype expirationDate: str
     :ivar thumbprint: Certificate thumbprint.
     :vartype thumbprint: str
     :ivar valid: Is the certificate valid?.
     :vartype valid: bool
-    :ivar cer_blob: Raw bytes of .cer file.
-    :vartype cer_blob: str
-    :ivar public_key_hash: Public key hash.
-    :vartype public_key_hash: str
-    :ivar hosting_environment_profile: Specification for the App Service Environment to use for the
+    :ivar cerBlob: Raw bytes of .cer file.
+    :vartype cerBlob: str
+    :ivar publicKeyHash: Public key hash.
+    :vartype publicKeyHash: str
+    :ivar hostingEnvironmentProfile: Specification for the App Service Environment to use for the
      certificate.
-    :vartype hosting_environment_profile: "HostingEnvironmentProfile"
-    :ivar key_vault_id: Key Vault Csm resource Id.
-    :vartype key_vault_id: str
-    :ivar key_vault_secret_name: Key Vault secret name.
-    :vartype key_vault_secret_name: str
-    :ivar key_vault_secret_status: Status of the Key Vault secret. Known values are: "Initialized",
+    :vartype hostingEnvironmentProfile: "HostingEnvironmentProfile"
+    :ivar keyVaultId: Key Vault Csm resource Id.
+    :vartype keyVaultId: str
+    :ivar keyVaultSecretName: Key Vault secret name.
+    :vartype keyVaultSecretName: str
+    :ivar keyVaultSecretStatus: Status of the Key Vault secret. Known values are: "Initialized",
      "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
      "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey", and
      "Unknown".
-    :vartype key_vault_secret_status: Union[str, "KeyVaultSecretStatus"]
-    :ivar server_farm_id: Resource ID of the associated App Service plan, formatted as:
+    :vartype keyVaultSecretStatus: Union[str, "KeyVaultSecretStatus"]
+    :ivar serverFarmId: Resource ID of the associated App Service plan, formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
-    :vartype server_farm_id: str
-    :ivar canonical_name: CNAME of the certificate to be issued via free certificate.
-    :vartype canonical_name: str
-    :ivar domain_validation_method: Method of domain validation for free cert.
-    :vartype domain_validation_method: str
+    :vartype serverFarmId: str
+    :ivar canonicalName: CNAME of the certificate to be issued via free certificate.
+    :vartype canonicalName: str
+    :ivar domainValidationMethod: Method of domain validation for free cert.
+    :vartype domainValidationMethod: str
     """
 
     password: str
@@ -1619,51 +1687,51 @@ class CertificateProperties(TypedDict, total=False):
 
     :ivar password: Certificate password.
     :vartype password: str
-    :ivar friendly_name: Friendly name of the certificate.
-    :vartype friendly_name: str
-    :ivar subject_name: Subject name of the certificate.
-    :vartype subject_name: str
-    :ivar host_names: Host names the certificate applies to.
-    :vartype host_names: list[str]
-    :ivar pfx_blob: Pfx blob.
-    :vartype pfx_blob: str
-    :ivar site_name: App name.
-    :vartype site_name: str
-    :ivar self_link: Self link.
-    :vartype self_link: str
+    :ivar friendlyName: Friendly name of the certificate.
+    :vartype friendlyName: str
+    :ivar subjectName: Subject name of the certificate.
+    :vartype subjectName: str
+    :ivar hostNames: Host names the certificate applies to.
+    :vartype hostNames: list[str]
+    :ivar pfxBlob: Pfx blob.
+    :vartype pfxBlob: str
+    :ivar siteName: App name.
+    :vartype siteName: str
+    :ivar selfLink: Self link.
+    :vartype selfLink: str
     :ivar issuer: Certificate issuer.
     :vartype issuer: str
-    :ivar issue_date: Certificate issue Date.
-    :vartype issue_date: str
-    :ivar expiration_date: Certificate expiration date.
-    :vartype expiration_date: str
+    :ivar issueDate: Certificate issue Date.
+    :vartype issueDate: str
+    :ivar expirationDate: Certificate expiration date.
+    :vartype expirationDate: str
     :ivar thumbprint: Certificate thumbprint.
     :vartype thumbprint: str
     :ivar valid: Is the certificate valid?.
     :vartype valid: bool
-    :ivar cer_blob: Raw bytes of .cer file.
-    :vartype cer_blob: str
-    :ivar public_key_hash: Public key hash.
-    :vartype public_key_hash: str
-    :ivar hosting_environment_profile: Specification for the App Service Environment to use for the
+    :ivar cerBlob: Raw bytes of .cer file.
+    :vartype cerBlob: str
+    :ivar publicKeyHash: Public key hash.
+    :vartype publicKeyHash: str
+    :ivar hostingEnvironmentProfile: Specification for the App Service Environment to use for the
      certificate.
-    :vartype hosting_environment_profile: "HostingEnvironmentProfile"
-    :ivar key_vault_id: Azure Key Vault Csm resource Id.
-    :vartype key_vault_id: str
-    :ivar key_vault_secret_name: Azure Key Vault secret name.
-    :vartype key_vault_secret_name: str
-    :ivar key_vault_secret_status: Status of the Key Vault secret. Known values are: "Initialized",
+    :vartype hostingEnvironmentProfile: "HostingEnvironmentProfile"
+    :ivar keyVaultId: Azure Key Vault Csm resource Id.
+    :vartype keyVaultId: str
+    :ivar keyVaultSecretName: Azure Key Vault secret name.
+    :vartype keyVaultSecretName: str
+    :ivar keyVaultSecretStatus: Status of the Key Vault secret. Known values are: "Initialized",
      "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
      "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey", and
      "Unknown".
-    :vartype key_vault_secret_status: Union[str, "KeyVaultSecretStatus"]
-    :ivar server_farm_id: Resource ID of the associated App Service plan.
-    :vartype server_farm_id: str
-    :ivar canonical_name: CNAME of the certificate to be issued via free certificate.
-    :vartype canonical_name: str
-    :ivar domain_validation_method: Method of domain validation for free cert.
-    :vartype domain_validation_method: str
+    :vartype keyVaultSecretStatus: Union[str, "KeyVaultSecretStatus"]
+    :ivar serverFarmId: Resource ID of the associated App Service plan.
+    :vartype serverFarmId: str
+    :ivar canonicalName: CNAME of the certificate to be issued via free certificate.
+    :vartype canonicalName: str
+    :ivar domainValidationMethod: Method of domain validation for free cert.
+    :vartype domainValidationMethod: str
     """
 
     password: str
@@ -1718,10 +1786,10 @@ class ClientRegistration(TypedDict, total=False):
     """The configuration settings of the app registration for providers that have client ids and
     client secrets.
 
-    :ivar client_id: The Client ID of the app used for login.
-    :vartype client_id: str
-    :ivar client_secret_setting_name: The app setting name that contains the client secret.
-    :vartype client_secret_setting_name: str
+    :ivar clientId: The Client ID of the app used for login.
+    :vartype clientId: str
+    :ivar clientSecretSettingName: The app setting name that contains the client secret.
+    :vartype clientSecretSettingName: str
     """
 
     clientId: str
@@ -1733,41 +1801,41 @@ class ClientRegistration(TypedDict, total=False):
 class CloningInfo(TypedDict, total=False):
     """Information needed for cloning operation.
 
-    :ivar correlation_id: Correlation ID of cloning operation. This ID ties multiple cloning
+    :ivar correlationId: Correlation ID of cloning operation. This ID ties multiple cloning
      operations together to use the same snapshot.
-    :vartype correlation_id: str
+    :vartype correlationId: str
     :ivar overwrite: <code>true</code> to overwrite destination app; otherwise, <code>false</code>.
     :vartype overwrite: bool
-    :ivar clone_custom_host_names: <code>true</code> to clone custom hostnames from source app;
+    :ivar cloneCustomHostNames: <code>true</code> to clone custom hostnames from source app;
      otherwise, <code>false</code>.
-    :vartype clone_custom_host_names: bool
-    :ivar clone_source_control: <code>true</code> to clone source control from source app;
-     otherwise, <code>false</code>.
-    :vartype clone_source_control: bool
-    :ivar source_web_app_id: ARM resource ID of the source app. App resource ID is of the form
+    :vartype cloneCustomHostNames: bool
+    :ivar cloneSourceControl: <code>true</code> to clone source control from source app; otherwise,
+     <code>false</code>.
+    :vartype cloneSourceControl: bool
+    :ivar sourceWebAppId: ARM resource ID of the source app. App resource ID is of the form
      /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}
      for production slots and
      /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slotName}
      for other slots. Required.
-    :vartype source_web_app_id: str
-    :ivar source_web_app_location: Location of source app ex: West US or North Europe.
-    :vartype source_web_app_location: str
-    :ivar hosting_environment: App Service Environment.
-    :vartype hosting_environment: str
-    :ivar app_settings_overrides: Application setting overrides for cloned app. If specified, these
+    :vartype sourceWebAppId: str
+    :ivar sourceWebAppLocation: Location of source app ex: West US or North Europe.
+    :vartype sourceWebAppLocation: str
+    :ivar hostingEnvironment: App Service Environment.
+    :vartype hostingEnvironment: str
+    :ivar appSettingsOverrides: Application setting overrides for cloned app. If specified, these
      settings override the settings cloned from source app. Otherwise, application settings from
      source app are retained.
-    :vartype app_settings_overrides: dict[str, str]
-    :ivar configure_load_balancing: <code>true</code> to configure load balancing for source and
+    :vartype appSettingsOverrides: dict[str, str]
+    :ivar configureLoadBalancing: <code>true</code> to configure load balancing for source and
      destination app.
-    :vartype configure_load_balancing: bool
-    :ivar traffic_manager_profile_id: ARM resource ID of the Traffic Manager profile to use, if it
+    :vartype configureLoadBalancing: bool
+    :ivar trafficManagerProfileId: ARM resource ID of the Traffic Manager profile to use, if it
      exists. Traffic Manager resource ID is of the form
      /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{profileName}.
-    :vartype traffic_manager_profile_id: str
-    :ivar traffic_manager_profile_name: Name of Traffic Manager profile to create. This is only
-     needed if Traffic Manager profile does not already exist.
-    :vartype traffic_manager_profile_name: str
+    :vartype trafficManagerProfileId: str
+    :ivar trafficManagerProfileName: Name of Traffic Manager profile to create. This is only needed
+     if Traffic Manager profile does not already exist.
+    :vartype trafficManagerProfileName: str
     """
 
     correlationId: str
@@ -1827,8 +1895,8 @@ class ConnStringInfo(TypedDict, total=False):
 
     :ivar name: Name of connection string.
     :vartype name: str
-    :ivar connection_string: Connection string value.
-    :vartype connection_string: str
+    :ivar connectionString: Connection string value.
+    :vartype connectionString: str
     :ivar type: Type of database. Known values are: "MySql", "SQLServer", "SQLAzure", "Custom",
      "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache", and "PostgreSQL".
     :vartype type: Union[str, "ConnectionStringType"]
@@ -1866,28 +1934,27 @@ class ConnStringValueTypePair(TypedDict, total=False):
 class ContainerAppsConfiguration(TypedDict, total=False):
     """ContainerAppsConfiguration.
 
-    :ivar dapr_ai_instrumentation_key: Azure Monitor instrumentation key used by Dapr to export
+    :ivar daprAIInstrumentationKey: Azure Monitor instrumentation key used by Dapr to export
      Service to Service communication telemetry.
-    :vartype dapr_ai_instrumentation_key: str
-    :ivar platform_reserved_cidr: IP range in CIDR notation that can be reserved for environment
+    :vartype daprAIInstrumentationKey: str
+    :ivar platformReservedCidr: IP range in CIDR notation that can be reserved for environment
      infrastructure IP addresses. It must not overlap with any other Subnet IP ranges.
-    :vartype platform_reserved_cidr: str
-    :ivar platform_reserved_dns_ip: An IP address from the IP range defined by platformReservedCidr
+    :vartype platformReservedCidr: str
+    :ivar platformReservedDnsIP: An IP address from the IP range defined by platformReservedCidr
      that will be reserved for the internal DNS server.
-    :vartype platform_reserved_dns_ip: str
-    :ivar control_plane_subnet_resource_id: Resource ID of a subnet for control plane
-     infrastructure components. This subnet must be in the same VNET as the subnet defined in
-     appSubnetResourceId. Must not overlap with the IP range defined in platformReservedCidr, if
-     defined.
-    :vartype control_plane_subnet_resource_id: str
-    :ivar app_subnet_resource_id: Resource ID of a subnet for control plane infrastructure
+    :vartype platformReservedDnsIP: str
+    :ivar controlPlaneSubnetResourceId: Resource ID of a subnet for control plane infrastructure
      components. This subnet must be in the same VNET as the subnet defined in appSubnetResourceId.
      Must not overlap with the IP range defined in platformReservedCidr, if defined.
-    :vartype app_subnet_resource_id: str
-    :ivar docker_bridge_cidr: CIDR notation IP range assigned to the Docker bridge network. It must
+    :vartype controlPlaneSubnetResourceId: str
+    :ivar appSubnetResourceId: Resource ID of a subnet for control plane infrastructure components.
+     This subnet must be in the same VNET as the subnet defined in appSubnetResourceId. Must not
+     overlap with the IP range defined in platformReservedCidr, if defined.
+    :vartype appSubnetResourceId: str
+    :ivar dockerBridgeCidr: CIDR notation IP range assigned to the Docker bridge network. It must
      not overlap with any Subnet IP ranges or the IP range defined in platformReservedCidr, if
      defined.
-    :vartype docker_bridge_cidr: str
+    :vartype dockerBridgeCidr: str
     """
 
     daprAIInstrumentationKey: str
@@ -1918,9 +1985,9 @@ class CookieExpiration(TypedDict, total=False):
     :ivar convention: The convention used when determining the session cookie's expiration. Known
      values are: "FixedTime" and "IdentityProviderDerived".
     :vartype convention: Union[str, "CookieExpirationConvention"]
-    :ivar time_to_expiration: The time after the request is made when the session cookie should
+    :ivar timeToExpiration: The time after the request is made when the session cookie should
      expire.
-    :vartype time_to_expiration: str
+    :vartype timeToExpiration: str
     """
 
     convention: Union[str, "CookieExpirationConvention"]
@@ -1933,15 +2000,15 @@ class CookieExpiration(TypedDict, total=False):
 class CorsSettings(TypedDict, total=False):
     """Cross-Origin Resource Sharing (CORS) settings for the app.
 
-    :ivar allowed_origins: Gets or sets the list of origins that should be allowed to make
+    :ivar allowedOrigins: Gets or sets the list of origins that should be allowed to make
      cross-origin calls (for example: `http://example.com:12345 <http://example.com:12345>`_). Use
      "*" to allow all.
-    :vartype allowed_origins: list[str]
-    :ivar support_credentials: Gets or sets whether CORS requests with credentials are allowed. See
+    :vartype allowedOrigins: list[str]
+    :ivar supportCredentials: Gets or sets whether CORS requests with credentials are allowed. See
      `https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Requests_with_credentials
      <https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Requests_with_credentials>`_ for more
      details.
-    :vartype support_credentials: bool
+    :vartype supportCredentials: bool
     """
 
     allowedOrigins: list[str]
@@ -1958,8 +2025,8 @@ class CsmMoveResourceEnvelope(TypedDict, total=False):
     """Object with a list of the resources that need to be moved and the resource group they should be
     moved to.
 
-    :ivar target_resource_group:
-    :vartype target_resource_group: str
+    :ivar targetResourceGroup:
+    :vartype targetResourceGroup: str
     :ivar resources:
     :vartype resources: list[str]
     """
@@ -1979,9 +2046,9 @@ class CsmPublishingCredentialsPoliciesEntity(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: CsmPublishingCredentialsPoliciesEntity resource specific properties.
     :vartype properties: "CsmPublishingCredentialsPoliciesEntityProperties"
     :ivar kind: Kind of resource.
@@ -2013,8 +2080,8 @@ class CsmPublishingProfileOptions(TypedDict, total=False):
     :ivar format: Name of the format. Valid values are: FileZilla3 WebDeploy -- default Ftp. Known
      values are: "FileZilla3", "WebDeploy", and "Ftp".
     :vartype format: Union[str, "PublishingProfileFormat"]
-    :ivar include_disaster_recovery_endpoints: Include the DisasterRecover endpoint if true.
-    :vartype include_disaster_recovery_endpoints: bool
+    :ivar includeDisasterRecoveryEndpoints: Include the DisasterRecover endpoint if true.
+    :vartype includeDisasterRecoveryEndpoints: bool
     """
 
     format: Union[str, "PublishingProfileFormat"]
@@ -2027,11 +2094,11 @@ class CsmPublishingProfileOptions(TypedDict, total=False):
 class CsmSlotEntity(TypedDict, total=False):
     """Deployment slot parameters.
 
-    :ivar target_slot: Destination deployment slot during swap operation. Required.
-    :vartype target_slot: str
-    :ivar preserve_vnet: <code>true</code> to preserve Virtual Network to the slot during swap;
+    :ivar targetSlot: Destination deployment slot during swap operation. Required.
+    :vartype targetSlot: str
+    :ivar preserveVnet: <code>true</code> to preserve Virtual Network to the slot during swap;
      otherwise, <code>false</code>. Required.
-    :vartype preserve_vnet: bool
+    :vartype preserveVnet: bool
     """
 
     targetSlot: Required[str]
@@ -2052,9 +2119,9 @@ class CustomDnsSuffixConfiguration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: CustomDnsSuffixConfiguration resource specific properties.
     :vartype properties: "CustomDnsSuffixConfigurationProperties"
     :ivar kind: Kind of resource.
@@ -2070,20 +2137,19 @@ class CustomDnsSuffixConfiguration(ProxyResource):
 class CustomDnsSuffixConfigurationProperties(TypedDict, total=False):
     """CustomDnsSuffixConfiguration resource specific properties.
 
-    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Degraded", and
-     "InProgress".
-    :vartype provisioning_state: Union[str, "CustomDnsSuffixProvisioningState"]
-    :ivar provisioning_details:
-    :vartype provisioning_details: str
-    :ivar dns_suffix: The default custom domain suffix to use for all sites deployed on the ASE.
-    :vartype dns_suffix: str
-    :ivar certificate_url: The URL referencing the Azure Key Vault certificate secret that should
-     be used as the default SSL/TLS certificate for sites with the custom domain suffix.
-    :vartype certificate_url: str
-    :ivar key_vault_reference_identity: The user-assigned identity to use for resolving the key
-     vault certificate reference. If not specified, the system-assigned ASE identity will be used if
+    :ivar provisioningState: Known values are: "Succeeded", "Failed", "Degraded", and "InProgress".
+    :vartype provisioningState: Union[str, "CustomDnsSuffixProvisioningState"]
+    :ivar provisioningDetails:
+    :vartype provisioningDetails: str
+    :ivar dnsSuffix: The default custom domain suffix to use for all sites deployed on the ASE.
+    :vartype dnsSuffix: str
+    :ivar certificateUrl: The URL referencing the Azure Key Vault certificate secret that should be
+     used as the default SSL/TLS certificate for sites with the custom domain suffix.
+    :vartype certificateUrl: str
+    :ivar keyVaultReferenceIdentity: The user-assigned identity to use for resolving the key vault
+     certificate reference. If not specified, the system-assigned ASE identity will be used if
      available.
-    :vartype key_vault_reference_identity: str
+    :vartype keyVaultReferenceIdentity: str
     """
 
     provisioningState: Union[str, "CustomDnsSuffixProvisioningState"]
@@ -2127,21 +2193,21 @@ class DaprConfig(TypedDict, total=False):
 
     :ivar enabled: Boolean indicating if the Dapr side car is enabled.
     :vartype enabled: bool
-    :ivar app_id: Dapr application identifier.
-    :vartype app_id: str
-    :ivar app_port: Tells Dapr which port your application is listening on.
-    :vartype app_port: int
-    :ivar http_read_buffer_size: Dapr max size of http header read buffer in KB to handle when
-     sending multi-KB headers. Default is 65KB.
-    :vartype http_read_buffer_size: int
-    :ivar http_max_request_size: Increasing max size of request body http servers parameter in MB
-     to handle uploading of big files. Default is 4 MB.
-    :vartype http_max_request_size: int
-    :ivar log_level: Sets the log level for the Dapr sidecar. Allowed values are debug, info, warn,
+    :ivar appId: Dapr application identifier.
+    :vartype appId: str
+    :ivar appPort: Tells Dapr which port your application is listening on.
+    :vartype appPort: int
+    :ivar httpReadBufferSize: Dapr max size of http header read buffer in KB to handle when sending
+     multi-KB headers. Default is 65KB.
+    :vartype httpReadBufferSize: int
+    :ivar httpMaxRequestSize: Increasing max size of request body http servers parameter in MB to
+     handle uploading of big files. Default is 4 MB.
+    :vartype httpMaxRequestSize: int
+    :ivar logLevel: Sets the log level for the Dapr sidecar. Allowed values are debug, info, warn,
      error. Default is info. Known values are: "info", "debug", "warn", and "error".
-    :vartype log_level: Union[str, "DaprLogLevel"]
-    :ivar enable_api_logging: Enables API logging for the Dapr sidecar.
-    :vartype enable_api_logging: bool
+    :vartype logLevel: Union[str, "DaprLogLevel"]
+    :ivar enableApiLogging: Enables API logging for the Dapr sidecar.
+    :vartype enableApiLogging: bool
     """
 
     enabled: bool
@@ -2166,19 +2232,19 @@ class DaprConfig(TypedDict, total=False):
 class DatabaseBackupSetting(TypedDict, total=False):
     """Database backup settings.
 
-    :ivar database_type: Database type (e.g. SqlAzure / MySql). Required. Known values are:
+    :ivar databaseType: Database type (e.g. SqlAzure / MySql). Required. Known values are:
      "SqlAzure", "MySql", "LocalMySql", and "PostgreSql".
-    :vartype database_type: Union[str, "DatabaseType"]
+    :vartype databaseType: Union[str, "DatabaseType"]
     :ivar name:
     :vartype name: str
-    :ivar connection_string_name: Contains a connection string name that is linked to the
+    :ivar connectionStringName: Contains a connection string name that is linked to the
      SiteConfig.ConnectionStrings. This is used during restore with overwrite connection strings
      options.
-    :vartype connection_string_name: str
-    :ivar connection_string: Contains a connection string to a database which is being backed up or
+    :vartype connectionStringName: str
+    :ivar connectionString: Contains a connection string to a database which is being backed up or
      restored. If the restore should happen to a new database, the database name inside is the new
      one.
-    :vartype connection_string: str
+    :vartype connectionString: str
     """
 
     databaseType: Required[Union[str, "DatabaseType"]]
@@ -2204,9 +2270,9 @@ class DatabaseConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: DatabaseConnection resource specific properties.
     :vartype properties: "DatabaseConnectionProperties"
     :ivar kind: Kind of resource.
@@ -2222,18 +2288,18 @@ class DatabaseConnection(ProxyResource):
 class DatabaseConnectionOverview(TypedDict, total=False):
     """Static Site Database Connection overview.
 
-    :ivar resource_id: The resource id of the database.
-    :vartype resource_id: str
-    :ivar connection_identity: If present, the identity is used in conjunction with connection
+    :ivar resourceId: The resource id of the database.
+    :vartype resourceId: str
+    :ivar connectionIdentity: If present, the identity is used in conjunction with connection
      string to connect to the database. Use of the system-assigned managed identity is indicated
      with the string 'SystemAssigned', while use of a user-assigned managed identity is indicated
      with the resource id of the managed identity resource.
-    :vartype connection_identity: str
+    :vartype connectionIdentity: str
     :ivar region: The region of the database resource.
     :vartype region: str
-    :ivar configuration_files: A list of configuration files associated with this database
+    :ivar configurationFiles: A list of configuration files associated with this database
      connection.
-    :vartype configuration_files: list["StaticSiteDatabaseConnectionConfigurationFileOverview"]
+    :vartype configurationFiles: list["StaticSiteDatabaseConnectionConfigurationFileOverview"]
     :ivar name: If present, the name of this database connection resource.
     :vartype name: str
     """
@@ -2267,15 +2333,15 @@ class DatabaseConnectionPatchRequest(TypedDict, total=False):
 class DatabaseConnectionPatchRequestProperties(TypedDict, total=False):
     """DatabaseConnectionPatchRequest resource specific properties.
 
-    :ivar resource_id: The resource id of the database.
-    :vartype resource_id: str
-    :ivar connection_identity: If present, the identity is used in conjunction with connection
+    :ivar resourceId: The resource id of the database.
+    :vartype resourceId: str
+    :ivar connectionIdentity: If present, the identity is used in conjunction with connection
      string to connect to the database. Use of the system-assigned managed identity is indicated
      with the string 'SystemAssigned', while use of a user-assigned managed identity is indicated
      with the resource id of the managed identity resource.
-    :vartype connection_identity: str
-    :ivar connection_string: The connection string to use to connect to the database.
-    :vartype connection_string: str
+    :vartype connectionIdentity: str
+    :ivar connectionString: The connection string to use to connect to the database.
+    :vartype connectionString: str
     :ivar region: The region of the database resource.
     :vartype region: str
     """
@@ -2296,20 +2362,20 @@ class DatabaseConnectionPatchRequestProperties(TypedDict, total=False):
 class DatabaseConnectionProperties(TypedDict, total=False):
     """DatabaseConnection resource specific properties.
 
-    :ivar resource_id: The resource id of the database. Required.
-    :vartype resource_id: str
-    :ivar connection_identity: If present, the identity is used in conjunction with connection
+    :ivar resourceId: The resource id of the database. Required.
+    :vartype resourceId: str
+    :ivar connectionIdentity: If present, the identity is used in conjunction with connection
      string to connect to the database. Use of the system-assigned managed identity is indicated
      with the string 'SystemAssigned', while use of a user-assigned managed identity is indicated
      with the resource id of the managed identity resource.
-    :vartype connection_identity: str
-    :ivar connection_string: The connection string to use to connect to the database.
-    :vartype connection_string: str
+    :vartype connectionIdentity: str
+    :ivar connectionString: The connection string to use to connect to the database.
+    :vartype connectionString: str
     :ivar region: The region of the database resource. Required.
     :vartype region: str
-    :ivar configuration_files: A list of configuration files associated with this database
+    :ivar configurationFiles: A list of configuration files associated with this database
      connection.
-    :vartype configuration_files: list["StaticSiteDatabaseConnectionConfigurationFileOverview"]
+    :vartype configurationFiles: list["StaticSiteDatabaseConnectionConfigurationFileOverview"]
     """
 
     resourceId: Required[str]
@@ -2330,12 +2396,12 @@ class DatabaseConnectionProperties(TypedDict, total=False):
 class DefaultAuthorizationPolicy(TypedDict, total=False):
     """The configuration settings of the Azure Active Directory default authorization policy.
 
-    :ivar allowed_principals: The configuration settings of the Azure Active Directory allowed
+    :ivar allowedPrincipals: The configuration settings of the Azure Active Directory allowed
      principals.
-    :vartype allowed_principals: "AllowedPrincipals"
-    :ivar allowed_applications: The configuration settings of the Azure Active Directory allowed
+    :vartype allowedPrincipals: "AllowedPrincipals"
+    :ivar allowedApplications: The configuration settings of the Azure Active Directory allowed
      applications.
-    :vartype allowed_applications: list[str]
+    :vartype allowedApplications: list[str]
     """
 
     allowedPrincipals: "AllowedPrincipals"
@@ -2347,11 +2413,11 @@ class DefaultAuthorizationPolicy(TypedDict, total=False):
 class DefaultIdentity(TypedDict, total=False):
     """DefaultIdentity.
 
-    :ivar identity_type: Known values are: "SystemAssigned", "UserAssigned", "SystemAssigned,
+    :ivar identityType: Known values are: "SystemAssigned", "UserAssigned", "SystemAssigned,
      UserAssigned", and "None".
-    :vartype identity_type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identity_resource_id:
-    :vartype user_assigned_identity_resource_id: str
+    :vartype identityType: Union[str, "ManagedServiceIdentityType"]
+    :ivar userAssignedIdentityResourceId:
+    :vartype userAssignedIdentityResourceId: str
     """
 
     identityType: Union[str, "ManagedServiceIdentityType"]
@@ -2382,17 +2448,17 @@ class DeletedAppRestoreRequest(ProxyOnlyResource):
 class DeletedAppRestoreRequestProperties(TypedDict, total=False):
     """DeletedAppRestoreRequest resource specific properties.
 
-    :ivar deleted_site_id: ARM resource ID of the deleted app. Example:
+    :ivar deletedSiteId: ARM resource ID of the deleted app. Example:
      /subscriptions/{subId}/providers/Microsoft.Web/deletedSites/{deletedSiteId}.
-    :vartype deleted_site_id: str
-    :ivar recover_configuration: If true, deleted site configuration, in addition to content, will
+    :vartype deletedSiteId: str
+    :ivar recoverConfiguration: If true, deleted site configuration, in addition to content, will
      be restored.
-    :vartype recover_configuration: bool
-    :ivar snapshot_time: Point in time to restore the deleted app from, formatted as a DateTime
+    :vartype recoverConfiguration: bool
+    :ivar snapshotTime: Point in time to restore the deleted app from, formatted as a DateTime
      string. If unspecified, default value is the time that the app was deleted.
-    :vartype snapshot_time: str
-    :ivar use_dr_secondary: If true, the snapshot is retrieved from DRSecondary endpoint.
-    :vartype use_dr_secondary: bool
+    :vartype snapshotTime: str
+    :ivar useDRSecondary: If true, the snapshot is retrieved from DRSecondary endpoint.
+    :vartype useDRSecondary: bool
     """
 
     deletedSiteId: str
@@ -2418,9 +2484,9 @@ class Deployment(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Deployment resource specific properties.
     :vartype properties: "DeploymentProperties"
     :ivar kind: Kind of resource.
@@ -2480,12 +2546,12 @@ class DeploymentProperties(TypedDict, total=False):
 class DnlResourceNameAvailabilityRequest(TypedDict, total=False):
     """DnlResourceNameAvailabilityRequest.
 
-    :ivar resource_group_name: Resource group name.
-    :vartype resource_group_name: str
-    :ivar auto_generated_domain_name_label_scope: Indicates the endpoint name reuse scope.The
-     default value is TenantReuse. Supported values are TenantReuse, SubscriptionReuse,
-     ResourceGroupReuse, NoReuse.
-    :vartype auto_generated_domain_name_label_scope: str
+    :ivar resourceGroupName: Resource group name.
+    :vartype resourceGroupName: str
+    :ivar autoGeneratedDomainNameLabelScope: Indicates the endpoint name reuse scope.The default
+     value is TenantReuse. Supported values are TenantReuse, SubscriptionReuse, ResourceGroupReuse,
+     NoReuse.
+    :vartype autoGeneratedDomainNameLabelScope: str
     :ivar name: Resource name to verify. Required.
     :vartype name: str
     :ivar type: Resource type used for verification. Required. Known values are: "Site", "Slot",
@@ -2544,14 +2610,14 @@ class EnvironmentVariable(TypedDict, total=False):
 class ErrorEntity(TypedDict, total=False):
     """Body of the error response returned from the API.
 
-    :ivar extended_code: Type of error.
-    :vartype extended_code: str
-    :ivar message_template: Message template.
-    :vartype message_template: str
+    :ivar extendedCode: Type of error.
+    :vartype extendedCode: str
+    :ivar messageTemplate: Message template.
+    :vartype messageTemplate: str
     :ivar parameters: Parameters for the template.
     :vartype parameters: list[str]
-    :ivar inner_errors: Inner errors.
-    :vartype inner_errors: list["ErrorEntity"]
+    :ivar innerErrors: Inner errors.
+    :vartype innerErrors: list["ErrorEntity"]
     :ivar details: Error Details.
     :vartype details: list["ErrorEntity"]
     :ivar target: The error target.
@@ -2583,8 +2649,8 @@ class ErrorEntity(TypedDict, total=False):
 class Experiments(TypedDict, total=False):
     """Routing rules in production experiments.
 
-    :ivar ramp_up_rules: List of ramp-up rules.
-    :vartype ramp_up_rules: list["RampUpRule"]
+    :ivar rampUpRules: List of ramp-up rules.
+    :vartype rampUpRules: list["RampUpRule"]
     """
 
     rampUpRules: list["RampUpRule"]
@@ -2615,8 +2681,8 @@ class Facebook(TypedDict, total=False):
     :ivar registration: The configuration settings of the app registration for the Facebook
      provider.
     :vartype registration: "AppRegistration"
-    :ivar graph_api_version: The version of the Facebook api to be used while logging in.
-    :vartype graph_api_version: str
+    :ivar graphApiVersion: The version of the Facebook api to be used while logging in.
+    :vartype graphApiVersion: str
     :ivar login: The configuration settings of the login flow.
     :vartype login: "LoginScopes"
     """
@@ -2647,12 +2713,12 @@ class FileSystemApplicationLogsConfig(TypedDict, total=False):
 class FileSystemHttpLogsConfig(TypedDict, total=False):
     """Http logs to file system configuration.
 
-    :ivar retention_in_mb: Maximum size in megabytes that http log files can use. When reached old
+    :ivar retentionInMb: Maximum size in megabytes that http log files can use. When reached old
      log files will be removed to make space for new ones. Value can range between 25 and 100.
-    :vartype retention_in_mb: int
-    :ivar retention_in_days: Retention in days. Remove files older than X days. 0 or lower means no
+    :vartype retentionInMb: int
+    :ivar retentionInDays: Retention in days. Remove files older than X days. 0 or lower means no
      retention.
-    :vartype retention_in_days: int
+    :vartype retentionInDays: int
     :ivar enabled: True if configuration is enabled, false if it is disabled and null if
      configuration is not set.
     :vartype enabled: bool
@@ -2687,8 +2753,8 @@ class FlowAccessControlConfiguration(TypedDict, total=False):
     :vartype contents: "FlowAccessControlConfigurationPolicy"
     :ivar actions: The access control configuration for workflow actions.
     :vartype actions: "FlowAccessControlConfigurationPolicy"
-    :ivar workflow_management: The access control configuration for workflow management.
-    :vartype workflow_management: "FlowAccessControlConfigurationPolicy"
+    :ivar workflowManagement: The access control configuration for workflow management.
+    :vartype workflowManagement: "FlowAccessControlConfigurationPolicy"
     """
 
     triggers: "FlowAccessControlConfigurationPolicy"
@@ -2704,10 +2770,10 @@ class FlowAccessControlConfiguration(TypedDict, total=False):
 class FlowAccessControlConfigurationPolicy(TypedDict, total=False):
     """The access control configuration policy.
 
-    :ivar allowed_caller_ip_addresses: The allowed caller IP address ranges.
-    :vartype allowed_caller_ip_addresses: list["IpAddressRange"]
-    :ivar open_authentication_policies: The authentication policies for workflow.
-    :vartype open_authentication_policies: "OpenAuthenticationAccessPolicies"
+    :ivar allowedCallerIpAddresses: The allowed caller IP address ranges.
+    :vartype allowedCallerIpAddresses: list["IpAddressRange"]
+    :ivar openAuthenticationPolicies: The authentication policies for workflow.
+    :vartype openAuthenticationPolicies: "OpenAuthenticationAccessPolicies"
     """
 
     allowedCallerIpAddresses: list["IpAddressRange"]
@@ -2719,10 +2785,10 @@ class FlowAccessControlConfigurationPolicy(TypedDict, total=False):
 class FlowEndpoints(TypedDict, total=False):
     """The flow endpoints configuration.
 
-    :ivar outgoing_ip_addresses: The outgoing ip address.
-    :vartype outgoing_ip_addresses: list["IpAddress"]
-    :ivar access_endpoint_ip_addresses: The access endpoint ip address.
-    :vartype access_endpoint_ip_addresses: list["IpAddress"]
+    :ivar outgoingIpAddresses: The outgoing ip address.
+    :vartype outgoingIpAddresses: list["IpAddress"]
+    :ivar accessEndpointIpAddresses: The access endpoint ip address.
+    :vartype accessEndpointIpAddresses: list["IpAddress"]
     """
 
     outgoingIpAddresses: list["IpAddress"]
@@ -2752,10 +2818,10 @@ class ForwardProxy(TypedDict, total=False):
     :ivar convention: The convention used to determine the url of the request made. Known values
      are: "NoProxy", "Standard", and "Custom".
     :vartype convention: Union[str, "ForwardProxyConvention"]
-    :ivar custom_host_header_name: The name of the header containing the host of the request.
-    :vartype custom_host_header_name: str
-    :ivar custom_proto_header_name: The name of the header containing the scheme of the request.
-    :vartype custom_proto_header_name: str
+    :ivar customHostHeaderName: The name of the header containing the host of the request.
+    :vartype customHostHeaderName: str
+    :ivar customProtoHeaderName: The name of the header containing the scheme of the request.
+    :vartype customProtoHeaderName: str
     """
 
     convention: Union[str, "ForwardProxyConvention"]
@@ -2785,10 +2851,10 @@ class FunctionAppConfig(TypedDict, total=False):
     :vartype deployment: "FunctionsDeployment"
     :ivar runtime: Function app runtime settings.
     :vartype runtime: "FunctionsRuntime"
-    :ivar scale_and_concurrency: Function app scale and concurrency settings.
-    :vartype scale_and_concurrency: "FunctionsScaleAndConcurrency"
-    :ivar site_update_strategy: Function app site update strategy configuration.
-    :vartype site_update_strategy: "FunctionsSiteUpdateStrategy"
+    :ivar scaleAndConcurrency: Function app scale and concurrency settings.
+    :vartype scaleAndConcurrency: "FunctionsScaleAndConcurrency"
+    :ivar siteUpdateStrategy: Function app site update strategy configuration.
+    :vartype siteUpdateStrategy: "FunctionsSiteUpdateStrategy"
     """
 
     deployment: "FunctionsDeployment"
@@ -2812,9 +2878,9 @@ class FunctionEnvelope(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: FunctionEnvelope resource specific properties.
     :vartype properties: "FunctionEnvelopeProperties"
     :ivar kind: Kind of resource.
@@ -2854,8 +2920,8 @@ class FunctionEnvelopeProperties(TypedDict, total=False):
     :vartype invoke_url_template: str
     :ivar language: The function language.
     :vartype language: str
-    :ivar is_disabled: Gets or sets a value indicating whether the function is disabled.
-    :vartype is_disabled: bool
+    :ivar isDisabled: Gets or sets a value indicating whether the function is disabled.
+    :vartype isDisabled: bool
     """
 
     function_app_id: str
@@ -2892,10 +2958,10 @@ class FunctionsAlwaysReadyConfig(TypedDict, total=False):
     :ivar name: Either a function group or a function name is required. For additional information
      see `https://aka.ms/flexconsumption/alwaysready <https://aka.ms/flexconsumption/alwaysready>`_.
     :vartype name: str
-    :ivar instance_count: Sets the number of 'Always Ready' instances for a given function group or
+    :ivar instanceCount: Sets the number of 'Always Ready' instances for a given function group or
      a specific function. For additional information see `https://aka.ms/flexconsumption/alwaysready
      <https://aka.ms/flexconsumption/alwaysready>`_.
-    :vartype instance_count: int
+    :vartype instanceCount: int
     """
 
     name: str
@@ -2949,14 +3015,14 @@ class FunctionsDeploymentStorageAuthentication(TypedDict, total=False):
      StorageAccountConnectionString. Known values are: "SystemAssignedIdentity",
      "UserAssignedIdentity", and "StorageAccountConnectionString".
     :vartype type: Union[str, "AuthenticationType"]
-    :ivar user_assigned_identity_resource_id: Use this property for UserAssignedIdentity. Set the
+    :ivar userAssignedIdentityResourceId: Use this property for UserAssignedIdentity. Set the
      resource ID of the identity. Do not set a value for this property when using other
      authentication type.
-    :vartype user_assigned_identity_resource_id: str
-    :ivar storage_account_connection_string_name: Use this property for
-     StorageAccountConnectionString. Set the name of the app setting that has the storage account
-     connection string. Do not set a value for this property when using other authentication type.
-    :vartype storage_account_connection_string_name: str
+    :vartype userAssignedIdentityResourceId: str
+    :ivar storageAccountConnectionStringName: Use this property for StorageAccountConnectionString.
+     Set the name of the app setting that has the storage account connection string. Do not set a
+     value for this property when using other authentication type.
+    :vartype storageAccountConnectionStringName: str
     """
 
     type: Union[str, "AuthenticationType"]
@@ -2978,7 +3044,7 @@ class FunctionsRuntime(TypedDict, total=False):
 
     :ivar name: Function app runtime name. Available options: dotnet-isolated, node, java,
      powershell, python, custom. Known values are: "dotnet-isolated", "node", "java", "powershell",
-     "python", and "custom".
+     "python", "go", and "custom".
     :vartype name: Union[str, "RuntimeName"]
     :ivar version: Function app runtime version. Example: 8 (for dotnet-isolated).
     :vartype version: str
@@ -2987,7 +3053,7 @@ class FunctionsRuntime(TypedDict, total=False):
     name: Union[str, "RuntimeName"]
     """Function app runtime name. Available options: dotnet-isolated, node, java, powershell, python,
      custom. Known values are: \"dotnet-isolated\", \"node\", \"java\", \"powershell\", \"python\",
-     and \"custom\"."""
+     \"go\", and \"custom\"."""
     version: Optional[str]
     """Function app runtime version. Example: 8 (for dotnet-isolated)."""
 
@@ -2995,13 +3061,13 @@ class FunctionsRuntime(TypedDict, total=False):
 class FunctionsScaleAndConcurrency(TypedDict, total=False):
     """Scale and concurrency settings for the function app.
 
-    :ivar always_ready: 'Always Ready' configuration for the function app.
-    :vartype always_ready: list["FunctionsAlwaysReadyConfig"]
-    :ivar maximum_instance_count: The maximum number of instances for the function app.
-    :vartype maximum_instance_count: int
-    :ivar instance_memory_mb: Set the amount of memory allocated to each instance of the function
-     app in MB. CPU and network bandwidth are allocated proportionally.
-    :vartype instance_memory_mb: int
+    :ivar alwaysReady: 'Always Ready' configuration for the function app.
+    :vartype alwaysReady: list["FunctionsAlwaysReadyConfig"]
+    :ivar maximumInstanceCount: The maximum number of on demand instances per function group.
+    :vartype maximumInstanceCount: int
+    :ivar instanceMemoryMB: Set the amount of memory allocated to each instance of the function app
+     in MB. CPU and network bandwidth are allocated proportionally.
+    :vartype instanceMemoryMB: int
     :ivar triggers: Scale and concurrency settings for the function app triggers.
     :vartype triggers: "FunctionsScaleAndConcurrencyTriggers"
     """
@@ -3009,7 +3075,7 @@ class FunctionsScaleAndConcurrency(TypedDict, total=False):
     alwaysReady: list["FunctionsAlwaysReadyConfig"]
     """'Always Ready' configuration for the function app."""
     maximumInstanceCount: int
-    """The maximum number of instances for the function app."""
+    """The maximum number of on demand instances per function group."""
     instanceMemoryMB: int
     """Set the amount of memory allocated to each instance of the function app in MB. CPU and network
      bandwidth are allocated proportionally."""
@@ -3031,9 +3097,9 @@ class FunctionsScaleAndConcurrencyTriggers(TypedDict, total=False):
 class FunctionsScaleAndConcurrencyTriggersHttp(TypedDict, total=False):
     """Scale and concurrency settings for the HTTP trigger.
 
-    :ivar per_instance_concurrency: The maximum number of concurrent HTTP trigger invocations per
+    :ivar perInstanceConcurrency: The maximum number of concurrent HTTP trigger invocations per
      instance.
-    :vartype per_instance_concurrency: int
+    :vartype perInstanceConcurrency: int
     """
 
     perInstanceConcurrency: int
@@ -3077,12 +3143,12 @@ class GitHub(TypedDict, total=False):
 class GitHubActionCodeConfiguration(TypedDict, total=False):
     """The GitHub action code configuration.
 
-    :ivar runtime_stack: Runtime stack is used to determine the workflow file content for code base
+    :ivar runtimeStack: Runtime stack is used to determine the workflow file content for code base
      apps.
-    :vartype runtime_stack: str
-    :ivar runtime_version: Runtime version is used to determine what build version to set in the
+    :vartype runtimeStack: str
+    :ivar runtimeVersion: Runtime version is used to determine what build version to set in the
      workflow file.
-    :vartype runtime_version: str
+    :vartype runtimeVersion: str
     """
 
     runtimeStack: str
@@ -3094,15 +3160,15 @@ class GitHubActionCodeConfiguration(TypedDict, total=False):
 class GitHubActionConfiguration(TypedDict, total=False):
     """The GitHub action configuration.
 
-    :ivar code_configuration: GitHub Action code configuration.
-    :vartype code_configuration: "GitHubActionCodeConfiguration"
-    :ivar container_configuration: GitHub Action container configuration.
-    :vartype container_configuration: "GitHubActionContainerConfiguration"
-    :ivar is_linux: This will help determine the workflow configuration to select.
-    :vartype is_linux: bool
-    :ivar generate_workflow_file: Workflow option to determine whether the workflow file should be
+    :ivar codeConfiguration: GitHub Action code configuration.
+    :vartype codeConfiguration: "GitHubActionCodeConfiguration"
+    :ivar containerConfiguration: GitHub Action container configuration.
+    :vartype containerConfiguration: "GitHubActionContainerConfiguration"
+    :ivar isLinux: This will help determine the workflow configuration to select.
+    :vartype isLinux: bool
+    :ivar generateWorkflowFile: Workflow option to determine whether the workflow file should be
      generated and written to the repository.
-    :vartype generate_workflow_file: bool
+    :vartype generateWorkflowFile: bool
     """
 
     codeConfiguration: "GitHubActionCodeConfiguration"
@@ -3119,10 +3185,10 @@ class GitHubActionConfiguration(TypedDict, total=False):
 class GitHubActionContainerConfiguration(TypedDict, total=False):
     """The GitHub action container configuration.
 
-    :ivar server_url: The server URL for the container registry where the build will be hosted.
-    :vartype server_url: str
-    :ivar image_name: The image name for the build.
-    :vartype image_name: str
+    :ivar serverUrl: The server URL for the container registry where the build will be hosted.
+    :vartype serverUrl: str
+    :ivar imageName: The image name for the build.
+    :vartype imageName: str
     :ivar username: The username used to upload the image to the container registry.
     :vartype username: str
     :ivar password: The password used to upload the image to the container registry.
@@ -3143,20 +3209,20 @@ class GlobalValidation(TypedDict, total=False):
     """The configuration settings that determines the validation flow of users using App Service
     Authentication/Authorization.
 
-    :ivar require_authentication: <code>true</code> if the authentication flow is required any
+    :ivar requireAuthentication: <code>true</code> if the authentication flow is required any
      request is made; otherwise, <code>false</code>.
-    :vartype require_authentication: bool
-    :ivar unauthenticated_client_action: The action to take when an unauthenticated client attempts
+    :vartype requireAuthentication: bool
+    :ivar unauthenticatedClientAction: The action to take when an unauthenticated client attempts
      to access the app. Known values are: "RedirectToLoginPage", "AllowAnonymous", "Return401", and
      "Return403".
-    :vartype unauthenticated_client_action: Union[str, "UnauthenticatedClientActionV2"]
-    :ivar redirect_to_provider: The default authentication provider to use when multiple providers
+    :vartype unauthenticatedClientAction: Union[str, "UnauthenticatedClientActionV2"]
+    :ivar redirectToProvider: The default authentication provider to use when multiple providers
      are configured. This setting is only needed if multiple providers are configured and the
      unauthenticated client action is set to "RedirectToLoginPage".
-    :vartype redirect_to_provider: str
-    :ivar excluded_paths: The paths for which unauthenticated flow would not be redirected to the
+    :vartype redirectToProvider: str
+    :ivar excludedPaths: The paths for which unauthenticated flow would not be redirected to the
      login page.
-    :vartype excluded_paths: list[str]
+    :vartype excludedPaths: list[str]
     """
 
     requireAuthentication: bool
@@ -3207,8 +3273,8 @@ class HandlerMapping(TypedDict, total=False):
     :ivar extension: Requests with this extension will be handled using the specified FastCGI
      application.
     :vartype extension: str
-    :ivar script_processor: The absolute path to the FastCGI application.
-    :vartype script_processor: str
+    :ivar scriptProcessor: The absolute path to the FastCGI application.
+    :vartype scriptProcessor: str
     :ivar arguments: Command-line arguments to be passed to the script processor.
     :vartype arguments: str
     """
@@ -3251,9 +3317,9 @@ class HostNameBinding(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: HostNameBinding resource specific properties.
     :vartype properties: "HostNameBindingProperties"
     :ivar kind: Kind of resource.
@@ -3269,26 +3335,24 @@ class HostNameBinding(ProxyResource):
 class HostNameBindingProperties(TypedDict, total=False):
     """HostNameBinding resource specific properties.
 
-    :ivar site_name: App Service app name.
-    :vartype site_name: str
-    :ivar domain_id: Fully qualified ARM domain resource URI.
-    :vartype domain_id: str
-    :ivar azure_resource_name: Azure resource name.
-    :vartype azure_resource_name: str
-    :ivar azure_resource_type: Azure resource type. Known values are: "Website" and
-     "TrafficManager".
-    :vartype azure_resource_type: Union[str, "AzureResourceType"]
-    :ivar custom_host_name_dns_record_type: Custom DNS record type. Known values are: "CName" and
-     "A".
-    :vartype custom_host_name_dns_record_type: Union[str, "CustomHostNameDnsRecordType"]
-    :ivar host_name_type: Hostname type. Known values are: "Verified" and "Managed".
-    :vartype host_name_type: Union[str, "HostNameType"]
-    :ivar ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", and "IpBasedEnabled".
-    :vartype ssl_state: Union[str, "SslState"]
+    :ivar siteName: App Service app name.
+    :vartype siteName: str
+    :ivar domainId: Fully qualified ARM domain resource URI.
+    :vartype domainId: str
+    :ivar azureResourceName: Azure resource name.
+    :vartype azureResourceName: str
+    :ivar azureResourceType: Azure resource type. Known values are: "Website" and "TrafficManager".
+    :vartype azureResourceType: Union[str, "AzureResourceType"]
+    :ivar customHostNameDnsRecordType: Custom DNS record type. Known values are: "CName" and "A".
+    :vartype customHostNameDnsRecordType: Union[str, "CustomHostNameDnsRecordType"]
+    :ivar hostNameType: Hostname type. Known values are: "Verified" and "Managed".
+    :vartype hostNameType: Union[str, "HostNameType"]
+    :ivar sslState: SSL type. Known values are: "Disabled", "SniEnabled", and "IpBasedEnabled".
+    :vartype sslState: Union[str, "SslState"]
     :ivar thumbprint: SSL certificate thumbprint.
     :vartype thumbprint: str
-    :ivar virtual_ip: Virtual IP address assigned to the hostname if IP based SSL is enabled.
-    :vartype virtual_ip: str
+    :ivar virtualIP: Virtual IP address assigned to the hostname if IP based SSL is enabled.
+    :vartype virtualIP: str
     """
 
     siteName: str
@@ -3316,17 +3380,17 @@ class HostNameSslState(TypedDict, total=False):
 
     :ivar name: Hostname.
     :vartype name: str
-    :ivar ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", and "IpBasedEnabled".
-    :vartype ssl_state: Union[str, "SslState"]
-    :ivar virtual_ip: Virtual IP address assigned to the hostname if IP based SSL is enabled.
-    :vartype virtual_ip: str
+    :ivar sslState: SSL type. Known values are: "Disabled", "SniEnabled", and "IpBasedEnabled".
+    :vartype sslState: Union[str, "SslState"]
+    :ivar virtualIP: Virtual IP address assigned to the hostname if IP based SSL is enabled.
+    :vartype virtualIP: str
     :ivar thumbprint: SSL certificate thumbprint.
     :vartype thumbprint: str
-    :ivar to_update: Set to <code>true</code> to update existing hostname.
-    :vartype to_update: bool
-    :ivar host_type: Indicates whether the hostname is a standard or repository hostname. Known
+    :ivar toUpdate: Set to <code>true</code> to update existing hostname.
+    :vartype toUpdate: bool
+    :ivar hostType: Indicates whether the hostname is a standard or repository hostname. Known
      values are: "Standard" and "Repository".
-    :vartype host_type: Union[str, "HostType"]
+    :vartype hostType: Union[str, "HostType"]
     """
 
     name: str
@@ -3347,10 +3411,10 @@ class HostNameSslState(TypedDict, total=False):
 class HttpLogsConfig(TypedDict, total=False):
     """Http logs configuration.
 
-    :ivar file_system: Http logs to file system configuration.
-    :vartype file_system: "FileSystemHttpLogsConfig"
-    :ivar azure_blob_storage: Http logs to azure blob storage configuration.
-    :vartype azure_blob_storage: "AzureBlobStorageHttpLogsConfig"
+    :ivar fileSystem: Http logs to file system configuration.
+    :vartype fileSystem: "FileSystemHttpLogsConfig"
+    :ivar azureBlobStorage: Http logs to azure blob storage configuration.
+    :vartype azureBlobStorage: "AzureBlobStorageHttpLogsConfig"
     """
 
     fileSystem: "FileSystemHttpLogsConfig"
@@ -3363,13 +3427,13 @@ class HttpSettings(TypedDict, total=False):
     """The configuration settings of the HTTP requests for authentication and authorization requests
     made against App Service Authentication/Authorization.
 
-    :ivar require_https: <code>false</code> if the authentication/authorization responses not
-     having the HTTPS scheme are permissible; otherwise, <code>true</code>.
-    :vartype require_https: bool
+    :ivar requireHttps: <code>false</code> if the authentication/authorization responses not having
+     the HTTPS scheme are permissible; otherwise, <code>true</code>.
+    :vartype requireHttps: bool
     :ivar routes: The configuration settings of the paths HTTP requests.
     :vartype routes: "HttpSettingsRoutes"
-    :ivar forward_proxy: The configuration settings of a forward proxy used to make the requests.
-    :vartype forward_proxy: "ForwardProxy"
+    :ivar forwardProxy: The configuration settings of a forward proxy used to make the requests.
+    :vartype forwardProxy: "ForwardProxy"
     """
 
     requireHttps: bool
@@ -3384,8 +3448,8 @@ class HttpSettings(TypedDict, total=False):
 class HttpSettingsRoutes(TypedDict, total=False):
     """The configuration settings of the paths HTTP requests.
 
-    :ivar api_prefix: The prefix that should precede all the authentication/authorization paths.
-    :vartype api_prefix: str
+    :ivar apiPrefix: The prefix that should precede all the authentication/authorization paths.
+    :vartype apiPrefix: str
     """
 
     apiPrefix: str
@@ -3403,9 +3467,9 @@ class HybridConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: HybridConnection resource specific properties.
     :vartype properties: "HybridConnectionProperties"
     :ivar kind: Kind of resource.
@@ -3421,25 +3485,25 @@ class HybridConnection(ProxyResource):
 class HybridConnectionProperties(TypedDict, total=False):
     """HybridConnection resource specific properties.
 
-    :ivar service_bus_namespace: The name of the Service Bus namespace.
-    :vartype service_bus_namespace: str
-    :ivar relay_name: The name of the Service Bus relay.
-    :vartype relay_name: str
-    :ivar relay_arm_uri: The ARM URI to the Service Bus relay.
-    :vartype relay_arm_uri: str
+    :ivar serviceBusNamespace: The name of the Service Bus namespace.
+    :vartype serviceBusNamespace: str
+    :ivar relayName: The name of the Service Bus relay.
+    :vartype relayName: str
+    :ivar relayArmUri: The ARM URI to the Service Bus relay.
+    :vartype relayArmUri: str
     :ivar hostname: The hostname of the endpoint.
     :vartype hostname: str
     :ivar port: The port of the endpoint.
     :vartype port: int
-    :ivar send_key_name: The name of the Service Bus key which has Send permissions. This is used
-     to authenticate to Service Bus.
-    :vartype send_key_name: str
-    :ivar send_key_value: The value of the Service Bus key. This is used to authenticate to Service
+    :ivar sendKeyName: The name of the Service Bus key which has Send permissions. This is used to
+     authenticate to Service Bus.
+    :vartype sendKeyName: str
+    :ivar sendKeyValue: The value of the Service Bus key. This is used to authenticate to Service
      Bus. In ARM this key will not be returned normally, use the POST /listKeys API instead.
-    :vartype send_key_value: str
-    :ivar service_bus_suffix: The suffix for the service bus endpoint. By default this is
+    :vartype sendKeyValue: str
+    :ivar serviceBusSuffix: The suffix for the service bus endpoint. By default this is
      .servicebus.windows.net.
-    :vartype service_bus_suffix: str
+    :vartype serviceBusSuffix: str
     """
 
     serviceBusNamespace: str
@@ -3473,9 +3537,9 @@ class Identifier(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Identifier resource specific properties.
     :vartype properties: "IdentifierProperties"
     :ivar kind: Kind of resource.
@@ -3491,8 +3555,8 @@ class Identifier(ProxyResource):
 class IdentifierProperties(TypedDict, total=False):
     """Identifier resource specific properties.
 
-    :ivar value: String representation of the identity.
-    :vartype value: str
+    :ivar id: String representation of the identity.
+    :vartype id: str
     """
 
     id: str
@@ -3503,27 +3567,26 @@ class IdentityProviders(TypedDict, total=False):
     """The configuration settings of each of the identity providers used to configure App Service
     Authentication/Authorization.
 
-    :ivar azure_active_directory: The configuration settings of the Azure Active directory
-     provider.
-    :vartype azure_active_directory: "AzureActiveDirectory"
+    :ivar azureActiveDirectory: The configuration settings of the Azure Active directory provider.
+    :vartype azureActiveDirectory: "AzureActiveDirectory"
     :ivar facebook: The configuration settings of the Facebook provider.
     :vartype facebook: "Facebook"
-    :ivar git_hub: The configuration settings of the GitHub provider.
-    :vartype git_hub: "GitHub"
+    :ivar gitHub: The configuration settings of the GitHub provider.
+    :vartype gitHub: "GitHub"
     :ivar google: The configuration settings of the Google provider.
     :vartype google: "Google"
-    :ivar legacy_microsoft_account: The configuration settings of the legacy Microsoft Account
+    :ivar legacyMicrosoftAccount: The configuration settings of the legacy Microsoft Account
      provider.
-    :vartype legacy_microsoft_account: "LegacyMicrosoftAccount"
+    :vartype legacyMicrosoftAccount: "LegacyMicrosoftAccount"
     :ivar twitter: The configuration settings of the Twitter provider.
     :vartype twitter: "Twitter"
     :ivar apple: The configuration settings of the Apple provider.
     :vartype apple: "Apple"
-    :ivar azure_static_web_apps: The configuration settings of the Azure Static Web Apps provider.
-    :vartype azure_static_web_apps: "AzureStaticWebApps"
-    :ivar custom_open_id_connect_providers: The map of the name of the alias of each custom Open ID
+    :ivar azureStaticWebApps: The configuration settings of the Azure Static Web Apps provider.
+    :vartype azureStaticWebApps: "AzureStaticWebApps"
+    :ivar customOpenIdConnectProviders: The map of the name of the alias of each custom Open ID
      Connect provider to the configuration settings of the custom Open ID Connect provider.
-    :vartype custom_open_id_connect_providers: dict[str, "CustomOpenIdConnectProvider"]
+    :vartype customOpenIdConnectProviders: dict[str, "CustomOpenIdConnectProvider"]
     """
 
     azureActiveDirectory: "AzureActiveDirectory"
@@ -3565,8 +3628,8 @@ class InstallScript(TypedDict, total=False):
 class InstallScriptSource(TypedDict, total=False):
     """Object to hold install script reference.
 
-    :ivar source_uri: Install script source URI where the install script file will be fetched from.
-    :vartype source_uri: str
+    :ivar sourceUri: Install script source URI where the install script file will be fetched from.
+    :vartype sourceUri: str
     :ivar type: Type of the install script. Known values are: "RemoteAzureBlob" and
      "PlatformStorage".
     :vartype type: Union[str, "InstallScriptType"]
@@ -3592,8 +3655,8 @@ class IpAddress(TypedDict, total=False):
 class IpAddressRange(TypedDict, total=False):
     """The ip address range.
 
-    :ivar address_range: The IP address range.
-    :vartype address_range: str
+    :ivar addressRange: The IP address range.
+    :vartype addressRange: str
     """
 
     addressRange: str
@@ -3603,18 +3666,18 @@ class IpAddressRange(TypedDict, total=False):
 class IpSecurityRestriction(TypedDict, total=False):
     """IP security restriction on an app.
 
-    :ivar ip_address: IP address the security restriction is valid for. It can be in form of pure
+    :ivar ipAddress: IP address the security restriction is valid for. It can be in form of pure
      ipv4 address (required SubnetMask property) or CIDR notation such as ipv4/mask (leading bit
      match). For CIDR, SubnetMask property must not be specified.
-    :vartype ip_address: str
-    :ivar subnet_mask: Subnet mask for the range of IP addresses the restriction is valid for.
-    :vartype subnet_mask: str
-    :ivar vnet_subnet_resource_id: Virtual network resource id.
-    :vartype vnet_subnet_resource_id: str
-    :ivar vnet_traffic_tag: (internal) Vnet traffic tag.
-    :vartype vnet_traffic_tag: int
-    :ivar subnet_traffic_tag: (internal) Subnet traffic tag.
-    :vartype subnet_traffic_tag: int
+    :vartype ipAddress: str
+    :ivar subnetMask: Subnet mask for the range of IP addresses the restriction is valid for.
+    :vartype subnetMask: str
+    :ivar vnetSubnetResourceId: Virtual network resource id.
+    :vartype vnetSubnetResourceId: str
+    :ivar vnetTrafficTag: (internal) Vnet traffic tag.
+    :vartype vnetTrafficTag: int
+    :ivar subnetTrafficTag: (internal) Subnet traffic tag.
+    :vartype subnetTrafficTag: int
     :ivar action: Allow or Deny access for this IP range.
     :vartype action: str
     :ivar tag: Defines what this IP filter will be used for. This is to support IP filtering on
@@ -3706,10 +3769,10 @@ class IpSecurityRestriction(TypedDict, total=False):
 class JwtClaimChecks(TypedDict, total=False):
     """The configuration settings of the checks that should be made while validating the JWT Claims.
 
-    :ivar allowed_groups: The list of the allowed groups.
-    :vartype allowed_groups: list[str]
-    :ivar allowed_client_applications: The list of the allowed client applications.
-    :vartype allowed_client_applications: list[str]
+    :ivar allowedGroups: The list of the allowed groups.
+    :vartype allowedGroups: list[str]
+    :ivar allowedClientApplications: The list of the allowed client applications.
+    :vartype allowedClientApplications: list[str]
     """
 
     allowedGroups: list[str]
@@ -3736,10 +3799,10 @@ class KeyInfo(TypedDict, total=False):
 class KeyVaultReferenceWithStatus(TypedDict, total=False):
     """Object to hold key vault reference and the resolution status.
 
-    :ivar secret_uri: Key vault secret URI.
-    :vartype secret_uri: str
-    :ivar reference_status: Reference status of the key vault secret.
-    :vartype reference_status: str
+    :ivar secretUri: Key vault secret URI.
+    :vartype secretUri: str
+    :ivar referenceStatus: Reference status of the key vault secret.
+    :vartype referenceStatus: str
     """
 
     secretUri: str
@@ -3759,17 +3822,17 @@ class KubeEnvironment(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar properties: KubeEnvironment resource specific properties.
     :vartype properties: "KubeEnvironmentProperties"
-    :ivar extended_location: Extended Location.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Extended Location.
+    :vartype extendedLocation: "ExtendedLocation"
     :ivar kind: Kind of resource.
     :vartype kind: str
     """
@@ -3804,30 +3867,30 @@ class KubeEnvironmentPatchResource(ProxyOnlyResource):
 class KubeEnvironmentPatchResourceProperties(TypedDict, total=False):
     """KubeEnvironmentPatchResource resource specific properties.
 
-    :ivar provisioning_state: Provisioning state of the Kubernetes Environment. Known values are:
+    :ivar provisioningState: Provisioning state of the Kubernetes Environment. Known values are:
      "Succeeded", "Failed", "Canceled", "Waiting", "InitializationInProgress",
      "InfrastructureSetupInProgress", "InfrastructureSetupComplete", "ScheduledForDelete",
      "UpgradeRequested", and "UpgradeFailed".
-    :vartype provisioning_state: Union[str, "KubeEnvironmentProvisioningState"]
-    :ivar deployment_errors: Any errors that occurred during deployment or deployment validation.
-    :vartype deployment_errors: str
-    :ivar internal_load_balancer_enabled: Only visible within Vnet/Subnet.
-    :vartype internal_load_balancer_enabled: bool
-    :ivar default_domain: Default Domain Name for the cluster.
-    :vartype default_domain: str
-    :ivar static_ip: Static IP of the KubeEnvironment.
-    :vartype static_ip: str
-    :ivar arc_configuration: Cluster configuration which determines the ARC cluster components
+    :vartype provisioningState: Union[str, "KubeEnvironmentProvisioningState"]
+    :ivar deploymentErrors: Any errors that occurred during deployment or deployment validation.
+    :vartype deploymentErrors: str
+    :ivar internalLoadBalancerEnabled: Only visible within Vnet/Subnet.
+    :vartype internalLoadBalancerEnabled: bool
+    :ivar defaultDomain: Default Domain Name for the cluster.
+    :vartype defaultDomain: str
+    :ivar staticIp: Static IP of the KubeEnvironment.
+    :vartype staticIp: str
+    :ivar arcConfiguration: Cluster configuration which determines the ARC cluster components
      types. Eg: Choosing between BuildService kind, FrontEnd Service ArtifactsStorageType etc.
-    :vartype arc_configuration: "ArcConfiguration"
-    :ivar app_logs_configuration: Cluster configuration which enables the log daemon to export app
+    :vartype arcConfiguration: "ArcConfiguration"
+    :ivar appLogsConfiguration: Cluster configuration which enables the log daemon to export app
      logs to a destination. Currently only "log-analytics" is supported.
-    :vartype app_logs_configuration: "AppLogsConfiguration"
-    :ivar container_apps_configuration: Cluster configuration for Container Apps Environments to
+    :vartype appLogsConfiguration: "AppLogsConfiguration"
+    :ivar containerAppsConfiguration: Cluster configuration for Container Apps Environments to
      configure Dapr Instrumentation Key and VNET Configuration.
-    :vartype container_apps_configuration: "ContainerAppsConfiguration"
-    :ivar aks_resource_id:
-    :vartype aks_resource_id: str
+    :vartype containerAppsConfiguration: "ContainerAppsConfiguration"
+    :ivar aksResourceID:
+    :vartype aksResourceID: str
     """
 
     provisioningState: Union[str, "KubeEnvironmentProvisioningState"]
@@ -3877,33 +3940,33 @@ class KubeEnvironmentProfile(TypedDict, total=False):
 class KubeEnvironmentProperties(TypedDict, total=False):
     """KubeEnvironment resource specific properties.
 
-    :ivar provisioning_state: Provisioning state of the Kubernetes Environment. Known values are:
+    :ivar provisioningState: Provisioning state of the Kubernetes Environment. Known values are:
      "Succeeded", "Failed", "Canceled", "Waiting", "InitializationInProgress",
      "InfrastructureSetupInProgress", "InfrastructureSetupComplete", "ScheduledForDelete",
      "UpgradeRequested", and "UpgradeFailed".
-    :vartype provisioning_state: Union[str, "KubeEnvironmentProvisioningState"]
-    :ivar deployment_errors: Any errors that occurred during deployment or deployment validation.
-    :vartype deployment_errors: str
-    :ivar internal_load_balancer_enabled: Only visible within Vnet/Subnet.
-    :vartype internal_load_balancer_enabled: bool
-    :ivar default_domain: Default Domain Name for the cluster.
-    :vartype default_domain: str
-    :ivar static_ip: Static IP of the KubeEnvironment.
-    :vartype static_ip: str
-    :ivar environment_type: Type of Kubernetes Environment. Only supported for Container App
+    :vartype provisioningState: Union[str, "KubeEnvironmentProvisioningState"]
+    :ivar deploymentErrors: Any errors that occurred during deployment or deployment validation.
+    :vartype deploymentErrors: str
+    :ivar internalLoadBalancerEnabled: Only visible within Vnet/Subnet.
+    :vartype internalLoadBalancerEnabled: bool
+    :ivar defaultDomain: Default Domain Name for the cluster.
+    :vartype defaultDomain: str
+    :ivar staticIp: Static IP of the KubeEnvironment.
+    :vartype staticIp: str
+    :ivar environmentType: Type of Kubernetes Environment. Only supported for Container App
      Environments with value as Managed.
-    :vartype environment_type: str
-    :ivar arc_configuration: Cluster configuration which determines the ARC cluster components
+    :vartype environmentType: str
+    :ivar arcConfiguration: Cluster configuration which determines the ARC cluster components
      types. Eg: Choosing between BuildService kind, FrontEnd Service ArtifactsStorageType etc.
-    :vartype arc_configuration: "ArcConfiguration"
-    :ivar app_logs_configuration: Cluster configuration which enables the log daemon to export app
+    :vartype arcConfiguration: "ArcConfiguration"
+    :ivar appLogsConfiguration: Cluster configuration which enables the log daemon to export app
      logs to a destination. Currently only "log-analytics" is supported.
-    :vartype app_logs_configuration: "AppLogsConfiguration"
-    :ivar container_apps_configuration: Cluster configuration for Container Apps Environments to
+    :vartype appLogsConfiguration: "AppLogsConfiguration"
+    :ivar containerAppsConfiguration: Cluster configuration for Container Apps Environments to
      configure Dapr Instrumentation Key and VNET Configuration.
-    :vartype container_apps_configuration: "ContainerAppsConfiguration"
-    :ivar aks_resource_id:
-    :vartype aks_resource_id: str
+    :vartype containerAppsConfiguration: "ContainerAppsConfiguration"
+    :ivar aksResourceID:
+    :vartype aksResourceID: str
     """
 
     provisioningState: Union[str, "KubeEnvironmentProvisioningState"]
@@ -3964,10 +4027,10 @@ class LegacyMicrosoftAccount(TypedDict, total=False):
 class LogAnalyticsConfiguration(TypedDict, total=False):
     """LogAnalyticsConfiguration.
 
-    :ivar customer_id:
-    :vartype customer_id: str
-    :ivar shared_key:
-    :vartype shared_key: str
+    :ivar customerId:
+    :vartype customerId: str
+    :ivar sharedKey:
+    :vartype sharedKey: str
     """
 
     customerId: str
@@ -3980,18 +4043,18 @@ class Login(TypedDict, total=False):
 
     :ivar routes: The routes that specify the endpoints used for login and logout requests.
     :vartype routes: "LoginRoutes"
-    :ivar token_store: The configuration settings of the token store.
-    :vartype token_store: "TokenStore"
-    :ivar preserve_url_fragments_for_logins: <code>true</code> if the fragments from the request
-     are preserved after the login request is made; otherwise, <code>false</code>.
-    :vartype preserve_url_fragments_for_logins: bool
-    :ivar allowed_external_redirect_urls: External URLs that can be redirected to as part of
-     logging in or logging out of the app. Note that the query string part of the URL is ignored.
-     This is an advanced setting typically only needed by Windows Store application backends. Note
-     that URLs within the current domain are always implicitly allowed.
-    :vartype allowed_external_redirect_urls: list[str]
-    :ivar cookie_expiration: The configuration settings of the session cookie's expiration.
-    :vartype cookie_expiration: "CookieExpiration"
+    :ivar tokenStore: The configuration settings of the token store.
+    :vartype tokenStore: "TokenStore"
+    :ivar preserveUrlFragmentsForLogins: <code>true</code> if the fragments from the request are
+     preserved after the login request is made; otherwise, <code>false</code>.
+    :vartype preserveUrlFragmentsForLogins: bool
+    :ivar allowedExternalRedirectUrls: External URLs that can be redirected to as part of logging
+     in or logging out of the app. Note that the query string part of the URL is ignored. This is an
+     advanced setting typically only needed by Windows Store application backends. Note that URLs
+     within the current domain are always implicitly allowed.
+    :vartype allowedExternalRedirectUrls: list[str]
+    :ivar cookieExpiration: The configuration settings of the session cookie's expiration.
+    :vartype cookieExpiration: "CookieExpiration"
     :ivar nonce: The configuration settings of the nonce used in the login flow.
     :vartype nonce: "Nonce"
     """
@@ -4017,8 +4080,8 @@ class Login(TypedDict, total=False):
 class LoginRoutes(TypedDict, total=False):
     """The routes that specify the endpoints used for login and logout requests.
 
-    :ivar logout_endpoint: The endpoint at which a logout request should be made.
-    :vartype logout_endpoint: str
+    :ivar logoutEndpoint: The endpoint at which a logout request should be made.
+    :vartype logoutEndpoint: str
     """
 
     logoutEndpoint: str
@@ -4042,14 +4105,14 @@ class ManagedServiceIdentity(TypedDict, total=False):
     :ivar type: Type of managed service identity. Known values are: "SystemAssigned",
      "UserAssigned", "SystemAssigned, UserAssigned", and "None".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar tenant_id: Tenant of managed service identity.
-    :vartype tenant_id: str
-    :ivar principal_id: Principal Id of managed service identity.
-    :vartype principal_id: str
-    :ivar user_assigned_identities: The list of user assigned identities associated with the
+    :ivar tenantId: Tenant of managed service identity.
+    :vartype tenantId: str
+    :ivar principalId: Principal Id of managed service identity.
+    :vartype principalId: str
+    :ivar userAssignedIdentities: The list of user assigned identities associated with the
      resource. The user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     type: Union[str, "ManagedServiceIdentityType"]
@@ -4063,6 +4126,49 @@ class ManagedServiceIdentity(TypedDict, total=False):
     """The list of user assigned identities associated with the resource. The user identity dictionary
      key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}."""
+
+
+class McpServerConfig(TypedDict, total=False):
+    """Configuration for an individual MCP server.
+
+    :ivar name: The name of the MCP server.
+    :vartype name: str
+    :ivar description: The description of the MCP server.
+    :vartype description: str
+    :ivar enabled: Whether the MCP server is enabled. Defaults to true when not specified on
+     creation.
+    :vartype enabled: bool
+    :ivar endpoint: The endpoint path for the MCP server.
+    :vartype endpoint: str
+    :ivar toolList: The list of tools exposed by this MCP server.
+    :vartype toolList: list[str]
+    """
+
+    name: str
+    """The name of the MCP server."""
+    description: str
+    """The description of the MCP server."""
+    enabled: bool
+    """Whether the MCP server is enabled. Defaults to true when not specified on creation."""
+    endpoint: str
+    """The endpoint path for the MCP server."""
+    toolList: list[str]
+    """The list of tools exposed by this MCP server."""
+
+
+class McpSettings(TypedDict, total=False):
+    """MCP configuration settings.
+
+    :ivar servers: Array of MCP server configurations. This array is replaced in its entirety on
+     update; individual servers cannot be patched independently. An empty array signals that MCP
+     should be disabled/deleted.
+    :vartype servers: list["McpServerConfig"]
+    """
+
+    servers: list["McpServerConfig"]
+    """Array of MCP server configurations. This array is replaced in its entirety on update;
+     individual servers cannot be patched independently. An empty array signals that MCP should be
+     disabled/deleted."""
 
 
 class MigrateMySqlRequest(ProxyOnlyResource):
@@ -4087,11 +4193,11 @@ class MigrateMySqlRequest(ProxyOnlyResource):
 class MigrateMySqlRequestProperties(TypedDict, total=False):
     """MigrateMySqlRequest resource specific properties.
 
-    :ivar connection_string: Connection string to the remote MySQL database. Required.
-    :vartype connection_string: str
-    :ivar migration_type: The type of migration operation to be done. Required. Known values are:
+    :ivar connectionString: Connection string to the remote MySQL database. Required.
+    :vartype connectionString: str
+    :ivar migrationType: The type of migration operation to be done. Required. Known values are:
      "LocalToRemote" and "RemoteToLocal".
-    :vartype migration_type: Union[str, "MySqlMigrationType"]
+    :vartype migrationType: Union[str, "MySqlMigrationType"]
     """
 
     connectionString: Required[str]
@@ -4123,25 +4229,25 @@ class MSDeploy(ProxyOnlyResource):
 class MSDeployCore(TypedDict, total=False):
     """MSDeploy ARM PUT core information.
 
-    :ivar package_uri: Package URI.
-    :vartype package_uri: str
-    :ivar connection_string: SQL Connection String.
-    :vartype connection_string: str
-    :ivar db_type: Database Type.
-    :vartype db_type: str
-    :ivar set_parameters_xml_file_uri: URI of MSDeploy Parameters file. Must not be set if
+    :ivar packageUri: Package URI.
+    :vartype packageUri: str
+    :ivar connectionString: SQL Connection String.
+    :vartype connectionString: str
+    :ivar dbType: Database Type.
+    :vartype dbType: str
+    :ivar setParametersXmlFileUri: URI of MSDeploy Parameters file. Must not be set if
      SetParameters is used.
-    :vartype set_parameters_xml_file_uri: str
-    :ivar set_parameters: MSDeploy Parameters. Must not be set if SetParametersXmlFileUri is used.
-    :vartype set_parameters: dict[str, str]
-    :ivar skip_app_data: Controls whether the MSDeploy operation skips the App_Data directory. If
-     set to <code>true</code>, the existing App_Data directory on the destination will not be
-     deleted, and any App_Data directory in the source will be ignored. Setting is
+    :vartype setParametersXmlFileUri: str
+    :ivar setParameters: MSDeploy Parameters. Must not be set if SetParametersXmlFileUri is used.
+    :vartype setParameters: dict[str, str]
+    :ivar skipAppData: Controls whether the MSDeploy operation skips the App_Data directory. If set
+     to <code>true</code>, the existing App_Data directory on the destination will not be deleted,
+     and any App_Data directory in the source will be ignored. Setting is <code>false</code> by
+     default.
+    :vartype skipAppData: bool
+    :ivar appOffline: Sets the AppOffline rule while the MSDeploy operation executes. Setting is
      <code>false</code> by default.
-    :vartype skip_app_data: bool
-    :ivar app_offline: Sets the AppOffline rule while the MSDeploy operation executes. Setting is
-     <code>false</code> by default.
-    :vartype app_offline: bool
+    :vartype appOffline: bool
     """
 
     packageUri: str
@@ -4166,28 +4272,28 @@ class MSDeployCore(TypedDict, total=False):
 class MSDeployProperties(MSDeployCore):
     """MSDeploy ARM PUT information properties.
 
-    :ivar package_uri: Package URI.
-    :vartype package_uri: str
-    :ivar connection_string: SQL Connection String.
-    :vartype connection_string: str
-    :ivar db_type: Database Type.
-    :vartype db_type: str
-    :ivar set_parameters_xml_file_uri: URI of MSDeploy Parameters file. Must not be set if
+    :ivar packageUri: Package URI.
+    :vartype packageUri: str
+    :ivar connectionString: SQL Connection String.
+    :vartype connectionString: str
+    :ivar dbType: Database Type.
+    :vartype dbType: str
+    :ivar setParametersXmlFileUri: URI of MSDeploy Parameters file. Must not be set if
      SetParameters is used.
-    :vartype set_parameters_xml_file_uri: str
-    :ivar set_parameters: MSDeploy Parameters. Must not be set if SetParametersXmlFileUri is used.
-    :vartype set_parameters: dict[str, str]
-    :ivar skip_app_data: Controls whether the MSDeploy operation skips the App_Data directory. If
-     set to <code>true</code>, the existing App_Data directory on the destination will not be
-     deleted, and any App_Data directory in the source will be ignored. Setting is
+    :vartype setParametersXmlFileUri: str
+    :ivar setParameters: MSDeploy Parameters. Must not be set if SetParametersXmlFileUri is used.
+    :vartype setParameters: dict[str, str]
+    :ivar skipAppData: Controls whether the MSDeploy operation skips the App_Data directory. If set
+     to <code>true</code>, the existing App_Data directory on the destination will not be deleted,
+     and any App_Data directory in the source will be ignored. Setting is <code>false</code> by
+     default.
+    :vartype skipAppData: bool
+    :ivar appOffline: Sets the AppOffline rule while the MSDeploy operation executes. Setting is
      <code>false</code> by default.
-    :vartype skip_app_data: bool
-    :ivar app_offline: Sets the AppOffline rule while the MSDeploy operation executes. Setting is
-     <code>false</code> by default.
-    :vartype app_offline: bool
-    :ivar add_on_packages: List of Add-On packages. Add-On packages implicitly enable the Do Not
+    :vartype appOffline: bool
+    :ivar addOnPackages: List of Add-On packages. Add-On packages implicitly enable the Do Not
      Delete MSDeploy rule.
-    :vartype add_on_packages: list["MSDeployCore"]
+    :vartype addOnPackages: list["MSDeployCore"]
     """
 
     addOnPackages: list["MSDeployCore"]
@@ -4223,12 +4329,11 @@ class NameValuePair(TypedDict, total=False):
 class Nonce(TypedDict, total=False):
     """The configuration settings of the nonce used in the login flow.
 
-    :ivar validate_nonce: <code>false</code> if the nonce should not be validated while completing
+    :ivar validateNonce: <code>false</code> if the nonce should not be validated while completing
      the login flow; otherwise, <code>true</code>.
-    :vartype validate_nonce: bool
-    :ivar nonce_expiration_interval: The time after the request is made when the nonce should
-     expire.
-    :vartype nonce_expiration_interval: str
+    :vartype validateNonce: bool
+    :ivar nonceExpirationInterval: The time after the request is made when the nonce should expire.
+    :vartype nonceExpirationInterval: str
     """
 
     validateNonce: bool
@@ -4285,9 +4390,9 @@ class OpenIdConnectClientCredential(TypedDict, total=False):
     :ivar method: The method that should be used to authenticate the user. Default value is
      "ClientSecretPost".
     :vartype method: Literal["ClientSecretPost"]
-    :ivar client_secret_setting_name: The app setting that contains the client secret for the
-     custom Open ID Connect provider.
-    :vartype client_secret_setting_name: str
+    :ivar clientSecretSettingName: The app setting that contains the client secret for the custom
+     Open ID Connect provider.
+    :vartype clientSecretSettingName: str
     """
 
     method: Literal["ClientSecretPost"]
@@ -4299,17 +4404,17 @@ class OpenIdConnectClientCredential(TypedDict, total=False):
 class OpenIdConnectConfig(TypedDict, total=False):
     """The configuration settings of the endpoints used for the custom Open ID Connect provider.
 
-    :ivar authorization_endpoint: The endpoint to be used to make an authorization request.
-    :vartype authorization_endpoint: str
-    :ivar token_endpoint: The endpoint to be used to request a token.
-    :vartype token_endpoint: str
+    :ivar authorizationEndpoint: The endpoint to be used to make an authorization request.
+    :vartype authorizationEndpoint: str
+    :ivar tokenEndpoint: The endpoint to be used to request a token.
+    :vartype tokenEndpoint: str
     :ivar issuer: The endpoint that issues the token.
     :vartype issuer: str
-    :ivar certification_uri: The endpoint that provides the keys necessary to validate the token.
-    :vartype certification_uri: str
-    :ivar well_known_open_id_configuration: The endpoint that contains all the configuration
-     endpoints for the provider.
-    :vartype well_known_open_id_configuration: str
+    :ivar certificationUri: The endpoint that provides the keys necessary to validate the token.
+    :vartype certificationUri: str
+    :ivar wellKnownOpenIdConfiguration: The endpoint that contains all the configuration endpoints
+     for the provider.
+    :vartype wellKnownOpenIdConfiguration: str
     """
 
     authorizationEndpoint: str
@@ -4327,8 +4432,8 @@ class OpenIdConnectConfig(TypedDict, total=False):
 class OpenIdConnectLogin(TypedDict, total=False):
     """The configuration settings of the login flow of the custom Open ID Connect provider.
 
-    :ivar name_claim_type: The name of the claim that contains the users name.
-    :vartype name_claim_type: str
+    :ivar nameClaimType: The name of the claim that contains the users name.
+    :vartype nameClaimType: str
     :ivar scopes: A list of the scopes that should be requested while authenticating.
     :vartype scopes: list[str]
     """
@@ -4342,13 +4447,13 @@ class OpenIdConnectLogin(TypedDict, total=False):
 class OpenIdConnectRegistration(TypedDict, total=False):
     """The configuration settings of the app registration for the custom Open ID Connect provider.
 
-    :ivar client_id: The client id of the custom Open ID Connect provider.
-    :vartype client_id: str
-    :ivar client_credential: The authentication credentials of the custom Open ID Connect provider.
-    :vartype client_credential: "OpenIdConnectClientCredential"
-    :ivar open_id_connect_configuration: The configuration settings of the endpoints used for the
+    :ivar clientId: The client id of the custom Open ID Connect provider.
+    :vartype clientId: str
+    :ivar clientCredential: The authentication credentials of the custom Open ID Connect provider.
+    :vartype clientCredential: "OpenIdConnectClientCredential"
+    :ivar openIdConnectConfiguration: The configuration settings of the endpoints used for the
      custom Open ID Connect provider.
-    :vartype open_id_connect_configuration: "OpenIdConnectConfig"
+    :vartype openIdConnectConfiguration: "OpenIdConnectConfig"
     """
 
     clientId: str
@@ -4362,21 +4467,23 @@ class OpenIdConnectRegistration(TypedDict, total=False):
 class OutboundVnetRouting(TypedDict, total=False):
     """Outbound traffic options over virtual network.
 
-    :ivar all_traffic: Enables all other routing options defined in OutboundVnetRouting if this
+    :ivar allTraffic: Enables all other routing options defined in OutboundVnetRouting if this
      setting is set to true.
-    :vartype all_traffic: bool
-    :ivar application_traffic: This causes all outbound traffic to have Virtual Network Security
+    :vartype allTraffic: bool
+    :ivar applicationTraffic: This causes all outbound traffic to have Virtual Network Security
      Groups and User Defined Routes applied. Previously called VnetRouteAllEnabled.
-    :vartype application_traffic: bool
-    :ivar content_share_traffic: Enables accessing content over virtual network. Previously called
+    :vartype applicationTraffic: bool
+    :ivar contentShareTraffic: Enables accessing content over virtual network. Previously called
      VnetContentShareEnabled.
-    :vartype content_share_traffic: bool
-    :ivar image_pull_traffic: Enables pulling image over Virtual Network. Previously called
+    :vartype contentShareTraffic: bool
+    :ivar imagePullTraffic: Enables pulling image over Virtual Network. Previously called
      VnetImagePullEnabled.
-    :vartype image_pull_traffic: bool
-    :ivar backup_restore_traffic: Enables Backup and Restore operations over virtual network.
+    :vartype imagePullTraffic: bool
+    :ivar backupRestoreTraffic: Enables Backup and Restore operations over virtual network.
      Previously called VnetBackupRestoreEnabled.
-    :vartype backup_restore_traffic: bool
+    :vartype backupRestoreTraffic: bool
+    :ivar managedIdentityTraffic: Enables Managed Identity operations over virtual network.
+    :vartype managedIdentityTraffic: bool
     """
 
     allTraffic: bool
@@ -4392,6 +4499,8 @@ class OutboundVnetRouting(TypedDict, total=False):
     backupRestoreTraffic: bool
     """Enables Backup and Restore operations over virtual network. Previously called
      VnetBackupRestoreEnabled."""
+    managedIdentityTraffic: bool
+    """Enables Managed Identity operations over virtual network."""
 
 
 class PremierAddOn(TrackedResource):
@@ -4405,9 +4514,9 @@ class PremierAddOn(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -4452,10 +4561,10 @@ class PremierAddOnPatchResourceProperties(TypedDict, total=False):
     :vartype product: str
     :ivar vendor: Premier add on Vendor.
     :vartype vendor: str
-    :ivar marketplace_publisher: Premier add on Marketplace publisher.
-    :vartype marketplace_publisher: str
-    :ivar marketplace_offer: Premier add on Marketplace offer.
-    :vartype marketplace_offer: str
+    :ivar marketplacePublisher: Premier add on Marketplace publisher.
+    :vartype marketplacePublisher: str
+    :ivar marketplaceOffer: Premier add on Marketplace offer.
+    :vartype marketplaceOffer: str
     """
 
     sku: str
@@ -4479,10 +4588,10 @@ class PremierAddOnProperties(TypedDict, total=False):
     :vartype product: str
     :ivar vendor: Premier add on Vendor.
     :vartype vendor: str
-    :ivar marketplace_publisher: Premier add on Marketplace publisher.
-    :vartype marketplace_publisher: str
-    :ivar marketplace_offer: Premier add on Marketplace offer.
-    :vartype marketplace_offer: str
+    :ivar marketplacePublisher: Premier add on Marketplace publisher.
+    :vartype marketplacePublisher: str
+    :ivar marketplaceOffer: Premier add on Marketplace offer.
+    :vartype marketplaceOffer: str
     """
 
     sku: str
@@ -4508,9 +4617,9 @@ class PrivateAccess(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: PrivateAccess resource specific properties.
     :vartype properties: "PrivateAccessProperties"
     :ivar kind: Kind of resource.
@@ -4528,9 +4637,8 @@ class PrivateAccessProperties(TypedDict, total=False):
 
     :ivar enabled: Whether private access is enabled or not.
     :vartype enabled: bool
-    :ivar virtual_networks: The Virtual Networks (and subnets) allowed to access the site
-     privately.
-    :vartype virtual_networks: list["PrivateAccessVirtualNetwork"]
+    :ivar virtualNetworks: The Virtual Networks (and subnets) allowed to access the site privately.
+    :vartype virtualNetworks: list["PrivateAccessVirtualNetwork"]
     """
 
     enabled: bool
@@ -4561,8 +4669,8 @@ class PrivateAccessVirtualNetwork(TypedDict, total=False):
     :vartype name: str
     :ivar key: The key (ID) of the Virtual Network.
     :vartype key: int
-    :ivar resource_id: The ARM uri of the Virtual Network.
-    :vartype resource_id: str
+    :ivar resourceId: The ARM uri of the Virtual Network.
+    :vartype resourceId: str
     :ivar subnets: A List of subnets that access is allowed to on this Virtual Network. An empty
      array (but not null) is interpreted to mean that all subnets are allowed within this Virtual
      Network.
@@ -4587,8 +4695,8 @@ class PrivateLinkConnectionState(TypedDict, total=False):
     :vartype status: str
     :ivar description: Description of a private link connection.
     :vartype description: str
-    :ivar actions_required: ActionsRequired for a private link connection.
-    :vartype actions_required: str
+    :ivar actionsRequired: ActionsRequired for a private link connection.
+    :vartype actionsRequired: str
     """
 
     status: str
@@ -4610,9 +4718,9 @@ class PublicCertificate(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: PublicCertificate resource specific properties.
     :vartype properties: "PublicCertificateProperties"
     :ivar kind: Kind of resource.
@@ -4630,9 +4738,9 @@ class PublicCertificateProperties(TypedDict, total=False):
 
     :ivar blob: Public Certificate byte array.
     :vartype blob: str
-    :ivar public_certificate_location: Public Certificate Location. Known values are:
+    :ivar publicCertificateLocation: Public Certificate Location. Known values are:
      "CurrentUserMy", "LocalMachineMy", and "Unknown".
-    :vartype public_certificate_location: Union[str, "PublicCertificateLocation"]
+    :vartype publicCertificateLocation: Union[str, "PublicCertificateLocation"]
     :ivar thumbprint: Certificate Thumbprint.
     :vartype thumbprint: str
     """
@@ -4668,20 +4776,20 @@ class PushSettings(ProxyOnlyResource):
 class PushSettingsProperties(TypedDict, total=False):
     """PushSettings resource specific properties.
 
-    :ivar is_push_enabled: Gets or sets a flag indicating whether the Push endpoint is enabled.
+    :ivar isPushEnabled: Gets or sets a flag indicating whether the Push endpoint is enabled.
      Required.
-    :vartype is_push_enabled: bool
-    :ivar tag_whitelist_json: Gets or sets a JSON string containing a list of tags that are
+    :vartype isPushEnabled: bool
+    :ivar tagWhitelistJson: Gets or sets a JSON string containing a list of tags that are
      whitelisted for use by the push registration endpoint.
-    :vartype tag_whitelist_json: str
-    :ivar tags_requiring_auth: Gets or sets a JSON string containing a list of tags that require
-     user authentication to be used in the push registration endpoint. Tags can consist of
-     alphanumeric characters and the following: '_', '@', '#', '.', ':', '-'. Validation should be
-     performed at the PushRequestHandler.
-    :vartype tags_requiring_auth: str
-    :ivar dynamic_tags_json: Gets or sets a JSON string containing a list of dynamic tags that will
+    :vartype tagWhitelistJson: str
+    :ivar tagsRequiringAuth: Gets or sets a JSON string containing a list of tags that require user
+     authentication to be used in the push registration endpoint. Tags can consist of alphanumeric
+     characters and the following: '_', '@', '#', '.', ':', '-'. Validation should be performed at
+     the PushRequestHandler.
+    :vartype tagsRequiringAuth: str
+    :ivar dynamicTagsJson: Gets or sets a JSON string containing a list of dynamic tags that will
      be evaluated from user claims in the push registration endpoint.
-    :vartype dynamic_tags_json: str
+    :vartype dynamicTagsJson: str
     """
 
     isPushEnabled: Required[bool]
@@ -4703,29 +4811,28 @@ class RampUpRule(TypedDict, total=False):
     """Routing rules for ramp up testing. This rule allows to redirect static traffic % to a slot or
     to gradually change routing % based on performance.
 
-    :ivar action_host_name: Hostname of a slot to which the traffic will be redirected if decided
-     to. E.g. myapp-stage.azurewebsites.net.
-    :vartype action_host_name: str
-    :ivar reroute_percentage: Percentage of the traffic which will be redirected to
+    :ivar actionHostName: Hostname of a slot to which the traffic will be redirected if decided to.
+     E.g. myapp-stage.azurewebsites.net.
+    :vartype actionHostName: str
+    :ivar reroutePercentage: Percentage of the traffic which will be redirected to
      <code>ActionHostName</code>.
-    :vartype reroute_percentage: float
-    :ivar change_step: In auto ramp up scenario this is the step to add/remove from
+    :vartype reroutePercentage: float
+    :ivar changeStep: In auto ramp up scenario this is the step to add/remove from
      <code>ReroutePercentage</code> until it reaches \\n<code>MinReroutePercentage</code> or
      <code>MaxReroutePercentage</code>. Site metrics are checked every N minutes specified in
      <code>ChangeIntervalInMinutes</code>.\\nCustom decision algorithm can be provided in
      TiPCallback site extension which URL can be specified in
      <code>ChangeDecisionCallbackUrl</code>.
-    :vartype change_step: float
-    :ivar change_interval_in_minutes: Specifies interval in minutes to reevaluate
-     ReroutePercentage.
-    :vartype change_interval_in_minutes: int
-    :ivar min_reroute_percentage: Specifies lower boundary above which ReroutePercentage will stay.
-    :vartype min_reroute_percentage: float
-    :ivar max_reroute_percentage: Specifies upper boundary below which ReroutePercentage will stay.
-    :vartype max_reroute_percentage: float
-    :ivar change_decision_callback_url: Custom decision algorithm can be provided in TiPCallback
-     site extension which URL can be specified.
-    :vartype change_decision_callback_url: str
+    :vartype changeStep: float
+    :ivar changeIntervalInMinutes: Specifies interval in minutes to reevaluate ReroutePercentage.
+    :vartype changeIntervalInMinutes: int
+    :ivar minReroutePercentage: Specifies lower boundary above which ReroutePercentage will stay.
+    :vartype minReroutePercentage: float
+    :ivar maxReroutePercentage: Specifies upper boundary below which ReroutePercentage will stay.
+    :vartype maxReroutePercentage: float
+    :ivar changeDecisionCallbackUrl: Custom decision algorithm can be provided in TiPCallback site
+     extension which URL can be specified.
+    :vartype changeDecisionCallbackUrl: str
     :ivar name: Name of the routing rule. The recommended name would be to point to the slot which
      will receive the traffic in the experiment.
     :vartype name: str
@@ -4759,8 +4866,8 @@ class RampUpRule(TypedDict, total=False):
 class RegenerateActionParameter(TypedDict, total=False):
     """The access key regenerate action content.
 
-    :ivar key_type: The key type. Known values are: "NotSpecified", "Primary", and "Secondary".
-    :vartype key_type: Union[str, "KeyType"]
+    :ivar keyType: The key type. Known values are: "NotSpecified", "Primary", and "Secondary".
+    :vartype keyType: Union[str, "KeyType"]
     """
 
     keyType: Union[str, "KeyType"]
@@ -4770,14 +4877,14 @@ class RegenerateActionParameter(TypedDict, total=False):
 class RegistryAdapter(TypedDict, total=False):
     """Server farm registry adapter configuration.
 
-    :ivar registry_key: Registry key for the adapter.
-    :vartype registry_key: str
+    :ivar registryKey: Registry key for the adapter.
+    :vartype registryKey: str
     :ivar type: Type of the registry adapter. Known values are: "Binary", "String",
      "Expand_String", "Multi_String", "DWord", and "QWord".
     :vartype type: Union[str, "RegistryAdapterType"]
-    :ivar key_vault_secret_reference: Key vault reference to the value that will be placed in the
+    :ivar keyVaultSecretReference: Key vault reference to the value that will be placed in the
      registry location.
-    :vartype key_vault_secret_reference: "KeyVaultReferenceWithStatus"
+    :vartype keyVaultSecretReference: "KeyVaultReferenceWithStatus"
     """
 
     registryKey: str
@@ -4800,9 +4907,9 @@ class RelayServiceConnectionEntity(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: RelayServiceConnectionEntity resource specific properties.
     :vartype properties: "RelayServiceConnectionEntityProperties"
     :ivar kind: Kind of resource.
@@ -4818,20 +4925,20 @@ class RelayServiceConnectionEntity(ProxyResource):
 class RelayServiceConnectionEntityProperties(TypedDict, total=False):
     """RelayServiceConnectionEntity resource specific properties.
 
-    :ivar entity_name:
-    :vartype entity_name: str
-    :ivar entity_connection_string:
-    :vartype entity_connection_string: str
-    :ivar resource_type:
-    :vartype resource_type: str
-    :ivar resource_connection_string:
-    :vartype resource_connection_string: str
+    :ivar entityName:
+    :vartype entityName: str
+    :ivar entityConnectionString:
+    :vartype entityConnectionString: str
+    :ivar resourceType:
+    :vartype resourceType: str
+    :ivar resourceConnectionString:
+    :vartype resourceConnectionString: str
     :ivar hostname:
     :vartype hostname: str
     :ivar port:
     :vartype port: int
-    :ivar biztalk_uri:
-    :vartype biztalk_uri: str
+    :ivar biztalkUri:
+    :vartype biztalkUri: str
     """
 
     entityName: str
@@ -4873,9 +4980,9 @@ class RemotePrivateEndpointConnectionARMResource(ProxyResource):  # pylint: disa
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: RemotePrivateEndpointConnectionARMResource resource specific properties.
     :vartype properties: "RemotePrivateEndpointConnectionARMResourceProperties"
     :ivar kind: Kind of resource.
@@ -4891,14 +4998,14 @@ class RemotePrivateEndpointConnectionARMResource(ProxyResource):  # pylint: disa
 class RemotePrivateEndpointConnectionARMResourceProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """RemotePrivateEndpointConnectionARMResource resource specific properties.
 
-    :ivar provisioning_state:
-    :vartype provisioning_state: str
-    :ivar private_endpoint: PrivateEndpoint of a remote private endpoint connection.
-    :vartype private_endpoint: "ArmIdWrapper"
-    :ivar private_link_service_connection_state: The state of a private link connection.
-    :vartype private_link_service_connection_state: "PrivateLinkConnectionState"
-    :ivar ip_addresses: Private IPAddresses mapped to the remote private endpoint.
-    :vartype ip_addresses: list[str]
+    :ivar provisioningState:
+    :vartype provisioningState: str
+    :ivar privateEndpoint: PrivateEndpoint of a remote private endpoint connection.
+    :vartype privateEndpoint: "ArmIdWrapper"
+    :ivar privateLinkServiceConnectionState: The state of a private link connection.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkConnectionState"
+    :ivar ipAddresses: Private IPAddresses mapped to the remote private endpoint.
+    :vartype ipAddresses: list[str]
     """
 
     provisioningState: str
@@ -4913,14 +5020,14 @@ class RemotePrivateEndpointConnectionARMResourceProperties(TypedDict, total=Fals
 class RemotePrivateEndpointConnectionProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """RemotePrivateEndpointConnection resource specific properties.
 
-    :ivar provisioning_state:
-    :vartype provisioning_state: str
-    :ivar private_endpoint: PrivateEndpoint of a remote private endpoint connection.
-    :vartype private_endpoint: "ArmIdWrapper"
-    :ivar private_link_service_connection_state: The state of a private link connection.
-    :vartype private_link_service_connection_state: "PrivateLinkConnectionState"
-    :ivar ip_addresses: Private IPAddresses mapped to the remote private endpoint.
-    :vartype ip_addresses: list[str]
+    :ivar provisioningState:
+    :vartype provisioningState: str
+    :ivar privateEndpoint: PrivateEndpoint of a remote private endpoint connection.
+    :vartype privateEndpoint: "ArmIdWrapper"
+    :ivar privateLinkServiceConnectionState: The state of a private link connection.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkConnectionState"
+    :ivar ipAddresses: Private IPAddresses mapped to the remote private endpoint.
+    :vartype ipAddresses: list[str]
     """
 
     provisioningState: str
@@ -4937,8 +5044,8 @@ class RequestsBasedTrigger(TypedDict, total=False):
 
     :ivar count: Request Count.
     :vartype count: int
-    :ivar time_interval: Time interval.
-    :vartype time_interval: str
+    :ivar timeInterval: Time interval.
+    :vartype timeInterval: str
     """
 
     count: int
@@ -4971,12 +5078,12 @@ class ResourceNameAvailabilityRequest(TypedDict, total=False):
      "HostingEnvironment", "PublishingUser", "Microsoft.Web/sites", "Microsoft.Web/sites/slots",
      "Microsoft.Web/hostingEnvironments", and "Microsoft.Web/publishingUsers".
     :vartype type: Union[str, "CheckNameResourceTypes"]
-    :ivar is_fqdn: Is fully qualified domain name.
-    :vartype is_fqdn: bool
-    :ivar environment_id: Azure Resource Manager ID of the customer's selected Container Apps
+    :ivar isFqdn: Is fully qualified domain name.
+    :vartype isFqdn: bool
+    :ivar environmentId: Azure Resource Manager ID of the customer's selected Container Apps
      Environment on which to host the Function app. This must be of the form
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}.
-    :vartype environment_id: str
+    :vartype environmentId: str
     """
 
     name: Required[str]
@@ -5095,37 +5202,37 @@ class RestoreRequest(ProxyOnlyResource):
 class RestoreRequestProperties(TypedDict, total=False):
     """RestoreRequest resource specific properties.
 
-    :ivar storage_account_url: SAS URL to the container. Required.
-    :vartype storage_account_url: str
-    :ivar blob_name: Name of a blob which contains the backup.
-    :vartype blob_name: str
+    :ivar storageAccountUrl: SAS URL to the container. Required.
+    :vartype storageAccountUrl: str
+    :ivar blobName: Name of a blob which contains the backup.
+    :vartype blobName: str
     :ivar overwrite: <code>true</code> if the restore operation can overwrite target app;
      otherwise, <code>false</code>. <code>true</code> is needed if trying to restore over an
      existing app. Required.
     :vartype overwrite: bool
-    :ivar site_name: Name of an app.
-    :vartype site_name: str
+    :ivar siteName: Name of an app.
+    :vartype siteName: str
     :ivar databases: Collection of databases which should be restored. This list has to match the
      list of databases included in the backup.
     :vartype databases: list["DatabaseBackupSetting"]
-    :ivar ignore_conflicting_host_names: Changes a logic when restoring an app with custom domains.
+    :ivar ignoreConflictingHostNames: Changes a logic when restoring an app with custom domains.
      <code>true</code> to remove custom domains automatically. If <code>false</code>, custom domains
      are added to \\nthe app's object when it is being restored, but that might fail due to
      conflicts during the operation.
-    :vartype ignore_conflicting_host_names: bool
-    :ivar ignore_databases: Ignore the databases and only restore the site content.
-    :vartype ignore_databases: bool
-    :ivar app_service_plan: Specify app service plan that will own restored site.
-    :vartype app_service_plan: str
-    :ivar operation_type: Operation type. Known values are: "Default", "Clone", "Relocation",
+    :vartype ignoreConflictingHostNames: bool
+    :ivar ignoreDatabases: Ignore the databases and only restore the site content.
+    :vartype ignoreDatabases: bool
+    :ivar appServicePlan: Specify app service plan that will own restored site.
+    :vartype appServicePlan: str
+    :ivar operationType: Operation type. Known values are: "Default", "Clone", "Relocation",
      "Snapshot", and "CloudFS".
-    :vartype operation_type: Union[str, "BackupRestoreOperationType"]
-    :ivar adjust_connection_strings: <code>true</code> if SiteConfig.ConnectionStrings should be
-     set in new app; otherwise, <code>false</code>.
-    :vartype adjust_connection_strings: bool
-    :ivar hosting_environment: App Service Environment name, if needed (only when restoring an app
+    :vartype operationType: Union[str, "BackupRestoreOperationType"]
+    :ivar adjustConnectionStrings: <code>true</code> if SiteConfig.ConnectionStrings should be set
+     in new app; otherwise, <code>false</code>.
+    :vartype adjustConnectionStrings: bool
+    :ivar hostingEnvironment: App Service Environment name, if needed (only when restoring an app
      to an App Service Environment).
-    :vartype hosting_environment: str
+    :vartype hostingEnvironment: str
     """
 
     storageAccountUrl: Required[str]
@@ -5163,10 +5270,10 @@ class RestoreRequestProperties(TypedDict, total=False):
 class ServerFarmNetworkSettings(TypedDict, total=False):
     """Network settings for an app service plan.
 
-    :ivar virtual_network_subnet_id: Azure Resource Manager ID of the Virtual network and subnet to
-     be joined by Regional VNET Integration. This must be of the form
+    :ivar virtualNetworkSubnetId: Azure Resource Manager ID of the Virtual network and subnet to be
+     joined by Regional VNET Integration. This must be of the form
      /subscriptions/{subscriptionName}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
-    :vartype virtual_network_subnet_id: str
+    :vartype virtualNetworkSubnetId: str
     """
 
     virtualNetworkSubnetId: str
@@ -5186,9 +5293,9 @@ class Site(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -5197,8 +5304,8 @@ class Site(TrackedResource):
     :vartype properties: "SiteProperties"
     :ivar identity: Managed service identity.
     :vartype identity: "ManagedServiceIdentity"
-    :ivar extended_location: Extended Location.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Extended Location.
+    :vartype extendedLocation: "ExtendedLocation"
     :ivar kind: Kind of resource. If the resource is an app, you can refer to
      `https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
      <https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference>`_
@@ -5217,6 +5324,38 @@ class Site(TrackedResource):
      `https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
      <https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference>`_
      for details supported values for kind."""
+
+
+class SiteAuthInfo(TypedDict, total=False):
+    """External auth configuration for the MCP endpoint (used when EasyAuth is not enabled). At
+    minimum, ``scopes`` and either ``wellKnownOpenIdConfiguration`` or ``issuer`` must be provided.
+
+    :ivar jwksUri: JWKS URL for verifying JWT signatures.
+    :vartype jwksUri: str
+    :ivar issuer: Expected 'iss' claim. Required for custom site authentication if
+     ``wellKnownOpenIdConfiguration`` is not provided.
+    :vartype issuer: str
+    :ivar audience: Expected 'aud' claim.
+    :vartype audience: str
+    :ivar wellKnownOpenIdConfiguration: OIDC metadata URL. Required for custom site authentication
+     if ``issuer`` is not provided.
+    :vartype wellKnownOpenIdConfiguration: str
+    :ivar scopes: OAuth scopes for Protected Resource Metadata (PRM). Required for custom site
+     authentication.
+    :vartype scopes: list[str]
+    """
+
+    jwksUri: str
+    """JWKS URL for verifying JWT signatures."""
+    issuer: str
+    """Expected 'iss' claim. Required for custom site authentication if
+     ``wellKnownOpenIdConfiguration`` is not provided."""
+    audience: str
+    """Expected 'aud' claim."""
+    wellKnownOpenIdConfiguration: str
+    """OIDC metadata URL. Required for custom site authentication if ``issuer`` is not provided."""
+    scopes: list[str]
+    """OAuth scopes for Protected Resource Metadata (PRM). Required for custom site authentication."""
 
 
 class SiteAuthSettings(ProxyOnlyResource):
@@ -5244,50 +5383,50 @@ class SiteAuthSettingsProperties(TypedDict, total=False):
     :ivar enabled: <code>true</code> if the Authentication / Authorization feature is enabled for
      the current app; otherwise, <code>false</code>.
     :vartype enabled: bool
-    :ivar runtime_version: The RuntimeVersion of the Authentication / Authorization feature in use
+    :ivar runtimeVersion: The RuntimeVersion of the Authentication / Authorization feature in use
      for the current app. The setting in this value can control the behavior of certain features in
      the Authentication / Authorization module.
-    :vartype runtime_version: str
-    :ivar unauthenticated_client_action: The action to take when an unauthenticated client attempts
+    :vartype runtimeVersion: str
+    :ivar unauthenticatedClientAction: The action to take when an unauthenticated client attempts
      to access the app. Known values are: "RedirectToLoginPage" and "AllowAnonymous".
-    :vartype unauthenticated_client_action: Union[str, "UnauthenticatedClientAction"]
-    :ivar token_store_enabled: <code>true</code> to durably store platform-specific security tokens
+    :vartype unauthenticatedClientAction: Union[str, "UnauthenticatedClientAction"]
+    :ivar tokenStoreEnabled: <code>true</code> to durably store platform-specific security tokens
      that are obtained during login flows; otherwise, <code>false</code>. The default is
      <code>false</code>.
-    :vartype token_store_enabled: bool
-    :ivar allowed_external_redirect_urls: External URLs that can be redirected to as part of
-     logging in or logging out of the app. Note that the query string part of the URL is ignored.
-     This is an advanced setting typically only needed by Windows Store application backends. Note
-     that URLs within the current domain are always implicitly allowed.
-    :vartype allowed_external_redirect_urls: list[str]
-    :ivar default_provider: The default authentication provider to use when multiple providers are
+    :vartype tokenStoreEnabled: bool
+    :ivar allowedExternalRedirectUrls: External URLs that can be redirected to as part of logging
+     in or logging out of the app. Note that the query string part of the URL is ignored. This is an
+     advanced setting typically only needed by Windows Store application backends. Note that URLs
+     within the current domain are always implicitly allowed.
+    :vartype allowedExternalRedirectUrls: list[str]
+    :ivar defaultProvider: The default authentication provider to use when multiple providers are
      configured. This setting is only needed if multiple providers are configured and the
      unauthenticated client action is set to "RedirectToLoginPage". Known values are:
      "AzureActiveDirectory", "Facebook", "Google", "MicrosoftAccount", "Twitter", and "Github".
-    :vartype default_provider: Union[str, "BuiltInAuthenticationProvider"]
-    :ivar token_refresh_extension_hours: The number of hours after session token expiration that a
+    :vartype defaultProvider: Union[str, "BuiltInAuthenticationProvider"]
+    :ivar tokenRefreshExtensionHours: The number of hours after session token expiration that a
      session token can be used to call the token refresh API. The default is 72 hours.
-    :vartype token_refresh_extension_hours: float
-    :ivar client_id: The Client ID of this relying party application, known as the client_id. This
+    :vartype tokenRefreshExtensionHours: float
+    :ivar clientId: The Client ID of this relying party application, known as the client_id. This
      setting is required for enabling OpenID Connection authentication with Azure Active Directory
      or other 3rd party OpenID Connect providers. More information on OpenID Connect:
      `http://openid.net/specs/openid-connect-core-1_0.html
      <http://openid.net/specs/openid-connect-core-1_0.html>`_.
-    :vartype client_id: str
-    :ivar client_secret: The Client Secret of this relying party application (in Azure Active
+    :vartype clientId: str
+    :ivar clientSecret: The Client Secret of this relying party application (in Azure Active
      Directory, this is also referred to as the Key). This setting is optional. If no client secret
      is configured, the OpenID Connect implicit auth flow is used to authenticate end users.
      Otherwise, the OpenID Connect Authorization Code Flow is used to authenticate end users. More
      information on OpenID Connect: `http://openid.net/specs/openid-connect-core-1_0.html
      <http://openid.net/specs/openid-connect-core-1_0.html>`_.
-    :vartype client_secret: str
-    :ivar client_secret_setting_name: The app setting name that contains the client secret of the
+    :vartype clientSecret: str
+    :ivar clientSecretSettingName: The app setting name that contains the client secret of the
      relying party application.
-    :vartype client_secret_setting_name: str
-    :ivar client_secret_certificate_thumbprint: An alternative to the client secret, that is the
+    :vartype clientSecretSettingName: str
+    :ivar clientSecretCertificateThumbprint: An alternative to the client secret, that is the
      thumbprint of a certificate used for signing purposes. This property acts as a replacement for
      the Client Secret. It is also optional.
-    :vartype client_secret_certificate_thumbprint: str
+    :vartype clientSecretCertificateThumbprint: str
     :ivar issuer: The OpenID Connect Issuer URI that represents the entity which issues access
      tokens for this application. When using Azure Active Directory, this value is the URI of the
      directory tenant, e.g. ``https://sts.windows.net/{tenant-guid}/``. This URI is a case-sensitive
@@ -5295,107 +5434,107 @@ class SiteAuthSettingsProperties(TypedDict, total=False):
      `http://openid.net/specs/openid-connect-discovery-1_0.html
      <http://openid.net/specs/openid-connect-discovery-1_0.html>`_.
     :vartype issuer: str
-    :ivar validate_issuer: Gets a value indicating whether the issuer should be a valid HTTPS url
+    :ivar validateIssuer: Gets a value indicating whether the issuer should be a valid HTTPS url
      and be validated as such.
-    :vartype validate_issuer: bool
-    :ivar allowed_audiences: Allowed audience values to consider when validating JSON Web Tokens
+    :vartype validateIssuer: bool
+    :ivar allowedAudiences: Allowed audience values to consider when validating JSON Web Tokens
      issued by Azure Active Directory. Note that the <code>ClientID</code> value is always
      considered an allowed audience, regardless of this setting.
-    :vartype allowed_audiences: list[str]
-    :ivar additional_login_params: Login parameters to send to the OpenID Connect authorization
+    :vartype allowedAudiences: list[str]
+    :ivar additionalLoginParams: Login parameters to send to the OpenID Connect authorization
      endpoint when a user logs in. Each parameter must be in the form "key=value".
-    :vartype additional_login_params: list[str]
-    :ivar aad_claims_authorization: Gets a JSON string containing the Azure AD Acl settings.
-    :vartype aad_claims_authorization: str
-    :ivar google_client_id: The OpenID Connect Client ID for the Google web application. This
+    :vartype additionalLoginParams: list[str]
+    :ivar aadClaimsAuthorization: Gets a JSON string containing the Azure AD Acl settings.
+    :vartype aadClaimsAuthorization: str
+    :ivar googleClientId: The OpenID Connect Client ID for the Google web application. This setting
+     is required for enabling Google Sign-In. Google Sign-In documentation:
+     `https://developers.google.com/identity/sign-in/web/
+     <https://developers.google.com/identity/sign-in/web/>`_.
+    :vartype googleClientId: str
+    :ivar googleClientSecret: The client secret associated with the Google web application. This
      setting is required for enabling Google Sign-In. Google Sign-In documentation:
      `https://developers.google.com/identity/sign-in/web/
      <https://developers.google.com/identity/sign-in/web/>`_.
-    :vartype google_client_id: str
-    :ivar google_client_secret: The client secret associated with the Google web application. This
-     setting is required for enabling Google Sign-In. Google Sign-In documentation:
-     `https://developers.google.com/identity/sign-in/web/
-     <https://developers.google.com/identity/sign-in/web/>`_.
-    :vartype google_client_secret: str
-    :ivar google_client_secret_setting_name: The app setting name that contains the client secret
+    :vartype googleClientSecret: str
+    :ivar googleClientSecretSettingName: The app setting name that contains the client secret
      associated with the Google web application.
-    :vartype google_client_secret_setting_name: str
-    :ivar google_o_auth_scopes: The OAuth 2.0 scopes that will be requested as part of Google
-     Sign-In authentication. This setting is optional. If not specified, "openid", "profile", and
-     "email" are used as default scopes. Google Sign-In documentation:
+    :vartype googleClientSecretSettingName: str
+    :ivar googleOAuthScopes: The OAuth 2.0 scopes that will be requested as part of Google Sign-In
+     authentication. This setting is optional. If not specified, "openid", "profile", and "email"
+     are used as default scopes. Google Sign-In documentation:
      `https://developers.google.com/identity/sign-in/web/
      <https://developers.google.com/identity/sign-in/web/>`_.
-    :vartype google_o_auth_scopes: list[str]
-    :ivar facebook_app_id: The App ID of the Facebook app used for login. This setting is required
+    :vartype googleOAuthScopes: list[str]
+    :ivar facebookAppId: The App ID of the Facebook app used for login. This setting is required
      for enabling Facebook Login. Facebook Login documentation:
      `https://developers.facebook.com/docs/facebook-login
      <https://developers.facebook.com/docs/facebook-login>`_.
-    :vartype facebook_app_id: str
-    :ivar facebook_app_secret: The App Secret of the Facebook app used for Facebook Login. This
+    :vartype facebookAppId: str
+    :ivar facebookAppSecret: The App Secret of the Facebook app used for Facebook Login. This
      setting is required for enabling Facebook Login. Facebook Login documentation:
      `https://developers.facebook.com/docs/facebook-login
      <https://developers.facebook.com/docs/facebook-login>`_.
-    :vartype facebook_app_secret: str
-    :ivar facebook_app_secret_setting_name: The app setting name that contains the app secret used
-     for Facebook Login.
-    :vartype facebook_app_secret_setting_name: str
-    :ivar facebook_o_auth_scopes: The OAuth 2.0 scopes that will be requested as part of Facebook
+    :vartype facebookAppSecret: str
+    :ivar facebookAppSecretSettingName: The app setting name that contains the app secret used for
+     Facebook Login.
+    :vartype facebookAppSecretSettingName: str
+    :ivar facebookOAuthScopes: The OAuth 2.0 scopes that will be requested as part of Facebook
      Login authentication. This setting is optional. Facebook Login documentation:
      `https://developers.facebook.com/docs/facebook-login
      <https://developers.facebook.com/docs/facebook-login>`_.
-    :vartype facebook_o_auth_scopes: list[str]
-    :ivar git_hub_client_id: The Client Id of the GitHub app used for login. This setting is
-     required for enabling Github login.
-    :vartype git_hub_client_id: str
-    :ivar git_hub_client_secret: The Client Secret of the GitHub app used for Github Login. This
+    :vartype facebookOAuthScopes: list[str]
+    :ivar gitHubClientId: The Client Id of the GitHub app used for login. This setting is required
+     for enabling Github login.
+    :vartype gitHubClientId: str
+    :ivar gitHubClientSecret: The Client Secret of the GitHub app used for Github Login. This
      setting is required for enabling Github login.
-    :vartype git_hub_client_secret: str
-    :ivar git_hub_client_secret_setting_name: The app setting name that contains the client secret
-     of the Github app used for GitHub Login.
-    :vartype git_hub_client_secret_setting_name: str
-    :ivar git_hub_o_auth_scopes: The OAuth 2.0 scopes that will be requested as part of GitHub
-     Login authentication. This setting is optional.
-    :vartype git_hub_o_auth_scopes: list[str]
-    :ivar twitter_consumer_key: The OAuth 1.0a consumer key of the Twitter application used for
+    :vartype gitHubClientSecret: str
+    :ivar gitHubClientSecretSettingName: The app setting name that contains the client secret of
+     the Github app used for GitHub Login.
+    :vartype gitHubClientSecretSettingName: str
+    :ivar gitHubOAuthScopes: The OAuth 2.0 scopes that will be requested as part of GitHub Login
+     authentication. This setting is optional.
+    :vartype gitHubOAuthScopes: list[str]
+    :ivar twitterConsumerKey: The OAuth 1.0a consumer key of the Twitter application used for
      sign-in. This setting is required for enabling Twitter Sign-In. Twitter Sign-In documentation:
      `https://dev.twitter.com/web/sign-in <https://dev.twitter.com/web/sign-in>`_.
-    :vartype twitter_consumer_key: str
-    :ivar twitter_consumer_secret: The OAuth 1.0a consumer secret of the Twitter application used
-     for sign-in. This setting is required for enabling Twitter Sign-In. Twitter Sign-In
-     documentation: `https://dev.twitter.com/web/sign-in <https://dev.twitter.com/web/sign-in>`_.
-    :vartype twitter_consumer_secret: str
-    :ivar twitter_consumer_secret_setting_name: The app setting name that contains the OAuth 1.0a
+    :vartype twitterConsumerKey: str
+    :ivar twitterConsumerSecret: The OAuth 1.0a consumer secret of the Twitter application used for
+     sign-in. This setting is required for enabling Twitter Sign-In. Twitter Sign-In documentation:
+     `https://dev.twitter.com/web/sign-in <https://dev.twitter.com/web/sign-in>`_.
+    :vartype twitterConsumerSecret: str
+    :ivar twitterConsumerSecretSettingName: The app setting name that contains the OAuth 1.0a
      consumer secret of the Twitter application used for sign-in.
-    :vartype twitter_consumer_secret_setting_name: str
-    :ivar microsoft_account_client_id: The OAuth 2.0 client ID that was created for the app used
-     for authentication. This setting is required for enabling Microsoft Account authentication.
+    :vartype twitterConsumerSecretSettingName: str
+    :ivar microsoftAccountClientId: The OAuth 2.0 client ID that was created for the app used for
+     authentication. This setting is required for enabling Microsoft Account authentication.
      Microsoft Account OAuth documentation: `https://dev.onedrive.com/auth/msa_oauth.htm
      <https://dev.onedrive.com/auth/msa_oauth.htm>`_.
-    :vartype microsoft_account_client_id: str
-    :ivar microsoft_account_client_secret: The OAuth 2.0 client secret that was created for the app
+    :vartype microsoftAccountClientId: str
+    :ivar microsoftAccountClientSecret: The OAuth 2.0 client secret that was created for the app
      used for authentication. This setting is required for enabling Microsoft Account
      authentication. Microsoft Account OAuth documentation:
      `https://dev.onedrive.com/auth/msa_oauth.htm <https://dev.onedrive.com/auth/msa_oauth.htm>`_.
-    :vartype microsoft_account_client_secret: str
-    :ivar microsoft_account_client_secret_setting_name: The app setting name containing the OAuth
-     2.0 client secret that was created for the app used for authentication.
-    :vartype microsoft_account_client_secret_setting_name: str
-    :ivar microsoft_account_o_auth_scopes: The OAuth 2.0 scopes that will be requested as part of
+    :vartype microsoftAccountClientSecret: str
+    :ivar microsoftAccountClientSecretSettingName: The app setting name containing the OAuth 2.0
+     client secret that was created for the app used for authentication.
+    :vartype microsoftAccountClientSecretSettingName: str
+    :ivar microsoftAccountOAuthScopes: The OAuth 2.0 scopes that will be requested as part of
      Microsoft Account authentication. This setting is optional. If not specified, "wl.basic" is
      used as the default scope. Microsoft Account Scopes and permissions documentation:
      `https://msdn.microsoft.com/en-us/library/dn631845.aspx
      <https://msdn.microsoft.com/en-us/library/dn631845.aspx>`_.
-    :vartype microsoft_account_o_auth_scopes: list[str]
-    :ivar is_auth_from_file: "true" if the auth config settings should be read from a file, "false"
+    :vartype microsoftAccountOAuthScopes: list[str]
+    :ivar isAuthFromFile: "true" if the auth config settings should be read from a file, "false"
      otherwise.
-    :vartype is_auth_from_file: str
-    :ivar auth_file_path: The path of the config file containing auth settings. If the path is
+    :vartype isAuthFromFile: str
+    :ivar authFilePath: The path of the config file containing auth settings. If the path is
      relative, base will the site's root directory.
-    :vartype auth_file_path: str
-    :ivar config_version: The ConfigVersion of the Authentication / Authorization feature in use
-     for the current app. The setting in this value can control the behavior of the control plane
-     for Authentication / Authorization.
-    :vartype config_version: str
+    :vartype authFilePath: str
+    :ivar configVersion: The ConfigVersion of the Authentication / Authorization feature in use for
+     the current app. The setting in this value can control the behavior of the control plane for
+     Authentication / Authorization.
+    :vartype configVersion: str
     """
 
     enabled: bool
@@ -5558,9 +5697,9 @@ class SiteAuthSettingsV2(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: SiteAuthSettingsV2 resource specific properties.
     :vartype properties: "SiteAuthSettingsV2Properties"
     :ivar kind: Kind of resource. If the resource is an app, you can refer to
@@ -5585,18 +5724,18 @@ class SiteAuthSettingsV2Properties(TypedDict, total=False):
     :ivar platform: The configuration settings of the platform of App Service
      Authentication/Authorization.
     :vartype platform: "AuthPlatform"
-    :ivar global_validation: The configuration settings that determines the validation flow of
-     users using App Service Authentication/Authorization.
-    :vartype global_validation: "GlobalValidation"
-    :ivar identity_providers: The configuration settings of each of the identity providers used to
+    :ivar globalValidation: The configuration settings that determines the validation flow of users
+     using App Service Authentication/Authorization.
+    :vartype globalValidation: "GlobalValidation"
+    :ivar identityProviders: The configuration settings of each of the identity providers used to
      configure App Service Authentication/Authorization.
-    :vartype identity_providers: "IdentityProviders"
+    :vartype identityProviders: "IdentityProviders"
     :ivar login: The configuration settings of the login flow of users using App Service
      Authentication/Authorization.
     :vartype login: "Login"
-    :ivar http_settings: The configuration settings of the HTTP requests for authentication and
+    :ivar httpSettings: The configuration settings of the HTTP requests for authentication and
      authorization requests made against App Service Authentication/Authorization.
-    :vartype http_settings: "HttpSettings"
+    :vartype httpSettings: "HttpSettings"
     """
 
     platform: "AuthPlatform"
@@ -5618,154 +5757,153 @@ class SiteAuthSettingsV2Properties(TypedDict, total=False):
 class SiteConfig(TypedDict, total=False):
     """Configuration of an App Service app.
 
-    :ivar number_of_workers: Number of workers.
-    :vartype number_of_workers: int
-    :ivar default_documents: Default documents.
-    :vartype default_documents: list[str]
-    :ivar net_framework_version: .NET Framework version.
-    :vartype net_framework_version: str
-    :ivar php_version: Version of PHP.
-    :vartype php_version: str
-    :ivar python_version: Version of Python.
-    :vartype python_version: str
-    :ivar node_version: Version of Node.js.
-    :vartype node_version: str
-    :ivar power_shell_version: Version of PowerShell.
-    :vartype power_shell_version: str
-    :ivar linux_fx_version: Linux App Framework and version.
-    :vartype linux_fx_version: str
-    :ivar windows_fx_version: Xenon App Framework and version.
-    :vartype windows_fx_version: str
-    :ivar request_tracing_enabled: <code>true</code> if request tracing is enabled; otherwise,
+    :ivar numberOfWorkers: Number of workers.
+    :vartype numberOfWorkers: int
+    :ivar defaultDocuments: Default documents.
+    :vartype defaultDocuments: list[str]
+    :ivar netFrameworkVersion: .NET Framework version.
+    :vartype netFrameworkVersion: str
+    :ivar phpVersion: Version of PHP.
+    :vartype phpVersion: str
+    :ivar pythonVersion: Version of Python.
+    :vartype pythonVersion: str
+    :ivar nodeVersion: Version of Node.js.
+    :vartype nodeVersion: str
+    :ivar powerShellVersion: Version of PowerShell.
+    :vartype powerShellVersion: str
+    :ivar linuxFxVersion: Linux App Framework and version.
+    :vartype linuxFxVersion: str
+    :ivar windowsFxVersion: Xenon App Framework and version.
+    :vartype windowsFxVersion: str
+    :ivar requestTracingEnabled: <code>true</code> if request tracing is enabled; otherwise,
      <code>false</code>.
-    :vartype request_tracing_enabled: bool
-    :ivar request_tracing_expiration_time: Request tracing expiration time.
-    :vartype request_tracing_expiration_time: str
-    :ivar remote_debugging_enabled: <code>true</code> if remote debugging is enabled; otherwise,
+    :vartype requestTracingEnabled: bool
+    :ivar requestTracingExpirationTime: Request tracing expiration time.
+    :vartype requestTracingExpirationTime: str
+    :ivar remoteDebuggingEnabled: <code>true</code> if remote debugging is enabled; otherwise,
      <code>false</code>.
-    :vartype remote_debugging_enabled: bool
-    :ivar remote_debugging_version: Remote debugging version.
-    :vartype remote_debugging_version: str
-    :ivar http_logging_enabled: <code>true</code> if HTTP logging is enabled; otherwise,
+    :vartype remoteDebuggingEnabled: bool
+    :ivar remoteDebuggingVersion: Remote debugging version.
+    :vartype remoteDebuggingVersion: str
+    :ivar httpLoggingEnabled: <code>true</code> if HTTP logging is enabled; otherwise,
      <code>false</code>.
-    :vartype http_logging_enabled: bool
-    :ivar acr_use_managed_identity_creds: Flag to use Managed Identity Creds for ACR pull.
-    :vartype acr_use_managed_identity_creds: bool
-    :ivar acr_user_managed_identity_id: If using user managed identity, the user managed identity
+    :vartype httpLoggingEnabled: bool
+    :ivar acrUseManagedIdentityCreds: Flag to use Managed Identity Creds for ACR pull.
+    :vartype acrUseManagedIdentityCreds: bool
+    :ivar acrUserManagedIdentityID: If using user managed identity, the user managed identity
      ClientId.
-    :vartype acr_user_managed_identity_id: str
-    :ivar logs_directory_size_limit: HTTP logs directory size limit.
-    :vartype logs_directory_size_limit: int
-    :ivar detailed_error_logging_enabled: <code>true</code> if detailed error logging is enabled;
+    :vartype acrUserManagedIdentityID: str
+    :ivar logsDirectorySizeLimit: HTTP logs directory size limit.
+    :vartype logsDirectorySizeLimit: int
+    :ivar detailedErrorLoggingEnabled: <code>true</code> if detailed error logging is enabled;
      otherwise, <code>false</code>.
-    :vartype detailed_error_logging_enabled: bool
-    :ivar publishing_username: Publishing user name.
-    :vartype publishing_username: str
-    :ivar app_settings: Application settings. This property is not returned in response to normal
+    :vartype detailedErrorLoggingEnabled: bool
+    :ivar publishingUsername: Publishing user name.
+    :vartype publishingUsername: str
+    :ivar appSettings: Application settings. This property is not returned in response to normal
      create and read requests since it may contain sensitive information.
-    :vartype app_settings: list["NameValuePair"]
+    :vartype appSettings: list["NameValuePair"]
     :ivar metadata: Application metadata. This property cannot be retrieved, since it may contain
      secrets.
     :vartype metadata: list["NameValuePair"]
-    :ivar connection_strings: Connection strings. This property is not returned in response to
+    :ivar connectionStrings: Connection strings. This property is not returned in response to
      normal create and read requests since it may contain sensitive information.
-    :vartype connection_strings: list["ConnStringInfo"]
-    :ivar machine_key: Site MachineKey.
-    :vartype machine_key: "SiteMachineKey"
-    :ivar handler_mappings: Handler mappings.
-    :vartype handler_mappings: list["HandlerMapping"]
-    :ivar document_root: Document root.
-    :vartype document_root: str
-    :ivar scm_type: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
+    :vartype connectionStrings: list["ConnStringInfo"]
+    :ivar machineKey: Site MachineKey.
+    :vartype machineKey: "SiteMachineKey"
+    :ivar handlerMappings: Handler mappings.
+    :vartype handlerMappings: list["HandlerMapping"]
+    :ivar documentRoot: Document root.
+    :vartype documentRoot: str
+    :ivar scmType: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
      "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit", "ExternalHg",
      "OneDrive", "VSO", and "VSTSRM".
-    :vartype scm_type: Union[str, "ScmType"]
-    :ivar use32_bit_worker_process: <code>true</code> to use 32-bit worker process; otherwise,
+    :vartype scmType: Union[str, "ScmType"]
+    :ivar use32BitWorkerProcess: <code>true</code> to use 32-bit worker process; otherwise,
      <code>false</code>.
-    :vartype use32_bit_worker_process: bool
-    :ivar web_sockets_enabled: <code>true</code> if WebSocket is enabled; otherwise,
+    :vartype use32BitWorkerProcess: bool
+    :ivar webSocketsEnabled: <code>true</code> if WebSocket is enabled; otherwise,
      <code>false</code>.
-    :vartype web_sockets_enabled: bool
-    :ivar always_on: <code>true</code> if Always On is enabled; otherwise, <code>false</code>.
-    :vartype always_on: bool
-    :ivar java_version: Java version.
-    :vartype java_version: str
-    :ivar java_container: Java container.
-    :vartype java_container: str
-    :ivar java_container_version: Java container version.
-    :vartype java_container_version: str
-    :ivar app_command_line: App command line to launch.
-    :vartype app_command_line: str
-    :ivar managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated" and
-     "Classic".
-    :vartype managed_pipeline_mode: Union[str, "ManagedPipelineMode"]
-    :ivar virtual_applications: Virtual applications.
-    :vartype virtual_applications: list["VirtualApplication"]
-    :ivar load_balancing: Site load balancing. Known values are: "WeightedRoundRobin",
+    :vartype webSocketsEnabled: bool
+    :ivar alwaysOn: <code>true</code> if Always On is enabled; otherwise, <code>false</code>.
+    :vartype alwaysOn: bool
+    :ivar javaVersion: Java version.
+    :vartype javaVersion: str
+    :ivar javaContainer: Java container.
+    :vartype javaContainer: str
+    :ivar javaContainerVersion: Java container version.
+    :vartype javaContainerVersion: str
+    :ivar appCommandLine: App command line to launch.
+    :vartype appCommandLine: str
+    :ivar managedPipelineMode: Managed pipeline mode. Known values are: "Integrated" and "Classic".
+    :vartype managedPipelineMode: Union[str, "ManagedPipelineMode"]
+    :ivar virtualApplications: Virtual applications.
+    :vartype virtualApplications: list["VirtualApplication"]
+    :ivar loadBalancing: Site load balancing. Known values are: "WeightedRoundRobin",
      "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", "RequestHash",
      "PerSiteRoundRobin", and "LeastRequestsWithTieBreaker".
-    :vartype load_balancing: Union[str, "SiteLoadBalancing"]
+    :vartype loadBalancing: Union[str, "SiteLoadBalancing"]
     :ivar experiments: This is work around for polymorphic types.
     :vartype experiments: "Experiments"
     :ivar limits: Site limits.
     :vartype limits: "SiteLimits"
-    :ivar auto_heal_enabled: <code>true</code> if Auto Heal is enabled; otherwise,
+    :ivar autoHealEnabled: <code>true</code> if Auto Heal is enabled; otherwise,
      <code>false</code>.
-    :vartype auto_heal_enabled: bool
-    :ivar auto_heal_rules: Auto Heal rules.
-    :vartype auto_heal_rules: "AutoHealRules"
-    :ivar tracing_options: Tracing options.
-    :vartype tracing_options: str
-    :ivar vnet_name: Virtual Network name.
-    :vartype vnet_name: str
-    :ivar vnet_route_all_enabled: Virtual Network Route All enabled. This causes all outbound
-     traffic to have Virtual Network Security Groups and User Defined Routes applied.
-    :vartype vnet_route_all_enabled: bool
-    :ivar vnet_private_ports_count: The number of private ports assigned to this app. These will be
+    :vartype autoHealEnabled: bool
+    :ivar autoHealRules: Auto Heal rules.
+    :vartype autoHealRules: "AutoHealRules"
+    :ivar tracingOptions: Tracing options.
+    :vartype tracingOptions: str
+    :ivar vnetName: Virtual Network name.
+    :vartype vnetName: str
+    :ivar vnetRouteAllEnabled: Virtual Network Route All enabled. This causes all outbound traffic
+     to have Virtual Network Security Groups and User Defined Routes applied.
+    :vartype vnetRouteAllEnabled: bool
+    :ivar vnetPrivatePortsCount: The number of private ports assigned to this app. These will be
      assigned dynamically on runtime.
-    :vartype vnet_private_ports_count: int
+    :vartype vnetPrivatePortsCount: int
     :ivar cors: Cross-Origin Resource Sharing (CORS) settings.
     :vartype cors: "CorsSettings"
     :ivar push: Push endpoint settings.
     :vartype push: "PushSettings"
-    :ivar api_definition: Information about the formal API definition for the app.
-    :vartype api_definition: "ApiDefinitionInfo"
-    :ivar api_management_config: Azure API management settings linked to the app.
-    :vartype api_management_config: "ApiManagementConfig"
-    :ivar auto_swap_slot_name: Auto-swap slot name.
-    :vartype auto_swap_slot_name: str
-    :ivar local_my_sql_enabled: <code>true</code> to enable local MySQL; otherwise,
+    :ivar apiDefinition: Information about the formal API definition for the app.
+    :vartype apiDefinition: "ApiDefinitionInfo"
+    :ivar apiManagementConfig: Azure API management settings linked to the app.
+    :vartype apiManagementConfig: "ApiManagementConfig"
+    :ivar autoSwapSlotName: Auto-swap slot name.
+    :vartype autoSwapSlotName: str
+    :ivar localMySqlEnabled: <code>true</code> to enable local MySQL; otherwise,
      <code>false</code>.
-    :vartype local_my_sql_enabled: bool
-    :ivar managed_service_identity_id: Managed Service Identity Id.
-    :vartype managed_service_identity_id: int
-    :ivar x_managed_service_identity_id: Explicit Managed Service Identity Id.
-    :vartype x_managed_service_identity_id: int
-    :ivar key_vault_reference_identity: Identity to use for Key Vault Reference authentication.
-    :vartype key_vault_reference_identity: str
-    :ivar ip_security_restrictions: IP security restrictions for main.
-    :vartype ip_security_restrictions: list["IpSecurityRestriction"]
-    :ivar ip_security_restrictions_default_action: Default action for main access restriction if no
+    :vartype localMySqlEnabled: bool
+    :ivar managedServiceIdentityId: Managed Service Identity Id.
+    :vartype managedServiceIdentityId: int
+    :ivar xManagedServiceIdentityId: Explicit Managed Service Identity Id.
+    :vartype xManagedServiceIdentityId: int
+    :ivar keyVaultReferenceIdentity: Identity to use for Key Vault Reference authentication.
+    :vartype keyVaultReferenceIdentity: str
+    :ivar ipSecurityRestrictions: IP security restrictions for main.
+    :vartype ipSecurityRestrictions: list["IpSecurityRestriction"]
+    :ivar ipSecurityRestrictionsDefaultAction: Default action for main access restriction if no
      rules are matched. Known values are: "Allow" and "Deny".
-    :vartype ip_security_restrictions_default_action: Union[str, "DefaultAction"]
-    :ivar scm_ip_security_restrictions: IP security restrictions for scm.
-    :vartype scm_ip_security_restrictions: list["IpSecurityRestriction"]
-    :ivar scm_ip_security_restrictions_default_action: Default action for scm access restriction if
-     no rules are matched. Known values are: "Allow" and "Deny".
-    :vartype scm_ip_security_restrictions_default_action: Union[str, "DefaultAction"]
-    :ivar scm_ip_security_restrictions_use_main: IP security restrictions for scm to use main.
-    :vartype scm_ip_security_restrictions_use_main: bool
-    :ivar http20_enabled: Http20Enabled: configures a web site to allow clients to connect over
+    :vartype ipSecurityRestrictionsDefaultAction: Union[str, "DefaultAction"]
+    :ivar scmIpSecurityRestrictions: IP security restrictions for scm.
+    :vartype scmIpSecurityRestrictions: list["IpSecurityRestriction"]
+    :ivar scmIpSecurityRestrictionsDefaultAction: Default action for scm access restriction if no
+     rules are matched. Known values are: "Allow" and "Deny".
+    :vartype scmIpSecurityRestrictionsDefaultAction: Union[str, "DefaultAction"]
+    :ivar scmIpSecurityRestrictionsUseMain: IP security restrictions for scm to use main.
+    :vartype scmIpSecurityRestrictionsUseMain: bool
+    :ivar http20Enabled: Http20Enabled: configures a web site to allow clients to connect over
      http2.0.
-    :vartype http20_enabled: bool
-    :ivar http20_proxy_flag: Http20ProxyFlag: Configures a website to allow http2.0 to pass be
+    :vartype http20Enabled: bool
+    :ivar http20ProxyFlag: Http20ProxyFlag: Configures a website to allow http2.0 to pass be
      proxied all the way to the app. 0 = disabled, 1 = pass through all http2 traffic, 2 = pass
      through gRPC only.
-    :vartype http20_proxy_flag: int
-    :ivar min_tls_version: MinTlsVersion: configures the minimum version of TLS required for SSL
+    :vartype http20ProxyFlag: int
+    :ivar minTlsVersion: MinTlsVersion: configures the minimum version of TLS required for SSL
      requests. Known values are: "1.0", "1.1", "1.2", and "1.3".
-    :vartype min_tls_version: Union[str, "SupportedTlsVersions"]
-    :ivar min_tls_cipher_suite: The minimum strength TLS cipher suite allowed for an application.
+    :vartype minTlsVersion: Union[str, "SupportedTlsVersions"]
+    :ivar minTlsCipherSuite: The minimum strength TLS cipher suite allowed for an application.
      Known values are: "TLS_AES_256_GCM_SHA384", "TLS_AES_128_GCM_SHA256",
      "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384", "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
      "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256", "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
@@ -5775,29 +5913,29 @@ class SiteConfig(TypedDict, total=False):
      "TLS_RSA_WITH_AES_128_GCM_SHA256", "TLS_RSA_WITH_AES_256_CBC_SHA256",
      "TLS_RSA_WITH_AES_128_CBC_SHA256", "TLS_RSA_WITH_AES_256_CBC_SHA", and
      "TLS_RSA_WITH_AES_128_CBC_SHA".
-    :vartype min_tls_cipher_suite: Union[str, "TlsCipherSuites"]
-    :ivar scm_min_tls_version: ScmMinTlsVersion: configures the minimum version of TLS required for
+    :vartype minTlsCipherSuite: Union[str, "TlsCipherSuites"]
+    :ivar scmMinTlsVersion: ScmMinTlsVersion: configures the minimum version of TLS required for
      SSL requests for SCM site. Known values are: "1.0", "1.1", "1.2", and "1.3".
-    :vartype scm_min_tls_version: Union[str, "SupportedTlsVersions"]
-    :ivar ftps_state: State of FTP / FTPS service. Known values are: "AllAllowed", "FtpsOnly", and
+    :vartype scmMinTlsVersion: Union[str, "SupportedTlsVersions"]
+    :ivar ftpsState: State of FTP / FTPS service. Known values are: "AllAllowed", "FtpsOnly", and
      "Disabled".
-    :vartype ftps_state: Union[str, "FtpsState"]
-    :ivar pre_warmed_instance_count: Number of preWarmed instances. This setting only applies to
-     the Consumption and Elastic Plans.
-    :vartype pre_warmed_instance_count: int
-    :ivar function_app_scale_limit: Maximum number of workers that a site can scale out to. This
+    :vartype ftpsState: Union[str, "FtpsState"]
+    :ivar preWarmedInstanceCount: Number of preWarmed instances. This setting only applies to the
+     Consumption and Elastic Plans.
+    :vartype preWarmedInstanceCount: int
+    :ivar functionAppScaleLimit: Maximum number of workers that a site can scale out to. This
      setting only applies to the Consumption and Elastic Premium Plans.
-    :vartype function_app_scale_limit: int
-    :ivar elastic_web_app_scale_limit: Maximum number of workers that a site can scale out to. This
+    :vartype functionAppScaleLimit: int
+    :ivar elasticWebAppScaleLimit: Maximum number of workers that a site can scale out to. This
      setting only applies to apps in plans where ElasticScaleEnabled is <code>true</code>.
-    :vartype elastic_web_app_scale_limit: int
-    :ivar health_check_path: Health check path.
-    :vartype health_check_path: str
-    :ivar functions_runtime_scale_monitoring_enabled: Gets or sets a value indicating whether
-     functions runtime scale monitoring is enabled. When enabled, the ScaleController will not
-     monitor event sources directly, but will instead call to the runtime to get scale status.
-    :vartype functions_runtime_scale_monitoring_enabled: bool
-    :ivar website_time_zone: Sets the time zone a site uses for generating timestamps. Compatible
+    :vartype elasticWebAppScaleLimit: int
+    :ivar healthCheckPath: Health check path.
+    :vartype healthCheckPath: str
+    :ivar functionsRuntimeScaleMonitoringEnabled: Gets or sets a value indicating whether functions
+     runtime scale monitoring is enabled. When enabled, the ScaleController will not monitor event
+     sources directly, but will instead call to the runtime to get scale status.
+    :vartype functionsRuntimeScaleMonitoringEnabled: bool
+    :ivar websiteTimeZone: Sets the time zone a site uses for generating timestamps. Compatible
      with Linux and Windows App Service. Setting the WEBSITE_TIME_ZONE app setting takes precedence
      over this config. For Linux, expects tz database values `https://www.iana.org/time-zones
      <https://www.iana.org/time-zones>`_ (for a quick reference see
@@ -5805,14 +5943,14 @@ class SiteConfig(TypedDict, total=False):
      <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>`_). For Windows, expects one of
      the time zones listed under HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows
      NT\\CurrentVersion\\Time Zones.
-    :vartype website_time_zone: str
-    :ivar minimum_elastic_instance_count: Number of minimum instance count for a site This setting
+    :vartype websiteTimeZone: str
+    :ivar minimumElasticInstanceCount: Number of minimum instance count for a site This setting
      only applies to the Elastic Plans.
-    :vartype minimum_elastic_instance_count: int
-    :ivar azure_storage_accounts: List of Azure Storage Accounts.
-    :vartype azure_storage_accounts: dict[str, "AzureStorageInfoValue"]
-    :ivar public_network_access: Property to allow or block all public traffic.
-    :vartype public_network_access: str
+    :vartype minimumElasticInstanceCount: int
+    :ivar azureStorageAccounts: List of Azure Storage Accounts.
+    :vartype azureStorageAccounts: dict[str, "AzureStorageInfoValue"]
+    :ivar publicNetworkAccess: Property to allow or block all public traffic.
+    :vartype publicNetworkAccess: str
     """
 
     numberOfWorkers: int
@@ -6007,9 +6145,9 @@ class SiteConfigResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Core resource properties.
     :vartype properties: "SiteConfig"
     :ivar kind: Kind of resource. If the resource is an app, you can refer to
@@ -6039,9 +6177,9 @@ class SiteContainer(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: SiteContainer resource specific properties.
     :vartype properties: "SiteContainerProperties"
     :ivar kind: Kind of resource.
@@ -6059,34 +6197,34 @@ class SiteContainerProperties(TypedDict, total=False):
 
     :ivar image: Image Name. Required.
     :vartype image: str
-    :ivar target_port: Target Port.
-    :vartype target_port: str
-    :ivar is_main: <code>true</code> if the container is the main site container;
-     <code>false</code> otherwise. Required.
-    :vartype is_main: bool
-    :ivar start_up_command: StartUp Command.
-    :vartype start_up_command: str
-    :ivar auth_type: Auth Type. Known values are: "Anonymous", "UserCredentials", "SystemIdentity",
+    :ivar targetPort: Target Port.
+    :vartype targetPort: str
+    :ivar isMain: <code>true</code> if the container is the main site container; <code>false</code>
+     otherwise. Required.
+    :vartype isMain: bool
+    :ivar startUpCommand: StartUp Command.
+    :vartype startUpCommand: str
+    :ivar authType: Auth Type. Known values are: "Anonymous", "UserCredentials", "SystemIdentity",
      and "UserAssigned".
-    :vartype auth_type: Union[str, "AuthType"]
-    :ivar user_name: User Name.
-    :vartype user_name: str
-    :ivar password_secret: Password Secret.
-    :vartype password_secret: str
-    :ivar user_managed_identity_client_id: UserManagedIdentity ClientId.
-    :vartype user_managed_identity_client_id: str
-    :ivar created_time: Created Time.
-    :vartype created_time: str
-    :ivar last_modified_time: Last Modified Time.
-    :vartype last_modified_time: str
-    :ivar volume_mounts: List of volume mounts.
-    :vartype volume_mounts: list["VolumeMount"]
-    :ivar inherit_app_settings_and_connection_strings: <code>true</code> if all AppSettings and
+    :vartype authType: Union[str, "AuthType"]
+    :ivar userName: User Name.
+    :vartype userName: str
+    :ivar passwordSecret: Password Secret.
+    :vartype passwordSecret: str
+    :ivar userManagedIdentityClientId: UserManagedIdentity ClientId.
+    :vartype userManagedIdentityClientId: str
+    :ivar createdTime: Created Time.
+    :vartype createdTime: str
+    :ivar lastModifiedTime: Last Modified Time.
+    :vartype lastModifiedTime: str
+    :ivar volumeMounts: List of volume mounts.
+    :vartype volumeMounts: list["VolumeMount"]
+    :ivar inheritAppSettingsAndConnectionStrings: <code>true</code> if all AppSettings and
      ConnectionStrings have to be passed to the container as environment variables;
      <code>false</code> otherwise.
-    :vartype inherit_app_settings_and_connection_strings: bool
-    :ivar environment_variables: List of environment variables.
-    :vartype environment_variables: list["EnvironmentVariable"]
+    :vartype inheritAppSettingsAndConnectionStrings: bool
+    :ivar environmentVariables: List of environment variables.
+    :vartype environmentVariables: list["EnvironmentVariable"]
     """
 
     image: Required[str]
@@ -6123,24 +6261,24 @@ class SiteContainerProperties(TypedDict, total=False):
 class SiteDnsConfig(TypedDict, total=False):
     """SiteDnsConfig.
 
-    :ivar dns_servers: List of custom DNS servers to be used by an app for lookups. Maximum 5 dns
+    :ivar dnsServers: List of custom DNS servers to be used by an app for lookups. Maximum 5 dns
      servers can be set.
-    :vartype dns_servers: list[str]
-    :ivar dns_alt_server: Alternate DNS server to be used by apps. This property replicates the
+    :vartype dnsServers: list[str]
+    :ivar dnsAltServer: Alternate DNS server to be used by apps. This property replicates the
      WEBSITE_DNS_ALT_SERVER app setting.
-    :vartype dns_alt_server: str
-    :ivar dns_retry_attempt_timeout: Timeout for a single dns lookup in seconds. Allowed range:
-     1-30. Default is 3.
-    :vartype dns_retry_attempt_timeout: int
-    :ivar dns_retry_attempt_count: Total number of retries for dns lookup. Allowed range: 1-5.
+    :vartype dnsAltServer: str
+    :ivar dnsRetryAttemptTimeout: Timeout for a single dns lookup in seconds. Allowed range: 1-30.
      Default is 3.
-    :vartype dns_retry_attempt_count: int
-    :ivar dns_max_cache_timeout: Custom time for DNS to be cached in seconds. Allowed range: 0-60.
+    :vartype dnsRetryAttemptTimeout: int
+    :ivar dnsRetryAttemptCount: Total number of retries for dns lookup. Allowed range: 1-5. Default
+     is 3.
+    :vartype dnsRetryAttemptCount: int
+    :ivar dnsMaxCacheTimeout: Custom time for DNS to be cached in seconds. Allowed range: 0-60.
      Default is 30 seconds. 0 means caching disabled.
-    :vartype dns_max_cache_timeout: int
-    :ivar dns_legacy_sort_order: Indicates that sites using Virtual network custom DNS servers are
+    :vartype dnsMaxCacheTimeout: int
+    :ivar dnsLegacySortOrder: Indicates that sites using Virtual network custom DNS servers are
      still sorting the list of DNS servers. Read-Only.
-    :vartype dns_legacy_sort_order: bool
+    :vartype dnsLegacySortOrder: bool
     """
 
     dnsServers: list[str]
@@ -6163,12 +6301,12 @@ class SiteDnsConfig(TypedDict, total=False):
 class SiteLimits(TypedDict, total=False):
     """Metric limits set on an app.
 
-    :ivar max_percentage_cpu: Maximum allowed CPU usage percentage.
-    :vartype max_percentage_cpu: float
-    :ivar max_memory_in_mb: Maximum allowed memory usage in MB.
-    :vartype max_memory_in_mb: int
-    :ivar max_disk_size_in_mb: Maximum allowed disk size usage in MB.
-    :vartype max_disk_size_in_mb: int
+    :ivar maxPercentageCpu: Maximum allowed CPU usage percentage.
+    :vartype maxPercentageCpu: float
+    :ivar maxMemoryInMb: Maximum allowed memory usage in MB.
+    :vartype maxMemoryInMb: int
+    :ivar maxDiskSizeInMb: Maximum allowed disk size usage in MB.
+    :vartype maxDiskSizeInMb: int
     """
 
     maxPercentageCpu: float
@@ -6190,9 +6328,9 @@ class SiteLogsConfig(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: SiteLogsConfig resource specific properties.
     :vartype properties: "SiteLogsConfigProperties"
     :ivar kind: Kind of resource.
@@ -6208,14 +6346,14 @@ class SiteLogsConfig(ProxyResource):
 class SiteLogsConfigProperties(TypedDict, total=False):
     """SiteLogsConfig resource specific properties.
 
-    :ivar application_logs: Application logs configuration.
-    :vartype application_logs: "ApplicationLogsConfig"
-    :ivar http_logs: HTTP logs configuration.
-    :vartype http_logs: "HttpLogsConfig"
-    :ivar failed_requests_tracing: Failed requests tracing configuration.
-    :vartype failed_requests_tracing: "EnabledConfig"
-    :ivar detailed_error_messages: Detailed error messages configuration.
-    :vartype detailed_error_messages: "EnabledConfig"
+    :ivar applicationLogs: Application logs configuration.
+    :vartype applicationLogs: "ApplicationLogsConfig"
+    :ivar httpLogs: HTTP logs configuration.
+    :vartype httpLogs: "HttpLogsConfig"
+    :ivar failedRequestsTracing: Failed requests tracing configuration.
+    :vartype failedRequestsTracing: "EnabledConfig"
+    :ivar detailedErrorMessages: Detailed error messages configuration.
+    :vartype detailedErrorMessages: "EnabledConfig"
     """
 
     applicationLogs: "ApplicationLogsConfig"
@@ -6233,12 +6371,12 @@ class SiteMachineKey(TypedDict, total=False):
 
     :ivar validation: MachineKey validation.
     :vartype validation: str
-    :ivar validation_key: Validation key.
-    :vartype validation_key: str
+    :ivar validationKey: Validation key.
+    :vartype validationKey: str
     :ivar decryption: Algorithm used for decryption.
     :vartype decryption: str
-    :ivar decryption_key: Decryption key.
-    :vartype decryption_key: str
+    :ivar decryptionKey: Decryption key.
+    :vartype decryptionKey: str
     """
 
     validation: str
@@ -6279,126 +6417,130 @@ class SitePatchResourceProperties(TypedDict, total=False):
 
     :ivar state: Current state of the app.
     :vartype state: str
-    :ivar host_names: Hostnames associated with the app.
-    :vartype host_names: list[str]
-    :ivar repository_site_name: Name of the repository site.
-    :vartype repository_site_name: str
-    :ivar usage_state: State indicating whether the app has exceeded its quota usage. Read-only.
+    :ivar hostNames: Hostnames associated with the app.
+    :vartype hostNames: list[str]
+    :ivar repositorySiteName: Name of the repository site.
+    :vartype repositorySiteName: str
+    :ivar usageState: State indicating whether the app has exceeded its quota usage. Read-only.
      Known values are: "Normal" and "Exceeded".
-    :vartype usage_state: Union[str, "UsageState"]
+    :vartype usageState: Union[str, "UsageState"]
     :ivar enabled: <code>true</code> if the app is enabled; otherwise, <code>false</code>. Setting
      this value to false disables the app (takes the app offline).
     :vartype enabled: bool
-    :ivar enabled_host_names: Enabled hostnames for the app.Hostnames need to be assigned (see
+    :ivar siteScopedCertificatesEnabled: <code>true</code> if site scoped certificates are enabled;
+     otherwise, <code>false</code>.
+    :vartype siteScopedCertificatesEnabled: bool
+    :ivar enabledHostNames: Enabled hostnames for the app.Hostnames need to be assigned (see
      HostNames) AND enabled. Otherwise, the app is not served on those hostnames.
-    :vartype enabled_host_names: list[str]
-    :ivar availability_state: Management information availability state for the app. Known values
+    :vartype enabledHostNames: list[str]
+    :ivar availabilityState: Management information availability state for the app. Known values
      are: "Normal", "Limited", and "DisasterRecoveryMode".
-    :vartype availability_state: Union[str, "SiteAvailabilityState"]
-    :ivar host_name_ssl_states: Hostname SSL states are used to manage the SSL bindings for app's
+    :vartype availabilityState: Union[str, "SiteAvailabilityState"]
+    :ivar hostNameSslStates: Hostname SSL states are used to manage the SSL bindings for app's
      hostnames.
-    :vartype host_name_ssl_states: list["HostNameSslState"]
-    :ivar server_farm_id: Resource ID of the associated App Service plan, formatted as:
+    :vartype hostNameSslStates: list["HostNameSslState"]
+    :ivar serverFarmId: Resource ID of the associated App Service plan, formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
-    :vartype server_farm_id: str
+    :vartype serverFarmId: str
     :ivar reserved: <code>true</code> if reserved; otherwise, <code>false</code>.
     :vartype reserved: bool
-    :ivar is_xenon: Obsolete: Hyper-V sandbox.
-    :vartype is_xenon: bool
-    :ivar hyper_v: Hyper-V sandbox.
-    :vartype hyper_v: bool
-    :ivar last_modified_time_utc: Last time the app was modified, in UTC. Read-only.
-    :vartype last_modified_time_utc: str
-    :ivar dns_configuration: Property to configure various DNS related settings for a site.
-    :vartype dns_configuration: "SiteDnsConfig"
-    :ivar site_config: Configuration of the app.
-    :vartype site_config: "SiteConfig"
-    :ivar traffic_manager_host_names: Azure Traffic Manager hostnames associated with the app.
+    :ivar isXenon: Obsolete: Hyper-V sandbox.
+    :vartype isXenon: bool
+    :ivar hyperV: Hyper-V sandbox.
+    :vartype hyperV: bool
+    :ivar lastModifiedTimeUtc: Last time the app was modified, in UTC. Read-only.
+    :vartype lastModifiedTimeUtc: str
+    :ivar dnsConfiguration: Property to configure various DNS related settings for a site.
+    :vartype dnsConfiguration: "SiteDnsConfig"
+    :ivar siteConfig: Configuration of the app.
+    :vartype siteConfig: "SiteConfig"
+    :ivar aiIntegration: AI integration configuration for the app.
+    :vartype aiIntegration: "AiIntegration"
+    :ivar trafficManagerHostNames: Azure Traffic Manager hostnames associated with the app.
      Read-only.
-    :vartype traffic_manager_host_names: list[str]
-    :ivar scm_site_also_stopped: <code>true</code> to stop SCM (KUDU) site when the app is stopped;
+    :vartype trafficManagerHostNames: list[str]
+    :ivar scmSiteAlsoStopped: <code>true</code> to stop SCM (KUDU) site when the app is stopped;
      otherwise, <code>false</code>. The default is <code>false</code>.
-    :vartype scm_site_also_stopped: bool
-    :ivar target_swap_slot: Specifies which deployment slot this app will swap into. Read-only.
-    :vartype target_swap_slot: str
-    :ivar hosting_environment_profile: App Service Environment to use for the app.
-    :vartype hosting_environment_profile: "HostingEnvironmentProfile"
-    :ivar client_affinity_enabled: <code>true</code> to enable client affinity; <code>false</code>
-     to stop sending session affinity cookies, which route client requests in the same session to
-     the same instance. Default is <code>true</code>.
-    :vartype client_affinity_enabled: bool
-    :ivar client_affinity_proxy_enabled: <code>true</code> to override client affinity cookie
-     domain with X-Forwarded-Host request header. <code>false</code> to use default domain. Default
-     is <code>false</code>.
-    :vartype client_affinity_proxy_enabled: bool
-    :ivar client_cert_enabled: <code>true</code> to enable client certificate authentication (TLS
+    :vartype scmSiteAlsoStopped: bool
+    :ivar targetSwapSlot: Specifies which deployment slot this app will swap into. Read-only.
+    :vartype targetSwapSlot: str
+    :ivar hostingEnvironmentProfile: App Service Environment to use for the app.
+    :vartype hostingEnvironmentProfile: "HostingEnvironmentProfile"
+    :ivar clientAffinityEnabled: <code>true</code> to enable client affinity; <code>false</code> to
+     stop sending session affinity cookies, which route client requests in the same session to the
+     same instance. Default is <code>true</code>.
+    :vartype clientAffinityEnabled: bool
+    :ivar clientAffinityProxyEnabled: <code>true</code> to override client affinity cookie domain
+     with X-Forwarded-Host request header. <code>false</code> to use default domain. Default is
+     <code>false</code>.
+    :vartype clientAffinityProxyEnabled: bool
+    :ivar clientCertEnabled: <code>true</code> to enable client certificate authentication (TLS
      mutual authentication); otherwise, <code>false</code>. Default is <code>false</code>.
-    :vartype client_cert_enabled: bool
-    :ivar client_cert_mode: This composes with ClientCertEnabled setting.
+    :vartype clientCertEnabled: bool
+    :ivar clientCertMode: This composes with ClientCertEnabled setting.
 
      * ClientCertEnabled: false means ClientCert is ignored.
      * ClientCertEnabled: true and ClientCertMode: Required means ClientCert is required.
      * ClientCertEnabled: true and ClientCertMode: Optional means ClientCert is optional or
        accepted. Known values are: "Required", "Optional", and "OptionalInteractiveUser".
-    :vartype client_cert_mode: Union[str, "ClientCertMode"]
-    :ivar client_cert_exclusion_paths: client certificate authentication comma-separated exclusion
+    :vartype clientCertMode: Union[str, "ClientCertMode"]
+    :ivar clientCertExclusionPaths: client certificate authentication comma-separated exclusion
      paths.
-    :vartype client_cert_exclusion_paths: str
-    :ivar host_names_disabled: <code>true</code> to disable the public hostnames of the app;
+    :vartype clientCertExclusionPaths: str
+    :ivar hostNamesDisabled: <code>true</code> to disable the public hostnames of the app;
      otherwise, <code>false</code>.\\n If <code>true</code>, the app is only accessible via API
      management process.
-    :vartype host_names_disabled: bool
-    :ivar custom_domain_verification_id: Unique identifier that verifies the custom domains
-     assigned to the app. Customer will add this id to a txt record for verification.
-    :vartype custom_domain_verification_id: str
-    :ivar outbound_ip_addresses: List of IP addresses that the app uses for outbound connections
+    :vartype hostNamesDisabled: bool
+    :ivar customDomainVerificationId: Unique identifier that verifies the custom domains assigned
+     to the app. Customer will add this id to a txt record for verification.
+    :vartype customDomainVerificationId: str
+    :ivar outboundIpAddresses: List of IP addresses that the app uses for outbound connections
      (e.g. database access). Includes VIPs from tenants that site can be hosted with current
      settings. Read-only.
-    :vartype outbound_ip_addresses: str
-    :ivar possible_outbound_ip_addresses: List of IP addresses that the app uses for outbound
+    :vartype outboundIpAddresses: str
+    :ivar possibleOutboundIpAddresses: List of IP addresses that the app uses for outbound
      connections (e.g. database access). Includes VIPs from all tenants except dataComponent.
      Read-only.
-    :vartype possible_outbound_ip_addresses: str
-    :ivar container_size: Size of the function container.
-    :vartype container_size: int
-    :ivar daily_memory_time_quota: Maximum allowed daily memory-time quota (applicable on dynamic
-     apps only).
-    :vartype daily_memory_time_quota: int
-    :ivar suspended_till: App suspended till in case memory-time quota is exceeded.
-    :vartype suspended_till: str
-    :ivar max_number_of_workers: Maximum number of workers. This only applies to Functions
-     container.
-    :vartype max_number_of_workers: int
-    :ivar cloning_info: If specified during app creation, the app is cloned from a source app.
-    :vartype cloning_info: "CloningInfo"
-    :ivar resource_group: Name of the resource group the app belongs to. Read-only.
-    :vartype resource_group: str
-    :ivar is_default_container: <code>true</code> if the app is a default container; otherwise,
+    :vartype possibleOutboundIpAddresses: str
+    :ivar containerSize: Size of the function container.
+    :vartype containerSize: int
+    :ivar dailyMemoryTimeQuota: Maximum allowed daily memory-time quota (applicable on dynamic apps
+     only).
+    :vartype dailyMemoryTimeQuota: int
+    :ivar suspendedTill: App suspended till in case memory-time quota is exceeded.
+    :vartype suspendedTill: str
+    :ivar maxNumberOfWorkers: Maximum number of workers. This only applies to Functions container.
+    :vartype maxNumberOfWorkers: int
+    :ivar cloningInfo: If specified during app creation, the app is cloned from a source app.
+    :vartype cloningInfo: "CloningInfo"
+    :ivar resourceGroup: Name of the resource group the app belongs to. Read-only.
+    :vartype resourceGroup: str
+    :ivar isDefaultContainer: <code>true</code> if the app is a default container; otherwise,
      <code>false</code>.
-    :vartype is_default_container: bool
-    :ivar default_host_name: Default hostname of the app. Read-only.
-    :vartype default_host_name: str
-    :ivar slot_swap_status: Status of the last deployment slot swap operation.
-    :vartype slot_swap_status: "SlotSwapStatus"
-    :ivar https_only: HttpsOnly: configures a web site to accept only https requests. Issues
+    :vartype isDefaultContainer: bool
+    :ivar defaultHostName: Default hostname of the app. Read-only.
+    :vartype defaultHostName: str
+    :ivar slotSwapStatus: Status of the last deployment slot swap operation.
+    :vartype slotSwapStatus: "SlotSwapStatus"
+    :ivar httpsOnly: HttpsOnly: configures a web site to accept only https requests. Issues
      redirect for http requests.
-    :vartype https_only: bool
-    :ivar redundancy_mode: Site redundancy mode. Known values are: "None", "Manual", "Failover",
+    :vartype httpsOnly: bool
+    :ivar redundancyMode: Site redundancy mode. Known values are: "None", "Manual", "Failover",
      "ActiveActive", and "GeoRedundant".
-    :vartype redundancy_mode: Union[str, "RedundancyMode"]
-    :ivar in_progress_operation_id: Specifies an operation id if this site has a pending operation.
-    :vartype in_progress_operation_id: str
-    :ivar public_network_access: Property to allow or block all public traffic. Allowed Values:
+    :vartype redundancyMode: Union[str, "RedundancyMode"]
+    :ivar inProgressOperationId: Specifies an operation id if this site has a pending operation.
+    :vartype inProgressOperationId: str
+    :ivar publicNetworkAccess: Property to allow or block all public traffic. Allowed Values:
      'Enabled', 'Disabled' or an empty string.
-    :vartype public_network_access: str
-    :ivar storage_account_required: Checks if Customer provided storage account is required.
-    :vartype storage_account_required: bool
-    :ivar key_vault_reference_identity: Identity to use for Key Vault Reference authentication.
-    :vartype key_vault_reference_identity: str
-    :ivar virtual_network_subnet_id: Azure Resource Manager ID of the Virtual network and subnet to
-     be joined by Regional VNET Integration. This must be of the form
+    :vartype publicNetworkAccess: str
+    :ivar storageAccountRequired: Checks if Customer provided storage account is required.
+    :vartype storageAccountRequired: bool
+    :ivar keyVaultReferenceIdentity: Identity to use for Key Vault Reference authentication.
+    :vartype keyVaultReferenceIdentity: str
+    :ivar virtualNetworkSubnetId: Azure Resource Manager ID of the Virtual network and subnet to be
+     joined by Regional VNET Integration. This must be of the form
      /subscriptions/{subscriptionName}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
-    :vartype virtual_network_subnet_id: str
+    :vartype virtualNetworkSubnetId: str
     """
 
     state: str
@@ -6413,6 +6555,8 @@ class SitePatchResourceProperties(TypedDict, total=False):
     enabled: bool
     """<code>true</code> if the app is enabled; otherwise, <code>false</code>. Setting this value to
      false disables the app (takes the app offline)."""
+    siteScopedCertificatesEnabled: bool
+    """<code>true</code> if site scoped certificates are enabled; otherwise, <code>false</code>."""
     enabledHostNames: list[str]
     """Enabled hostnames for the app.Hostnames need to be assigned (see HostNames) AND enabled.
      Otherwise, the app is not served on those hostnames."""
@@ -6436,6 +6580,8 @@ class SitePatchResourceProperties(TypedDict, total=False):
     """Property to configure various DNS related settings for a site."""
     siteConfig: "SiteConfig"
     """Configuration of the app."""
+    aiIntegration: "AiIntegration"
+    """AI integration configuration for the app."""
     trafficManagerHostNames: list[str]
     """Azure Traffic Manager hostnames associated with the app. Read-only."""
     scmSiteAlsoStopped: bool
@@ -6520,164 +6666,176 @@ class SiteProperties(TypedDict, total=False):
 
     :ivar state: Current state of the app.
     :vartype state: str
-    :ivar host_names: Hostnames associated with the app.
-    :vartype host_names: list[str]
-    :ivar repository_site_name: Name of the repository site.
-    :vartype repository_site_name: str
-    :ivar usage_state: State indicating whether the app has exceeded its quota usage. Read-only.
+    :ivar hostNames: Hostnames associated with the app.
+    :vartype hostNames: list[str]
+    :ivar repositorySiteName: Name of the repository site.
+    :vartype repositorySiteName: str
+    :ivar usageState: State indicating whether the app has exceeded its quota usage. Read-only.
      Known values are: "Normal" and "Exceeded".
-    :vartype usage_state: Union[str, "UsageState"]
+    :vartype usageState: Union[str, "UsageState"]
     :ivar enabled: <code>true</code> if the app is enabled; otherwise, <code>false</code>. Setting
      this value to false disables the app (takes the app offline).
     :vartype enabled: bool
-    :ivar enabled_host_names: Enabled hostnames for the app.Hostnames need to be assigned (see
+    :ivar siteScopedCertificatesEnabled: <code>true</code> if site scoped certificates are enabled;
+     otherwise, <code>false</code>.
+    :vartype siteScopedCertificatesEnabled: bool
+    :ivar enabledHostNames: Enabled hostnames for the app.Hostnames need to be assigned (see
      HostNames) AND enabled. Otherwise, the app is not served on those hostnames.
-    :vartype enabled_host_names: list[str]
-    :ivar availability_state: Management information availability state for the app. Known values
+    :vartype enabledHostNames: list[str]
+    :ivar availabilityState: Management information availability state for the app. Known values
      are: "Normal", "Limited", and "DisasterRecoveryMode".
-    :vartype availability_state: Union[str, "SiteAvailabilityState"]
-    :ivar host_name_ssl_states: Hostname SSL states are used to manage the SSL bindings for app's
+    :vartype availabilityState: Union[str, "SiteAvailabilityState"]
+    :ivar hostNameSslStates: Hostname SSL states are used to manage the SSL bindings for app's
      hostnames.
-    :vartype host_name_ssl_states: list["HostNameSslState"]
-    :ivar server_farm_id: Resource ID of the associated App Service plan, formatted as:
+    :vartype hostNameSslStates: list["HostNameSslState"]
+    :ivar serverFarmId: Resource ID of the associated App Service plan, formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
-    :vartype server_farm_id: str
+    :vartype serverFarmId: str
     :ivar reserved: <code>true</code> if reserved; otherwise, <code>false</code>.
     :vartype reserved: bool
-    :ivar is_xenon: Obsolete: Hyper-V sandbox.
-    :vartype is_xenon: bool
-    :ivar hyper_v: Hyper-V sandbox.
-    :vartype hyper_v: bool
-    :ivar last_modified_time_utc: Last time the app was modified, in UTC. Read-only.
-    :vartype last_modified_time_utc: str
-    :ivar dns_configuration: Property to configure various DNS related settings for a site.
-    :vartype dns_configuration: "SiteDnsConfig"
-    :ivar outbound_vnet_routing: Property to configure various outbound traffic routing options
-     over virtual network for a site.
-    :vartype outbound_vnet_routing: "OutboundVnetRouting"
-    :ivar site_config: Configuration of an App Service app. This property is not returned in
+    :ivar isXenon: Obsolete: Hyper-V sandbox.
+    :vartype isXenon: bool
+    :ivar hyperV: Hyper-V sandbox.
+    :vartype hyperV: bool
+    :ivar lastModifiedTimeUtc: Last time the app was modified, in UTC. Read-only.
+    :vartype lastModifiedTimeUtc: str
+    :ivar dnsConfiguration: Property to configure various DNS related settings for a site.
+    :vartype dnsConfiguration: "SiteDnsConfig"
+    :ivar outboundVnetRouting: Property to configure various outbound traffic routing options over
+     virtual network for a site.
+    :vartype outboundVnetRouting: "OutboundVnetRouting"
+    :ivar siteConfig: Configuration of an App Service app. This property is not returned in
      response to normal create and read requests since it may contain sensitive information.
-    :vartype site_config: "SiteConfig"
-    :ivar function_app_config: Configuration specific of the Azure Function app.
-    :vartype function_app_config: "FunctionAppConfig"
-    :ivar dapr_config: Dapr configuration of the app.
-    :vartype dapr_config: "DaprConfig"
-    :ivar workload_profile_name: Workload profile name for function app to execute on.
-    :vartype workload_profile_name: str
-    :ivar resource_config: Function app resource requirements.
-    :vartype resource_config: "ResourceConfig"
-    :ivar traffic_manager_host_names: Azure Traffic Manager hostnames associated with the app.
+    :vartype siteConfig: "SiteConfig"
+    :ivar functionAppConfig: Configuration specific of the Azure Function app.
+    :vartype functionAppConfig: "FunctionAppConfig"
+    :ivar daprConfig: Dapr configuration of the app.
+    :vartype daprConfig: "DaprConfig"
+    :ivar aiIntegration: AI integration configuration for the app.
+    :vartype aiIntegration: "AiIntegration"
+    :ivar workloadProfileName: Workload profile name for function app to execute on.
+    :vartype workloadProfileName: str
+    :ivar resourceConfig: Function app resource requirements.
+    :vartype resourceConfig: "ResourceConfig"
+    :ivar trafficManagerHostNames: Azure Traffic Manager hostnames associated with the app.
      Read-only.
-    :vartype traffic_manager_host_names: list[str]
-    :ivar scm_site_also_stopped: <code>true</code> to stop SCM (KUDU) site when the app is stopped;
+    :vartype trafficManagerHostNames: list[str]
+    :ivar scmSiteAlsoStopped: <code>true</code> to stop SCM (KUDU) site when the app is stopped;
      otherwise, <code>false</code>. The default is <code>false</code>.
-    :vartype scm_site_also_stopped: bool
-    :ivar target_swap_slot: Specifies which deployment slot this app will swap into. Read-only.
-    :vartype target_swap_slot: str
-    :ivar hosting_environment_profile: App Service Environment to use for the app.
-    :vartype hosting_environment_profile: "HostingEnvironmentProfile"
-    :ivar client_affinity_enabled: <code>true</code> to enable client affinity; <code>false</code>
-     to stop sending session affinity cookies, which route client requests in the same session to
-     the same instance. Default is <code>true</code>.
-    :vartype client_affinity_enabled: bool
-    :ivar client_affinity_partitioning_enabled: <code>true</code> to enable client affinity
+    :vartype scmSiteAlsoStopped: bool
+    :ivar targetSwapSlot: Specifies which deployment slot this app will swap into. Read-only.
+    :vartype targetSwapSlot: str
+    :ivar hostingEnvironmentProfile: App Service Environment to use for the app.
+    :vartype hostingEnvironmentProfile: "HostingEnvironmentProfile"
+    :ivar clientAffinityEnabled: <code>true</code> to enable client affinity; <code>false</code> to
+     stop sending session affinity cookies, which route client requests in the same session to the
+     same instance. Default is <code>true</code>.
+    :vartype clientAffinityEnabled: bool
+    :ivar clientAffinityPartitioningEnabled: <code>true</code> to enable client affinity
      partitioning using CHIPS cookies, this will add the <code>partitioned</code> property to the
      affinity cookies; <code>false</code> to stop sending partitioned affinity cookies. Default is
      <code>false</code>.
-    :vartype client_affinity_partitioning_enabled: bool
-    :ivar client_affinity_proxy_enabled: <code>true</code> to override client affinity cookie
-     domain with X-Forwarded-Host request header. <code>false</code> to use default domain. Default
-     is <code>false</code>.
-    :vartype client_affinity_proxy_enabled: bool
-    :ivar client_cert_enabled: <code>true</code> to enable client certificate authentication (TLS
+    :vartype clientAffinityPartitioningEnabled: bool
+    :ivar clientAffinityProxyEnabled: <code>true</code> to override client affinity cookie domain
+     with X-Forwarded-Host request header. <code>false</code> to use default domain. Default is
+     <code>false</code>.
+    :vartype clientAffinityProxyEnabled: bool
+    :ivar clientCertEnabled: <code>true</code> to enable client certificate authentication (TLS
      mutual authentication); otherwise, <code>false</code>. Default is <code>false</code>.
-    :vartype client_cert_enabled: bool
-    :ivar client_cert_mode: This composes with ClientCertEnabled setting.
+    :vartype clientCertEnabled: bool
+    :ivar clientCertMode: This composes with ClientCertEnabled setting.
 
      * ClientCertEnabled: false means ClientCert is ignored.
      * ClientCertEnabled: true and ClientCertMode: Required means ClientCert is required.
      * ClientCertEnabled: true and ClientCertMode: Optional means ClientCert is optional or
        accepted. Known values are: "Required", "Optional", and "OptionalInteractiveUser".
-    :vartype client_cert_mode: Union[str, "ClientCertMode"]
-    :ivar client_cert_exclusion_paths: client certificate authentication comma-separated exclusion
+    :vartype clientCertMode: Union[str, "ClientCertMode"]
+    :ivar clientCertExclusionPaths: client certificate authentication comma-separated exclusion
      paths.
-    :vartype client_cert_exclusion_paths: str
-    :ivar ip_mode: Specifies the IP mode of the app. Known values are: "IPv4", "IPv6", and
+    :vartype clientCertExclusionPaths: str
+    :ivar ipMode: Specifies the IP mode of the app. Known values are: "IPv4", "IPv6", and
      "IPv4AndIPv6".
-    :vartype ip_mode: Union[str, "IPMode"]
-    :ivar end_to_end_encryption_enabled: Whether to use end to end encryption between the FrontEnd
-     and the Worker.
-    :vartype end_to_end_encryption_enabled: bool
-    :ivar ssh_enabled: Whether to enable ssh access.
-    :vartype ssh_enabled: bool
-    :ivar host_names_disabled: <code>true</code> to disable the public hostnames of the app;
+    :vartype ipMode: Union[str, "IPMode"]
+    :ivar endToEndEncryptionEnabled: Whether to use end to end encryption between the FrontEnd and
+     the Worker.
+    :vartype endToEndEncryptionEnabled: bool
+    :ivar sshEnabled: Whether to enable ssh access.
+    :vartype sshEnabled: bool
+    :ivar hostNamesDisabled: <code>true</code> to disable the public hostnames of the app;
      otherwise, <code>false</code>. If <code>true</code>, the app is only accessible via API
      management process.
-    :vartype host_names_disabled: bool
-    :ivar custom_domain_verification_id: Unique identifier that verifies the custom domains
-     assigned to the app. Customer will add this id to a txt record for verification.
-    :vartype custom_domain_verification_id: str
-    :ivar outbound_ip_addresses: List of IP addresses that the app uses for outbound connections
+    :vartype hostNamesDisabled: bool
+    :ivar customDomainVerificationId: Unique identifier that verifies the custom domains assigned
+     to the app. Customer will add this id to a txt record for verification.
+    :vartype customDomainVerificationId: str
+    :ivar outboundIpAddresses: List of IP addresses that the app uses for outbound connections
      (e.g. database access). Includes VIPs from tenants that site can be hosted with current
      settings. Read-only.
-    :vartype outbound_ip_addresses: str
-    :ivar possible_outbound_ip_addresses: List of IP addresses that the app uses for outbound
+    :vartype outboundIpAddresses: str
+    :ivar possibleOutboundIpAddresses: List of IP addresses that the app uses for outbound
      connections (e.g. database access). Includes VIPs from all tenants except dataComponent.
      Read-only.
-    :vartype possible_outbound_ip_addresses: str
-    :ivar container_size: Size of the function container.
-    :vartype container_size: int
-    :ivar daily_memory_time_quota: Maximum allowed daily memory-time quota (applicable on dynamic
-     apps only).
-    :vartype daily_memory_time_quota: int
-    :ivar suspended_till: App suspended till in case memory-time quota is exceeded.
-    :vartype suspended_till: str
-    :ivar max_number_of_workers: Maximum number of workers. This only applies to Functions
-     container.
-    :vartype max_number_of_workers: int
-    :ivar cloning_info: If specified during app creation, the app is cloned from a source app.
-    :vartype cloning_info: "CloningInfo"
-    :ivar resource_group: Name of the resource group the app belongs to. Read-only.
-    :vartype resource_group: str
-    :ivar is_default_container: <code>true</code> if the app is a default container; otherwise,
+    :vartype possibleOutboundIpAddresses: str
+    :ivar containerSize: Size of the function container.
+    :vartype containerSize: int
+    :ivar dailyMemoryTimeQuota: Maximum allowed daily memory-time quota (applicable on dynamic apps
+     only).
+    :vartype dailyMemoryTimeQuota: int
+    :ivar suspendedTill: App suspended till in case memory-time quota is exceeded.
+    :vartype suspendedTill: str
+    :ivar maxNumberOfWorkers: Maximum number of workers. This only applies to Functions container.
+    :vartype maxNumberOfWorkers: int
+    :ivar cloningInfo: If specified during app creation, the app is cloned from a source app.
+    :vartype cloningInfo: "CloningInfo"
+    :ivar resourceGroup: Name of the resource group the app belongs to. Read-only.
+    :vartype resourceGroup: str
+    :ivar isDefaultContainer: <code>true</code> if the app is a default container; otherwise,
      <code>false</code>.
-    :vartype is_default_container: bool
-    :ivar default_host_name: Default hostname of the app. Read-only.
-    :vartype default_host_name: str
-    :ivar slot_swap_status: Status of the last deployment slot swap operation.
-    :vartype slot_swap_status: "SlotSwapStatus"
-    :ivar https_only: HttpsOnly: configures a web site to accept only https requests. Issues
+    :vartype isDefaultContainer: bool
+    :ivar defaultHostName: Default hostname of the app. Read-only.
+    :vartype defaultHostName: str
+    :ivar slotSwapStatus: Status of the last deployment slot swap operation.
+    :vartype slotSwapStatus: "SlotSwapStatus"
+    :ivar httpsOnly: HttpsOnly: configures a web site to accept only https requests. Issues
      redirect for http requests.
-    :vartype https_only: bool
-    :ivar redundancy_mode: Site redundancy mode. Known values are: "None", "Manual", "Failover",
+    :vartype httpsOnly: bool
+    :ivar redundancyMode: Site redundancy mode. Known values are: "None", "Manual", "Failover",
      "ActiveActive", and "GeoRedundant".
-    :vartype redundancy_mode: Union[str, "RedundancyMode"]
-    :ivar in_progress_operation_id: Specifies an operation id if this site has a pending operation.
-    :vartype in_progress_operation_id: str
-    :ivar public_network_access: Property to allow or block all public traffic. Allowed Values:
+    :vartype redundancyMode: Union[str, "RedundancyMode"]
+    :ivar inProgressOperationId: Specifies an operation id if this site has a pending operation.
+    :vartype inProgressOperationId: str
+    :ivar publicNetworkAccess: Property to allow or block all public traffic. Allowed Values:
      'Enabled', 'Disabled' or an empty string.
-    :vartype public_network_access: str
-    :ivar storage_account_required: Checks if Customer provided storage account is required.
-    :vartype storage_account_required: bool
-    :ivar key_vault_reference_identity: Identity to use for Key Vault Reference authentication.
-    :vartype key_vault_reference_identity: str
-    :ivar auto_generated_domain_name_label_scope: Specifies the scope of uniqueness for the default
+    :vartype publicNetworkAccess: str
+    :ivar storageAccountRequired: Checks if Customer provided storage account is required.
+    :vartype storageAccountRequired: bool
+    :ivar keyVaultReferenceIdentity: Identity to use for Key Vault Reference authentication.
+    :vartype keyVaultReferenceIdentity: str
+    :ivar autoGeneratedDomainNameLabelScope: Specifies the scope of uniqueness for the default
      hostname during resource creation. Known values are: "TenantReuse", "SubscriptionReuse",
      "ResourceGroupReuse", and "NoReuse".
-    :vartype auto_generated_domain_name_label_scope: Union[str,
-     "AutoGeneratedDomainNameLabelScope"]
-    :ivar virtual_network_subnet_id: Azure Resource Manager ID of the Virtual network and subnet to
-     be joined by Regional VNET Integration. This must be of the form
+    :vartype autoGeneratedDomainNameLabelScope: Union[str, "AutoGeneratedDomainNameLabelScope"]
+    :ivar virtualNetworkSubnetId: Azure Resource Manager ID of the Virtual network and subnet to be
+     joined by Regional VNET Integration. This must be of the form
      /subscriptions/{subscriptionName}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
-    :vartype virtual_network_subnet_id: str
-    :ivar managed_environment_id: Azure Resource Manager ID of the customer's selected Managed
+    :vartype virtualNetworkSubnetId: str
+    :ivar managedEnvironmentId: Azure Resource Manager ID of the customer's selected Managed
      Environment on which to host this app. This must be of the form
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}.
-    :vartype managed_environment_id: str
+    :vartype managedEnvironmentId: str
     :ivar sku: Current SKU of application based on associated App Service Plan. Some valid SKU
      values are Free, Shared, Basic, Dynamic, FlexConsumption, Standard, Premium, PremiumV2,
      PremiumV3, Isolated, IsolatedV2.
     :vartype sku: str
+    :ivar platformReleaseChannel: The platform release channel for the site. Latest receives
+     updates earliest, followed by Standard, then Extended. Known values are: "Latest", "Standard",
+     and "Extended".
+    :vartype platformReleaseChannel: Union[str, "PlatformReleaseChannel"]
+    :ivar maintenanceEnabled: <code>true</code> if the app is in maintenance mode; otherwise,
+     <code>false</code>. Setting this value to true puts the app in maintenance mode, making it
+     return the maintenance custom error page. The maintenance custom error page is required to set
+     the site to maintenance. Default value is <code>false</code>.
+    :vartype maintenanceEnabled: bool
     """
 
     state: str
@@ -6692,6 +6850,8 @@ class SiteProperties(TypedDict, total=False):
     enabled: bool
     """<code>true</code> if the app is enabled; otherwise, <code>false</code>. Setting this value to
      false disables the app (takes the app offline)."""
+    siteScopedCertificatesEnabled: bool
+    """<code>true</code> if site scoped certificates are enabled; otherwise, <code>false</code>."""
     enabledHostNames: list[str]
     """Enabled hostnames for the app.Hostnames need to be assigned (see HostNames) AND enabled.
      Otherwise, the app is not served on those hostnames."""
@@ -6722,6 +6882,8 @@ class SiteProperties(TypedDict, total=False):
     """Configuration specific of the Azure Function app."""
     daprConfig: "DaprConfig"
     """Dapr configuration of the app."""
+    aiIntegration: "AiIntegration"
+    """AI integration configuration for the app."""
     workloadProfileName: str
     """Workload profile name for function app to execute on."""
     resourceConfig: "ResourceConfig"
@@ -6824,6 +6986,14 @@ class SiteProperties(TypedDict, total=False):
     """Current SKU of application based on associated App Service Plan. Some valid SKU values are
      Free, Shared, Basic, Dynamic, FlexConsumption, Standard, Premium, PremiumV2, PremiumV3,
      Isolated, IsolatedV2."""
+    platformReleaseChannel: Union[str, "PlatformReleaseChannel"]
+    """The platform release channel for the site. Latest receives updates earliest, followed by
+     Standard, then Extended. Known values are: \"Latest\", \"Standard\", and \"Extended\"."""
+    maintenanceEnabled: bool
+    """<code>true</code> if the app is in maintenance mode; otherwise, <code>false</code>. Setting
+     this value to true puts the app in maintenance mode, making it return the maintenance custom
+     error page. The maintenance custom error page is required to set the site to maintenance.
+     Default value is <code>false</code>."""
 
 
 class SiteSourceControl(ProxyResource):
@@ -6837,9 +7007,9 @@ class SiteSourceControl(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: SiteSourceControl resource specific properties.
     :vartype properties: "SiteSourceControlProperties"
     :ivar kind: Kind of resource.
@@ -6855,25 +7025,24 @@ class SiteSourceControl(ProxyResource):
 class SiteSourceControlProperties(TypedDict, total=False):
     """SiteSourceControl resource specific properties.
 
-    :ivar repo_url: Repository or source control URL.
-    :vartype repo_url: str
+    :ivar repoUrl: Repository or source control URL.
+    :vartype repoUrl: str
     :ivar branch: Name of branch to use for deployment.
     :vartype branch: str
-    :ivar is_manual_integration: <code>true</code> to limit to manual integration;
-     <code>false</code> to enable continuous integration (which configures webhooks into online
-     repos like GitHub).
-    :vartype is_manual_integration: bool
-    :ivar is_git_hub_action: <code>true</code> if this is deployed via GitHub action.
-    :vartype is_git_hub_action: bool
-    :ivar deployment_rollback_enabled: <code>true</code> to enable deployment rollback; otherwise,
+    :ivar isManualIntegration: <code>true</code> to limit to manual integration; <code>false</code>
+     to enable continuous integration (which configures webhooks into online repos like GitHub).
+    :vartype isManualIntegration: bool
+    :ivar isGitHubAction: <code>true</code> if this is deployed via GitHub action.
+    :vartype isGitHubAction: bool
+    :ivar deploymentRollbackEnabled: <code>true</code> to enable deployment rollback; otherwise,
      <code>false</code>.
-    :vartype deployment_rollback_enabled: bool
-    :ivar is_mercurial: <code>true</code> for a Mercurial repository; <code>false</code> for a Git
+    :vartype deploymentRollbackEnabled: bool
+    :ivar isMercurial: <code>true</code> for a Mercurial repository; <code>false</code> for a Git
      repository.
-    :vartype is_mercurial: bool
-    :ivar git_hub_action_configuration: If GitHub Action is selected, than the associated
+    :vartype isMercurial: bool
+    :ivar gitHubActionConfiguration: If GitHub Action is selected, than the associated
      configuration.
-    :vartype git_hub_action_configuration: "GitHubActionConfiguration"
+    :vartype gitHubActionConfiguration: "GitHubActionConfiguration"
     """
 
     repoUrl: str
@@ -6900,12 +7069,12 @@ class SkuCapacity(TypedDict, total=False):
     :vartype minimum: int
     :ivar maximum: Maximum number of workers for this App Service plan SKU.
     :vartype maximum: int
-    :ivar elastic_maximum: Maximum number of Elastic workers for this App Service plan SKU.
-    :vartype elastic_maximum: int
+    :ivar elasticMaximum: Maximum number of Elastic workers for this App Service plan SKU.
+    :vartype elasticMaximum: int
     :ivar default: Default number of workers for this App Service plan SKU.
     :vartype default: int
-    :ivar scale_type: Available scale configurations for an App Service plan.
-    :vartype scale_type: str
+    :ivar scaleType: Available scale configurations for an App Service plan.
+    :vartype scaleType: str
     """
 
     minimum: int
@@ -6933,8 +7102,8 @@ class SkuDescription(TypedDict, total=False):
     :vartype family: str
     :ivar capacity: Current number of instances assigned to the resource.
     :vartype capacity: int
-    :ivar sku_capacity: Min, max, and default scale values of the SKU.
-    :vartype sku_capacity: "SkuCapacity"
+    :ivar skuCapacity: Min, max, and default scale values of the SKU.
+    :vartype skuCapacity: "SkuCapacity"
     :ivar locations: Locations of the SKU.
     :vartype locations: list[str]
     :ivar capabilities: Capabilities of the SKU, e.g., is traffic manager enabled?.
@@ -6964,12 +7133,12 @@ class SlotConfigNames(TypedDict, total=False):
     configuration identifiers to be marked as sticky to the deployment slot and not moved during a
     swap operation. This is valid for all deployment slots in an app.
 
-    :ivar connection_string_names: List of connection string names.
-    :vartype connection_string_names: list[str]
-    :ivar app_setting_names: List of application settings names.
-    :vartype app_setting_names: list[str]
-    :ivar azure_storage_config_names: List of external Azure storage account identifiers.
-    :vartype azure_storage_config_names: list[str]
+    :ivar connectionStringNames: List of connection string names.
+    :vartype connectionStringNames: list[str]
+    :ivar appSettingNames: List of application settings names.
+    :vartype appSettingNames: list[str]
+    :ivar azureStorageConfigNames: List of external Azure storage account identifiers.
+    :vartype azureStorageConfigNames: list[str]
     """
 
     connectionStringNames: list[str]
@@ -6991,9 +7160,9 @@ class SlotConfigNamesResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Core resource properties.
     :vartype properties: "SlotConfigNames"
     :ivar kind: Kind of resource.
@@ -7009,12 +7178,12 @@ class SlotConfigNamesResource(ProxyResource):
 class SlotSwapStatus(TypedDict, total=False):
     """The status of the last successful slot swap operation.
 
-    :ivar timestamp_utc: The time the last successful slot swap completed.
-    :vartype timestamp_utc: str
-    :ivar source_slot_name: The source slot of the last swap operation.
-    :vartype source_slot_name: str
-    :ivar destination_slot_name: The destination slot of the last swap operation.
-    :vartype destination_slot_name: str
+    :ivar timestampUtc: The time the last successful slot swap completed.
+    :vartype timestampUtc: str
+    :ivar sourceSlotName: The source slot of the last swap operation.
+    :vartype sourceSlotName: str
+    :ivar destinationSlotName: The destination slot of the last swap operation.
+    :vartype destinationSlotName: str
     """
 
     timestampUtc: str
@@ -7028,14 +7197,14 @@ class SlotSwapStatus(TypedDict, total=False):
 class SlowRequestsBasedTrigger(TypedDict, total=False):
     """Trigger based on request execution time.
 
-    :ivar time_taken: Time taken.
-    :vartype time_taken: str
+    :ivar timeTaken: Time taken.
+    :vartype timeTaken: str
     :ivar path: Request Path.
     :vartype path: str
     :ivar count: Request Count.
     :vartype count: int
-    :ivar time_interval: Time interval.
-    :vartype time_interval: str
+    :ivar timeInterval: Time interval.
+    :vartype timeInterval: str
     """
 
     timeTaken: str
@@ -7094,24 +7263,24 @@ class SnapshotRestoreRequest(ProxyOnlyResource):
 class SnapshotRestoreRequestProperties(TypedDict, total=False):
     """SnapshotRestoreRequest resource specific properties.
 
-    :ivar snapshot_time: Point in time in which the app restore should be done, formatted as a
+    :ivar snapshotTime: Point in time in which the app restore should be done, formatted as a
      DateTime string.
-    :vartype snapshot_time: str
-    :ivar recovery_source: Optional. Specifies the web app that snapshot contents will be retrieved
+    :vartype snapshotTime: str
+    :ivar recoverySource: Optional. Specifies the web app that snapshot contents will be retrieved
      from. If empty, the targeted web app will be used as the source.
-    :vartype recovery_source: "SnapshotRecoverySource"
+    :vartype recoverySource: "SnapshotRecoverySource"
     :ivar overwrite: If <code>true</code> the restore operation can overwrite source app;
      otherwise, <code>false</code>. Required.
     :vartype overwrite: bool
-    :ivar recover_configuration: If true, site configuration, in addition to content, will be
+    :ivar recoverConfiguration: If true, site configuration, in addition to content, will be
      reverted.
-    :vartype recover_configuration: bool
-    :ivar ignore_conflicting_host_names: If true, custom hostname conflicts will be ignored when
+    :vartype recoverConfiguration: bool
+    :ivar ignoreConflictingHostNames: If true, custom hostname conflicts will be ignored when
      recovering to a target web app. This setting is only necessary when RecoverConfiguration is
      enabled.
-    :vartype ignore_conflicting_host_names: bool
-    :ivar use_dr_secondary: If true, the snapshot is retrieved from DRSecondary endpoint.
-    :vartype use_dr_secondary: bool
+    :vartype ignoreConflictingHostNames: bool
+    :ivar useDRSecondary: If true, the snapshot is retrieved from DRSecondary endpoint.
+    :vartype useDRSecondary: bool
     """
 
     snapshotTime: str
@@ -7142,9 +7311,9 @@ class SourceControl(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: SourceControl resource specific properties.
     :vartype properties: "SourceControlProperties"
     :ivar kind: Kind of resource.
@@ -7162,12 +7331,12 @@ class SourceControlProperties(TypedDict, total=False):
 
     :ivar token: OAuth access token.
     :vartype token: str
-    :ivar token_secret: OAuth access token secret.
-    :vartype token_secret: str
-    :ivar refresh_token: OAuth refresh token.
-    :vartype refresh_token: str
-    :ivar expiration_time: OAuth token expiration.
-    :vartype expiration_time: str
+    :ivar tokenSecret: OAuth access token secret.
+    :vartype tokenSecret: str
+    :ivar refreshToken: OAuth refresh token.
+    :vartype refreshToken: str
+    :ivar expirationTime: OAuth token expiration.
+    :vartype expirationTime: str
     """
 
     token: str
@@ -7183,50 +7352,50 @@ class SourceControlProperties(TypedDict, total=False):
 class StaticSite(TypedDict, total=False):
     """A static site.
 
-    :ivar default_hostname: The default autogenerated hostname for the static site.
-    :vartype default_hostname: str
-    :ivar repository_url: URL for the repository of the static site.
-    :vartype repository_url: str
+    :ivar defaultHostname: The default autogenerated hostname for the static site.
+    :vartype defaultHostname: str
+    :ivar repositoryUrl: URL for the repository of the static site.
+    :vartype repositoryUrl: str
     :ivar branch: The target branch in the repository.
     :vartype branch: str
-    :ivar custom_domains: The custom domains associated with this static site.
-    :vartype custom_domains: list[str]
-    :ivar repository_token: A user's github repository token. This is used to setup the Github
+    :ivar customDomains: The custom domains associated with this static site.
+    :vartype customDomains: list[str]
+    :ivar repositoryToken: A user's github repository token. This is used to setup the Github
      Actions workflow file and API secrets.
-    :vartype repository_token: str
-    :ivar build_properties: Build properties to configure on the repository.
-    :vartype build_properties: "StaticSiteBuildProperties"
-    :ivar private_endpoint_connections: Private endpoint connections.
-    :vartype private_endpoint_connections:
+    :vartype repositoryToken: str
+    :ivar buildProperties: Build properties to configure on the repository.
+    :vartype buildProperties: "StaticSiteBuildProperties"
+    :ivar privateEndpointConnections: Private endpoint connections.
+    :vartype privateEndpointConnections:
      list["ResponseMessageEnvelopeRemotePrivateEndpointConnection"]
-    :ivar staging_environment_policy: State indicating whether staging environments are allowed or
+    :ivar stagingEnvironmentPolicy: State indicating whether staging environments are allowed or
      not allowed for a static web app. Known values are: "Enabled" and "Disabled".
-    :vartype staging_environment_policy: Union[str, "StagingEnvironmentPolicy"]
-    :ivar allow_config_file_updates: <code>false</code> if config file is locked for this static
-     web app; otherwise, <code>true</code>.
-    :vartype allow_config_file_updates: bool
-    :ivar template_properties: Template options for generating a new repository.
-    :vartype template_properties: "StaticSiteTemplateOptions"
-    :ivar content_distribution_endpoint: The content distribution endpoint for the static site.
-    :vartype content_distribution_endpoint: str
-    :ivar key_vault_reference_identity: Identity to use for Key Vault Reference authentication.
-    :vartype key_vault_reference_identity: str
-    :ivar user_provided_function_apps: User provided function apps registered with the static site.
-    :vartype user_provided_function_apps: list["StaticSiteUserProvidedFunctionApp"]
-    :ivar linked_backends: Backends linked to the static side.
-    :vartype linked_backends: list["StaticSiteLinkedBackend"]
+    :vartype stagingEnvironmentPolicy: Union[str, "StagingEnvironmentPolicy"]
+    :ivar allowConfigFileUpdates: <code>false</code> if config file is locked for this static web
+     app; otherwise, <code>true</code>.
+    :vartype allowConfigFileUpdates: bool
+    :ivar templateProperties: Template options for generating a new repository.
+    :vartype templateProperties: "StaticSiteTemplateOptions"
+    :ivar contentDistributionEndpoint: The content distribution endpoint for the static site.
+    :vartype contentDistributionEndpoint: str
+    :ivar keyVaultReferenceIdentity: Identity to use for Key Vault Reference authentication.
+    :vartype keyVaultReferenceIdentity: str
+    :ivar userProvidedFunctionApps: User provided function apps registered with the static site.
+    :vartype userProvidedFunctionApps: list["StaticSiteUserProvidedFunctionApp"]
+    :ivar linkedBackends: Backends linked to the static side.
+    :vartype linkedBackends: list["StaticSiteLinkedBackend"]
     :ivar provider: The provider that submitted the last deployment to the primary environment of
      the static site.
     :vartype provider: str
-    :ivar enterprise_grade_cdn_status: State indicating the status of the enterprise grade CDN
-     serving traffic to the static web app. Known values are: "Enabled", "Enabling", "Disabled", and
+    :ivar enterpriseGradeCdnStatus: State indicating the status of the enterprise grade CDN serving
+     traffic to the static web app. Known values are: "Enabled", "Enabling", "Disabled", and
      "Disabling".
-    :vartype enterprise_grade_cdn_status: Union[str, "EnterpriseGradeCdnStatus"]
-    :ivar public_network_access: State indicating whether public traffic are allowed or not for a
+    :vartype enterpriseGradeCdnStatus: Union[str, "EnterpriseGradeCdnStatus"]
+    :ivar publicNetworkAccess: State indicating whether public traffic are allowed or not for a
      static web app. Allowed Values: 'Enabled', 'Disabled' or an empty string.
-    :vartype public_network_access: str
-    :ivar database_connections: Database connections for the static site.
-    :vartype database_connections: list["DatabaseConnectionOverview"]
+    :vartype publicNetworkAccess: str
+    :ivar databaseConnections: Database connections for the static site.
+    :vartype databaseConnections: list["DatabaseConnectionOverview"]
     """
 
     defaultHostname: str
@@ -7284,9 +7453,9 @@ class StaticSiteARMResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -7322,9 +7491,9 @@ class StaticSiteBasicAuthPropertiesARMResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: StaticSiteBasicAuthPropertiesARMResource resource specific properties.
     :vartype properties: "StaticSiteBasicAuthPropertiesARMResourceProperties"
     :ivar kind: Kind of resource.
@@ -7342,16 +7511,16 @@ class StaticSiteBasicAuthPropertiesARMResourceProperties(TypedDict, total=False)
 
     :ivar password: The password for basic auth.
     :vartype password: str
-    :ivar secret_url: Url to the secret in Key Vault.
-    :vartype secret_url: str
-    :ivar applicable_environments_mode: State indicating if basic auth is enabled and for what
+    :ivar secretUrl: Url to the secret in Key Vault.
+    :vartype secretUrl: str
+    :ivar applicableEnvironmentsMode: State indicating if basic auth is enabled and for what
      environments it is active. Required.
-    :vartype applicable_environments_mode: str
+    :vartype applicableEnvironmentsMode: str
     :ivar environments: The list of enabled environments for Basic Auth if
      ApplicableEnvironmentsMode is set to SpecifiedEnvironments.
     :vartype environments: list[str]
-    :ivar secret_state: State indicating if basic auth has a secret and what type it is.
-    :vartype secret_state: str
+    :ivar secretState: State indicating if basic auth has a secret and what type it is.
+    :vartype secretState: str
     """
 
     password: str
@@ -7370,25 +7539,25 @@ class StaticSiteBasicAuthPropertiesARMResourceProperties(TypedDict, total=False)
 class StaticSiteBuildProperties(TypedDict, total=False):
     """Build properties for the static site.
 
-    :ivar app_location: The path to the app code within the repository.
-    :vartype app_location: str
-    :ivar api_location: The path to the api code within the repository.
-    :vartype api_location: str
-    :ivar app_artifact_location: Deprecated: The path of the app artifacts after building
-     (deprecated in favor of OutputLocation).
-    :vartype app_artifact_location: str
-    :ivar output_location: The output path of the app after building.
-    :vartype output_location: str
-    :ivar app_build_command: A custom command to run during deployment of the static content
+    :ivar appLocation: The path to the app code within the repository.
+    :vartype appLocation: str
+    :ivar apiLocation: The path to the api code within the repository.
+    :vartype apiLocation: str
+    :ivar appArtifactLocation: Deprecated: The path of the app artifacts after building (deprecated
+     in favor of OutputLocation).
+    :vartype appArtifactLocation: str
+    :ivar outputLocation: The output path of the app after building.
+    :vartype outputLocation: str
+    :ivar appBuildCommand: A custom command to run during deployment of the static content
      application.
-    :vartype app_build_command: str
-    :ivar api_build_command: A custom command to run during deployment of the Azure Functions API
+    :vartype appBuildCommand: str
+    :ivar apiBuildCommand: A custom command to run during deployment of the Azure Functions API
      application.
-    :vartype api_build_command: str
-    :ivar skip_github_action_workflow_generation: Skip Github Action workflow generation.
-    :vartype skip_github_action_workflow_generation: bool
-    :ivar github_action_secret_name_override: Github Action secret name override.
-    :vartype github_action_secret_name_override: str
+    :vartype apiBuildCommand: str
+    :ivar skipGithubActionWorkflowGeneration: Skip Github Action workflow generation.
+    :vartype skipGithubActionWorkflowGeneration: bool
+    :ivar githubActionSecretNameOverride: Github Action secret name override.
+    :vartype githubActionSecretNameOverride: str
     """
 
     appLocation: str
@@ -7435,8 +7604,8 @@ class StaticSiteCustomDomainRequestPropertiesARMResourceProperties(
 ):  # pylint: disable=name-too-long
     """StaticSiteCustomDomainRequestPropertiesARMResource resource specific properties.
 
-    :ivar validation_method: Validation method for adding a custom domain.
-    :vartype validation_method: str
+    :ivar validationMethod: Validation method for adding a custom domain.
+    :vartype validationMethod: str
     """
 
     validationMethod: str
@@ -7446,8 +7615,8 @@ class StaticSiteCustomDomainRequestPropertiesARMResourceProperties(
 class StaticSiteDatabaseConnectionConfigurationFileOverview(TypedDict, total=False):  # pylint: disable=name-too-long
     """A database connection configuration file.
 
-    :ivar file_name: The name of the configuration file.
-    :vartype file_name: str
+    :ivar fileName: The name of the configuration file.
+    :vartype fileName: str
     :ivar contents: The Base64 encoding of the file contents.
     :vartype contents: str
     :ivar type: The type of configuration file.
@@ -7465,14 +7634,14 @@ class StaticSiteDatabaseConnectionConfigurationFileOverview(TypedDict, total=Fal
 class StaticSiteLinkedBackend(TypedDict, total=False):
     """Static Site Linked Backend ARM resource.
 
-    :ivar backend_resource_id: The resource id of the backend linked to the static site.
-    :vartype backend_resource_id: str
+    :ivar backendResourceId: The resource id of the backend linked to the static site.
+    :vartype backendResourceId: str
     :ivar region: The region of the backend linked to the static site.
     :vartype region: str
-    :ivar created_on: The date and time on which the backend was linked to the static site.
-    :vartype created_on: str
-    :ivar provisioning_state: The provisioning state of the linking process.
-    :vartype provisioning_state: str
+    :ivar createdOn: The date and time on which the backend was linked to the static site.
+    :vartype createdOn: str
+    :ivar provisioningState: The provisioning state of the linking process.
+    :vartype provisioningState: str
     """
 
     backendResourceId: str
@@ -7496,9 +7665,9 @@ class StaticSiteLinkedBackendARMResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: StaticSiteLinkedBackendARMResource resource specific properties.
     :vartype properties: "StaticSiteLinkedBackendARMResourceProperties"
     :ivar kind: Kind of resource.
@@ -7514,14 +7683,14 @@ class StaticSiteLinkedBackendARMResource(ProxyResource):
 class StaticSiteLinkedBackendARMResourceProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """StaticSiteLinkedBackendARMResource resource specific properties.
 
-    :ivar backend_resource_id: The resource id of the backend linked to the static site.
-    :vartype backend_resource_id: str
+    :ivar backendResourceId: The resource id of the backend linked to the static site.
+    :vartype backendResourceId: str
     :ivar region: The region of the backend linked to the static site.
     :vartype region: str
-    :ivar created_on: The date and time on which the backend was linked to the static site.
-    :vartype created_on: str
-    :ivar provisioning_state: The provisioning state of the linking process.
-    :vartype provisioning_state: str
+    :ivar createdOn: The date and time on which the backend was linked to the static site.
+    :vartype createdOn: str
+    :ivar provisioningState: The provisioning state of the linking process.
+    :vartype provisioningState: str
     """
 
     backendResourceId: str
@@ -7575,11 +7744,11 @@ class StaticSiteResetPropertiesARMResource(ProxyOnlyResource):
 class StaticSiteResetPropertiesARMResourceProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """StaticSiteResetPropertiesARMResource resource specific properties.
 
-    :ivar repository_token: The token which proves admin privileges to the repository.
-    :vartype repository_token: str
-    :ivar should_update_repository: Determines whether the repository should be updated with the
-     new properties.
-    :vartype should_update_repository: bool
+    :ivar repositoryToken: The token which proves admin privileges to the repository.
+    :vartype repositoryToken: str
+    :ivar shouldUpdateRepository: Determines whether the repository should be updated with the new
+     properties.
+    :vartype shouldUpdateRepository: bool
     """
 
     repositoryToken: str
@@ -7610,12 +7779,12 @@ class StaticSitesWorkflowPreviewRequest(ProxyOnlyResource):
 class StaticSitesWorkflowPreviewRequestProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """StaticSitesWorkflowPreviewRequest resource specific properties.
 
-    :ivar repository_url: URL for the repository of the static site.
-    :vartype repository_url: str
+    :ivar repositoryUrl: URL for the repository of the static site.
+    :vartype repositoryUrl: str
     :ivar branch: The target branch in the repository.
     :vartype branch: str
-    :ivar build_properties: Build properties to configure on the repository.
-    :vartype build_properties: "StaticSiteBuildProperties"
+    :ivar buildProperties: Build properties to configure on the repository.
+    :vartype buildProperties: "StaticSiteBuildProperties"
     """
 
     repositoryUrl: str
@@ -7629,18 +7798,18 @@ class StaticSitesWorkflowPreviewRequestProperties(TypedDict, total=False):  # py
 class StaticSiteTemplateOptions(TypedDict, total=False):
     """Template Options for the static site.
 
-    :ivar template_repository_url: URL of the template repository. The newly generated repository
+    :ivar templateRepositoryUrl: URL of the template repository. The newly generated repository
      will be based on this one.
-    :vartype template_repository_url: str
+    :vartype templateRepositoryUrl: str
     :ivar owner: Owner of the newly generated repository.
     :vartype owner: str
-    :ivar repository_name: Name of the newly generated repository.
-    :vartype repository_name: str
+    :ivar repositoryName: Name of the newly generated repository.
+    :vartype repositoryName: str
     :ivar description: Description of the newly generated repository.
     :vartype description: str
-    :ivar is_private: Whether or not the newly generated repository is a private repository.
+    :ivar isPrivate: Whether or not the newly generated repository is a private repository.
      Defaults to false (i.e. public).
-    :vartype is_private: bool
+    :vartype isPrivate: bool
     """
 
     templateRepositoryUrl: str
@@ -7680,10 +7849,10 @@ class StaticSiteUserARMResourceProperties(TypedDict, total=False):
 
     :ivar provider: The identity provider for the static site user.
     :vartype provider: str
-    :ivar user_id: The user id for the static site user.
-    :vartype user_id: str
-    :ivar display_name: The display name for the static site user.
-    :vartype display_name: str
+    :ivar userId: The user id for the static site user.
+    :vartype userId: str
+    :ivar displayName: The display name for the static site user.
+    :vartype displayName: str
     :ivar roles: The roles for the static site user, in free-form string format.
     :vartype roles: str
     """
@@ -7724,12 +7893,12 @@ class StaticSiteUserInvitationRequestResourceProperties(TypedDict, total=False):
     :vartype domain: str
     :ivar provider: The identity provider for the static site user.
     :vartype provider: str
-    :ivar user_details: The user id for the static site user.
-    :vartype user_details: str
+    :ivar userDetails: The user id for the static site user.
+    :vartype userDetails: str
     :ivar roles: The roles for the static site user, in free-form string format.
     :vartype roles: str
-    :ivar num_hours_to_expiration: The number of hours the sas token stays valid.
-    :vartype num_hours_to_expiration: int
+    :ivar numHoursToExpiration: The number of hours the sas token stays valid.
+    :vartype numHoursToExpiration: int
     """
 
     domain: str
@@ -7774,9 +7943,9 @@ class StaticSiteUserProvidedFunctionAppARMResource(ProxyResource):  # pylint: di
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: StaticSiteUserProvidedFunctionAppARMResource resource specific properties.
     :vartype properties: "StaticSiteUserProvidedFunctionAppARMResourceProperties"
     :ivar kind: Kind of resource.
@@ -7792,14 +7961,14 @@ class StaticSiteUserProvidedFunctionAppARMResource(ProxyResource):  # pylint: di
 class StaticSiteUserProvidedFunctionAppARMResourceProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """StaticSiteUserProvidedFunctionAppARMResource resource specific properties.
 
-    :ivar function_app_resource_id: The resource id of the function app registered with the static
+    :ivar functionAppResourceId: The resource id of the function app registered with the static
      site.
-    :vartype function_app_resource_id: str
-    :ivar function_app_region: The region of the function app registered with the static site.
-    :vartype function_app_region: str
-    :ivar created_on: The date and time on which the function app was registered with the static
+    :vartype functionAppResourceId: str
+    :ivar functionAppRegion: The region of the function app registered with the static site.
+    :vartype functionAppRegion: str
+    :ivar createdOn: The date and time on which the function app was registered with the static
      site.
-    :vartype created_on: str
+    :vartype createdOn: str
     """
 
     functionAppResourceId: str
@@ -7813,14 +7982,14 @@ class StaticSiteUserProvidedFunctionAppARMResourceProperties(TypedDict, total=Fa
 class StaticSiteUserProvidedFunctionAppProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """StaticSiteUserProvidedFunctionApp resource specific properties.
 
-    :ivar function_app_resource_id: The resource id of the function app registered with the static
+    :ivar functionAppResourceId: The resource id of the function app registered with the static
      site.
-    :vartype function_app_resource_id: str
-    :ivar function_app_region: The region of the function app registered with the static site.
-    :vartype function_app_region: str
-    :ivar created_on: The date and time on which the function app was registered with the static
+    :vartype functionAppResourceId: str
+    :ivar functionAppRegion: The region of the function app registered with the static site.
+    :vartype functionAppRegion: str
+    :ivar createdOn: The date and time on which the function app was registered with the static
      site.
-    :vartype created_on: str
+    :vartype createdOn: str
     """
 
     functionAppResourceId: str
@@ -7834,16 +8003,16 @@ class StaticSiteUserProvidedFunctionAppProperties(TypedDict, total=False):  # py
 class StaticSiteZipDeployment(TypedDict, total=False):
     """A static site zip deployment.
 
-    :ivar app_zip_url: URL for the zipped app content.
-    :vartype app_zip_url: str
-    :ivar api_zip_url: URL for the zipped api content.
-    :vartype api_zip_url: str
-    :ivar deployment_title: A title to label the deployment.
-    :vartype deployment_title: str
+    :ivar appZipUrl: URL for the zipped app content.
+    :vartype appZipUrl: str
+    :ivar apiZipUrl: URL for the zipped api content.
+    :vartype apiZipUrl: str
+    :ivar deploymentTitle: A title to label the deployment.
+    :vartype deploymentTitle: str
     :ivar provider: The provider submitting this deployment.
     :vartype provider: str
-    :ivar function_language: The language of the api content, if it exists.
-    :vartype function_language: str
+    :ivar functionLanguage: The language of the api content, if it exists.
+    :vartype functionLanguage: str
     """
 
     appZipUrl: str
@@ -7882,14 +8051,14 @@ class StatusCodesBasedTrigger(TypedDict, total=False):
 
     :ivar status: HTTP status code.
     :vartype status: int
-    :ivar sub_status: Request Sub Status.
-    :vartype sub_status: int
-    :ivar win32_status: Win32 error code.
-    :vartype win32_status: int
+    :ivar subStatus: Request Sub Status.
+    :vartype subStatus: int
+    :ivar win32Status: Win32 error code.
+    :vartype win32Status: int
     :ivar count: Request Count.
     :vartype count: int
-    :ivar time_interval: Time interval.
-    :vartype time_interval: str
+    :ivar timeInterval: Time interval.
+    :vartype timeInterval: str
     :ivar path: Request Path.
     :vartype path: str
     """
@@ -7911,14 +8080,14 @@ class StatusCodesBasedTrigger(TypedDict, total=False):
 class StatusCodesRangeBasedTrigger(TypedDict, total=False):
     """Trigger based on range of status codes.
 
-    :ivar status_codes: HTTP status code.
-    :vartype status_codes: str
+    :ivar statusCodes: HTTP status code.
+    :vartype statusCodes: str
     :ivar path:
     :vartype path: str
     :ivar count: Request Count.
     :vartype count: int
-    :ivar time_interval: Time interval.
-    :vartype time_interval: str
+    :ivar timeInterval: Time interval.
+    :vartype timeInterval: str
     """
 
     statusCodes: str
@@ -7952,16 +8121,16 @@ class StorageMigrationOptions(ProxyOnlyResource):
 class StorageMigrationOptionsProperties(TypedDict, total=False):
     """StorageMigrationOptions resource specific properties.
 
-    :ivar azurefiles_connection_string: AzureFiles connection string. Required.
-    :vartype azurefiles_connection_string: str
-    :ivar azurefiles_share: AzureFiles share. Required.
-    :vartype azurefiles_share: str
-    :ivar switch_site_after_migration: <code>true</code>if the app should be switched over;
-     otherwise, <code>false</code>.
-    :vartype switch_site_after_migration: bool
-    :ivar block_write_access_to_site: <code>true</code> if the app should be read only during copy
+    :ivar azurefilesConnectionString: AzureFiles connection string. Required.
+    :vartype azurefilesConnectionString: str
+    :ivar azurefilesShare: AzureFiles share. Required.
+    :vartype azurefilesShare: str
+    :ivar switchSiteAfterMigration: <code>true</code>if the app should be switched over; otherwise,
+     <code>false</code>.
+    :vartype switchSiteAfterMigration: bool
+    :ivar blockWriteAccessToSite: <code>true</code> if the app should be read only during copy
      operation; otherwise, <code>false</code>.
-    :vartype block_write_access_to_site: bool
+    :vartype blockWriteAccessToSite: bool
     """
 
     azurefilesConnectionString: Required[str]
@@ -7985,10 +8154,10 @@ class StorageMount(TypedDict, total=False):
     :vartype type: Union[str, "StorageMountType"]
     :ivar source: Source of the fileshare/storage.
     :vartype source: str
-    :ivar destination_path: Path on worker where storage will be mounted.
-    :vartype destination_path: str
-    :ivar credentials_key_vault_reference: KV reference to the credentials to connect to the share.
-    :vartype credentials_key_vault_reference: "KeyVaultReferenceWithStatus"
+    :ivar destinationPath: Path on worker where storage will be mounted.
+    :vartype destinationPath: str
+    :ivar credentialsKeyVaultReference: KV reference to the credentials to connect to the share.
+    :vartype credentialsKeyVaultReference: "KeyVaultReferenceWithStatus"
     """
 
     name: str
@@ -8035,9 +8204,9 @@ class SwiftVirtualNetwork(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: SwiftVirtualNetwork resource specific properties.
     :vartype properties: "SwiftVirtualNetworkProperties"
     :ivar kind: Kind of resource.
@@ -8053,13 +8222,13 @@ class SwiftVirtualNetwork(ProxyResource):
 class SwiftVirtualNetworkProperties(TypedDict, total=False):
     """SwiftVirtualNetwork resource specific properties.
 
-    :ivar subnet_resource_id: The Virtual Network subnet's resource ID. This is the subnet that
-     this Web App will join. This subnet must have a delegation to Microsoft.Web/serverFarms defined
+    :ivar subnetResourceId: The Virtual Network subnet's resource ID. This is the subnet that this
+     Web App will join. This subnet must have a delegation to Microsoft.Web/serverFarms defined
      first.
-    :vartype subnet_resource_id: str
-    :ivar swift_supported: A flag that specifies if the scale unit this Web App is on supports
-     Swift integration.
-    :vartype swift_supported: bool
+    :vartype subnetResourceId: str
+    :ivar swiftSupported: A flag that specifies if the scale unit this Web App is on supports Swift
+     integration.
+    :vartype swiftSupported: bool
     """
 
     subnetResourceId: str
@@ -8072,20 +8241,20 @@ class SwiftVirtualNetworkProperties(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -8110,15 +8279,15 @@ class TokenStore(TypedDict, total=False):
     :ivar enabled: <code>true</code> to durably store platform-specific security tokens that are
      obtained during login flows; otherwise, <code>false</code>. The default is <code>false</code>.
     :vartype enabled: bool
-    :ivar token_refresh_extension_hours: The number of hours after session token expiration that a
+    :ivar tokenRefreshExtensionHours: The number of hours after session token expiration that a
      session token can be used to call the token refresh API. The default is 72 hours.
-    :vartype token_refresh_extension_hours: float
-    :ivar file_system: The configuration settings of the storage of the tokens if a file system is
+    :vartype tokenRefreshExtensionHours: float
+    :ivar fileSystem: The configuration settings of the storage of the tokens if a file system is
      used.
-    :vartype file_system: "FileSystemTokenStore"
-    :ivar azure_blob_storage: The configuration settings of the storage of the tokens if blob
-     storage is used.
-    :vartype azure_blob_storage: "BlobStorageTokenStore"
+    :vartype fileSystem: "FileSystemTokenStore"
+    :ivar azureBlobStorage: The configuration settings of the storage of the tokens if blob storage
+     is used.
+    :vartype azureBlobStorage: "BlobStorageTokenStore"
     """
 
     enabled: bool
@@ -8154,13 +8323,13 @@ class Twitter(TypedDict, total=False):
 class TwitterRegistration(TypedDict, total=False):
     """The configuration settings of the app registration for the Twitter provider.
 
-    :ivar consumer_key: The OAuth 1.0a consumer key of the Twitter application used for sign-in.
+    :ivar consumerKey: The OAuth 1.0a consumer key of the Twitter application used for sign-in.
      This setting is required for enabling Twitter Sign-In. Twitter Sign-In documentation:
      `https://dev.twitter.com/web/sign-in <https://dev.twitter.com/web/sign-in>`_.
-    :vartype consumer_key: str
-    :ivar consumer_secret_setting_name: The app setting name that contains the OAuth 1.0a consumer
+    :vartype consumerKey: str
+    :ivar consumerSecretSettingName: The app setting name that contains the OAuth 1.0a consumer
      secret of the Twitter application used for sign-in.
-    :vartype consumer_secret_setting_name: str
+    :vartype consumerSecretSettingName: str
     """
 
     consumerKey: str
@@ -8183,9 +8352,9 @@ class User(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: User resource specific properties.
     :vartype properties: "UserProperties"
     :ivar kind: Kind of resource.
@@ -8201,10 +8370,10 @@ class User(ProxyResource):
 class UserAssignedIdentity(TypedDict, total=False):
     """User Assigned identity.
 
-    :ivar principal_id: Principal Id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: Client Id of user assigned identity.
-    :vartype client_id: str
+    :ivar principalId: Principal Id of user assigned identity.
+    :vartype principalId: str
+    :ivar clientId: Client Id of user assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -8216,16 +8385,16 @@ class UserAssignedIdentity(TypedDict, total=False):
 class UserProperties(TypedDict, total=False):
     """User resource specific properties.
 
-    :ivar publishing_user_name: Username used for publishing. Required.
-    :vartype publishing_user_name: str
-    :ivar publishing_password: Password used for publishing.
-    :vartype publishing_password: str
-    :ivar publishing_password_hash: Password hash used for publishing.
-    :vartype publishing_password_hash: str
-    :ivar publishing_password_hash_salt: Password hash salt used for publishing.
-    :vartype publishing_password_hash_salt: str
-    :ivar scm_uri: Url of SCM site.
-    :vartype scm_uri: str
+    :ivar publishingUserName: Username used for publishing. Required.
+    :vartype publishingUserName: str
+    :ivar publishingPassword: Password used for publishing.
+    :vartype publishingPassword: str
+    :ivar publishingPasswordHash: Password hash used for publishing.
+    :vartype publishingPasswordHash: str
+    :ivar publishingPasswordHashSalt: Password hash salt used for publishing.
+    :vartype publishingPasswordHashSalt: str
+    :ivar scmUri: Url of SCM site.
+    :vartype scmUri: str
     """
 
     publishingUserName: Required[str]
@@ -8243,37 +8412,37 @@ class UserProperties(TypedDict, total=False):
 class ValidateProperties(TypedDict, total=False):
     """App properties used for validation.
 
-    :ivar server_farm_id: ARM resource ID of an App Service plan that would host the app.
-    :vartype server_farm_id: str
-    :ivar sku_name: Name of the target SKU for the App Service plan.
-    :vartype sku_name: str
-    :ivar need_linux_workers: <code>true</code> if App Service plan is for Linux workers;
-     otherwise, <code>false</code>.
-    :vartype need_linux_workers: bool
-    :ivar is_spot: <code>true</code> if App Service plan is for Spot instances; otherwise,
+    :ivar serverFarmId: ARM resource ID of an App Service plan that would host the app.
+    :vartype serverFarmId: str
+    :ivar skuName: Name of the target SKU for the App Service plan.
+    :vartype skuName: str
+    :ivar needLinuxWorkers: <code>true</code> if App Service plan is for Linux workers; otherwise,
      <code>false</code>.
-    :vartype is_spot: bool
+    :vartype needLinuxWorkers: bool
+    :ivar isSpot: <code>true</code> if App Service plan is for Spot instances; otherwise,
+     <code>false</code>.
+    :vartype isSpot: bool
     :ivar capacity: Target capacity of the App Service plan (number of VMs).
     :vartype capacity: int
-    :ivar hosting_environment: Name of App Service Environment where app or App Service plan should
+    :ivar hostingEnvironment: Name of App Service Environment where app or App Service plan should
      be created.
-    :vartype hosting_environment: str
-    :ivar is_xenon: <code>true</code> if App Service plan is running as a windows container.
-    :vartype is_xenon: bool
-    :ivar container_registry_base_url: Base URL of the container registry.
-    :vartype container_registry_base_url: str
-    :ivar container_registry_username: Username for to access the container registry.
-    :vartype container_registry_username: str
-    :ivar container_registry_password: Password for to access the container registry.
-    :vartype container_registry_password: str
-    :ivar container_image_repository: Repository name (image name).
-    :vartype container_image_repository: str
-    :ivar container_image_tag: Image tag.
-    :vartype container_image_tag: str
-    :ivar container_image_platform: Platform (windows or linux).
-    :vartype container_image_platform: str
-    :ivar app_service_environment: App Service Environment Properties.
-    :vartype app_service_environment: "AppServiceEnvironment"
+    :vartype hostingEnvironment: str
+    :ivar isXenon: <code>true</code> if App Service plan is running as a windows container.
+    :vartype isXenon: bool
+    :ivar containerRegistryBaseUrl: Base URL of the container registry.
+    :vartype containerRegistryBaseUrl: str
+    :ivar containerRegistryUsername: Username for to access the container registry.
+    :vartype containerRegistryUsername: str
+    :ivar containerRegistryPassword: Password for to access the container registry.
+    :vartype containerRegistryPassword: str
+    :ivar containerImageRepository: Repository name (image name).
+    :vartype containerImageRepository: str
+    :ivar containerImageTag: Image tag.
+    :vartype containerImageTag: str
+    :ivar containerImagePlatform: Platform (windows or linux).
+    :vartype containerImagePlatform: str
+    :ivar appServiceEnvironment: App Service Environment Properties.
+    :vartype appServiceEnvironment: "AppServiceEnvironment"
     """
 
     serverFarmId: str
@@ -8334,15 +8503,15 @@ class ValidateRequest(TypedDict, total=False):
 class VirtualApplication(TypedDict, total=False):
     """Virtual application in an app.
 
-    :ivar virtual_path: Virtual path.
-    :vartype virtual_path: str
-    :ivar physical_path: Physical path.
-    :vartype physical_path: str
-    :ivar preload_enabled: <code>true</code> if preloading is enabled; otherwise,
+    :ivar virtualPath: Virtual path.
+    :vartype virtualPath: str
+    :ivar physicalPath: Physical path.
+    :vartype physicalPath: str
+    :ivar preloadEnabled: <code>true</code> if preloading is enabled; otherwise,
      <code>false</code>.
-    :vartype preload_enabled: bool
-    :ivar virtual_directories: Virtual directories for virtual application.
-    :vartype virtual_directories: list["VirtualDirectory"]
+    :vartype preloadEnabled: bool
+    :ivar virtualDirectories: Virtual directories for virtual application.
+    :vartype virtualDirectories: list["VirtualDirectory"]
     """
 
     virtualPath: str
@@ -8358,10 +8527,10 @@ class VirtualApplication(TypedDict, total=False):
 class VirtualDirectory(TypedDict, total=False):
     """Directory for virtual application.
 
-    :ivar virtual_path: Path to virtual application.
-    :vartype virtual_path: str
-    :ivar physical_path: Physical path.
-    :vartype physical_path: str
+    :ivar virtualPath: Path to virtual application.
+    :vartype virtualPath: str
+    :ivar physicalPath: Physical path.
+    :vartype physicalPath: str
     """
 
     virtualPath: str
@@ -8405,9 +8574,9 @@ class VnetGateway(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: VnetGateway resource specific properties.
     :vartype properties: "VnetGatewayProperties"
     :ivar kind: Kind of resource.
@@ -8423,10 +8592,10 @@ class VnetGateway(ProxyResource):
 class VnetGatewayProperties(TypedDict, total=False):
     """VnetGateway resource specific properties.
 
-    :ivar vnet_name: The Virtual Network name.
-    :vartype vnet_name: str
-    :ivar vpn_package_uri: The URI where the VPN package can be downloaded. Required.
-    :vartype vpn_package_uri: str
+    :ivar vnetName: The Virtual Network name.
+    :vartype vnetName: str
+    :ivar vpnPackageUri: The URI where the VPN package can be downloaded. Required.
+    :vartype vpnPackageUri: str
     """
 
     vnetName: str
@@ -8438,23 +8607,22 @@ class VnetGatewayProperties(TypedDict, total=False):
 class VnetInfo(TypedDict, total=False):
     """Virtual Network information contract.
 
-    :ivar vnet_resource_id: The Virtual Network's resource ID.
-    :vartype vnet_resource_id: str
-    :ivar cert_thumbprint: The client certificate thumbprint.
-    :vartype cert_thumbprint: str
-    :ivar cert_blob: A certificate file (.cer) blob containing the public key of the private key
+    :ivar vnetResourceId: The Virtual Network's resource ID.
+    :vartype vnetResourceId: str
+    :ivar certThumbprint: The client certificate thumbprint.
+    :vartype certThumbprint: str
+    :ivar certBlob: A certificate file (.cer) blob containing the public key of the private key
      used to authenticate a \\nPoint-To-Site VPN connection.
-    :vartype cert_blob: str
+    :vartype certBlob: str
     :ivar routes: The routes that this Virtual Network connection uses.
     :vartype routes: list["VnetRoute"]
-    :ivar resync_required: <code>true</code> if a resync is required; otherwise,
-     <code>false</code>.
-    :vartype resync_required: bool
-    :ivar dns_servers: DNS servers to be used by this Virtual Network. This should be a
+    :ivar resyncRequired: <code>true</code> if a resync is required; otherwise, <code>false</code>.
+    :vartype resyncRequired: bool
+    :ivar dnsServers: DNS servers to be used by this Virtual Network. This should be a
      comma-separated list of IP addresses.
-    :vartype dns_servers: str
-    :ivar is_swift: Flag that is used to denote if this is VNET injection.
-    :vartype is_swift: bool
+    :vartype dnsServers: str
+    :ivar isSwift: Flag that is used to denote if this is VNET injection.
+    :vartype isSwift: bool
     """
 
     vnetResourceId: str
@@ -8486,9 +8654,9 @@ class VnetInfoResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Core resource properties.
     :vartype properties: "VnetInfo"
     :ivar kind: Kind of resource.
@@ -8523,14 +8691,14 @@ class VnetParameters(ProxyOnlyResource):
 class VnetParametersProperties(TypedDict, total=False):
     """VnetParameters resource specific properties.
 
-    :ivar vnet_resource_group: The Resource Group of the VNET to be validated.
-    :vartype vnet_resource_group: str
-    :ivar vnet_name: The name of the VNET to be validated.
-    :vartype vnet_name: str
-    :ivar vnet_subnet_name: The subnet name to be validated.
-    :vartype vnet_subnet_name: str
-    :ivar subnet_resource_id: The ARM Resource ID of the subnet to validate.
-    :vartype subnet_resource_id: str
+    :ivar vnetResourceGroup: The Resource Group of the VNET to be validated.
+    :vartype vnetResourceGroup: str
+    :ivar vnetName: The name of the VNET to be validated.
+    :vartype vnetName: str
+    :ivar vnetSubnetName: The subnet name to be validated.
+    :vartype vnetSubnetName: str
+    :ivar subnetResourceId: The ARM Resource ID of the subnet to validate.
+    :vartype subnetResourceId: str
     """
 
     vnetResourceGroup: str
@@ -8554,9 +8722,9 @@ class VnetRoute(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: VnetRoute resource specific properties.
     :vartype properties: "VnetRouteProperties"
     :ivar kind: Kind of resource.
@@ -8572,20 +8740,20 @@ class VnetRoute(ProxyResource):
 class VnetRouteProperties(TypedDict, total=False):
     """VnetRoute resource specific properties.
 
-    :ivar start_address: The starting address for this route. This may also include a CIDR
-     notation, in which case the end address must not be specified.
-    :vartype start_address: str
-    :ivar end_address: The ending address for this route. If the start address is specified in CIDR
+    :ivar startAddress: The starting address for this route. This may also include a CIDR notation,
+     in which case the end address must not be specified.
+    :vartype startAddress: str
+    :ivar endAddress: The ending address for this route. If the start address is specified in CIDR
      notation, this must be omitted.
-    :vartype end_address: str
-    :ivar route_type: The type of route this is:
+    :vartype endAddress: str
+    :ivar routeType: The type of route this is:
      DEFAULT - By default, every app has routes to the local address ranges specified by RFC1918
      INHERITED - Routes inherited from the real Virtual Network routes
      STATIC - Static route set on the app only
 
      These values will be used for syncing an app's routes with those from a Virtual Network. Known
      values are: "DEFAULT", "INHERITED", and "STATIC".
-    :vartype route_type: Union[str, "RouteType"]
+    :vartype routeType: Union[str, "RouteType"]
     """
 
     startAddress: str
@@ -8607,14 +8775,14 @@ class VnetRouteProperties(TypedDict, total=False):
 class VolumeMount(TypedDict, total=False):
     """VolumeMount.
 
-    :ivar volume_sub_path: Sub path in the volume where volume is mounted from. Required.
-    :vartype volume_sub_path: str
-    :ivar container_mount_path: Target path on the container where volume is mounted on. Required.
-    :vartype container_mount_path: str
+    :ivar volumeSubPath: Sub path in the volume where volume is mounted from. Required.
+    :vartype volumeSubPath: str
+    :ivar containerMountPath: Target path on the container where volume is mounted on. Required.
+    :vartype containerMountPath: str
     :ivar data: Config Data to be mounted on the volume.
     :vartype data: str
-    :ivar read_only: Boolean to specify if the mount is read only on the container.
-    :vartype read_only: bool
+    :ivar readOnly: Boolean to specify if the mount is read only on the container.
+    :vartype readOnly: bool
     """
 
     volumeSubPath: Required[str]
@@ -8630,17 +8798,17 @@ class VolumeMount(TypedDict, total=False):
 class WorkerPool(TypedDict, total=False):
     """Worker pool of an App Service Environment.
 
-    :ivar worker_size_id: Worker size ID for referencing this worker pool.
-    :vartype worker_size_id: int
-    :ivar compute_mode: Shared or dedicated app hosting. Known values are: "Shared", "Dedicated",
+    :ivar workerSizeId: Worker size ID for referencing this worker pool.
+    :vartype workerSizeId: int
+    :ivar computeMode: Shared or dedicated app hosting. Known values are: "Shared", "Dedicated",
      and "Dynamic".
-    :vartype compute_mode: Union[str, "ComputeModeOptions"]
-    :ivar worker_size: VM size of the worker pool instances.
-    :vartype worker_size: str
-    :ivar worker_count: Number of instances in the worker pool.
-    :vartype worker_count: int
-    :ivar instance_names: Names of all instances in the worker pool (read only).
-    :vartype instance_names: list[str]
+    :vartype computeMode: Union[str, "ComputeModeOptions"]
+    :ivar workerSize: VM size of the worker pool instances.
+    :vartype workerSize: str
+    :ivar workerCount: Number of instances in the worker pool.
+    :vartype workerCount: int
+    :ivar instanceNames: Names of all instances in the worker pool (read only).
+    :vartype instanceNames: list[str]
     """
 
     workerSizeId: int
@@ -8666,9 +8834,9 @@ class WorkerPoolResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Core resource properties.
     :vartype properties: "WorkerPool"
     :ivar sku: Description of a SKU for a scalable resource.
@@ -8746,12 +8914,12 @@ class Workflow(WorkflowResource):
 class WorkflowArtifacts(TypedDict, total=False):
     """The workflow filter.
 
-    :ivar app_settings: Application settings of the workflow.
-    :vartype app_settings: Any
+    :ivar appSettings: Application settings of the workflow.
+    :vartype appSettings: Any
     :ivar files: Files of the app.
     :vartype files: dict[str, Any]
-    :ivar files_to_delete: Files of the app to delete.
-    :vartype files_to_delete: list[str]
+    :ivar filesToDelete: Files of the app to delete.
+    :vartype filesToDelete: list[str]
     """
 
     appSettings: Any
@@ -8790,32 +8958,32 @@ class WorkflowParameter(TypedDict, total=False):
 class WorkflowProperties(TypedDict, total=False):
     """The workflow properties.
 
-    :ivar provisioning_state: Gets the provisioning state. Known values are: "NotSpecified",
+    :ivar provisioningState: Gets the provisioning state. Known values are: "NotSpecified",
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Moving", "Updating", "Registering", "Registered", "Unregistering",
      "Unregistered", "Completed", "Renewing", "Pending", "Waiting", and "InProgress".
-    :vartype provisioning_state: Union[str, "WorkflowProvisioningState"]
-    :ivar created_time: Gets the created time.
-    :vartype created_time: str
-    :ivar changed_time: Gets the changed time.
-    :vartype changed_time: str
+    :vartype provisioningState: Union[str, "WorkflowProvisioningState"]
+    :ivar createdTime: Gets the created time.
+    :vartype createdTime: str
+    :ivar changedTime: Gets the changed time.
+    :vartype changedTime: str
     :ivar state: The state. Known values are: "NotSpecified", "Completed", "Enabled", "Disabled",
      "Deleted", and "Suspended".
     :vartype state: Union[str, "WorkflowState"]
     :ivar version: Gets the version.
     :vartype version: str
-    :ivar access_endpoint: Gets the access endpoint.
-    :vartype access_endpoint: str
-    :ivar endpoints_configuration: The endpoints configuration.
-    :vartype endpoints_configuration: "FlowEndpointsConfiguration"
-    :ivar access_control: The access control configuration.
-    :vartype access_control: "FlowAccessControlConfiguration"
+    :ivar accessEndpoint: Gets the access endpoint.
+    :vartype accessEndpoint: str
+    :ivar endpointsConfiguration: The endpoints configuration.
+    :vartype endpointsConfiguration: "FlowEndpointsConfiguration"
+    :ivar accessControl: The access control configuration.
+    :vartype accessControl: "FlowAccessControlConfiguration"
     :ivar sku: The sku.
     :vartype sku: "WorkflowSku"
-    :ivar integration_account: The integration account.
-    :vartype integration_account: "ResourceReference"
-    :ivar integration_service_environment: The integration service environment.
-    :vartype integration_service_environment: "ResourceReference"
+    :ivar integrationAccount: The integration account.
+    :vartype integrationAccount: "ResourceReference"
+    :ivar integrationServiceEnvironment: The integration service environment.
+    :vartype integrationServiceEnvironment: "ResourceReference"
     :ivar definition: The definition.
     :vartype definition: Any
     :ivar parameters: The parameters.

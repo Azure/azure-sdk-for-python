@@ -1,5 +1,57 @@
 # Release History
 
+## 12.0.0 (2026-10-21)
+
+### Features Added
+
+  - Client `WebSiteManagementClient` added operation group `ai_gateways`
+  - Client `WebSiteManagementClient` added operation group `sites`
+  - Client `WebSiteManagementClient` added operation group `static_sites_async_operations`
+  - Model `OutboundVnetRouting` added property `managed_identity_traffic`
+  - Enum `RuntimeName` added member `GO`
+  - Model `SitePatchResourceProperties` added property `ai_integration`
+  - Model `SitePatchResourceProperties` added property `site_scoped_certificates_enabled`
+  - Model `SiteProperties` added property `ai_integration`
+  - Model `SiteProperties` added property `maintenance_enabled`
+  - Model `SiteProperties` added property `platform_release_channel`
+  - Model `SiteProperties` added property `site_scoped_certificates_enabled`
+  - Added model `AiGateway`
+  - Added model `AiGatewayProperties`
+  - Added model `AiGatewayTagsUpdate`
+  - Added model `AiIntegration`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `McpServerConfig`
+  - Added model `McpSettings`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added model `NspProfile`
+  - Added model `NspProfileAccessRule`
+  - Added model `NspProfileAccessRuleGranularFeature`
+  - Added model `NspProfileAccessRuleProperties`
+  - Added model `NspProvisioningIssue`
+  - Added model `NspProvisioningIssueProperties`
+  - Added model `NspResourceAssociation`
+  - Added model `NspSubscription`
+  - Added enum `PlatformReleaseChannel`
+  - Added model `SiteAuthInfo`
+  - Added model `StaticSitesOperationStatus`
+  - Added model `StaticSitesOperationStatusProperties`
+  - Model `AppServicePlansOperations` added method `start_web_apps`
+  - Model `AppServicePlansOperations` added method `stop_web_apps`
+  - Added operation group `AiGatewaysOperations`
+  - Added operation group `SitesOperations`
+  - Added operation group `StaticSitesAsyncOperationsOperations`
+
+### Breaking Changes
+
+  - Method `WebAppsOperations.list_publishing_profile_xml_with_secrets` changed return type from `AsyncIterator[bytes]` to `str`
+  - Method `WebAppsOperations.list_publishing_profile_xml_with_secrets_slot` changed return type from `AsyncIterator[bytes]` to `str`
+  - Method `WebAppsOperations.list_publishing_profile_xml_with_secrets` changed return type from `Iterator[bytes]` to `str`
+  - Method `WebAppsOperations.list_publishing_profile_xml_with_secrets_slot` changed return type from `Iterator[bytes]` to `str`
+
 ## 11.0.1 (2026-07-13)
 
 ### Features Added

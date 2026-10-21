@@ -22,6 +22,9 @@ from ._operations import SiteCertificatesOperations  # type: ignore
 from ._operations import GlobalOperations  # type: ignore
 from ._operations import DiagnosticsOperations  # type: ignore
 from ._operations import KubeEnvironmentsOperations  # type: ignore
+from ._operations import SitesOperations  # type: ignore
+from ._operations import StaticSitesAsyncOperationsOperations  # type: ignore
+from ._operations import AiGatewaysOperations  # type: ignore
 from ._operations import WorkflowRunsOperations  # type: ignore
 from ._operations import WorkflowRunActionsOperations  # type: ignore
 from ._operations import WorkflowRunActionScopeRepetitionsOperations  # type: ignore
@@ -52,6 +55,9 @@ __all__ = [
     "GlobalOperations",
     "DiagnosticsOperations",
     "KubeEnvironmentsOperations",
+    "SitesOperations",
+    "StaticSitesAsyncOperationsOperations",
+    "AiGatewaysOperations",
     "WorkflowRunsOperations",
     "WorkflowRunActionsOperations",
     "WorkflowRunActionScopeRepetitionsOperations",
