@@ -125,6 +125,41 @@ def test_zero_inclusive_range_accepts_a_parsed_text_zero(answer):
     assert result["metric"] == 0.0
 
 
+@pytest.mark.parametrize("score", ["-1", "+10", "10", "-0.25", "1.25", "1e1", "1e309", "-1e-1"])
+def test_explicit_text_range_rejects_the_full_out_of_range_score(score):
+    """Out-of-range text cannot become a passing score by dropping its sign or suffix."""
+    with pytest.raises(EvaluationException, match="Invalid score value"):
+        strategy(strict=False, score_range=(0, 1), threshold=1).parse({"llm_output": f"the score is {score}"})
+
+
+@pytest.mark.parametrize(
+    "score,score_range,expected",
+    [
+        ("-1", (-2, 2), -1.0),
+        ("10", (0, 10), 10.0),
+        ("0.25", (0, 1), 0.25),
+        (".25", (0, 1), 0.25),
+        ("+0.25", (0, 1), 0.25),
+        ("1.", (0, 1), 1.0),
+        ("1e-1", (0, 1), 0.1),
+        ("1E+1", (0, 10), 10.0),
+        ("-1e-1", (-1, 1), -0.1),
+    ],
+)
+def test_explicit_text_range_preserves_the_full_valid_score(score, score_range, expected):
+    """Ranged text keeps valid signed, multidigit, decimal and exponent values intact."""
+    result = strategy(strict=False, score_range=score_range, threshold=1).parse({"llm_output": f"the score is {score}"})
+    assert result["metric"] == expected
+    assert result["metric_status"] == "completed"
+    assert result["metric_passed"] is (expected >= 1)
+
+
+@pytest.mark.parametrize("score,expected", [("-1", 1.0), ("10", 1.0), ("0.25", 0.0), ("1e-1", 1.0)])
+def test_legacy_text_keeps_single_digit_parsing_without_an_explicit_range(score, expected):
+    result = strategy(strict=False).parse({"llm_output": f"the score is {score}"})
+    assert result["metric"] == expected
+
+
 @pytest.mark.parametrize("answer,valid", [("<S1>Reason</S1><S2>0</S2>", True), ("No grade", False)])
 def test_quality_text_zero_is_distinct_from_a_missing_grade(answer, valid):
     """The quality parser reports presence independently of its numeric fallback."""

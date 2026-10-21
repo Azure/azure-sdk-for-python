@@ -95,7 +95,9 @@ class PromptyEvaluationStrategy:
                     score, reason = parse_quality_evaluator_reason_score(answer)
                 has_score = not math.isnan(score)
             else:
-                match = re.search(r"\d", answer)
+                match = re.search(
+                    r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?" if self.score_range else r"\d", answer
+                )
                 if match:
                     score = float(match.group())
                     has_score = True

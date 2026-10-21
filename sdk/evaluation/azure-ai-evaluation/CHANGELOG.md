@@ -19,6 +19,7 @@
 - Retained known earlier-turn Decision usage and model metadata when an asynchronous split evaluation is cancelled directly, while preserving `CancelledError` and existing callback cancellation behavior.
 - Rejected non-JSON-safe native answer provenance with typed errors that retain known usage, without validating unused scores on applicability skips.
 - Accepted explicit numeric zero in zero-inclusive shared Prompty score ranges while keeping missing, invalid and boolean grades on the typed error path. Missing-score fallbacks cannot manufacture a ranged grade.
+- Validated complete signed, decimal, and exponent scores in shared Prompty text fallbacks with explicit score ranges, preventing out-of-range values from becoming passing scores through single-digit parsing.
 - Preserved the primary initialization error or cancellation when legacy token-provider cleanup also fails.
 - Preserved known Decision usage when a later split conversation turn fails, without assigning mixed-model usage to one model or treating the failed turn's execution summary as a conversation summary.
 - Reconciled successful split-conversation properties with aggregate Decision usage and common model identity, omitting single-request execution summaries while preserving final-turn diagnostics and original per-turn data.
