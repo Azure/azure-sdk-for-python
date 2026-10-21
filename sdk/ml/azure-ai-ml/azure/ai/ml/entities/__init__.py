@@ -64,6 +64,7 @@ from ._compute.compute import Compute, NetworkSettings
 from ._compute.compute_instance import AssignedUserConfiguration, ComputeInstance, ComputeInstanceSshSettings
 from ._compute.kubernetes_compute import KubernetesCompute
 from ._compute.synapsespark_compute import AutoPauseSettings, AutoScaleSettings, SynapseSparkCompute
+from ._compute.fabricspark_compute import FabricSparkCompute
 from ._compute.unsupported_compute import UnsupportedCompute
 from ._compute.virtual_machine_compute import VirtualMachineCompute, VirtualMachineSshSettings
 from ._credentials import (
@@ -399,6 +400,7 @@ __all__ = [
     "RegistryRegionDetails",
     "Registry",
     "SynapseSparkCompute",
+    "FabricSparkCompute",
     "AutoScaleSettings",
     "AutoPauseSettings",
     "WorkspaceModelReference",
