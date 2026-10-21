@@ -32317,7 +32317,9 @@ class VoiceAgentDefinition(VoiceAgentBaseDefinition):  # pylint: disable=docstri
     :vartype subagent_config: ~azure.ai.projects.models.VoiceAgentSubagentConfig
     """
 
-    sub_protocol: Optional[Literal["realtime"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    sub_protocol: Optional[Literal["realtime"]] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Selects Realtime. May be omitted for legacy agents. Default value is \"realtime\"."""
     model_type: Optional[Union[str, "_models.VoiceModelType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -33195,7 +33197,7 @@ class VoiceAgentLiveDefinition(VoiceAgentBaseDefinition):  # pylint: disable=doc
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.sub_protocol: Literal["live"] = "live"
+        self.sub_protocol: Literal["live"] = "live"  # pyright: ignore[reportIncompatibleVariableOverride]
         self.model_type: Literal["self_deployed"] = "self_deployed"
 
 

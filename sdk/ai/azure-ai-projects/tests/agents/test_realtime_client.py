@@ -15,6 +15,7 @@ can all be verified without a live service or a recorded transport.
 import json
 import inspect
 import logging
+from typing import Literal, Optional
 from unittest.mock import MagicMock, patch
 from urllib.parse import parse_qs, urlparse
 
@@ -77,6 +78,28 @@ def test_voice_readback_customization_does_not_change_other_agent_kinds(definiti
 
     assert type(version.definition) is expected_type
     assert version.definition.as_dict() == definition
+
+
+@pytest.mark.parametrize(
+    "definition_type,expected_annotation,expected_payload",
+    [
+        (
+            models.VoiceAgentDefinition,
+            Optional[Literal["realtime"]],
+            {"model": "deployment-test", "kind": "voice"},
+        ),
+        (
+            models.VoiceAgentLiveDefinition,
+            Literal["live"],
+            {"model": "deployment-test", "kind": "voice", "sub_protocol": "live", "model_type": "self_deployed"},
+        ),
+    ],
+)
+def test_voice_protocol_typing_fix_preserves_annotations_and_constructor_defaults(
+    definition_type, expected_annotation, expected_payload
+):
+    assert definition_type.__annotations__["sub_protocol"] == expected_annotation
+    assert definition_type(model="deployment-test").as_dict() == expected_payload
 
 
 class _FakeCredential:
