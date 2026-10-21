@@ -302,10 +302,26 @@ fn later_window_errors_are_terminal_and_preserve_yielded_bytes() {
                 );
             let mut stream = stream(py, &mock, 0, None, 1, 2).unwrap();
             let first = stream.__next__(py).unwrap().unwrap();
-            assert!(stream.__next__(py).is_err(), "{failure}");
+            let error = stream.__next__(py).unwrap_err();
+            assert!(
+                error.is_instance_of::<crate::errors::NativeTransferError>(py),
+                "{failure}"
+            );
+            if failure == "http" {
+                assert_eq!(
+                    error
+                        .value(py)
+                        .getattr("status_code")
+                        .unwrap()
+                        .extract::<u16>()
+                        .unwrap(),
+                    500
+                );
+            }
             assert!(stream.failure.is_some());
             for _ in 0..3 {
-                assert!(stream.__next__(py).is_err());
+                let repeated = stream.__next__(py).unwrap_err();
+                assert!(repeated.value(py).is(error.value(py)));
             }
             assert_eq!(stream.size(), 6);
             assert_eq!(first.bind(py).as_bytes(), b"ab");
