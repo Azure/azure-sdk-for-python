@@ -173,8 +173,8 @@ class ChatRole(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         super().__init__(*args, **kwargs)
 
 
-class ChatRoleCreate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties supplied when creating a role.
+class ChatRoleCreateOrReplace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when creating or replacing a role.
 
     :ivar permissions: Permissions associated with the role. Do not mix user permissions and room
      permissions in one role. Required.
@@ -245,8 +245,8 @@ class ChatRoom(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         super().__init__(*args, **kwargs)
 
 
-class ChatRoomCreate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties supplied when creating a room.
+class ChatRoomCreateOrReplace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when creating or replacing a room.
 
     :ivar title: Room title. Required.
     :vartype title: str
@@ -309,8 +309,8 @@ class ChatRoomMember(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class ChatRoomMemberCreate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties supplied when creating a room member.
+class ChatRoomMemberCreateOrReplace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when creating or replacing a room member.
 
     :ivar role_name: Room role assigned to the user within this room. Required.
     :vartype role_name: str
@@ -503,11 +503,11 @@ class ChatUser(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         super().__init__(*args, **kwargs)
 
 
-class ChatUserCreate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties supplied when creating a user.
+class ChatUserCreateOrReplace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when creating or replacing a user.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    HumanChatUserCreate
+    HumanChatUserCreateOrReplace
 
     :ivar kind: The kind of user. Required. "Human"
     :vartype kind: str or ~azure.messaging.webpubsubchatservice.models.ChatUserKind
@@ -651,10 +651,10 @@ class HumanChatUser(ChatUser, discriminator="Human"):  # pylint: disable=docstri
         self.kind = ChatUserKind.HUMAN  # type: ignore
 
 
-class HumanChatUserCreate(
-    ChatUserCreate, discriminator="Human"
+class HumanChatUserCreateOrReplace(
+    ChatUserCreateOrReplace, discriminator="Human"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties supplied when creating a human user.
+    """Properties supplied when creating or replacing a human user.
 
     :ivar kind: Required. A human end-user.
     :vartype kind: str or ~azure.messaging.webpubsubchatservice.models.HUMAN

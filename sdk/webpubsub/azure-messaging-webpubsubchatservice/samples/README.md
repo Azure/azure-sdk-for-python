@@ -14,7 +14,7 @@ describe those dictionary shapes for static type checking; they do not create
 model instances or validate values at runtime. Both request-body styles are
 accepted by the corresponding client operations.
 
-`HumanChatUserCreate` automatically supplies `"kind": "Human"` when serialized.
+`HumanChatUserCreateOrReplace` automatically supplies `"kind": "Human"` when serialized.
 Dictionary requests must supply that field explicitly. See
 [request models and dictionaries](../README.md#request-models-and-dictionaries)
 for details.

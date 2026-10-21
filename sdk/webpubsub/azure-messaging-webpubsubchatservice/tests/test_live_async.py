@@ -15,10 +15,10 @@ from azure.core.exceptions import HttpResponseError
 from azure.messaging.webpubsubchatservice.models import (
     ChatMessageUpdate,
     ChatPermission,
-    ChatRoleCreate,
-    ChatRoomCreate,
-    ChatRoomMemberCreate,
-    HumanChatUserCreate,
+    ChatRoleCreateOrReplace,
+    ChatRoomCreateOrReplace,
+    ChatRoomMemberCreateOrReplace,
+    HumanChatUserCreateOrReplace,
     MessageContent,
 )
 
@@ -38,7 +38,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
             for role_name in role_names:
                 role = await client.create_or_replace_role(
                     role_name,
-                    ChatRoleCreate(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                    ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
                 )
                 assert role.name == role_name
                 assert (await client.get_role(role_name)).permissions == [ChatPermission.USER_CREATE_ROOM]
@@ -87,7 +87,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
         try:
             created = await client.create_or_replace_role(
                 role_name,
-                ChatRoleCreate(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
                 match_condition=MatchConditions.IfMissing,
             )
             assert created.name == role_name
@@ -95,7 +95,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
             with pytest.raises(HttpResponseError) as error:
                 await client.create_or_replace_role(
                     role_name,
-                    ChatRoleCreate(permissions=[ChatPermission.USER_FETCH_ALL_ROOMS]),
+                    ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_FETCH_ALL_ROOMS]),
                     match_condition=MatchConditions.IfMissing,
                 )
             assert error.value.status_code == 412
@@ -112,11 +112,11 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
         try:
             created = await client.create_or_replace_role(
                 role_name,
-                ChatRoleCreate(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
             )
             replaced = await client.create_or_replace_role(
                 role_name,
-                ChatRoleCreate(
+                ChatRoleCreateOrReplace(
                     permissions=[
                         ChatPermission.USER_CREATE_ROOM,
                         ChatPermission.USER_FETCH_ALL_ROOMS,
@@ -130,7 +130,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
             with pytest.raises(HttpResponseError) as error:
                 await client.create_or_replace_role(
                     role_name,
-                    ChatRoleCreate(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                    ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
                     etag=created.etag,
                     match_condition=MatchConditions.IfNotModified,
                 )
@@ -146,7 +146,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
         client = self.create_async_client(wps_chat_endpoint)
         room_id = "python-async-e2e-empty-room"
         try:
-            room = await client.create_or_replace_room(room_id, ChatRoomCreate(title="Async Python E2E Room"))
+            room = await client.create_or_replace_room(room_id, ChatRoomCreateOrReplace(title="Async Python E2E Room"))
             assert room.id == room_id
             fetched_room = await client.get_room(room_id)
             assert fetched_room.id == room_id
@@ -172,26 +172,26 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
         room_id = "python-async-e2e-member-room"
         try:
             await client.create_or_replace_role(
-                user_role, ChatRoleCreate(permissions=[ChatPermission.USER_CREATE_ROOM])
+                user_role, ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM])
             )
             await client.create_or_replace_role(
-                room_role, ChatRoleCreate(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE])
+                room_role, ChatRoleCreateOrReplace(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE])
             )
 
             user = await client.create_or_replace_user(
                 user_id,
-                HumanChatUserCreate(nickname="Async Python User", role_name=user_role),
+                HumanChatUserCreateOrReplace(nickname="Async Python User", role_name=user_role),
             )
             assert user.id == user_id
             assert user.kind == "Human"
             fetched_user = await client.get_user(user_id)
             assert fetched_user.id == user_id
             assert fetched_user.nickname == "Async Python User"
-            await client.create_or_replace_room(room_id, ChatRoomCreate(title="Async Member Room"))
+            await client.create_or_replace_room(room_id, ChatRoomCreateOrReplace(title="Async Member Room"))
             member = await client.create_or_replace_room_member(
                 room_id,
                 user_id,
-                ChatRoomMemberCreate(role_name=room_role),
+                ChatRoomMemberCreateOrReplace(role_name=room_role),
             )
             assert member.user_id == user_id
             assert member.role_name == room_role
@@ -221,11 +221,11 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
         binary_content = bytes([0, 1, 2, 254, 255])
         try:
             await client.create_or_replace_role(
-                user_role, ChatRoleCreate(permissions=[ChatPermission.USER_CREATE_ROOM])
+                user_role, ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM])
             )
             await client.create_or_replace_role(
                 room_role,
-                ChatRoleCreate(
+                ChatRoleCreateOrReplace(
                     permissions=[
                         ChatPermission.ROOM_PUBLISH_MESSAGE,
                         ChatPermission.ROOM_HISTORY,
@@ -234,10 +234,12 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
             )
             await client.create_or_replace_user(
                 user_id,
-                HumanChatUserCreate(nickname="Async Message User", role_name=user_role),
+                HumanChatUserCreateOrReplace(nickname="Async Message User", role_name=user_role),
             )
-            room = await client.create_or_replace_room(room_id, ChatRoomCreate(title="Async Message Room"))
-            await client.create_or_replace_room_member(room_id, user_id, ChatRoomMemberCreate(role_name=room_role))
+            room = await client.create_or_replace_room(room_id, ChatRoomCreateOrReplace(title="Async Message Room"))
+            await client.create_or_replace_room_member(
+                room_id, user_id, ChatRoomMemberCreateOrReplace(role_name=room_role)
+            )
 
             await self.seed_chat_message_async(client, user_id, room.default_conversation, message_text)
             messages = await _collect(client.list_messages(room.default_conversation))
