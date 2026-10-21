@@ -1,0 +1,6 @@
+{
+  "apiVersion": "2026-09-01-preview",
+  "apiVersions": {
+    "Azure.Data.AI": "2026-09-01-preview"
+  }
+}

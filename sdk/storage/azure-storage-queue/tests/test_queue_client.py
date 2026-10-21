@@ -29,7 +29,6 @@ from azure.storage.queue._shared.parser import (
     DEVSTORE_ACCOUNT_NAME,
 )
 
-
 # ------------------------------------------------------------------------------
 SERVICES = {
     QueueServiceClient: "queue",

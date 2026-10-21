@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,15 +35,24 @@ def main():
         resource_group_name="rgazuremonitorworkspace",
         azure_monitor_workspace_name="myAzureMonitorWorkspace",
         resource={
-            "identity": {"type": "SystemAssigned"},
             "location": "eastus",
-            "properties": {"metrics": {"enableAccessUsingResourcePermissions": True}, "publicNetworkAccess": "Enabled"},
+            "properties": {
+                "actions": {
+                    "defaultActionGroups": [
+                        {
+                            "id": "/subscriptions/703362b3-f278-4e4b-9179-c76eaf41ffc2/resourceGroups/myResourceGroup/providers/Microsoft.Insights/actionGroups/defaultActionGroup"
+                        }
+                    ]
+                },
+                "metrics": {"enableAccessUsingResourcePermissions": True},
+                "publicNetworkAccess": "Enabled",
+            },
             "tags": {},
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-10-03/AzureMonitorWorkspaces_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-03-preview/AzureMonitorWorkspaces_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

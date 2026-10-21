@@ -181,7 +181,7 @@ class SkuMixPlacementScoresOperations:  # pylint: disable=docstring-missing-para
     @api_version_validation(
         method_added_on="2026-05-05-preview",
         params_added_on={"2026-05-05-preview": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-05-05-preview"],
+        api_versions_list=["2026-05-05-preview", "2026-09-05-preview"],
     )
     async def get(self, location: str, **kwargs: Any) -> _models.SkuMixPlacementBase:
         """Gets SkuMixPlacement scoring metadata.
@@ -326,7 +326,7 @@ class SkuMixPlacementScoresOperations:  # pylint: disable=docstring-missing-para
         params_added_on={
             "2026-05-05-preview": ["api_version", "subscription_id", "location", "content_type", "accept"]
         },
-        api_versions_list=["2026-05-05-preview"],
+        api_versions_list=["2026-05-05-preview", "2026-09-05-preview"],
     )
     async def post(
         self,

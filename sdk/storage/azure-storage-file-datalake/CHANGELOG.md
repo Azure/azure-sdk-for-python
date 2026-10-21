@@ -5,6 +5,23 @@
 ### Features Added
 - Added opt-in client session-based authentication via the new `use_session` keyword argument. When enabled, eligible file read requests are authenticated with a short-lived, per-file-system session credential obtained from the service rather than the bearer token. Requires a `TokenCredential`. Sessions are managed by a session provider, which can be shared across clients via the `session_provider` keyword, and the account name used for signing can be set explicitly with `session_account_name`.
 
+### Bugs Fixed
+- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_file_system_sas`,
+  `generate_directory_sas`, `generate_file_sas`, and `DataLakeServiceClient.get_user_delegation_key` (sync and async).
+  Datetimes without timezone information continue to be treated as UTC.
+- Fixed an issue where a SAS generated for a path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
+
+### Other Changes
+- Content-Type for append_data has changed from application/json to octet-stream
+- Dropped support for legacy transports
+
+## 12.26.0 (2026-09-30)
+
+This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
+
+### Features Added
+- Stable release of features from 12.26.0b1
+
 ## 12.26.0b1 (2026-08-10)
 
 ### Features Added
