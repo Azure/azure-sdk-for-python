@@ -123,7 +123,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             )
         self.snapshot = _parse_snapshot(snapshot, path_snapshot)
         self.share_name = share_name
-        self.directory_path = directory_path
+        self.directory_path: Optional[str] = None if self.file_id else directory_path
 
         self._query_str, credential = self._format_query_string(sas_token, credential, share_snapshot=self.snapshot)
         super(ShareDirectoryClient, self).__init__(parsed_url, service="file-share", credential=credential, **kwargs)
@@ -193,7 +193,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         return cls(
             account_url=account_url,
             share_name=share_name,
-            directory_path=directory_path,
+            directory_path=directory_path,  # type: ignore[arg-type]
             snapshot=snapshot,
             credential=credential,
             _file_id=file_id,

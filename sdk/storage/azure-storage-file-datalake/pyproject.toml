@@ -12,7 +12,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "azure-storage-file-datalake"
 authors = [
-  { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
 description = "Microsoft Corporation Azure Storage File Datalake Client Library for Python"
 license = "MIT"
@@ -41,12 +41,12 @@ dynamic = [
 ]
 
 [project.optional-dependencies]
- aio = [
-     "azure-core[aio]>=1.38.3",
- ]
- ext-checksums = [
-     "azure-storage-extensions>=0.1.0,<1.0.0",
- ]
+aio = [
+  "azure-core[aio]>=1.38.3",
+]
+ext-checksums = [
+  "azure-storage-extensions>=0.1.0,<1.0.0",
+]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python"

@@ -15,10 +15,13 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     AccessPolicy,
+    BlockDeviceItem,
+    CharDeviceItem,
     ClearRange,
     CorsRule,
     DirectoryItem,
     Error,
+    FifoItem,
     FileItem,
     FileProperty,
     FileRange,
@@ -46,8 +49,10 @@ from ._models import (  # type: ignore
     SignedIdentifier,
     SignedIdentifiers,
     SmbMultichannel,
+    SocketItem,
     StorageServiceProperties,
     StringEncoded,
+    SymLinkItem,
     UserDelegationKey,
 )
 
@@ -80,10 +85,13 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AccessPolicy",
+    "BlockDeviceItem",
+    "CharDeviceItem",
     "ClearRange",
     "CorsRule",
     "DirectoryItem",
     "Error",
+    "FifoItem",
     "FileItem",
     "FileProperty",
     "FileRange",
@@ -111,8 +119,10 @@ __all__ = [
     "SignedIdentifier",
     "SignedIdentifiers",
     "SmbMultichannel",
+    "SocketItem",
     "StorageServiceProperties",
     "StringEncoded",
+    "SymLinkItem",
     "UserDelegationKey",
     "AccessRight",
     "CopyStatus",

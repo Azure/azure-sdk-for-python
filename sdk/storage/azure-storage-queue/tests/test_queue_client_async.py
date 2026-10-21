@@ -28,7 +28,6 @@ from azure.storage.queue._shared.parser import (
 )
 from azure.storage.queue.aio import QueueClient, QueueServiceClient
 
-
 # ------------------------------------------------------------------------------
 SERVICES = {
     QueueServiceClient: "queue",

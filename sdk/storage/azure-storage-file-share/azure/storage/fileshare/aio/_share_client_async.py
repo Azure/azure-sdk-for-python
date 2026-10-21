@@ -323,7 +323,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         return ShareFileClient(
             self.url,
             share_name=self.share_name,
-            file_path="",
+            file_path=None,  # type: ignore[arg-type]
             snapshot=self.snapshot,
             credential=self.credential,
             token_intent=self.file_request_intent,
@@ -351,7 +351,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         return ShareDirectoryClient(
             self.url,
             share_name=self.share_name,
-            directory_path="",
+            directory_path=None,  # type: ignore[arg-type]
             snapshot=self.snapshot,
             credential=self.credential,
             token_intent=self.file_request_intent,
