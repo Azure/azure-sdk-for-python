@@ -1,5 +1,14 @@
 # Release History
 
+## 12.0.0 (2026-10-21)
+
+### Breaking Changes
+
+  - Method `WebAppsOperations.list_publishing_profile_xml_with_secrets` changed return type from `AsyncIterator[bytes]` to `str`
+  - Method `WebAppsOperations.list_publishing_profile_xml_with_secrets_slot` changed return type from `AsyncIterator[bytes]` to `str`
+  - Method `WebAppsOperations.list_publishing_profile_xml_with_secrets` changed return type from `Iterator[bytes]` to `str`
+  - Method `WebAppsOperations.list_publishing_profile_xml_with_secrets_slot` changed return type from `Iterator[bytes]` to `str`
+
 ## 11.0.1 (2026-07-13)
 
 ### Features Added

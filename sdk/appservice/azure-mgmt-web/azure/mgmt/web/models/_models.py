@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AbnormalTimePeriod(_Model):
+class AbnormalTimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing Abnormal Time Period identified in diagnosis.
 
     :ivar start_time: Start time of the downtime.
@@ -113,7 +113,7 @@ class ProxyResource(Resource):
     """
 
 
-class AddressResponse(ProxyResource):
+class AddressResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes main public IP address and any extra virtual IPs.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -179,7 +179,7 @@ class AddressResponse(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AddressResponseProperties(_Model):
+class AddressResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AddressResponse resource specific properties.
 
     :ivar service_ip_address: Main public virtual IP.
@@ -232,7 +232,7 @@ class AddressResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllowedAudiencesValidation(_Model):
+class AllowedAudiencesValidation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Allowed Audiences validation flow.
 
     :ivar allowed_audiences: The configuration settings of the allowed list of audiences from which
@@ -264,7 +264,7 @@ class AllowedAudiencesValidation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllowedPrincipals(_Model):
+class AllowedPrincipals(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active Directory allowed principals.
 
     :ivar groups: The list of the allowed groups.
@@ -297,7 +297,7 @@ class AllowedPrincipals(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalysisData(_Model):
+class AnalysisData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class Representing Detector Evidence used for analysis.
 
     :ivar source: Name of the Detector.
@@ -353,7 +353,7 @@ class AnalysisData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalysisDefinition(ProxyResource):
+class AnalysisDefinition(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of Analysis.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -430,7 +430,7 @@ class AnalysisDefinitionProperties(_Model):
     """Description of the Analysis."""
 
 
-class ApiDefinitionInfo(_Model):
+class ApiDefinitionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the formal API definition for the app.
 
     :ivar url: The URL of the API definition.
@@ -458,7 +458,7 @@ class ApiDefinitionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiKVReference(ProxyResource):
+class ApiKVReference(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of site key vault references.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -534,7 +534,7 @@ class ApiKVReference(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApiKVReferenceProperties(_Model):
+class ApiKVReferenceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApiKVReference resource specific properties.
 
     :ivar reference:
@@ -610,7 +610,7 @@ class ApiKVReferenceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementConfig(_Model):
+class ApiManagementConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure API management (APIM) configuration linked to the app.
 
     :ivar id: APIM-Api Identifier.
@@ -657,7 +657,7 @@ class AppInsightsWebAppStackSettings(_Model):
      <code>false</code>."""
 
 
-class Apple(_Model):
+class Apple(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Apple provider.
 
     :ivar enabled: <code>false</code> if the Apple provider should not be enabled despite the set
@@ -699,7 +699,7 @@ class Apple(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppleRegistration(_Model):
+class AppleRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the registration for the Apple provider.
 
     :ivar client_id: The Client ID of the app used for login.
@@ -734,7 +734,7 @@ class AppleRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationLogsConfig(_Model):
+class ApplicationLogsConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application logs configuration.
 
     :ivar file_system: Application logs to file system configuration.
@@ -778,7 +778,7 @@ class ApplicationLogsConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationStack(_Model):
+class ApplicationStack(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application stack.
 
     :ivar name: Application stack name.
@@ -838,7 +838,7 @@ class ApplicationStack(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProxyOnlyResource(_Model):
+class ProxyOnlyResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure proxy only resource. This resource is not tracked by Azure Resource Manager.
 
     :ivar id: Resource Id.
@@ -878,7 +878,7 @@ class ProxyOnlyResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationStackResource(ProxyOnlyResource):
+class ApplicationStackResource(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM resource for a ApplicationStack.
 
     :ivar id: Resource Id.
@@ -937,7 +937,7 @@ class ApplicationStackResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class AppLogsConfiguration(_Model):
+class AppLogsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AppLogsConfiguration.
 
     :ivar destination:
@@ -970,7 +970,7 @@ class AppLogsConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppRegistration(_Model):
+class AppRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the app registration for providers that have app ids and app
     secrets.
 
@@ -1006,7 +1006,7 @@ class AppRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppServiceEnvironment(_Model):
+class AppServiceEnvironment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of an App Service Environment.
 
     :ivar provisioning_state: Provisioning state of the App Service Environment. Known values are:
@@ -1164,7 +1164,9 @@ class AppServiceEnvironment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
+class AppServiceEnvironmentPatchResource(
+    ProxyOnlyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM resource for a app service environment.
 
     :ivar id: Resource Id.
@@ -1244,7 +1246,7 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1288,7 +1290,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AppServiceEnvironmentResource(TrackedResource):
+class AppServiceEnvironmentResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """App Service Environment ARM resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1387,7 +1389,7 @@ class AppServiceEnvironmentResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class AppServicePlan(TrackedResource):
+class AppServicePlan(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """App Service plan.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1516,7 +1518,7 @@ class AppServicePlan(TrackedResource):
             super().__setattr__(key, value)
 
 
-class AppServicePlanPatchResource(ProxyOnlyResource):
+class AppServicePlanPatchResource(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM resource for a app service plan.
 
     :ivar id: Resource Id.
@@ -1606,7 +1608,7 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class AppServicePlanPatchResourceProperties(_Model):
+class AppServicePlanPatchResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AppServicePlanPatchResource resource specific properties.
 
     :ivar worker_tier_name: Target worker tier assigned to the App Service plan.
@@ -1779,7 +1781,7 @@ class AppServicePlanPatchResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppServicePlanProperties(_Model):
+class AppServicePlanProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AppServicePlan resource specific properties.
 
     :ivar worker_tier_name: Target worker tier assigned to the App Service plan.
@@ -2015,7 +2017,7 @@ class AppServicePlanProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArcConfiguration(_Model):
+class ArcConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ArcConfiguration.
 
     :ivar artifacts_storage_type: Known values are: "LocalNode" and "NetworkFileSystem".
@@ -2089,7 +2091,7 @@ class ArmIdWrapper(_Model):
     id: Optional[str] = rest_field(visibility=["read"])
 
 
-class ArmPlan(_Model):
+class ArmPlan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The plan object in Azure Resource Manager, represents a marketplace plan.
 
     :ivar name: The name.
@@ -2139,7 +2141,7 @@ class ArmPlan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AseRegion(ProxyOnlyResource):
+class AseRegion(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ASE region.
 
     :ivar id: Resource Id.
@@ -2205,7 +2207,7 @@ class AseRegion(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class AseRegionProperties(_Model):
+class AseRegionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ASE region resource specific properties.
 
     :ivar display_name: Display name for region.
@@ -2258,7 +2260,7 @@ class AseRegionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AseV3NetworkingConfiguration(ProxyResource):
+class AseV3NetworkingConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Full view of networking configuration for an ASE.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2333,7 +2335,7 @@ class AseV3NetworkingConfiguration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AseV3NetworkingConfigurationProperties(_Model):
+class AseV3NetworkingConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AseV3NetworkingConfiguration resource specific properties.
 
     :ivar windows_outbound_ip_addresses:
@@ -2404,7 +2406,7 @@ class AseV3NetworkingConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthPlatform(_Model):
+class AuthPlatform(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the platform of App Service Authentication/Authorization.
 
     :ivar enabled: <code>true</code> if the Authentication / Authorization feature is enabled for
@@ -2454,7 +2456,7 @@ class AuthPlatform(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoHealActions(_Model):
+class AutoHealActions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Actions which to take by the auto-heal module when a rule is triggered.
 
     :ivar action_type: Predefined action to be taken. Known values are: "Recycle", "LogEvent", and
@@ -2501,7 +2503,7 @@ class AutoHealActions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoHealCustomAction(_Model):
+class AutoHealCustomAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom action to be executed when an auto heal rule is triggered.
 
     :ivar exe: Executable to be run.
@@ -2534,7 +2536,7 @@ class AutoHealCustomAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoHealRules(_Model):
+class AutoHealRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rules that can be defined for auto-heal.
 
     :ivar triggers: Conditions that describe when to execute the auto-heal actions.
@@ -2571,7 +2573,7 @@ class AutoHealRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoHealTriggers(_Model):
+class AutoHealTriggers(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Triggers for auto-heal.
 
     :ivar requests: A rule based on total requests.
@@ -2636,7 +2638,7 @@ class AutoHealTriggers(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureActiveDirectory(_Model):
+class AzureActiveDirectory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active directory provider.
 
     :ivar enabled: <code>false</code> if the Azure Active Directory provider should not be enabled
@@ -2699,7 +2701,7 @@ class AzureActiveDirectory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureActiveDirectoryLogin(_Model):
+class AzureActiveDirectoryLogin(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active Directory login flow.
 
     :ivar login_parameters: Login parameters to send to the OpenID Connect authorization endpoint
@@ -2740,7 +2742,7 @@ class AzureActiveDirectoryLogin(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureActiveDirectoryRegistration(_Model):
+class AzureActiveDirectoryRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active Directory app registration.
 
     :ivar open_id_issuer: The OpenID Connect Issuer URI that represents the entity which issues
@@ -2834,7 +2836,7 @@ class AzureActiveDirectoryRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureActiveDirectoryValidation(_Model):
+class AzureActiveDirectoryValidation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active Directory token validation flow.
 
     :ivar jwt_claim_checks: The configuration settings of the checks that should be made while
@@ -2881,7 +2883,7 @@ class AzureActiveDirectoryValidation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobStorageApplicationLogsConfig(_Model):
+class AzureBlobStorageApplicationLogsConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application logs azure blob storage configuration.
 
     :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", and
@@ -2925,7 +2927,7 @@ class AzureBlobStorageApplicationLogsConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobStorageHttpLogsConfig(_Model):
+class AzureBlobStorageHttpLogsConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Http logs to azure blob storage configuration.
 
     :ivar sas_url: SAS url to a azure blob container with read/write/list/delete permissions.
@@ -2967,7 +2969,7 @@ class AzureBlobStorageHttpLogsConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorInfo(_Model):
+class ErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The error info.
 
     :ivar code: The error code. Required.
@@ -2995,7 +2997,7 @@ class ErrorInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureResourceErrorInfo(ErrorInfo):
+class AzureResourceErrorInfo(ErrorInfo):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The azure resource error info.
 
     :ivar code: The error code. Required.
@@ -3033,7 +3035,7 @@ class AzureResourceErrorInfo(ErrorInfo):
         super().__init__(*args, **kwargs)
 
 
-class AzureStaticWebApps(_Model):
+class AzureStaticWebApps(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Static Web Apps provider.
 
     :ivar enabled: <code>false</code> if the Azure Static Web Apps provider should not be enabled
@@ -3070,7 +3072,7 @@ class AzureStaticWebApps(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureStaticWebAppsRegistration(_Model):
+class AzureStaticWebAppsRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the registration for the Azure Static Web Apps provider.
 
     :ivar client_id: The Client ID of the app used for login.
@@ -3098,7 +3100,7 @@ class AzureStaticWebAppsRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureStorageInfoValue(_Model):
+class AzureStorageInfoValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Files or Blob Storage access information value for dictionary storage.
 
     :ivar type: Type of storage. Known values are: "AzureFiles" and "AzureBlob".
@@ -3165,7 +3167,9 @@ class AzureStorageInfoValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureStoragePropertyDictionaryResource(ProxyOnlyResource):
+class AzureStoragePropertyDictionaryResource(
+    ProxyOnlyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureStorageInfo dictionary resource.
 
     :ivar id: Resource Id.
@@ -3224,7 +3228,7 @@ class AzureStoragePropertyDictionaryResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class AzureTableStorageApplicationLogsConfig(_Model):
+class AzureTableStorageApplicationLogsConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application logs to Azure table storage configuration.
 
     :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", and
@@ -3260,7 +3264,7 @@ class AzureTableStorageApplicationLogsConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupItem(ProxyResource):
+class BackupItem(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup description.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3414,7 +3418,7 @@ class BackupItemProperties(_Model):
     """Size of the original web app which has been backed up."""
 
 
-class BackupRequest(ProxyOnlyResource):
+class BackupRequest(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a backup which will be performed.
 
     :ivar id: Resource Id.
@@ -3473,7 +3477,7 @@ class BackupRequest(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class BackupRequestProperties(_Model):
+class BackupRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupRequest resource specific properties.
 
     :ivar backup_name: Name of the backup.
@@ -3531,7 +3535,7 @@ class BackupRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupSchedule(_Model):
+class BackupSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a backup schedule. Describes how often should be the backup performed and what
     should be the retention policy.
 
@@ -3604,7 +3608,7 @@ class BackupSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BillingMeter(ProxyOnlyResource):
+class BillingMeter(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """App Service billing entity that contains information about meter which the Azure billing system
     utilizes to charge users for services.
 
@@ -3672,7 +3676,7 @@ class BillingMeter(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class BillingMeterProperties(_Model):
+class BillingMeterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BillingMeter resource specific properties.
 
     :ivar meter_id: Meter GUID onboarded in Commerce.
@@ -3736,7 +3740,7 @@ class BillingMeterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobStorageTokenStore(_Model):
+class BlobStorageTokenStore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the storage of the tokens if blob storage is used.
 
     :ivar sas_url_setting_name: The name of the app setting containing the SAS URL of the blob
@@ -3767,7 +3771,7 @@ class BlobStorageTokenStore(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Capability(_Model):
+class Capability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the capabilities/features allowed for a specific SKU.
 
     :ivar name: Name of the SKU capability.
@@ -3805,7 +3809,7 @@ class Capability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Certificate(TrackedResource):
+class Certificate(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SSL certificate for an app.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3905,7 +3909,7 @@ class Certificate(TrackedResource):
             super().__setattr__(key, value)
 
 
-class CertificatePatchResource(ProxyOnlyResource):
+class CertificatePatchResource(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM resource for a certificate.
 
     :ivar id: Resource Id.
@@ -3986,7 +3990,7 @@ class CertificatePatchResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class CertificatePatchResourceProperties(_Model):
+class CertificatePatchResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CertificatePatchResource resource specific properties.
 
     :ivar password: Certificate password.
@@ -4131,7 +4135,7 @@ class CertificatePatchResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateProperties(_Model):
+class CertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate resource specific properties.
 
     :ivar password: Certificate password.
@@ -4275,7 +4279,7 @@ class CertificateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientRegistration(_Model):
+class ClientRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the app registration for providers that have client ids and
     client secrets.
 
@@ -4311,7 +4315,7 @@ class ClientRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloningInfo(_Model):
+class CloningInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information needed for cloning operation.
 
     :ivar correlation_id: Correlation ID of cloning operation. This ID ties multiple cloning
@@ -4431,7 +4435,7 @@ class CloningInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionStringDictionary(ProxyOnlyResource):
+class ConnectionStringDictionary(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """String dictionary resource.
 
     :ivar id: Resource Id.
@@ -4490,7 +4494,7 @@ class ConnectionStringDictionary(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class ConnStringInfo(_Model):
+class ConnStringInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database connection string information.
 
     :ivar name: Name of connection string.
@@ -4535,7 +4539,7 @@ class ConnStringInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnStringValueTypePair(_Model):
+class ConnStringValueTypePair(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database connection string value to type pair.
 
     :ivar value: Value of pair. Required.
@@ -4574,7 +4578,7 @@ class ConnStringValueTypePair(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerAppsConfiguration(_Model):
+class ContainerAppsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerAppsConfiguration.
 
     :ivar dapr_ai_instrumentation_key: Azure Monitor instrumentation key used by Dapr to export
@@ -4649,7 +4653,7 @@ class ContainerAppsConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerCpuStatistics(_Model):
+class ContainerCpuStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerCpuStatistics.
 
     :ivar cpu_usage:
@@ -4696,7 +4700,7 @@ class ContainerCpuStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerCpuUsage(_Model):
+class ContainerCpuUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerCpuUsage.
 
     :ivar total_usage:
@@ -4743,7 +4747,7 @@ class ContainerCpuUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerInfo(_Model):
+class ContainerInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerInfo.
 
     :ivar current_time_stamp:
@@ -4810,7 +4814,7 @@ class ContainerInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerMemoryStatistics(_Model):
+class ContainerMemoryStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerMemoryStatistics.
 
     :ivar usage:
@@ -4845,7 +4849,7 @@ class ContainerMemoryStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerNetworkInterfaceStatistics(_Model):
+class ContainerNetworkInterfaceStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerNetworkInterfaceStatistics.
 
     :ivar rx_bytes:
@@ -4900,7 +4904,7 @@ class ContainerNetworkInterfaceStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerThrottlingData(_Model):
+class ContainerThrottlingData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerThrottlingData.
 
     :ivar periods:
@@ -4939,7 +4943,7 @@ class ContainerThrottlingData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContentHash(_Model):
+class ContentHash(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The content hash.
 
     :ivar algorithm: The algorithm of the content hash.
@@ -4972,7 +4976,7 @@ class ContentHash(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContentLink(_Model):
+class ContentLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The content link.
 
     :ivar uri: The content link URI.
@@ -5016,7 +5020,7 @@ class ContentLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContinuousWebJob(ProxyResource):
+class ContinuousWebJob(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Continuous Web Job Information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5093,7 +5097,7 @@ class ContinuousWebJob(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ContinuousWebJobProperties(_Model):
+class ContinuousWebJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContinuousWebJob resource specific properties.
 
     :ivar status: Job status. Known values are: "Initializing", "Starting", "Running",
@@ -5172,7 +5176,7 @@ class ContinuousWebJobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CookieExpiration(_Model):
+class CookieExpiration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the session cookie's expiration.
 
     :ivar convention: The convention used when determining the session cookie's expiration. Known
@@ -5212,7 +5216,7 @@ class CookieExpiration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Correlation(_Model):
+class Correlation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The correlation property.
 
     :ivar client_tracking_id: The client tracking id.
@@ -5242,7 +5246,7 @@ class Correlation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CorsSettings(_Model):
+class CorsSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cross-Origin Resource Sharing (CORS) settings for the app.
 
     :ivar allowed_origins: Gets or sets the list of origins that should be allowed to make
@@ -5288,7 +5292,7 @@ class CorsSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CsmDeploymentStatus(ProxyResource):
+class CsmDeploymentStatus(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment status response payload.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5362,7 +5366,7 @@ class CsmDeploymentStatus(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CsmDeploymentStatusProperties(_Model):
+class CsmDeploymentStatusProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CsmDeploymentStatus resource specific properties.
 
     :ivar deployment_id: Deployment operation id.
@@ -5441,7 +5445,7 @@ class CsmDeploymentStatusProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CsmMoveResourceEnvelope(_Model):
+class CsmMoveResourceEnvelope(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Object with a list of the resources that need to be moved and the resource group they should be
     moved to.
 
@@ -5475,7 +5479,7 @@ class CsmMoveResourceEnvelope(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CsmOperationDescription(_Model):
+class CsmOperationDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of an operation available for Microsoft.Web resource provider.
 
     :ivar name:
@@ -5526,7 +5530,7 @@ class CsmOperationDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CsmOperationDescriptionProperties(_Model):
+class CsmOperationDescriptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties available for a Microsoft.Web resource provider operation.
 
     :ivar service_specification: Resource metrics service provided by Microsoft.Insights resource
@@ -5557,7 +5561,7 @@ class CsmOperationDescriptionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CsmOperationDisplay(_Model):
+class CsmOperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Meta data about operation used for display in portal.
 
     :ivar provider:
@@ -5596,7 +5600,9 @@ class CsmOperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CsmPublishingCredentialsPoliciesEntity(ProxyResource):
+class CsmPublishingCredentialsPoliciesEntity(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Publishing Credentials Policies parameters.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5662,7 +5668,9 @@ class CsmPublishingCredentialsPoliciesEntity(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CsmPublishingCredentialsPoliciesEntityProperties(_Model):  # pylint: disable=name-too-long
+class CsmPublishingCredentialsPoliciesEntityProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """CsmPublishingCredentialsPoliciesEntity resource specific properties.
 
     :ivar allow: <code>true</code> to allow access to a publishing method; otherwise,
@@ -5692,7 +5700,7 @@ class CsmPublishingCredentialsPoliciesEntityProperties(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class CsmPublishingProfileOptions(_Model):
+class CsmPublishingProfileOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Publishing options for requested profile.
 
     :ivar format: Name of the format. Valid values are: FileZilla3 WebDeploy -- default Ftp. Known
@@ -5731,7 +5739,7 @@ class CsmPublishingProfileOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CsmSlotEntity(_Model):
+class CsmSlotEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment slot parameters.
 
     :ivar target_slot: Destination deployment slot during swap operation. Required.
@@ -5766,7 +5774,7 @@ class CsmSlotEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CsmUsageQuota(_Model):
+class CsmUsageQuota(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Usage of the quota resource.
 
     :ivar unit: Units of measurement for the quota resource.
@@ -5818,7 +5826,7 @@ class CsmUsageQuota(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomDnsSuffixConfiguration(ProxyResource):
+class CustomDnsSuffixConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Full view of the custom domain suffix configuration for ASEv3.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5890,7 +5898,7 @@ class CustomDnsSuffixConfiguration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CustomDnsSuffixConfigurationProperties(_Model):
+class CustomDnsSuffixConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CustomDnsSuffixConfiguration resource specific properties.
 
     :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Degraded", and
@@ -5947,7 +5955,7 @@ class CustomDnsSuffixConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomHostnameAnalysisResult(ProxyOnlyResource):
+class CustomHostnameAnalysisResult(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom domain analysis.
 
     :ivar id: Resource Id.
@@ -6018,7 +6026,7 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class CustomHostnameAnalysisResultProperties(_Model):
+class CustomHostnameAnalysisResultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CustomHostnameAnalysisResult resource specific properties.
 
     :ivar is_hostname_already_verified: <code>true</code> if hostname is already verified;
@@ -6113,7 +6121,7 @@ class CustomHostnameAnalysisResultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomHostnameSites(ProxyOnlyResource):
+class CustomHostnameSites(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A hostname and its assigned sites.
 
     :ivar id: Resource Id.
@@ -6172,7 +6180,7 @@ class CustomHostnameSites(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class CustomHostnameSitesProperties(_Model):
+class CustomHostnameSitesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CustomHostnameSites resource specific properties.
 
     :ivar custom_hostname:
@@ -6211,7 +6219,7 @@ class CustomHostnameSitesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomOpenIdConnectProvider(_Model):
+class CustomOpenIdConnectProvider(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the custom Open ID Connect provider.
 
     :ivar enabled: <code>false</code> if the custom Open ID provider provider should not be
@@ -6257,7 +6265,7 @@ class CustomOpenIdConnectProvider(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DaprConfig(_Model):
+class DaprConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """App Dapr configuration.
 
     :ivar enabled: Boolean indicating if the Dapr side car is enabled.
@@ -6329,7 +6337,7 @@ class DaprConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseBackupSetting(_Model):
+class DatabaseBackupSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database backup settings.
 
     :ivar database_type: Database type (e.g. SqlAzure / MySql). Required. Known values are:
@@ -6385,7 +6393,7 @@ class DatabaseBackupSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseConnection(ProxyResource):
+class DatabaseConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Site Database Connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6488,7 +6496,7 @@ class DatabaseConnectionOverview(_Model):
     """If present, the name of this database connection resource."""
 
 
-class DatabaseConnectionPatchRequest(_Model):
+class DatabaseConnectionPatchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Site Database Connection Request Properties resource when patching.
 
     :ivar properties: DatabaseConnectionPatchRequest resource specific properties.
@@ -6538,7 +6546,7 @@ class DatabaseConnectionPatchRequest(_Model):
             super().__setattr__(key, value)
 
 
-class DatabaseConnectionPatchRequestProperties(_Model):
+class DatabaseConnectionPatchRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DatabaseConnectionPatchRequest resource specific properties.
 
     :ivar resource_id: The resource id of the database.
@@ -6593,7 +6601,7 @@ class DatabaseConnectionPatchRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseConnectionProperties(_Model):
+class DatabaseConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DatabaseConnection resource specific properties.
 
     :ivar resource_id: The resource id of the database. Required.
@@ -6654,7 +6662,7 @@ class DatabaseConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataProviderMetadata(_Model):
+class DataProviderMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional configuration for a data providers.
 
     :ivar provider_name:
@@ -6689,7 +6697,7 @@ class DataProviderMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataSource(_Model):
+class DataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing data source used by the detectors.
 
     :ivar instructions: Instructions if any for the data source.
@@ -6724,7 +6732,7 @@ class DataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataTableResponseColumn(_Model):
+class DataTableResponseColumn(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Column definition.
 
     :ivar column_name: Name of the column.
@@ -6766,7 +6774,7 @@ class DataTableResponseColumn(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataTableResponseObject(_Model):
+class DataTableResponseObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data Table which defines columns and raw row values.
 
     :ivar table_name: Name of the table.
@@ -6806,7 +6814,7 @@ class DataTableResponseObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefaultAuthorizationPolicy(_Model):
+class DefaultAuthorizationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active Directory default authorization policy.
 
     :ivar allowed_principals: The configuration settings of the Azure Active Directory allowed
@@ -6856,7 +6864,7 @@ class DefaultErrorResponse(_Model):
     """Error model."""
 
 
-class DefaultErrorResponseError(_Model):
+class DefaultErrorResponseError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error model.
 
     :ivar code: Standardized string to programmatically identify the error.
@@ -6920,7 +6928,7 @@ class DefaultErrorResponseErrorDetailsItem(_Model):
     """Detailed error description and debugging information."""
 
 
-class DefaultIdentity(_Model):
+class DefaultIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DefaultIdentity.
 
     :ivar identity_type: Known values are: "SystemAssigned", "UserAssigned", "SystemAssigned,
@@ -6958,7 +6966,7 @@ class DefaultIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeletedAppRestoreRequest(ProxyOnlyResource):
+class DeletedAppRestoreRequest(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about restoring a deleted app.
 
     :ivar id: Resource Id.
@@ -7017,7 +7025,7 @@ class DeletedAppRestoreRequest(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class DeletedAppRestoreRequestProperties(_Model):
+class DeletedAppRestoreRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DeletedAppRestoreRequest resource specific properties.
 
     :ivar deleted_site_id: ARM resource ID of the deleted app. Example:
@@ -7073,7 +7081,7 @@ class DeletedAppRestoreRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeletedSite(ProxyResource):
+class DeletedSite(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A deleted app.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7187,7 +7195,7 @@ class DeletedSiteProperties(_Model):
     """Geo Region of the deleted site."""
 
 
-class Deployment(ProxyResource):
+class Deployment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User credentials used for publishing activity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7263,7 +7271,7 @@ class Deployment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DeploymentLocations(_Model):
+class DeploymentLocations(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of available locations (regions or App Service Environments) for deployment of App Service
     resources.
 
@@ -7311,7 +7319,7 @@ class DeploymentLocations(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentProperties(_Model):
+class DeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment resource specific properties.
 
     :ivar status: Deployment status.
@@ -7384,7 +7392,7 @@ class DeploymentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DetectorAbnormalTimePeriod(_Model):
+class DetectorAbnormalTimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing Abnormal Time Period detected.
 
     :ivar start_time: Start time of the correlated event.
@@ -7484,7 +7492,7 @@ class DetectorDefinition(_Model):
     """Flag representing whether detector is enabled or not."""
 
 
-class DetectorDefinitionResource(ProxyResource):
+class DetectorDefinitionResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM resource for a detector definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7597,7 +7605,7 @@ class DetectorInfo(_Model):
     """Defines score of a detector to power ML based matching."""
 
 
-class DetectorResponse(ProxyResource):
+class DetectorResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing Response from Detector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7663,7 +7671,7 @@ class DetectorResponse(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DetectorResponseProperties(_Model):
+class DetectorResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DetectorResponse resource specific properties.
 
     :ivar metadata: metadata for the detector.
@@ -7718,7 +7726,7 @@ class DetectorResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticAnalysis(ProxyOnlyResource):
+class DiagnosticAnalysis(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a diagnostic analysis done on an application.
 
     :ivar id: Resource Id.
@@ -7777,7 +7785,7 @@ class DiagnosticAnalysis(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class DiagnosticAnalysisProperties(_Model):
+class DiagnosticAnalysisProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DiagnosticAnalysis resource specific properties.
 
     :ivar start_time: Start time of the period.
@@ -7835,7 +7843,7 @@ class DiagnosticAnalysisProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticCategory(ProxyResource):
+class DiagnosticCategory(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing detector definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7912,7 +7920,7 @@ class DiagnosticCategoryProperties(_Model):
     """Description of the diagnostic category."""
 
 
-class DiagnosticData(_Model):
+class DiagnosticData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Set of data with rendering instructions.
 
     :ivar table: Data in table form.
@@ -7949,7 +7957,7 @@ class DiagnosticData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticDetectorResponse(ProxyOnlyResource):
+class DiagnosticDetectorResponse(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing Response from Diagnostic Detectors.
 
     :ivar id: Resource Id.
@@ -8017,7 +8025,7 @@ class DiagnosticDetectorResponse(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class DiagnosticDetectorResponseProperties(_Model):
+class DiagnosticDetectorResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DiagnosticDetectorResponse resource specific properties.
 
     :ivar start_time: Start time of the period.
@@ -8096,7 +8104,7 @@ class DiagnosticDetectorResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticMetricSample(_Model):
+class DiagnosticMetricSample(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing Diagnostic Metric.
 
     :ivar timestamp: Time at which metric is measured.
@@ -8162,7 +8170,7 @@ class DiagnosticMetricSample(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticMetricSet(_Model):
+class DiagnosticMetricSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing Diagnostic Metric information.
 
     :ivar name: Name of the metric.
@@ -8223,7 +8231,7 @@ class DiagnosticMetricSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Dimension(_Model):
+class Dimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dimension of a resource metric. For e.g. instance specific HTTP requests for a web app, where
     instance name is dimension of the metric HTTP request.
 
@@ -8269,7 +8277,7 @@ class Dimension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DnlResourceNameAvailability(_Model):
+class DnlResourceNameAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information regarding availability of a resource name for DNL apps with regionalized default
     hostnames.
 
@@ -8328,7 +8336,7 @@ class DnlResourceNameAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DnlResourceNameAvailabilityRequest(_Model):
+class DnlResourceNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DnlResourceNameAvailabilityRequest.
 
     :ivar resource_group_name: Resource group name.
@@ -8385,7 +8393,7 @@ class DnlResourceNameAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnabledConfig(_Model):
+class EnabledConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enabled configuration.
 
     :ivar enabled: True if configuration is enabled, false if it is disabled and null if
@@ -8414,7 +8422,7 @@ class EnabledConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDependency(_Model):
+class EndpointDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A domain name that a service is reached at, including details of the current connection status.
 
     :ivar domain_name: The domain name of the dependency.
@@ -8451,7 +8459,7 @@ class EndpointDependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDetail(_Model):
+class EndpointDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Current TCP connectivity information from the App Service Environment to a single endpoint.
 
     :ivar ip_address: An IP Address that Domain Name currently resolves to.
@@ -8500,7 +8508,7 @@ class EndpointDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnvironmentVariable(_Model):
+class EnvironmentVariable(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EnvironmentVariable.
 
     :ivar name: Environment variable name. Required.
@@ -8539,7 +8547,7 @@ class EnvironmentVariable(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorEntity(_Model):
+class ErrorEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Body of the error response returned from the API.
 
     :ivar extended_code: Type of error.
@@ -8610,7 +8618,7 @@ class ErrorEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorProperties(_Model):
+class ErrorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error properties indicate why the Logic service was not able to process the incoming request.
     The reason is provided in the error message.
 
@@ -8644,7 +8652,7 @@ class ErrorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Experiments(_Model):
+class Experiments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Routing rules in production experiments.
 
     :ivar ramp_up_rules: List of ramp-up rules.
@@ -8674,7 +8682,7 @@ class Experiments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Expression(_Model):
+class Expression(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The expression.
 
     :ivar text: The text.
@@ -8721,7 +8729,7 @@ class Expression(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExpressionRoot(Expression):
+class ExpressionRoot(Expression):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The expression root.
 
     :ivar text: The text.
@@ -8761,7 +8769,7 @@ class ExpressionRoot(Expression):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Extended Location.
 
     :ivar name: Name of extended location.
@@ -8793,7 +8801,7 @@ class ExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Facebook(_Model):
+class Facebook(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Facebook provider.
 
     :ivar enabled: <code>false</code> if the Facebook provider should not be enabled despite the
@@ -8843,7 +8851,7 @@ class Facebook(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileSystemApplicationLogsConfig(_Model):
+class FileSystemApplicationLogsConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application logs to file system configuration.
 
     :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", and
@@ -8874,7 +8882,7 @@ class FileSystemApplicationLogsConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileSystemHttpLogsConfig(_Model):
+class FileSystemHttpLogsConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Http logs to file system configuration.
 
     :ivar retention_in_mb: Maximum size in megabytes that http log files can use. When reached old
@@ -8920,7 +8928,7 @@ class FileSystemHttpLogsConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileSystemTokenStore(_Model):
+class FileSystemTokenStore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the storage of the tokens if a file system is used.
 
     :ivar directory: The directory in which the tokens will be stored.
@@ -8948,7 +8956,7 @@ class FileSystemTokenStore(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FlowAccessControlConfiguration(_Model):
+class FlowAccessControlConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The access control configuration.
 
     :ivar triggers: The access control configuration for invoking workflow triggers.
@@ -8999,7 +9007,7 @@ class FlowAccessControlConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FlowAccessControlConfigurationPolicy(_Model):
+class FlowAccessControlConfigurationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The access control configuration policy.
 
     :ivar allowed_caller_ip_addresses: The allowed caller IP address ranges.
@@ -9036,7 +9044,7 @@ class FlowAccessControlConfigurationPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FlowEndpoints(_Model):
+class FlowEndpoints(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The flow endpoints configuration.
 
     :ivar outgoing_ip_addresses: The outgoing ip address.
@@ -9073,7 +9081,7 @@ class FlowEndpoints(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FlowEndpointsConfiguration(_Model):
+class FlowEndpointsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The endpoints configuration.
 
     :ivar workflow: The workflow endpoints.
@@ -9108,7 +9116,7 @@ class FlowEndpointsConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForwardProxy(_Model):
+class ForwardProxy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of a forward proxy used to make the requests.
 
     :ivar convention: The convention used to determine the url of the request made. Known values
@@ -9154,7 +9162,7 @@ class ForwardProxy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FrontEndConfiguration(_Model):
+class FrontEndConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FrontEndConfiguration.
 
     :ivar kind: Known values are: "NodePort" and "LoadBalancer".
@@ -9184,7 +9192,7 @@ class FrontEndConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionAppConfig(_Model):
+class FunctionAppConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Function app configuration.
 
     :ivar deployment: Function app deployment configuration.
@@ -9376,7 +9384,7 @@ class FunctionAppRuntimeSettings(_Model):
     """<code>true</code> if the minor version the default; otherwise, <code>false</code>."""
 
 
-class FunctionAppStack(ProxyOnlyResource):
+class FunctionAppStack(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Function App Stack.
 
     :ivar id: Resource Id.
@@ -9464,7 +9472,7 @@ class FunctionAppStackProperties(_Model):
     """Function App stack preferred OS. Known values are: \"Windows\" and \"Linux\"."""
 
 
-class FunctionEnvelope(ProxyResource):
+class FunctionEnvelope(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Function information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9544,7 +9552,7 @@ class FunctionEnvelope(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FunctionEnvelopeProperties(_Model):
+class FunctionEnvelopeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FunctionEnvelope resource specific properties.
 
     :ivar function_app_id: Function App ID.
@@ -9634,7 +9642,7 @@ class FunctionEnvelopeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionsAlwaysReadyConfig(_Model):
+class FunctionsAlwaysReadyConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sets the number of 'Always Ready' instances for a function group or a specific function.
 
     :ivar name: Either a function group or a function name is required. For additional information
@@ -9675,7 +9683,7 @@ class FunctionsAlwaysReadyConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionsDeployment(_Model):
+class FunctionsDeployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration section for the function app deployment.
 
     :ivar storage: Storage for deployed package used by the function app.
@@ -9705,7 +9713,7 @@ class FunctionsDeployment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionsDeploymentStorage(_Model):
+class FunctionsDeploymentStorage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage for deployed package used by the function app.
 
     :ivar type: Property to select Azure Storage type. Available options: blobContainer.
@@ -9751,7 +9759,7 @@ class FunctionsDeploymentStorage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionsDeploymentStorageAuthentication(_Model):
+class FunctionsDeploymentStorageAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authentication method to access the storage account for deployment.
 
     :ivar type: Property to select authentication type to access the selected storage account.
@@ -9808,7 +9816,7 @@ class FunctionsDeploymentStorageAuthentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionSecrets(_Model):
+class FunctionSecrets(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Function secrets.
 
     :ivar key: Secret key.
@@ -9841,7 +9849,7 @@ class FunctionSecrets(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionsRuntime(_Model):
+class FunctionsRuntime(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Function app runtime name and version.
 
     :ivar name: Function app runtime name. Available options: dotnet-isolated, node, java,
@@ -9880,7 +9888,7 @@ class FunctionsRuntime(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionsScaleAndConcurrency(_Model):
+class FunctionsScaleAndConcurrency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scale and concurrency settings for the function app.
 
     :ivar always_ready: 'Always Ready' configuration for the function app.
@@ -9933,7 +9941,7 @@ class FunctionsScaleAndConcurrency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionsScaleAndConcurrencyTriggers(_Model):
+class FunctionsScaleAndConcurrencyTriggers(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scale and concurrency settings for the function app triggers.
 
     :ivar http: Scale and concurrency settings for the HTTP trigger.
@@ -9963,7 +9971,7 @@ class FunctionsScaleAndConcurrencyTriggers(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionsScaleAndConcurrencyTriggersHttp(_Model):
+class FunctionsScaleAndConcurrencyTriggersHttp(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scale and concurrency settings for the HTTP trigger.
 
     :ivar per_instance_concurrency: The maximum number of concurrent HTTP trigger invocations per
@@ -9994,7 +10002,7 @@ class FunctionsScaleAndConcurrencyTriggersHttp(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionsSiteUpdateStrategy(_Model):
+class FunctionsSiteUpdateStrategy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Function app site update strategy configuration for deployments and site config updates.
 
     :ivar type: Function app site update strategy type. Available options: Recreate, RollingUpdate.
@@ -10026,7 +10034,7 @@ class FunctionsSiteUpdateStrategy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GeoRegion(ProxyOnlyResource):
+class GeoRegion(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Geographical region.
 
     :ivar id: Resource Id.
@@ -10104,7 +10112,7 @@ class GeoRegionProperties(_Model):
     """Display name for region."""
 
 
-class GitHub(_Model):
+class GitHub(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the GitHub provider.
 
     :ivar enabled: <code>false</code> if the GitHub provider should not be enabled despite the set
@@ -10146,7 +10154,7 @@ class GitHub(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GitHubActionCodeConfiguration(_Model):
+class GitHubActionCodeConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The GitHub action code configuration.
 
     :ivar runtime_stack: Runtime stack is used to determine the workflow file content for code base
@@ -10185,7 +10193,7 @@ class GitHubActionCodeConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GitHubActionConfiguration(_Model):
+class GitHubActionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The GitHub action configuration.
 
     :ivar code_configuration: GitHub Action code configuration.
@@ -10236,7 +10244,7 @@ class GitHubActionConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GitHubActionContainerConfiguration(_Model):
+class GitHubActionContainerConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The GitHub action container configuration.
 
     :ivar server_url: The server URL for the container registry where the build will be hosted.
@@ -10295,7 +10303,7 @@ class GitHubActionWebAppStackSettings(_Model):
     """The minor version that is supported for GitHub Actions."""
 
 
-class GlobalCsmSkuDescription(_Model):
+class GlobalCsmSkuDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Global SKU Description.
 
     :ivar name: Name of the resource SKU.
@@ -10355,7 +10363,7 @@ class GlobalCsmSkuDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GlobalValidation(_Model):
+class GlobalValidation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings that determines the validation flow of users using App Service
     Authentication/Authorization.
 
@@ -10418,7 +10426,7 @@ class GlobalValidation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Google(_Model):
+class Google(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Google provider.
 
     :ivar enabled: <code>false</code> if the Google provider should not be enabled despite the set
@@ -10468,7 +10476,7 @@ class Google(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HandlerMapping(_Model):
+class HandlerMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IIS handler mappings used to define which handler processes HTTP requests with certain
     extension. For example, it is used to configure php-cgi.exe process to handle all HTTP requests
     with *.php extension.
@@ -10511,7 +10519,7 @@ class HandlerMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostingEnvironmentDeploymentInfo(_Model):
+class HostingEnvironmentDeploymentInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information needed to create resources on an App Service Environment.
 
     :ivar name: Name of the App Service Environment.
@@ -10544,7 +10552,7 @@ class HostingEnvironmentDeploymentInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostingEnvironmentDiagnostics(_Model):
+class HostingEnvironmentDiagnostics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostics for an App Service Environment.
 
     :ivar name: Name/identifier of the diagnostics.
@@ -10579,7 +10587,7 @@ class HostingEnvironmentDiagnostics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostingEnvironmentProfile(_Model):
+class HostingEnvironmentProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specification for an App Service Environment to use for this resource.
 
     :ivar id: Resource ID of the App Service Environment.
@@ -10615,7 +10623,7 @@ class HostingEnvironmentProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostKeys(_Model):
+class HostKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Functions host level keys.
 
     :ivar master_key: Secret key.
@@ -10657,7 +10665,7 @@ class HostKeys(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostNameBinding(ProxyResource):
+class HostNameBinding(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A hostname binding object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10733,7 +10741,7 @@ class HostNameBinding(ProxyResource):
             super().__setattr__(key, value)
 
 
-class HostNameBindingProperties(_Model):
+class HostNameBindingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HostNameBinding resource specific properties.
 
     :ivar site_name: App Service app name.
@@ -10809,7 +10817,7 @@ class HostNameBindingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostNameSslState(_Model):
+class HostNameSslState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SSL-enabled hostname.
 
     :ivar name: Hostname.
@@ -10868,7 +10876,7 @@ class HostNameSslState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpLogsConfig(_Model):
+class HttpLogsConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Http logs configuration.
 
     :ivar file_system: Http logs to file system configuration.
@@ -10905,7 +10913,7 @@ class HttpLogsConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpSettings(_Model):
+class HttpSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the HTTP requests for authentication and authorization requests
     made against App Service Authentication/Authorization.
 
@@ -10952,7 +10960,7 @@ class HttpSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpSettingsRoutes(_Model):
+class HttpSettingsRoutes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the paths HTTP requests.
 
     :ivar api_prefix: The prefix that should precede all the authentication/authorization paths.
@@ -10980,7 +10988,7 @@ class HttpSettingsRoutes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HybridConnection(ProxyResource):
+class HybridConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hybrid Connection contract. This is used to configure a Hybrid Connection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11055,7 +11063,7 @@ class HybridConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class HybridConnectionKey(ProxyOnlyResource):
+class HybridConnectionKey(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hybrid Connection key contract. This has the send key name and value for a Hybrid Connection.
 
     :ivar id: Resource Id.
@@ -11129,7 +11137,7 @@ class HybridConnectionKeyProperties(_Model):
     """The value of the send key."""
 
 
-class HybridConnectionLimits(ProxyResource):
+class HybridConnectionLimits(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hybrid Connection limits contract. This is used to return the plan limits of Hybrid
     Connections.
 
@@ -11211,7 +11219,7 @@ class HybridConnectionLimitsProperties(_Model):
     """The maximum number of Hybrid Connections allowed."""
 
 
-class HybridConnectionProperties(_Model):
+class HybridConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HybridConnection resource specific properties.
 
     :ivar service_bus_namespace: The name of the Service Bus namespace.
@@ -11287,7 +11295,7 @@ class HybridConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identifier(ProxyResource):
+class Identifier(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A domain specific resource identifier.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11353,7 +11361,7 @@ class Identifier(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IdentifierProperties(_Model):
+class IdentifierProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identifier resource specific properties.
 
     :ivar value: String representation of the identity.
@@ -11381,7 +11389,7 @@ class IdentifierProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityProviders(_Model):
+class IdentityProviders(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of each of the identity providers used to configure App Service
     Authentication/Authorization.
 
@@ -11465,7 +11473,7 @@ class IdentityProviders(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InboundEnvironmentEndpoint(_Model):
+class InboundEnvironmentEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IP Addresses and Ports that require inbound network access to and within the subnet of the
     App Service Environment.
 
@@ -11504,7 +11512,7 @@ class InboundEnvironmentEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstallScript(_Model):
+class InstallScript(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server farm install script configuration.
 
     :ivar name: Name of the install script.
@@ -11539,7 +11547,7 @@ class InstallScript(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstallScriptSource(_Model):
+class InstallScriptSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Object to hold install script reference.
 
     :ivar source_uri: Install script source URI where the install script file will be fetched from.
@@ -11575,7 +11583,7 @@ class InstallScriptSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpAddress(_Model):
+class IpAddress(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ip address.
 
     :ivar address: The address.
@@ -11603,7 +11611,7 @@ class IpAddress(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpAddressRange(_Model):
+class IpAddressRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ip address range.
 
     :ivar address_range: The IP address range.
@@ -11633,7 +11641,7 @@ class IpAddressRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpSecurityRestriction(_Model):
+class IpSecurityRestriction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP security restriction on an app.
 
     :ivar ip_address: IP address the security restriction is valid for. It can be in form of pure
@@ -11773,7 +11781,7 @@ class IpSecurityRestriction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JsonSchema(_Model):
+class JsonSchema(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON schema.
 
     :ivar title: The JSON title.
@@ -11806,7 +11814,7 @@ class JsonSchema(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JwtClaimChecks(_Model):
+class JwtClaimChecks(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the checks that should be made while validating the JWT Claims.
 
     :ivar allowed_groups: The list of the allowed groups.
@@ -11843,7 +11851,7 @@ class JwtClaimChecks(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyInfo(_Model):
+class KeyInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Function key info.
 
     :ivar name: Key name.
@@ -11890,7 +11898,7 @@ class KeyValuePairStringObject(_Model):
     """Any object."""
 
 
-class KeyVaultReferenceWithStatus(_Model):
+class KeyVaultReferenceWithStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Object to hold key vault reference and the resolution status.
 
     :ivar secret_uri: Key vault secret URI.
@@ -11925,7 +11933,7 @@ class KeyVaultReferenceWithStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubeEnvironment(TrackedResource):
+class KubeEnvironment(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Kubernetes cluster specialized for web workloads by Azure App Service.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12015,7 +12023,7 @@ class KubeEnvironment(TrackedResource):
             super().__setattr__(key, value)
 
 
-class KubeEnvironmentPatchResource(ProxyOnlyResource):
+class KubeEnvironmentPatchResource(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM resource for a KubeEnvironment when patching.
 
     :ivar id: Resource Id.
@@ -12084,7 +12092,7 @@ class KubeEnvironmentPatchResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class KubeEnvironmentPatchResourceProperties(_Model):
+class KubeEnvironmentPatchResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubeEnvironmentPatchResource resource specific properties.
 
     :ivar provisioning_state: Provisioning state of the Kubernetes Environment. Known values are:
@@ -12170,7 +12178,7 @@ class KubeEnvironmentPatchResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubeEnvironmentProfile(_Model):
+class KubeEnvironmentProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specification for a Kubernetes Environment to use for this resource.
 
     :ivar id: Resource ID of the Kubernetes Environment.
@@ -12206,7 +12214,7 @@ class KubeEnvironmentProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubeEnvironmentProperties(_Model):
+class KubeEnvironmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubeEnvironment resource specific properties.
 
     :ivar provisioning_state: Provisioning state of the Kubernetes Environment. Known values are:
@@ -12299,7 +12307,7 @@ class KubeEnvironmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LegacyMicrosoftAccount(_Model):
+class LegacyMicrosoftAccount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the legacy Microsoft Account provider.
 
     :ivar enabled: <code>false</code> if the legacy Microsoft Account provider should not be
@@ -12395,7 +12403,7 @@ class LinuxJavaContainerSettings(_Model):
     """<code>true</code> if the minor version is early-access; otherwise, <code>false</code>."""
 
 
-class LocalizableString(_Model):
+class LocalizableString(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Localizable string object containing the name and a localized value.
 
     :ivar value: Non-localized name.
@@ -12430,7 +12438,7 @@ class LocalizableString(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogAnalyticsConfiguration(_Model):
+class LogAnalyticsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LogAnalyticsConfiguration.
 
     :ivar customer_id:
@@ -12463,7 +12471,7 @@ class LogAnalyticsConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Login(_Model):
+class Login(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the login flow of users using App Service
     Authentication/Authorization.
 
@@ -12533,7 +12541,7 @@ class Login(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoginRoutes(_Model):
+class LoginRoutes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The routes that specify the endpoints used for login and logout requests.
 
     :ivar logout_endpoint: The endpoint at which a logout request should be made.
@@ -12563,7 +12571,7 @@ class LoginRoutes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoginScopes(_Model):
+class LoginScopes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the login flow, including the scopes that should be requested.
 
     :ivar scopes: A list of the scopes that should be requested while authenticating.
@@ -12591,7 +12599,7 @@ class LoginScopes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogSpecification(_Model):
+class LogSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Log Definition of a single resource metric.
 
     :ivar name:
@@ -12636,7 +12644,7 @@ class LogSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity.
 
     :ivar type: Type of managed service identity. Known values are: "SystemAssigned",
@@ -12687,7 +12695,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricAvailability(_Model):
+class MetricAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Retention policy of a resource metric.
 
     :ivar time_grain:
@@ -12720,7 +12728,7 @@ class MetricAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricSpecification(_Model):
+class MetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of a single resource metric.
 
     :ivar name:
@@ -12839,7 +12847,7 @@ class MetricSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrateMySqlRequest(ProxyOnlyResource):
+class MigrateMySqlRequest(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MySQL migration request.
 
     :ivar id: Resource Id.
@@ -12898,7 +12906,7 @@ class MigrateMySqlRequest(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class MigrateMySqlRequestProperties(_Model):
+class MigrateMySqlRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MigrateMySqlRequest resource specific properties.
 
     :ivar connection_string: Connection string to the remote MySQL database. Required.
@@ -12937,7 +12945,7 @@ class MigrateMySqlRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrateMySqlStatus(ProxyResource):
+class MigrateMySqlStatus(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MySQL migration status.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13026,7 +13034,7 @@ class MigrateMySqlStatusProperties(_Model):
     """True if the web app has in app MySql enabled."""
 
 
-class MSDeploy(ProxyOnlyResource):
+class MSDeploy(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MSDeploy ARM PUT information.
 
     :ivar id: Resource Id.
@@ -13094,7 +13102,7 @@ class MSDeploy(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class MSDeployCore(_Model):
+class MSDeployCore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MSDeploy ARM PUT core information.
 
     :ivar package_uri: Package URI.
@@ -13172,7 +13180,7 @@ class MSDeployCore(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MSDeployLog(ProxyOnlyResource):
+class MSDeployLog(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MSDeploy log.
 
     :ivar id: Resource Id.
@@ -13261,7 +13269,7 @@ class MSDeployLogProperties(_Model):
     """List of log entry messages."""
 
 
-class MSDeployProperties(MSDeployCore):
+class MSDeployProperties(MSDeployCore):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MSDeploy ARM PUT information properties.
 
     :ivar package_uri: Package URI.
@@ -13318,7 +13326,7 @@ class MSDeployProperties(MSDeployCore):
         super().__init__(*args, **kwargs)
 
 
-class MSDeployStatus(ProxyResource):
+class MSDeployStatus(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MSDeploy ARM response.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13415,7 +13423,7 @@ class MSDeployStatusProperties(_Model):
     """Whether the deployment operation has completed."""
 
 
-class NameIdentifier(_Model):
+class NameIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identifies an object.
 
     :ivar name: Name of the object.
@@ -13443,7 +13451,7 @@ class NameIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NameValuePair(_Model):
+class NameValuePair(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Name value pair.
 
     :ivar name: Pair name.
@@ -13476,7 +13484,7 @@ class NameValuePair(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkFeatures(ProxyResource):
+class NetworkFeatures(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Full view of network features for an app (presently VNET integration and Hybrid Connections).
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13576,7 +13584,7 @@ class NetworkFeaturesProperties(_Model):
     """The Hybrid Connection V2 (Service Bus) view."""
 
 
-class NetworkTrace(_Model):
+class NetworkTrace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network trace.
 
     :ivar path: Local file path for the captured network trace file.
@@ -13617,7 +13625,7 @@ class NetworkTrace(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Nonce(_Model):
+class Nonce(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the nonce used in the login flow.
 
     :ivar validate_nonce: <code>false</code> if the nonce should not be validated while completing
@@ -13657,7 +13665,7 @@ class Nonce(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenAuthenticationAccessPolicies(_Model):
+class OpenAuthenticationAccessPolicies(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AuthenticationPolicy of type Open.
 
     :ivar policies: Open authentication policies.
@@ -13687,7 +13695,7 @@ class OpenAuthenticationAccessPolicies(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenAuthenticationAccessPolicy(_Model):
+class OpenAuthenticationAccessPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Open authentication access policy defined by user.
 
     :ivar type: Type of provider for OAuth. "AAD"
@@ -13724,7 +13732,7 @@ class OpenAuthenticationAccessPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenAuthenticationPolicyClaim(_Model):
+class OpenAuthenticationPolicyClaim(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Open authentication policy claim.
 
     :ivar name: The name of the claim.
@@ -13757,7 +13765,7 @@ class OpenAuthenticationPolicyClaim(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenIdConnectClientCredential(_Model):
+class OpenIdConnectClientCredential(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication client credentials of the custom Open ID Connect provider.
 
     :ivar method: The method that should be used to authenticate the user. Default value is
@@ -13796,7 +13804,7 @@ class OpenIdConnectClientCredential(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenIdConnectConfig(_Model):
+class OpenIdConnectConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the endpoints used for the custom Open ID Connect provider.
 
     :ivar authorization_endpoint: The endpoint to be used to make an authorization request.
@@ -13853,7 +13861,7 @@ class OpenIdConnectConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenIdConnectLogin(_Model):
+class OpenIdConnectLogin(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the login flow of the custom Open ID Connect provider.
 
     :ivar name_claim_type: The name of the claim that contains the users name.
@@ -13888,7 +13896,7 @@ class OpenIdConnectLogin(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenIdConnectRegistration(_Model):
+class OpenIdConnectRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the app registration for the custom Open ID Connect provider.
 
     :ivar client_id: The client id of the custom Open ID Connect provider.
@@ -13931,7 +13939,7 @@ class OpenIdConnectRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An operation on a resource.
 
     :ivar id: Operation ID.
@@ -14008,7 +14016,7 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResultProperties(_Model):
+class OperationResultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The run operation result properties.
 
     :ivar start_time: The start time of the workflow scope repetition.
@@ -14073,7 +14081,7 @@ class OperationResultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResult(OperationResultProperties):
+class OperationResult(OperationResultProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The operation result definition.
 
     :ivar start_time: The start time of the workflow scope repetition.
@@ -14153,7 +14161,7 @@ class OperationResult(OperationResultProperties):
         super().__init__(*args, **kwargs)
 
 
-class OutboundEnvironmentEndpoint(_Model):
+class OutboundEnvironmentEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Endpoints accessed for a common purpose that the App Service Environment requires outbound
     network access to.
 
@@ -14191,7 +14199,7 @@ class OutboundEnvironmentEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OutboundVnetRouting(_Model):
+class OutboundVnetRouting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Outbound traffic options over virtual network.
 
     :ivar all_traffic: Enables all other routing options defined in OutboundVnetRouting if this
@@ -14257,7 +14265,7 @@ class OutboundVnetRouting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PerfMonResponse(_Model):
+class PerfMonResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Performance monitor API response.
 
     :ivar code: The response code.
@@ -14295,7 +14303,7 @@ class PerfMonResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PerfMonSample(_Model):
+class PerfMonSample(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Performance monitor sample in a set.
 
     :ivar time: Point in time for which counter was measured.
@@ -14337,7 +14345,7 @@ class PerfMonSample(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PerfMonSet(_Model):
+class PerfMonSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metric information.
 
     :ivar name: Unique key name of the counter.
@@ -14391,7 +14399,7 @@ class PerfMonSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PremierAddOn(TrackedResource):
+class PremierAddOn(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Premier add-on.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14463,7 +14471,7 @@ class PremierAddOn(TrackedResource):
             super().__setattr__(key, value)
 
 
-class PremierAddOnOffer(ProxyOnlyResource):
+class PremierAddOnOffer(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Premier add-on offer.
 
     :ivar id: Resource Id.
@@ -14533,7 +14541,7 @@ class PremierAddOnOffer(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class PremierAddOnOfferProperties(_Model):
+class PremierAddOnOfferProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PremierAddOnOffer resource specific properties.
 
     :ivar sku: Premier add on SKU.
@@ -14622,7 +14630,7 @@ class PremierAddOnOfferProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PremierAddOnPatchResource(ProxyOnlyResource):
+class PremierAddOnPatchResource(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM resource for a PremierAddOn.
 
     :ivar id: Resource Id.
@@ -14681,7 +14689,7 @@ class PremierAddOnPatchResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class PremierAddOnPatchResourceProperties(_Model):
+class PremierAddOnPatchResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PremierAddOnPatchResource resource specific properties.
 
     :ivar sku: Premier add on SKU.
@@ -14733,7 +14741,7 @@ class PremierAddOnPatchResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PremierAddOnProperties(_Model):
+class PremierAddOnProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PremierAddOn resource specific properties.
 
     :ivar sku: Premier add on SKU.
@@ -14785,7 +14793,7 @@ class PremierAddOnProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateAccess(ProxyResource):
+class PrivateAccess(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of the parameters of Private Access for a Web Site.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14851,7 +14859,7 @@ class PrivateAccess(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateAccessProperties(_Model):
+class PrivateAccessProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateAccess resource specific properties.
 
     :ivar enabled: Whether private access is enabled or not.
@@ -14887,7 +14895,7 @@ class PrivateAccessProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateAccessSubnet(_Model):
+class PrivateAccessSubnet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a Virtual Network subnet that is useable for private site access.
 
     :ivar name: The name of the subnet.
@@ -14920,7 +14928,7 @@ class PrivateAccessSubnet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateAccessVirtualNetwork(_Model):
+class PrivateAccessVirtualNetwork(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a Virtual Network that is useable for private site access.
 
     :ivar name: The name of the Virtual Network.
@@ -14970,7 +14978,7 @@ class PrivateAccessVirtualNetwork(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkConnectionState(_Model):
+class PrivateLinkConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The state of a private link connection.
 
     :ivar status: Status of a private link connection.
@@ -15010,7 +15018,7 @@ class PrivateLinkConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(_Model):
+class PrivateLinkResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Required.
@@ -15074,7 +15082,7 @@ class PrivateLinkResourceProperties(_Model):
     """RequiredZoneNames of a private link resource."""
 
 
-class PrivateLinkResourcesWrapper(_Model):
+class PrivateLinkResourcesWrapper(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Wrapper for a collection of private link resources.
 
     :ivar value: Required.
@@ -15102,7 +15110,7 @@ class PrivateLinkResourcesWrapper(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProcessInfo(ProxyResource):
+class ProcessInfo(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Process Information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15205,7 +15213,7 @@ class ProcessInfo(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ProcessInfoProperties(_Model):
+class ProcessInfoProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ProcessInfo resource specific properties.
 
     :ivar identifier: ARM Identifier for deployment.
@@ -15419,7 +15427,7 @@ class ProcessInfoProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProcessModuleInfo(ProxyResource):
+class ProcessModuleInfo(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Process Module Information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15497,7 +15505,7 @@ class ProcessModuleInfo(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ProcessModuleInfoProperties(_Model):
+class ProcessModuleInfoProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ProcessModuleInfo resource specific properties.
 
     :ivar base_address: Base address. Used as module identifier in ARM resource URI.
@@ -15575,7 +15583,7 @@ class ProcessModuleInfoProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProcessThreadInfo(ProxyOnlyResource):
+class ProcessThreadInfo(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Process Thread Information.
 
     :ivar id: Resource Id.
@@ -15647,7 +15655,7 @@ class ProcessThreadInfo(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class ProcessThreadInfoProperties(_Model):
+class ProcessThreadInfoProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ProcessThreadInfo resource specific properties.
 
     :ivar identifier: Site extension ID.
@@ -15731,7 +15739,7 @@ class ProcessThreadInfoProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PublicCertificate(ProxyResource):
+class PublicCertificate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Public certificate object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15797,7 +15805,7 @@ class PublicCertificate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PublicCertificateProperties(_Model):
+class PublicCertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PublicCertificate resource specific properties.
 
     :ivar blob: Public Certificate byte array.
@@ -15838,7 +15846,7 @@ class PublicCertificateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PushSettings(ProxyOnlyResource):
+class PushSettings(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Push settings for the App.
 
     :ivar id: Resource Id.
@@ -15897,7 +15905,7 @@ class PushSettings(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class PushSettingsProperties(_Model):
+class PushSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PushSettings resource specific properties.
 
     :ivar is_push_enabled: Gets or sets a flag indicating whether the Push endpoint is enabled.
@@ -15957,7 +15965,7 @@ class PushSettingsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryUtterancesResult(_Model):
+class QueryUtterancesResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result for utterances query.
 
     :ivar sample_utterance: A sample utterance.
@@ -15992,7 +16000,7 @@ class QueryUtterancesResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryUtterancesResults(_Model):
+class QueryUtterancesResults(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Suggested utterances where the detector can be applicable.
 
     :ivar query: Search Query.
@@ -16027,7 +16035,7 @@ class QueryUtterancesResults(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RampUpRule(_Model):
+class RampUpRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Routing rules for ramp up testing. This rule allows to redirect static traffic % to a slot or
     to gradually change routing % based on performance.
 
@@ -16122,7 +16130,7 @@ class RampUpRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Recommendation(ProxyOnlyResource):
+class Recommendation(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a recommendation result generated by the recommendation engine.
 
     :ivar id: Resource Id.
@@ -16205,7 +16213,7 @@ class Recommendation(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class RecommendationProperties(_Model):
+class RecommendationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recommendation resource specific properties.
 
     :ivar creation_time: Timestamp when this instance was created.
@@ -16388,7 +16396,7 @@ class RecommendationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationRule(ProxyResource):
+class RecommendationRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a recommendation rule that the recommendation engine can perform.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16468,7 +16476,7 @@ class RecommendationRule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RecommendationRuleProperties(_Model):
+class RecommendationRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RecommendationRule resource specific properties.
 
     :ivar recommendation_name: Unique name of the rule.
@@ -16580,7 +16588,7 @@ class RecommendationRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecurrenceSchedule(_Model):
+class RecurrenceSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The recurrence schedule.
 
     :ivar minutes: The minutes.
@@ -16634,7 +16642,7 @@ class RecurrenceSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecurrenceScheduleOccurrence(_Model):
+class RecurrenceScheduleOccurrence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The recurrence schedule occurrence.
 
     :ivar day: The day of the week. Known values are: "Sunday", "Monday", "Tuesday", "Wednesday",
@@ -16671,7 +16679,7 @@ class RecurrenceScheduleOccurrence(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegenerateActionParameter(_Model):
+class RegenerateActionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The access key regenerate action content.
 
     :ivar key_type: The key type. Known values are: "NotSpecified", "Primary", and "Secondary".
@@ -16701,7 +16709,7 @@ class RegenerateActionParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryAdapter(_Model):
+class RegistryAdapter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server farm registry adapter configuration.
 
     :ivar registry_key: Registry key for the adapter.
@@ -16748,7 +16756,7 @@ class RegistryAdapter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RelayServiceConnectionEntity(ProxyResource):
+class RelayServiceConnectionEntity(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hybrid Connection for an App Service app.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16822,7 +16830,7 @@ class RelayServiceConnectionEntity(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RelayServiceConnectionEntityProperties(_Model):
+class RelayServiceConnectionEntityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RelayServiceConnectionEntity resource specific properties.
 
     :ivar entity_name:
@@ -16883,7 +16891,7 @@ class RelayServiceConnectionEntityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemotePrivateEndpointConnection(ProxyOnlyResource):
+class RemotePrivateEndpointConnection(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A remote private endpoint connection.
 
     :ivar id: Resource Id.
@@ -16947,7 +16955,9 @@ class RemotePrivateEndpointConnection(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class RemotePrivateEndpointConnectionARMResource(ProxyResource):  # pylint: disable=name-too-long
+class RemotePrivateEndpointConnectionARMResource(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Remote Private Endpoint Connection ARM resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17019,7 +17029,9 @@ class RemotePrivateEndpointConnectionARMResource(ProxyResource):  # pylint: disa
             super().__setattr__(key, value)
 
 
-class RemotePrivateEndpointConnectionARMResourceProperties(_Model):  # pylint: disable=name-too-long
+class RemotePrivateEndpointConnectionARMResourceProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RemotePrivateEndpointConnectionARMResource resource specific properties.
 
     :ivar provisioning_state:
@@ -17067,7 +17079,9 @@ class RemotePrivateEndpointConnectionARMResourceProperties(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class RemotePrivateEndpointConnectionProperties(_Model):  # pylint: disable=name-too-long
+class RemotePrivateEndpointConnectionProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RemotePrivateEndpointConnection resource specific properties.
 
     :ivar provisioning_state:
@@ -17115,7 +17129,7 @@ class RemotePrivateEndpointConnectionProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class Rendering(_Model):
+class Rendering(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instructions for rendering the data.
 
     :ivar type: Rendering Type. Known values are: "NoGraph", "Table", "TimeSeries",
@@ -17164,7 +17178,7 @@ class Rendering(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RepetitionIndex(_Model):
+class RepetitionIndex(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow run action repetition index.
 
     :ivar scope_name: The scope.
@@ -17197,7 +17211,7 @@ class RepetitionIndex(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Request(_Model):
+class Request(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A request.
 
     :ivar headers: A list of all the headers attached to the request.
@@ -17235,7 +17249,7 @@ class Request(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequestHistory(TrackedResource):
+class RequestHistory(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request history.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17282,7 +17296,7 @@ class RequestHistory(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class RequestHistoryProperties(_Model):
+class RequestHistoryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request history.
 
     :ivar start_time: The time the request started.
@@ -17329,7 +17343,7 @@ class RequestHistoryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequestsBasedTrigger(_Model):
+class RequestsBasedTrigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Trigger based on total requests.
 
     :ivar count: Request Count.
@@ -17364,7 +17378,7 @@ class RequestsBasedTrigger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceConfig(_Model):
+class ResourceConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Function app resource requirements.
 
     :ivar cpu: Required CPU in cores, e.g. 0.5.
@@ -17397,7 +17411,7 @@ class ResourceConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceHealthMetadata(ProxyResource):
+class ResourceHealthMetadata(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used for getting ResourceHealthCheck settings.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17463,7 +17477,7 @@ class ResourceHealthMetadata(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ResourceHealthMetadataProperties(_Model):
+class ResourceHealthMetadataProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceHealthMetadata resource specific properties.
 
     :ivar category: The category that the resource matches in the RHC Policy File.
@@ -17513,7 +17527,7 @@ class ResourceMetricAvailability(_Model):
     """Retention period for the current time grain."""
 
 
-class ResourceMetricDefinition(ProxyOnlyResource):
+class ResourceMetricDefinition(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata for the metrics.
 
     :ivar id: Resource Id.
@@ -17602,7 +17616,7 @@ class ResourceMetricDefinitionProperties(_Model):
     """Resource metric definition properties."""
 
 
-class ResourceNameAvailability(_Model):
+class ResourceNameAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information regarding availability of a resource name.
 
     :ivar name_available: <code>true</code> indicates name is valid and available.
@@ -17656,7 +17670,7 @@ class ResourceNameAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceNameAvailabilityRequest(_Model):
+class ResourceNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource name availability request content.
 
     :ivar name: Resource name to verify. Required.
@@ -17712,7 +17726,7 @@ class ResourceNameAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceReference(_Model):
+class ResourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource reference.
 
     :ivar id: The resource id.
@@ -17748,7 +17762,7 @@ class ResourceReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Response(_Model):
+class Response(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A response.
 
     :ivar headers: A list of all the headers attached to the response.
@@ -17790,7 +17804,9 @@ class Response(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResponseMessageEnvelopeRemotePrivateEndpointConnection(_Model):  # pylint: disable=name-too-long
+class ResponseMessageEnvelopeRemotePrivateEndpointConnection(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Message envelope that contains the common Azure resource manager properties and the resource
     provider specific content.
 
@@ -17882,7 +17898,7 @@ class ResponseMessageEnvelopeRemotePrivateEndpointConnection(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class ResponseMetaData(_Model):
+class ResponseMetaData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResponseMetaData.
 
     :ivar data_source: Source of the Data.
@@ -17912,7 +17928,7 @@ class ResponseMetaData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreRequest(ProxyOnlyResource):
+class RestoreRequest(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a restore request.
 
     :ivar id: Resource Id.
@@ -17983,7 +17999,7 @@ class RestoreRequest(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class RestoreRequestProperties(_Model):
+class RestoreRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RestoreRequest resource specific properties.
 
     :ivar storage_account_url: SAS URL to the container. Required.
@@ -18094,7 +18110,7 @@ class RestoreRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetryHistory(_Model):
+class RetryHistory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The retry history.
 
     :ivar start_time: Gets the start time.
@@ -18157,7 +18173,7 @@ class RetryHistory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunCorrelation(_Model):
+class RunCorrelation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The correlation properties.
 
     :ivar client_tracking_id: The client tracking identifier.
@@ -18194,7 +18210,7 @@ class RunCorrelation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunActionCorrelation(RunCorrelation):
+class RunActionCorrelation(RunCorrelation):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow run action correlation properties.
 
     :ivar client_tracking_id: The client tracking identifier.
@@ -18230,7 +18246,7 @@ class RunActionCorrelation(RunCorrelation):
         super().__init__(*args, **kwargs)
 
 
-class SampleUtterance(_Model):
+class SampleUtterance(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sample utterance.
 
     :ivar text: Text attribute of sample utterance.
@@ -18268,7 +18284,7 @@ class SampleUtterance(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerFarmInstance(_Model):
+class ServerFarmInstance(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents details of a single instance in a server farm.
 
     :ivar instance_name: The instance name.
@@ -18308,7 +18324,7 @@ class ServerFarmInstance(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerFarmInstanceDetails(_Model):
+class ServerFarmInstanceDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents instance details for an app service plan.
 
     :ivar server_farm_name: The server farm name.
@@ -18352,7 +18368,7 @@ class ServerFarmInstanceDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerFarmNetworkSettings(_Model):
+class ServerFarmNetworkSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network settings for an app service plan.
 
     :ivar virtual_network_subnet_id: Azure Resource Manager ID of the Virtual network and subnet to
@@ -18386,7 +18402,7 @@ class ServerFarmNetworkSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerFarmRdpDetails(_Model):
+class ServerFarmRdpDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server Farm RDP connection details.
 
     :ivar rdp_password: The RDP password for the server farm.
@@ -18423,7 +18439,7 @@ class ServerFarmRdpDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceSpecification(_Model):
+class ServiceSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource metrics service provided by Microsoft.Insights resource provider.
 
     :ivar metric_specifications:
@@ -18458,7 +18474,7 @@ class ServiceSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Site(TrackedResource):
+class Site(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A web app, a mobile app backend, or an API app.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18607,7 +18623,7 @@ class Site(TrackedResource):
             super().__setattr__(key, value)
 
 
-class SiteAuthSettings(ProxyOnlyResource):
+class SiteAuthSettings(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration settings for the Azure App Service Authentication / Authorization feature.
 
     :ivar id: Resource Id.
@@ -18705,7 +18721,7 @@ class SiteAuthSettings(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class SiteAuthSettingsProperties(_Model):
+class SiteAuthSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SiteAuthSettings resource specific properties.
 
     :ivar enabled: <code>true</code> if the Authentication / Authorization feature is enabled for
@@ -19139,7 +19155,7 @@ class SiteAuthSettingsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteAuthSettingsV2(ProxyResource):
+class SiteAuthSettingsV2(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration settings for the Azure App Service Authentication / Authorization V2 feature.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19211,7 +19227,7 @@ class SiteAuthSettingsV2(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SiteAuthSettingsV2Properties(_Model):
+class SiteAuthSettingsV2Properties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SiteAuthSettingsV2 resource specific properties.
 
     :ivar platform: The configuration settings of the platform of App Service
@@ -19274,7 +19290,7 @@ class SiteAuthSettingsV2Properties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteCloneability(_Model):
+class SiteCloneability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents whether or not an app is cloneable.
 
     :ivar result: Name of app. Known values are: "Cloneable", "PartiallyCloneable", and
@@ -19329,7 +19345,7 @@ class SiteCloneability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteCloneabilityCriterion(_Model):
+class SiteCloneabilityCriterion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An app cloneability criterion.
 
     :ivar name: Name of criterion.
@@ -19362,7 +19378,7 @@ class SiteCloneabilityCriterion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteConfig(_Model):
+class SiteConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration of an App Service app.
 
     :ivar number_of_workers: Number of workers.
@@ -19991,7 +20007,7 @@ class SiteConfigPropertiesDictionary(_Model):
     """PowerShellVersion configuration setting."""
 
 
-class SiteConfigResource(ProxyResource):
+class SiteConfigResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Web app configuration ARM resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20135,7 +20151,7 @@ class SiteConfigResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SiteConfigurationSnapshotInfo(ProxyOnlyResource):
+class SiteConfigurationSnapshotInfo(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A snapshot of a web app configuration.
 
     :ivar id: Resource Id.
@@ -20209,7 +20225,7 @@ class SiteConfigurationSnapshotInfoProperties(_Model):
     """The id of the snapshot."""
 
 
-class SiteContainer(ProxyResource):
+class SiteContainer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container of a site.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20289,7 +20305,7 @@ class SiteContainer(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SiteContainerProperties(_Model):
+class SiteContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SiteContainer resource specific properties.
 
     :ivar image: Image Name. Required.
@@ -20400,7 +20416,7 @@ class SiteContainerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteDnsConfig(_Model):
+class SiteDnsConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SiteDnsConfig.
 
     :ivar dns_servers: List of custom DNS servers to be used by an app for lookups. Maximum 5 dns
@@ -20471,7 +20487,7 @@ class SiteDnsConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteExtensionInfo(ProxyResource):
+class SiteExtensionInfo(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Site Extension Information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20558,7 +20574,7 @@ class SiteExtensionInfo(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SiteExtensionInfoProperties(_Model):
+class SiteExtensionInfoProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SiteExtensionInfo resource specific properties.
 
     :ivar extension_id: Site extension ID.
@@ -20691,7 +20707,7 @@ class SiteExtensionInfoProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteLimits(_Model):
+class SiteLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metric limits set on an app.
 
     :ivar max_percentage_cpu: Maximum allowed CPU usage percentage.
@@ -20735,7 +20751,7 @@ class SiteLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteLogsConfig(ProxyResource):
+class SiteLogsConfig(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration of App Service site logs.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20801,7 +20817,7 @@ class SiteLogsConfig(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SiteLogsConfigProperties(_Model):
+class SiteLogsConfigProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SiteLogsConfig resource specific properties.
 
     :ivar application_logs: Application logs configuration.
@@ -20852,7 +20868,7 @@ class SiteLogsConfigProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteMachineKey(_Model):
+class SiteMachineKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MachineKey of an app.
 
     :ivar validation: MachineKey validation.
@@ -20899,7 +20915,7 @@ class SiteMachineKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SitePatchResource(ProxyOnlyResource):
+class SitePatchResource(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM resource for a site.
 
     :ivar id: Resource Id.
@@ -21010,7 +21026,7 @@ class SitePatchResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class SitePatchResourceProperties(_Model):
+class SitePatchResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SitePatchResource resource specific properties.
 
     :ivar state: Current state of the app.
@@ -21341,7 +21357,7 @@ class SitePatchResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SitePhpErrorLogFlag(ProxyOnlyResource):
+class SitePhpErrorLogFlag(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used for getting PHP error logging flag.
 
     :ivar id: Resource Id.
@@ -21405,7 +21421,7 @@ class SitePhpErrorLogFlag(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class SitePhpErrorLogFlagProperties(_Model):
+class SitePhpErrorLogFlagProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SitePhpErrorLogFlag resource specific properties.
 
     :ivar local_log_errors: Local log_errors setting.
@@ -21456,7 +21472,7 @@ class SitePhpErrorLogFlagProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteProperties(_Model):
+class SiteProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Site resource specific properties.
 
     :ivar state: Current state of the app.
@@ -21890,7 +21906,7 @@ class SiteProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteSourceControl(ProxyResource):
+class SiteSourceControl(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source control configuration for an app.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21964,7 +21980,7 @@ class SiteSourceControl(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SiteSourceControlProperties(_Model):
+class SiteSourceControlProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SiteSourceControl resource specific properties.
 
     :ivar repo_url: Repository or source control URL.
@@ -22032,7 +22048,7 @@ class SiteSourceControlProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuCapacity(_Model):
+class SkuCapacity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of the App Service plan scale options.
 
     :ivar minimum: Minimum number of workers for this App Service plan SKU.
@@ -22082,7 +22098,7 @@ class SkuCapacity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuDescription(_Model):
+class SkuDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a SKU for a scalable resource.
 
     :ivar name: Name of the resource SKU.
@@ -22149,7 +22165,7 @@ class SkuDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuInfo(_Model):
+class SkuInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU discovery information.
 
     :ivar resource_type: Resource type that this SKU applies to.
@@ -22189,7 +22205,7 @@ class SkuInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuInfos(_Model):
+class SkuInfos(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Collection of SKU information.
 
     :ivar resource_type: Resource type that this SKU applies to.
@@ -22226,7 +22242,7 @@ class SkuInfos(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SlotConfigNames(_Model):
+class SlotConfigNames(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Names for connection strings, application settings, and external Azure storage account
     configuration identifiers to be marked as sticky to the deployment slot and not moved during a
     swap operation. This is valid for all deployment slots in an app.
@@ -22272,7 +22288,7 @@ class SlotConfigNames(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SlotConfigNamesResource(ProxyResource):
+class SlotConfigNamesResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Slot Config names azure resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22338,7 +22354,7 @@ class SlotConfigNamesResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SlotDifference(ProxyOnlyResource):
+class SlotDifference(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A setting difference between two deployment slots of an app.
 
     :ivar id: Resource Id.
@@ -22459,7 +22475,7 @@ class SlotSwapStatus(_Model):
     """The destination slot of the last swap operation."""
 
 
-class SlowRequestsBasedTrigger(_Model):
+class SlowRequestsBasedTrigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Trigger based on request execution time.
 
     :ivar time_taken: Time taken.
@@ -22504,7 +22520,7 @@ class SlowRequestsBasedTrigger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Snapshot(ProxyOnlyResource):
+class Snapshot(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A snapshot of an app.
 
     :ivar id: Resource Id.
@@ -22574,7 +22590,7 @@ class SnapshotProperties(_Model):
     """The time the snapshot was taken."""
 
 
-class SnapshotRecoverySource(_Model):
+class SnapshotRecoverySource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the web app that snapshot contents will be retrieved from.
 
     :ivar location: Geographical location of the source web app, e.g. SouthEastAsia,
@@ -22616,7 +22632,7 @@ class SnapshotRecoverySource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SnapshotRestoreRequest(ProxyOnlyResource):
+class SnapshotRestoreRequest(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about app recovery operation.
 
     :ivar id: Resource Id.
@@ -22682,7 +22698,7 @@ class SnapshotRestoreRequest(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class SnapshotRestoreRequestProperties(_Model):
+class SnapshotRestoreRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SnapshotRestoreRequest resource specific properties.
 
     :ivar snapshot_time: Point in time in which the app restore should be done, formatted as a
@@ -22754,7 +22770,7 @@ class SnapshotRestoreRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Solution(_Model):
+class Solution(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class Representing Solution for problems detected.
 
     :ivar id: Solution Id.
@@ -22822,7 +22838,7 @@ class Solution(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceControl(ProxyResource):
+class SourceControl(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The source control OAuth token.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22888,7 +22904,7 @@ class SourceControl(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SourceControlProperties(_Model):
+class SourceControlProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SourceControl resource specific properties.
 
     :ivar token: OAuth access token.
@@ -22937,7 +22953,7 @@ class SourceControlProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StackMajorVersion(_Model):
+class StackMajorVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application stack major version.
 
     :ivar display_version: Application stack major version (display only).
@@ -23041,7 +23057,7 @@ class StackMajorVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StackMinorVersion(_Model):
+class StackMinorVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application stack minor version.
 
     :ivar display_version: Application stack minor version (display only).
@@ -23094,7 +23110,7 @@ class StackMinorVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StampCapacity(_Model):
+class StampCapacity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Stamp capacity information.
 
     :ivar name: Name of the stamp.
@@ -23192,7 +23208,7 @@ class StampCapacity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticSite(_Model):
+class StaticSite(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A static site.
 
     :ivar default_hostname: The default autogenerated hostname for the static site.
@@ -23335,7 +23351,7 @@ class StaticSite(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticSiteARMResource(TrackedResource):
+class StaticSiteARMResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -23437,7 +23453,9 @@ class StaticSiteARMResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class StaticSiteBasicAuthPropertiesARMResource(ProxyResource):
+class StaticSiteBasicAuthPropertiesARMResource(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static site basic auth properties ARM resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23503,7 +23521,9 @@ class StaticSiteBasicAuthPropertiesARMResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class StaticSiteBasicAuthPropertiesARMResourceProperties(_Model):  # pylint: disable=name-too-long
+class StaticSiteBasicAuthPropertiesARMResourceProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StaticSiteBasicAuthPropertiesARMResource resource specific properties.
 
     :ivar password: The password for basic auth.
@@ -23555,7 +23575,7 @@ class StaticSiteBasicAuthPropertiesARMResourceProperties(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class StaticSiteBuildARMResource(ProxyResource):
+class StaticSiteBuildARMResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Site Build ARM resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23693,7 +23713,7 @@ class StaticSiteBuildARMResourceProperties(_Model):
     """Database connections for the static site build."""
 
 
-class StaticSiteBuildProperties(_Model):
+class StaticSiteBuildProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Build properties for the static site.
 
     :ivar app_location: The path to the app code within the repository.
@@ -23776,7 +23796,9 @@ class StaticSiteBuildProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticSiteCustomDomainOverviewARMResource(ProxyResource):  # pylint: disable=name-too-long
+class StaticSiteCustomDomainOverviewARMResource(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Static Site Custom Domain Overview ARM resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23870,7 +23892,9 @@ class StaticSiteCustomDomainOverviewARMResourceProperties(_Model):  # pylint: di
     error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
 
 
-class StaticSiteCustomDomainRequestPropertiesARMResource(ProxyOnlyResource):  # pylint: disable=name-too-long
+class StaticSiteCustomDomainRequestPropertiesARMResource(
+    ProxyOnlyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Static Site Custom Domain Request Properties ARM resource.
 
     :ivar id: Resource Id.
@@ -23931,7 +23955,9 @@ class StaticSiteCustomDomainRequestPropertiesARMResource(ProxyOnlyResource):  # 
             super().__setattr__(key, value)
 
 
-class StaticSiteCustomDomainRequestPropertiesARMResourceProperties(_Model):  # pylint: disable=name-too-long
+class StaticSiteCustomDomainRequestPropertiesARMResourceProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StaticSiteCustomDomainRequestPropertiesARMResource resource specific properties.
 
     :ivar validation_method: Validation method for adding a custom domain.
@@ -23980,7 +24006,9 @@ class StaticSiteDatabaseConnectionConfigurationFileOverview(_Model):  # pylint: 
     """The type of configuration file."""
 
 
-class StaticSiteFunctionOverviewARMResource(ProxyOnlyResource):
+class StaticSiteFunctionOverviewARMResource(
+    ProxyOnlyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Site Function Overview ARM resource.
 
     :ivar id: Resource Id.
@@ -24055,7 +24083,7 @@ class StaticSiteFunctionOverviewARMResourceProperties(_Model):  # pylint: disabl
     """The trigger type of the function. Known values are: \"HttpTrigger\" and \"Unknown\"."""
 
 
-class StaticSiteLinkedBackend(_Model):
+class StaticSiteLinkedBackend(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Site Linked Backend ARM resource.
 
     :ivar backend_resource_id: The resource id of the backend linked to the static site.
@@ -24098,7 +24126,7 @@ class StaticSiteLinkedBackend(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticSiteLinkedBackendARMResource(ProxyResource):
+class StaticSiteLinkedBackendARMResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Site Linked Backend ARM resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24164,7 +24192,9 @@ class StaticSiteLinkedBackendARMResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class StaticSiteLinkedBackendARMResourceProperties(_Model):  # pylint: disable=name-too-long
+class StaticSiteLinkedBackendARMResourceProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StaticSiteLinkedBackendARMResource resource specific properties.
 
     :ivar backend_resource_id: The resource id of the backend linked to the static site.
@@ -24207,7 +24237,7 @@ class StaticSiteLinkedBackendARMResourceProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class StaticSitePatchResource(ProxyOnlyResource):
+class StaticSitePatchResource(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM resource for a static site when patching.
 
     :ivar id: Resource Id.
@@ -24283,7 +24313,9 @@ class StaticSitePatchResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class StaticSiteResetPropertiesARMResource(ProxyOnlyResource):
+class StaticSiteResetPropertiesARMResource(
+    ProxyOnlyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Site Reset Properties ARM resource.
 
     :ivar id: Resource Id.
@@ -24342,7 +24374,9 @@ class StaticSiteResetPropertiesARMResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class StaticSiteResetPropertiesARMResourceProperties(_Model):  # pylint: disable=name-too-long
+class StaticSiteResetPropertiesARMResourceProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StaticSiteResetPropertiesARMResource resource specific properties.
 
     :ivar repository_token: The token which proves admin privileges to the repository.
@@ -24380,7 +24414,7 @@ class StaticSiteResetPropertiesARMResourceProperties(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class StaticSitesWorkflowPreview(ProxyOnlyResource):
+class StaticSitesWorkflowPreview(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Preview for the Static Site Workflow to be generated.
 
     :ivar id: Resource Id.
@@ -24454,7 +24488,9 @@ class StaticSitesWorkflowPreviewProperties(_Model):
     """The contents for the workflow file to be generated."""
 
 
-class StaticSitesWorkflowPreviewRequest(ProxyOnlyResource):
+class StaticSitesWorkflowPreviewRequest(
+    ProxyOnlyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request entity for previewing the Static Site workflow.
 
     :ivar id: Resource Id.
@@ -24513,7 +24549,9 @@ class StaticSitesWorkflowPreviewRequest(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class StaticSitesWorkflowPreviewRequestProperties(_Model):  # pylint: disable=name-too-long
+class StaticSitesWorkflowPreviewRequestProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StaticSitesWorkflowPreviewRequest resource specific properties.
 
     :ivar repository_url: URL for the repository of the static site.
@@ -24555,7 +24593,7 @@ class StaticSitesWorkflowPreviewRequestProperties(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class StaticSiteTemplateOptions(_Model):
+class StaticSiteTemplateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Template Options for the static site.
 
     :ivar template_repository_url: URL of the template repository. The newly generated repository
@@ -24612,7 +24650,7 @@ class StaticSiteTemplateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticSiteUserARMResource(ProxyOnlyResource):
+class StaticSiteUserARMResource(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Site User ARM resource.
 
     :ivar id: Resource Id.
@@ -24671,7 +24709,7 @@ class StaticSiteUserARMResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class StaticSiteUserARMResourceProperties(_Model):
+class StaticSiteUserARMResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StaticSiteUserARMResource resource specific properties.
 
     :ivar provider: The identity provider for the static site user.
@@ -24711,7 +24749,9 @@ class StaticSiteUserARMResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticSiteUserInvitationRequestResource(ProxyOnlyResource):
+class StaticSiteUserInvitationRequestResource(
+    ProxyOnlyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static sites user roles invitation resource.
 
     :ivar id: Resource Id.
@@ -24770,7 +24810,9 @@ class StaticSiteUserInvitationRequestResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class StaticSiteUserInvitationRequestResourceProperties(_Model):  # pylint: disable=name-too-long
+class StaticSiteUserInvitationRequestResourceProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StaticSiteUserInvitationRequestResource resource specific properties.
 
     :ivar domain: The domain name for the static site custom domain.
@@ -24822,7 +24864,9 @@ class StaticSiteUserInvitationRequestResourceProperties(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class StaticSiteUserInvitationResponseResource(ProxyOnlyResource):
+class StaticSiteUserInvitationResponseResource(
+    ProxyOnlyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static sites user roles invitation link resource.
 
     :ivar id: Resource Id.
@@ -24896,7 +24940,9 @@ class StaticSiteUserInvitationResponseResourceProperties(_Model):  # pylint: dis
     """The url for the invitation link."""
 
 
-class StaticSiteUserProvidedFunctionApp(ProxyOnlyResource):
+class StaticSiteUserProvidedFunctionApp(
+    ProxyOnlyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A static site user provided function.
 
     :ivar id: Resource Id.
@@ -24955,7 +25001,9 @@ class StaticSiteUserProvidedFunctionApp(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class StaticSiteUserProvidedFunctionAppARMResource(ProxyResource):  # pylint: disable=name-too-long
+class StaticSiteUserProvidedFunctionAppARMResource(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Static Site User Provided Function App ARM resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -25022,7 +25070,9 @@ class StaticSiteUserProvidedFunctionAppARMResource(ProxyResource):  # pylint: di
             super().__setattr__(key, value)
 
 
-class StaticSiteUserProvidedFunctionAppARMResourceProperties(_Model):  # pylint: disable=name-too-long
+class StaticSiteUserProvidedFunctionAppARMResourceProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StaticSiteUserProvidedFunctionAppARMResource resource specific properties.
 
     :ivar function_app_resource_id: The resource id of the function app registered with the static
@@ -25065,7 +25115,9 @@ class StaticSiteUserProvidedFunctionAppARMResourceProperties(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class StaticSiteUserProvidedFunctionAppProperties(_Model):  # pylint: disable=name-too-long
+class StaticSiteUserProvidedFunctionAppProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StaticSiteUserProvidedFunctionApp resource specific properties.
 
     :ivar function_app_resource_id: The resource id of the function app registered with the static
@@ -25108,7 +25160,7 @@ class StaticSiteUserProvidedFunctionAppProperties(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class StaticSiteZipDeployment(_Model):
+class StaticSiteZipDeployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A static site zip deployment.
 
     :ivar app_zip_url: URL for the zipped app content.
@@ -25164,7 +25216,9 @@ class StaticSiteZipDeployment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticSiteZipDeploymentARMResource(ProxyOnlyResource):
+class StaticSiteZipDeploymentARMResource(
+    ProxyOnlyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static site zip deployment ARM resource.
 
     :ivar id: Resource Id.
@@ -25223,7 +25277,7 @@ class StaticSiteZipDeploymentARMResource(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class Status(_Model):
+class Status(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identify the status of the most severe insight generated by the detector.
 
     :ivar message: Descriptive message.
@@ -25260,7 +25314,7 @@ class Status(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StatusCodesBasedTrigger(_Model):
+class StatusCodesBasedTrigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Trigger based on status code.
 
     :ivar status: HTTP status code.
@@ -25317,7 +25371,7 @@ class StatusCodesBasedTrigger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StatusCodesRangeBasedTrigger(_Model):
+class StatusCodesRangeBasedTrigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Trigger based on range of status codes.
 
     :ivar status_codes: HTTP status code.
@@ -25363,7 +25417,7 @@ class StatusCodesRangeBasedTrigger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageMigrationOptions(ProxyOnlyResource):
+class StorageMigrationOptions(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Options for app content migration.
 
     :ivar id: Resource Id.
@@ -25427,7 +25481,7 @@ class StorageMigrationOptions(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class StorageMigrationOptionsProperties(_Model):
+class StorageMigrationOptionsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageMigrationOptions resource specific properties.
 
     :ivar azurefiles_connection_string: AzureFiles connection string. Required.
@@ -25473,7 +25527,7 @@ class StorageMigrationOptionsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageMigrationResponse(ProxyOnlyResource):
+class StorageMigrationResponse(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for a migration of app content request.
 
     :ivar id: Resource Id.
@@ -25545,7 +25599,7 @@ class StorageMigrationResponseProperties(_Model):
      particular migration operation."""
 
 
-class StorageMount(_Model):
+class StorageMount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server farm storage mount configuration.
 
     :ivar name: Name of the storage mount.
@@ -25601,7 +25655,7 @@ class StorageMount(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StringDictionary(ProxyOnlyResource):
+class StringDictionary(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """String dictionary resource.
 
     :ivar id: Resource Id.
@@ -25658,7 +25712,7 @@ class StringDictionary(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class StringList(ProxyOnlyResource):
+class StringList(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """String list resource.
 
     :ivar id: Resource Id.
@@ -25710,7 +25764,7 @@ class SupportTopic(_Model):
     """Unique resource Id."""
 
 
-class SwiftVirtualNetwork(ProxyResource):
+class SwiftVirtualNetwork(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Swift Virtual Network Contract. This is used to enable the new Swift way of doing virtual
     network integration.
 
@@ -25777,7 +25831,7 @@ class SwiftVirtualNetwork(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SwiftVirtualNetworkProperties(_Model):
+class SwiftVirtualNetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SwiftVirtualNetwork resource specific properties.
 
     :ivar subnet_resource_id: The Virtual Network subnet's resource ID. This is the subnet that
@@ -25818,7 +25872,7 @@ class SwiftVirtualNetworkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -25885,7 +25939,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TokenStore(_Model):
+class TokenStore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the token store.
 
     :ivar enabled: <code>true</code> to durably store platform-specific security tokens that are
@@ -25940,7 +25994,7 @@ class TokenStore(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TriggeredJobHistory(ProxyResource):
+class TriggeredJobHistory(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Triggered Web Job History. List of Triggered Web Job Run Information elements.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -26006,7 +26060,7 @@ class TriggeredJobHistory(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TriggeredJobHistoryProperties(_Model):
+class TriggeredJobHistoryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TriggeredJobHistory resource specific properties.
 
     :ivar runs: List of triggered web job runs.
@@ -26036,7 +26090,7 @@ class TriggeredJobHistoryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TriggeredJobRun(_Model):
+class TriggeredJobRun(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Triggered Web Job Run Information.
 
     :ivar web_job_id: Job ID.
@@ -26121,7 +26175,7 @@ class TriggeredJobRun(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TriggeredWebJob(ProxyResource):
+class TriggeredWebJob(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Triggered Web Job Information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -26200,7 +26254,7 @@ class TriggeredWebJob(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TriggeredWebJobProperties(_Model):
+class TriggeredWebJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TriggeredWebJob resource specific properties.
 
     :ivar latest_run: Latest job run information.
@@ -26293,7 +26347,7 @@ class TriggeredWebJobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Twitter(_Model):
+class Twitter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Twitter provider.
 
     :ivar enabled: <code>false</code> if the Twitter provider should not be enabled despite the set
@@ -26331,7 +26385,7 @@ class Twitter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TwitterRegistration(_Model):
+class TwitterRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the app registration for the Twitter provider.
 
     :ivar consumer_key: The OAuth 1.0a consumer key of the Twitter application used for sign-in.
@@ -26374,7 +26428,7 @@ class TwitterRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Usage(ProxyOnlyResource):
+class Usage(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Usage of the quota resource.
 
     :ivar id: Resource Id.
@@ -26486,7 +26540,7 @@ class UsageProperties(_Model):
     """Site mode used for this usage."""
 
 
-class User(ProxyResource):
+class User(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User credentials used for publishing activity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -26573,7 +26627,7 @@ class UserAssignedIdentity(_Model):
     """Client Id of user assigned identity."""
 
 
-class UserProperties(_Model):
+class UserProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User resource specific properties.
 
     :ivar publishing_user_name: Username used for publishing. Required.
@@ -26629,7 +26683,7 @@ class UserProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateProperties(_Model):
+class ValidateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """App properties used for validation.
 
     :ivar server_farm_id: ARM resource ID of an App Service plan that would host the app.
@@ -26745,7 +26799,7 @@ class ValidateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateRequest(_Model):
+class ValidateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource validation request content.
 
     :ivar name: Resource name to verify. Required.
@@ -26827,7 +26881,7 @@ class ValidateRequest(_Model):
             super().__setattr__(key, value)
 
 
-class ValidateResponse(_Model):
+class ValidateResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the result of resource validation.
 
     :ivar status: Result of validation.
@@ -26862,7 +26916,7 @@ class ValidateResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateResponseError(_Model):
+class ValidateResponseError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error details for when validation fails.
 
     :ivar code: Validation error code.
@@ -26895,7 +26949,7 @@ class ValidateResponseError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualApplication(_Model):
+class VirtualApplication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual application in an app.
 
     :ivar virtual_path: Virtual path.
@@ -26947,7 +27001,7 @@ class VirtualApplication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualDirectory(_Model):
+class VirtualDirectory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Directory for virtual application.
 
     :ivar virtual_path: Path to virtual application.
@@ -26984,7 +27038,7 @@ class VirtualDirectory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualIPMapping(_Model):
+class VirtualIPMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual IP mapping.
 
     :ivar virtual_ip: Virtual IP address.
@@ -27038,7 +27092,7 @@ class VirtualIPMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualNetworkProfile(_Model):
+class VirtualNetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specification for using a Virtual Network.
 
     :ivar id: Resource id of the Virtual Network. Required.
@@ -27079,7 +27133,7 @@ class VirtualNetworkProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VnetGateway(ProxyResource):
+class VnetGateway(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Virtual Network gateway contract. This is used to give the Virtual Network gateway access
     to the VPN package.
 
@@ -27146,7 +27200,7 @@ class VnetGateway(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VnetGatewayProperties(_Model):
+class VnetGatewayProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VnetGateway resource specific properties.
 
     :ivar vnet_name: The Virtual Network name.
@@ -27179,7 +27233,7 @@ class VnetGatewayProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VnetInfo(_Model):
+class VnetInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Network information contract.
 
     :ivar vnet_resource_id: The Virtual Network's resource ID.
@@ -27243,7 +27297,7 @@ class VnetInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VnetInfoResource(ProxyResource):
+class VnetInfoResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Network information ARM resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -27315,7 +27369,7 @@ class VnetInfoResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VnetParameters(ProxyOnlyResource):
+class VnetParameters(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The required set of inputs to validate a VNET.
 
     :ivar id: Resource Id.
@@ -27374,7 +27428,7 @@ class VnetParameters(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class VnetParametersProperties(_Model):
+class VnetParametersProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VnetParameters resource specific properties.
 
     :ivar vnet_resource_group: The Resource Group of the VNET to be validated.
@@ -27423,7 +27477,7 @@ class VnetParametersProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VnetRoute(ProxyResource):
+class VnetRoute(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Network route contract used to pass routing information for a Virtual Network.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -27489,7 +27543,7 @@ class VnetRoute(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VnetRouteProperties(_Model):
+class VnetRouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VnetRoute resource specific properties.
 
     :ivar start_address: The starting address for this route. This may also include a CIDR
@@ -27549,7 +27603,7 @@ class VnetRouteProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VnetValidationFailureDetails(ProxyOnlyResource):
+class VnetValidationFailureDetails(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A class that describes the reason for a validation failure.
 
     :ivar id: Resource Id.
@@ -27608,7 +27662,7 @@ class VnetValidationFailureDetails(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class VnetValidationFailureDetailsProperties(_Model):
+class VnetValidationFailureDetailsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VnetValidationFailureDetails resource specific properties.
 
     :ivar message: Text describing the validation outcome.
@@ -27655,7 +27709,7 @@ class VnetValidationFailureDetailsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VnetValidationTestFailure(ProxyOnlyResource):
+class VnetValidationTestFailure(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A class that describes a test that failed during NSG and UDR validation.
 
     :ivar id: Resource Id.
@@ -27714,7 +27768,7 @@ class VnetValidationTestFailure(ProxyOnlyResource):
             super().__setattr__(key, value)
 
 
-class VnetValidationTestFailureProperties(_Model):
+class VnetValidationTestFailureProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VnetValidationTestFailure resource specific properties.
 
     :ivar test_name: The name of the test that failed.
@@ -27747,7 +27801,7 @@ class VnetValidationTestFailureProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeMount(_Model):
+class VolumeMount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VolumeMount.
 
     :ivar volume_sub_path: Sub path in the volume where volume is mounted from. Required.
@@ -27922,7 +27976,7 @@ class WebAppRuntimeSettings(_Model):
     """<code>true</code> if the minor version is early-access; otherwise, <code>false</code>."""
 
 
-class WebAppStack(ProxyOnlyResource):
+class WebAppStack(ProxyOnlyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Web App stack.
 
     :ivar id: Resource Id.
@@ -28008,7 +28062,7 @@ class WebAppStackProperties(_Model):
     """Web App stack preferred OS. Known values are: \"Windows\" and \"Linux\"."""
 
 
-class WebJob(ProxyResource):
+class WebJob(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Web Job Information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28074,7 +28128,7 @@ class WebJob(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WebJobProperties(_Model):
+class WebJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WebJob resource specific properties.
 
     :ivar run_command: Run command.
@@ -28134,7 +28188,7 @@ class WebJobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebSiteInstanceStatus(ProxyResource):
+class WebSiteInstanceStatus(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -28209,7 +28263,7 @@ class WebSiteInstanceStatus(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WebSiteInstanceStatusProperties(_Model):
+class WebSiteInstanceStatusProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WebSiteInstanceStatus resource specific properties.
 
     :ivar state: Known values are: "READY", "STOPPED", and "UNKNOWN".
@@ -28324,7 +28378,7 @@ class WindowsJavaContainerSettings(_Model):
     """<code>true</code> if the minor version is early-access; otherwise, <code>false</code>."""
 
 
-class WorkerPool(_Model):
+class WorkerPool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Worker pool of an App Service Environment.
 
     :ivar worker_size_id: Worker size ID for referencing this worker pool.
@@ -28380,7 +28434,7 @@ class WorkerPool(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkerPoolResource(ProxyResource):
+class WorkerPoolResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Worker pool of an App Service Environment ARM resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28455,7 +28509,7 @@ class WorkerPoolResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkflowResource(_Model):
+class WorkflowResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The base resource type.
 
     :ivar id: The resource id.
@@ -28500,7 +28554,7 @@ class WorkflowResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Workflow(WorkflowResource):
+class Workflow(WorkflowResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow type.
 
     :ivar id: The resource id.
@@ -28584,7 +28638,7 @@ class Workflow(WorkflowResource):
             super().__setattr__(key, value)
 
 
-class WorkflowArtifacts(_Model):
+class WorkflowArtifacts(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow filter.
 
     :ivar app_settings: Application settings of the workflow.
@@ -28626,7 +28680,7 @@ class WorkflowArtifacts(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowEnvelope(ProxyResource):
+class WorkflowEnvelope(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workflow properties definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28677,7 +28731,7 @@ class WorkflowEnvelope(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowEnvelopeProperties(_Model):
+class WorkflowEnvelopeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional workflow properties.
 
     :ivar files: Gets or sets the files.
@@ -28719,7 +28773,7 @@ class WorkflowEnvelopeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowErrorResponse(_Model):
+class WorkflowErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response indicates Logic service is not able to process the incoming request. The error
     property contains the error details.
 
@@ -28748,7 +28802,7 @@ class WorkflowErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowHealth(_Model):
+class WorkflowHealth(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the workflow health.
 
     :ivar state: Gets or sets the workflow health state. Required. Known values are:
@@ -28785,7 +28839,7 @@ class WorkflowHealth(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowParameter(_Model):
+class WorkflowParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow parameters.
 
     :ivar type: The type. Known values are: "NotSpecified", "String", "SecureString", "Int",
@@ -28832,7 +28886,7 @@ class WorkflowParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowOutputParameter(WorkflowParameter):
+class WorkflowOutputParameter(WorkflowParameter):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow output parameter.
 
     :ivar type: The type. Known values are: "NotSpecified", "String", "SecureString", "Int",
@@ -28872,7 +28926,7 @@ class WorkflowOutputParameter(WorkflowParameter):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowProperties(_Model):
+class WorkflowProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow properties.
 
     :ivar provisioning_state: Gets the provisioning state. Known values are: "NotSpecified",
@@ -28981,7 +29035,7 @@ class WorkflowProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowRun(ProxyResource):
+class WorkflowRun(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow run.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -29055,7 +29109,7 @@ class WorkflowRun(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkflowRunAction(ProxyResource):
+class WorkflowRunAction(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow run action.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -29128,7 +29182,7 @@ class WorkflowRunAction(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkflowRunActionProperties(_Model):
+class WorkflowRunActionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow run action properties.
 
     :ivar start_time: Gets the start time.
@@ -29205,7 +29259,9 @@ class WorkflowRunActionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowRunActionRepetitionDefinition(TrackedResource):
+class WorkflowRunActionRepetitionDefinition(
+    TrackedResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow run action repetition definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -29288,7 +29344,9 @@ class WorkflowRunActionRepetitionDefinition(TrackedResource):
             super().__setattr__(key, value)
 
 
-class WorkflowRunActionRepetitionProperties(OperationResult):
+class WorkflowRunActionRepetitionProperties(
+    OperationResult
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow run action repetition properties definition.
 
     :ivar start_time: The start time of the workflow scope repetition.
@@ -29356,7 +29414,7 @@ class WorkflowRunActionRepetitionProperties(OperationResult):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowRunProperties(_Model):
+class WorkflowRunProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow run properties.
 
     :ivar wait_end_time: Gets the wait end time.
@@ -29434,7 +29492,7 @@ class WorkflowRunProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowRunTrigger(_Model):
+class WorkflowRunTrigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow run trigger.
 
     :ivar name: Gets the name.
@@ -29522,7 +29580,7 @@ class WorkflowRunTrigger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowSku(_Model):
+class WorkflowSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The sku type.
 
     :ivar name: The name. Required. Known values are: "NotSpecified", "Free", "Shared", "Basic",
@@ -29557,7 +29615,7 @@ class WorkflowSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowTrigger(ProxyResource):
+class WorkflowTrigger(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow trigger.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -29628,7 +29686,7 @@ class WorkflowTrigger(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkflowTriggerCallbackUrl(_Model):
+class WorkflowTriggerCallbackUrl(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow trigger callback URL.
 
     :ivar value: Gets the workflow trigger callback URL.
@@ -29682,7 +29740,7 @@ class WorkflowTriggerCallbackUrl(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowTriggerHistory(ProxyResource):
+class WorkflowTriggerHistory(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow trigger history.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -29756,7 +29814,7 @@ class WorkflowTriggerHistory(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkflowTriggerHistoryProperties(_Model):
+class WorkflowTriggerHistoryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow trigger history properties.
 
     :ivar start_time: Gets the start time.
@@ -29836,7 +29894,7 @@ class WorkflowTriggerHistoryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowTriggerListCallbackUrlQueries(_Model):
+class WorkflowTriggerListCallbackUrlQueries(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gets the workflow trigger callback URL query parameters.
 
     :ivar api_version: The api version.
@@ -29947,7 +30005,7 @@ class WorkflowTriggerProperties(_Model):
     """Gets the reference to workflow."""
 
 
-class WorkflowTriggerRecurrence(_Model):
+class WorkflowTriggerRecurrence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow trigger recurrence.
 
     :ivar frequency: The frequency. Known values are: "NotSpecified", "Second", "Minute", "Hour",
@@ -30006,7 +30064,7 @@ class WorkflowTriggerRecurrence(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowVersion(TrackedResource):
+class WorkflowVersion(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -30086,7 +30144,7 @@ class WorkflowVersion(TrackedResource):
             super().__setattr__(key, value)
 
 
-class WorkflowVersionProperties(_Model):
+class WorkflowVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow version properties.
 
     :ivar provisioning_state: The provisioning state. Known values are: "NotSpecified", "Accepted",

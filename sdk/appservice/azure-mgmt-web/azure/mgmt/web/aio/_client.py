@@ -56,7 +56,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class WebSiteManagementClient(
+    _WebSiteManagementClientOperationsMixin
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """WebSiteManagementClient.
 
     :ivar app_service_environments: AppServiceEnvironmentsOperations operations

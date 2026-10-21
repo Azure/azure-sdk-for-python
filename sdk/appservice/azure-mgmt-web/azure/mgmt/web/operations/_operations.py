@@ -20602,7 +20602,7 @@ def build_web_site_management_list_source_controls_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-methods
+class AppServiceEnvironmentsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26703,7 +26703,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         return ItemPaged(get_next, extract_data)
 
 
-class RecommendationsOperations:
+class RecommendationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -27984,7 +27984,7 @@ class RecommendationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class StaticSitesOperations:  # pylint: disable=too-many-public-methods
+class StaticSitesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38408,7 +38408,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class WebAppsOperations:  # pylint: disable=too-many-public-methods
+class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -44284,7 +44284,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> Iterator[bytes]:
+    ) -> str:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -44303,8 +44303,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: str
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -44318,7 +44318,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> Iterator[bytes]:
+    ) -> str:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -44337,8 +44337,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: str
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -44352,7 +44352,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> Iterator[bytes]:
+    ) -> str:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -44371,8 +44371,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: str
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -44386,7 +44386,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             _models.CsmPublishingProfileOptions, _types.CsmPublishingProfileOptions, IO[bytes]
         ],
         **kwargs: Any,
-    ) -> Iterator[bytes]:
+    ) -> str:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -44404,8 +44404,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          CsmPublishingProfileOptions type or a IO[bytes] type. Required.
         :type publishing_profile_options: ~azure.mgmt.web.models.CsmPublishingProfileOptions or
          ~azure.mgmt.web.types.CsmPublishingProfileOptions or IO[bytes]
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: str
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -44420,7 +44420,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[str] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -44446,7 +44446,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", True)
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -44469,7 +44469,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response_headers = {}
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize_xml(str, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -57688,7 +57691,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> Iterator[bytes]:
+    ) -> str:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -57704,8 +57707,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: str
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -57718,7 +57721,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> Iterator[bytes]:
+    ) -> str:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -57734,8 +57737,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: str
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -57748,7 +57751,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> Iterator[bytes]:
+    ) -> str:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -57764,8 +57767,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: str
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -57778,7 +57781,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             _models.CsmPublishingProfileOptions, _types.CsmPublishingProfileOptions, IO[bytes]
         ],
         **kwargs: Any,
-    ) -> Iterator[bytes]:
+    ) -> str:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -57793,8 +57796,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          CsmPublishingProfileOptions type or a IO[bytes] type. Required.
         :type publishing_profile_options: ~azure.mgmt.web.models.CsmPublishingProfileOptions or
          ~azure.mgmt.web.types.CsmPublishingProfileOptions or IO[bytes]
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: str
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -57809,7 +57812,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[str] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -57834,7 +57837,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", True)
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -57857,7 +57860,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response_headers = {}
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize_xml(str, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -87579,7 +87585,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
 
-class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
+class AppServicePlansOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -90665,7 +90671,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class CertificatesOperations:
+class CertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -91372,7 +91378,7 @@ class CertificatesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SiteCertificatesOperations:
+class SiteCertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -92690,7 +92696,7 @@ class SiteCertificatesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GlobalOperations:
+class GlobalOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -92904,7 +92910,7 @@ class GlobalOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
+class DiagnosticsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -95067,7 +95073,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class KubeEnvironmentsOperations:
+class KubeEnvironmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -95899,7 +95905,7 @@ class KubeEnvironmentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkflowRunsOperations:
+class WorkflowRunsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -96179,7 +96185,7 @@ class WorkflowRunsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class WorkflowRunActionsOperations:
+class WorkflowRunActionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -96512,7 +96518,7 @@ class WorkflowRunActionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkflowRunActionScopeRepetitionsOperations:  # pylint: disable=name-too-long
+class WorkflowRunActionScopeRepetitionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -96734,7 +96740,7 @@ class WorkflowRunActionScopeRepetitionsOperations:  # pylint: disable=name-too-l
         return ItemPaged(get_next, extract_data)
 
 
-class WorkflowTriggersOperations:
+class WorkflowTriggersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -97233,7 +97239,7 @@ class WorkflowTriggersOperations:
         return deserialized  # type: ignore
 
 
-class WorkflowTriggerHistoriesOperations:
+class WorkflowTriggerHistoriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -97606,7 +97612,7 @@ class WorkflowTriggerHistoriesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class WorkflowVersionsOperations:
+class WorkflowVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -97810,7 +97816,7 @@ class WorkflowVersionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProviderOperations:
+class ProviderOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -98531,7 +98537,7 @@ class ProviderOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DeletedWebAppsOperations:
+class DeletedWebAppsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -98815,7 +98821,7 @@ class DeletedWebAppsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ResourceHealthMetadataOperations:
+class ResourceHealthMetadataOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -99394,7 +99400,7 @@ class ResourceHealthMetadataOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkflowsOperations:
+class WorkflowsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -99752,7 +99758,7 @@ class WorkflowsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class WorkflowRunActionRepetitionsOperations:
+class WorkflowRunActionRepetitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -100095,7 +100101,7 @@ class WorkflowRunActionRepetitionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkflowRunActionRepetitionsRequestHistoriesOperations:  # pylint: disable=name-too-long
+class WorkflowRunActionRepetitionsRequestHistoriesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -100329,7 +100335,7 @@ class WorkflowRunActionRepetitionsRequestHistoriesOperations:  # pylint: disable
         return ItemPaged(get_next, extract_data)
 
 
-class GetUsagesInLocationOperations:
+class GetUsagesInLocationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

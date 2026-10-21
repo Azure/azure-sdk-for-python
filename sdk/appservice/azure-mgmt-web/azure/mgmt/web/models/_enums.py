@@ -189,7 +189,7 @@ class BuildStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class BuiltInAuthenticationProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default authentication provider to use when multiple providers are configured. This setting
     is only needed if multiple providers are configured and the unauthenticated client action is
-    set to "RedirectToLoginPage".
+    set to \"RedirectToLoginPage\".
     """
 
     AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
