@@ -30,6 +30,7 @@ from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
 from websockets.frames import Close
 
 from azure.ai.projects import AIProjectClient, __version__, models, operations
+from azure.ai.projects._live_utils import _server_event_types
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 from azure.ai.projects.aio import operations as async_operations
 
@@ -815,6 +816,13 @@ async def test_session_close_requests_shutdown_without_closing_transport(live):
         assert connection.closed is False
         live.transport.socket.close.assert_not_called()
     live.transport.assert_closed_once()
+
+
+@pytest.mark.parametrize("invalid", [None, "not-a-model", 42, object, models.LiveServerEvent({"type": "future.event"})])
+async def test_live_event_registry_accepts_only_model_classes(invalid):
+    registry = {"session.started": models.LiveServerEventLiveSessionStarted, "invalid": invalid}
+
+    assert _server_event_types(registry) == {"session.started": models.LiveServerEventLiveSessionStarted}
 
 
 @pytest.mark.parametrize(
