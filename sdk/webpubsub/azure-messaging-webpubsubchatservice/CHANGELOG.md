@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Added topic lifecycle operations (create or replace, list, get, update, and soft delete)
+  - Added topic lifecycle operations (create or replace, list, get, update, and soft delete). Creation or replacement accepts `ChatTopicCreateOrReplace`, which requires only `title`; updates accept `ChatTopicUpdate`, whose fields are optional.
   - Added room, user, and user-room collection operations
 
 ### Other Changes
@@ -14,7 +14,6 @@
 ### Breaking Changes
 
   - Create or replace operations now accept dedicated `ChatRoleCreateOrReplace`, `ChatRoomCreateOrReplace`, `ChatRoomMemberCreateOrReplace`, and `ChatUserCreateOrReplace` (including `HumanChatUserCreateOrReplace`) request models instead of resource response models.
-  - Topic creation or replacement accepts `ChatTopicCreateOrReplace`, which requires only `title`. Topic updates accept `ChatTopicUpdate`, whose fields are optional.
   - Message updates accept `ChatMessageUpdate`, whose fields are optional, instead of `ChatMessage`. Resource response model names are unchanged.
 
 ## 1.0.0b1 (2026-10-08)
