@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added the `azure.health.deidentification.types` module with `TypedDict` definitions for request bodies. `begin_deidentify_documents` and `deidentify_text` accept these as typed alternatives to the models.
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -13,6 +15,7 @@
 - Regenerated the client with the latest TypeSpec emitter and removed stale generated files.
 - Dropped support for Python 3.9. The minimum supported Python version is now 3.10.
 - The minimum required `azure-core` version is now 1.37.0.
+- The `JSON` overloads of `begin_deidentify_documents` and `deidentify_text` are now typed with the `TypedDict`s in `azure.health.deidentification.types`. Runtime behavior is unchanged, but static type checkers may flag arguments typed as `dict[str, Any]`.
 
 ## 1.1.0b1 (2025-08-05)
 
