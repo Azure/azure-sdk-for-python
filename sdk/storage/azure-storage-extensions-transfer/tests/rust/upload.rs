@@ -424,13 +424,32 @@ fn upload_failures_return_errors_and_failed_block_never_commits() {
             )
         });
         Python::attach(|py| {
-            assert!(UploadOptions {
+            let error = UploadOptions {
                 max_block_size: Some(block_size),
                 max_concurrency: Some(1),
                 ..Default::default()
             }
             .run(py, &transport, b"abcdefghij")
-            .is_err());
+            .unwrap_err();
+            assert!(error.is_instance_of::<crate::errors::NativeTransferError>(py));
+            assert_eq!(
+                error
+                    .value(py)
+                    .getattr("status_code")
+                    .unwrap()
+                    .extract::<u16>()
+                    .unwrap(),
+                400
+            );
+            assert_eq!(
+                error
+                    .value(py)
+                    .getattr("error_code")
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+                "InvalidBlock"
+            );
         });
         let requests = transport.requests();
         assert_eq!(requests.len(), 1);

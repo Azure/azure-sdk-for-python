@@ -30,6 +30,7 @@ This ensures you get compatible versions of both the SDK and the extensions pack
 - `src/credentials.rs`: Python token callback credential and process-wide credential cache.
 - `src/upload.rs`: Upload bindings, zero-copy Python buffer ownership, and upload response conversion.
 - `src/download.rs`: Download bindings and the windowed download stream.
+- `src/errors.rs`: SDK-independent native error carrier and Rust error conversion.
 
 ## Running Rust tests
 
@@ -80,6 +81,25 @@ stream fails, subsequent reads re-raise the failure without issuing more request
 Bytes already yielded or written to a destination are not rolled back. Nonempty
 ranged responses must include a valid `Content-Range` total; the response
 `Content-Length` alone does not identify the total blob size.
+
+### Error handling
+
+The extension defines `NativeTransferError` in its native module and re-exports it
+from `azure.storage.extensions.transfer` when the native binary is available.
+Direct extension calls expose this SDK-independent exception for Rust SDK failures.
+It has the following attributes:
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `message` | `str` | Normalized service message, or native error context when unavailable. |
+| `kind` | `str` | `http`, `connection`, `io`, `incomplete_read`, `data_conversion`, `credential`, or `other`. |
+| `status_code` | `int` or `None` | HTTP status, when available. |
+| `error_code` | `str` or `None` | Normalized service code, falling back to the original Rust SDK code candidate. Unknown codes are preserved. |
+| `request_id` | `str` or `None` | Service request ID, when available. |
+| `additional_info` | `dict[str, str]` | Normalized service details, including additional error fields. |
+| `normalization_error` | `str` or `None` | Diagnostic describing a failed attempt to normalize an HTTP error. |
+| `headers` | `dict[str, str]` | Response headers, including request ID when returned by the service. |
+| `body` | `bytes` or `None` | Original response bytes; `None` means the raw response was unavailable. |
 
 The Python SDK automatically falls back to its built-in Python implementation when:
 - Client-side encryption is enabled

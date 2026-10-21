@@ -12,13 +12,37 @@ the Rust backend whenever the extension is available and raise for unsupported n
 inputs rather than silently falling back to Python.
 """
 
+from contextlib import contextmanager
 from datetime import timezone
 import logging
 import os
 import threading
-from typing import Any, Callable, Dict, Iterator, Optional, Tuple, TYPE_CHECKING
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generator,
+    Iterator,
+    NoReturn,
+    Optional,
+    Tuple,
+    Type,
+    TYPE_CHECKING,
+)
 
 from azure.core.credentials import AzureSasCredential
+from azure.core.exceptions import (
+    AzureError,
+    ClientAuthenticationError,
+    DecodeError,
+    HttpResponseError,
+    IncompleteReadError,
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError,
+    ServiceRequestError,
+    ServiceResponseError,
+)
 from ._models import BlobType
 from ._serialize import (
     get_blob_modify_conditions,
@@ -36,6 +60,92 @@ _LOGGER = logging.getLogger(__name__)
 # installed. Intended for benchmarking and troubleshooting. Set the environment variable
 # AZURE_STORAGE_DISABLE_NATIVE_TRANSFER to a truthy value ("1", "true", "yes", "on").
 _DISABLE_NATIVE_ENV_VAR = "AZURE_STORAGE_DISABLE_NATIVE_TRANSFER"
+
+_NATIVE_HTTP_ERROR_TYPES: Dict[str, Type[HttpResponseError]] = {
+    "ResourceNotFound": ResourceNotFoundError,
+    "CannotVerifyCopySource": ResourceNotFoundError,
+    "BlobNotFound": ResourceNotFoundError,
+    "ContainerNotFound": ResourceNotFoundError,
+    "AccountAlreadyExists": ResourceExistsError,
+    "AccountBeingCreated": ResourceExistsError,
+    "ResourceAlreadyExists": ResourceExistsError,
+    "ResourceTypeMismatch": ResourceExistsError,
+    "BlobAlreadyExists": ResourceExistsError,
+    "ContainerAlreadyExists": ResourceExistsError,
+    "ContainerBeingDeleted": ResourceExistsError,
+    "ConditionNotMet": ResourceModifiedError,
+    "BlobOverwritten": ResourceModifiedError,
+    "InvalidAuthenticationInfo": ClientAuthenticationError,
+    "AuthenticationFailed": ClientAuthenticationError,
+}
+
+
+def _native_error_type() -> Type[Exception]:
+    try:
+        from azure.storage.extensions.transfer import (  # pylint: disable=import-outside-toplevel
+            NativeTransferError,
+        )
+    except ImportError as error:
+        raise RuntimeError(
+            "The installed native transfer extension does not expose NativeTransferError. "
+            "Install a compatible azure-storage-extensions-transfer build."
+        ) from error
+    return NativeTransferError
+
+
+def _raise_native_error(error: Any) -> NoReturn:
+    if error.kind == "http":
+        status_error_type: Type[HttpResponseError] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+        }.get(error.status_code, HttpResponseError)
+        http_error_type = _NATIVE_HTTP_ERROR_TYPES.get(error.error_code, status_error_type)
+        mapped = http_error_type(error.message)
+        mapped.status_code = error.status_code
+        setattr(mapped, "error_code", error.error_code)
+        setattr(mapped, "additional_info", error.additional_info)
+        setattr(mapped, "request_id", error.request_id)
+        raise mapped from error
+
+    error_type: Type[AzureError] = {
+        "connection": ServiceRequestError,
+        "io": ServiceResponseError,
+        "incomplete_read": IncompleteReadError,
+        "data_conversion": DecodeError,
+        "credential": ClientAuthenticationError,
+    }.get(error.kind, AzureError)
+    raise error_type(error.message) from error
+
+
+@contextmanager
+def _translate_native_errors() -> Generator[None, None, None]:
+    native_error = _native_error_type()
+    try:
+        yield
+    except native_error as error:
+        _raise_native_error(error)
+
+
+class _NativeErrorIterator:
+    def __init__(self, stream: Iterator[bytes]) -> None:
+        self._stream = stream
+        self._native_error = _native_error_type()
+        self._failure: Optional[AzureError] = None
+
+    def __iter__(self) -> "_NativeErrorIterator":
+        return self
+
+    def __next__(self) -> bytes:
+        if self._failure is not None:
+            raise self._failure
+        try:
+            return next(self._stream)
+        except self._native_error as error:
+            try:
+                _raise_native_error(error)
+            except AzureError as mapped:
+                self._failure = mapped
+                raise
 
 
 def _native_disabled() -> bool:
@@ -124,17 +234,13 @@ def _can_use_native_upload(
         return False
 
     if blob_type not in (BlobType.BLOCKBLOB, BlobType.BlockBlob, "BlockBlob"):
-        raise ValueError(
-            f"Native upload supports only block blobs; received blob type {blob_type!r}."
-        )
+        raise ValueError(f"Native upload supports only block blobs; received blob type {blob_type!r}.")
 
     if encryption_options.get("key") or encryption_options.get("required"):
         raise ValueError("Native upload does not support client-side encryption.")
 
     if validate_content not in (None, False):
-        raise ValueError(
-            "Native upload does not support transactional content validation."
-        )
+        raise ValueError("Native upload does not support transactional content validation.")
 
     if kwargs.get("progress_hook"):
         raise ValueError("Native upload does not support progress hooks.")
@@ -142,8 +248,7 @@ def _can_use_native_upload(
     if credential is not None and not hasattr(credential, "get_token"):
         if not isinstance(credential, (str, AzureSasCredential)):
             raise ValueError(
-                "Native upload requires a token credential or SAS credential; "
-                f"received {type(credential).__name__}."
+                "Native upload requires a token credential or SAS credential; " f"received {type(credential).__name__}."
             )
 
     if isinstance(data, (bytes, str)):
@@ -170,17 +275,11 @@ def _can_use_native_download(
     if not _is_native_available():
         return False
 
-    if (
-        encryption_options.get("key")
-        or encryption_options.get("required")
-        or encryption_options.get("resolver")
-    ):
+    if encryption_options.get("key") or encryption_options.get("required") or encryption_options.get("resolver"):
         raise ValueError("Native download does not support client-side encryption.")
 
     if validate_content not in (None, False):
-        raise ValueError(
-            "Native download does not support transactional content validation."
-        )
+        raise ValueError("Native download does not support transactional content validation.")
 
     if kwargs.get("decompress", None) is True:
         raise ValueError("Native download does not support decompression.")
@@ -277,38 +376,39 @@ def try_native_upload(
     if hasattr(tier, "value"):
         tier = tier.value
 
-    result = native_upload(
-        url=blob_client.url,
-        data=upload_data,
-        token_provider=token_provider,
-        credential_id=id(blob_client.credential) if token_provider else None,
-        overwrite=overwrite,
-        content_type=content_type,
-        content_encoding=content_encoding,
-        content_language=content_language,
-        content_disposition=content_disposition,
-        cache_control=cache_control,
-        content_md5=content_md5,
-        metadata=metadata,
-        tags=tags,
-        lease_id=lease,
-        encryption_key=getattr(cpk, "key_value", None),
-        encryption_key_sha256=getattr(cpk, "key_hash", None),
-        encryption_algorithm=getattr(cpk, "algorithm", None),
-        encryption_scope=kwargs.get("encryption_scope", None),
-        if_match=conditions.get("if_match"),
-        if_none_match=conditions.get("if_none_match"),
-        if_modified_since=_to_unix_timestamp(conditions.get("if_modified_since")),
-        if_unmodified_since=_to_unix_timestamp(conditions.get("if_unmodified_since")),
-        if_tags=if_tags,
-        immutability_policy_expiry=immutability_policy_expiry,
-        immutability_policy_mode=immutability_policy_mode,
-        legal_hold=kwargs.get("legal_hold", None),
-        tier=tier,
-        timeout=kwargs.get("timeout", None),
-        max_concurrency=max_concurrency,
-        max_block_size=config.max_block_size,
-    )
+    with _translate_native_errors():
+        result = native_upload(
+            url=blob_client.url,
+            data=upload_data,
+            token_provider=token_provider,
+            credential_id=id(blob_client.credential) if token_provider else None,
+            overwrite=overwrite,
+            content_type=content_type,
+            content_encoding=content_encoding,
+            content_language=content_language,
+            content_disposition=content_disposition,
+            cache_control=cache_control,
+            content_md5=content_md5,
+            metadata=metadata,
+            tags=tags,
+            lease_id=lease,
+            encryption_key=getattr(cpk, "key_value", None),
+            encryption_key_sha256=getattr(cpk, "key_hash", None),
+            encryption_algorithm=getattr(cpk, "algorithm", None),
+            encryption_scope=kwargs.get("encryption_scope", None),
+            if_match=conditions.get("if_match"),
+            if_none_match=conditions.get("if_none_match"),
+            if_modified_since=_to_unix_timestamp(conditions.get("if_modified_since")),
+            if_unmodified_since=_to_unix_timestamp(conditions.get("if_unmodified_since")),
+            if_tags=if_tags,
+            immutability_policy_expiry=immutability_policy_expiry,
+            immutability_policy_mode=immutability_policy_mode,
+            legal_hold=kwargs.get("legal_hold", None),
+            tier=tier,
+            timeout=kwargs.get("timeout", None),
+            max_concurrency=max_concurrency,
+            max_block_size=config.max_block_size,
+        )
     _LOGGER.info("Used native Rust extension for blob upload.")
     return result
 
@@ -326,7 +426,7 @@ class NativeStorageStreamDownloader:
     def __init__(self, stream: Any, name: str, container: str) -> None:
         self._stream = stream
         # Single persistent iterator over the native stream (which is single-pass).
-        self._iter = iter(stream)
+        self._iter = _NativeErrorIterator(iter(stream))
         # Buffer holding bytes pulled from the stream but not yet consumed by read().
         self._buffer = bytearray()
         self.name = name
@@ -429,9 +529,7 @@ def try_native_download_eager(
         credential=blob_client.credential,
         **kwargs,
     ):
-        _LOGGER.debug(
-            "Native download extension unavailable; using Python download path."
-        )
+        _LOGGER.debug("Native download extension unavailable; using Python download path.")
         return None
 
     from azure.storage.extensions.transfer import (  # pylint: disable=import-outside-toplevel
@@ -445,26 +543,27 @@ def try_native_download_eager(
     conditions = get_blob_modify_conditions(dict(kwargs))
     version_id = kwargs.get("version_id", getattr(blob_client, "version_id", None))
 
-    stream = native_download(
-        url=blob_client.url,
-        token_provider=token_provider,
-        credential_id=id(blob_client.credential) if token_provider else None,
-        offset=offset,
-        length=length,
-        lease_id=lease,
-        encryption_key=getattr(cpk, "key_value", None),
-        encryption_key_sha256=getattr(cpk, "key_hash", None),
-        encryption_algorithm=getattr(cpk, "algorithm", None),
-        if_match=conditions.get("if_match"),
-        if_none_match=conditions.get("if_none_match"),
-        if_modified_since=_to_unix_timestamp(conditions.get("if_modified_since")),
-        if_unmodified_since=_to_unix_timestamp(conditions.get("if_unmodified_since")),
-        if_tags=kwargs.get("if_tags_match_condition", None),
-        version_id=version_id,
-        timeout=kwargs.get("timeout", None),
-        max_concurrency=max_concurrency,
-        max_chunk_size=blob_client._config.max_chunk_get_size,  # pylint: disable=protected-access
-    )
+    with _translate_native_errors():
+        stream = native_download(
+            url=blob_client.url,
+            token_provider=token_provider,
+            credential_id=id(blob_client.credential) if token_provider else None,
+            offset=offset,
+            length=length,
+            lease_id=lease,
+            encryption_key=getattr(cpk, "key_value", None),
+            encryption_key_sha256=getattr(cpk, "key_hash", None),
+            encryption_algorithm=getattr(cpk, "algorithm", None),
+            if_match=conditions.get("if_match"),
+            if_none_match=conditions.get("if_none_match"),
+            if_modified_since=_to_unix_timestamp(conditions.get("if_modified_since")),
+            if_unmodified_since=_to_unix_timestamp(conditions.get("if_unmodified_since")),
+            if_tags=kwargs.get("if_tags_match_condition", None),
+            version_id=version_id,
+            timeout=kwargs.get("timeout", None),
+            max_concurrency=max_concurrency,
+            max_chunk_size=blob_client._config.max_chunk_get_size,  # pylint: disable=protected-access
+        )
     _LOGGER.info("Used native Rust extension for blob download.")
     return NativeStorageStreamDownloader(
         stream=stream,
