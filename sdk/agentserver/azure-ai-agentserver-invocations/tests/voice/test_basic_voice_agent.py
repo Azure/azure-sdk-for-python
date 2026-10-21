@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from packaging.requirements import Requirement
 
 import azure.ai.agentserver.invocations.voice as voice
 from azure.ai.agentserver.invocations.voice import (
@@ -186,12 +187,23 @@ def test_sample_includes_setup_run_and_bridge_manifest():
     assert "python -m pip install -r requirements.txt" in readme
     assert "python basic_voice_agent.py" in readme
     assert "/invocations_ws" in readme
-    assert requirements == ["azure-ai-agentserver-invocations>=1.2.0b1,<2.0.0"]
+    assert requirements == ["azure-ai-agentserver-invocations>=1.3.0b1,<2.0.0"]
+    assert "azure_ai_agentserver_invocations-1.3.0b1-py3-none-any.whl" in readme
 
     manifest = yaml.safe_load((_SAMPLE_ROOT / "agent.manifest.yaml").read_text(encoding="utf-8"))
     assert manifest["protocols"] == ["invocations_ws"]
     assert manifest["voiceLiveCompatible"] == "true"
     assert manifest["bridgeProtocolVersion"] == "1.0"
+
+
+@pytest.mark.parametrize(
+    ("version", "supported"),
+    [("1.2.0b1", False), ("1.2.0", False), ("1.3.0b1", True), ("1.3.0", True), ("2.0.0", False)],
+)
+def test_sample_dependency_requires_user_barge_in_sdk(version, supported):
+    requirement = Requirement((_SAMPLE_ROOT / "requirements.txt").read_text(encoding="utf-8").strip())
+    assert requirement.name == "azure-ai-agentserver-invocations"
+    assert requirement.specifier.contains(version) is supported
 
 
 @pytest.mark.asyncio

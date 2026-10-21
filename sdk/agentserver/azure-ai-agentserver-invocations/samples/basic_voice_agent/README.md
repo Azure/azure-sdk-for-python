@@ -13,22 +13,30 @@ Caller interruptions arrive as `user.barge_in` and are handled by `@app.on_user_
 
 ## Install
 
-Create and activate a virtual environment, then install the sample dependency:
+This sample requires `azure-ai-agentserver-invocations>=1.3.0b1,<2.0.0` for
+`UserBargeIn` and `on_user_barge_in`. Version `1.2.x` cannot run this sample.
+
+Create and activate a virtual environment:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
-python -m pip install -r requirements.txt
 ```
 
-For local SDK development, install the sibling packages or their wheels instead
-of the published dependency:
+Until a release containing these APIs and the CE route is published, you must
+install a matching local SDK build. Replace the paths below with Core and
+Invocations wheels built from the same SDK checkout:
 
 ```bash
 python -m pip install \
-  /path/to/azure_ai_agentserver_core-2.1.0b1-py3-none-any.whl \
-  /path/to/azure_ai_agentserver_invocations-1.2.0b1-py3-none-any.whl
+  /path/to/azure_ai_agentserver_core-2.3.0b1-py3-none-any.whl \
+  /path/to/azure_ai_agentserver_invocations-1.3.0b1-py3-none-any.whl
+python -m pip install -r requirements.txt
 ```
+
+After a matching release is available, `python -m pip install -r requirements.txt`
+can install the dependency directly from the package feed. The version constraint
+alone does not publish the new APIs or make them available in older SDK builds.
 
 ## Run
 
