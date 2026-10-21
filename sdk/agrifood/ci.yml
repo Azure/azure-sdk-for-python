@@ -9,6 +9,4 @@ extends:
   parameters:
     ServiceDirectory: agrifood
     TestProxy: true
-    Artifacts:
-    - name: azure-agrifood-farming
-      safeName: azureagrifoodfarming
+    Artifacts: []
