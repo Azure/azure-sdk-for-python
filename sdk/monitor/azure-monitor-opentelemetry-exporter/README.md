@@ -180,6 +180,12 @@ Retry storage is separate from the host storage, partitioned by endpoint and
 authentication mode, and shares the configured storage capacity across routed
 partitions. Pending items are retried after a subsequent successful send to the
 same endpoint/authentication group, preserving their original instrumentation keys.
+For destinations with enabled, available offline storage, retryable failures also
+pause new transmissions to that endpoint/authentication group. New items are stored
+until the retry window expires. The window uses the existing `Retry-After` handling,
+or `storage_min_retry_interval` (60 seconds by default) when no valid delay is available.
+Other destinations continue transmitting. This does not add background retries or
+.NET's exponential backoff; export results retain the existing failure semantics.
 Each exporter supports up to 64 offline-storage partitions. Different keys using
 the same normalized endpoint and authentication mode share a partition.
 Additional destinations still transmit, but without offline persistence.

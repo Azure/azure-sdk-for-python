@@ -18,6 +18,8 @@
   Routing-enabled exporters can be created without a host connection string.
   Routed offline storage is limited to 64 endpoint/authentication partitions per
   exporter; additional destinations still transmit without persistence.
+  Routed destinations with available offline storage defer new transmissions
+  during retry backoff, using the existing retry delay or minimum retry interval.
 
 ### Breaking Changes
 

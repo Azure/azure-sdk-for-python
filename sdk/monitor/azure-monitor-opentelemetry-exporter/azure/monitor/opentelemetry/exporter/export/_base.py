@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 import getpass
 import logging
+import math
 import os
 import tempfile
 import time
@@ -202,6 +203,7 @@ class BaseExporter:
         # specifies whether current exporter is used for collection of instrumentation metrics
         self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
         self._retry_after_delay_seconds: Optional[int] = None
+        self._route_retry_at = 0.0
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
@@ -424,6 +426,7 @@ class BaseExporter:
     # pylint: disable=too-many-statements
     # pylint: disable=too-many-locals
     def _transmit(self, envelopes: List[TelemetryItem], _skip_rate_limit: bool = False) -> ExportResult:
+        # pylint: disable=protected-access
         """
         Transmit the data envelopes to the ingestion service.
 
@@ -437,6 +440,12 @@ class BaseExporter:
         :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
         """
         if len(envelopes) > 0:
+            if self._route is not None and self.storage and self.storage._enabled and self.storage._active:
+                remaining = self._route_retry_at - time.monotonic()
+                if remaining > 0:
+                    self._retry_after_delay_seconds = math.ceil(remaining)
+                    logger.debug("Deferring routed telemetry to offline storage during destination backoff.")
+                    return ExportResult.FAILED_RETRYABLE
             # Client-side rate limiting: cap send rate to protect shared ingestion infrastructure.
             # Stats exporters bypass rate limiting to ensure observability data is not lost.
             # Skip rate limiting on recursive calls (e.g. 307/308 redirects) to avoid
@@ -485,6 +494,7 @@ class BaseExporter:
             start_time = time.time()
             final_result = None
             retry_after_delay_seconds = None
+            resend_envelopes: List[TelemetryItem] = []
             try:
                 track_result = self.client.track(
                     envelopes,
@@ -516,7 +526,6 @@ class BaseExporter:
                         track_successful_items(envelopes)
                 else:  # 206
                     reach_ingestion = True
-                    resend_envelopes = []
                     for error in track_response.errors:
                         # Check for sampling rejection - these should not be retried
                         # because the server will always reject them based on sampling rules
@@ -777,6 +786,16 @@ class BaseExporter:
 
                 if final_result is None:
                     final_result = result
+                if self._route is not None:
+                    if final_result == ExportResult.FAILED_RETRYABLE or resend_envelopes:
+                        delay = (
+                            retry_after_delay_seconds
+                            if retry_after_delay_seconds is not None
+                            else self._storage_min_retry_interval
+                        )
+                        self._route_retry_at = max(self._route_retry_at, time.monotonic() + delay)
+                    elif final_result == ExportResult.SUCCESS:
+                        self._route_retry_at = 0.0
                 if final_result == ExportResult.FAILED_RETRYABLE:
                     self._retry_after_delay_seconds = retry_after_delay_seconds
                 else:

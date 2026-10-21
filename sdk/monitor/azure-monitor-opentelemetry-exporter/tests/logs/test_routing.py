@@ -11,6 +11,7 @@ from pathlib import Path
 from unittest import mock
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline.transport import HttpResponse, HttpTransport
 from opentelemetry._logs import LogRecord
 from opentelemetry.sdk._logs import ReadWriteLogRecord
@@ -152,7 +153,8 @@ class TestLogRouting(unittest.TestCase):
         self.assertTrue(self.transport.send.call_args.args[0].url.startswith("https://one.example/proxy/"))
 
     @mock.patch.dict(os.environ)
-    def test_routing_without_host_preserves_retry_storage(self):
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_routing_without_host_preserves_retry_storage(self, clock):
         os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
         os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
         with mock.patch(
@@ -170,6 +172,7 @@ class TestLogRouting(unittest.TestCase):
             self.assertEqual(exporter.export([self._record(key="old-key")]), LogRecordExportResult.FAILURE)
         self.transport.send.reset_mock()
         self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        clock.return_value = 161
         with mock.patch(
             "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=61)
         ):
@@ -256,7 +259,106 @@ class TestLogRouting(unittest.TestCase):
         self.assertTrue(requests[1].url.startswith("https://two.example/"))
         self.assertFalse(list((Path(self.directory.name) / "host").iterdir()))
 
-    def test_partial_failure_retries_only_rejected_items(self):
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_route_backoff_defers_until_retry_after_without_blocking_other_routes(self, clock):
+        now = datetime.datetime(2026, 10, 20, tzinfo=datetime.timezone.utc)
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            self.assertEqual(exporter.export([self._record(key="original")]), LogRecordExportResult.FAILURE)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        clock.return_value = 120
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=20)
+        ):
+            result = exporter.export(
+                [self._record(key="deferred"), self._record(endpoint="https://two.example/", key="healthy")]
+            )
+        self.assertEqual(result, LogRecordExportResult.FAILURE)
+        self.transport.send.assert_called_once()
+        self.assertTrue(self.transport.send.call_args.args[0].url.startswith("https://two.example/"))
+        self.assertEqual(len(list(Path(self.directory.name).rglob("*.lock"))), 2)
+        self.transport.send.reset_mock()
+        clock.return_value = 160
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=60)
+        ):
+            self.assertEqual(exporter.export([self._record(key="new")]), LogRecordExportResult.SUCCESS)
+        requests = [call.args[0] for call in self.transport.send.call_args_list]
+        self.assertEqual([json.loads(request.body)[0]["iKey"] for request in requests], ["new", "original", "deferred"])
+        self.assertTrue(all(request.url.startswith("https://one.example/proxy/") for request in requests))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_route_backoff_uses_existing_retry_interval_without_header(self, clock):
+        for failure in (503, ServiceRequestError("test connection failure")):
+            with self.subTest(failure=failure):
+                clock.return_value = 100
+                exporter = self._exporter(disable_offline_storage=False, storage_min_retry_interval=9)
+                if isinstance(failure, int):
+                    self.transport.send.side_effect = lambda request, **kwargs: _Response(request, failure)
+                else:
+                    self.transport.send.side_effect = failure
+                self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
+                self.transport.send.reset_mock()
+                self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+                clock.return_value = 108.5
+                self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
+                self.transport.send.assert_not_called()
+                clock.return_value = 109
+                self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+                self.transport.send.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_route_backoff_is_separate_for_authentication_modes(self, _clock):
+        credential = mock.Mock(spec=["get_token"])
+        credential.get_token.return_value = AccessToken("test-token", int(time.time()) + 3600)
+        exporter = self._exporter(credential=credential, disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        self.assertEqual(exporter.export([self._record(), self._record(auth="aad")]), LogRecordExportResult.FAILURE)
+        self.transport.send.assert_called_once()
+        self.assertIn("Authorization", self.transport.send.call_args.args[0].headers)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_unavailable_storage_does_not_suppress_transmission(self, _clock):
+        for unavailable in ("disabled", "remote", "permissions"):
+            with self.subTest(unavailable=unavailable):
+                exporter = self._exporter(disable_offline_storage=unavailable == "disabled")
+                self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429)
+                self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
+                if unavailable == "remote":
+                    exporter._local_storage_configuration_callback(
+                        {_ONE_SETTINGS_FEATURE_LOCAL_STORAGE: {"default": "disabled"}}
+                    )
+                elif unavailable == "permissions":
+                    route = exporter._route_exporters[("https://one.example/proxy/", False)]
+                    self.addCleanup(route.storage.close)
+                    with mock.patch.object(route.storage, "_enabled", False):
+                        self.transport.send.reset_mock()
+                        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+                        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+                    self.transport.send.assert_called_once()
+                    continue
+                self.transport.send.reset_mock()
+                self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+                self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+                self.transport.send.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_single_connection_string_does_not_backoff_new_batches(self, _clock):
+        exporter = self._exporter(enable_multi_endpoint_routing=False, disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+        self.transport.send.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_partial_failure_retries_only_rejected_items(self, clock):
         now = datetime.datetime(2026, 10, 20, tzinfo=datetime.timezone.utc)
         exporter = self._exporter(disable_offline_storage=False)
         self.transport.send.side_effect = lambda request, **kwargs: _Response(
@@ -270,12 +372,74 @@ class TestLogRouting(unittest.TestCase):
         self.assertEqual(result, LogRecordExportResult.FAILURE)
         self.transport.send.reset_mock()
         self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        clock.return_value = 130
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=30)
+        ):
+            self.assertEqual(exporter.export([self._record(key="deferred")]), LogRecordExportResult.FAILURE)
+        self.transport.send.assert_not_called()
+        clock.return_value = 161
         with mock.patch(
             "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=61)
         ):
             self.assertEqual(exporter.export([self._record(key="new")]), LogRecordExportResult.SUCCESS)
         requests = [call.args[0] for call in self.transport.send.call_args_list]
-        self.assertEqual([json.loads(request.body)[0]["iKey"] for request in requests], ["new", "rejected"])
+        self.assertEqual([json.loads(request.body)[0]["iKey"] for request in requests], ["new", "rejected", "deferred"])
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_stored_retry_failure_starts_another_backoff_window(self, clock):
+        now = datetime.datetime(2026, 10, 20, tzinfo=datetime.timezone.utc)
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            self.assertEqual(exporter.export([self._record(key="stored")]), LogRecordExportResult.FAILURE)
+        clock.return_value = 160
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(
+            request, 429 if json.loads(request.body)[0]["iKey"] == "stored" else 200, {"Retry-After": "120"}
+        )
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=60)
+        ):
+            self.assertEqual(exporter.export([self._record(key="new")]), LogRecordExportResult.SUCCESS)
+        self.assertEqual(self.transport.send.call_count, 2)
+        self.transport.send.reset_mock()
+        clock.return_value = 170
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=70)
+        ):
+            self.assertEqual(exporter.export([self._record(key="deferred")]), LogRecordExportResult.FAILURE)
+        self.transport.send.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_non_retryable_failure_does_not_defer_new_batches(self, _clock):
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 400)
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+        self.transport.send.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_backoff_preserves_retry_after_from_redirected_request(self, clock):
+        exporter = self._exporter(disable_offline_storage=False)
+        record = self._record(endpoint="https://eastus.in.applicationinsights.azure.com/")
+        self.transport.send.side_effect = lambda request, **kwargs: (
+            _Response(request, 307, {"location": "https://westus.in.applicationinsights.azure.com/"})
+            if request.url.startswith("https://eastus.")
+            else _Response(request, 429, {"Retry-After": "120"})
+        )
+        self.assertEqual(exporter.export([record]), LogRecordExportResult.FAILURE)
+        self.assertEqual(self.transport.send.call_count, 2)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        clock.return_value = 161
+        self.assertEqual(exporter.export([record]), LogRecordExportResult.FAILURE)
+        self.transport.send.assert_not_called()
+        clock.return_value = 220
+        self.assertEqual(exporter.export([record]), LogRecordExportResult.SUCCESS)
+        self.transport.send.assert_called_once()
 
     def test_retry_storage_is_separate_for_authentication_modes(self):
         credential = mock.Mock(spec=["get_token"])

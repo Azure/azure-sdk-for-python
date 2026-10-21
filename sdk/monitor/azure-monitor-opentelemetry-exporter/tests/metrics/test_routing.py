@@ -331,6 +331,20 @@ class TestMetricRouting(unittest.TestCase):
             self.assertEqual(exporter.export(data), MetricExportResult.FAILURE)
         self.transport.send.assert_not_called()
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_backoff_defers_metric_points(self, clock):
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        data = self._data(self._metric([self._point()]))
+        self.assertEqual(exporter.export(data), MetricExportResult.FAILURE)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        self.assertEqual(exporter.export(data), MetricExportResult.FAILURE)
+        self.transport.send.assert_not_called()
+        clock.return_value = 160
+        self.assertEqual(exporter.export(data), MetricExportResult.SUCCESS)
+        self.transport.send.assert_called_once()
+
     def test_routed_transmission_exception_is_reported(self):
         exporter = self._exporter()
         with mock.patch.object(exporter, "_transmit_routed", side_effect=RuntimeError("test failure")):
