@@ -88,12 +88,8 @@ class AbstractPreparer(object):
             # Note: If it is ever desired to make caching inferred, remove this if/throw.
             # This ensures that a user must _very specifically say they want caching_ on an item and all parents.
             if not self._use_cache and child_is_cached:
-                raise Exception(
-                    """Preparer exception for test {}:\n Child preparers are cached, but parent {} is not.
-You must specify use_cache=True in the preparer decorator""".format(
-                        test_class_instance, self.__class__.__name__
-                    )
-                )
+                raise Exception("""Preparer exception for test {}:\n Child preparers are cached, but parent {} is not.
+You must specify use_cache=True in the preparer decorator""".format(test_class_instance, self.__class__.__name__))
             self._use_cache |= child_is_cached
             _logger.debug("Child cache status for %s: %s", self.__class__.__name__, child_is_cached)
 
