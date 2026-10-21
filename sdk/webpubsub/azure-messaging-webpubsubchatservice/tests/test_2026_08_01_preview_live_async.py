@@ -10,14 +10,14 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.messaging.webpubsubchatservice.models import (
     ChatPermission,
-    ChatRoleCreate,
-    ChatRoomCreate,
-    ChatRoomMemberCreate,
+    ChatRoleCreateOrReplace,
+    ChatRoomCreateOrReplace,
+    ChatRoomMemberCreateOrReplace,
     ChatTopicCreateOrReplace,
     ChatTopicUpdate,
     ChatTopicState,
     HumanChatUser,
-    HumanChatUserCreate,
+    HumanChatUserCreateOrReplace,
 )
 
 
@@ -44,7 +44,7 @@ class TestWebPubSubChatTopicsLiveAsync(WebPubSubChatTest):
         client = self.create_async_client(wps_chat_endpoint)
         room_id = "python-async-e2e-topics"
         try:
-            room = await client.create_or_replace_room(room_id, ChatRoomCreate(title="Async Topic E2E"))
+            room = await client.create_or_replace_room(room_id, ChatRoomCreateOrReplace(title="Async Topic E2E"))
             assert all(
                 topic.conversation_id == room.default_conversation
                 for topic in await _collect(client.list_topics(room_id))
@@ -108,18 +108,20 @@ class TestWebPubSubChatTopicsLiveAsync(WebPubSubChatTest):
         room_role = "room.python_async_e2e_collections"
         try:
             await client.create_or_replace_role(
-                user_role, ChatRoleCreate(permissions=[ChatPermission.USER_CREATE_ROOM])
+                user_role, ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM])
             )
             await client.create_or_replace_role(
-                room_role, ChatRoleCreate(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE])
+                room_role, ChatRoleCreateOrReplace(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE])
             )
             for user_id in user_ids:
-                await client.create_or_replace_user(user_id, HumanChatUserCreate(nickname=user_id, role_name=user_role))
+                await client.create_or_replace_user(
+                    user_id, HumanChatUserCreateOrReplace(nickname=user_id, role_name=user_role)
+                )
             assert await _collect(client.list_rooms_for_user(user_ids[0])) == []
             for room_id in room_ids:
-                await client.create_or_replace_room(room_id, ChatRoomCreate(title=room_id))
+                await client.create_or_replace_room(room_id, ChatRoomCreateOrReplace(title=room_id))
                 await client.create_or_replace_room_member(
-                    room_id, user_ids[0], ChatRoomMemberCreate(role_name=room_role)
+                    room_id, user_ids[0], ChatRoomMemberCreateOrReplace(role_name=room_role)
                 )
             assert {room.id async for room in client.list_rooms(max_page_size=1)}.issuperset(room_ids)
             users = await _collect(client.list_users(max_page_size=1))

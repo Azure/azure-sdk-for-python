@@ -5,19 +5,19 @@
         "azure.messaging.webpubsubchatservice.models.ChatMessage": "WebPubSubChat.ChatMessage",
         "azure.messaging.webpubsubchatservice.models.ChatMessageUpdate": "WebPubSubChat.PythonCustomizations.ChatMessageUpdate",
         "azure.messaging.webpubsubchatservice.models.ChatRole": "WebPubSubChat.ChatRole",
-        "azure.messaging.webpubsubchatservice.models.ChatRoleCreate": "WebPubSubChat.PythonCustomizations.ChatRoleCreate",
+        "azure.messaging.webpubsubchatservice.models.ChatRoleCreateOrReplace": "WebPubSubChat.PythonCustomizations.ChatRoleCreateOrReplace",
         "azure.messaging.webpubsubchatservice.models.ChatRoom": "WebPubSubChat.ChatRoom",
-        "azure.messaging.webpubsubchatservice.models.ChatRoomCreate": "WebPubSubChat.PythonCustomizations.ChatRoomCreate",
+        "azure.messaging.webpubsubchatservice.models.ChatRoomCreateOrReplace": "WebPubSubChat.PythonCustomizations.ChatRoomCreateOrReplace",
         "azure.messaging.webpubsubchatservice.models.ChatRoomMember": "WebPubSubChat.ChatRoomMember",
-        "azure.messaging.webpubsubchatservice.models.ChatRoomMemberCreate": "WebPubSubChat.PythonCustomizations.ChatRoomMemberCreate",
+        "azure.messaging.webpubsubchatservice.models.ChatRoomMemberCreateOrReplace": "WebPubSubChat.PythonCustomizations.ChatRoomMemberCreateOrReplace",
         "azure.messaging.webpubsubchatservice.models.ChatTopic": "WebPubSubChat.ChatTopic",
         "azure.messaging.webpubsubchatservice.models.ChatTopicCreateOrReplace": "WebPubSubChat.PythonCustomizations.ChatTopicCreateOrReplace",
         "azure.messaging.webpubsubchatservice.models.ChatTopicUpdate": "WebPubSubChat.PythonCustomizations.ChatTopicUpdate",
         "azure.messaging.webpubsubchatservice.models.ChatUser": "WebPubSubChat.ChatUser",
-        "azure.messaging.webpubsubchatservice.models.ChatUserCreate": "WebPubSubChat.PythonCustomizations.ChatUserCreate",
+        "azure.messaging.webpubsubchatservice.models.ChatUserCreateOrReplace": "WebPubSubChat.PythonCustomizations.ChatUserCreateOrReplace",
         "azure.messaging.webpubsubchatservice.models.ChatUserRoom": "WebPubSubChat.ChatUserRoom",
         "azure.messaging.webpubsubchatservice.models.HumanChatUser": "WebPubSubChat.HumanChatUser",
-        "azure.messaging.webpubsubchatservice.models.HumanChatUserCreate": "WebPubSubChat.PythonCustomizations.HumanChatUserCreate",
+        "azure.messaging.webpubsubchatservice.models.HumanChatUserCreateOrReplace": "WebPubSubChat.PythonCustomizations.HumanChatUserCreateOrReplace",
         "azure.messaging.webpubsubchatservice.models.MessageContent": "WebPubSubChat.MessageContent",
         "azure.messaging.webpubsubchatservice.models.ChatPermission": "WebPubSubChat.ChatPermission",
         "azure.messaging.webpubsubchatservice.models.ChatTopicState": "WebPubSubChat.ChatTopicState",
@@ -73,5 +73,5 @@
         "azure.messaging.webpubsubchatservice.WebPubSubChatServiceClient.list_rooms_for_user": "WebPubSubChat.WebPubSubChatServiceClient.listRoomsForUser",
         "azure.messaging.webpubsubchatservice.aio.WebPubSubChatServiceClient.list_rooms_for_user": "WebPubSubChat.WebPubSubChatServiceClient.listRoomsForUser"
     },
-    "CrossLanguageVersion": "99e41376e215"
+    "CrossLanguageVersion": "584f70179c70"
 }

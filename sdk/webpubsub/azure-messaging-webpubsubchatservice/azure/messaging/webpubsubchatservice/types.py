@@ -30,8 +30,8 @@ class ChatMessageUpdate(TypedDict, total=False):
     """Message content."""
 
 
-class ChatRoleCreate(TypedDict, total=False):
-    """Properties supplied when creating a role.
+class ChatRoleCreateOrReplace(TypedDict, total=False):
+    """Properties supplied when creating or replacing a role.
 
     :ivar permissions: Permissions associated with the role. Do not mix user permissions and room
      permissions in one role. Required.
@@ -43,8 +43,8 @@ class ChatRoleCreate(TypedDict, total=False):
      role. Required."""
 
 
-class ChatRoomCreate(TypedDict, total=False):
-    """Properties supplied when creating a room.
+class ChatRoomCreateOrReplace(TypedDict, total=False):
+    """Properties supplied when creating or replacing a room.
 
     :ivar title: Room title. Required.
     :vartype title: str
@@ -54,8 +54,8 @@ class ChatRoomCreate(TypedDict, total=False):
     """Room title. Required."""
 
 
-class ChatRoomMemberCreate(TypedDict, total=False):
-    """Properties supplied when creating a room member.
+class ChatRoomMemberCreateOrReplace(TypedDict, total=False):
+    """Properties supplied when creating or replacing a room member.
 
     :ivar roleName: Room role assigned to the user within this room. Required.
     :vartype roleName: str
@@ -93,8 +93,8 @@ class ChatTopicUpdate(TypedDict, total=False):
      \"SoftDeleted\"."""
 
 
-class HumanChatUserCreate(TypedDict, total=False):
-    """Properties supplied when creating a human user.
+class HumanChatUserCreateOrReplace(TypedDict, total=False):
+    """Properties supplied when creating or replacing a human user.
 
     :ivar kind: Required. A human end-user.
     :vartype kind: Literal[ChatUserKind.HUMAN]
@@ -127,4 +127,4 @@ class MessageContent(TypedDict, total=False):
     """Binary content (base64 encoded)."""
 
 
-ChatUserCreate = Union[HumanChatUserCreate]
+ChatUserCreateOrReplace = Union[HumanChatUserCreateOrReplace]

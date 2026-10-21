@@ -129,7 +129,7 @@ User roles control operations such as creating rooms. Room roles control what a 
 
 ### User
 
-A user represents an identity participating in chat, such as a human end user or an application. In the service API, a user is identified by a user ID and assigned a user role. The SDK provides `HumanChatUserCreate` for creating human users with a nickname and a user role. Client access credentials associate WebSocket connections with a user ID.
+A user represents an identity participating in chat, such as a human end user or an application. In the service API, a user is identified by a user ID and assigned a user role. The SDK provides `HumanChatUserCreateOrReplace` for creating human users with a nickname and a user role. Client access credentials associate WebSocket connections with a user ID.
 
 ### Room
 
@@ -168,7 +168,7 @@ dictionaries; at runtime they are ordinary dictionaries, not model instances,
 and do not perform runtime validation.
 
 Concrete user models automatically set the JSON discriminator field.
-For example, `HumanChatUserCreate(nickname="Alice", role_name="user.normal")`
+For example, `HumanChatUserCreateOrReplace(nickname="Alice", role_name="user.normal")`
 sets `kind` to `"Human"`; callers do not pass `kind` or `discriminator` to
 this constructor. The `discriminator="Human"` in the generated class
 declaration registers the subtype for deserialization, while `kind` is the
@@ -208,23 +208,23 @@ The returned URL contains an access token. Send it only to the intended client, 
 
 ### Create a role
 
-Create operations use dedicated request models such as `ChatRoleCreate` and
-`ChatRoomCreate`. PATCH operations use `ChatTopicUpdate` and `ChatMessageUpdate`,
+Create operations use dedicated request models such as `ChatRoleCreateOrReplace` and
+`ChatRoomCreateOrReplace`. PATCH operations use `ChatTopicUpdate` and `ChatMessageUpdate`,
 whose fields can be omitted to leave existing values unchanged. The operations
 return resource models such as `ChatRole`, `ChatRoom`, and `ChatTopic`, which
 include service-assigned identifiers and ETags.
 
-Use the `ChatRoleCreate` model and `ChatPermission` enum instead of a dictionary with
+Use the `ChatRoleCreateOrReplace` model and `ChatPermission` enum instead of a dictionary with
 permission string literals. This example assumes `os` is imported.
 
 <!-- SNIPPET:sample_roles_and_permissions.create_role -->
 
 ```python
-from azure.messaging.webpubsubchatservice.models import ChatPermission, ChatRoleCreate
+from azure.messaging.webpubsubchatservice.models import ChatPermission, ChatRoleCreateOrReplace
 
 role = client.create_or_replace_role(
     os.environ.get("WPS_CHAT_ROLE_NAME", "user.python_sample"),
-    ChatRoleCreate(permissions=[ChatPermission.USER_CREATE_ROOM]),
+    ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
 )
 print(role.name, role.permissions)
 ```
@@ -254,11 +254,11 @@ The user role `user.room_creator` must already exist.
 <!-- SNIPPET:sample_readme_snippets.create_user -->
 
 ```python
-from azure.messaging.webpubsubchatservice.models import HumanChatUserCreate
+from azure.messaging.webpubsubchatservice.models import HumanChatUserCreateOrReplace
 
 user = client.create_or_replace_user(
     "alice",
-    HumanChatUserCreate(nickname="Alice", role_name="user.room_creator"),
+    HumanChatUserCreateOrReplace(nickname="Alice", role_name="user.room_creator"),
 )
 print(user.id, user.nickname)
 ```
@@ -270,9 +270,9 @@ print(user.id, user.nickname)
 <!-- SNIPPET:sample_readme_snippets.create_room -->
 
 ```python
-from azure.messaging.webpubsubchatservice.models import ChatRoomCreate
+from azure.messaging.webpubsubchatservice.models import ChatRoomCreateOrReplace
 
-room = client.create_or_replace_room("general", ChatRoomCreate(title="General"))
+room = client.create_or_replace_room("general", ChatRoomCreateOrReplace(title="General"))
 print(room.id, room.default_conversation)
 ```
 
@@ -285,12 +285,12 @@ The room `general`, user `alice`, and room role `room.contributor` must already 
 <!-- SNIPPET:sample_readme_snippets.add_room_member -->
 
 ```python
-from azure.messaging.webpubsubchatservice.models import ChatRoomMemberCreate
+from azure.messaging.webpubsubchatservice.models import ChatRoomMemberCreateOrReplace
 
 member = client.create_or_replace_room_member(
     "general",
     "alice",
-    ChatRoomMemberCreate(role_name="room.contributor"),
+    ChatRoomMemberCreateOrReplace(role_name="room.contributor"),
 )
 print(member.user_id, member.role_name)
 ```

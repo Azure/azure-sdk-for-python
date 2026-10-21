@@ -33,7 +33,7 @@ namespace azure.messaging.webpubsubchatservice
         def create_or_replace_role(
                 self, 
                 role_name: str, 
-                resource: ChatRoleCreate,
+                resource: ChatRoleCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -45,7 +45,7 @@ namespace azure.messaging.webpubsubchatservice
         def create_or_replace_role(
                 self, 
                 role_name: str, 
-                resource: ChatRoleCreate,
+                resource: ChatRoleCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -69,7 +69,7 @@ namespace azure.messaging.webpubsubchatservice
         def create_or_replace_room(
                 self, 
                 room_id: str, 
-                resource: ChatRoomCreate,
+                resource: ChatRoomCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -81,7 +81,7 @@ namespace azure.messaging.webpubsubchatservice
         def create_or_replace_room(
                 self, 
                 room_id: str, 
-                resource: ChatRoomCreate,
+                resource: ChatRoomCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -106,7 +106,7 @@ namespace azure.messaging.webpubsubchatservice
                 self, 
                 room_id: str, 
                 user_id: str, 
-                resource: ChatRoomMemberCreate,
+                resource: ChatRoomMemberCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -119,7 +119,7 @@ namespace azure.messaging.webpubsubchatservice
                 self, 
                 room_id: str, 
                 user_id: str, 
-                resource: ChatRoomMemberCreate,
+                resource: ChatRoomMemberCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -183,7 +183,7 @@ namespace azure.messaging.webpubsubchatservice
         def create_or_replace_user(
                 self, 
                 user_id: str, 
-                resource: ChatUserCreate,
+                resource: ChatUserCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -195,7 +195,7 @@ namespace azure.messaging.webpubsubchatservice
         def create_or_replace_user(
                 self, 
                 user_id: str, 
-                resource: ChatUserCreate,
+                resource: ChatUserCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -512,7 +512,7 @@ namespace azure.messaging.webpubsubchatservice.aio
         async def create_or_replace_role(
                 self, 
                 role_name: str, 
-                resource: ChatRoleCreate,
+                resource: ChatRoleCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -524,7 +524,7 @@ namespace azure.messaging.webpubsubchatservice.aio
         async def create_or_replace_role(
                 self, 
                 role_name: str, 
-                resource: ChatRoleCreate,
+                resource: ChatRoleCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -548,7 +548,7 @@ namespace azure.messaging.webpubsubchatservice.aio
         async def create_or_replace_room(
                 self, 
                 room_id: str, 
-                resource: ChatRoomCreate,
+                resource: ChatRoomCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -560,7 +560,7 @@ namespace azure.messaging.webpubsubchatservice.aio
         async def create_or_replace_room(
                 self, 
                 room_id: str, 
-                resource: ChatRoomCreate,
+                resource: ChatRoomCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -585,7 +585,7 @@ namespace azure.messaging.webpubsubchatservice.aio
                 self, 
                 room_id: str, 
                 user_id: str, 
-                resource: ChatRoomMemberCreate,
+                resource: ChatRoomMemberCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -598,7 +598,7 @@ namespace azure.messaging.webpubsubchatservice.aio
                 self, 
                 room_id: str, 
                 user_id: str, 
-                resource: ChatRoomMemberCreate,
+                resource: ChatRoomMemberCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -662,7 +662,7 @@ namespace azure.messaging.webpubsubchatservice.aio
         async def create_or_replace_user(
                 self, 
                 user_id: str, 
-                resource: ChatUserCreate,
+                resource: ChatUserCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -674,7 +674,7 @@ namespace azure.messaging.webpubsubchatservice.aio
         async def create_or_replace_user(
                 self, 
                 user_id: str, 
-                resource: ChatUserCreate,
+                resource: ChatUserCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1041,7 +1041,7 @@ namespace azure.messaging.webpubsubchatservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubchatservice.models.ChatRoleCreate(_Model):
+    class azure.messaging.webpubsubchatservice.models.ChatRoleCreateOrReplace(_Model):
         permissions: list[Union[str, ChatPermission]]
 
         @overload
@@ -1072,7 +1072,7 @@ namespace azure.messaging.webpubsubchatservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubchatservice.models.ChatRoomCreate(_Model):
+    class azure.messaging.webpubsubchatservice.models.ChatRoomCreateOrReplace(_Model):
         title: str
 
         @overload
@@ -1102,7 +1102,7 @@ namespace azure.messaging.webpubsubchatservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubchatservice.models.ChatRoomMemberCreate(_Model):
+    class azure.messaging.webpubsubchatservice.models.ChatRoomMemberCreateOrReplace(_Model):
         role_name: str
 
         @overload
@@ -1191,7 +1191,7 @@ namespace azure.messaging.webpubsubchatservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubchatservice.models.ChatUserCreate(_Model):
+    class azure.messaging.webpubsubchatservice.models.ChatUserCreateOrReplace(_Model):
         kind: str
         nickname: str
 
@@ -1247,7 +1247,7 @@ namespace azure.messaging.webpubsubchatservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubchatservice.models.HumanChatUserCreate(ChatUserCreate, discriminator='Human'):
+    class azure.messaging.webpubsubchatservice.models.HumanChatUserCreateOrReplace(ChatUserCreateOrReplace, discriminator='Human'):
         kind: Literal[ChatUserKind.HUMAN]
         nickname: str
         role_name: str
@@ -1289,17 +1289,17 @@ namespace azure.messaging.webpubsubchatservice.types
         createdBy: str
 
 
-    class azure.messaging.webpubsubchatservice.types.ChatRoleCreate(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.ChatRoleCreateOrReplace(TypedDict, total=False):
         key "permissions": Required[list[Union[str, ChatPermission]]]
         permissions: list[Union[str, ChatPermission]]
 
 
-    class azure.messaging.webpubsubchatservice.types.ChatRoomCreate(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.ChatRoomCreateOrReplace(TypedDict, total=False):
         key "title": Required[str]
         title: str
 
 
-    class azure.messaging.webpubsubchatservice.types.ChatRoomMemberCreate(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.ChatRoomMemberCreateOrReplace(TypedDict, total=False):
         key "roleName": Required[str]
         roleName: str
 
@@ -1316,7 +1316,7 @@ namespace azure.messaging.webpubsubchatservice.types
         title: str
 
 
-    class azure.messaging.webpubsubchatservice.types.ChatUserCreate(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.ChatUserCreateOrReplace(TypedDict, total=False):
         key "kind": Required[Literal[ChatUserKind.HUMAN]]
         key "nickname": Required[str]
         key "roleName": Required[str]
@@ -1329,7 +1329,7 @@ namespace azure.messaging.webpubsubchatservice.types
         HUMAN = "Human"
 
 
-    class azure.messaging.webpubsubchatservice.types.HumanChatUserCreate(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.HumanChatUserCreateOrReplace(TypedDict, total=False):
         key "kind": Required[Literal[ChatUserKind.HUMAN]]
         key "nickname": Required[str]
         key "roleName": Required[str]

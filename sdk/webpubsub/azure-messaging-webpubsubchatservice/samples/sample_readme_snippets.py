@@ -16,11 +16,11 @@ def list_roles(client: WebPubSubChatServiceClient) -> None:
 
 def create_user(client: WebPubSubChatServiceClient) -> None:
     # [START create_user]
-    from azure.messaging.webpubsubchatservice.models import HumanChatUserCreate
+    from azure.messaging.webpubsubchatservice.models import HumanChatUserCreateOrReplace
 
     user = client.create_or_replace_user(
         "alice",
-        HumanChatUserCreate(nickname="Alice", role_name="user.room_creator"),
+        HumanChatUserCreateOrReplace(nickname="Alice", role_name="user.room_creator"),
     )
     print(user.id, user.nickname)
     # [END create_user]
@@ -28,21 +28,21 @@ def create_user(client: WebPubSubChatServiceClient) -> None:
 
 def create_room(client: WebPubSubChatServiceClient) -> None:
     # [START create_room]
-    from azure.messaging.webpubsubchatservice.models import ChatRoomCreate
+    from azure.messaging.webpubsubchatservice.models import ChatRoomCreateOrReplace
 
-    room = client.create_or_replace_room("general", ChatRoomCreate(title="General"))
+    room = client.create_or_replace_room("general", ChatRoomCreateOrReplace(title="General"))
     print(room.id, room.default_conversation)
     # [END create_room]
 
 
 def add_room_member(client: WebPubSubChatServiceClient) -> None:
     # [START add_room_member]
-    from azure.messaging.webpubsubchatservice.models import ChatRoomMemberCreate
+    from azure.messaging.webpubsubchatservice.models import ChatRoomMemberCreateOrReplace
 
     member = client.create_or_replace_room_member(
         "general",
         "alice",
-        ChatRoomMemberCreate(role_name="room.contributor"),
+        ChatRoomMemberCreateOrReplace(role_name="room.contributor"),
     )
     print(member.user_id, member.role_name)
     # [END add_room_member]
