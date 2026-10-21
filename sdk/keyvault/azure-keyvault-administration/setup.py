@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 PACKAGE_NAME = "azure-keyvault-administration"
 PACKAGE_PPRINT_NAME = "Key Vault Administration"
-PACKAGE_NAMESPACE = "azure.keyvault.administration"
+PACKAGE_NAMESPACE = "azure.keyvault.administration._generated"
 
 # a.b.c => a/b/c
 package_folder_path = PACKAGE_NAMESPACE.replace(".", "/")
@@ -38,7 +38,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -46,25 +46,26 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
     packages=find_packages(
         exclude=[
-            "samples",
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.keyvault",
+            "azure.keyvault.administration",
         ]
     ),
     include_package_data=True,
     package_data={
-        "azure.keyvault.administration": ["py.typed"],
+        "azure.keyvault.administration._generated": ["py.typed"],
     },
     install_requires=[
         "isodate>=0.6.1",
-        "azure-core>=1.38.0",
+        "azure-core>=1.37.0",
         "typing-extensions>=4.6.0",
     ],
     python_requires=">=3.10",
