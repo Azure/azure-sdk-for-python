@@ -15,8 +15,8 @@ urls = { "Homepage" = "https://github.com/Azure/azure-sdk-for-python" }
 dependencies = [
   "setuptools",
   "pyparsing",
-  "certifi>=2026.10.19",
-  "cibuildwheel==4.3.2",
+  "certifi",
+  "cibuildwheel",
   "pkginfo",
   "build",
   "packaging",
