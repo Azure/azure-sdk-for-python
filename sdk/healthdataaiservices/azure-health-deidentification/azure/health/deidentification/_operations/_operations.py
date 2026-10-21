@@ -30,12 +30,13 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models, types as _types
+from .. import models as _models
 from .._configuration import DeidentificationClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -303,10 +304,7 @@ class _DeidentificationClientOperationsMixin(
         return deserialized  # type: ignore
 
     def _deidentify_documents_initial(
-        self,
-        job_name: str,
-        resource: Union[_models.DeidentificationJob, _types.DeidentificationJob, IO[bytes]],
-        **kwargs: Any
+        self, job_name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -400,12 +398,7 @@ class _DeidentificationClientOperationsMixin(
 
     @overload
     def begin_deidentify_documents(
-        self,
-        job_name: str,
-        resource: _types.DeidentificationJob,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, job_name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
 
@@ -414,7 +407,7 @@ class _DeidentificationClientOperationsMixin(
         :param job_name: The name of a job. Required.
         :type job_name: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.health.deidentification.types.DeidentificationJob
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -449,10 +442,7 @@ class _DeidentificationClientOperationsMixin(
 
     @distributed_trace
     def begin_deidentify_documents(
-        self,
-        job_name: str,
-        resource: Union[_models.DeidentificationJob, _types.DeidentificationJob, IO[bytes]],
-        **kwargs: Any
+        self, job_name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
 
@@ -460,10 +450,9 @@ class _DeidentificationClientOperationsMixin(
 
         :param job_name: The name of a job. Required.
         :type job_name: str
-        :param resource: The resource instance. Is either a DeidentificationJob type or a IO[bytes]
-         type. Required.
-        :type resource: ~azure.health.deidentification.models.DeidentificationJob or
-         ~azure.health.deidentification.types.DeidentificationJob or IO[bytes]
+        :param resource: The resource instance. Is one of the following types: DeidentificationJob,
+         JSON, IO[bytes] Required.
+        :type resource: ~azure.health.deidentification.models.DeidentificationJob or JSON or IO[bytes]
         :return: An instance of LROPoller that returns DeidentificationJob. The DeidentificationJob is
          compatible with MutableMapping
         :rtype:
@@ -877,14 +866,14 @@ class _DeidentificationClientOperationsMixin(
 
     @overload
     def deidentify_text(
-        self, body: _types.DeidentificationContent, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeidentificationResult:
         """De-identify text.
 
         A remote procedure call (RPC) operation.
 
         :param body: Request body for de-identification operation. Required.
-        :type body: ~azure.health.deidentification.types.DeidentificationContent
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -913,16 +902,15 @@ class _DeidentificationClientOperationsMixin(
 
     @distributed_trace
     def deidentify_text(
-        self, body: Union[_models.DeidentificationContent, _types.DeidentificationContent, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.DeidentificationContent, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DeidentificationResult:
         """De-identify text.
 
         A remote procedure call (RPC) operation.
 
-        :param body: Request body for de-identification operation. Is either a DeidentificationContent
-         type or a IO[bytes] type. Required.
-        :type body: ~azure.health.deidentification.models.DeidentificationContent or
-         ~azure.health.deidentification.types.DeidentificationContent or IO[bytes]
+        :param body: Request body for de-identification operation. Is one of the following types:
+         DeidentificationContent, JSON, IO[bytes] Required.
+        :type body: ~azure.health.deidentification.models.DeidentificationContent or JSON or IO[bytes]
         :return: DeidentificationResult. The DeidentificationResult is compatible with MutableMapping
         :rtype: ~azure.health.deidentification.models.DeidentificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
