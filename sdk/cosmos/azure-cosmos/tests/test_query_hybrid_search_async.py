@@ -230,6 +230,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert response_hook.count == 6 # one global stat query per partition, two queries per partition for each component query
 
     async def test_hybrid_search_partitioned_query_response_hook_async(self):
+        partition_count = len([item async for item in self.test_container.read_feed_ranges()])
         item = await self.test_container.read_item('50', '1')
         item_vector = item['vector']
         response_hook = test_config.ResponseHookCaller()
@@ -239,7 +240,54 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         results = self.test_container.query_items(query, partition_key='1', response_hook=response_hook)
         result_list = [item async for item in results]
         assert len(result_list) == 10
-        assert response_hook.count == 1
+        # One statistics query per physical partition, then two scoped component queries.
+        assert response_hook.count == partition_count + 2
+
+    async def test_partition_scoped_ranking_matches_query_partition_filter_async(self):
+        item = await self.test_container.read_item('50', '1')
+        item_vector = item['vector']
+        for partition_key in ("1", "2"):
+            rankings = []
+            for term in ("John", "United States"):
+                full_text_score = f"FullTextScore(c.text, '{term}')"
+                for expression in (
+                    full_text_score,
+                    f"RRF({full_text_score}, VectorDistance(c.vector, {item_vector}), [2, 1])",
+                ):
+                    for scope in ("Global", "Local"):
+                        with self.subTest(partition_key=partition_key, expression=expression, scope=scope):
+                            query = f"SELECT TOP 10 c.id, c.index, c.pk FROM c ORDER BY RANK {expression}"
+                            filtered_query = query.replace("FROM c", "FROM c WHERE c.pk = @pk")
+                            parameters = [{"name": "@pk", "value": partition_key}]
+                            expected = [item async for item in self.test_container.query_items(
+                                filtered_query,
+                                parameters=parameters,
+                                full_text_score_scope=scope,
+                            )]
+                            actual = [item async for item in self.test_container.query_items(
+                                query,
+                                partition_key=partition_key,
+                                full_text_score_scope=scope,
+                            )]
+                            assert len(actual) == len(expected) == 10
+                            assert all(item["pk"] == partition_key for item in actual)
+                            assert [item["id"] for item in actual] == [item["id"] for item in expected]
+
+                            pages = self.test_container.query_items(
+                                filtered_query,
+                                parameters=parameters,
+                                partition_key=partition_key,
+                                full_text_score_scope=scope,
+                                max_item_count=3,
+                            ).by_page()
+                            paged_results = [[item async for item in page] async for page in pages]
+                            assert [len(page) for page in paged_results] == [3, 3, 3, 1]
+                            assert [item["id"] for page in paged_results for item in page] == [
+                                item["id"] for item in expected
+                            ]
+                            if expression == full_text_score and scope == "Global":
+                                rankings.append([item["id"] for item in actual])
+            assert rankings[0] != rankings[1]
 
     async def test_hybrid_search_weighted_reciprocal_rank_fusion_async(self):
         # Test case 1
