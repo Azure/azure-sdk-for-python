@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/CloudExadataInfrastructures_ConfigureExascale_MinimumSet_Gen.json
+# x-ms-original-file: 2025-11-01-preview/CloudExadataInfrastructures_ConfigureExascale_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

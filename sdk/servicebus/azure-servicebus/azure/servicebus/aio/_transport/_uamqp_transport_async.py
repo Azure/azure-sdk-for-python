@@ -22,6 +22,7 @@ try:
     from .._async_utils import get_running_loop
     from ..._common.tracing import get_receive_links, receive_trace_context_manager
     from ..._common.constants import ServiceBusReceiveMode
+    from ..._common.utils import get_attempt_timeout
 
     if TYPE_CHECKING:
         from uamqp import AMQPClientAsync, Message
@@ -240,7 +241,7 @@ try:
             # pylint: disable=protected-access
             try:
                 receiver._receive_context.set()
-                await receiver._open()
+                await receiver._open(get_attempt_timeout(None, receiver._config.try_timeout))
                 if not receiver._message_iter:
                     receiver._message_iter = receiver._handler.receive_messages_iter_async()
                 uamqp_message = await cast(AsyncIterator["Message"], receiver._message_iter).__anext__()
@@ -280,7 +281,7 @@ try:
         async def drain_and_release_messages_async(handler: "ReceiveClientAsync") -> None:
             """
             No-op for uamqp: drain-on-close is only implemented for the pyamqp
-            transport (the default). uamqp is deprecated.
+            transport (the default).
             :param ReceiveClientAsync handler: The handler.
             :rtype: None
             """

@@ -304,7 +304,7 @@ app.run()
 
 The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`. The full WebSocket API — `iter_text`, `iter_bytes`, `iter_json`, `send_text`, `send_bytes`, `send_json`, `close`, `headers`, `query_params`, `client`, `state` — is available, so application protocols on top of `invocations_ws` are entirely under your control.
 
-[starlette-ws]: https://www.starlette.io/websockets/
+[starlette-ws]: https://starlette.dev/websockets/
 
 ## Typed Voice Live Bridge submodule (preview)
 
@@ -488,7 +488,7 @@ sample.
 
 | Environment variable | Default | Description |
 |---|---|---|
-| `SSE_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected interval, in seconds, for SSE comments on idle `POST /invocations` streams. `0` disables keep-alive. Surfaced on `app.config.sse_keepalive_interval`. |
+| `SSE_KEEPALIVE_INTERVAL` | `15` | Interval, in seconds, for SSE comments on idle `POST /invocations` streams. `0` disables keep-alive. Surfaced on `app.config.sse_keepalive_interval`. |
 | `WS_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected WebSocket Ping interval, in seconds. `0` disables keep-alive. Surfaced on `app.config.ws_ping_interval` and wired into Hypercorn's `websocket_ping_interval` by `AgentServerHost`. |
 
 ### Reference: close codes

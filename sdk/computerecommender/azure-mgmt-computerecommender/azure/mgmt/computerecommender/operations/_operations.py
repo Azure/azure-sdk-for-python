@@ -48,7 +48,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-05-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-05-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -69,7 +69,7 @@ def build_sku_mix_placement_scores_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-05-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-05-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -97,7 +97,7 @@ def build_sku_mix_placement_scores_post_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-05-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-05-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -124,7 +124,7 @@ def build_spot_placement_scores_get_request(location: str, subscription_id: str,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-05-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-05-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -150,7 +150,7 @@ def build_spot_placement_scores_post_request(location: str, subscription_id: str
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-05-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-05-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -306,7 +306,7 @@ class SkuMixPlacementScoresOperations:  # pylint: disable=docstring-missing-para
     @api_version_validation(
         method_added_on="2026-05-05-preview",
         params_added_on={"2026-05-05-preview": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-05-05-preview"],
+        api_versions_list=["2026-05-05-preview", "2026-09-05-preview"],
     )
     def get(self, location: str, **kwargs: Any) -> _models.SkuMixPlacementBase:
         """Gets SkuMixPlacement scoring metadata.
@@ -451,7 +451,7 @@ class SkuMixPlacementScoresOperations:  # pylint: disable=docstring-missing-para
         params_added_on={
             "2026-05-05-preview": ["api_version", "subscription_id", "location", "content_type", "accept"]
         },
-        api_versions_list=["2026-05-05-preview"],
+        api_versions_list=["2026-05-05-preview", "2026-09-05-preview"],
     )
     def post(
         self,

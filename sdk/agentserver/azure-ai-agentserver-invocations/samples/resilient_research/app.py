@@ -77,6 +77,7 @@ from azure.ai.agentserver.core.streaming import (
     EventStreamNotFoundError,
     streams,
 )
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
@@ -98,6 +99,15 @@ logger = logging.getLogger(__name__)
 # closed and its events age out), and serialization defaults to JSON — so the
 # only thing this sample supplies is the ``cursor_fn``.
 streams.use_file_backed_replay(cursor_fn=lambda ev: ev["sequence_number"])
+
+# Resilient tasks (durable execution + crash recovery) are strictly opt-in as of
+# azure-ai-agentserver-core 2.1.0b1: ``AgentServerHost`` constructs the
+# ``TaskManager`` ONLY when this switch is on, and it must be set before host
+# startup (i.e. at module-import time). Without it, ``get_task_manager()`` /
+# ``deep_research.start()`` raise ``TaskManagerNotInitialized`` and the agent
+# runs non-durably with no crash recovery — defeating the purpose of a resilient
+# long-running agent.
+set_resilient_tasks_enabled(True)
 
 app = InvocationAgentServerHost()
 

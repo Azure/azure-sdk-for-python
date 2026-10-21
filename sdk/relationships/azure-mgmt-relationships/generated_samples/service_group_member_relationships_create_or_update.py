@@ -28,6 +28,7 @@ from azure.mgmt.relationships import RelationshipsMgmtClient
 def main():
     client = RelationshipsMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.service_group_member_relationships.begin_create_or_update(
@@ -35,14 +36,14 @@ def main():
         name="sg1",
         resource={
             "properties": {
-                "targetId": "/providers/Microsoft.Management/serviceGroups/sg1",
-                "targetTenant": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                "sourceId": "/providers/Microsoft.Management/serviceGroups/sg1",
+                "sourceTenant": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2023-09-01-preview/ServiceGroupMemberRelationships_CreateOrUpdate.json
+# x-ms-original-file: 2026-08-01/ServiceGroupMemberRelationships_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

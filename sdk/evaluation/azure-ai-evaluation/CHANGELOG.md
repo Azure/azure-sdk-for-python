@@ -1,14 +1,52 @@
 # Release History
 
-## 1.18.5 (Unreleased)
+## 1.18.10 (Unreleased)
+
+### Bugs Fixed
+
+- Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
+
+## 1.18.9 (2026-10-12)
+
+### Bugs Fixed
+
+- Hardened multimodal evaluation image handling. The output file name is now derived from a validated allow-list of known image types rather than the raw `data:image/<subtype>;` value, and decoded image bytes are confined to the intended `images/` folder.
+- Added Microsoft-scoped evaluation status and boolean pass/fail attributes to Application Insights result events.
+
+## 1.18.8 (2026-10-08)
+
+### Bugs Fixed
+
+- Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately and log the operation ID, poll count, and elapsed time without response content or credentials; pending responses and other retry behavior are unchanged.
+- Fixed multi-turn evaluations failing during Azure OpenAI result conversion when per-turn token-count lists were routed into scalar token-usage fields. Per-turn breakdowns are now excluded from scalar result-field routing, preserving aggregate token counts and scores. ([#49242](https://github.com/Azure/azure-sdk-for-python/pull/49242))
+- Fixed conversation-history formatting falling back to raw input when included system messages use typed text content blocks instead of plain strings, including the tool-call-aware formatting path.
+
+## 1.18.7 (2026-09-25)
+
+### Breaking Changes
+
+- Removed the `aoai_output_items_page_size` option from `evaluate` and its input validation.
+  Callers using this option must remove it; it no longer configures native Azure OpenAI grader output retrieval.
+  Output-item requests again use a fixed page size of 100 and the existing OpenAI client's configured retry
+  policy, without adaptive page-size reduction or a separate SDK-level retry budget. All cursor pages are
+  still retrieved, and result ordering and missing-row alignment are unchanged.
+
+### Bugs Fixed
+
+- Fixed native Azure OpenAI grader evaluations overriding explicit item-schema types and constraints with inferred schemas and converting corresponding typed input values to strings during request construction, including fields governed by a schema-valued `additionalProperties`.
+
+## 1.18.6 (2026-09-23)
+
+### Bugs Fixed
+
+- Fixed automatic mappings for Azure OpenAI graders omitting nested input fields with duplicate leaf names from the evaluation schema, and corrected type inference for wrapped input fields.
+- Prevented AOAI data-source generation from mutating nested input data shared with callable evaluators.
+
+## 1.18.5 (2026-09-02)
 
 ### Bugs Fixed
 
 - Made Application Insights export failures best-effort for evaluations using project managed identity authentication.
-
-## 1.18.4 (2026-08-27)
-
-### Bugs Fixed
 
 - Fixed keyword argument routing so bare `messages=[...]` input, with optional top-level `context`, `ground_truth`,
   and `tool_definitions`, is normalized into the already-supported conversation path for `RelevanceEvaluator`,

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -3511,6 +3512,42 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         assert self.short_byte_data == content
 
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_sas_access_file_name_with_backslash(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        try:
+            share_client.create_directory("dir")
+        except ResourceExistsError:
+            pass
+        file_client = self._create_file("dir\\file")
+
+        token = self.generate_sas(
+            generate_file_sas,
+            file_client.account_name,
+            file_client.share_name,
+            file_client.file_path,
+            file_client.credential.account_key,
+            permission=FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path="dir\\file",
+            credential=token,
+        )
+        content = file_client.download_file().readall()
+
+        # Assert
+        assert self.short_byte_data == content
+
     @FileSharePreparer()
     @recorded_by_proxy
     def test_sas_signed_identifier(self, **kwargs):
@@ -4400,6 +4437,69 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client.create_file(len(data), data=data)
         downloaded_data = file_client.download_file().readall()
         assert downloaded_data == data
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_get_properties_by_file_id(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        try:
+            share_client = self.fsc.get_share_client(self.share_name)
+            directory_client = share_client.create_directory(self.get_resource_name(TEST_DIRECTORY_PREFIX))
+            file_client = directory_client.get_file_client(self._get_file_reference())
+            file_client.create_file(1024)
+            file_props = file_client.get_file_properties()
+            directory_props = directory_client.get_directory_properties()
+
+            props = share_client.get_file_client_by_file_id(file_props.file_id).get_file_properties()
+            assert props.file_id == file_props.file_id
+            assert props.parent_id == file_props.parent_id
+            assert props.name == file_client.file_name
+            assert props.size == 1024
+            assert props.path is None
+
+            props = share_client.get_directory_client_by_file_id(directory_props.file_id).get_directory_properties()
+            assert props.file_id == directory_props.file_id
+            assert props.parent_id == directory_props.parent_id
+            assert props.name == directory_client.directory_path
+        finally:
+            self.fsc.delete_share(self.share_name)
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_get_file_links(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        try:
+            share_client = self.fsc.get_share_client(self.share_name)
+            directory_client = share_client.create_directory(self.get_resource_name(TEST_DIRECTORY_PREFIX))
+            file_client = directory_client.get_file_client(self._get_file_reference())
+            file_client.create_file(1024)
+            file_props = file_client.get_file_properties()
+
+            links = share_client.get_file_client_by_file_id(file_props.file_id).get_file_links()
+            assert len(links) == 1
+            assert links[0].name == file_client.file_name
+            assert links[0].parent_id == file_props.parent_id
+        finally:
+            self.fsc.delete_share(self.share_name)
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_get_file_links_by_file_id_error(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_client = self.fsc.get_share_client(self.share_name).get_file_client_by_file_id("11111111111111111111")
+
+        with pytest.raises(HttpResponseError) as e:
+            file_client.get_file_links()
+        assert e.value.error_code is not None
 
 
 # ------------------------------------------------------------------------------

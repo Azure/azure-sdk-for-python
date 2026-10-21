@@ -48,7 +48,7 @@ class TestSqlManagementManagedRestorableDroppedDatabaseBackupShortTermRetentionP
                 parameters={
                     "id": "str",
                     "name": "str",
-                    "properties": {"retentionDays": 0},
+                    "properties": {"immutabilityStatus": "str", "lockImmutability": bool, "retentionDays": 0},
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -78,7 +78,7 @@ class TestSqlManagementManagedRestorableDroppedDatabaseBackupShortTermRetentionP
             parameters={
                 "id": "str",
                 "name": "str",
-                "properties": {"retentionDays": 0},
+                "properties": {"immutabilityStatus": "str", "lockImmutability": bool, "retentionDays": 0},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",

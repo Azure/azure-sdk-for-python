@@ -128,22 +128,23 @@ def _ensure_log_filter() -> None:
         _log_filter_installed = True
 
 
-def _sanitize_id(value: str, fallback: str) -> str:
+def _sanitize_id(value: str, fallback: str | None = None) -> str:
     """Validate a user-provided ID string.
 
-    Returns *value* unchanged when it passes validation, otherwise returns
-    *fallback*.  This prevents excessively long or malformed IDs from
+    Returns *value* unchanged when it passes validation, otherwise uses
+    *fallback* or generates a UUID when it is omitted. This prevents malformed IDs from
     propagating into headers, span attributes, and log messages.
 
     :param value: The raw ID from a header or query parameter.
     :type value: str
-    :param fallback: A safe fallback value (typically a generated UUID).
-    :type fallback: str
+    :param fallback: A safe fallback value, or ``None`` to generate a UUID only
+        when *value* fails validation.
+    :type fallback: str | None
     :return: The validated ID or the fallback.
     :rtype: str
     """
     if not value or len(value) > _MAX_ID_LENGTH or not _VALID_ID_RE.match(value):
-        return fallback
+        return fallback if fallback is not None else str(uuid.uuid4())
     return value
 
 
@@ -517,14 +518,12 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     async def _create_invocation_endpoint(self, request: Request) -> Response:
         invocation_id = _sanitize_id(
             request.headers.get(InvocationConstants.INVOCATION_ID_HEADER) or "",
-            str(uuid.uuid4()),
         )
         request.state.invocation_id = invocation_id
 
         # Session ID: query param overrides env var / generated UUID
         session_id = _sanitize_id(
             request.query_params.get("agent_session_id") or self.config.session_id or "",
-            str(uuid.uuid4()),
         )
         request.state.session_id = session_id
 

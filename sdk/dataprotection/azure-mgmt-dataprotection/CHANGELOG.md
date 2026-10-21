@@ -1,5 +1,30 @@
 # Release History
 
+## 2.3.0b1 (2026-09-29)
+
+### Features Added
+
+  - Model `AzureBackupDiscreteRecoveryPoint` added property `immutability_properties`
+  - Model `ImmutabilitySettings` added property `configuration`
+  - Added enum `BackupSolutionType`
+  - Added model `ImmutabilityConfiguration`
+  - Added enum `ImmutabilityType`
+  - Added model `PostgreSqlFlexibleServerBackupDatasourceParameters`
+  - Added model `RecoveryPointImmutabilityProperties`
+
+## 2.2.0 (2026-09-04)
+
+### Features Added
+
+  - Model `BackupVault` added property `cost_management_settings`
+  - Model `DeletedBackupVault` added property `cost_management_settings`
+  - Model `PatchBackupVaultInput` added property `cost_management_settings`
+  - Added model `CostManagementSettings`
+  - Added model `GenericBackupDatasourceParameters`
+  - Added model `GenericRestoreDatasourceCriteria`
+  - Added enum `GranularityLevel`
+  - Added model `ResourceListSelectionCriteria`
+
 ## 2.1.0 (2026-07-29)
 
 ### Features Added
