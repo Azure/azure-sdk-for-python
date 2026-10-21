@@ -1,7 +1,7 @@
 ---
-changeKind: breaking
+changeKind: feature
 packages:
   - azure-ai-agentserver-invocations
 ---
 
-Renamed the experimental Voice caller-interruption event to `user.barge_in`, with public `UserBargeIn`, `UserBargeInCallback`, and `VoiceAgentServerHost.on_user_barge_in` APIs. The former `barge_in`, `BargeIn`, `BargeInCallback`, and `on_barge_in` names are no longer supported. Voice Live senders must be updated together. Generic raw WebSocket handlers are unchanged.
+Aligned the experimental Voice caller-interruption contract with `user.barge_in`, `UserBargeIn`, `UserBargeInCallback`, and `VoiceAgentServerHost.on_user_barge_in`. Playback snapshots and application-owned cancellation/history are preserved. Voice Live senders must use the same event contract. Generic raw WebSocket handlers are unchanged.

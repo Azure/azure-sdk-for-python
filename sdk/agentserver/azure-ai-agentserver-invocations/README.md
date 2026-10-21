@@ -324,7 +324,7 @@ CE route and CE-aware Voice Live to be deployed.
 
 Each callback receives an immutable event and a send-only `Session`:
 
-Caller interruptions use `user.barge_in`, the `UserBargeIn` event model, `UserBargeInCallback`, and `@app.on_user_barge_in`. The former `barge_in`, `BargeIn`, `BargeInCallback`, and `on_barge_in` names have been removed without compatibility aliases. Update the Voice Live sender together with the SDK. Generic raw WebSocket handlers and application-owned cancellation/history are unchanged.
+Caller interruptions use `user.barge_in`, the `UserBargeIn` event model, `UserBargeInCallback`, and `@app.on_user_barge_in`. Voice Live senders must use the same event contract. Generic raw WebSocket handlers and application-owned cancellation/history are unchanged.
 
 ```python
 import asyncio

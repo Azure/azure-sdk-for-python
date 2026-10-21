@@ -6,11 +6,7 @@
 
 - Added immutable `InputDataPart` and `ResponseOutputDataDone` for structured application data in Bridge protocol `1.0`. Existing callbacks and explicit `ResponseNone` silent completion remain application-owned.
 - Added a standalone `/voice_conversation_engine` WebSocket route to the experimental `VoiceAgentServerHost`, reusing the existing typed Bridge event relay alongside `/invocations_ws`. Existing `invocations_ws` behavior and generic `InvocationAgentServerHost` raw WebSocket handlers are unchanged.
-
-### Breaking Changes
-
-- Renamed the standalone Hosted Agent protocol and route from `conversation_engine` / `/conversation_engine` to `voice_conversation_engine` / `/voice_conversation_engine`, with no old-name alias. The independent `/invocations_ws` route and Bridge message version `1.0` are unchanged.
-- Renamed the experimental Voice caller-interruption event to `user.barge_in` and its public APIs to `UserBargeIn`, `UserBargeInCallback`, and `VoiceAgentServerHost.on_user_barge_in`. The former wire event and API names are no longer supported; update the Voice Live sender together with the SDK.
+- Aligned the experimental Voice caller-interruption contract with `user.barge_in`, `UserBargeIn`, `UserBargeInCallback`, and `VoiceAgentServerHost.on_user_barge_in`, preserving playback snapshots and application-owned cancellation/history. Voice Live senders must use the same event contract.
 
 ### Bugs Fixed
 
