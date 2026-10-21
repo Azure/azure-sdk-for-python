@@ -1,6 +1,11 @@
 {
-  "apiVersion": "2025-07-01",
+  "apiVersion": "2026-03-01-preview",
   "apiVersions": {
-    "KeyVault": "2025-07-01"
-  }
+    "KeyVault": "2026-03-01-preview"
+  },
+  "commit": "134ccf43911942aa62ffc34557d392348fa986b0",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/keyvault/data-plane/SecurityDomain",
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
 }

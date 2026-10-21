@@ -28,13 +28,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import SecurityDomainClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -46,7 +45,7 @@ def build_security_domain_get_download_status_request(**kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -66,7 +65,7 @@ def build_security_domain_download_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -87,7 +86,7 @@ def build_security_domain_get_upload_status_request(**kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -107,7 +106,7 @@ def build_security_domain_upload_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -128,7 +127,7 @@ def build_security_domain_get_transfer_key_request(**kwargs: Any) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -213,7 +212,7 @@ class _SecurityDomainClientOperationsMixin(
         return deserialized  # type: ignore
 
     def _download_initial(
-        self, certificate_info_object: Union[_models.CertificateInfo, JSON, IO[bytes]], **kwargs: Any
+        self, certificate_info_object: Union[_models.CertificateInfo, _types.CertificateInfo, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -289,7 +288,7 @@ class _SecurityDomainClientOperationsMixin(
     ) -> LROPoller[None]: ...
     @overload
     def _begin_download(
-        self, certificate_info_object: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, certificate_info_object: _types.CertificateInfo, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]: ...
     @overload
     def _begin_download(
@@ -298,16 +297,16 @@ class _SecurityDomainClientOperationsMixin(
 
     @distributed_trace
     def _begin_download(
-        self, certificate_info_object: Union[_models.CertificateInfo, JSON, IO[bytes]], **kwargs: Any
+        self, certificate_info_object: Union[_models.CertificateInfo, _types.CertificateInfo, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Retrieves the Security Domain from the managed HSM. Calling this endpoint can be used to
         activate a provisioned managed HSM resource.
 
         :param certificate_info_object: The Security Domain download operation requires customer to
-         provide N certificates (minimum 3 and maximum 10) containing a public key in JWK format. Is one
-         of the following types: CertificateInfo, JSON, IO[bytes] Required.
-        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfo or JSON or
-         IO[bytes]
+         provide N certificates (minimum 3 and maximum 10) containing a public key in JWK format. Is
+         either a CertificateInfo type or a IO[bytes] type. Required.
+        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfo or
+         ~azure.keyvault.securitydomain.types.CertificateInfo or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -425,7 +424,7 @@ class _SecurityDomainClientOperationsMixin(
         return deserialized  # type: ignore
 
     def _upload_initial(
-        self, security_domain: Union[_models.SecurityDomain, JSON, IO[bytes]], **kwargs: Any
+        self, security_domain: Union[_models.SecurityDomain, _types.SecurityDomain, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -502,7 +501,7 @@ class _SecurityDomainClientOperationsMixin(
     ) -> LROPoller[_models.SecurityDomainOperationStatus]: ...
     @overload
     def _begin_upload(
-        self, security_domain: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, security_domain: _types.SecurityDomain, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.SecurityDomainOperationStatus]: ...
     @overload
     def _begin_upload(
@@ -511,14 +510,14 @@ class _SecurityDomainClientOperationsMixin(
 
     @distributed_trace
     def _begin_upload(
-        self, security_domain: Union[_models.SecurityDomain, JSON, IO[bytes]], **kwargs: Any
+        self, security_domain: Union[_models.SecurityDomain, _types.SecurityDomain, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
 
-        :param security_domain: The Security Domain to be restored. Is one of the following types:
-         SecurityDomain, JSON, IO[bytes] Required.
-        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomain or JSON or
-         IO[bytes]
+        :param security_domain: The Security Domain to be restored. Is either a SecurityDomain type or
+         a IO[bytes] type. Required.
+        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomain or
+         ~azure.keyvault.securitydomain.types.SecurityDomain or IO[bytes]
         :return: An instance of LROPoller that returns SecurityDomainOperationStatus. The
          SecurityDomainOperationStatus is compatible with MutableMapping
         :rtype:
