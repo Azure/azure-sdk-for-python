@@ -19,6 +19,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+import pytest
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.core import get_request_context
@@ -43,6 +44,8 @@ def _build_capturing_client(
         captured["call_id"] = rc.call_id
         captured["user_id"] = rc.user_id
         captured["session_id"] = rc.session_id
+        captured["model_headers"] = rc.model_attribution_headers()
+        captured["platform_headers"] = rc.platform_headers()
 
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
         yield stream.emit_created()
@@ -58,6 +61,31 @@ def _build_capturing_client(
 
 class TestStreamingRequestContext:
     """The platform context must be visible inside streaming handler bodies."""
+
+    @pytest.mark.parametrize("stream", [False, True])
+    @pytest.mark.parametrize("stored", [False, True])
+    def test_original_subject_survives_handler_rebinding(
+        self, stream: bool, stored: bool, tmp_path: Path
+    ) -> None:
+        captured: dict[str, Any] = {}
+        client = _build_capturing_client(
+            captured, resilient=stored, storage_dir=tmp_path / "store" if stored else None
+        )
+        subject = {
+            "x-ms-original-subject-oid": "original-oid",
+            "x-ms-original-subject-tid": "original-tid",
+            "x-ms-original-subject-idtype": "user",
+        }
+        response = client.post(
+            "/responses",
+            json={"model": "m", "input": "hi", "stream": stream, "store": stored},
+            headers={**subject, "x-agent-foundry-call-id": "call-current", "x-agent-user-id": "state-key"},
+        )
+        assert response.status_code == 200
+        assert captured["model_headers"] == {**subject, "x-agent-foundry-call-id": "call-current"}
+        assert captured["platform_headers"] == {"x-agent-foundry-call-id": "call-current"}
+        assert captured["user_id"] == "state-key"
+        assert get_request_context().original_subject is None
 
     def test_streaming_handler_sees_call_id_and_user_id(self) -> None:
         captured: dict[str, Any] = {}

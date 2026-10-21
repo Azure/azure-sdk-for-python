@@ -14,9 +14,30 @@ from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from azure.ai.agentserver.core import get_request_context
 from azure.ai.agentserver.invocations._constants import InvocationsWSConstants
 
 from conftest import _make_echo_ws_app, _make_failing_ws_app
+
+
+def test_ws_original_subject_is_invocation_local():
+    app = InvocationAgentServerHost()
+
+    @app.ws_handler
+    async def handler(websocket: WebSocket) -> None:
+        await websocket.send_json(get_request_context().model_attribution_headers())
+
+    subject = {
+        "x-ms-original-subject-oid": "original-oid",
+        "x-ms-original-subject-tid": "original-tid",
+        "x-ms-original-subject-idtype": "user",
+    }
+    client = TestClient(app)
+    with client.websocket_connect("/invocations_ws", headers=dict(subject)) as websocket:
+        assert websocket.receive_json() == subject
+    with client.websocket_connect("/invocations_ws") as websocket:
+        assert websocket.receive_json() == {}
+    assert get_request_context().original_subject is None
 
 
 # ---------------------------------------------------------------------------

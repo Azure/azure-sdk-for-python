@@ -23,6 +23,7 @@ from starlette.routing import Route
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
     FoundryAgentRequestContext,
+    FoundryOriginalSubject,
     create_error_response,
     reset_request_context,
     set_request_context,
@@ -167,6 +168,7 @@ def _platform_context_from_request(
         call_id=request.state.call_id or None,
         user_id=request.state.user_id or None,
         session_id=session_id or None,
+        original_subject=FoundryOriginalSubject.from_headers(request.headers),
     )
 
 

@@ -126,6 +126,7 @@ async def _iter_handler_with_request_context(
             user_id=platform_context.user_id_key,
             call_id=platform_context.call_id,
             session_id=agent_session_id,
+            original_subject=platform_context.original_subject,
         )
 
     handler_iterator = create_fn(parsed, context, cancellation_signal)

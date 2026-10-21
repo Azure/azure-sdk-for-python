@@ -27,6 +27,7 @@ from starlette.types import Message, Send
 
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
     FoundryAgentRequestContext,
+    FoundryOriginalSubject,
     flush_spans,
     flush_spans_async,
     reset_request_context,
@@ -652,6 +653,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             platform_context=PlatformContext(
                 user_id_key=ctx.user_id,
                 call_id=ctx.call_id,
+                original_subject=FoundryOriginalSubject.from_headers(request.headers),
             ),
             prefetched_history_ids=ctx.prefetched_history_ids,
             steerable=self._runtime_options.steerable_conversations,
@@ -998,6 +1000,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             call_id=ctx.call_id or None,
             user_id=ctx.user_id or None,
             session_id=agent_session_id,
+            original_subject=(
+                ctx.context.platform_context.original_subject if ctx.context is not None else None
+            ),
         )
         platform_ctx_token = set_request_context(platform_context)
 

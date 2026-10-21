@@ -91,6 +91,32 @@ async def call_toolbox(query: str) -> str:
     return resp.text  # the toolbox resolved the caller from the call ID and acted as that user
 ```
 
+### Draft original-subject model attribution
+
+`get_request_context().original_subject` carries a separate immutable snapshot
+of the proposed original-subject `oid`, `tid`, and `idtype` headers. Responses,
+Invocations (HTTP, streaming, and WebSocket), and native Activity consume the
+same metadata. The existing user-state identifier and `platform_headers()`
+behavior are unchanged.
+
+This is a draft contract for owner review, not an enabled budget feature.
+The proposed wire names are `x-ms-original-subject-oid`,
+`x-ms-original-subject-tid`, and `x-ms-original-subject-idtype`.
+For a supported model endpoint whose owner has enabled the contract, pass
+`get_request_context().model_attribution_headers()` as **per-call** headers
+(for example, `extra_headers` on a model SDK call). Keep the model's existing
+credential. Never put a user's tuple in shared client defaults or send it to
+external/BYO endpoints, arbitrary URLs, tools, or storage callbacks.
+
+No model client is patched automatically. Absent metadata returns an empty
+mapping; partial, empty, or HTTP-unsafe metadata raises `ValueError` rather
+than silently forwarding an incomplete tuple. Non-user and unknown
+classifications are preserved for receiver-side policy, not treated as users.
+Header assertions are not identity proof: receiver provenance validation,
+invocation binding, wire names, and missing-metadata policy still require
+owner agreement. Durable restore and detached execution are not supported by
+this draft. It does not change authentication, billing, or enforcement.
+
 ### Subclassing AgentServerHost
 
 For custom protocol implementations, subclass `AgentServerHost` and add routes:

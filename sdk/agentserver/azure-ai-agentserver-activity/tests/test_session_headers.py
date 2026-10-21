@@ -7,6 +7,39 @@ import pytest
 from starlette.responses import JSONResponse
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
+from azure.ai.agentserver.core import get_request_context
+
+
+@pytest.mark.asyncio
+async def test_original_subject_comes_from_headers_not_activity_payload(asgi_client):
+    async def handle(_request):
+        return JSONResponse(get_request_context().model_attribution_headers())
+
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
+    subject = {
+        "x-ms-original-subject-oid": "platform-original-oid",
+        "x-ms-original-subject-tid": "platform-original-tid",
+        "x-ms-original-subject-idtype": "user",
+    }
+    payload = {
+        "type": "message",
+        "from": {"aadObjectId": "payload-spoof"},
+        "channelData": {"tenant": {"id": "payload-spoof"}},
+        "conversation": {"id": "conversation"},
+    }
+    async with asgi_client(app) as client:
+        response = await client.post(
+            "/activity/messages", json=payload,
+            headers={**subject, "Authorization": "Bearer bot-token", "x-agent-user-id": "state-key"},
+        )
+        assert response.status_code == 200
+        assert response.json() == subject
+        response = await client.post(
+            "/activity/messages", json=payload, headers={"Authorization": "Bearer bot-token"},
+        )
+        assert response.status_code == 200
+        assert response.json() == {}
+    assert get_request_context().original_subject is None
 
 
 @pytest.mark.asyncio

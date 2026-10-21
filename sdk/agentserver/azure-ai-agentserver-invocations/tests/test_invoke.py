@@ -6,6 +6,39 @@ import json
 import uuid
 
 import pytest
+import httpx
+from starlette.responses import JSONResponse, StreamingResponse
+
+from azure.ai.agentserver.core import get_request_context
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("stream", [False, True])
+async def test_invoke_original_subject_is_available_during_body_iteration(stream):
+    app = InvocationAgentServerHost()
+
+    @app.invoke_handler
+    async def handler(_request):
+        if stream:
+            async def body():
+                yield json.dumps(get_request_context().model_attribution_headers())
+            return StreamingResponse(body(), media_type="application/json")
+        return JSONResponse(get_request_context().model_attribution_headers())
+
+    subject = {
+        "x-ms-original-subject-oid": "original-oid",
+        "x-ms-original-subject-tid": "original-tid",
+        "x-ms-original-subject-idtype": "app",
+    }
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:
+        response = await client.post("/invocations", headers={**subject, "x-agent-user-id": "state-key"})
+        assert response.status_code == 200
+        assert response.json() == subject
+        response = await client.post("/invocations")
+        assert response.status_code == 200
+        assert response.json() == {}
+    assert get_request_context().original_subject is None
 
 
 # ---------------------------------------------------------------------------

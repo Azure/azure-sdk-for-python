@@ -37,6 +37,7 @@ from starlette.routing import Route
 from azure.ai.agentserver.core import (
     AgentServerHost,
     FoundryAgentRequestContext,
+    FoundryOriginalSubject,
     build_server_version,
     create_error_response,
     detach_context,
@@ -815,6 +816,7 @@ class ActivityAgentServerHost(AgentServerHost):
                 call_id=inbound_call_id or None,
                 user_id=inbound_user_id or None,
                 session_id=session_id,
+                original_subject=FoundryOriginalSubject.from_headers(request.headers),
             )
         )
         baggage_token: Optional[Token[Context]] = None
