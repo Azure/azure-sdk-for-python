@@ -7,11 +7,12 @@
 from __future__ import annotations
 
 import asyncio
-from contextlib import suppress
+from contextlib import contextmanager, suppress
 import os
+from pathlib import Path
 import sys
 import time
-from typing import Any, Mapping, Optional, Sequence, TYPE_CHECKING
+from typing import Any, BinaryIO, Iterator, Mapping, Optional, Sequence, TYPE_CHECKING
 from uuid import uuid4
 
 from azure.ai.projects import models
@@ -55,6 +56,29 @@ def safe_print(text: str) -> None:
     """Display model text even on a console with a legacy encoding."""
     encoding = sys.stdout.encoding or "utf-8"
     print(text.encode(encoding, errors="replace").decode(encoding))
+
+
+@contextmanager
+def recording_output(path: Path) -> Iterator[BinaryIO]:
+    """Create an audio file exclusively and remove incomplete or empty downloads.
+
+    :param path: Explicit destination that must not already exist.
+    :type path: pathlib.Path
+    :return: A writable binary stream for the downloaded audio.
+    :rtype: ~typing.Iterator[~typing.BinaryIO]
+    """
+    output = path.open("xb")
+    completed = False
+    try:
+        with output:
+            yield output
+            if output.tell() == 0:
+                raise RuntimeError("The audio download returned no bytes.")
+        completed = True
+    finally:
+        if not completed:
+            path.unlink()
+    print(f"Saved recording: {path}")
 
 
 def remaining_time(deadline: float, operation: str) -> float:
