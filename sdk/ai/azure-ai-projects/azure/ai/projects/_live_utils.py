@@ -22,15 +22,15 @@ LiveServerEvent = Union[models.LiveServerEvent, Mapping[str, Any]]
 _LOGGER = logging.getLogger("azure.ai.projects.live")
 
 
-def _server_event_types() -> dict[str, Type[Model]]:
+def _server_event_types(registry: Mapping[str, object]) -> dict[str, Type[Model]]:
     result: dict[str, Type[Model]] = {}
-    for name, cls in models.LiveServerEvent.__mapping__.items():
+    for name, cls in registry.items():
         if isinstance(cls, type) and issubclass(cls, Model):
             result[name] = cls
     return result
 
 
-_SERVER_EVENT_TYPES = _server_event_types()
+_SERVER_EVENT_TYPES = _server_event_types(models.LiveServerEvent.__mapping__)
 
 
 def _live_url(endpoint: str, agent_name: str) -> str:
