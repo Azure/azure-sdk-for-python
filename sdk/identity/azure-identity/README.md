@@ -21,7 +21,7 @@ pip install azure-identity
 ### Prerequisites
 
 - An [Azure subscription](https://azure.microsoft.com/free/python)
-- Python 3.9 or a recent version of Python 3 (this library doesn't support end-of-life versions)
+- Python 3.10 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 
 ### Use with AI tools
 

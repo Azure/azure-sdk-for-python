@@ -11,6 +11,7 @@
 
 - Fixed `AzureDeveloperCliCredential` to correctly parse error messages from Azure Developer CLI v1.23.7 and later, which previously caused raw JSON to surface in `ClientAuthenticationError` instead of the underlying error text. ([#46711](https://github.com/Azure/azure-sdk-for-python/pull/46711))
 - Fixed persistent token cache isolation on macOS when using custom cache names or CAE-enabled caches. ([#49314](https://github.com/Azure/azure-sdk-for-python/pull/49314))
+- Fixed a regression in 1.26.0 where asynchronous `OnBehalfOfCredential` instances could not reuse access or refresh tokens cached by another instance with the same user assertion. Cache entries are now isolated by user assertion, allowing safe reuse across instances, including with `TokenCachePersistenceOptions`. Existing cache entries without assertion binding require a fresh token exchange. ([#49533](https://github.com/Azure/azure-sdk-for-python/pull/49533))
 
 ## 1.26.0 (2026-09-30)
 
