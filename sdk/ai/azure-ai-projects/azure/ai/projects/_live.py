@@ -176,7 +176,7 @@ class BetaLiveConnection(_BaseWebSocketConnection[LiveServerEvent, LiveClientEve
         :type event: ~azure.ai.projects.operations.LiveClientEvent
         :raises ValueError: If the supplied JSON string is invalid.
         """
-        super().send(event)
+        super().send(dict(event) if isinstance(event, Mapping) else event)
 
 
 class BetaLiveConnectionManager(_BaseWebSocketConnectionManager[BetaLiveConnection]):

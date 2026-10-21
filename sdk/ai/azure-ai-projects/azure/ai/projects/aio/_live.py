@@ -204,7 +204,7 @@ class AsyncBetaLiveConnection(_BaseWebSocketConnection[LiveServerEvent, LiveClie
         :type event: ~azure.ai.projects.aio.operations.LiveClientEvent
         :raises ValueError: If the supplied JSON string is invalid.
         """
-        await super().send(event)
+        await super().send(dict(event) if isinstance(event, Mapping) else event)
 
 
 class AsyncBetaLiveConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaLiveConnection]):

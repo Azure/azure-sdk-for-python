@@ -31,6 +31,7 @@ imported lazily so importing the SDK never fails when it is absent.
 
 from __future__ import annotations
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 import base64
 import json
 import logging
@@ -595,7 +596,7 @@ class _BaseWebSocketConnection(Generic[_ServerEventT, _ClientEventT]):
     def __init__(self, connection: "ClientWebSocketResponse", session: "ClientSession") -> None:
         self._connection = connection
         self._session = session
-        self._closed = False
+        self._close_task: Optional[asyncio.Task[None]] = None
 
     async def __aenter__(self) -> "_BaseWebSocketConnection[_ServerEventT, _ClientEventT]":
         return self
@@ -697,12 +698,30 @@ class _BaseWebSocketConnection(Generic[_ServerEventT, _ClientEventT]):
     async def close(self, *, code: int = 1000, reason: str = "") -> None:
         """Close the socket and its HTTP session once.
 
+        Concurrent callers await the same cleanup. Caller cancellation is
+        propagated after both resources have finished closing.
+
         :keyword int code: WebSocket close code.
         :keyword str reason: WebSocket close reason.
         """
-        if self._closed:
+        if self._close_task is not None and self._close_task.done():
             return
-        self._closed = True
+        if self._close_task is None:
+            self._close_task = asyncio.create_task(self._close_resources(code, reason))
+        cancelled = False
+        while True:
+            try:
+                await asyncio.shield(self._close_task)
+                break
+            except asyncio.CancelledError:
+                if self._close_task.cancelled():
+                    await self._close_task
+                    raise
+                cancelled = True
+        if cancelled:
+            raise asyncio.CancelledError
+
+    async def _close_resources(self, code: int, reason: str) -> None:
         self._logger.debug("WebSocket CLOSE code=%d", code)
         try:
             await self._connection.close(code=code, message=reason.encode("utf-8"))
@@ -943,9 +962,12 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
 
     async def __aexit__(self, *exc_details: Any) -> None:
         connection = self._connection
-        self._connection = None
         if connection is not None:
-            await connection.close()
+            try:
+                await connection.close()
+            finally:
+                if self._connection is connection:
+                    self._connection = None
 
 
 class AsyncBetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaRealtimeConnection]):
