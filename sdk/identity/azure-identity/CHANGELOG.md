@@ -1,5 +1,11 @@
 # Release History
 
+## 1.26.1 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed a regression in 1.26.0 where asynchronous `OnBehalfOfCredential` instances could not reuse access or refresh tokens cached by another instance with the same user assertion. Cache entries are now isolated by user assertion, allowing safe reuse across instances, including with `TokenCachePersistenceOptions`. Existing cache entries without assertion binding require a fresh token exchange. ([#49533](https://github.com/Azure/azure-sdk-for-python/pull/49533))
+
 ## 1.26.0 (2026-09-30)
 
 ### Features Added

@@ -12,7 +12,6 @@ from typing import Any, IO, Optional, Union, cast, overload
 from collections.abc import MutableMapping
 
 from azure.core.polling import NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
@@ -21,16 +20,10 @@ from ._operations import (
 )
 from .. import models as _models
 from .._utils.model_base import _deserialize
+from .._utils.polling import AIProjectsLROBasePolling
 from ..models import AgentInsightRunLROPoller
 
 JSON = MutableMapping[str, Any]
-
-
-class _AgentInsightPolling(LROBasePolling):
-    def status(self) -> str:
-        status = super().status()
-        # Azure Core uses the single-L spelling for terminal cancellation.
-        return "canceled" if status.lower() == "cancelled" else status
 
 
 class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
@@ -135,7 +128,7 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                _AgentInsightPolling(
+                AIProjectsLROBasePolling(
                     lro_delay,
                     path_format_arguments=path_format_arguments,
                     headers=headers,

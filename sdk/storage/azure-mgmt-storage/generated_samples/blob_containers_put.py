@@ -39,6 +39,10 @@ def main():
             "id": "str",
             "name": "str",
             "properties": {
+                "blobAccessPointConfiguration": {
+                    "blobAccessPointConfigurationName": "str",
+                    "blobAccessPointConfigurationUniqueId": "str",
+                },
                 "defaultEncryptionScope": "str",
                 "deleted": bool,
                 "deletedTime": "2020-02-20 00:00:00",
@@ -112,6 +116,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-01/BlobContainersPut.json
+# x-ms-original-file: 2026-09-01/BlobContainersPut.json
 if __name__ == "__main__":
     main()
