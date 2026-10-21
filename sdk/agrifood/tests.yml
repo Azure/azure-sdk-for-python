@@ -6,7 +6,7 @@ extends:
     parameters:
       Location: westcentralus
       ServiceDirectory: agrifood
-      # Both Agrifood SDKs have CI disabled; keep this definition without targeting packages.
+      # Both SDKs under this service directory have CI disabled; keep this definition without targeting packages.
       BuildTargetingString: 'null'
       Clouds: Public_FarmBeats
       CloudConfig:
