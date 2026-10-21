@@ -14,6 +14,7 @@ import inspect
 import json
 import logging
 import threading
+from collections import UserDict
 from collections.abc import AsyncIterator, Iterator
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
@@ -352,8 +353,9 @@ async def test_beta_namespace_implies_preview_opt_in_without_allow_preview(live,
     live.transport.assert_closed_once()
 
 
-async def test_handshake_encodes_live_route_authentication_and_all_options(live):
-    structured_inputs = {"name": "Zoë / guest", "count": 0, "enabled": False, "optional": None}
+@pytest.mark.parametrize("mapping_type", [dict, MappingProxyType, UserDict])
+async def test_handshake_encodes_live_route_authentication_and_all_options(live, mapping_type):
+    structured_inputs = mapping_type({"name": "Zoë / guest", "count": 0, "enabled": False, "optional": None})
     extra_query = MappingProxyType({"custom": "space + /?&=#"})
     extra_headers = MappingProxyType({"X-Custom": "example"})
     options = {"heartbeat": 3, "max_msg_size": 1024} if live.is_async else {"open_timeout": 3, "max_size": 1024}
@@ -619,13 +621,15 @@ async def test_live_does_not_negotiate_realtime_even_with_caller_protocol_overri
         assert "Sec-WebSocket-Protocol" not in live.headers
 
 
-@pytest.mark.parametrize("kind", ["model", "mapping", "json"])
+@pytest.mark.parametrize("kind", ["model", "mapping", "mapping_proxy", "user_dict", "json"])
 async def test_raw_send_supports_generated_model_mapping_and_exact_json(live, kind):
     expected = {"type": "response.create", "event_id": "evt-response"}
     raw = '{ "type": "response.create", "event_id": "evt-response" }'
     event = {
         "model": models.LiveClientEventLiveResponseCreateParam(event_id="evt-response"),
         "mapping": expected,
+        "mapping_proxy": MappingProxyType(expected),
+        "user_dict": UserDict(expected),
         "json": raw,
     }[kind]
     async with live.open() as connection:
@@ -1053,6 +1057,114 @@ async def test_task_cancellation_inside_connection_context_releases_resources(li
         with pytest.raises(asyncio.CancelledError):
             await task
     live.transport.assert_closed_once()
+
+
+@pytest.mark.parametrize("is_async", [True], ids=["async"])
+@pytest.mark.parametrize("protocol", ["live", "realtime"])
+@pytest.mark.parametrize("blocked_resource", ["websocket", "http_session"])
+@pytest.mark.parametrize("cancel_caller", [None, "first_close", "context_exit"])
+async def test_async_close_callers_wait_for_shared_cancellation_safe_cleanup(
+    live, protocol, blocked_resource, cancel_caller
+):
+    blocked = asyncio.Event()
+    release = asyncio.Event()
+
+    async def close_socket(**kwargs):
+        if blocked_resource == "websocket":
+            blocked.set()
+            await release.wait()
+        live.transport.socket.closed = True
+
+    async def close_session():
+        if blocked_resource == "http_session":
+            blocked.set()
+            await release.wait()
+        live.transport.session.closed = True
+
+    live.transport.socket.close.side_effect = close_socket
+    live.transport.session.close.side_effect = close_session
+    manager = live.manager(protocol=protocol)
+    connection = await manager.enter()
+    callers = {"first_close": asyncio.create_task(connection.close(code=1001, reason="first caller"))}
+    try:
+        await asyncio.wait_for(blocked.wait(), timeout=2)
+        callers["second_close"] = asyncio.create_task(connection.close(code=1000, reason="second caller"))
+        callers["context_exit"] = asyncio.create_task(live.exit(manager))
+        callers["second_context_exit"] = asyncio.create_task(live.exit(manager))
+        await asyncio.sleep(0)
+        assert all(not caller.done() for caller in callers.values())
+        assert live.transport.session.closed is False
+        if cancel_caller is not None:
+            for _ in range(2):
+                callers[cancel_caller].cancel()
+                await asyncio.sleep(0)
+            assert all(not caller.done() for caller in callers.values())
+        release.set()
+        results = await asyncio.wait_for(asyncio.gather(*callers.values(), return_exceptions=True), timeout=2)
+        for name, result in zip(callers, results):
+            if name == cancel_caller:
+                assert isinstance(result, asyncio.CancelledError)
+            else:
+                assert result is None
+    finally:
+        release.set()
+        await asyncio.wait_for(asyncio.gather(*callers.values(), return_exceptions=True), timeout=2)
+        await live.exit(manager)
+    live.transport.assert_closed_once()
+    live.transport.socket.close.assert_awaited_once_with(code=1001, message=b"first caller")
+    assert manager._connection is None
+
+
+@pytest.mark.parametrize("is_async", [True], ids=["async"])
+@pytest.mark.parametrize("protocol", ["live", "realtime"])
+@pytest.mark.parametrize("failure_source", ["websocket", "http_session"])
+async def test_async_close_failure_propagates_to_every_waiter_without_repeating_cleanup(live, protocol, failure_source):
+    blocked = asyncio.Event()
+    release = asyncio.Event()
+    failure = OSError("offline cleanup failure")
+
+    async def close_socket(**kwargs):
+        blocked.set()
+        await release.wait()
+        if failure_source == "websocket":
+            raise failure
+        live.transport.socket.closed = True
+
+    async def close_session():
+        live.transport.session.closed = True
+        if failure_source == "http_session":
+            raise failure
+
+    live.transport.socket.close.side_effect = close_socket
+    live.transport.session.close.side_effect = close_session
+    manager = live.manager(protocol=protocol)
+    connection = await manager.enter()
+    first = asyncio.create_task(connection.close())
+    second = None
+    context_exit = None
+    try:
+        await asyncio.wait_for(blocked.wait(), timeout=2)
+        second = asyncio.create_task(connection.close())
+        context_exit = asyncio.create_task(live.exit(manager))
+        await asyncio.sleep(0)
+        assert not second.done()
+        assert not context_exit.done()
+        release.set()
+        results = await asyncio.wait_for(asyncio.gather(first, second, context_exit, return_exceptions=True), timeout=2)
+        assert all(result is failure for result in results)
+        await connection.close()
+        await live.exit(manager)
+    finally:
+        release.set()
+        await asyncio.wait_for(
+            asyncio.gather(
+                *(task for task in (first, second, context_exit) if task is not None), return_exceptions=True
+            ),
+            timeout=2,
+        )
+    live.transport.socket.close.assert_awaited_once()
+    live.transport.session.close.assert_awaited_once()
+    assert live.transport.session.closed is True
 
 
 @pytest.mark.parametrize("is_async", [False], ids=["sync"])

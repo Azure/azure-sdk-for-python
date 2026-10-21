@@ -476,6 +476,31 @@ async def test_audio_refuses_to_overwrite_the_input_recording(monkeypatch, sampl
 
 
 @pytest.mark.asyncio
+async def test_audio_refuses_a_hard_link_to_the_input_without_modifying_either_path(
+    monkeypatch, sample_environment, tmp_path
+):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")
+    input_path = tmp_path / "input.wav"
+    output_path = tmp_path / "hard-linked-output.wav"
+    original = _wav_bytes(1)
+    input_path.write_bytes(original)
+    output_path.hardlink_to(input_path)
+    assert input_path.resolve() != output_path.resolve()
+    assert output_path.samefile(input_path)
+    monkeypatch.setenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH", str(input_path))
+    monkeypatch.setenv("FOUNDRY_VOICE_AUDIO_OUTPUT_PATH", str(output_path))
+    monkeypatch.setattr(sample, "_run_audio_conversation", AsyncMock())
+
+    with pytest.raises(ValueError, match="must not overwrite"):
+        await sample.main()
+
+    assert input_path.read_bytes() == original
+    assert output_path.read_bytes() == original
+    sample_environment.async_client.agents.create_version.assert_not_awaited()
+    sample_environment.async_client.beta.voice_agents.live.connect.assert_not_called()
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("failure", [RuntimeError("offline receive failed"), asyncio.CancelledError()])
 async def test_async_sample_deletes_its_version_on_error_or_cancellation(monkeypatch, sample_environment, failure):
     sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")

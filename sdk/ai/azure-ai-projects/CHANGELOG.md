@@ -12,6 +12,8 @@
 ### Bugs Fixed
 
 * Preserved concrete Live/Realtime voice-agent types on agent readback without inserting an omitted `sub_protocol`.
+* Accepted non-dictionary mappings in GPT Live raw events and structured connection inputs.
+* Fixed concurrent asynchronous Voice Agent close calls to await shared cleanup, including when a caller is cancelled.
 
 ### Sample updates
 
@@ -19,6 +21,7 @@
 * Updated GPT Live text examples with synchronous/asynchronous headless multi-turn conversations that reuse one session and preserve the default single-turn example.
 * Added synchronous/asynchronous GPT Live REST examples for reading an existing stored conversation, its items, and audio metadata, with explicit opt-in recording downloads and conversation deletion.
 * Fixed the GPT Live WAV sample to ignore silent/very-low-level PCM when detecting reply inactivity, reject silence-only replies, and preserve captured PCM in audio counts and optional WAV output.
+* Protected the GPT Live WAV sample's input recording from being overwritten through hard-linked output paths.
 
 ## 2.9.0 (2026-10-16)
 

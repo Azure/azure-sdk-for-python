@@ -31,7 +31,8 @@ USAGE:
        WAV file: uncompressed PCM16, mono, 24000 Hz. No microphone is needed.
     4) FOUNDRY_VOICE_AUDIO_OUTPUT_PATH (optional) - Explicit WAV output path.
        When set, saves actual returned audio, not telemetry. Without it no audio
-       file is written. The path must differ from the input path.
+       file is written. The output must not refer to the input file, including
+       through a symbolic link or hard link.
     5) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for a uniquely named sample
        agent. Only the version created by this run is deleted.
 
@@ -221,8 +222,10 @@ async def main() -> None:
     model = os.environ["FOUNDRY_VOICE_AGENT_MODEL"]
     input_path = Path(os.environ["FOUNDRY_VOICE_AUDIO_INPUT_PATH"])
     output_path = os.environ.get("FOUNDRY_VOICE_AUDIO_OUTPUT_PATH")
-    if output_path and Path(output_path).resolve() == input_path.resolve():
-        raise ValueError("The audio output path must not overwrite the input recording.")
+    if output_path:
+        output = Path(output_path)
+        if output.resolve() == input_path.resolve() or (output.exists() and output.samefile(input_path)):
+            raise ValueError("The audio output path must not overwrite the input recording.")
     agent_name = sample_agent_name("audio")
 
     with ExitStack() as files:

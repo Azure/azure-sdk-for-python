@@ -51,7 +51,7 @@ def _live_query(
     if structured_inputs is not None:
         if "structured_input" in result:
             raise ValueError("structured_input and structured_inputs cannot be supplied together.")
-        result["structured_inputs"] = json.dumps(structured_inputs, cls=SdkJSONEncoder)
+        result["structured_inputs"] = json.dumps(dict(structured_inputs), cls=SdkJSONEncoder)
     if "structured_inputs" in result and "structured_input" in result:
         raise ValueError("structured_input and structured_inputs cannot be supplied together.")
     if store is not None:
