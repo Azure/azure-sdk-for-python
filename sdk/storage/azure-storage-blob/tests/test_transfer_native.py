@@ -17,6 +17,18 @@ from unittest.mock import Mock, patch
 
 from azure.core import MatchConditions
 from azure.core.credentials import AccessToken, AzureSasCredential
+from azure.core.exceptions import (
+    AzureError,
+    ClientAuthenticationError,
+    DecodeError,
+    HttpResponseError,
+    IncompleteReadError,
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError,
+    ServiceRequestError,
+    ServiceResponseError,
+)
 from azure.storage.blob import (
     BlobImmutabilityPolicyMode,
     BlobType,
@@ -40,6 +52,32 @@ _DISABLE_ENV = "AZURE_STORAGE_DISABLE_NATIVE_TRANSFER"
 _SCOPE = "https://storage.azure.com/.default"
 
 
+class _FakeNativeTransferError(Exception):
+    def __init__(
+        self,
+        message="native failure",
+        *,
+        kind="http",
+        status_code=404,
+        error_code=None,
+        headers=None,
+        body=None,
+        request_id=None,
+        additional_info=None,
+        normalization_error=None,
+    ):
+        super().__init__(message)
+        self.message = message
+        self.kind = kind
+        self.status_code = status_code
+        self.error_code = error_code
+        self.headers = headers or {}
+        self.body = body
+        self.request_id = request_id
+        self.additional_info = additional_info or {}
+        self.normalization_error = normalization_error
+
+
 class _FakeNativeStream:
     """Single-pass native stream stand-in that records yielded windows."""
 
@@ -61,6 +99,7 @@ class _NativeTransferTestCase(unittest.TestCase):
     def setUp(self):
         self.extension = ModuleType(_EXTENSION)
         self.extension.is_available = Mock(return_value=True)
+        self.extension.NativeTransferError = _FakeNativeTransferError
         self.extension.upload_blob = Mock(return_value={"etag": '"etag"'})
         self.extension.download_blob = Mock(side_effect=lambda **kwargs: _FakeNativeStream([b"data"]))
         for patcher in (
@@ -80,7 +119,14 @@ class _NativeTransferTestCase(unittest.TestCase):
         )
         self.config = SimpleNamespace(max_block_size=4)
 
-    def upload(self, data=b"data", blob_type="BlockBlob", encryption_options=None, validate_content=None, **kwargs):
+    def upload(
+        self,
+        data=b"data",
+        blob_type="BlockBlob",
+        encryption_options=None,
+        validate_content=None,
+        **kwargs,
+    ):
         return try_native_upload(
             self.client,
             data,
@@ -91,7 +137,14 @@ class _NativeTransferTestCase(unittest.TestCase):
             **kwargs,
         )
 
-    def download(self, offset=None, length=None, encryption_options=None, validate_content=None, **kwargs):
+    def download(
+        self,
+        offset=None,
+        length=None,
+        encryption_options=None,
+        validate_content=None,
+        **kwargs,
+    ):
         return try_native_download_eager(
             self.client,
             offset,
@@ -161,8 +214,16 @@ class TestNativeEligibility(_NativeTransferTestCase):
             ("mutable buffer", {"data": bytearray(b"data")}, "immutable bytes or str"),
             ("buffer view", {"data": memoryview(b"data")}, "immutable bytes or str"),
             ("iterator", {"data": iter([b"data"])}, "immutable bytes or str"),
-            ("encryption key", {"encryption_options": {"key": "key"}}, "client-side encryption"),
-            ("encryption required", {"encryption_options": {"required": True}}, "client-side encryption"),
+            (
+                "encryption key",
+                {"encryption_options": {"key": "key"}},
+                "client-side encryption",
+            ),
+            (
+                "encryption required",
+                {"encryption_options": {"required": True}},
+                "client-side encryption",
+            ),
             ("validation", {"validate_content": True}, "content validation"),
             ("validation algorithm", {"validate_content": "md5"}, "content validation"),
             ("progress", {"progress_hook": Mock()}, "progress hooks"),
@@ -174,11 +235,27 @@ class TestNativeEligibility(_NativeTransferTestCase):
 
     def test_download_rejects_unsupported_options(self):
         cases = [
-            ("encryption key", {"encryption_options": {"key": "key"}}, "client-side encryption"),
-            ("encryption required", {"encryption_options": {"required": True}}, "client-side encryption"),
-            ("encryption resolver", {"encryption_options": {"resolver": Mock()}}, "client-side encryption"),
+            (
+                "encryption key",
+                {"encryption_options": {"key": "key"}},
+                "client-side encryption",
+            ),
+            (
+                "encryption required",
+                {"encryption_options": {"required": True}},
+                "client-side encryption",
+            ),
+            (
+                "encryption resolver",
+                {"encryption_options": {"resolver": Mock()}},
+                "client-side encryption",
+            ),
             ("validation", {"validate_content": True}, "content validation"),
-            ("validation algorithm", {"validate_content": "crc64"}, "content validation"),
+            (
+                "validation algorithm",
+                {"validate_content": "crc64"},
+                "content validation",
+            ),
             ("decompression", {"decompress": True}, "decompression"),
             ("encoding", {"encoding": "utf-8"}, "text encoding"),
             ("progress", {"progress_hook": Mock()}, "progress hooks"),
@@ -190,7 +267,12 @@ class TestNativeEligibility(_NativeTransferTestCase):
 
     def test_download_accepts_disabled_optional_features(self):
         self.assertIsInstance(
-            self.download(validate_content=False, decompress=False, encoding=None, progress_hook=None),
+            self.download(
+                validate_content=False,
+                decompress=False,
+                encoding=None,
+                progress_hook=None,
+            ),
             NativeStorageStreamDownloader,
         )
 
@@ -411,7 +493,12 @@ class TestNativeDispatch(_NativeTransferTestCase):
     def test_supported_credentials_and_callback_wiring(self):
         token_credential = Mock(spec=["get_token"])
         token_credential.get_token.return_value = AccessToken("token", 123)
-        for credential in (None, "sig=test", AzureSasCredential("sig=test"), token_credential):
+        for credential in (
+            None,
+            "sig=test",
+            AzureSasCredential("sig=test"),
+            token_credential,
+        ):
             self.client.credential = credential
             for transfer, native in (
                 (self.upload, self.extension.upload_blob),
@@ -543,7 +630,7 @@ class TestBuildTokenProvider(unittest.TestCase):
         self.assertEqual(calls, [("first",), ("second",)])
 
 
-class TestNativeStorageStreamDownloader(unittest.TestCase):
+class TestNativeStorageStreamDownloader(_NativeTransferTestCase):
     def make_downloader(self, windows):
         stream = _FakeNativeStream(windows)
         return NativeStorageStreamDownloader(stream, "blob", "container"), stream
@@ -678,6 +765,228 @@ class TestNativeStorageStreamDownloader(unittest.TestCase):
             downloader.readinto(destination)
         self.assertIs(caught.exception, failure)
         destination.write.assert_called_once_with(b"data")
+
+
+class TestNativeErrorMapping(_NativeTransferTestCase):
+    def test_http_diagnostics_remain_on_native_cause_without_response(self):
+        body = b'{"error":{"code":"InternalError","message":"service failure"}}'
+        failure = _FakeNativeTransferError(
+            "original native message",
+            status_code=500,
+            error_code="InternalError",
+            headers={"content-type": "application/json", "x-ms-request-id": "request-id"},
+            body=body,
+            request_id="request-id",
+            normalization_error="Could not parse XML",
+        )
+        self.extension.download_blob.side_effect = failure
+        with self.assertRaises(HttpResponseError) as caught:
+            self.download()
+        error = caught.exception
+        self.assertIsNone(error.response)
+        self.assertIsNone(error.inner_exception)
+        self.assertIs(error.__cause__, failure)
+        self.assertEqual(error.message, "original native message")
+        self.assertEqual(error.request_id, "request-id")
+        self.assertEqual(error.__cause__.body, body)
+        self.assertEqual(error.__cause__.headers["x-ms-request-id"], "request-id")
+        self.assertEqual(error.__cause__.normalization_error, "Could not parse XML")
+
+    def test_http_mapping_uses_normalized_fields(self):
+        cases = [
+            (401, None, ClientAuthenticationError),
+            (403, "AuthenticationFailed", ClientAuthenticationError),
+            (403, "InvalidAuthenticationInfo", ClientAuthenticationError),
+            (403, "AuthorizationPermissionMismatch", HttpResponseError),
+            (404, "BlobNotFound", ResourceNotFoundError),
+            (404, "ContainerNotFound", ResourceNotFoundError),
+            (500, "ResourceNotFound", ResourceNotFoundError),
+            (500, "CannotVerifyCopySource", ResourceNotFoundError),
+            (409, "BlobAlreadyExists", ResourceExistsError),
+            (409, "ContainerAlreadyExists", ResourceExistsError),
+            (409, "AccountAlreadyExists", ResourceExistsError),
+            (409, "AccountBeingCreated", ResourceExistsError),
+            (409, "ResourceAlreadyExists", ResourceExistsError),
+            (409, "ResourceTypeMismatch", ResourceExistsError),
+            (409, "ContainerBeingDeleted", ResourceExistsError),
+            (409, "LeaseAlreadyPresent", HttpResponseError),
+            (409, None, HttpResponseError),
+            (412, "ConditionNotMet", ResourceModifiedError),
+            (412, "BlobOverwritten", ResourceModifiedError),
+            (412, "LeaseIdMismatchWithBlobOperation", HttpResponseError),
+            (416, "InvalidRange", HttpResponseError),
+            (429, "TooManyRequests", HttpResponseError),
+            (500, "InternalError", HttpResponseError),
+            (599, "FutureServiceCode", HttpResponseError),
+            (404, "ConditionNotMet", ResourceModifiedError),
+            (409, "AuthenticationFailed", ClientAuthenticationError),
+        ]
+        for status, code, expected in cases:
+            for operation in (self.upload, self.download):
+                with self.subTest(status=status, code=code, operation=operation):
+                    failure = _FakeNativeTransferError(
+                        "service message",
+                        status_code=status,
+                        error_code=code,
+                        additional_info={"Detail": "extra info", "reason": "reason"},
+                        request_id="request-id",
+                    )
+                    self.extension.upload_blob.side_effect = failure
+                    self.extension.download_blob.side_effect = failure
+                    with self.assertRaises(expected) as caught:
+                        operation()
+                    error = caught.exception
+                    self.assertIs(type(error), expected)
+                    self.assertIsNone(error.response)
+                    self.assertEqual(error.status_code, status)
+                    self.assertEqual(error.error_code, code)
+                    self.assertEqual(error.message, "service message")
+                    self.assertEqual(error.additional_info, failure.additional_info)
+                    self.assertEqual(error.request_id, "request-id")
+                    self.assertIsNone(error.inner_exception)
+                    self.assertIs(error.__cause__, failure)
+
+    def test_missing_or_unparseable_http_details(self):
+        for body in (None, b"", b"not xml", b"\xff"):
+            for code in (None, "UnknownCode"):
+                for status, expected in (
+                    (404, ResourceNotFoundError),
+                    (500, HttpResponseError),
+                ):
+                    with self.subTest(body=body, code=code, status=status):
+                        self.extension.download_blob.side_effect = _FakeNativeTransferError(
+                            status_code=status,
+                            error_code=code,
+                            body=body,
+                            normalization_error="parse failure" if body else None,
+                        )
+                        with self.assertRaises(expected) as caught:
+                            self.download()
+                        self.assertIs(type(caught.exception), expected)
+                        self.assertEqual(caught.exception.status_code, status)
+                        self.assertEqual(caught.exception.error_code, code)
+                        self.assertIsNone(caught.exception.response)
+                        self.assertIsNone(caught.exception.inner_exception)
+                        self.assertIsNone(caught.exception.request_id)
+                        self.assertEqual(caught.exception.__cause__.body, body)
+
+    def test_python_does_not_reparse_raw_diagnostics(self):
+        self.extension.download_blob.side_effect = _FakeNativeTransferError(
+            status_code=412,
+            error_code="ConditionNotMet",
+            headers={
+                "content-type": "application/xml",
+                "x-ms-error-code": "LeaseIdMismatchWithBlobOperation",
+            },
+            body=b"<Error><Code>LeaseIdMismatchWithBlobOperation</Code><Message>lease failure</Message></Error>",
+        )
+        with self.assertRaises(ResourceModifiedError) as caught:
+            self.download()
+        self.assertEqual(caught.exception.error_code, "ConditionNotMet")
+        self.assertEqual(caught.exception.message, "native failure")
+
+    def test_conditions_are_not_rewritten_based_on_overwrite(self):
+        for overwrite in (False, True):
+            for conditions in (
+                {},
+                {"etag": '"etag"', "match_condition": MatchConditions.IfNotModified},
+            ):
+                with self.subTest(overwrite=overwrite, conditions=conditions):
+                    self.extension.upload_blob.side_effect = _FakeNativeTransferError(
+                        status_code=412,
+                        error_code="ConditionNotMet",
+                    )
+                    with self.assertRaises(ResourceModifiedError) as caught:
+                        self.upload(overwrite=overwrite, **conditions)
+                    self.assertEqual(caught.exception.status_code, 412)
+                    self.assertEqual(caught.exception.error_code, "ConditionNotMet")
+
+    def test_non_http_categories(self):
+        for kind, expected in (
+            ("connection", ServiceRequestError),
+            ("io", ServiceResponseError),
+            ("incomplete_read", IncompleteReadError),
+            ("data_conversion", DecodeError),
+            ("credential", ClientAuthenticationError),
+            ("other", AzureError),
+            ("future_kind", AzureError),
+        ):
+            for operation in (self.upload, self.download):
+                with self.subTest(kind=kind, operation=operation):
+                    failure = _FakeNativeTransferError(
+                        kind=kind,
+                        status_code=None,
+                    )
+                    self.extension.upload_blob.side_effect = failure
+                    self.extension.download_blob.side_effect = failure
+                    with self.assertRaises(expected) as caught:
+                        operation()
+                    self.assertIs(type(caught.exception), expected)
+                    self.assertIsNone(caught.exception.inner_exception)
+                    self.assertIs(caught.exception.__cause__, failure)
+
+    def test_later_stream_failures_are_terminal_for_all_consumers(self):
+        for method in ("read", "readall", "readinto", "chunks", "iter"):
+            with self.subTest(method=method):
+                failure = _FakeNativeTransferError(
+                    "short response",
+                    kind="incomplete_read",
+                )
+                advances = []
+
+                def windows():
+                    advances.append("first")
+                    yield b"first"
+                    advances.append("failure")
+                    raise failure
+
+                stream = Mock(size=10, spec=["size", "__iter__"])
+                stream.__iter__ = Mock(return_value=windows())
+                self.extension.download_blob.side_effect = None
+                self.extension.download_blob.return_value = stream
+                downloader = self.download()
+                self.assertEqual(downloader.read(2), b"fi")
+                destination = BytesIO()
+                with self.assertRaises(IncompleteReadError) as caught:
+                    if method == "readinto":
+                        downloader.readinto(destination)
+                    elif method == "chunks":
+                        list(downloader.chunks())
+                    elif method == "iter":
+                        list(downloader)
+                    else:
+                        getattr(downloader, method)()
+                if method == "readinto":
+                    self.assertEqual(destination.getvalue(), b"rst")
+                for consume in (
+                    downloader.readall,
+                    lambda: downloader.read(1),
+                    lambda: list(downloader.chunks()),
+                    lambda: list(downloader),
+                    lambda: downloader.readinto(BytesIO()),
+                ):
+                    with self.assertRaises(IncompleteReadError) as repeated:
+                        consume()
+                    self.assertIs(repeated.exception, caught.exception)
+                self.assertEqual(advances, ["first", "failure"])
+
+    def test_destination_native_shaped_error_is_not_translated(self):
+        downloader = self.download()
+        failure = _FakeNativeTransferError()
+        destination = Mock()
+        destination.write.side_effect = failure
+        with self.assertRaises(_FakeNativeTransferError) as caught:
+            downloader.readinto(destination)
+        self.assertIs(caught.exception, failure)
+
+    def test_incompatible_extension_is_explicit(self):
+        del self.extension.NativeTransferError
+        for operation in (self.upload, self.download):
+            with self.subTest(operation=operation):
+                with self.assertRaisesRegex(RuntimeError, "compatible"):
+                    operation()
+        self.extension.upload_blob.assert_not_called()
+        self.extension.download_blob.assert_not_called()
 
 
 if __name__ == "__main__":
