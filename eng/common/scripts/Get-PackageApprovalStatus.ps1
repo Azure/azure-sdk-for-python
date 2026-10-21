@@ -7,6 +7,7 @@ Invokes the centralized Azure SDK CLI API review release gate and fails unless i
 
 .PARAMETER PackageInfoFiles
 Package-info JSON files containing the package name, version, and optional API hash.
+Missing or blank hashes are sent as "dummy" so API Review Hub can decide whether review is required.
 
 .PARAMETER RepoOwner
 The optional GitHub repository owner to query in API Review Hub.
@@ -83,25 +84,22 @@ function Write-ApprovalSummary([object] $Response) {
 }
 
 function Test-PackageApproval([string] $PackageName, [string] $PackageVersion, [string] $ApiHash) {
+    $ApiHash = if ([string]::IsNullOrWhiteSpace($ApiHash)) { "dummy" } else { $ApiHash }
     $arguments = @(
         "package",
         "get-approval-status",
         "--language", $LanguageShort,
         "--package-name", $PackageName,
         "--package-version", $PackageVersion,
-        "--output", "json"
+        "--output", "json",
+        "--api-hash", $ApiHash
     )
-
-    if (-not [string]::IsNullOrWhiteSpace($ApiHash)) {
-        $arguments += @("--api-hash", $ApiHash)
-    }
 
     if (-not [string]::IsNullOrWhiteSpace($RepoOwner)) {
         $arguments += @("--repo-owner", $RepoOwner)
     }
 
-    $hashDescription = if ([string]::IsNullOrWhiteSpace($ApiHash)) { "not provided" } else { $ApiHash }
-    Write-Host "Checking package approval: language=$LanguageShort, package=$PackageName, version=$PackageVersion, apiHash=$hashDescription"
+    Write-Host "Checking package approval: language=$LanguageShort, package=$PackageName, version=$PackageVersion, apiHash=$ApiHash"
     $formattedArguments = @($arguments | ForEach-Object { Format-CommandArgument $_ })
     Write-Host "Command: azsdk $($formattedArguments -join ' ')"
 
