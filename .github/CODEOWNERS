@@ -864,5 +864,5 @@
 # Add Johnathan Walker as code owner for Event Hubs SDK
 /sdk/eventhub/azure-eventhub/* @j7nw4r @meetamitbhatia @SwayGom @sagar0207
 
-# Add Johnathan Walker as code owner for Service Bus SDK
-/sdk/servicebus/azure-servicebus/* @j7nw4r @meetamitbhatia @SwayGom @sagar0207
+# Service Bus SDK team code owners
+/sdk/servicebus/azure-servicebus/* @j7nw4r @meetamitbhatia @SwayGom @sagar0207 @ksalazar-91 @pranz1996 @EldertGrootenboer
