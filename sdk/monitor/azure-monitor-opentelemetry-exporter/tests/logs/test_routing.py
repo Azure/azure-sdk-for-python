@@ -5,6 +5,7 @@ import datetime
 import json
 import os
 import tempfile
+import threading
 import time
 import unittest
 from pathlib import Path
@@ -538,3 +539,199 @@ class TestLogRouting(unittest.TestCase):
         exporter._local_storage_configuration_callback({_ONE_SETTINGS_FEATURE_LOCAL_STORAGE: {"default": "enabled"}})
         self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
         self.assertEqual(len(list(Path(self.directory.name).rglob("*.lock"))), 1)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    def test_retry_worker_is_lazy_and_shared_by_storage_backed_routes(self, worker):
+        disabled = self._exporter()
+        self.assertEqual(disabled.export([self._record()]), LogRecordExportResult.SUCCESS)
+        legacy = self._exporter(enable_multi_endpoint_routing=False, disable_offline_storage=False)
+        self.assertEqual(legacy.export([self._record()]), LogRecordExportResult.SUCCESS)
+        exporter = self._exporter(disable_offline_storage=False, storage_maintenance_period=17)
+        worker.assert_not_called()
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+        self.assertEqual(
+            exporter.export([self._record(), self._record(endpoint="https://two.example/")]),
+            LogRecordExportResult.SUCCESS,
+        )
+        worker.assert_called_once()
+        self.assertEqual(worker.call_args.kwargs["interval"], 17)
+        self.assertIs(worker.return_value.daemon, True)
+        worker.return_value.start.assert_called_once()
+        exporter.shutdown()
+        worker.return_value.cancel.assert_called_once()
+        worker.return_value.join.assert_called_once()
+        exporter.shutdown()
+        worker.return_value.join.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_background_retry_preserves_keys_and_auth_without_new_exports(self, clock, worker):
+        now = datetime.datetime(2026, 10, 20, tzinfo=datetime.timezone.utc)
+        credential = mock.Mock(spec=["get_token"])
+        credential.get_token.return_value = AccessToken("test-token", int(time.time()) + 3600)
+        exporter = self._exporter(disable_offline_storage=False, credential=credential)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            result = exporter.export([self._record(key="key-only"), self._record(key="aad-key", auth="aad")])
+        self.assertEqual(result, LogRecordExportResult.FAILURE)
+        retry = worker.call_args.kwargs["function"]
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        clock.return_value = 150
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=61)
+        ):
+            retry()
+            self.transport.send.assert_not_called()
+            clock.return_value = 161
+            retry()
+        requests = [call.args[0] for call in self.transport.send.call_args_list]
+        self.assertEqual([json.loads(request.body)[0]["iKey"] for request in requests], ["key-only", "aad-key"])
+        self.assertTrue(all(request.url.startswith("https://one.example/proxy/") for request in requests))
+        self.assertNotIn("Authorization", requests[0].headers)
+        self.assertEqual(requests[1].headers["Authorization"], f"Bearer {credential.get_token.return_value.token}")
+        self.assertFalse(list(Path(self.directory.name).rglob("*.lock")))
+        self.assertFalse(list(Path(self.directory.name).rglob("*.blob")))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_background_retry_honors_storage_kill_switch(self, clock, worker):
+        now = datetime.datetime(2026, 10, 20, tzinfo=datetime.timezone.utc)
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
+        retry = worker.call_args.kwargs["function"]
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        clock.return_value = 161
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=61)
+        ):
+            exporter._local_storage_configuration_callback(
+                {_ONE_SETTINGS_FEATURE_LOCAL_STORAGE: {"default": "disabled"}}
+            )
+            retry()
+            self.transport.send.assert_not_called()
+            exporter._local_storage_configuration_callback(
+                {_ONE_SETTINGS_FEATURE_LOCAL_STORAGE: {"default": "enabled"}}
+            )
+            retry()
+        self.transport.send.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_background_retry_failure_waits_for_next_backoff_window(self, clock, worker):
+        now = datetime.datetime(2026, 10, 20, tzinfo=datetime.timezone.utc)
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            self.assertEqual(exporter.export([self._record(key="stored-key")]), LogRecordExportResult.FAILURE)
+        retry = worker.call_args.kwargs["function"]
+        clock.return_value = 161
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "120"})
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=61)
+        ):
+            retry()
+        self.transport.send.assert_called_once()
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        clock.return_value = 200
+        retry()
+        self.transport.send.assert_not_called()
+        clock.return_value = 281
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=181)
+        ):
+            retry()
+        self.transport.send.assert_called_once()
+        self.assertEqual(json.loads(self.transport.send.call_args.args[0].body)[0]["iKey"], "stored-key")
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_background_retry_shares_foreground_rate_limit(self, clock, worker):
+        now = datetime.datetime(2026, 10, 20, tzinfo=datetime.timezone.utc)
+        exporter = self._exporter(
+            disable_offline_storage=False, storage_min_retry_interval=0, max_envelopes_per_second=1
+        )
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429)
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
+        retry = worker.call_args.kwargs["function"]
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            retry()
+        self.transport.send.assert_not_called()
+        clock.return_value = 101
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=1)
+        ):
+            retry()
+        self.transport.send.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    def test_background_retry_error_does_not_block_other_routes(self, worker):
+        exporter = self._exporter(disable_offline_storage=False)
+        self.assertEqual(
+            exporter.export([self._record(), self._record(endpoint="https://two.example/")]),
+            LogRecordExportResult.SUCCESS,
+        )
+        first, second = exporter._route_exporters.values()
+        retry = worker.call_args.kwargs["function"]
+        with mock.patch.object(first, "_transmit_from_storage", side_effect=RuntimeError("test failure")):
+            with mock.patch.object(second, "_transmit_from_storage") as drain:
+                with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as logs:
+                    retry()
+        self.assertIn("test failure", logs.output[0])
+        drain.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    def test_background_retry_does_not_wait_for_export_lock_or_run_after_shutdown(self, worker):
+        exporter = self._exporter(disable_offline_storage=False)
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+        retry = worker.call_args.kwargs["function"]
+        completed = threading.Event()
+
+        def tick():
+            try:
+                retry()
+            finally:
+                completed.set()
+
+        thread = threading.Thread(target=tick, daemon=True)
+        try:
+            with exporter._route_lock:
+                thread.start()
+                self.assertTrue(completed.wait(2), "Retry worker blocked on the export lock.")
+        finally:
+            thread.join(timeout=2)
+        self.assertFalse(thread.is_alive())
+        exporter.shutdown()
+        self.transport.send.reset_mock()
+        retry()
+        self.transport.send.assert_not_called()
+
+    def test_real_background_worker_retries_without_new_telemetry(self):
+        exporter = self._exporter(
+            disable_offline_storage=False, storage_min_retry_interval=0, storage_maintenance_period=1
+        )
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429)
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
+        worker = exporter._route_retry_task
+        self.assertTrue(worker.is_alive())
+        delivered = threading.Event()
+
+        def respond(request, **kwargs):
+            delivered.set()
+            return _Response(request)
+
+        self.transport.send.side_effect = respond
+        self.assertTrue(delivered.wait(5), "Background retry did not transmit stored telemetry.")
+        with exporter._route_lock:
+            self.assertFalse(list(Path(self.directory.name).rglob("*.blob")))
+            self.assertFalse(list(Path(self.directory.name).rglob("*.lock")))
+        exporter.shutdown()
+        self.assertFalse(worker.is_alive())

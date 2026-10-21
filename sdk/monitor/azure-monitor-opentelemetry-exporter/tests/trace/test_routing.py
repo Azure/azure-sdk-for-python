@@ -250,6 +250,27 @@ class TestTraceRouting(unittest.TestCase):
             self.assertEqual(exporter.export([self._span()]), SpanExportResult.FAILURE)
         self.transport.send.assert_not_called()
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_background_retry_sends_span_and_events_without_new_exports(self, clock):
+        now = datetime.datetime(2026, 10, 20, tzinfo=datetime.timezone.utc)
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            self.assertEqual(exporter.export([self._span(key="original")]), SpanExportResult.FAILURE)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        clock.return_value = 161
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=61)
+        ):
+            exporter._route_retry_task.function()
+        self.transport.send.assert_called_once()
+        items = json.loads(self.transport.send.call_args.args[0].body)
+        self.assertEqual([item["iKey"] for item in items], ["original"] * 3)
+        self.assertEqual(
+            [item["data"]["baseType"] for item in items], ["RemoteDependencyData", "MessageData", "ExceptionData"]
+        )
+
     def test_routed_export_exception_is_reported(self):
         exporter = self._exporter()
         with mock.patch.object(exporter, "_transmit_routed", side_effect=RuntimeError("test failure")):
