@@ -464,6 +464,26 @@ mod tests {
     }
 
     #[test]
+    fn download_length_errors_use_normalized_categories() {
+        Python::initialize();
+        Python::attach(|py| {
+            for (actual, expected) in [(3, "incomplete_read"), (5, "io")] {
+                let error = validate_download_length(12, 4, actual).unwrap_err();
+                let converted = PyErr::from(AzureError(error));
+                assert_eq!(
+                    converted
+                        .value(py)
+                        .getattr("kind")
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                    expected
+                );
+            }
+        });
+    }
+
+    #[test]
     fn range_arithmetic_overflows_before_io() {
         Python::initialize();
         Python::attach(|py| {
