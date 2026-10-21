@@ -67,6 +67,8 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 #  - This will also affect usage of get_package_properties.py (Save-Package-Properties stage of CI), so please be aware of this!
 PATHS_EXCLUDED_FROM_DISCOVERY = [
     "sdk/textanalytics/azure-ai-textanalytics",
+    # Explicitly disabled in addition to the release-age scope below.
+    "sdk/agrifood/azure-agrifood-farming",
     # SDKs last released in 2022: retain source without repository-wide CI discovery.
     "sdk/agrifood/azure-mgmt-agrifood",
     "sdk/anomalydetector/azure-ai-anomalydetector",

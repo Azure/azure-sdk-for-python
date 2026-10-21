@@ -1,11 +1,13 @@
 trigger: none
+pr: none
 
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       Location: westcentralus
       ServiceDirectory: agrifood
-      BuildTargetingString: azure-agrifood-farming
+      # Both Agrifood SDKs have CI disabled; keep this definition without targeting packages.
+      BuildTargetingString: 'null'
       Clouds: Public_FarmBeats
       CloudConfig:
         Public_Farmbeats:
