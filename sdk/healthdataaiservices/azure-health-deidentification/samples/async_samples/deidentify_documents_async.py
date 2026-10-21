@@ -55,17 +55,19 @@ async def deidentify_documents_async():
         target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix, overwrite=True),
     )
 
-    async with client:
+    async with credential, client:
         lro: AsyncLROPoller = await client.begin_deidentify_documents(jobname, job)
         try:
             finished_job: DeidentificationJob = await lro.result()
         except HttpResponseError:
             # A failed or canceled job surfaces as a generic polling error; the job's own error explains why.
-            failed_job = await client.get_job(jobname)
-            print(f"Job {jobname} ended with status {failed_job.status}: {failed_job.error}")
+            # The lookup is best-effort so the original error is always re-raised.
+            try:
+                failed_job = await client.get_job(jobname)
+                print(f"Job {jobname} ended with status {failed_job.status}: {failed_job.error}")
+            except Exception as lookup_error:
+                print(f"Could not retrieve job {jobname} for diagnostics: {lookup_error}")
             raise
-        finally:
-            await credential.close()
 
         print(f"Job Name:   {finished_job.job_name}")
         print(f"Job Status: {finished_job.status}")  # Succeeded
