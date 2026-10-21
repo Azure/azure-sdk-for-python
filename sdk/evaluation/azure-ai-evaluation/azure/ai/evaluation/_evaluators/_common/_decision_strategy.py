@@ -81,6 +81,14 @@ def _digest(question: Dict[str, Any]) -> str:
     return hashlib.sha256(json.dumps(question, sort_keys=True).encode("utf-8")).hexdigest()
 
 
+def _native_answer_provenance(answer: Dict[str, Any]) -> Dict[str, Any]:
+    try:
+        json.dumps(answer, allow_nan=False)
+    except (TypeError, ValueError, OverflowError, RecursionError):
+        raise ValueError("native answer provenance must contain only JSON-safe values") from None
+    return dict(answer)
+
+
 @dataclass(frozen=True)
 class BinaryScoring:
     """Scores 1 when the answer's probability reaches the cutoff, otherwise 0.
@@ -209,19 +217,24 @@ class DecisionEvaluationStrategy:
             properties["decision_model"]["status_completion_probability"] = decision_probability(
                 response, "status", self.error_target
             )
-            properties["decision_model"]["native_status_answer"] = response["answers"]["status"]
+            properties["decision_model"]["native_status_answer"] = _checked_value(
+                _native_answer_provenance, self.error_target, response["answers"]["status"]
+            )
             if skip_reason:
                 result = not_applicable_result(key, skip_reason, self.threshold)
                 result[f"{key}_properties"] = properties
                 return result
             score, reason, details = self.scoring.interpret(response, key, self.error_target)
+            native_answer = _checked_value(
+                _native_answer_provenance,
+                self.error_target,
+                {name: value for name, value in response["answers"][key].items() if name != "legend"},
+            )
         except EvaluationException as exc:
             exc.properties = properties
             raise
         properties["decision_model"].update(details)
-        properties["decision_model"]["native_answer"] = {
-            name: value for name, value in response["answers"][key].items() if name != "legend"
-        }
+        properties["decision_model"]["native_answer"] = native_answer
         passed = self.scoring.passes(score, self.threshold)
         return {
             key: score,

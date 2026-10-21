@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import logging
 import os
 from typing import Any, AsyncContextManager, Optional
 
@@ -10,6 +11,8 @@ from azure.identity import AzureCliCredential, DefaultAzureCredential, ManagedId
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._azure._envs import AzureEnvironmentClient
+
+logger = logging.getLogger(__name__)
 
 
 class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
@@ -63,7 +66,10 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
             if self._credential is None:
                 self._credential = await self._initialize_async(self._env_client)
         except BaseException:
-            await self.close()
+            try:
+                await self.close()
+            except Exception as cleanup_error:
+                logger.warning("Token provider cleanup failed during initialization: %s", type(cleanup_error).__name__)
             raise
         return self
 

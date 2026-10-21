@@ -16,6 +16,10 @@
 
 ### Bugs Fixed
 
+- Retained known earlier-turn Decision usage and model metadata when an asynchronous split evaluation is cancelled directly, while preserving `CancelledError` and existing callback cancellation behavior.
+- Rejected non-JSON-safe native answer provenance with typed errors that retain known usage, without validating unused scores on applicability skips.
+- Accepted explicit numeric zero in zero-inclusive shared Prompty score ranges while keeping missing, invalid and boolean grades on the typed error path. Missing-score fallbacks cannot manufacture a ranged grade.
+- Preserved the primary initialization error or cancellation when legacy token-provider cleanup also fails.
 - Preserved known Decision usage when a later split conversation turn fails, without assigning mixed-model usage to one model or treating the failed turn's execution summary as a conversation summary.
 - Reconciled successful split-conversation properties with aggregate Decision usage and common model identity, omitting single-request execution summaries while preserving final-turn diagnostics and original per-turn data.
 - Kept numeric-overflow validation failures on the typed Decision error path so known usage and provenance survive failed-row conversion.
@@ -24,6 +28,8 @@
 - Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
 
 ### Other Changes
+
+- Decision-only execution controls supplied to a chat evaluator are rejected explicitly; they do not configure chat timeout, retry or cancellation behavior.
 
 ## 1.18.9 (2026-10-12)
 

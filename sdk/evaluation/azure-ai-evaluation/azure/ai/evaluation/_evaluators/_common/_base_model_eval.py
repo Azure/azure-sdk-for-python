@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import asyncio
 import math
 from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 
@@ -242,7 +243,9 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
             )
         return aggregated
 
-    def _on_evaluation_error(self, error: EvaluationException, per_turn_results: List[Dict[str, T]]) -> None:
+    def _on_evaluation_error(
+        self, error: Union[EvaluationException, asyncio.CancelledError], per_turn_results: List[Dict[str, T]]
+    ) -> None:
         """Preserve known Decision turn usage without changing the failure or Prompty behavior.
 
         Only the request-owning result's usage is accumulated. A failed turn's execution summary cannot
@@ -258,7 +261,8 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
                 contributions.append((usage, result.get(f"{self._result_key}_model")))
         if not contributions:
             return
-        properties = dict(error.properties) if isinstance(error.properties, dict) else {}
+        error_properties = getattr(error, "properties", None)
+        properties = dict(error_properties) if isinstance(error_properties, dict) else {}
         failing_usage = self._known_turn_usage(properties, fields)
         if failing_usage:
             contributions.append((failing_usage, properties.get("model")))
@@ -271,7 +275,7 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         common_model = models[0] if isinstance(models[0], str) and models[0].strip() else None
         if not all(model == common_model for model in models):
             common_model = None
-        error.properties = self._reconcile_decision_properties(properties, usage, common_model)
+        setattr(error, "properties", self._reconcile_decision_properties(properties, usage, common_model))
 
     @staticmethod
     def _reconcile_decision_properties(

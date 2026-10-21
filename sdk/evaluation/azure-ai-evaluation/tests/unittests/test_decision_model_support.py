@@ -11,6 +11,7 @@ import logging
 import math
 import sys
 import threading
+from copy import deepcopy
 from logging.handlers import BufferingHandler
 from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
@@ -844,6 +845,55 @@ def strategy_with(payload, scoring, key="tool_call_accuracy", extra_properties=N
 
 
 class TestSharedDecisionStrategy:
+    @pytest.mark.parametrize("question", ["status", "tool_call_accuracy"])
+    @pytest.mark.parametrize("extra", [math.inf, -math.inf, math.nan, {"nested": [math.inf]}])
+    def test_nonfinite_answer_extras_raise_a_json_safe_metadata_preserving_error(self, question, extra):
+        """Validate retained provenance without discarding the paid response's known usage."""
+        response = level_payload(4)
+        response["answers"][question]["diagnostic"] = extra
+        configured = strategy_with(response, LikertScoring(5))
+        with pytest.raises(EvaluationException, match="JSON-safe") as raised:
+            asyncio.run(configured.evaluate({}))
+        assert raised.value.blame == ErrorBlame.SYSTEM_ERROR
+        assert raised.value.properties["total_tokens"] == 123
+        assert raised.value.properties["model"] == "microsoft-decision-1"
+        json.dumps(raised.value.properties, allow_nan=False)
+
+    def test_json_numeric_overflow_in_an_extra_is_rejected_after_real_response_parsing(self, client):
+        """A valid JSON exponent must not become infinity in a completed result."""
+        response = level_payload(4)
+        response["answers"]["status"]["diagnostic"] = "OVERFLOW"
+        client.response = FakeResponse(body=json.dumps(response).replace('"OVERFLOW"', "1e309").encode())
+        configured = strategy_with(response, LikertScoring(5))
+        configured.runner = DecisionModelRunner(DECISION_CONFIG)
+        with pytest.raises(EvaluationException, match="JSON-safe") as raised:
+            asyncio.run(configured.evaluate({}))
+        assert raised.value.properties["total_tokens"] == 123
+        json.dumps(raised.value.properties, allow_nan=False)
+
+    def test_json_safe_answer_extras_are_preserved_without_mutating_the_response(self):
+        """Do not remove valid provider diagnostics while validating durable metadata."""
+        response = level_payload(4)
+        diagnostic = {"optional": None, "values": [True, 0, "kept"]}
+        response["answers"]["status"]["diagnostic"] = diagnostic
+        response["answers"]["tool_call_accuracy"]["diagnostic"] = diagnostic
+        original = deepcopy(response)
+        result = asyncio.run(strategy_with(response, LikertScoring(5)).evaluate({}))
+        native = result["tool_call_accuracy_properties"]["decision_model"]
+        assert native["native_status_answer"]["diagnostic"] == diagnostic
+        assert native["native_answer"]["diagnostic"] == diagnostic
+        assert response == original
+        json.dumps(result, allow_nan=False)
+
+    def test_skipped_unusable_answer_extras_are_not_validated_or_persisted(self):
+        """A false applicability verdict still ignores the unused score answer."""
+        response = level_payload(4, status=0.1)
+        response["answers"]["tool_call_accuracy"]["diagnostic"] = math.inf
+        result = asyncio.run(strategy_with(response, LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] == "skipped"
+        assert "native_answer" not in result["tool_call_accuracy_properties"]["decision_model"]
+        json.dumps(result, allow_nan=False)
+
     @pytest.mark.parametrize("field", ["status", "noul", "probability", "confidence", "score"])
     def test_oversized_integer_preserves_typed_failure_metadata(self, field):
         from azure.ai.evaluation._evaluate._batch_run._run_submitter_client import _decision_error_metadata

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import asyncio
 import inspect
 import logging
 from abc import ABC, abstractmethod
@@ -610,7 +611,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         return tool_name_param_pairs
 
     def _on_evaluation_error(
-        self, error: EvaluationException, per_turn_results: List[DoEvalResult[T_EvalValue]]
+        self,
+        error: Union[EvaluationException, asyncio.CancelledError],
+        per_turn_results: List[DoEvalResult[T_EvalValue]],
     ) -> None:
         """Allow a model-backed evaluator to retain completed-turn metadata on a later failure."""
 
@@ -633,7 +636,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         for eval_input in eval_input_list:
             try:
                 result = await self._do_eval(eval_input)
-            except EvaluationException as error:
+            except (EvaluationException, asyncio.CancelledError) as error:
                 self._on_evaluation_error(error, per_turn_results)
                 raise
             # logic to determine threshold pass/fail

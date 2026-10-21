@@ -68,6 +68,7 @@ class PromptyEvaluationStrategy:
         reason = ""
         properties = {}
         score = self.missing_score
+        has_score = False
         if isinstance(answer, dict) and (self.strict or answer):
             if answer.get("status", "completed") == "skipped":
                 return self.format_result(
@@ -79,20 +80,28 @@ class PromptyEvaluationStrategy:
                     output,
                 )
             score = answer.get("score", self.missing_score)
+            has_score = "score" in answer
             reason = answer.get("reason", "")
             properties = answer.get("properties", {}) or {}
         elif self.strict:
             self._invalid_output()
         elif isinstance(answer, str):
             if self.result_key in PROMPT_BASED_REASON_EVALUATORS:
-                score, reason = parse_quality_evaluator_reason_score(answer)
+                if self.score_range:
+                    score, reason = parse_quality_evaluator_reason_score(
+                        answer, valid_score_range=r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?"
+                    )
+                else:
+                    score, reason = parse_quality_evaluator_reason_score(answer)
+                has_score = not math.isnan(score)
             else:
                 match = re.search(r"\d", answer)
                 if match:
                     score = float(match.group())
+                    has_score = True
         if self.score_range:
             minimum, maximum = self.score_range
-            if not score or not check_score_is_valid(score, minimum, maximum):
+            if not has_score or isinstance(score, bool) or not check_score_is_valid(score, minimum, maximum):
                 raise EvaluationException(
                     message=f"Invalid score value: {score}. Expected a number in range [{minimum}, {maximum}].",
                     internal_message="Invalid score value.",

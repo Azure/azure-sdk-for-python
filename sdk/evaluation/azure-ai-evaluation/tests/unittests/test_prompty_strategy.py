@@ -88,6 +88,70 @@ def test_score_range_errors(score):
     assert error.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
 
 
+@pytest.mark.parametrize("strict", [True, False])
+@pytest.mark.parametrize("score", [0, 0.0, "0"])
+def test_zero_inclusive_range_accepts_an_explicit_zero(strict, score):
+    """A parsed zero is a valid score, not a missing-score sentinel."""
+    result = strategy(strict=strict, score_range=(0, 1)).parse({"llm_output": {"score": score}})
+    assert result["metric"] == 0.0
+    assert result["metric_status"] == "completed"
+
+
+@pytest.mark.parametrize("missing_score", [0, 1])
+@pytest.mark.parametrize("strict", [True, False])
+@pytest.mark.parametrize(
+    "answer",
+    [
+        {},
+        {"reason": "no score"},
+        {"score": None},
+        {"score": ""},
+        {"score": "bad"},
+        {"score": math.nan},
+        {"score": True},
+        {"score": False},
+    ],
+)
+def test_zero_inclusive_range_rejects_missing_or_invalid_scores(strict, missing_score, answer):
+    """A default fallback must not manufacture a valid ranged grade."""
+    with pytest.raises(EvaluationException, match="Invalid score value"):
+        strategy(strict=strict, missing_score=missing_score, score_range=(0, 1)).parse({"llm_output": answer})
+
+
+@pytest.mark.parametrize("answer", ['{"score": 0}', "the score is 0"])
+def test_zero_inclusive_range_accepts_a_parsed_text_zero(answer):
+    """Legacy textual and JSON parsing retain explicit zero scores."""
+    result = strategy(strict=False, score_range=(0, 1)).parse({"llm_output": answer})
+    assert result["metric"] == 0.0
+
+
+@pytest.mark.parametrize("answer,valid", [("<S1>Reason</S1><S2>0</S2>", True), ("No grade", False)])
+def test_quality_text_zero_is_distinct_from_a_missing_grade(answer, valid):
+    """The quality parser reports presence independently of its numeric fallback."""
+    configured = strategy(result_key="fluency", strict=False, score_range=(0, 5))
+    if valid:
+        assert configured.parse({"llm_output": answer})["fluency"] == 0.0
+    else:
+        with pytest.raises(EvaluationException, match="Invalid score value"):
+            configured.parse({"llm_output": answer})
+
+
+@pytest.mark.parametrize("score", ["-1", "6", "1e309"])
+def test_explicit_quality_text_range_rejects_out_of_range_scores(score):
+    """An explicit range validates the full parsed number instead of a leading digit."""
+    with pytest.raises(EvaluationException, match="Invalid score value"):
+        strategy(result_key="fluency", strict=False, score_range=(0, 5)).parse(
+            {"llm_output": f"<S1>Reason</S1><S2>{score}</S2>"}
+        )
+
+
+def test_legacy_quality_text_domain_is_unchanged_without_an_explicit_range():
+    """The existing quality parser still accepts only its default one-through-five domain."""
+    result = strategy(result_key="fluency", strict=False).parse({"llm_output": "<S1>Reason</S1><S2>0</S2>"})
+    assert math.isnan(result["fluency"])
+    assert result["fluency_result"] == "unknown"
+
+
 def test_missing_completion_score_and_binary_rule():
     completion = strategy(binary_cutoff=1, threshold=7)
     assert completion.parse({})["metric"] == 0

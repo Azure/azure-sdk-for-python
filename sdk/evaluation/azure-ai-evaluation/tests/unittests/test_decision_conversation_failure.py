@@ -196,6 +196,100 @@ def test_failed_split_conversation_preserves_known_usage(monkeypatch, tmp_path, 
             assert properties == evaluator.original_properties
 
 
+@pytest.mark.parametrize("failed_turn", [0, 1])
+def test_direct_task_cancellation_preserves_completed_usage_and_closes_transports(monkeypatch, failed_turn):
+    """Direct task cancellation retains paid earlier turns without changing its exception type."""
+    transports = []
+
+    async def scenario():
+        entered = asyncio.Event()
+
+        class Response(HttpResponse):
+            def __init__(self, request):
+                super().__init__(request, None)
+                self.status_code, self.headers = 200, {}
+
+            def body(self):
+                return json.dumps(
+                    {
+                        "model": "known-model",
+                        "usage": {"input_tokens": 12, "output_tokens": 3},
+                        "answers": {
+                            "status": {"type": "noul", "noul": 1},
+                            "task_completion": {"type": "noul", "noul": 1},
+                        },
+                    }
+                ).encode()
+
+        class Transport(AsyncHttpTransport):
+            def __init__(self):
+                self.index = len(transports)
+                self.closed = False
+                transports.append(self)
+
+            async def open(self):
+                pass
+
+            async def close(self):
+                self.closed = True
+
+            async def __aexit__(self, *_):
+                await self.close()
+
+            async def send(self, request, **kwargs):
+                if self.index == failed_turn:
+                    entered.set()
+                    await asyncio.sleep(10)
+                    raise AssertionError("The cancelled request must not complete")
+                return Response(request)
+
+        monkeypatch.setattr(
+            _model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=Transport())
+        )
+        evaluator = SplitDecisionEvaluator()
+        task = asyncio.create_task(evaluator._to_async()(conversation=CONVERSATION))
+        await asyncio.wait_for(entered.wait(), timeout=2)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError) as raised:
+            await task
+        properties = raised.value.properties
+        if failed_turn:
+            assert {field: properties[field] for field in ("prompt_tokens", "completion_tokens", "total_tokens")} == {
+                "prompt_tokens": 12,
+                "completion_tokens": 3,
+                "total_tokens": 15,
+            }
+            assert properties["model"] == "known-model"
+            assert properties["decision_model"]["result_usage_scope"] == "reported_turns_only"
+            assert "execution" not in properties["decision_model"]
+        else:
+            assert not {"prompt_tokens", "completion_tokens", "total_tokens"}.intersection(properties)
+            assert properties["decision_model"]["execution"]["outcome"] == "cancelled"
+        assert len(transports) == failed_turn + 1
+        assert all(transport.closed for transport in transports)
+
+    asyncio.run(scenario())
+
+
+def test_cancelled_error_without_properties_can_retain_known_turn_metadata():
+    """The shared hook also accepts cancellation before the runner attaches a carrier."""
+    evaluator = SplitDecisionEvaluator()
+    error = asyncio.CancelledError()
+    evaluator._on_evaluation_error(
+        error,
+        [
+            {
+                "task_completion_prompt_tokens": 12,
+                "task_completion_completion_tokens": 3,
+                "task_completion_total_tokens": 15,
+                "task_completion_model": "known-model",
+            }
+        ],
+    )
+    assert error.properties["total_tokens"] == 15
+    assert error.properties["decision_model"]["usage_available"] is True
+
+
 def test_prompty_split_failure_preserves_existing_exception(monkeypatch):
     monkeypatch.setattr(_model_runners.AsyncPrompty, "load", Mock())
     error = EvaluationException(

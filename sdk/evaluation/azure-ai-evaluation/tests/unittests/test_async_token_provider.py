@@ -98,6 +98,26 @@ def test_repeated_provider_contexts_close_each_owned_provider(monkeypatch):
         credential.close.assert_called_once_with()
 
 
+@pytest.mark.parametrize("cancelled", [False, True])
+def test_failed_entry_preserves_primary_error_when_cleanup_fails(resources, caplog, cancelled):
+    """Cleanup errors must not replace initialization failures or task cancellation."""
+    client, credential, initialize = resources
+    primary = asyncio.CancelledError("primary cancellation") if cancelled else RuntimeError("primary initialization")
+    initialize.side_effect = primary
+    client.close.side_effect = ValueError("private cleanup detail")
+
+    async def request():
+        await providers.AsyncAzureTokenProvider().__aenter__()
+
+    with pytest.raises(type(primary)) as raised:
+        asyncio.run(request())
+    assert raised.value is primary
+    client.close.assert_awaited_once_with()
+    credential.close.assert_not_called()
+    assert "ValueError" in caplog.text
+    assert "private cleanup detail" not in caplog.text
+
+
 @pytest.mark.parametrize("credential_fails,client_fails", [(True, False), (False, True), (True, True)])
 def test_close_attempts_both_resources_and_exposes_cleanup_failures(resources, credential_fails, client_fails):
     client, credential, _ = resources
