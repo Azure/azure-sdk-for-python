@@ -1,0 +1,21 @@
+{
+  "TestId": "tests/samples/test_samples.py::TestSamples::test_agents_samples[sample_agent_basic]",
+  "SamplePath": "samples/agents/sample_agent_basic.py",
+  "Enabled": true,
+  "Environment": [
+    {
+      "Name": "FOUNDRY_PROJECT_ENDPOINT",
+      "Source": "ProjectEndpoint"
+    },
+    {
+      "Name": "FOUNDRY_MODEL_NAME",
+      "Source": "Variable",
+      "Variable": "AGENT_MODEL_DEPLOYMENT"
+    },
+    {
+      "Name": "LLM_VALIDATION_PROJECT_ENDPOINT",
+      "Source": "Variable",
+      "Variable": "VALIDATION_PROJECT_ENDPOINT"
+    }
+  ]
+}

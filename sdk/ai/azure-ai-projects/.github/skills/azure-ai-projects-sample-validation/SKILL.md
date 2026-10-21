@@ -109,3 +109,11 @@ Do not repair unrelated failures, edit recordings by hand, or fall back to bare 
 Run `git diff --check` and `git status --short`. Report the selected mode and node; required, harness-supplied, missing, and empty names; recording, repair, playback, and live results; and changed recording paths. Report unselected steps as `not run`. Never claim `record-and-playback` success unless playback passed.
 
 Also report sample/test patterns, selected sample/node counts, and the pipeline link when applicable. Do not repeat environment values in the final report.
+
+## 6. Offer independent test profiles after ADO completion
+
+After a skill-started `live-test-by-pipeline` run is confirmed **completed**, first report the actual result, then ask with the question tool: **“Save the selected exact tests as reusable test profiles for manual endpoint-pipeline runs?”** Offer **Add new test profile**, **Update existing test profile**, and **Skip**. Completed failures can be configured but must remain reported as failed. Do not prompt for local, recording, playback, unknown, or timed-out runs. Respect Skip without repeating the question.
+
+For Add/Update, load [azure-ai-projects-test-profiles](../azure-ai-projects-test-profiles/SKILL.md). Use the resolved exact pytest nodes (including parameterized IDs), not the original wildcard, and save **one independent profile per exact TestId**. Use the original required/harness/effective environment names to propose variable references; inherit `FOUNDRY_PROJECT_ENDPOINT` from the project group. Profiles contain no pipeline IDs, literal endpoints, secrets, or required build IDs. Keep original run links/results in the report; saving metadata is not evidence of live-test success.
+
+Follow the profile skill's schema preview and explicit save approval. Values and project membership are administered separately in the endpoint's ADO Library group; do not import all local `.env` values, put them in metadata, or expose them in chat. Offer assigning the profile to the selected endpoint's pipeline separately from saving it. Pipeline/group creation, authorization, commits, pushes, and live reruns require separate approval. A user can also create/update profiles manually at any time **without running tests first**.

@@ -1,0 +1,89 @@
+# Shared stage template. Each no-parameter wrapper binds exactly one Foundry project.
+parameters:
+  - name: ExpectedEndpointHash
+    type: string
+  - name: RegistryVariableGroup
+    type: string
+  - name: ProjectVariableGroup
+    type: string
+  - name: ValueVariables
+    type: object
+    default: []
+
+stages:
+  - stage: TestProjectProfiles
+    displayName: Run this Foundry project's test profiles
+    dependsOn: []
+    variables:
+      - group: ${{ parameters.RegistryVariableGroup }}
+      - group: ${{ parameters.ProjectVariableGroup }}
+    jobs:
+      - job: ValidateProfiles
+        displayName: Validate assigned exact tests
+        timeoutInMinutes: 120
+        pool:
+          name: azsdk-pool
+          image: ubuntu-24.04
+          os: linux
+        steps:
+          - checkout: self
+
+          - template: /eng/pipelines/templates/steps/use-python-version.yml
+            parameters:
+              versionSpec: '3.12'
+
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              EnableTwineAuth: false
+
+          - template: /eng/pipelines/templates/steps/use-venv.yml
+
+          - pwsh: |
+              $ErrorActionPreference = 'Stop'
+              $PSNativeCommandUseErrorActionPreference = $true
+              Push-Location sdk/ai/azure-ai-projects
+              try { $(PIP_EXE) install -e . -r dev_requirements.txt }
+              finally { Pop-Location }
+            displayName: Install test dependencies
+
+          - task: AzurePowerShell@5
+            displayName: Run profiles against the bound endpoint
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+              AZURE_POD_IDENTITY_AUTHORITY_HOST: https://FakeAuthorityHost
+              AZURE_TEST_ATTACH_SAMPLE_LOGS: 'true'
+              SAMPLE_TEST_PROFILES_JSON: $(SAMPLE_TEST_PROFILES_JSON)
+              SAMPLE_TEST_PROFILE_IDS: $(SAMPLE_TEST_PROFILE_IDS)
+              FOUNDRY_PROJECT_ENDPOINT: $(FOUNDRY_PROJECT_ENDPOINT)
+              SAMPLE_EXPECTED_ENDPOINT_HASH: ${{ parameters.ExpectedEndpointHash }}
+              ${{ each name in parameters.ValueVariables }}:
+                ${{ format('SAMPLE_PROFILE_VALUE_{0}', name) }}: ${{ format('$({0})', name) }}
+            inputs:
+              azureSubscription: azure-sdk-tests
+              azurePowerShellVersion: LatestVersion
+              pwsh: true
+              ScriptType: InlineScript
+              Inline: |
+                $ErrorActionPreference = 'Stop'
+                $context = Get-AzContext
+                $env:AZURESUBSCRIPTION_CLIENT_ID = $context.Account.Id
+                $env:AZURESUBSCRIPTION_TENANT_ID = $context.Tenant.Id
+                ./sdk/ai/azure-ai-projects/.github/skills/azure-ai-projects-test-profiles/scripts/InvokeTestProfileProject.ps1 `
+                  -ExpectedEndpointHash $env:SAMPLE_EXPECTED_ENDPOINT_HASH `
+                  -ResultsDirectory '$(Build.SourcesDirectory)/sdk/ai/azure-ai-projects/test-profile-results' `
+                  -Run -ConfirmLive
+
+          - task: PublishTestResults@2
+            displayName: Publish profile test results and log attachments
+            condition: always()
+            inputs:
+              testResultsFiles: '**/test-profile-results/test-junit-*.xml'
+              testRunTitle: azure-ai-projects endpoint profiles
+              failTaskOnFailedTests: true
+              publishRunAttachments: true
+
+          - pwsh: |
+              $path = '$(Build.SourcesDirectory)/sdk/ai/azure-ai-projects/test-profile-results/test-profile-summary.md'
+              if (Test-Path -LiteralPath $path) { Write-Host "##vso[task.uploadsummary]$path" }
+            displayName: Publish profile summary
+            condition: always()

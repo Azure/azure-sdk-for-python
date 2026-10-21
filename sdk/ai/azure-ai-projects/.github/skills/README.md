@@ -65,6 +65,12 @@ This skill registers one or more existing samples in the recorded sample-test ha
 
 This skill validates exact or wildcard-selected recorded samples through recording, playback, local live execution, or the azure-ai-projects Azure DevOps live-test pipeline. It resolves every matching pytest node, supports repeatable command-line environment overrides, and waits for queued ADO validation to complete.
 
+After a confirmed completed ADO live run, Copilot offers Add, Update, or Skip for independent profiles, one per exact test ID. Saving a profile is separate from assigning it to a Foundry project pipeline or rerunning it.
+
+### azure-ai-projects-test-profiles
+
+This skill configures test profiles without requiring a prior run. Profiles map exact pytest IDs to required environment names and ADO Library value references; they contain no pipeline IDs, endpoint values, or secrets. One manually runnable pipeline per Foundry project endpoint uses the shared stage template, a project value group, and an editable membership list. Configuration can be administered manually or with preview-and-approval PowerShell helpers. An optional master triggers endpoint pipelines only. No custom backend is required; see [manual setup](azure-ai-projects-test-profiles/references/setup.md).
+
 ### azure-ai-projects-model-reference-graph
 
 This skill generates structured and readable graphs that trace every generated model through direct references, inheritance, runtime ownership, and public operation methods. It supports model-usage investigation and TypeSpec removal analysis without treating static reachability as proof that a model is safe to remove.

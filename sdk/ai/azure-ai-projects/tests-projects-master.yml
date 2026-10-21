@@ -1,0 +1,37 @@
+trigger: none
+pr: none
+
+# Optional: contains endpoint pipeline IDs/branches only, never test profiles or values.
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: RunEndpointPipelines
+        dependsOn: []
+        jobs:
+          - job: QueueEndpoints
+            timeoutInMinutes: 150
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+            steps:
+              - checkout: self
+              - pwsh: |
+                  $ErrorActionPreference = 'Stop'
+                  $collection = [Uri]$env:SYSTEM_COLLECTIONURI
+                  if ($collection.Host -eq 'dev.azure.com') { $organization = $collection.AbsolutePath.Trim('/').Split('/')[0] }
+                  elseif ($collection.Host.EndsWith('.visualstudio.com')) { $organization = $collection.Host.Split('.')[0] }
+                  else { throw 'Unsupported ADO collection URL.' }
+                  ./sdk/ai/azure-ai-projects/.github/skills/azure-ai-projects-test-profiles/scripts/InvokeTestProjectsMaster.ps1 `
+                    -Organization $organization -Project $env:SYSTEM_TEAMPROJECT `
+                    -SummaryPath (Join-Path $env:AGENT_TEMPDIRECTORY 'test-projects-master.md') -Run -ConfirmRun
+                displayName: Run configured endpoint pipelines
+                env:
+                  SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+                  SAMPLE_PROJECT_PIPELINES_JSON: $(SAMPLE_PROJECT_PIPELINES_JSON)
+              - pwsh: |
+                  $path = Join-Path $env:AGENT_TEMPDIRECTORY 'test-projects-master.md'
+                  if (Test-Path -LiteralPath $path) { Write-Host "##vso[task.uploadsummary]$path" }
+                condition: always()
+                displayName: Publish endpoint results
