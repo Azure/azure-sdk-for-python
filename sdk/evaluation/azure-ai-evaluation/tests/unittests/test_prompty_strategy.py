@@ -1,11 +1,12 @@
 import asyncio
+import json
 import math
 from unittest.mock import AsyncMock
 
 import pytest
 
 from azure.ai.evaluation._evaluators._common._prompty_strategy import PromptyEvaluationStrategy
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorTarget
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 def strategy(**kwargs):
@@ -85,6 +86,35 @@ def test_strict_rejects_non_dict_answer(output):
 def test_score_range_errors(score):
     with pytest.raises(EvaluationException, match="Invalid score value") as error:
         strategy(score_range=(1, 5), error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR).parse({"score": score})
+    assert error.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+
+
+@pytest.mark.parametrize("strict", [True, False])
+@pytest.mark.parametrize("sign", [1, -1], ids=["positive", "negative"])
+@pytest.mark.parametrize("exponent", [309, 5000])
+def test_oversized_integer_scores_preserve_typed_error_classification(strict, sign, exponent):
+    """Integer conversion and error formatting cannot bypass the configured score error."""
+    with pytest.raises(EvaluationException, match="Invalid score value") as error:
+        strategy(
+            strict=strict,
+            score_range=(0, 1),
+            score_error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+        ).parse({"llm_output": {"score": sign * 10**exponent}})
+    assert error.value.blame == ErrorBlame.SYSTEM_ERROR
+    assert error.value.category == ErrorCategory.FAILED_EXECUTION
+    assert error.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+
+
+@pytest.mark.parametrize("sign", [1, -1], ids=["positive", "negative"])
+def test_oversized_json_integer_scores_preserve_typed_error_classification(sign):
+    with pytest.raises(EvaluationException, match="Invalid score value") as error:
+        strategy(
+            strict=False,
+            score_range=(0, 1),
+            score_error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+        ).parse({"llm_output": json.dumps({"score": sign * 10**309})})
+    assert error.value.blame == ErrorBlame.SYSTEM_ERROR
+    assert error.value.category == ErrorCategory.FAILED_EXECUTION
     assert error.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
 
 

@@ -103,9 +103,18 @@ class PromptyEvaluationStrategy:
                     has_score = True
         if self.score_range:
             minimum, maximum = self.score_range
-            if not has_score or isinstance(score, bool) or not check_score_is_valid(score, minimum, maximum):
+            score_for_error = score
+            try:
+                valid_score = (
+                    has_score and not isinstance(score, bool) and check_score_is_valid(score, minimum, maximum)
+                )
+            except OverflowError:
+                valid_score = False
+                # Formatting an oversized integer can also exceed Python's decimal digit limit.
+                score_for_error = "<numeric overflow>"
+            if not valid_score:
                 raise EvaluationException(
-                    message=f"Invalid score value: {score}. Expected a number in range [{minimum}, {maximum}].",
+                    message=f"Invalid score value: {score_for_error}. Expected a number in range [{minimum}, {maximum}].",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     target=self.score_error_target,
