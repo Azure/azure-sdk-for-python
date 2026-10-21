@@ -45,7 +45,11 @@ JOB_TIMEOUT_SECONDS = 600
 MAX_DIAGNOSTIC_DOCUMENTS = 20
 
 
-def format_job_diagnostics(job: DeidentificationJob, documents: List[DeidentificationDocumentDetails]) -> str:
+def format_job_diagnostics(
+    job: DeidentificationJob,
+    documents: List[DeidentificationDocumentDetails],
+    listing_error: Optional[Exception] = None,
+) -> str:
     lines = [
         f"Job '{job.job_name}' status: {job.status}",
         f"  created_at={job.created_at} started_at={job.started_at} last_updated_at={job.last_updated_at}",
@@ -64,6 +68,8 @@ def format_job_diagnostics(job: DeidentificationJob, documents: List[Deidentific
         for doc in documents:
             location = doc.input_location.location if doc.input_location is not None else doc.id
             lines.append(f"    - {location} status={doc.status} error={doc.error}")
+    if listing_error is not None:
+        lines.append(f"  unable to list all job documents: {listing_error!r}")
     return "\n".join(lines)
 
 
@@ -76,32 +82,41 @@ class DeidBaseTestCase(AzureRecordedTestCase):
 
     def describe_job(self, client: DeidentificationClient, job_name: str) -> str:
         """Fetch the job and its unsuccessful documents and format them for an assertion message."""
+        # Diagnostics must never mask the original failure, and a document-listing failure (even on a later page)
+        # must not discard the job details or documents already collected.
         try:
             job = client.get_job(job_name)
-            documents: List[DeidentificationDocumentDetails] = []
+        except Exception as e:  # pylint: disable=broad-except
+            return f"Unable to fetch diagnostics for job '{job_name}': {e!r}"
+        documents: List[DeidentificationDocumentDetails] = []
+        listing_error: Optional[Exception] = None
+        try:
             for doc in client.list_job_documents(job_name):
                 if _is_unsuccessful(doc):
                     documents.append(doc)
                     if len(documents) >= MAX_DIAGNOSTIC_DOCUMENTS:
                         break
-            return format_job_diagnostics(job, documents)
         except Exception as e:  # pylint: disable=broad-except
-            # Diagnostics must never mask the original failure.
-            return f"Unable to fetch diagnostics for job '{job_name}': {e!r}"
+            listing_error = e
+        return format_job_diagnostics(job, documents, listing_error)
 
     async def describe_job_async(self, client: DeidentificationClientAsync, job_name: str) -> str:
         """Async version of describe_job."""
         try:
             job = await client.get_job(job_name)
-            documents: List[DeidentificationDocumentDetails] = []
+        except Exception as e:  # pylint: disable=broad-except
+            return f"Unable to fetch diagnostics for job '{job_name}': {e!r}"
+        documents: List[DeidentificationDocumentDetails] = []
+        listing_error: Optional[Exception] = None
+        try:
             async for doc in client.list_job_documents(job_name):
                 if _is_unsuccessful(doc):
                     documents.append(doc)
                     if len(documents) >= MAX_DIAGNOSTIC_DOCUMENTS:
                         break
-            return format_job_diagnostics(job, documents)
         except Exception as e:  # pylint: disable=broad-except
-            return f"Unable to fetch diagnostics for job '{job_name}': {e!r}"
+            listing_error = e
+        return format_job_diagnostics(job, documents, listing_error)
 
     def wait_for_job(
         self,
