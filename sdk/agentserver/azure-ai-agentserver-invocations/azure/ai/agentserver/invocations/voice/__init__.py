@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Typed Voice Live Bridge event relay over ``conversation_engine`` or legacy ``invocations_ws``."""
+"""Typed Voice Live Bridge event relay over ``voice_conversation_engine`` or legacy ``invocations_ws``."""
 
 from ._models import (
     AgentError,

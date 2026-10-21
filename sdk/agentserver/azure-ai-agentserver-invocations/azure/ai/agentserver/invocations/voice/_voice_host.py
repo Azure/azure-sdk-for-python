@@ -564,7 +564,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
     Agent code owns IDs, application tasks, response lifecycle, terminal-event
     correlation, cancellation, history, and reconnect restoration.
 
-    Both ``/invocations_ws`` and ``/conversation_engine`` expose the same typed
+    Both ``/invocations_ws`` and ``/voice_conversation_engine`` expose the same typed
     event relay. The legacy route and message handshake version ``1.0`` are
     unchanged. Hosted agent protocol declarations are configured separately.
 
@@ -619,7 +619,10 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         ce_route = self._conversation_engine_route
         if ce_route is None:
             ce_route = _VoiceWebSocketRoute(
-                self._ws_endpoint, router=self.router, path="/conversation_engine", name="conversation_engine"
+                self._ws_endpoint,
+                router=self.router,
+                path="/voice_conversation_engine",
+                name="voice_conversation_engine",
             )
             self._conversation_engine_route = ce_route
         routes = self.router.routes

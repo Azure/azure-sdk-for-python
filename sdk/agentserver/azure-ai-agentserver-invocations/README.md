@@ -4,7 +4,7 @@ The `azure-ai-agentserver-invocations` package provides the invocation protocol 
 
 - **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`, `GET /invocations/docs/asyncapi.{json,yaml}`.
 - **WebSocket** (`invocations_ws` protocol) — full-duplex streaming at `/invocations_ws`, registered with `@app.ws_handler`.
-- **Voice Live Bridge** — an experimental typed event relay in the `azure.ai.agentserver.invocations.voice` submodule, available at both `/conversation_engine` and the existing `/invocations_ws` endpoint.
+- **Voice Live Bridge** — an experimental typed event relay in the `azure.ai.agentserver.invocations.voice` submodule, available at both `/voice_conversation_engine` and the existing `/invocations_ws` endpoint.
 
 ## Getting started
 
@@ -308,7 +308,9 @@ The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`.
 
 ## Typed Voice Live Bridge submodule (preview)
 
-`VoiceAgentServerHost` provides typed `on_<event>` decorators at both `/invocations_ws` and `/conversation_engine`, using the same `VoiceAgentServerHost()` construction. Existing legacy protocol declarations and metadata do not need migration. To use standalone CE, declare `conversation_engine` version `1.0.0` on the deployed hosted agent. Neither legacy Bridge metadata flag is required for CE. The SDK does not create or modify hosted agent protocol declarations; registering the container route alone does not enable the public Foundry CE endpoint.
+`VoiceAgentServerHost` provides typed `on_<event>` decorators at both `/invocations_ws` and `/voice_conversation_engine`, using the same `VoiceAgentServerHost()` construction. Existing legacy protocol declarations and metadata do not need migration. To use standalone CE, declare `voice_conversation_engine` version `1.0.0` on the deployed hosted agent. Neither legacy Bridge metadata flag is required for CE. The SDK does not create or modify hosted agent protocol declarations; registering the container route alone does not enable the public Foundry CE endpoint.
+
+The Voice Agent configuration field `conversation_engine` is separate from the Hosted Agent protocol name and remains unchanged.
 
 Both endpoints reuse the same typed Bridge messages, callbacks, transport limits,
 tracing, and application-owned lifecycle. The message handshake remains

@@ -39,7 +39,7 @@ python basic_voice_agent.py
 The server listens on `0.0.0.0` and uses the `PORT` environment variable when
 set; otherwise it listens on port `8088`. Foundry selects the container route
 from the hosted agent's protocol declaration: `invocations_ws` forwards to
-`/invocations_ws`, while `conversation_engine` forwards to `/conversation_engine`.
+`/invocations_ws`, while `voice_conversation_engine` forwards to `/voice_conversation_engine`.
 
 ## Deploy
 
@@ -59,7 +59,7 @@ For new-schema definitions using `container_configuration` or `code_configuratio
 
 ```yaml
 protocol_versions:
-  - protocol: conversation_engine
+  - protocol: voice_conversation_engine
     version: "1.0.0"
 ```
 
@@ -67,7 +67,7 @@ For legacy definitions using `image`:
 
 ```yaml
 container_protocol_versions:
-  - protocol: conversation_engine
+  - protocol: voice_conversation_engine
     version: "1.0.0"
 ```
 
@@ -75,7 +75,7 @@ These are hosted agent definition fragments, not complete deployment manifests
 or replacements for `agent.manifest.yaml`. If the agent must also serve legacy
 Bridge calls, retain its existing `invocations_ws` declaration and Bridge metadata.
 
-The typed host exposes both `/conversation_engine` and `/invocations_ws`, but the
+The typed host exposes both `/voice_conversation_engine` and `/invocations_ws`, but the
 Foundry protocol declaration determines which public endpoint can invoke it.
 For CE, no `invocations_ws` declaration,
 `voiceLiveCompatible`, or `bridgeProtocolVersion` metadata is required. The existing

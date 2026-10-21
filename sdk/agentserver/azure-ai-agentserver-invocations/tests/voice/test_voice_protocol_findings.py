@@ -35,7 +35,7 @@ from conftest import _records_with_ws_extras
 
 
 class TestUserBargeInDispatch:
-    @pytest.mark.parametrize("protocol", ["invocations_ws", "conversation_engine"])
+    @pytest.mark.parametrize("protocol", ["invocations_ws", "voice_conversation_engine"])
     def test_only_user_barge_in_reaches_callback_with_playback_snapshot(self, protocol: str) -> None:
         app = VoiceAgentServerHost(configure_observability=None)
         interruptions: list[UserBargeIn] = []
@@ -91,7 +91,7 @@ class TestUserBargeInDispatch:
 
 
 @pytest.mark.parametrize("silent", [False, True])
-@pytest.mark.parametrize("protocol", ["invocations_ws", "conversation_engine"])
+@pytest.mark.parametrize("protocol", ["invocations_ws", "voice_conversation_engine"])
 def test_data_and_silent_completion_over_websocket(silent: bool, protocol: str) -> None:
     app = VoiceAgentServerHost(configure_observability=None)
 
