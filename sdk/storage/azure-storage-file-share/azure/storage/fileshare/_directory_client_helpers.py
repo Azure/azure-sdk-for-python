@@ -32,7 +32,7 @@ def _format_url(
     scheme: str,
     hostname: str,
     share_name: Union[str, bytes],
-    dir_path: str,
+    dir_path: Optional[str],
     query_str: str,
     file_id: Optional[str] = None,
 ) -> str:
@@ -48,7 +48,7 @@ def _format_url(
 
 def _from_directory_url(
     directory_url: str, snapshot: Optional[Union[str, Dict[str, Any]]] = None
-) -> Tuple[str, str, str, Optional[Union[str, Dict[str, Any]]], Optional[str]]:
+) -> Tuple[str, str, Optional[str], Optional[Union[str, Dict[str, Any]]], Optional[str]]:
     try:
         if not directory_url.lower().startswith("http"):
             directory_url = "https://" + directory_url
@@ -64,4 +64,4 @@ def _from_directory_url(
     share_name = unquote(share_name)
     snapshot = snapshot or path_snapshot
 
-    return account_url, share_name, path_dir, snapshot, file_id
+    return account_url, share_name, None if file_id else path_dir, snapshot, file_id
