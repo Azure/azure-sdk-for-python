@@ -388,3 +388,12 @@ def test_http_logger_allowed_query_params_via_constructor(http_request, http_res
     assert messages_request[0] == "Request URL: 'http://localhost/?api-version=1.0&country=france&city=REDACTED'"
 
     mock_handler.reset()
+
+
+def test_http_logger_allowed_header_names_inplace_operators():
+    policy = HttpLoggingPolicy()
+    policy.allowed_header_names |= {"x-custom-header"}
+    assert policy._redact_header("X-Custom-Header", "value") == "value"
+
+    policy.allowed_header_names -= {"x-ms-request-id"}
+    assert policy._redact_header("x-ms-request-id", "value") == HttpLoggingPolicy.REDACTED_PLACEHOLDER
