@@ -168,11 +168,11 @@ extends:
                       ServiceConnection: ${{ coalesce(cloud.value.ServiceConnection, lower(format('azure-sdk-tests-{0}', cloud.key))) }}
                       SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
 
-      # Analyze-weekly runs only on scheduled runs that start on a weekend (Sat/Sun, UTC).
+      # The shared template checks whether the scheduled run started on a weekend (UTC).
       - ${{ if eq(variables['Build.Reason'], 'Schedule') }}:
         - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
           parameters:
             BuildTargetingString: ${{ package }}
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             JobName: ${{ parameters.JobName }}
-            Condition: and(succeeded(), in(format('{0:ddd}', pipeline.startTime), 'Sat', 'Sun'))
+            Condition: succeeded()
