@@ -354,3 +354,23 @@ class TestMetricRouting(unittest.TestCase):
                 result = exporter.export(self._data(self._metric([self._point()])))
         self.assertEqual(result, MetricExportResult.FAILURE)
         self.assertIn("test failure", logs.output[0])
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_background_retry_sends_metric_without_new_exports(self, clock):
+        now = datetime.datetime(2026, 10, 20, tzinfo=datetime.timezone.utc)
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            data = self._data(self._metric([self._point(key="original", value=42)]))
+            self.assertEqual(exporter.export(data), MetricExportResult.FAILURE)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        clock.return_value = 161
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=61)
+        ):
+            exporter._route_retry_task.function()
+        self.transport.send.assert_called_once()
+        item = json.loads(self.transport.send.call_args.args[0].body)[0]
+        self.assertEqual(item["iKey"], "original")
+        self.assertEqual(item["data"]["baseData"]["metrics"][0]["value"], 42)

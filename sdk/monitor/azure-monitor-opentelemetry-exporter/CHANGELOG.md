@@ -20,6 +20,8 @@
   exporter; additional destinations still transmit without persistence.
   Routed destinations with available offline storage defer new transmissions
   during retry backoff, using the existing retry delay or minimum retry interval.
+  Opened storage-backed routes also retry pending telemetry through one shared
+  background worker per exporter, without requiring new telemetry.
 
 ### Breaking Changes
 

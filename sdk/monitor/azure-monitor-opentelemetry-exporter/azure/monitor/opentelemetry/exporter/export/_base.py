@@ -63,6 +63,7 @@ from azure.monitor.opentelemetry.exporter._configuration._utils import (
     evaluate_feature,
 )
 from azure.monitor.opentelemetry.exporter._utils import (
+    PeriodicTask,
     _get_auth_policy,
     _get_sha256_hash,
     _get_retry_delay_from_headers,
@@ -146,6 +147,7 @@ class BaseExporter:
         self._route_exporters: Dict[tuple[str, bool], BaseExporter] = {}
         self._route_lock = threading.RLock()
         self._routing_shutdown = False
+        self._route_retry_task: Optional[PeriodicTask] = None
         self._route_options = kwargs.copy()
         self._local_storage_enabled: Optional[bool] = None
         parsed_connection_string = _connection_string_parser or ConnectionStringParser(
@@ -326,7 +328,32 @@ class BaseExporter:
         if self._local_storage_enabled is False:
             exporter._disable_local_storage()
         self._route_exporters[key] = exporter
+        if self._route_retry_task is None and exporter.storage and exporter.storage._enabled:
+            self._route_retry_task = PeriodicTask(
+                interval=self._storage_maintenance_period,
+                function=self._transmit_routes_from_storage,
+                name="{} Routed Retry".format(self.__class__.__name__),
+            )
+            self._route_retry_task.daemon = True
+            self._route_retry_task.start()
         return exporter
+
+    def _transmit_routes_from_storage(self) -> None:
+        # pylint: disable=protected-access,consider-using-with
+        # Do not wait on the lock: shutdown holds it while joining this worker.
+        if not self._route_lock.acquire(blocking=False):
+            return
+        try:
+            if self._routing_shutdown:
+                return
+            for exporter in self._route_exporters.values():
+                if exporter.storage and exporter._route_retry_at <= time.monotonic():
+                    try:
+                        exporter._transmit_from_storage()
+                    except Exception:  # pylint: disable=broad-except
+                        logger.exception("Exception occurred while retrying routed telemetry.")  # pylint: disable=C4769
+        finally:
+            self._route_lock.release()
 
     def _transmit_routed(self, groups: Dict[tuple[str, bool], List[TelemetryItem]]) -> ExportResult:
         # pylint: disable=protected-access
@@ -359,6 +386,9 @@ class BaseExporter:
                     cleanup.callback(exporter.client.close)
                     if exporter.storage:
                         cleanup.callback(exporter.storage.close)
+                if self._route_retry_task is not None:
+                    self._route_retry_task.cancel()
+                    cleanup.callback(self._route_retry_task.join)
                 self._route_exporters.clear()
 
     # Maximum number of blobs to drain from storage per invocation.
