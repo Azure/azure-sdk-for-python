@@ -16,6 +16,7 @@ from unittest.mock import AsyncMock, MagicMock
 import wave
 
 import pytest
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from azure.ai.projects import models
 
@@ -811,3 +812,286 @@ async def test_async_close_expired_deadline_does_not_create_an_unawaited_send(mo
         await helper.close_session_async(sample_environment.async_connection)
 
     sample_environment.async_connection.session.close.assert_not_called()
+
+
+def _rest_values(values, asynchronous):
+    if asynchronous:
+
+        async def iterate():
+            for value in values:
+                yield value
+
+        return iterate()
+    return iter(values)
+
+
+def _wav_bytes(channels):
+    stream = io.BytesIO()
+    with wave.open(stream, "wb") as writer:
+        writer.setparams((channels, 2, 24000, 0, "NONE", "not compressed"))
+        writer.writeframes(b"\x01\x02" * 1200 * channels)
+    return stream.getvalue()
+
+
+@pytest.fixture(params=[False, True], ids=["sync", "async"])
+def rest_sample(request, monkeypatch, sample_environment):
+    asynchronous = request.param
+    filename = "sample_voice_agent_live_read_conversation" + ("_async.py" if asynchronous else ".py")
+    sample = _load_module(monkeypatch, filename)
+    monkeypatch.setenv("FOUNDRY_VOICE_AGENT_NAME", "stored-agent-test")
+    monkeypatch.setenv("FOUNDRY_VOICE_CONVERSATION_ID", "conversation-test")
+    client = sample_environment.async_client if asynchronous else sample_environment.client
+    operations = client.beta.voice_agents.live_conversations
+    method_mock = AsyncMock if asynchronous else MagicMock
+    conversation = models.VoiceAgentLiveConversation(
+        {"id": "conversation-test", "status": "completed", "created_at": 1, "completed_at": 2}
+    )
+    audio = models.VoiceAudioItem(
+        {
+            "conversation_id": "conversation-test",
+            "item_id": "speech-test",
+            "role": "agent",
+            "format": "wav",
+            "codec": "pcm16",
+            "sample_rate": 24000,
+            "channels": 1,
+            "duration_ms": 50,
+        }
+    )
+    speech = models.VoiceAgentLiveOutputConversationItem(
+        {"id": "speech-test", "transcription": "A synthetic transcript.", "audio": audio.as_dict()}
+    )
+    delegation = models.VoiceAgentLiveClientDelegationConversationItem(
+        {"id": "delegation-test", "created_at": 1, "commentary": "Synthetic application guidance."}
+    )
+    items = [speech, delegation]
+    recording = models.VoiceRecording(
+        {
+            "conversation_id": "conversation-test",
+            "format": "wav",
+            "sample_rate": 24000,
+            "channels": 2,
+            "channel_layout": {"left": "user", "right": "agent"},
+            "duration_ms": 50,
+        }
+    )
+    item_bytes, merged_bytes = _wav_bytes(1), _wav_bytes(2)
+    operations.get = method_mock(return_value=conversation)
+    operations.list = MagicMock(side_effect=lambda *args, **kwargs: _rest_values([conversation], asynchronous))
+    operations.list_items = MagicMock(side_effect=lambda *args, **kwargs: _rest_values(items, asynchronous))
+    operations.get_item = method_mock(
+        side_effect=lambda agent, conversation, item: next(v for v in items if v.id == item)
+    )
+    operations.get_audio_item = method_mock(return_value=audio)
+    operations.get_audio = method_mock(return_value=recording)
+    operations.download_audio_item = method_mock(
+        side_effect=lambda *args: _rest_values([item_bytes[:12], item_bytes[12:]], asynchronous)
+    )
+    operations.download_audio = method_mock(
+        side_effect=lambda *args: _rest_values([merged_bytes[:12], merged_bytes[12:]], asynchronous)
+    )
+    operations.delete = method_mock()
+
+    async def run(**kwargs):
+        if asynchronous:
+            await sample.main(**kwargs)
+        else:
+            sample.main(**kwargs)
+
+    return SimpleNamespace(
+        sample=sample,
+        client=client,
+        operations=operations,
+        conversation=conversation,
+        audio=audio,
+        recording=recording,
+        items=items,
+        run=run,
+        item_bytes=item_bytes,
+        merged_bytes=merged_bytes,
+        asynchronous=asynchronous,
+    )
+
+
+@pytest.mark.asyncio
+async def test_live_rest_samples_are_read_only_by_default(rest_sample, tmp_path, capsys, monkeypatch):
+    for variable in ("FOUNDRY_VOICE_AGENT_MODEL", "FOUNDRY_MODEL_NAME", "FOUNDRY_VOICE_AUDIO_INPUT_PATH"):
+        monkeypatch.delenv(variable, raising=False)
+    await rest_sample.run()
+
+    operations = rest_sample.operations
+    operations.get.assert_called_once_with("stored-agent-test", "conversation-test")
+    operations.list.assert_called_once_with("stored-agent-test", limit=5, order="desc")
+    operations.list_items.assert_called_once_with("stored-agent-test", "conversation-test", limit=20, order="asc")
+    assert operations.get_item.call_count == 2
+    operations.get_audio_item.assert_called_once_with("stored-agent-test", "conversation-test", "speech-test")
+    operations.get_audio.assert_called_once_with("stored-agent-test", "conversation-test")
+    operations.download_audio.assert_not_called()
+    operations.download_audio_item.assert_not_called()
+    operations.delete.assert_not_called()
+    rest_sample.client.agents.create_version.assert_not_called()
+    rest_sample.client.agents.delete_version.assert_not_called()
+    rest_sample.client.beta.voice_agents.live.connect.assert_not_called()
+    rest_sample.client.beta.voice_agents.conversations.get.assert_not_called()
+    assert not list(tmp_path.iterdir())
+    output = capsys.readouterr().out
+    assert "A synthetic transcript." in output
+    assert "Non-speech item" in output
+    assert "Read-only run" in output
+
+
+@pytest.mark.asyncio
+async def test_live_rest_samples_download_both_recordings_and_delete_only_when_requested(rest_sample, tmp_path, capsys):
+    rest_sample.operations.get.side_effect = [rest_sample.conversation, ResourceNotFoundError("deleted")]
+
+    await rest_sample.run(output_directory=tmp_path, delete=True)
+
+    assert (tmp_path / "item-0001.wav").read_bytes() == rest_sample.item_bytes
+    assert (tmp_path / "conversation.wav").read_bytes() == rest_sample.merged_bytes
+    rest_sample.operations.download_audio_item.assert_called_once_with(
+        "stored-agent-test", "conversation-test", "speech-test"
+    )
+    rest_sample.operations.download_audio.assert_called_once_with("stored-agent-test", "conversation-test")
+    rest_sample.operations.delete.assert_called_once_with("stored-agent-test", "conversation-test")
+    assert rest_sample.operations.get.call_count == 2
+    if rest_sample.asynchronous:
+        for name in ("get_item", "get_audio_item", "get_audio", "download_audio_item", "download_audio", "delete"):
+            method = getattr(rest_sample.operations, name)
+            assert method.await_count == method.call_count
+    assert "confirmed HTTP 404" in capsys.readouterr().out
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", [404, 409, 500])
+async def test_live_rest_samples_surface_service_failures_without_fallback_or_deletion(rest_sample, status, capsys):
+    failure = HttpResponseError("service failure")
+    failure.status_code = status
+    rest_sample.operations.get.side_effect = failure
+
+    with pytest.raises(HttpResponseError) as caught:
+        await rest_sample.run(delete=True)
+
+    assert caught.value is failure
+    rest_sample.operations.delete.assert_not_called()
+    assert not rest_sample.client.beta.voice_agents.conversations.mock_calls
+    assert f"HTTP {status}" in capsys.readouterr().out
+    if rest_sample.asynchronous:
+        rest_sample.client.__aexit__.assert_awaited_once()
+    else:
+        rest_sample.client.__exit__.assert_called_once()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", ["in_progress", "failed"])
+async def test_live_rest_samples_require_successful_session_finalization(rest_sample, status):
+    rest_sample.conversation.status = status
+
+    with pytest.raises(RuntimeError, match="must finish successfully"):
+        await rest_sample.run(delete=True)
+
+    rest_sample.operations.list_items.assert_not_called()
+    rest_sample.operations.download_audio.assert_not_called()
+    rest_sample.operations.delete.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "method,filename",
+    [
+        ("download_audio_item", "item-0001.wav"),
+        ("download_audio", "conversation.wav"),
+    ],
+)
+@pytest.mark.parametrize("empty", [True, False], ids=["empty-stream", "failed-stream"])
+async def test_live_rest_download_failures_remove_incomplete_files_and_do_not_delete(
+    rest_sample, tmp_path, method, filename, empty
+):
+    async def async_chunks():
+        if not empty:
+            yield b"partial"
+            raise ConnectionError("stream failed")
+
+    def sync_chunks():
+        if not empty:
+            yield b"partial"
+            raise ConnectionError("stream failed")
+
+    getattr(rest_sample.operations, method).side_effect = lambda *args: (
+        async_chunks() if rest_sample.asynchronous else sync_chunks()
+    )
+
+    with pytest.raises(RuntimeError if empty else ConnectionError, match="no bytes|stream failed"):
+        await rest_sample.run(output_directory=tmp_path, delete=True)
+
+    assert not (tmp_path / filename).exists()
+    rest_sample.operations.delete.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "filename,method",
+    [
+        ("item-0001.wav", "download_audio_item"),
+        ("conversation.wav", "download_audio"),
+    ],
+)
+async def test_live_rest_samples_never_overwrite_an_existing_recording(rest_sample, tmp_path, filename, method):
+    path = tmp_path / filename
+    path.write_bytes(b"keep existing audio")
+
+    with pytest.raises(FileExistsError):
+        await rest_sample.run(output_directory=tmp_path, delete=True)
+
+    assert path.read_bytes() == b"keep existing audio"
+    getattr(rest_sample.operations, method).assert_not_called()
+    rest_sample.operations.delete.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("level", ["item", "merged"])
+@pytest.mark.parametrize("download", [False, True], ids=["metadata-only", "download-requested"])
+async def test_live_rest_samples_explain_byos_without_proxying_downloads(
+    rest_sample, tmp_path, capsys, level, download
+):
+    metadata = rest_sample.audio if level == "item" else rest_sample.recording
+    metadata.blob_uri = "https://example.invalid/private-recording"
+    if download:
+        with pytest.raises(RuntimeError, match="not BYOS audio"):
+            await rest_sample.run(output_directory=tmp_path, delete=True)
+        rest_sample.operations.delete.assert_not_called()
+    else:
+        await rest_sample.run()
+    method = "download_audio_item" if level == "item" else "download_audio"
+    getattr(rest_sample.operations, method).assert_not_called()
+    output = capsys.readouterr().out
+    assert "BYOS" in output and "https://example.invalid/private-recording" not in output
+
+
+@pytest.mark.asyncio
+async def test_live_rest_samples_reject_repeated_paging_items(rest_sample):
+    rest_sample.items.append(rest_sample.items[0])
+
+    with pytest.raises(RuntimeError, match="pager repeated an item"):
+        await rest_sample.run(delete=True)
+
+    rest_sample.operations.delete.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_live_rest_samples_report_a_delete_that_did_not_take_effect(rest_sample):
+    with pytest.raises(RuntimeError, match="remains readable after deletion"):
+        await rest_sample.run(delete=True)
+
+    rest_sample.operations.delete.assert_called_once_with("stored-agent-test", "conversation-test")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("variable", ["FOUNDRY_VOICE_AGENT_NAME", "FOUNDRY_VOICE_CONVERSATION_ID"])
+async def test_live_rest_samples_reject_blank_resource_identifiers(rest_sample, monkeypatch, variable):
+    monkeypatch.setenv(variable, " ")
+
+    with pytest.raises(ValueError, match="nonblank"):
+        await rest_sample.run(delete=True)
+
+    rest_sample.operations.get.assert_not_called()
+    rest_sample.operations.delete.assert_not_called()

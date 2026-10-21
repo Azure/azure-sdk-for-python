@@ -17,6 +17,7 @@
 
 * Added GPT Live connection, text conversation, asynchronous PCM audio streaming, and function-tool examples under `samples/agents/voice`.
 * Updated GPT Live text examples with synchronous/asynchronous headless multi-turn conversations that reuse one session and preserve the default single-turn example.
+* Added synchronous/asynchronous GPT Live REST examples for reading an existing stored conversation, its items, and audio metadata, with explicit opt-in recording downloads and conversation deletion.
 * Fixed the GPT Live WAV sample to ignore silent/very-low-level PCM when detecting reply inactivity, reject silence-only replies, and preserve captured PCM in audio counts and optional WAV output.
 
 ## 2.9.0 (2026-10-16)

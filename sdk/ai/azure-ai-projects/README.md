@@ -260,6 +260,22 @@ The WAV audio example uses a bounded speech-inactivity heuristic because Live ha
 event. Continued silent PCM does not keep it waiting forever, and silence-only output is not a
 successful spoken reply. A long speech pause can still split a reply.
 
+The [synchronous REST sample](samples/agents/voice/sample_voice_agent_live_read_conversation.py)
+and [asynchronous REST sample](samples/agents/voice/sample_voice_agent_live_read_conversation_async.py)
+read an existing stored Live conversation without opening a WebSocket. Set `FOUNDRY_PROJECT_ENDPOINT`,
+`FOUNDRY_VOICE_AGENT_NAME`, and `FOUNDRY_VOICE_CONVERSATION_ID`. The last value must be
+`session.started.conversation_id` from a session with effective `store=True`, not `session.id`.
+The session must have finished successfully and contain recorded speech.
+
+Both samples demonstrate conversation/item listing and retrieval, plus merged and per-item audio
+metadata. Pass `--output-dir <directory>` to download Foundry-managed WAV audio without overwriting
+existing files. Downloads save conversation content locally, not telemetry. BYOS audio requires your
+own storage credentials. Nothing is deleted unless `--delete` is explicitly supplied; that option
+deletes the selected conversation and its stored items/audio only after all requested reads succeed.
+These samples use the dedicated `.beta.voice_agents.live_conversations` routes. A deployment that
+does not support those routes returns HTTP 404, which is surfaced rather than silently falling back
+to `.beta.voice_agents.conversations`.
+
 ## Client-side tracing
 
 See [Add client-side tracing to Foundry agents (preview)](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python).
