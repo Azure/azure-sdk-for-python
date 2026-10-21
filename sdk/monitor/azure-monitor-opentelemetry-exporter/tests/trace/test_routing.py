@@ -223,6 +223,20 @@ class TestTraceRouting(unittest.TestCase):
         self.assertTrue(all(request.url.startswith("https://one.example/proxy/") for request in requests))
         self.assertFalse(list((Path(self.directory.name) / "host").iterdir()))
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_backoff_defers_spans_and_events(self, clock):
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        self.assertEqual(exporter.export([self._span()]), SpanExportResult.FAILURE)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        self.assertEqual(exporter.export([self._span(key="deferred")]), SpanExportResult.FAILURE)
+        self.transport.send.assert_not_called()
+        clock.return_value = 160
+        self.assertEqual(exporter.export([self._span(key="new")]), SpanExportResult.SUCCESS)
+        self.transport.send.assert_called_once()
+        self.assertEqual([item["iKey"] for item in json.loads(self.transport.send.call_args.args[0].body)], ["new"] * 3)
+
     def test_shutdown_closes_routes_and_rejects_later_exports(self):
         exporter = self._exporter(disable_offline_storage=False)
         self.assertEqual(exporter.export([self._span()]), SpanExportResult.SUCCESS)
