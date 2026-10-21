@@ -3,6 +3,10 @@
 # ---------------------------------------------------------
 """Host A2A v1.0 and Invocations on one Foundry agent server."""
 
+import os
+
+os.environ.setdefault("OTEL_INSTRUMENTATION_A2A_SDK_ENABLED", "false")
+
 from a2a.helpers import new_task_from_user_message, new_text_message, new_text_part
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue

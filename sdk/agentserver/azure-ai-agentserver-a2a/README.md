@@ -18,6 +18,42 @@ to a small host declaration. The container contract itself remains mandatory.
 pip install azure-ai-agentserver-a2a
 ```
 
+### Build and install an alpha
+
+Alpha packages use the same internal dev-feed workflow as the Activity host.
+They are not published to PyPI.
+
+1. Commit and push the A2A and core changes to a branch available to the
+   [internal `python - agentserver` pipeline](https://dev.azure.com/azure-sdk/internal/_build?definitionId=7974).
+   A fork-only branch must first be made available to that pipeline's source
+   repository by a maintainer.
+2. Select **Run pipeline**, choose that branch, and enable
+   **Publish A2A and core alpha packages to the dev feed** (`PublishA2AAlpha`).
+3. Keep **Build** and **Integration** selected. The opt-in applies only to
+   internal manual runs; it sets `SetDevVersion=true` and `Skip.Release=true`.
+   Leave the `BuildTargetingString` variable unset so neither package is
+   filtered out. Normal CI, scheduled builds, and PR validation are unchanged.
+4. Check the Integration job's publish steps for both
+   `azure-ai-agentserver-a2a` and `azure-ai-agentserver-core`. Normal validation
+   still covers the service packages, but this mode publishes only these two
+   alpha packages, not the other Agent Server hosts.
+
+The pipeline generates versions from its build number without changing the
+checked-in versions. For example, build `20261021.1` produces
+`1.0.0a20261021001` (A2A) and `2.2.0a20261021001` (core).
+Replace the example versions below with those from the successful run:
+
+```powershell
+python -m pip install --pre `
+  --index-url "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" `
+  "azure-ai-agentserver-a2a==1.0.0a20261021001" `
+  "azure-ai-agentserver-core==2.2.0a20261021001"
+```
+
+Install both packages from the same run to include the core tracing enrichment
+changes. The dev-build tooling rewrites A2A's core dependency to an alpha range;
+pinning both versions also prevents accidentally testing a different core build.
+
 ### Prerequisites
 
 - Python 3.10 or later
@@ -30,6 +66,8 @@ pip install azure-ai-agentserver-a2a
 `A2AAgentServerHost` is an `AgentServerHost` subclass that:
 
 - registers the native JSON-RPC handler at `POST /a2a`;
+- accepts `POST /invocations/a2a` as a non-advertised compatibility alias for
+  Foundry service versions that still forward to the legacy container path;
 - registers the native public agent card at
   `GET /a2a/.well-known/agent-card.json`;
 - captures `x-agent-foundry-call-id` and `x-agent-user-id` in the
@@ -37,9 +75,33 @@ pip install azure-ai-agentserver-a2a
 - provides `/readiness`, port configuration, telemetry, and graceful shutdown
   through `azure-ai-agentserver-core`.
 
+  Both POST routes execute the same native handler and semantic tracing wrapper.
+
 The Foundry passthrough advertises only the JSON-RPC binding, including
 `SendStreamingMessage` responses over SSE. Push notifications, the authenticated
 extended card, HTTP+JSON/REST, and gRPC are not exposed in the initial release.
+
+### Distributed tracing
+
+The host emits one `SERVER` span for each valid A2A JSON-RPC operation using
+the `Azure.AI.AgentServer.A2A` instrumentation scope. Span names are the A2A
+method names (`SendMessage`, `SendStreamingMessage`, `GetTask`, and so on).
+Attributes include protocol, message, task, Agent Card, and `contextId`
+correlation data. JSON-RPC errors set `error.type` and mark the span as failed
+even though the HTTP response status is 200. Streaming spans remain open until
+the SSE response completes.
+
+These attributes follow the development-stage proposal in
+[OpenTelemetry GenAI semantic conventions PR 195](https://github.com/open-telemetry/semantic-conventions-genai/pull/195)
+and may evolve before that convention becomes stable.
+
+The native `a2a-sdk` currently emits generic implementation-level spans in
+addition to these semantic operation spans. To avoid duplicate server spans,
+set this environment variable **before importing `a2a`**:
+
+```bash
+OTEL_INSTRUMENTATION_A2A_SDK_ENABLED=false
+```
 
 ## Examples
 
@@ -75,6 +137,10 @@ await client.post(foundry_service_url, headers=headers, json=payload)
 `platform_headers()` forwards only `x-agent-foundry-call-id`. The inbound user
 ID remains available as `get_request_context().user_id` for container-side
 state partitioning and is not forwarded to Foundry services.
+
+An inbound A2A `contextId` is recorded as `gen_ai.conversation.id` and added to
+the active baggage context so child model, tool, and framework spans can use the
+same conversation correlation.
 
 ### Host A2A and Invocations together
 

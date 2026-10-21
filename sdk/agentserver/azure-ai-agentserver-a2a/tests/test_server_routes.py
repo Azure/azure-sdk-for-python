@@ -23,6 +23,7 @@ from azure.ai.agentserver.core import get_request_context
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 _RPC_PATH = "/a2a"
+_FOUNDRY_COMPAT_RPC_PATH = "/invocations/a2a"
 _CARD_PATH = "/a2a/.well-known/agent-card.json"
 
 
@@ -83,12 +84,17 @@ def _host(**kwargs) -> A2AAgentServerHost:
     )
 
 
-def test_registers_only_canonical_a2a_routes():
+def test_registers_canonical_and_foundry_compatibility_routes():
     host = _host()
 
     paths = [getattr(route, "path", None) for route in host.routes]
 
-    assert paths == [_RPC_PATH, _CARD_PATH, "/readiness"]
+    assert paths == [
+        _RPC_PATH,
+        _FOUNDRY_COMPAT_RPC_PATH,
+        _CARD_PATH,
+        "/readiness",
+    ]
     assert "/.well-known/agent-card.json" not in paths
     assert "/a2a/extendedAgentCard" not in paths
 
@@ -153,7 +159,8 @@ async def test_send_streaming_message_returns_sse(client_factory):
 
 
 @pytest.mark.asyncio
-async def test_binds_and_resets_platform_request_context(client_factory):
+@pytest.mark.parametrize("path", [_RPC_PATH, _FOUNDRY_COMPAT_RPC_PATH])
+async def test_binds_and_resets_platform_request_context(client_factory, path):
     async def inspect_context(_request: Request) -> JSONResponse:
         context = get_request_context()
         return JSONResponse(
@@ -173,7 +180,7 @@ async def test_binds_and_resets_platform_request_context(client_factory):
 
     async with client_factory(host) as client:
         response = await client.post(
-            _RPC_PATH,
+            path,
             json={},
             headers={
                 "x-agent-foundry-call-id": "call-123",

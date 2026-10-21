@@ -641,6 +641,24 @@ class TestFoundryEnrichmentSpanProcessor:
         assert attrs["gen_ai.agent.name"] == "my-agent"
         assert attrs["gen_ai.agent.id"] == "my-agent:1.0"
 
+    def test_a2a_span_preserves_agent_card_name_and_version(self) -> None:
+        proc = _FoundryEnrichmentSpanProcessor(
+            agent_name="foundry-deployment",
+            agent_version="7",
+            agent_id="foundry-deployment:7",
+        )
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("Azure.AI.AgentServer.A2A")
+
+        with tracer.start_as_current_span("SendMessage") as span:
+            span.set_attribute("gen_ai.agent.name", "Agent Card Name")
+            span.set_attribute("gen_ai.agent.version", "1.2.3")
+
+        attrs = dict(collector.spans[0].attributes)
+        assert attrs["gen_ai.agent.name"] == "Agent Card Name"
+        assert attrs["gen_ai.agent.version"] == "1.2.3"
+        assert attrs["gen_ai.agent.id"] == "foundry-deployment:7"
+
     def test_blueprint_id_uses_correct_attribute_key(self) -> None:
         """agent_blueprint_id must be emitted under microsoft.a365.agent.blueprint.id."""
         proc = _FoundryEnrichmentSpanProcessor(
@@ -942,6 +960,22 @@ class TestBaggageLogRecordProcessor:
         assert attrs["gen_ai.agent.name"] == "existing-name"
         assert attrs["gen_ai.agent.version"] == "0.0.1"
         assert attrs["microsoft.session.id"] == "existing-session"
+
+    def test_maps_conversation_baggage_to_gen_ai_attribute(self) -> None:
+        proc = _BaggageLogRecordProcessor()
+        attrs = {}
+        log_data = _FakeLogData(attrs)
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.conversation_id",
+            "ctx-a2a",
+        )
+        token = _otel_context.attach(ctx)
+        try:
+            proc.on_emit(log_data)
+        finally:
+            _otel_context.detach(token)
+
+        assert attrs["gen_ai.conversation.id"] == "ctx-a2a"
 
 
 # ------------------------------------------------------------------ #

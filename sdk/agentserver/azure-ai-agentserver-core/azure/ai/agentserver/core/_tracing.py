@@ -74,6 +74,7 @@ _BAGGAGE_CONVERSATION_ID = "azure.ai.agentserver.conversation_id"
 _BAGGAGE_INVOCATION_ID = "azure.ai.agentserver.invocation_id"
 
 _ATTR_INVOCATION_ID = "azure.ai.agentserver.invocations.invocation_id"
+_A2A_INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.A2A"
 
 _SERVICE_NAME_VALUE = "azure.ai.agentserver"
 _GEN_AI_SYSTEM_VALUE = "azure.ai.agentserver"
@@ -847,10 +848,14 @@ class _FoundryEnrichmentSpanProcessor:
             return
         try:
             target = getattr(attrs, "_dict", attrs)
+            scope = getattr(span, "instrumentation_scope", None)
+            preserve_agent_card_metadata = getattr(scope, "name", "") == _A2A_INSTRUMENTATION_SCOPE
             if self.agent_name:
-                target[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+                if not preserve_agent_card_metadata or _ATTR_GEN_AI_AGENT_NAME not in target:
+                    target[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
             if self.agent_version:
-                target[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+                if not preserve_agent_card_metadata or _ATTR_GEN_AI_AGENT_VERSION not in target:
+                    target[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
             if self.agent_id:
                 target[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
             if self.agent_blueprint_id:
@@ -916,6 +921,12 @@ class _BaggageLogRecordProcessor:
             resolved_session = bag_session or self.session_id
             if resolved_session and _ATTR_SESSION_ID not in attrs:
                 attrs[_ATTR_SESSION_ID] = resolved_session
+            conversation_id = _otel_baggage.get_baggage(
+                _BAGGAGE_CONVERSATION_ID,
+                context=ctx,
+            )
+            if conversation_id and _ATTR_GEN_AI_CONVERSATION_ID not in attrs:
+                attrs[_ATTR_GEN_AI_CONVERSATION_ID] = conversation_id
         except Exception:  # pylint: disable=broad-except
             pass
 
