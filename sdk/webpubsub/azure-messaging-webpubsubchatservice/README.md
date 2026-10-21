@@ -17,8 +17,8 @@ Use this client library in an application server to:
 | [Package (PyPI)][package]
 | [API reference documentation][api_reference]
 | [Product documentation][product_docs]
-| [Samples][samples]
-| [Generated samples][generated_samples]
+| [Model-based samples][samples]
+| [Dictionary-based samples][generated_samples]
 | [Changelog][changelog]
 
 ## Getting started
@@ -129,7 +129,7 @@ User roles control operations such as creating rooms. Room roles control what a 
 
 ### User
 
-A user represents an identity participating in chat, such as a human end user or an application. In the service API, a user is identified by a user ID and assigned a user role. The SDK provides `HumanChatUserCreateOrReplace` for creating human users with a nickname and a user role. Client access credentials associate WebSocket connections with a user ID.
+A user represents an identity participating in chat, such as a human end user or an application. Client access credentials associate WebSocket connections with a user ID.
 
 ### Room
 
@@ -147,14 +147,8 @@ Messages sent to a conversation are delivered in real time to the room's connect
 
 ### Topic
 
-A topic represents a named conversation within a room. The service returns its
-ID, creation time, creator, conversation ID, and ETag in responses. Topic IDs are specified
-by the application in the request path. Topics have a lifecycle state of `Normal`, `Archived`,
-or `SoftDeleted`. Creating a topic requires a title; updating a topic can change its title
-and state. Deleting a topic is a soft delete.
-
-The default service API version is `2026-08-01-preview`, which adds topics and the
-room, user, and user-room collection operations.
+A topic represents a named conversation within a room. Topics can be created,
+renamed, archived, and soft deleted independently of the room's default conversation.
 
 ### Request models and dictionaries
 
@@ -167,14 +161,6 @@ such as `roleName`. `TypedDict` provides static type checking for those
 dictionaries; at runtime they are ordinary dictionaries, not model instances,
 and do not perform runtime validation.
 
-Concrete user models automatically set the JSON discriminator field.
-For example, `HumanChatUserCreateOrReplace(nickname="Alice", role_name="user.normal")`
-sets `kind` to `"Human"`; callers do not pass `kind` or `discriminator` to
-this constructor. The `discriminator="Human"` in the generated class
-declaration registers the subtype for deserialization, while `kind` is the
-field sent in JSON. A dictionary request must include `"kind": "Human"`
-explicitly.
-
 ## Examples
 
 The following sections show common scenarios. Each operation snippet assumes an
@@ -182,12 +168,11 @@ authenticated `client`, created as shown in Getting started. The async snippet
 uses a client from `azure.messaging.webpubsubchatservice.aio`.
 See the [package samples][samples] for complete synchronous and asynchronous programs.
 
-The hand-written request-body examples use model instances. The
-[generated operation samples][generated_samples] use dictionary literals
-with JSON field names, rather than explicitly constructing `TypedDict` values.
-Both request-body styles are supported. See the
-[sample guide and complete operation index](samples/README.md) for links to
-every operation and the available hand-written examples.
+The [model-based samples][samples] use model instances for request bodies.
+The [dictionary-based samples][generated_samples] use dictionary literals with
+JSON field names. Both call the same client methods. See the
+[sample guide and complete operation index](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/README.md)
+for a corresponding model-based example of every service operation.
 
 ### Generate client access credentials
 
@@ -575,13 +560,13 @@ Explore the [README snippet sources](https://github.com/Azure/azure-sdk-for-pyth
 - Manage topic lifecycles and iterate over room and user collections.
 - Use synchronous and asynchronous clients.
 
-See also the [generated operation samples][generated_samples], produced from the
+See also the [dictionary-based operation samples][generated_samples], produced from the
 specification's examples. Each file demonstrates one operation. Replace
 `ENDPOINT`, `HUB`, and any example resource identifiers before running them,
 and configure authentication as described in each file. These generated files
 are refreshed during SDK generation. The README snippet source contains
 independent functions, not a combined workflow or a standalone program.
-The runnable hand-written samples demonstrate model and permission-enum usage,
+The runnable model-based samples demonstrate model and permission-enum usage,
 authentication, client access credentials, errors, and logging.
 
 ## Additional resources
