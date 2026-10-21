@@ -75,6 +75,7 @@ $storageContext = New-AzStorageContext -StorageAccountName $storageAccountName -
 $networkRuleSet = New-Object -TypeName Microsoft.Azure.Commands.Management.Storage.Models.PSNetworkRuleSet
 $networkRuleSet.DefaultAction = "Allow"
 Set-AzStorageAccount -ResourceGroupName $resourceGroup -Name $storageAccountName -NetworkRuleSet $networkRuleSet -ErrorAction Stop
+$sinceNetworkRuleUpdate = [System.Diagnostics.Stopwatch]::StartNew()
 
 # Wait until the container is reachable through the data plane (RBAC + network ACL propagated)
 Invoke-WithRetry -Operation "Accessing container '$containerName'" -ScriptBlock {
@@ -97,3 +98,12 @@ Get-ChildItem -Path $localFolderPath -Recurse -File | ForEach-Object {
 }
 
 Write-Host "Folder '$localFolderPath' uploaded to container '$containerName' successfully."
+
+# Our own access proves the test principal's RBAC and the network rule, but not the DeID service's managed
+# identity role assignment. Keep a minimum wait after the network rule update for it to propagate.
+$minimumWaitSeconds = 30
+$remainingSeconds = [int][Math]::Ceiling($minimumWaitSeconds - $sinceNetworkRuleUpdate.Elapsed.TotalSeconds)
+if ($remainingSeconds -gt 0) {
+    Write-Host "Waiting ${remainingSeconds}s more so at least ${minimumWaitSeconds}s pass after the network rule update for role assignments to propagate."
+    Start-Sleep -Seconds $remainingSeconds
+}
