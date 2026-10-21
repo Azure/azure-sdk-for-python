@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/GetWebSiteNetworkTraces_GetNetworkTracesSlotV2.json
+# x-ms-original-file: 2026-03-15/GetWebSiteNetworkTraces_GetNetworkTracesSlotV2.json
 if __name__ == "__main__":
     main()

@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/PatchStaticSiteBuildDatabaseConnection.json
+# x-ms-original-file: 2026-03-15/PatchStaticSiteBuildDatabaseConnection.json
 if __name__ == "__main__":
     main()

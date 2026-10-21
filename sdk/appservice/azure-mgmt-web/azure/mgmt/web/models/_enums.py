@@ -189,7 +189,7 @@ class BuildStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class BuiltInAuthenticationProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default authentication provider to use when multiple providers are configured. This setting
     is only needed if multiple providers are configured and the unauthenticated client action is
-    set to "RedirectToLoginPage".
+    set to \"RedirectToLoginPage\".
     """
 
     AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
@@ -901,6 +901,17 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OBJECT."""
     SECURE_OBJECT = "SecureObject"
     """SECURE_OBJECT."""
+
+
+class PlatformReleaseChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The platform release channel for the site."""
+
+    LATEST = "Latest"
+    """Latest receives updates earliest."""
+    STANDARD = "Standard"
+    """Standard receives updates after Latest."""
+    EXTENDED = "Extended"
+    """Extended receives updates last with extended support."""
 
 
 class ProviderOsTypeSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):

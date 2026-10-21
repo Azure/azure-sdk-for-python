@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-05-01/ListWebAppConfigurations.json
+# x-ms-original-file: 2026-03-15/ListWebAppConfigurations.json
 if __name__ == "__main__":
     main()

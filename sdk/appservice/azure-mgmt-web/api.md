@@ -2,6 +2,7 @@
 namespace azure.mgmt.web
 
     class azure.mgmt.web.WebSiteManagementClient(_WebSiteManagementClientOperationsMixin): implements ContextManager 
+        ai_gateways: AiGatewaysOperations
         app_service_environments: AppServiceEnvironmentsOperations
         app_service_plans: AppServicePlansOperations
         certificates: CertificatesOperations
@@ -14,7 +15,9 @@ namespace azure.mgmt.web
         recommendations: RecommendationsOperations
         resource_health_metadata: ResourceHealthMetadataOperations
         site_certificates: SiteCertificatesOperations
+        sites: SitesOperations
         static_sites: StaticSitesOperations
+        static_sites_async_operations: StaticSitesAsyncOperationsOperations
         web_apps: WebAppsOperations
         workflow_run_action_repetitions: WorkflowRunActionRepetitionsOperations
         workflow_run_action_repetitions_request_histories: WorkflowRunActionRepetitionsRequestHistoriesOperations
@@ -364,6 +367,7 @@ namespace azure.mgmt.web
 namespace azure.mgmt.web.aio
 
     class azure.mgmt.web.aio.WebSiteManagementClient(_WebSiteManagementClientOperationsMixin): implements AsyncContextManager 
+        ai_gateways: AiGatewaysOperations
         app_service_environments: AppServiceEnvironmentsOperations
         app_service_plans: AppServicePlansOperations
         certificates: CertificatesOperations
@@ -376,7 +380,9 @@ namespace azure.mgmt.web.aio
         recommendations: RecommendationsOperations
         resource_health_metadata: ResourceHealthMetadataOperations
         site_certificates: SiteCertificatesOperations
+        sites: SitesOperations
         static_sites: StaticSitesOperations
+        static_sites_async_operations: StaticSitesAsyncOperationsOperations
         web_apps: WebAppsOperations
         workflow_run_action_repetitions: WorkflowRunActionRepetitionsOperations
         workflow_run_action_repetitions_request_histories: WorkflowRunActionRepetitionsRequestHistoriesOperations
@@ -724,6 +730,118 @@ namespace azure.mgmt.web.aio
 
 
 namespace azure.mgmt.web.aio.operations
+
+    class azure.mgmt.web.aio.operations.AiGatewaysOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                resource: AiGateway, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                resource: AiGateway, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'name']}, api_versions_list=['2026-03-01-preview', '2026-03-15'])
+        async def delete(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-03-15'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip', 'maxpagesize', 'filter', 'select', 'expand', 'orderby', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-03-15'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                *, 
+                expand: Optional[List[str]] = ..., 
+                filter: Optional[str] = ..., 
+                orderby: Optional[List[str]] = ..., 
+                select: Optional[List[str]] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AiGateway]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-03-15'])
+        def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[AiGateway]: ...
+
+        @overload
+        async def patch(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                properties: AiGatewayTagsUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @overload
+        async def patch(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                properties: AiGatewayTagsUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @overload
+        async def patch(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
 
     class azure.mgmt.web.aio.operations.AppServiceEnvironmentsOperations:
 
@@ -2812,6 +2930,61 @@ namespace azure.mgmt.web.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> Certificate: ...
+
+
+    class azure.mgmt.web.aio.operations.SitesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-15', params_added_on={'2026-03-15': ['api_version', 'subscription_id', 'resource_group_name', 'name', 'network_security_perimeter_reference', 'accept']}, api_versions_list=['2026-03-15'])
+        async def get_network_security_perimeter_configuration(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                network_security_perimeter_reference: str, 
+                **kwargs: Any
+            ) -> NetworkSecurityPerimeterConfiguration: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-15', params_added_on={'2026-03-15': ['api_version', 'subscription_id', 'resource_group_name', 'name', 'accept']}, api_versions_list=['2026-03-15'])
+        def list_network_security_perimeter_configurations(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[NetworkSecurityPerimeterConfiguration]: ...
+
+
+    class azure.mgmt.web.aio.operations.StaticSitesAsyncOperationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-15', params_added_on={'2026-03-15': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-03-15'])
+        async def begin_get_operation_result(
+                self, 
+                location: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-15', params_added_on={'2026-03-15': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-03-15'])
+        async def get_operation_status(
+                self, 
+                location: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> StaticSitesOperationStatus: ...
 
 
     class azure.mgmt.web.aio.operations.StaticSitesOperations:
@@ -8709,7 +8882,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
+            ) -> str: ...
 
         @overload
         async def list_publishing_profile_xml_with_secrets(
@@ -8720,7 +8893,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
+            ) -> str: ...
 
         @overload
         async def list_publishing_profile_xml_with_secrets(
@@ -8731,7 +8904,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
+            ) -> str: ...
 
         @overload
         async def list_publishing_profile_xml_with_secrets_slot(
@@ -8743,7 +8916,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
+            ) -> str: ...
 
         @overload
         async def list_publishing_profile_xml_with_secrets_slot(
@@ -8755,7 +8928,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
+            ) -> str: ...
 
         @overload
         async def list_publishing_profile_xml_with_secrets_slot(
@@ -8767,7 +8940,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
+            ) -> str: ...
 
         @distributed_trace_async
         async def list_relay_service_connections(
@@ -11475,6 +11648,64 @@ namespace azure.mgmt.web.models
                 outbound_ip_addresses: Optional[list[str]] = ..., 
                 service_ip_address: Optional[str] = ..., 
                 vip_mappings: Optional[list[VirtualIPMapping]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.AiGateway(TrackedResource):
+        id: str
+        location: str
+        name: str
+        properties: Optional[AiGatewayProperties]
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: str, 
+                properties: Optional[AiGatewayProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.AiGatewayProperties(_Model):
+        ai_gateway_id: Optional[str]
+
+
+    class azure.mgmt.web.models.AiGatewayTagsUpdate(_Model):
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.AiIntegration(_Model):
+        api_spec_path: Optional[str]
+        mcp: Optional[McpSettings]
+        site_auth: Optional[SiteAuthInfo]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                api_spec_path: Optional[str] = ..., 
+                mcp: Optional[McpSettings] = ..., 
+                site_auth: Optional[SiteAuthInfo] = ...
             ) -> None: ...
 
         @overload
@@ -14844,6 +15075,19 @@ namespace azure.mgmt.web.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.web.models.ErrorAdditionalInfo(_Model):
+        info: Optional[Any]
+        type: Optional[str]
+
+
+    class azure.mgmt.web.models.ErrorDetail(_Model):
+        additional_info: Optional[list[ErrorAdditionalInfo]]
+        code: Optional[str]
+        details: Optional[list[ErrorDetail]]
+        message: Optional[str]
+        target: Optional[str]
+
+
     class azure.mgmt.web.models.ErrorEntity(_Model):
         code: Optional[str]
         details: Optional[list[ErrorEntity]]
@@ -14896,6 +15140,20 @@ namespace azure.mgmt.web.models
                 *, 
                 code: Optional[str] = ..., 
                 message: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.ErrorResponse(_Model):
+        error: Optional[ErrorDetail]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                error: Optional[ErrorDetail] = ...
             ) -> None: ...
 
         @overload
@@ -16822,6 +17080,42 @@ namespace azure.mgmt.web.models
         USER_ASSIGNED = "UserAssigned"
 
 
+    class azure.mgmt.web.models.McpServerConfig(_Model):
+        description: Optional[str]
+        enabled: Optional[bool]
+        endpoint: Optional[str]
+        name: Optional[str]
+        tool_list: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                enabled: Optional[bool] = ..., 
+                endpoint: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_list: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.McpSettings(_Model):
+        servers: Optional[list[McpServerConfig]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                servers: Optional[list[McpServerConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.web.models.MetricAvailability(_Model):
         blob_duration: Optional[str]
         time_grain: Optional[str]
@@ -17031,6 +17325,64 @@ namespace azure.mgmt.web.models
         virtual_network_name: Optional[str]
 
 
+    class azure.mgmt.web.models.NetworkSecurityPerimeter(_Model):
+        id: Optional[str]
+        location: Optional[str]
+        perimeter_guid: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ..., 
+                location: Optional[str] = ..., 
+                perimeter_guid: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.NetworkSecurityPerimeterConfiguration(ProxyOnlyResource):
+        id: str
+        kind: str
+        name: str
+        properties: Optional[NetworkSecurityPerimeterConfigurationProperties]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                kind: Optional[str] = ..., 
+                properties: Optional[NetworkSecurityPerimeterConfigurationProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.NetworkSecurityPerimeterConfigurationProperties(_Model):
+        network_security_perimeter: Optional[NetworkSecurityPerimeter]
+        profile: Optional[NspProfile]
+        provisioning_issues: Optional[list[NspProvisioningIssue]]
+        provisioning_state: Optional[str]
+        resource_associations: Optional[NspResourceAssociation]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                network_security_perimeter: Optional[NetworkSecurityPerimeter] = ..., 
+                profile: Optional[NspProfile] = ..., 
+                provisioning_issues: Optional[list[NspProvisioningIssue]] = ..., 
+                resource_associations: Optional[NspResourceAssociation] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.web.models.NetworkTrace(_Model):
         message: Optional[str]
         path: Optional[str]
@@ -17070,6 +17422,158 @@ namespace azure.mgmt.web.models
         INFORMATION = "Information"
         NON_URGENT_SUGGESTION = "NonUrgentSuggestion"
         WARNING = "Warning"
+
+
+    class azure.mgmt.web.models.NspProfile(_Model):
+        access_rules: Optional[list[NspProfileAccessRule]]
+        access_rules_version: Optional[str]
+        diagnostic_settings_version: Optional[str]
+        enabled_log_categories: Optional[list[str]]
+        name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                access_rules: Optional[list[NspProfileAccessRule]] = ..., 
+                access_rules_version: Optional[str] = ..., 
+                diagnostic_settings_version: Optional[str] = ..., 
+                enabled_log_categories: Optional[list[str]] = ..., 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.NspProfileAccessRule(_Model):
+        name: Optional[str]
+        properties: Optional[NspProfileAccessRuleProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Optional[str] = ..., 
+                properties: Optional[NspProfileAccessRuleProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.NspProfileAccessRuleGranularFeature(_Model):
+        features: Optional[list[str]]
+        resource_type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                features: Optional[list[str]] = ..., 
+                resource_type: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.NspProfileAccessRuleProperties(_Model):
+        address_prefixes: Optional[list[str]]
+        applies_to: Optional[list[NspProfileAccessRuleGranularFeature]]
+        direction: Optional[str]
+        email_addresses: Optional[list[str]]
+        fully_qualified_domain_names: Optional[list[str]]
+        network_security_perimeters: Optional[list[NetworkSecurityPerimeter]]
+        phone_numbers: Optional[list[str]]
+        service_tags: Optional[list[str]]
+        subscriptions: Optional[list[NspSubscription]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                address_prefixes: Optional[list[str]] = ..., 
+                applies_to: Optional[list[NspProfileAccessRuleGranularFeature]] = ..., 
+                direction: Optional[str] = ..., 
+                email_addresses: Optional[list[str]] = ..., 
+                fully_qualified_domain_names: Optional[list[str]] = ..., 
+                network_security_perimeters: Optional[list[NetworkSecurityPerimeter]] = ..., 
+                phone_numbers: Optional[list[str]] = ..., 
+                service_tags: Optional[list[str]] = ..., 
+                subscriptions: Optional[list[NspSubscription]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.NspProvisioningIssue(_Model):
+        name: Optional[str]
+        properties: Optional[NspProvisioningIssueProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Optional[str] = ..., 
+                properties: Optional[NspProvisioningIssueProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.NspProvisioningIssueProperties(_Model):
+        description: Optional[str]
+        issue_type: Optional[str]
+        severity: Optional[str]
+        suggested_access_rules: Optional[list[str]]
+        suggested_resource_ids: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                issue_type: Optional[str] = ..., 
+                severity: Optional[str] = ..., 
+                suggested_access_rules: Optional[list[str]] = ..., 
+                suggested_resource_ids: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.NspResourceAssociation(_Model):
+        access_mode: Optional[str]
+        name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                access_mode: Optional[str] = ..., 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.NspSubscription(_Model):
+        id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.web.models.OpenAuthenticationAccessPolicies(_Model):
@@ -17310,6 +17814,7 @@ namespace azure.mgmt.web.models
         backup_restore_traffic: Optional[bool]
         content_share_traffic: Optional[bool]
         image_pull_traffic: Optional[bool]
+        managed_identity_traffic: Optional[bool]
 
         @overload
         def __init__(
@@ -17319,7 +17824,8 @@ namespace azure.mgmt.web.models
                 application_traffic: Optional[bool] = ..., 
                 backup_restore_traffic: Optional[bool] = ..., 
                 content_share_traffic: Optional[bool] = ..., 
-                image_pull_traffic: Optional[bool] = ...
+                image_pull_traffic: Optional[bool] = ..., 
+                managed_identity_traffic: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -17394,6 +17900,12 @@ namespace azure.mgmt.web.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.PlatformReleaseChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EXTENDED = "Extended"
+        LATEST = "Latest"
+        STANDARD = "Standard"
 
 
     class azure.mgmt.web.models.PremierAddOn(TrackedResource):
@@ -19209,6 +19721,28 @@ namespace azure.mgmt.web.models
             ) -> None: ...
 
 
+    class azure.mgmt.web.models.SiteAuthInfo(_Model):
+        audience: Optional[str]
+        issuer: Optional[str]
+        jwks_uri: Optional[str]
+        scopes: Optional[list[str]]
+        well_known_open_id_configuration: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audience: Optional[str] = ..., 
+                issuer: Optional[str] = ..., 
+                jwks_uri: Optional[str] = ..., 
+                scopes: Optional[list[str]] = ..., 
+                well_known_open_id_configuration: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.web.models.SiteAuthSettings(ProxyOnlyResource):
         id: str
         kind: str
@@ -19938,6 +20472,7 @@ namespace azure.mgmt.web.models
 
 
     class azure.mgmt.web.models.SitePatchResourceProperties(_Model):
+        ai_integration: Optional[AiIntegration]
         availability_state: Optional[Union[str, SiteAvailabilityState]]
         client_affinity_enabled: Optional[bool]
         client_affinity_proxy_enabled: Optional[bool]
@@ -19974,6 +20509,7 @@ namespace azure.mgmt.web.models
         scm_site_also_stopped: Optional[bool]
         server_farm_id: Optional[str]
         site_config: Optional[SiteConfig]
+        site_scoped_certificates_enabled: Optional[bool]
         slot_swap_status: Optional[SlotSwapStatus]
         state: Optional[str]
         storage_account_required: Optional[bool]
@@ -19987,6 +20523,7 @@ namespace azure.mgmt.web.models
         def __init__(
                 self, 
                 *, 
+                ai_integration: Optional[AiIntegration] = ..., 
                 client_affinity_enabled: Optional[bool] = ..., 
                 client_affinity_proxy_enabled: Optional[bool] = ..., 
                 client_cert_enabled: Optional[bool] = ..., 
@@ -20011,6 +20548,7 @@ namespace azure.mgmt.web.models
                 scm_site_also_stopped: Optional[bool] = ..., 
                 server_farm_id: Optional[str] = ..., 
                 site_config: Optional[SiteConfig] = ..., 
+                site_scoped_certificates_enabled: Optional[bool] = ..., 
                 storage_account_required: Optional[bool] = ..., 
                 virtual_network_subnet_id: Optional[str] = ...
             ) -> None: ...
@@ -20067,6 +20605,7 @@ namespace azure.mgmt.web.models
 
 
     class azure.mgmt.web.models.SiteProperties(_Model):
+        ai_integration: Optional[AiIntegration]
         auto_generated_domain_name_label_scope: Optional[Union[str, AutoGeneratedDomainNameLabelScope]]
         availability_state: Optional[Union[str, SiteAvailabilityState]]
         client_affinity_enabled: Optional[bool]
@@ -20102,6 +20641,7 @@ namespace azure.mgmt.web.models
         max_number_of_workers: Optional[int]
         outbound_ip_addresses: Optional[str]
         outbound_vnet_routing: Optional[OutboundVnetRouting]
+        platform_release_channel: Optional[Union[str, PlatformReleaseChannel]]
         possible_outbound_ip_addresses: Optional[str]
         public_network_access: Optional[str]
         redundancy_mode: Optional[Union[str, RedundancyMode]]
@@ -20112,6 +20652,7 @@ namespace azure.mgmt.web.models
         scm_site_also_stopped: Optional[bool]
         server_farm_id: Optional[str]
         site_config: Optional[SiteConfig]
+        site_scoped_certificates_enabled: Optional[bool]
         sku: Optional[str]
         slot_swap_status: Optional[SlotSwapStatus]
         ssh_enabled: Optional[bool]
@@ -20128,6 +20669,7 @@ namespace azure.mgmt.web.models
         def __init__(
                 self, 
                 *, 
+                ai_integration: Optional[AiIntegration] = ..., 
                 auto_generated_domain_name_label_scope: Optional[Union[str, AutoGeneratedDomainNameLabelScope]] = ..., 
                 client_affinity_enabled: Optional[bool] = ..., 
                 client_affinity_partitioning_enabled: Optional[bool] = ..., 
@@ -20154,6 +20696,7 @@ namespace azure.mgmt.web.models
                 key_vault_reference_identity: Optional[str] = ..., 
                 managed_environment_id: Optional[str] = ..., 
                 outbound_vnet_routing: Optional[OutboundVnetRouting] = ..., 
+                platform_release_channel: Optional[Union[str, PlatformReleaseChannel]] = ..., 
                 public_network_access: Optional[str] = ..., 
                 redundancy_mode: Optional[Union[str, RedundancyMode]] = ..., 
                 reserved: Optional[bool] = ..., 
@@ -20161,6 +20704,7 @@ namespace azure.mgmt.web.models
                 scm_site_also_stopped: Optional[bool] = ..., 
                 server_farm_id: Optional[str] = ..., 
                 site_config: Optional[SiteConfig] = ..., 
+                site_scoped_certificates_enabled: Optional[bool] = ..., 
                 ssh_enabled: Optional[bool] = ..., 
                 storage_account_required: Optional[bool] = ..., 
                 virtual_network_subnet_id: Optional[str] = ..., 
@@ -21452,6 +21996,44 @@ namespace azure.mgmt.web.models
                 key: str, 
                 value: Any
             ) -> None: ...
+
+
+    class azure.mgmt.web.models.StaticSitesOperationStatus(_Model):
+        id: Optional[str]
+        name: Optional[str]
+        properties: Optional[StaticSitesOperationStatusProperties]
+        type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[StaticSitesOperationStatusProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.web.models.StaticSitesOperationStatusProperties(_Model):
+        end_time: Optional[str]
+        error: Optional[WorkflowErrorResponse]
+        start_time: Optional[str]
+        static_site_properties: Optional[StaticSite]
+        status: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                end_time: Optional[str] = ..., 
+                error: Optional[WorkflowErrorResponse] = ..., 
+                start_time: Optional[str] = ..., 
+                static_site_properties: Optional[StaticSite] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.web.models.StaticSitesWorkflowPreview(ProxyOnlyResource):
@@ -23666,6 +24248,118 @@ namespace azure.mgmt.web.models
 
 namespace azure.mgmt.web.operations
 
+    class azure.mgmt.web.operations.AiGatewaysOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                resource: AiGateway, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                resource: AiGateway, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'name']}, api_versions_list=['2026-03-01-preview', '2026-03-15'])
+        def delete(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-03-15'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip', 'maxpagesize', 'filter', 'select', 'expand', 'orderby', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-03-15'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                *, 
+                expand: Optional[List[str]] = ..., 
+                filter: Optional[str] = ..., 
+                orderby: Optional[List[str]] = ..., 
+                select: Optional[List[str]] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[AiGateway]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-03-15'])
+        def list_by_subscription(self, **kwargs: Any) -> ItemPaged[AiGateway]: ...
+
+        @overload
+        def patch(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                properties: AiGatewayTagsUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @overload
+        def patch(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                properties: AiGatewayTagsUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+        @overload
+        def patch(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AiGateway: ...
+
+
     class azure.mgmt.web.operations.AppServiceEnvironmentsOperations:
 
         def __init__(
@@ -25753,6 +26447,61 @@ namespace azure.mgmt.web.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> Certificate: ...
+
+
+    class azure.mgmt.web.operations.SitesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-15', params_added_on={'2026-03-15': ['api_version', 'subscription_id', 'resource_group_name', 'name', 'network_security_perimeter_reference', 'accept']}, api_versions_list=['2026-03-15'])
+        def get_network_security_perimeter_configuration(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                network_security_perimeter_reference: str, 
+                **kwargs: Any
+            ) -> NetworkSecurityPerimeterConfiguration: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-15', params_added_on={'2026-03-15': ['api_version', 'subscription_id', 'resource_group_name', 'name', 'accept']}, api_versions_list=['2026-03-15'])
+        def list_network_security_perimeter_configurations(
+                self, 
+                resource_group_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[NetworkSecurityPerimeterConfiguration]: ...
+
+
+    class azure.mgmt.web.operations.StaticSitesAsyncOperationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-15', params_added_on={'2026-03-15': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-03-15'])
+        def begin_get_operation_result(
+                self, 
+                location: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-15', params_added_on={'2026-03-15': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-03-15'])
+        def get_operation_status(
+                self, 
+                location: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> StaticSitesOperationStatus: ...
 
 
     class azure.mgmt.web.operations.StaticSitesOperations:
@@ -31650,7 +32399,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> Iterator[bytes]: ...
+            ) -> str: ...
 
         @overload
         def list_publishing_profile_xml_with_secrets(
@@ -31661,7 +32410,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> Iterator[bytes]: ...
+            ) -> str: ...
 
         @overload
         def list_publishing_profile_xml_with_secrets(
@@ -31672,7 +32421,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> Iterator[bytes]: ...
+            ) -> str: ...
 
         @overload
         def list_publishing_profile_xml_with_secrets_slot(
@@ -31684,7 +32433,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> Iterator[bytes]: ...
+            ) -> str: ...
 
         @overload
         def list_publishing_profile_xml_with_secrets_slot(
@@ -31696,7 +32445,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> Iterator[bytes]: ...
+            ) -> str: ...
 
         @overload
         def list_publishing_profile_xml_with_secrets_slot(
@@ -31708,7 +32457,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> Iterator[bytes]: ...
+            ) -> str: ...
 
         @distributed_trace
         def list_relay_service_connections(
@@ -34354,9 +35103,42 @@ namespace azure.mgmt.web.operations
 
 namespace azure.mgmt.web.types
 
+    class azure.mgmt.web.types.AiGateway(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('AiGatewayProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: AiGatewayProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.web.types.AiGatewayProperties(TypedDict, total=False):
+        key "aiGatewayId": str
+        aiGatewayId: str
+
+
+    class azure.mgmt.web.types.AiGatewayTagsUpdate(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.web.types.AiIntegration(TypedDict, total=False):
+        key "apiSpecPath": str
+        key "mcp": ForwardRef('McpSettings', module='types')
+        key "siteAuth": ForwardRef('SiteAuthInfo', module='types')
+        apiSpecPath: str
+        mcp: McpSettings
+        siteAuth: SiteAuthInfo
+
+
     class azure.mgmt.web.types.AllowedAudiencesValidation(TypedDict, total=False):
         allowedAudiences: list[str]
-        allowed_audiences: list[str]
 
 
     class azure.mgmt.web.types.AllowedPrincipals(TypedDict, total=False):
@@ -34378,14 +35160,14 @@ namespace azure.mgmt.web.types
         key "destination": str
         key "logAnalyticsConfiguration": ForwardRef('LogAnalyticsConfiguration', module='types')
         destination: str
-        log_analytics_configuration: LogAnalyticsConfiguration
+        logAnalyticsConfiguration: LogAnalyticsConfiguration
 
 
     class azure.mgmt.web.types.AppRegistration(TypedDict, total=False):
         key "appId": str
         key "appSecretSettingName": str
-        app_id: str
-        app_secret_setting_name: str
+        appId: str
+        appSecretSettingName: str
 
 
     class azure.mgmt.web.types.AppServiceEnvironment(TypedDict, total=False):
@@ -34408,27 +35190,25 @@ namespace azure.mgmt.web.types
         key "virtualNetwork": Required[VirtualNetworkProfile]
         key "zoneRedundant": bool
         clusterSettings: list[NameValuePair]
-        cluster_settings: list[NameValuePair]
-        custom_dns_suffix_configuration: CustomDnsSuffixConfiguration
-        dedicated_host_count: int
-        dns_suffix: str
-        front_end_scale_factor: int
-        has_linux_workers: bool
-        internal_load_balancing_mode: Union[str, LoadBalancingMode]
-        ipssl_address_count: int
-        maximum_number_of_machines: int
-        multi_role_count: int
-        multi_size: str
-        networking_configuration: AseV3NetworkingConfiguration
-        provisioning_state: Union[str, ProvisioningState]
+        customDnsSuffixConfiguration: CustomDnsSuffixConfiguration
+        dedicatedHostCount: int
+        dnsSuffix: str
+        frontEndScaleFactor: int
+        hasLinuxWorkers: bool
+        internalLoadBalancingMode: Union[str, LoadBalancingMode]
+        ipsslAddressCount: int
+        maximumNumberOfMachines: int
+        multiRoleCount: int
+        multiSize: str
+        networkingConfiguration: AseV3NetworkingConfiguration
+        provisioningState: Union[str, ProvisioningState]
         status: Union[str, HostingEnvironmentStatus]
         suspended: bool
-        upgrade_availability: Union[str, UpgradeAvailability]
-        upgrade_preference: Union[str, UpgradePreference]
+        upgradeAvailability: Union[str, UpgradeAvailability]
+        upgradePreference: Union[str, UpgradePreference]
         userWhitelistedIpRanges: list[str]
-        user_whitelisted_ip_ranges: list[str]
-        virtual_network: VirtualNetworkProfile
-        zone_redundant: bool
+        virtualNetwork: VirtualNetworkProfile
+        zoneRedundant: bool
 
 
     class azure.mgmt.web.types.AppServiceEnvironmentPatchResource(ProxyOnlyResource):
@@ -34457,7 +35237,7 @@ namespace azure.mgmt.web.types
         location: str
         name: str
         properties: AppServiceEnvironment
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -34473,7 +35253,7 @@ namespace azure.mgmt.web.types
         key "sku": ForwardRef('SkuDescription', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         identity: ManagedServiceIdentity
         kind: str
@@ -34481,7 +35261,7 @@ namespace azure.mgmt.web.types
         name: str
         properties: AppServicePlanProperties
         sku: SkuDescription
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -34525,29 +35305,29 @@ namespace azure.mgmt.web.types
         key "targetWorkerSizeId": int
         key "workerTierName": str
         key "zoneRedundant": bool
-        elastic_scale_enabled: bool
-        free_offer_expiration_time: str
-        geo_region: str
-        hosting_environment_profile: HostingEnvironmentProfile
-        hyper_v: bool
-        is_spot: bool
-        is_xenon: bool
-        kube_environment_profile: KubeEnvironmentProfile
-        maximum_elastic_worker_count: int
-        maximum_number_of_workers: int
-        number_of_sites: int
-        number_of_workers: int
-        per_site_scaling: bool
-        provisioning_state: Union[str, ProvisioningState]
+        elasticScaleEnabled: bool
+        freeOfferExpirationTime: str
+        geoRegion: str
+        hostingEnvironmentProfile: HostingEnvironmentProfile
+        hyperV: bool
+        isSpot: bool
+        isXenon: bool
+        kubeEnvironmentProfile: KubeEnvironmentProfile
+        maximumElasticWorkerCount: int
+        maximumNumberOfWorkers: int
+        numberOfSites: int
+        numberOfWorkers: int
+        perSiteScaling: bool
+        provisioningState: Union[str, ProvisioningState]
         reserved: bool
-        resource_group: str
-        spot_expiration_time: str
+        resourceGroup: str
+        spotExpirationTime: str
         status: Union[str, StatusOptions]
         subscription: str
-        target_worker_count: int
-        target_worker_size_id: int
-        worker_tier_name: str
-        zone_redundant: bool
+        targetWorkerCount: int
+        targetWorkerSizeId: int
+        workerTierName: str
+        zoneRedundant: bool
 
 
     class azure.mgmt.web.types.AppServicePlanProperties(TypedDict, total=False):
@@ -34579,40 +35359,37 @@ namespace azure.mgmt.web.types
         key "targetWorkerSizeId": int
         key "workerTierName": str
         key "zoneRedundant": bool
-        async_scaling_enabled: bool
-        elastic_scale_enabled: bool
-        free_offer_expiration_time: str
-        geo_region: str
-        hosting_environment_profile: HostingEnvironmentProfile
-        hyper_v: bool
+        asyncScalingEnabled: bool
+        elasticScaleEnabled: bool
+        freeOfferExpirationTime: str
+        geoRegion: str
+        hostingEnvironmentProfile: HostingEnvironmentProfile
+        hyperV: bool
         installScripts: list[InstallScript]
-        install_scripts: list[InstallScript]
-        is_custom_mode: bool
-        is_spot: bool
-        is_xenon: bool
-        kube_environment_profile: KubeEnvironmentProfile
-        maximum_elastic_worker_count: int
-        maximum_number_of_workers: int
+        isCustomMode: bool
+        isSpot: bool
+        isXenon: bool
+        kubeEnvironmentProfile: KubeEnvironmentProfile
+        maximumElasticWorkerCount: int
+        maximumNumberOfWorkers: int
         network: ServerFarmNetworkSettings
-        number_of_sites: int
-        number_of_workers: int
-        per_site_scaling: bool
-        plan_default_identity: DefaultIdentity
-        provisioning_state: Union[str, ProvisioningState]
-        rdp_enabled: bool
+        numberOfSites: int
+        numberOfWorkers: int
+        perSiteScaling: bool
+        planDefaultIdentity: DefaultIdentity
+        provisioningState: Union[str, ProvisioningState]
+        rdpEnabled: bool
         registryAdapters: list[RegistryAdapter]
-        registry_adapters: list[RegistryAdapter]
         reserved: bool
-        resource_group: str
-        spot_expiration_time: str
+        resourceGroup: str
+        spotExpirationTime: str
         status: Union[str, StatusOptions]
         storageMounts: list[StorageMount]
-        storage_mounts: list[StorageMount]
         subscription: str
-        target_worker_count: int
-        target_worker_size_id: int
-        worker_tier_name: str
-        zone_redundant: bool
+        targetWorkerCount: int
+        targetWorkerSizeId: int
+        workerTierName: str
+        zoneRedundant: bool
 
 
     class azure.mgmt.web.types.Apple(TypedDict, total=False):
@@ -34627,17 +35404,17 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.AppleRegistration(TypedDict, total=False):
         key "clientId": str
         key "clientSecretSettingName": str
-        client_id: str
-        client_secret_setting_name: str
+        clientId: str
+        clientSecretSettingName: str
 
 
     class azure.mgmt.web.types.ApplicationLogsConfig(TypedDict, total=False):
         key "azureBlobStorage": ForwardRef('AzureBlobStorageApplicationLogsConfig', module='types')
         key "azureTableStorage": ForwardRef('AzureTableStorageApplicationLogsConfig', module='types')
         key "fileSystem": ForwardRef('FileSystemApplicationLogsConfig', module='types')
-        azure_blob_storage: AzureBlobStorageApplicationLogsConfig
-        azure_table_storage: AzureTableStorageApplicationLogsConfig
-        file_system: FileSystemApplicationLogsConfig
+        azureBlobStorage: AzureBlobStorageApplicationLogsConfig
+        azureTableStorage: AzureTableStorageApplicationLogsConfig
+        fileSystem: FileSystemApplicationLogsConfig
 
 
     class azure.mgmt.web.types.ArcConfiguration(TypedDict, total=False):
@@ -34648,13 +35425,13 @@ namespace azure.mgmt.web.types
         key "artifactsStorageType": Union[str, StorageType]
         key "frontEndServiceConfiguration": ForwardRef('FrontEndConfiguration', module='types')
         key "kubeConfig": str
-        artifact_storage_access_mode: str
-        artifact_storage_class_name: str
-        artifact_storage_mount_path: str
-        artifact_storage_node_name: str
-        artifacts_storage_type: Union[str, StorageType]
-        front_end_service_configuration: FrontEndConfiguration
-        kube_config: str
+        artifactStorageAccessMode: str
+        artifactStorageClassName: str
+        artifactStorageMountPath: str
+        artifactStorageNodeName: str
+        artifactsStorageType: Union[str, StorageType]
+        frontEndServiceConfiguration: FrontEndConfiguration
+        kubeConfig: str
 
 
     class azure.mgmt.web.types.ArmIdWrapper(TypedDict, total=False):
@@ -34670,7 +35447,7 @@ namespace azure.mgmt.web.types
         key "version": str
         name: str
         product: str
-        promotion_code: str
+        promotionCode: str
         publisher: str
         version: str
 
@@ -34686,7 +35463,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: AseV3NetworkingConfigurationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -34695,36 +35472,32 @@ namespace azure.mgmt.web.types
         key "ftpEnabled": bool
         key "inboundIpAddressOverride": str
         key "remoteDebugEnabled": bool
-        allow_new_private_endpoint_connections: bool
+        allowNewPrivateEndpointConnections: bool
         externalInboundIpAddresses: list[str]
-        external_inbound_ip_addresses: list[str]
-        ftp_enabled: bool
-        inbound_ip_address_override: str
+        ftpEnabled: bool
+        inboundIpAddressOverride: str
         internalInboundIpAddresses: list[str]
-        internal_inbound_ip_addresses: list[str]
         linuxOutboundIpAddresses: list[str]
-        linux_outbound_ip_addresses: list[str]
-        remote_debug_enabled: bool
+        remoteDebugEnabled: bool
         windowsOutboundIpAddresses: list[str]
-        windows_outbound_ip_addresses: list[str]
 
 
     class azure.mgmt.web.types.AuthPlatform(TypedDict, total=False):
         key "configFilePath": str
         key "enabled": bool
         key "runtimeVersion": str
-        config_file_path: str
+        configFilePath: str
         enabled: bool
-        runtime_version: str
+        runtimeVersion: str
 
 
     class azure.mgmt.web.types.AutoHealActions(TypedDict, total=False):
         key "actionType": Union[str, AutoHealActionType]
         key "customAction": ForwardRef('AutoHealCustomAction', module='types')
         key "minProcessExecutionTime": str
-        action_type: Union[str, AutoHealActionType]
-        custom_action: AutoHealCustomAction
-        min_process_execution_time: str
+        actionType: Union[str, AutoHealActionType]
+        customAction: AutoHealCustomAction
+        minProcessExecutionTime: str
 
 
     class azure.mgmt.web.types.AutoHealCustomAction(TypedDict, total=False):
@@ -34745,15 +35518,12 @@ namespace azure.mgmt.web.types
         key "privateBytesInKB": int
         key "requests": ForwardRef('RequestsBasedTrigger', module='types')
         key "slowRequests": ForwardRef('SlowRequestsBasedTrigger', module='types')
-        private_bytes_in_kb: int
+        privateBytesInKB: int
         requests: RequestsBasedTrigger
+        slowRequests: SlowRequestsBasedTrigger
         slowRequestsWithPath: list[SlowRequestsBasedTrigger]
-        slow_requests: SlowRequestsBasedTrigger
-        slow_requests_with_path: list[SlowRequestsBasedTrigger]
         statusCodes: list[StatusCodesBasedTrigger]
         statusCodesRange: list[StatusCodesRangeBasedTrigger]
-        status_codes: list[StatusCodesBasedTrigger]
-        status_codes_range: list[StatusCodesRangeBasedTrigger]
 
 
     class azure.mgmt.web.types.AzureActiveDirectory(TypedDict, total=False):
@@ -34763,7 +35533,7 @@ namespace azure.mgmt.web.types
         key "registration": ForwardRef('AzureActiveDirectoryRegistration', module='types')
         key "validation": ForwardRef('AzureActiveDirectoryValidation', module='types')
         enabled: bool
-        is_auto_provisioned: bool
+        isAutoProvisioned: bool
         login: AzureActiveDirectoryLogin
         registration: AzureActiveDirectoryRegistration
         validation: AzureActiveDirectoryValidation
@@ -34771,9 +35541,8 @@ namespace azure.mgmt.web.types
 
     class azure.mgmt.web.types.AzureActiveDirectoryLogin(TypedDict, total=False):
         key "disableWWWAuthenticate": bool
-        disable_www_authenticate: bool
+        disableWWWAuthenticate: bool
         loginParameters: list[str]
-        login_parameters: list[str]
 
 
     class azure.mgmt.web.types.AzureActiveDirectoryRegistration(TypedDict, total=False):
@@ -34783,21 +35552,20 @@ namespace azure.mgmt.web.types
         key "clientSecretCertificateThumbprint": str
         key "clientSecretSettingName": str
         key "openIdIssuer": str
-        client_id: str
-        client_secret_certificate_issuer: str
-        client_secret_certificate_subject_alternative_name: str
-        client_secret_certificate_thumbprint: str
-        client_secret_setting_name: str
-        open_id_issuer: str
+        clientId: str
+        clientSecretCertificateIssuer: str
+        clientSecretCertificateSubjectAlternativeName: str
+        clientSecretCertificateThumbprint: str
+        clientSecretSettingName: str
+        openIdIssuer: str
 
 
     class azure.mgmt.web.types.AzureActiveDirectoryValidation(TypedDict, total=False):
         key "defaultAuthorizationPolicy": ForwardRef('DefaultAuthorizationPolicy', module='types')
         key "jwtClaimChecks": ForwardRef('JwtClaimChecks', module='types')
         allowedAudiences: list[str]
-        allowed_audiences: list[str]
-        default_authorization_policy: DefaultAuthorizationPolicy
-        jwt_claim_checks: JwtClaimChecks
+        defaultAuthorizationPolicy: DefaultAuthorizationPolicy
+        jwtClaimChecks: JwtClaimChecks
 
 
     class azure.mgmt.web.types.AzureBlobStorageApplicationLogsConfig(TypedDict, total=False):
@@ -34805,8 +35573,8 @@ namespace azure.mgmt.web.types
         key "retentionInDays": int
         key "sasUrl": str
         level: Union[str, LogLevel]
-        retention_in_days: int
-        sas_url: str
+        retentionInDays: int
+        sasUrl: str
 
 
     class azure.mgmt.web.types.AzureBlobStorageHttpLogsConfig(TypedDict, total=False):
@@ -34814,8 +35582,8 @@ namespace azure.mgmt.web.types
         key "retentionInDays": int
         key "sasUrl": str
         enabled: bool
-        retention_in_days: int
-        sas_url: str
+        retentionInDays: int
+        sasUrl: str
 
 
     class azure.mgmt.web.types.AzureStaticWebApps(TypedDict, total=False):
@@ -34827,7 +35595,7 @@ namespace azure.mgmt.web.types
 
     class azure.mgmt.web.types.AzureStaticWebAppsRegistration(TypedDict, total=False):
         key "clientId": str
-        client_id: str
+        clientId: str
 
 
     class azure.mgmt.web.types.AzureStorageInfoValue(TypedDict, total=False):
@@ -34838,11 +35606,11 @@ namespace azure.mgmt.web.types
         key "shareName": str
         key "state": Union[str, AzureStorageState]
         key "type": Union[str, AzureStorageType]
-        access_key: str
-        account_name: str
-        mount_path: str
+        accessKey: str
+        accountName: str
+        mountPath: str
         protocol: Union[str, AzureStorageProtocol]
-        share_name: str
+        shareName: str
         state: Union[str, AzureStorageState]
         type: Union[str, AzureStorageType]
 
@@ -34863,7 +35631,7 @@ namespace azure.mgmt.web.types
         key "level": Union[str, LogLevel]
         key "sasUrl": Required[str]
         level: Union[str, LogLevel]
-        sas_url: str
+        sasUrl: str
 
 
     class azure.mgmt.web.types.BackupRequest(ProxyOnlyResource):
@@ -34884,11 +35652,11 @@ namespace azure.mgmt.web.types
         key "backupSchedule": ForwardRef('BackupSchedule', module='types')
         key "enabled": bool
         key "storageAccountUrl": Required[str]
-        backup_name: str
-        backup_schedule: BackupSchedule
+        backupName: str
+        backupSchedule: BackupSchedule
         databases: list[DatabaseBackupSetting]
         enabled: bool
-        storage_account_url: str
+        storageAccountUrl: str
 
 
     class azure.mgmt.web.types.BackupSchedule(TypedDict, total=False):
@@ -34898,17 +35666,17 @@ namespace azure.mgmt.web.types
         key "lastExecutionTime": str
         key "retentionPeriodInDays": Required[int]
         key "startTime": str
-        frequency_interval: int
-        frequency_unit: Union[str, FrequencyUnit]
-        keep_at_least_one_backup: bool
-        last_execution_time: str
-        retention_period_in_days: int
-        start_time: str
+        frequencyInterval: int
+        frequencyUnit: Union[str, FrequencyUnit]
+        keepAtLeastOneBackup: bool
+        lastExecutionTime: str
+        retentionPeriodInDays: int
+        startTime: str
 
 
     class azure.mgmt.web.types.BlobStorageTokenStore(TypedDict, total=False):
         key "sasUrlSettingName": str
-        sas_url_setting_name: str
+        sasUrlSettingName: str
 
 
     class azure.mgmt.web.types.Capability(TypedDict, total=False):
@@ -34933,7 +35701,7 @@ namespace azure.mgmt.web.types
         location: str
         name: str
         properties: CertificateProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -34972,26 +35740,25 @@ namespace azure.mgmt.web.types
         key "subjectName": str
         key "thumbprint": str
         key "valid": bool
-        canonical_name: str
-        cer_blob: str
-        domain_validation_method: str
-        expiration_date: str
-        friendly_name: str
+        canonicalName: str
+        cerBlob: str
+        domainValidationMethod: str
+        expirationDate: str
+        friendlyName: str
         hostNames: list[str]
-        host_names: list[str]
-        hosting_environment_profile: HostingEnvironmentProfile
-        issue_date: str
+        hostingEnvironmentProfile: HostingEnvironmentProfile
+        issueDate: str
         issuer: str
-        key_vault_id: str
-        key_vault_secret_name: str
-        key_vault_secret_status: Union[str, KeyVaultSecretStatus]
+        keyVaultId: str
+        keyVaultSecretName: str
+        keyVaultSecretStatus: Union[str, KeyVaultSecretStatus]
         password: str
-        pfx_blob: str
-        public_key_hash: str
-        self_link: str
-        server_farm_id: str
-        site_name: str
-        subject_name: str
+        pfxBlob: str
+        publicKeyHash: str
+        selfLink: str
+        serverFarmId: str
+        siteName: str
+        subjectName: str
         thumbprint: str
         valid: bool
 
@@ -35017,26 +35784,25 @@ namespace azure.mgmt.web.types
         key "subjectName": str
         key "thumbprint": str
         key "valid": bool
-        canonical_name: str
-        cer_blob: str
-        domain_validation_method: str
-        expiration_date: str
-        friendly_name: str
+        canonicalName: str
+        cerBlob: str
+        domainValidationMethod: str
+        expirationDate: str
+        friendlyName: str
         hostNames: list[str]
-        host_names: list[str]
-        hosting_environment_profile: HostingEnvironmentProfile
-        issue_date: str
+        hostingEnvironmentProfile: HostingEnvironmentProfile
+        issueDate: str
         issuer: str
-        key_vault_id: str
-        key_vault_secret_name: str
-        key_vault_secret_status: Union[str, KeyVaultSecretStatus]
+        keyVaultId: str
+        keyVaultSecretName: str
+        keyVaultSecretStatus: Union[str, KeyVaultSecretStatus]
         password: str
-        pfx_blob: str
-        public_key_hash: str
-        self_link: str
-        server_farm_id: str
-        site_name: str
-        subject_name: str
+        pfxBlob: str
+        publicKeyHash: str
+        selfLink: str
+        serverFarmId: str
+        siteName: str
+        subjectName: str
         thumbprint: str
         valid: bool
 
@@ -35044,8 +35810,8 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.ClientRegistration(TypedDict, total=False):
         key "clientId": str
         key "clientSecretSettingName": str
-        client_id: str
-        client_secret_setting_name: str
+        clientId: str
+        clientSecretSettingName: str
 
 
     class azure.mgmt.web.types.CloningInfo(TypedDict, total=False):
@@ -35060,24 +35826,23 @@ namespace azure.mgmt.web.types
         key "trafficManagerProfileId": str
         key "trafficManagerProfileName": str
         appSettingsOverrides: dict[str, str]
-        app_settings_overrides: dict[str, str]
-        clone_custom_host_names: bool
-        clone_source_control: bool
-        configure_load_balancing: bool
-        correlation_id: str
-        hosting_environment: str
+        cloneCustomHostNames: bool
+        cloneSourceControl: bool
+        configureLoadBalancing: bool
+        correlationId: str
+        hostingEnvironment: str
         overwrite: bool
-        source_web_app_id: str
-        source_web_app_location: str
-        traffic_manager_profile_id: str
-        traffic_manager_profile_name: str
+        sourceWebAppId: str
+        sourceWebAppLocation: str
+        trafficManagerProfileId: str
+        trafficManagerProfileName: str
 
 
     class azure.mgmt.web.types.ConnStringInfo(TypedDict, total=False):
         key "connectionString": str
         key "name": str
         key "type": Union[str, ConnectionStringType]
-        connection_string: str
+        connectionString: str
         name: str
         type: Union[str, ConnectionStringType]
 
@@ -35108,32 +35873,31 @@ namespace azure.mgmt.web.types
         key "dockerBridgeCidr": str
         key "platformReservedCidr": str
         key "platformReservedDnsIP": str
-        app_subnet_resource_id: str
-        control_plane_subnet_resource_id: str
-        dapr_ai_instrumentation_key: str
-        docker_bridge_cidr: str
-        platform_reserved_cidr: str
-        platform_reserved_dns_ip: str
+        appSubnetResourceId: str
+        controlPlaneSubnetResourceId: str
+        daprAIInstrumentationKey: str
+        dockerBridgeCidr: str
+        platformReservedCidr: str
+        platformReservedDnsIP: str
 
 
     class azure.mgmt.web.types.CookieExpiration(TypedDict, total=False):
         key "convention": Union[str, CookieExpirationConvention]
         key "timeToExpiration": str
         convention: Union[str, CookieExpirationConvention]
-        time_to_expiration: str
+        timeToExpiration: str
 
 
     class azure.mgmt.web.types.CorsSettings(TypedDict, total=False):
         key "supportCredentials": bool
         allowedOrigins: list[str]
-        allowed_origins: list[str]
-        support_credentials: bool
+        supportCredentials: bool
 
 
     class azure.mgmt.web.types.CsmMoveResourceEnvelope(TypedDict, total=False):
         key "targetResourceGroup": str
         resources: list[str]
-        target_resource_group: str
+        targetResourceGroup: str
 
 
     class azure.mgmt.web.types.CsmPublishingCredentialsPoliciesEntity(ProxyResource):
@@ -35147,7 +35911,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: CsmPublishingCredentialsPoliciesEntityProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -35160,14 +35924,14 @@ namespace azure.mgmt.web.types
         key "format": Union[str, PublishingProfileFormat]
         key "includeDisasterRecoveryEndpoints": bool
         format: Union[str, PublishingProfileFormat]
-        include_disaster_recovery_endpoints: bool
+        includeDisasterRecoveryEndpoints: bool
 
 
     class azure.mgmt.web.types.CsmSlotEntity(TypedDict, total=False):
         key "preserveVnet": Required[bool]
         key "targetSlot": Required[str]
-        preserve_vnet: bool
-        target_slot: str
+        preserveVnet: bool
+        targetSlot: str
 
 
     class azure.mgmt.web.types.CustomDnsSuffixConfiguration(ProxyResource):
@@ -35181,7 +35945,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: CustomDnsSuffixConfigurationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -35191,11 +35955,11 @@ namespace azure.mgmt.web.types
         key "keyVaultReferenceIdentity": str
         key "provisioningDetails": str
         key "provisioningState": Union[str, CustomDnsSuffixProvisioningState]
-        certificate_url: str
-        dns_suffix: str
-        key_vault_reference_identity: str
-        provisioning_details: str
-        provisioning_state: Union[str, CustomDnsSuffixProvisioningState]
+        certificateUrl: str
+        dnsSuffix: str
+        keyVaultReferenceIdentity: str
+        provisioningDetails: str
+        provisioningState: Union[str, CustomDnsSuffixProvisioningState]
 
 
     class azure.mgmt.web.types.CustomOpenIdConnectProvider(TypedDict, total=False):
@@ -35215,13 +35979,13 @@ namespace azure.mgmt.web.types
         key "httpMaxRequestSize": int
         key "httpReadBufferSize": int
         key "logLevel": Union[str, DaprLogLevel]
-        app_id: str
-        app_port: int
-        enable_api_logging: bool
+        appId: str
+        appPort: int
+        enableApiLogging: bool
         enabled: bool
-        http_max_request_size: int
-        http_read_buffer_size: int
-        log_level: Union[str, DaprLogLevel]
+        httpMaxRequestSize: int
+        httpReadBufferSize: int
+        logLevel: Union[str, DaprLogLevel]
 
 
     class azure.mgmt.web.types.DatabaseBackupSetting(TypedDict, total=False):
@@ -35229,9 +35993,9 @@ namespace azure.mgmt.web.types
         key "connectionStringName": str
         key "databaseType": Required[Union[str, DatabaseType]]
         key "name": str
-        connection_string: str
-        connection_string_name: str
-        database_type: Union[str, DatabaseType]
+        connectionString: str
+        connectionStringName: str
+        databaseType: Union[str, DatabaseType]
         name: str
 
 
@@ -35246,7 +36010,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: DatabaseConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -35256,11 +36020,10 @@ namespace azure.mgmt.web.types
         key "region": str
         key "resourceId": str
         configurationFiles: list[StaticSiteDatabaseConnectionConfigurationFileOverview]
-        configuration_files: list[StaticSiteDatabaseConnectionConfigurationFileOverview]
-        connection_identity: str
+        connectionIdentity: str
         name: str
         region: str
-        resource_id: str
+        resourceId: str
 
 
     class azure.mgmt.web.types.DatabaseConnectionPatchRequest(TypedDict, total=False):
@@ -35273,10 +36036,10 @@ namespace azure.mgmt.web.types
         key "connectionString": str
         key "region": str
         key "resourceId": str
-        connection_identity: str
-        connection_string: str
+        connectionIdentity: str
+        connectionString: str
         region: str
-        resource_id: str
+        resourceId: str
 
 
     class azure.mgmt.web.types.DatabaseConnectionProperties(TypedDict, total=False):
@@ -35285,25 +36048,23 @@ namespace azure.mgmt.web.types
         key "region": Required[str]
         key "resourceId": Required[str]
         configurationFiles: list[StaticSiteDatabaseConnectionConfigurationFileOverview]
-        configuration_files: list[StaticSiteDatabaseConnectionConfigurationFileOverview]
-        connection_identity: str
-        connection_string: str
+        connectionIdentity: str
+        connectionString: str
         region: str
-        resource_id: str
+        resourceId: str
 
 
     class azure.mgmt.web.types.DefaultAuthorizationPolicy(TypedDict, total=False):
         key "allowedPrincipals": ForwardRef('AllowedPrincipals', module='types')
         allowedApplications: list[str]
-        allowed_applications: list[str]
-        allowed_principals: AllowedPrincipals
+        allowedPrincipals: AllowedPrincipals
 
 
     class azure.mgmt.web.types.DefaultIdentity(TypedDict, total=False):
         key "identityType": Union[str, ManagedServiceIdentityType]
         key "userAssignedIdentityResourceId": str
-        identity_type: Union[str, ManagedServiceIdentityType]
-        user_assigned_identity_resource_id: str
+        identityType: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentityResourceId: str
 
 
     class azure.mgmt.web.types.DeletedAppRestoreRequest(ProxyOnlyResource):
@@ -35324,10 +36085,10 @@ namespace azure.mgmt.web.types
         key "recoverConfiguration": bool
         key "snapshotTime": str
         key "useDRSecondary": bool
-        deleted_site_id: str
-        recover_configuration: bool
-        snapshot_time: str
-        use_dr_secondary: bool
+        deletedSiteId: str
+        recoverConfiguration: bool
+        snapshotTime: str
+        useDRSecondary: bool
 
 
     class azure.mgmt.web.types.Deployment(ProxyResource):
@@ -35341,7 +36102,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: DeploymentProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -35371,9 +36132,9 @@ namespace azure.mgmt.web.types
         key "name": Required[str]
         key "resourceGroupName": str
         key "type": Required[Union[str, CheckNameResourceTypes]]
-        auto_generated_domain_name_label_scope: str
+        autoGeneratedDomainNameLabelScope: str
         name: str
-        resource_group_name: str
+        resourceGroupName: str
         type: Union[str, CheckNameResourceTypes]
 
 
@@ -35397,18 +36158,16 @@ namespace azure.mgmt.web.types
         key "target": str
         code: str
         details: list[ErrorEntity]
-        extended_code: str
+        extendedCode: str
         innerErrors: list[ErrorEntity]
-        inner_errors: list[ErrorEntity]
         message: str
-        message_template: str
+        messageTemplate: str
         parameters: list[str]
         target: str
 
 
     class azure.mgmt.web.types.Experiments(TypedDict, total=False):
         rampUpRules: list[RampUpRule]
-        ramp_up_rules: list[RampUpRule]
 
 
     class azure.mgmt.web.types.ExtendedLocation(TypedDict, total=False):
@@ -35424,7 +36183,7 @@ namespace azure.mgmt.web.types
         key "login": ForwardRef('LoginScopes', module='types')
         key "registration": ForwardRef('AppRegistration', module='types')
         enabled: bool
-        graph_api_version: str
+        graphApiVersion: str
         login: LoginScopes
         registration: AppRegistration
 
@@ -35439,8 +36198,8 @@ namespace azure.mgmt.web.types
         key "retentionInDays": int
         key "retentionInMb": int
         enabled: bool
-        retention_in_days: int
-        retention_in_mb: int
+        retentionInDays: int
+        retentionInMb: int
 
 
     class azure.mgmt.web.types.FileSystemTokenStore(TypedDict, total=False):
@@ -35456,21 +36215,18 @@ namespace azure.mgmt.web.types
         actions: FlowAccessControlConfigurationPolicy
         contents: FlowAccessControlConfigurationPolicy
         triggers: FlowAccessControlConfigurationPolicy
-        workflow_management: FlowAccessControlConfigurationPolicy
+        workflowManagement: FlowAccessControlConfigurationPolicy
 
 
     class azure.mgmt.web.types.FlowAccessControlConfigurationPolicy(TypedDict, total=False):
         key "openAuthenticationPolicies": ForwardRef('OpenAuthenticationAccessPolicies', module='types')
         allowedCallerIpAddresses: list[IpAddressRange]
-        allowed_caller_ip_addresses: list[IpAddressRange]
-        open_authentication_policies: OpenAuthenticationAccessPolicies
+        openAuthenticationPolicies: OpenAuthenticationAccessPolicies
 
 
     class azure.mgmt.web.types.FlowEndpoints(TypedDict, total=False):
         accessEndpointIpAddresses: list[IpAddress]
-        access_endpoint_ip_addresses: list[IpAddress]
         outgoingIpAddresses: list[IpAddress]
-        outgoing_ip_addresses: list[IpAddress]
 
 
     class azure.mgmt.web.types.FlowEndpointsConfiguration(TypedDict, total=False):
@@ -35485,8 +36241,8 @@ namespace azure.mgmt.web.types
         key "customHostHeaderName": str
         key "customProtoHeaderName": str
         convention: Union[str, ForwardProxyConvention]
-        custom_host_header_name: str
-        custom_proto_header_name: str
+        customHostHeaderName: str
+        customProtoHeaderName: str
 
 
     class azure.mgmt.web.types.FrontEndConfiguration(TypedDict, total=False):
@@ -35501,8 +36257,8 @@ namespace azure.mgmt.web.types
         key "siteUpdateStrategy": ForwardRef('FunctionsSiteUpdateStrategy', module='types')
         deployment: FunctionsDeployment
         runtime: FunctionsRuntime
-        scale_and_concurrency: FunctionsScaleAndConcurrency
-        site_update_strategy: FunctionsSiteUpdateStrategy
+        scaleAndConcurrency: FunctionsScaleAndConcurrency
+        siteUpdateStrategy: FunctionsSiteUpdateStrategy
 
 
     class azure.mgmt.web.types.FunctionEnvelope(ProxyResource):
@@ -35516,7 +36272,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: FunctionEnvelopeProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -35539,7 +36295,7 @@ namespace azure.mgmt.web.types
         function_app_id: str
         href: str
         invoke_url_template: str
-        is_disabled: bool
+        isDisabled: bool
         language: str
         script_href: str
         script_root_path_href: str
@@ -35551,7 +36307,7 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.FunctionsAlwaysReadyConfig(TypedDict, total=False):
         key "instanceCount": int
         key "name": str
-        instance_count: int
+        instanceCount: int
         name: str
 
 
@@ -35573,9 +36329,9 @@ namespace azure.mgmt.web.types
         key "storageAccountConnectionStringName": str
         key "type": Union[str, AuthenticationType]
         key "userAssignedIdentityResourceId": str
-        storage_account_connection_string_name: str
+        storageAccountConnectionStringName: str
         type: Union[str, AuthenticationType]
-        user_assigned_identity_resource_id: str
+        userAssignedIdentityResourceId: str
 
 
     class azure.mgmt.web.types.FunctionsRuntime(TypedDict, total=False):
@@ -35590,9 +36346,8 @@ namespace azure.mgmt.web.types
         key "maximumInstanceCount": int
         key "triggers": ForwardRef('FunctionsScaleAndConcurrencyTriggers', module='types')
         alwaysReady: list[FunctionsAlwaysReadyConfig]
-        always_ready: list[FunctionsAlwaysReadyConfig]
-        instance_memory_mb: int
-        maximum_instance_count: int
+        instanceMemoryMB: int
+        maximumInstanceCount: int
         triggers: FunctionsScaleAndConcurrencyTriggers
 
 
@@ -35603,7 +36358,7 @@ namespace azure.mgmt.web.types
 
     class azure.mgmt.web.types.FunctionsScaleAndConcurrencyTriggersHttp(TypedDict, total=False):
         key "perInstanceConcurrency": int
-        per_instance_concurrency: int
+        perInstanceConcurrency: int
 
 
     class azure.mgmt.web.types.FunctionsSiteUpdateStrategy(TypedDict, total=False):
@@ -35623,8 +36378,8 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.GitHubActionCodeConfiguration(TypedDict, total=False):
         key "runtimeStack": str
         key "runtimeVersion": str
-        runtime_stack: str
-        runtime_version: str
+        runtimeStack: str
+        runtimeVersion: str
 
 
     class azure.mgmt.web.types.GitHubActionConfiguration(TypedDict, total=False):
@@ -35632,10 +36387,10 @@ namespace azure.mgmt.web.types
         key "containerConfiguration": ForwardRef('GitHubActionContainerConfiguration', module='types')
         key "generateWorkflowFile": bool
         key "isLinux": bool
-        code_configuration: GitHubActionCodeConfiguration
-        container_configuration: GitHubActionContainerConfiguration
-        generate_workflow_file: bool
-        is_linux: bool
+        codeConfiguration: GitHubActionCodeConfiguration
+        containerConfiguration: GitHubActionContainerConfiguration
+        generateWorkflowFile: bool
+        isLinux: bool
 
 
     class azure.mgmt.web.types.GitHubActionContainerConfiguration(TypedDict, total=False):
@@ -35643,9 +36398,9 @@ namespace azure.mgmt.web.types
         key "password": str
         key "serverUrl": str
         key "username": str
-        image_name: str
+        imageName: str
         password: str
-        server_url: str
+        serverUrl: str
         username: str
 
 
@@ -35654,10 +36409,9 @@ namespace azure.mgmt.web.types
         key "requireAuthentication": bool
         key "unauthenticatedClientAction": Union[str, UnauthenticatedClientActionV2]
         excludedPaths: list[str]
-        excluded_paths: list[str]
-        redirect_to_provider: str
-        require_authentication: bool
-        unauthenticated_client_action: Union[str, UnauthenticatedClientActionV2]
+        redirectToProvider: str
+        requireAuthentication: bool
+        unauthenticatedClientAction: Union[str, UnauthenticatedClientActionV2]
 
 
     class azure.mgmt.web.types.Google(TypedDict, total=False):
@@ -35677,7 +36431,7 @@ namespace azure.mgmt.web.types
         key "scriptProcessor": str
         arguments: str
         extension: str
-        script_processor: str
+        scriptProcessor: str
 
 
     class azure.mgmt.web.types.HostNameBinding(ProxyResource):
@@ -35691,7 +36445,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: HostNameBindingProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -35705,15 +36459,15 @@ namespace azure.mgmt.web.types
         key "sslState": Union[str, SslState]
         key "thumbprint": str
         key "virtualIP": str
-        azure_resource_name: str
-        azure_resource_type: Union[str, AzureResourceType]
-        custom_host_name_dns_record_type: Union[str, CustomHostNameDnsRecordType]
-        domain_id: str
-        host_name_type: Union[str, HostNameType]
-        site_name: str
-        ssl_state: Union[str, SslState]
+        azureResourceName: str
+        azureResourceType: Union[str, AzureResourceType]
+        customHostNameDnsRecordType: Union[str, CustomHostNameDnsRecordType]
+        domainId: str
+        hostNameType: Union[str, HostNameType]
+        siteName: str
+        sslState: Union[str, SslState]
         thumbprint: str
-        virtual_ip: str
+        virtualIP: str
 
 
     class azure.mgmt.web.types.HostNameSslState(TypedDict, total=False):
@@ -35723,12 +36477,12 @@ namespace azure.mgmt.web.types
         key "thumbprint": str
         key "toUpdate": bool
         key "virtualIP": str
-        host_type: Union[str, HostType]
+        hostType: Union[str, HostType]
         name: str
-        ssl_state: Union[str, SslState]
+        sslState: Union[str, SslState]
         thumbprint: str
-        to_update: bool
-        virtual_ip: str
+        toUpdate: bool
+        virtualIP: str
 
 
     class azure.mgmt.web.types.HostingEnvironmentProfile(TypedDict, total=False):
@@ -35743,22 +36497,22 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.HttpLogsConfig(TypedDict, total=False):
         key "azureBlobStorage": ForwardRef('AzureBlobStorageHttpLogsConfig', module='types')
         key "fileSystem": ForwardRef('FileSystemHttpLogsConfig', module='types')
-        azure_blob_storage: AzureBlobStorageHttpLogsConfig
-        file_system: FileSystemHttpLogsConfig
+        azureBlobStorage: AzureBlobStorageHttpLogsConfig
+        fileSystem: FileSystemHttpLogsConfig
 
 
     class azure.mgmt.web.types.HttpSettings(TypedDict, total=False):
         key "forwardProxy": ForwardRef('ForwardProxy', module='types')
         key "requireHttps": bool
         key "routes": ForwardRef('HttpSettingsRoutes', module='types')
-        forward_proxy: ForwardProxy
-        require_https: bool
+        forwardProxy: ForwardProxy
+        requireHttps: bool
         routes: HttpSettingsRoutes
 
 
     class azure.mgmt.web.types.HttpSettingsRoutes(TypedDict, total=False):
         key "apiPrefix": str
-        api_prefix: str
+        apiPrefix: str
 
 
     class azure.mgmt.web.types.HybridConnection(ProxyResource):
@@ -35772,7 +36526,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: HybridConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -35787,12 +36541,12 @@ namespace azure.mgmt.web.types
         key "serviceBusSuffix": str
         hostname: str
         port: int
-        relay_arm_uri: str
-        relay_name: str
-        send_key_name: str
-        send_key_value: str
-        service_bus_namespace: str
-        service_bus_suffix: str
+        relayArmUri: str
+        relayName: str
+        sendKeyName: str
+        sendKeyValue: str
+        serviceBusNamespace: str
+        serviceBusSuffix: str
 
 
     class azure.mgmt.web.types.Identifier(ProxyResource):
@@ -35806,13 +36560,13 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: IdentifierProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.web.types.IdentifierProperties(TypedDict, total=False):
         key "id": str
-        value: str
+        id: str
 
 
     class azure.mgmt.web.types.IdentityProviders(TypedDict, total=False):
@@ -35825,14 +36579,13 @@ namespace azure.mgmt.web.types
         key "legacyMicrosoftAccount": ForwardRef('LegacyMicrosoftAccount', module='types')
         key "twitter": ForwardRef('Twitter', module='types')
         apple: Apple
-        azure_active_directory: AzureActiveDirectory
-        azure_static_web_apps: AzureStaticWebApps
+        azureActiveDirectory: AzureActiveDirectory
+        azureStaticWebApps: AzureStaticWebApps
         customOpenIdConnectProviders: dict[str, CustomOpenIdConnectProvider]
-        custom_open_id_connect_providers: dict[str, CustomOpenIdConnectProvider]
         facebook: Facebook
-        git_hub: GitHub
+        gitHub: GitHub
         google: Google
-        legacy_microsoft_account: LegacyMicrosoftAccount
+        legacyMicrosoftAccount: LegacyMicrosoftAccount
         twitter: Twitter
 
 
@@ -35846,7 +36599,7 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.InstallScriptSource(TypedDict, total=False):
         key "sourceUri": str
         key "type": Union[str, InstallScriptType]
-        source_uri: str
+        sourceUri: str
         type: Union[str, InstallScriptType]
 
 
@@ -35857,7 +36610,7 @@ namespace azure.mgmt.web.types
 
     class azure.mgmt.web.types.IpAddressRange(TypedDict, total=False):
         key "addressRange": str
-        address_range: str
+        addressRange: str
 
 
     class azure.mgmt.web.types.IpSecurityRestriction(TypedDict, total=False):
@@ -35874,21 +36627,19 @@ namespace azure.mgmt.web.types
         action: str
         description: str
         headers: dict[str, list[str]]
-        ip_address: str
+        ipAddress: str
         name: str
         priority: int
-        subnet_mask: str
-        subnet_traffic_tag: int
+        subnetMask: str
+        subnetTrafficTag: int
         tag: Union[str, IpFilterTag]
-        vnet_subnet_resource_id: str
-        vnet_traffic_tag: int
+        vnetSubnetResourceId: str
+        vnetTrafficTag: int
 
 
     class azure.mgmt.web.types.JwtClaimChecks(TypedDict, total=False):
         allowedClientApplications: list[str]
         allowedGroups: list[str]
-        allowed_client_applications: list[str]
-        allowed_groups: list[str]
 
 
     class azure.mgmt.web.types.KeyInfo(TypedDict, total=False):
@@ -35901,8 +36652,8 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.KeyVaultReferenceWithStatus(TypedDict, total=False):
         key "referenceStatus": str
         key "secretUri": str
-        reference_status: str
-        secret_uri: str
+        referenceStatus: str
+        secretUri: str
 
 
     class azure.mgmt.web.types.KubeEnvironment(TrackedResource):
@@ -35914,13 +36665,13 @@ namespace azure.mgmt.web.types
         key "properties": ForwardRef('KubeEnvironmentProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         kind: str
         location: str
         name: str
         properties: KubeEnvironmentProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -35948,15 +36699,15 @@ namespace azure.mgmt.web.types
         key "internalLoadBalancerEnabled": bool
         key "provisioningState": Union[str, KubeEnvironmentProvisioningState]
         key "staticIp": str
-        aks_resource_id: str
-        app_logs_configuration: AppLogsConfiguration
-        arc_configuration: ArcConfiguration
-        container_apps_configuration: ContainerAppsConfiguration
-        default_domain: str
-        deployment_errors: str
-        internal_load_balancer_enabled: bool
-        provisioning_state: Union[str, KubeEnvironmentProvisioningState]
-        static_ip: str
+        aksResourceID: str
+        appLogsConfiguration: AppLogsConfiguration
+        arcConfiguration: ArcConfiguration
+        containerAppsConfiguration: ContainerAppsConfiguration
+        defaultDomain: str
+        deploymentErrors: str
+        internalLoadBalancerEnabled: bool
+        provisioningState: Union[str, KubeEnvironmentProvisioningState]
+        staticIp: str
 
 
     class azure.mgmt.web.types.KubeEnvironmentProfile(TypedDict, total=False):
@@ -35979,16 +36730,16 @@ namespace azure.mgmt.web.types
         key "internalLoadBalancerEnabled": bool
         key "provisioningState": Union[str, KubeEnvironmentProvisioningState]
         key "staticIp": str
-        aks_resource_id: str
-        app_logs_configuration: AppLogsConfiguration
-        arc_configuration: ArcConfiguration
-        container_apps_configuration: ContainerAppsConfiguration
-        default_domain: str
-        deployment_errors: str
-        environment_type: str
-        internal_load_balancer_enabled: bool
-        provisioning_state: Union[str, KubeEnvironmentProvisioningState]
-        static_ip: str
+        aksResourceID: str
+        appLogsConfiguration: AppLogsConfiguration
+        arcConfiguration: ArcConfiguration
+        containerAppsConfiguration: ContainerAppsConfiguration
+        defaultDomain: str
+        deploymentErrors: str
+        environmentType: str
+        internalLoadBalancerEnabled: bool
+        provisioningState: Union[str, KubeEnvironmentProvisioningState]
+        staticIp: str
 
 
     class azure.mgmt.web.types.LegacyMicrosoftAccount(TypedDict, total=False):
@@ -36005,8 +36756,8 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.LogAnalyticsConfiguration(TypedDict, total=False):
         key "customerId": str
         key "sharedKey": str
-        customer_id: str
-        shared_key: str
+        customerId: str
+        sharedKey: str
 
 
     class azure.mgmt.web.types.Login(TypedDict, total=False):
@@ -36016,17 +36767,16 @@ namespace azure.mgmt.web.types
         key "routes": ForwardRef('LoginRoutes', module='types')
         key "tokenStore": ForwardRef('TokenStore', module='types')
         allowedExternalRedirectUrls: list[str]
-        allowed_external_redirect_urls: list[str]
-        cookie_expiration: CookieExpiration
+        cookieExpiration: CookieExpiration
         nonce: Nonce
-        preserve_url_fragments_for_logins: bool
+        preserveUrlFragmentsForLogins: bool
         routes: LoginRoutes
-        token_store: TokenStore
+        tokenStore: TokenStore
 
 
     class azure.mgmt.web.types.LoginRoutes(TypedDict, total=False):
         key "logoutEndpoint": str
-        logout_endpoint: str
+        logoutEndpoint: str
 
 
     class azure.mgmt.web.types.LoginScopes(TypedDict, total=False):
@@ -36053,14 +36803,13 @@ namespace azure.mgmt.web.types
         key "packageUri": str
         key "setParametersXmlFileUri": str
         key "skipAppData": bool
-        app_offline: bool
-        connection_string: str
-        db_type: str
-        package_uri: str
+        appOffline: bool
+        connectionString: str
+        dbType: str
+        packageUri: str
         setParameters: dict[str, str]
-        set_parameters: dict[str, str]
-        set_parameters_xml_file_uri: str
-        skip_app_data: bool
+        setParametersXmlFileUri: str
+        skipAppData: bool
 
 
     class azure.mgmt.web.types.MSDeployProperties(MSDeployCore):
@@ -36071,26 +36820,39 @@ namespace azure.mgmt.web.types
         key "setParametersXmlFileUri": str
         key "skipAppData": bool
         addOnPackages: list[MSDeployCore]
-        add_on_packages: list[MSDeployCore]
-        app_offline: bool
-        connection_string: str
-        db_type: str
-        package_uri: str
+        appOffline: bool
+        connectionString: str
+        dbType: str
+        packageUri: str
         setParameters: dict[str, str]
-        set_parameters: dict[str, str]
-        set_parameters_xml_file_uri: str
-        skip_app_data: bool
+        setParametersXmlFileUri: str
+        skipAppData: bool
 
 
     class azure.mgmt.web.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Union[str, ManagedServiceIdentityType]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.web.types.McpServerConfig(TypedDict, total=False):
+        key "description": str
+        key "enabled": bool
+        key "endpoint": str
+        key "name": str
+        description: str
+        enabled: bool
+        endpoint: str
+        name: str
+        toolList: list[str]
+
+
+    class azure.mgmt.web.types.McpSettings(TypedDict, total=False):
+        servers: list[McpServerConfig]
 
 
     class azure.mgmt.web.types.MigrateMySqlRequest(ProxyOnlyResource):
@@ -36109,8 +36871,8 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.MigrateMySqlRequestProperties(TypedDict, total=False):
         key "connectionString": Required[str]
         key "migrationType": Required[Union[str, MySqlMigrationType]]
-        connection_string: str
-        migration_type: Union[str, MySqlMigrationType]
+        connectionString: str
+        migrationType: Union[str, MySqlMigrationType]
 
 
     class azure.mgmt.web.types.NameIdentifier(TypedDict, total=False):
@@ -36128,8 +36890,8 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.Nonce(TypedDict, total=False):
         key "nonceExpirationInterval": str
         key "validateNonce": bool
-        nonce_expiration_interval: str
-        validate_nonce: bool
+        nonceExpirationInterval: str
+        validateNonce: bool
 
 
     class azure.mgmt.web.types.OpenAuthenticationAccessPolicies(TypedDict, total=False):
@@ -36152,7 +36914,7 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.OpenIdConnectClientCredential(TypedDict, total=False):
         key "clientSecretSettingName": str
         key "method": Literal["ClientSecretPost"]
-        client_secret_setting_name: str
+        clientSecretSettingName: str
         method: Literal[ClientSecretPost]
 
 
@@ -36162,16 +36924,16 @@ namespace azure.mgmt.web.types
         key "issuer": str
         key "tokenEndpoint": str
         key "wellKnownOpenIdConfiguration": str
-        authorization_endpoint: str
-        certification_uri: str
+        authorizationEndpoint: str
+        certificationUri: str
         issuer: str
-        token_endpoint: str
-        well_known_open_id_configuration: str
+        tokenEndpoint: str
+        wellKnownOpenIdConfiguration: str
 
 
     class azure.mgmt.web.types.OpenIdConnectLogin(TypedDict, total=False):
         key "nameClaimType": str
-        name_claim_type: str
+        nameClaimType: str
         scopes: list[str]
 
 
@@ -36179,9 +36941,9 @@ namespace azure.mgmt.web.types
         key "clientCredential": ForwardRef('OpenIdConnectClientCredential', module='types')
         key "clientId": str
         key "openIdConnectConfiguration": ForwardRef('OpenIdConnectConfig', module='types')
-        client_credential: OpenIdConnectClientCredential
-        client_id: str
-        open_id_connect_configuration: OpenIdConnectConfig
+        clientCredential: OpenIdConnectClientCredential
+        clientId: str
+        openIdConnectConfiguration: OpenIdConnectConfig
 
 
     class azure.mgmt.web.types.OutboundVnetRouting(TypedDict, total=False):
@@ -36190,11 +36952,13 @@ namespace azure.mgmt.web.types
         key "backupRestoreTraffic": bool
         key "contentShareTraffic": bool
         key "imagePullTraffic": bool
-        all_traffic: bool
-        application_traffic: bool
-        backup_restore_traffic: bool
-        content_share_traffic: bool
-        image_pull_traffic: bool
+        key "managedIdentityTraffic": bool
+        allTraffic: bool
+        applicationTraffic: bool
+        backupRestoreTraffic: bool
+        contentShareTraffic: bool
+        imagePullTraffic: bool
+        managedIdentityTraffic: bool
 
 
     class azure.mgmt.web.types.PremierAddOn(TrackedResource):
@@ -36210,7 +36974,7 @@ namespace azure.mgmt.web.types
         location: str
         name: str
         properties: PremierAddOnProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -36234,8 +36998,8 @@ namespace azure.mgmt.web.types
         key "product": str
         key "sku": str
         key "vendor": str
-        marketplace_offer: str
-        marketplace_publisher: str
+        marketplaceOffer: str
+        marketplacePublisher: str
         product: str
         sku: str
         vendor: str
@@ -36247,8 +37011,8 @@ namespace azure.mgmt.web.types
         key "product": str
         key "sku": str
         key "vendor": str
-        marketplace_offer: str
-        marketplace_publisher: str
+        marketplaceOffer: str
+        marketplacePublisher: str
         product: str
         sku: str
         vendor: str
@@ -36265,7 +37029,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: PrivateAccessProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -36273,7 +37037,6 @@ namespace azure.mgmt.web.types
         key "enabled": bool
         enabled: bool
         virtualNetworks: list[PrivateAccessVirtualNetwork]
-        virtual_networks: list[PrivateAccessVirtualNetwork]
 
 
     class azure.mgmt.web.types.PrivateAccessSubnet(TypedDict, total=False):
@@ -36289,7 +37052,7 @@ namespace azure.mgmt.web.types
         key "resourceId": str
         key: int
         name: str
-        resource_id: str
+        resourceId: str
         subnets: list[PrivateAccessSubnet]
 
 
@@ -36297,7 +37060,7 @@ namespace azure.mgmt.web.types
         key "actionsRequired": str
         key "description": str
         key "status": str
-        actions_required: str
+        actionsRequired: str
         description: str
         status: str
 
@@ -36320,7 +37083,7 @@ namespace azure.mgmt.web.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -36335,7 +37098,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: PublicCertificateProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -36344,7 +37107,7 @@ namespace azure.mgmt.web.types
         key "publicCertificateLocation": Union[str, PublicCertificateLocation]
         key "thumbprint": str
         blob: str
-        public_certificate_location: Union[str, PublicCertificateLocation]
+        publicCertificateLocation: Union[str, PublicCertificateLocation]
         thumbprint: str
 
 
@@ -36366,10 +37129,10 @@ namespace azure.mgmt.web.types
         key "isPushEnabled": Required[bool]
         key "tagWhitelistJson": str
         key "tagsRequiringAuth": str
-        dynamic_tags_json: str
-        is_push_enabled: bool
-        tag_whitelist_json: str
-        tags_requiring_auth: str
+        dynamicTagsJson: str
+        isPushEnabled: bool
+        tagWhitelistJson: str
+        tagsRequiringAuth: str
 
 
     class azure.mgmt.web.types.RampUpRule(TypedDict, total=False):
@@ -36381,27 +37144,27 @@ namespace azure.mgmt.web.types
         key "minReroutePercentage": float
         key "name": str
         key "reroutePercentage": float
-        action_host_name: str
-        change_decision_callback_url: str
-        change_interval_in_minutes: int
-        change_step: float
-        max_reroute_percentage: float
-        min_reroute_percentage: float
+        actionHostName: str
+        changeDecisionCallbackUrl: str
+        changeIntervalInMinutes: int
+        changeStep: float
+        maxReroutePercentage: float
+        minReroutePercentage: float
         name: str
-        reroute_percentage: float
+        reroutePercentage: float
 
 
     class azure.mgmt.web.types.RegenerateActionParameter(TypedDict, total=False):
         key "keyType": Union[str, KeyType]
-        key_type: Union[str, KeyType]
+        keyType: Union[str, KeyType]
 
 
     class azure.mgmt.web.types.RegistryAdapter(TypedDict, total=False):
         key "keyVaultSecretReference": ForwardRef('KeyVaultReferenceWithStatus', module='types')
         key "registryKey": str
         key "type": Union[str, RegistryAdapterType]
-        key_vault_secret_reference: KeyVaultReferenceWithStatus
-        registry_key: str
+        keyVaultSecretReference: KeyVaultReferenceWithStatus
+        registryKey: str
         type: Union[str, RegistryAdapterType]
 
 
@@ -36416,7 +37179,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: RelayServiceConnectionEntityProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -36428,13 +37191,13 @@ namespace azure.mgmt.web.types
         key "port": int
         key "resourceConnectionString": str
         key "resourceType": str
-        biztalk_uri: str
-        entity_connection_string: str
-        entity_name: str
+        biztalkUri: str
+        entityConnectionString: str
+        entityName: str
         hostname: str
         port: int
-        resource_connection_string: str
-        resource_type: str
+        resourceConnectionString: str
+        resourceType: str
 
 
     class azure.mgmt.web.types.RemotePrivateEndpointConnection(ProxyOnlyResource):
@@ -36461,7 +37224,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: RemotePrivateEndpointConnectionARMResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -36470,10 +37233,9 @@ namespace azure.mgmt.web.types
         key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkConnectionState', module='types')
         key "provisioningState": str
         ipAddresses: list[str]
-        ip_addresses: list[str]
-        private_endpoint: ArmIdWrapper
-        private_link_service_connection_state: PrivateLinkConnectionState
-        provisioning_state: str
+        privateEndpoint: ArmIdWrapper
+        privateLinkServiceConnectionState: PrivateLinkConnectionState
+        provisioningState: str
 
 
     class azure.mgmt.web.types.RemotePrivateEndpointConnectionProperties(TypedDict, total=False):
@@ -36481,17 +37243,16 @@ namespace azure.mgmt.web.types
         key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkConnectionState', module='types')
         key "provisioningState": str
         ipAddresses: list[str]
-        ip_addresses: list[str]
-        private_endpoint: ArmIdWrapper
-        private_link_service_connection_state: PrivateLinkConnectionState
-        provisioning_state: str
+        privateEndpoint: ArmIdWrapper
+        privateLinkServiceConnectionState: PrivateLinkConnectionState
+        provisioningState: str
 
 
     class azure.mgmt.web.types.RequestsBasedTrigger(TypedDict, total=False):
         key "count": int
         key "timeInterval": str
         count: int
-        time_interval: str
+        timeInterval: str
 
 
     class azure.mgmt.web.types.Resource(TypedDict, total=False):
@@ -36501,7 +37262,7 @@ namespace azure.mgmt.web.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -36517,8 +37278,8 @@ namespace azure.mgmt.web.types
         key "isFqdn": bool
         key "name": Required[str]
         key "type": Required[Union[str, CheckNameResourceTypes]]
-        environment_id: str
-        is_fqdn: bool
+        environmentId: str
+        isFqdn: bool
         name: str
         type: Union[str, CheckNameResourceTypes]
 
@@ -36581,22 +37342,22 @@ namespace azure.mgmt.web.types
         key "overwrite": Required[bool]
         key "siteName": str
         key "storageAccountUrl": Required[str]
-        adjust_connection_strings: bool
-        app_service_plan: str
-        blob_name: str
+        adjustConnectionStrings: bool
+        appServicePlan: str
+        blobName: str
         databases: list[DatabaseBackupSetting]
-        hosting_environment: str
-        ignore_conflicting_host_names: bool
-        ignore_databases: bool
-        operation_type: Union[str, BackupRestoreOperationType]
+        hostingEnvironment: str
+        ignoreConflictingHostNames: bool
+        ignoreDatabases: bool
+        operationType: Union[str, BackupRestoreOperationType]
         overwrite: bool
-        site_name: str
-        storage_account_url: str
+        siteName: str
+        storageAccountUrl: str
 
 
     class azure.mgmt.web.types.ServerFarmNetworkSettings(TypedDict, total=False):
         key "virtualNetworkSubnetId": str
-        virtual_network_subnet_id: str
+        virtualNetworkSubnetId: str
 
 
     class azure.mgmt.web.types.Site(TrackedResource):
@@ -36609,16 +37370,28 @@ namespace azure.mgmt.web.types
         key "properties": ForwardRef('SiteProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         identity: ManagedServiceIdentity
         kind: str
         location: str
         name: str
         properties: SiteProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
+
+
+    class azure.mgmt.web.types.SiteAuthInfo(TypedDict, total=False):
+        key "audience": str
+        key "issuer": str
+        key "jwksUri": str
+        key "wellKnownOpenIdConfiguration": str
+        audience: str
+        issuer: str
+        jwksUri: str
+        scopes: list[str]
+        wellKnownOpenIdConfiguration: str
 
 
     class azure.mgmt.web.types.SiteAuthSettings(ProxyOnlyResource):
@@ -36666,51 +37439,44 @@ namespace azure.mgmt.web.types
         key "twitterConsumerSecretSettingName": str
         key "unauthenticatedClientAction": Union[str, UnauthenticatedClientAction]
         key "validateIssuer": bool
-        aad_claims_authorization: str
+        aadClaimsAuthorization: str
         additionalLoginParams: list[str]
-        additional_login_params: list[str]
         allowedAudiences: list[str]
         allowedExternalRedirectUrls: list[str]
-        allowed_audiences: list[str]
-        allowed_external_redirect_urls: list[str]
-        auth_file_path: str
-        client_id: str
-        client_secret: str
-        client_secret_certificate_thumbprint: str
-        client_secret_setting_name: str
-        config_version: str
-        default_provider: Union[str, BuiltInAuthenticationProvider]
+        authFilePath: str
+        clientId: str
+        clientSecret: str
+        clientSecretCertificateThumbprint: str
+        clientSecretSettingName: str
+        configVersion: str
+        defaultProvider: Union[str, BuiltInAuthenticationProvider]
         enabled: bool
+        facebookAppId: str
+        facebookAppSecret: str
+        facebookAppSecretSettingName: str
         facebookOAuthScopes: list[str]
-        facebook_app_id: str
-        facebook_app_secret: str
-        facebook_app_secret_setting_name: str
-        facebook_o_auth_scopes: list[str]
+        gitHubClientId: str
+        gitHubClientSecret: str
+        gitHubClientSecretSettingName: str
         gitHubOAuthScopes: list[str]
-        git_hub_client_id: str
-        git_hub_client_secret: str
-        git_hub_client_secret_setting_name: str
-        git_hub_o_auth_scopes: list[str]
+        googleClientId: str
+        googleClientSecret: str
+        googleClientSecretSettingName: str
         googleOAuthScopes: list[str]
-        google_client_id: str
-        google_client_secret: str
-        google_client_secret_setting_name: str
-        google_o_auth_scopes: list[str]
-        is_auth_from_file: str
+        isAuthFromFile: str
         issuer: str
+        microsoftAccountClientId: str
+        microsoftAccountClientSecret: str
+        microsoftAccountClientSecretSettingName: str
         microsoftAccountOAuthScopes: list[str]
-        microsoft_account_client_id: str
-        microsoft_account_client_secret: str
-        microsoft_account_client_secret_setting_name: str
-        microsoft_account_o_auth_scopes: list[str]
-        runtime_version: str
-        token_refresh_extension_hours: float
-        token_store_enabled: bool
-        twitter_consumer_key: str
-        twitter_consumer_secret: str
-        twitter_consumer_secret_setting_name: str
-        unauthenticated_client_action: Union[str, UnauthenticatedClientAction]
-        validate_issuer: bool
+        runtimeVersion: str
+        tokenRefreshExtensionHours: float
+        tokenStoreEnabled: bool
+        twitterConsumerKey: str
+        twitterConsumerSecret: str
+        twitterConsumerSecretSettingName: str
+        unauthenticatedClientAction: Union[str, UnauthenticatedClientAction]
+        validateIssuer: bool
 
 
     class azure.mgmt.web.types.SiteAuthSettingsV2(ProxyResource):
@@ -36724,7 +37490,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: SiteAuthSettingsV2Properties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -36734,9 +37500,9 @@ namespace azure.mgmt.web.types
         key "identityProviders": ForwardRef('IdentityProviders', module='types')
         key "login": ForwardRef('Login', module='types')
         key "platform": ForwardRef('AuthPlatform', module='types')
-        global_validation: GlobalValidation
-        http_settings: HttpSettings
-        identity_providers: IdentityProviders
+        globalValidation: GlobalValidation
+        httpSettings: HttpSettings
+        identityProviders: IdentityProviders
         login: Login
         platform: AuthPlatform
 
@@ -36806,87 +37572,79 @@ namespace azure.mgmt.web.types
         key "websiteTimeZone": str
         key "windowsFxVersion": str
         key "xManagedServiceIdentityId": int
-        acr_use_managed_identity_creds: bool
-        acr_user_managed_identity_id: str
-        always_on: bool
-        api_definition: ApiDefinitionInfo
-        api_management_config: ApiManagementConfig
+        acrUseManagedIdentityCreds: bool
+        acrUserManagedIdentityID: str
+        alwaysOn: bool
+        apiDefinition: ApiDefinitionInfo
+        apiManagementConfig: ApiManagementConfig
+        appCommandLine: str
         appSettings: list[NameValuePair]
-        app_command_line: str
-        app_settings: list[NameValuePair]
-        auto_heal_enabled: bool
-        auto_heal_rules: AutoHealRules
-        auto_swap_slot_name: str
+        autoHealEnabled: bool
+        autoHealRules: AutoHealRules
+        autoSwapSlotName: str
         azureStorageAccounts: dict[str, AzureStorageInfoValue]
-        azure_storage_accounts: dict[str, AzureStorageInfoValue]
         connectionStrings: list[ConnStringInfo]
-        connection_strings: list[ConnStringInfo]
         cors: CorsSettings
         defaultDocuments: list[str]
-        default_documents: list[str]
-        detailed_error_logging_enabled: bool
-        document_root: str
-        elastic_web_app_scale_limit: int
+        detailedErrorLoggingEnabled: bool
+        documentRoot: str
+        elasticWebAppScaleLimit: int
         experiments: Experiments
-        ftps_state: Union[str, FtpsState]
-        function_app_scale_limit: int
-        functions_runtime_scale_monitoring_enabled: bool
+        ftpsState: Union[str, FtpsState]
+        functionAppScaleLimit: int
+        functionsRuntimeScaleMonitoringEnabled: bool
         handlerMappings: list[HandlerMapping]
-        handler_mappings: list[HandlerMapping]
-        health_check_path: str
-        http20_enabled: bool
-        http20_proxy_flag: int
-        http_logging_enabled: bool
+        healthCheckPath: str
+        http20Enabled: bool
+        http20ProxyFlag: int
+        httpLoggingEnabled: bool
         ipSecurityRestrictions: list[IpSecurityRestriction]
-        ip_security_restrictions: list[IpSecurityRestriction]
-        ip_security_restrictions_default_action: Union[str, DefaultAction]
-        java_container: str
-        java_container_version: str
-        java_version: str
-        key_vault_reference_identity: str
+        ipSecurityRestrictionsDefaultAction: Union[str, DefaultAction]
+        javaContainer: str
+        javaContainerVersion: str
+        javaVersion: str
+        keyVaultReferenceIdentity: str
         limits: SiteLimits
-        linux_fx_version: str
-        load_balancing: Union[str, SiteLoadBalancing]
-        local_my_sql_enabled: bool
-        logs_directory_size_limit: int
-        machine_key: SiteMachineKey
-        managed_pipeline_mode: Union[str, ManagedPipelineMode]
-        managed_service_identity_id: int
+        linuxFxVersion: str
+        loadBalancing: Union[str, SiteLoadBalancing]
+        localMySqlEnabled: bool
+        logsDirectorySizeLimit: int
+        machineKey: SiteMachineKey
+        managedPipelineMode: Union[str, ManagedPipelineMode]
+        managedServiceIdentityId: int
         metadata: list[NameValuePair]
-        min_tls_cipher_suite: Union[str, TlsCipherSuites]
-        min_tls_version: Union[str, SupportedTlsVersions]
-        minimum_elastic_instance_count: int
-        net_framework_version: str
-        node_version: str
-        number_of_workers: int
-        php_version: str
-        power_shell_version: str
-        pre_warmed_instance_count: int
-        public_network_access: str
-        publishing_username: str
+        minTlsCipherSuite: Union[str, TlsCipherSuites]
+        minTlsVersion: Union[str, SupportedTlsVersions]
+        minimumElasticInstanceCount: int
+        netFrameworkVersion: str
+        nodeVersion: str
+        numberOfWorkers: int
+        phpVersion: str
+        powerShellVersion: str
+        preWarmedInstanceCount: int
+        publicNetworkAccess: str
+        publishingUsername: str
         push: PushSettings
-        python_version: str
-        remote_debugging_enabled: bool
-        remote_debugging_version: str
-        request_tracing_enabled: bool
-        request_tracing_expiration_time: str
+        pythonVersion: str
+        remoteDebuggingEnabled: bool
+        remoteDebuggingVersion: str
+        requestTracingEnabled: bool
+        requestTracingExpirationTime: str
         scmIpSecurityRestrictions: list[IpSecurityRestriction]
-        scm_ip_security_restrictions: list[IpSecurityRestriction]
-        scm_ip_security_restrictions_default_action: Union[str, DefaultAction]
-        scm_ip_security_restrictions_use_main: bool
-        scm_min_tls_version: Union[str, SupportedTlsVersions]
-        scm_type: Union[str, ScmType]
-        tracing_options: str
-        use32_bit_worker_process: bool
+        scmIpSecurityRestrictionsDefaultAction: Union[str, DefaultAction]
+        scmIpSecurityRestrictionsUseMain: bool
+        scmMinTlsVersion: Union[str, SupportedTlsVersions]
+        scmType: Union[str, ScmType]
+        tracingOptions: str
+        use32BitWorkerProcess: bool
         virtualApplications: list[VirtualApplication]
-        virtual_applications: list[VirtualApplication]
-        vnet_name: str
-        vnet_private_ports_count: int
-        vnet_route_all_enabled: bool
-        web_sockets_enabled: bool
-        website_time_zone: str
-        windows_fx_version: str
-        x_managed_service_identity_id: int
+        vnetName: str
+        vnetPrivatePortsCount: int
+        vnetRouteAllEnabled: bool
+        webSocketsEnabled: bool
+        websiteTimeZone: str
+        windowsFxVersion: str
+        xManagedServiceIdentityId: int
 
 
     class azure.mgmt.web.types.SiteConfigResource(ProxyResource):
@@ -36900,7 +37658,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: SiteConfig
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -36915,7 +37673,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: SiteContainerProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -36931,21 +37689,19 @@ namespace azure.mgmt.web.types
         key "targetPort": str
         key "userManagedIdentityClientId": str
         key "userName": str
-        auth_type: Union[str, AuthType]
-        created_time: str
+        authType: Union[str, AuthType]
+        createdTime: str
         environmentVariables: list[EnvironmentVariable]
-        environment_variables: list[EnvironmentVariable]
         image: str
-        inherit_app_settings_and_connection_strings: bool
-        is_main: bool
-        last_modified_time: str
-        password_secret: str
-        start_up_command: str
-        target_port: str
-        user_managed_identity_client_id: str
-        user_name: str
+        inheritAppSettingsAndConnectionStrings: bool
+        isMain: bool
+        lastModifiedTime: str
+        passwordSecret: str
+        startUpCommand: str
+        targetPort: str
+        userManagedIdentityClientId: str
+        userName: str
         volumeMounts: list[VolumeMount]
-        volume_mounts: list[VolumeMount]
 
 
     class azure.mgmt.web.types.SiteDnsConfig(TypedDict, total=False):
@@ -36954,22 +37710,21 @@ namespace azure.mgmt.web.types
         key "dnsMaxCacheTimeout": int
         key "dnsRetryAttemptCount": int
         key "dnsRetryAttemptTimeout": int
+        dnsAltServer: str
+        dnsLegacySortOrder: bool
+        dnsMaxCacheTimeout: int
+        dnsRetryAttemptCount: int
+        dnsRetryAttemptTimeout: int
         dnsServers: list[str]
-        dns_alt_server: str
-        dns_legacy_sort_order: bool
-        dns_max_cache_timeout: int
-        dns_retry_attempt_count: int
-        dns_retry_attempt_timeout: int
-        dns_servers: list[str]
 
 
     class azure.mgmt.web.types.SiteLimits(TypedDict, total=False):
         key "maxDiskSizeInMb": int
         key "maxMemoryInMb": int
         key "maxPercentageCpu": float
-        max_disk_size_in_mb: int
-        max_memory_in_mb: int
-        max_percentage_cpu: float
+        maxDiskSizeInMb: int
+        maxMemoryInMb: int
+        maxPercentageCpu: float
 
 
     class azure.mgmt.web.types.SiteLogsConfig(ProxyResource):
@@ -36983,7 +37738,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: SiteLogsConfigProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -36992,10 +37747,10 @@ namespace azure.mgmt.web.types
         key "detailedErrorMessages": ForwardRef('EnabledConfig', module='types')
         key "failedRequestsTracing": ForwardRef('EnabledConfig', module='types')
         key "httpLogs": ForwardRef('HttpLogsConfig', module='types')
-        application_logs: ApplicationLogsConfig
-        detailed_error_messages: EnabledConfig
-        failed_requests_tracing: EnabledConfig
-        http_logs: HttpLogsConfig
+        applicationLogs: ApplicationLogsConfig
+        detailedErrorMessages: EnabledConfig
+        failedRequestsTracing: EnabledConfig
+        httpLogs: HttpLogsConfig
 
 
     class azure.mgmt.web.types.SiteMachineKey(TypedDict, total=False):
@@ -37004,9 +37759,9 @@ namespace azure.mgmt.web.types
         key "validation": str
         key "validationKey": str
         decryption: str
-        decryption_key: str
+        decryptionKey: str
         validation: str
-        validation_key: str
+        validationKey: str
 
 
     class azure.mgmt.web.types.SitePatchResource(ProxyOnlyResource):
@@ -37025,6 +37780,7 @@ namespace azure.mgmt.web.types
 
 
     class azure.mgmt.web.types.SitePatchResourceProperties(TypedDict, total=False):
+        key "aiIntegration": ForwardRef('AiIntegration', module='types')
         key "availabilityState": Union[str, SiteAvailabilityState]
         key "clientAffinityEnabled": bool
         key "clientAffinityProxyEnabled": bool
@@ -37058,6 +37814,7 @@ namespace azure.mgmt.web.types
         key "scmSiteAlsoStopped": bool
         key "serverFarmId": str
         key "siteConfig": ForwardRef('SiteConfig', module='types')
+        key "siteScopedCertificatesEnabled": bool
         key "slotSwapStatus": ForwardRef('SlotSwapStatus', module='types')
         key "state": str
         key "storageAccountRequired": bool
@@ -37065,57 +37822,56 @@ namespace azure.mgmt.web.types
         key "targetSwapSlot": str
         key "usageState": Union[str, UsageState]
         key "virtualNetworkSubnetId": str
-        availability_state: Union[str, SiteAvailabilityState]
-        client_affinity_enabled: bool
-        client_affinity_proxy_enabled: bool
-        client_cert_enabled: bool
-        client_cert_exclusion_paths: str
-        client_cert_mode: Union[str, ClientCertMode]
-        cloning_info: CloningInfo
-        container_size: int
-        custom_domain_verification_id: str
-        daily_memory_time_quota: int
-        default_host_name: str
-        dns_configuration: SiteDnsConfig
+        aiIntegration: AiIntegration
+        availabilityState: Union[str, SiteAvailabilityState]
+        clientAffinityEnabled: bool
+        clientAffinityProxyEnabled: bool
+        clientCertEnabled: bool
+        clientCertExclusionPaths: str
+        clientCertMode: Union[str, ClientCertMode]
+        cloningInfo: CloningInfo
+        containerSize: int
+        customDomainVerificationId: str
+        dailyMemoryTimeQuota: int
+        defaultHostName: str
+        dnsConfiguration: SiteDnsConfig
         enabled: bool
         enabledHostNames: list[str]
-        enabled_host_names: list[str]
         hostNameSslStates: list[HostNameSslState]
         hostNames: list[str]
-        host_name_ssl_states: list[HostNameSslState]
-        host_names: list[str]
-        host_names_disabled: bool
-        hosting_environment_profile: HostingEnvironmentProfile
-        https_only: bool
-        hyper_v: bool
-        in_progress_operation_id: str
-        is_default_container: bool
-        is_xenon: bool
-        key_vault_reference_identity: str
-        last_modified_time_utc: str
-        max_number_of_workers: int
-        outbound_ip_addresses: str
-        possible_outbound_ip_addresses: str
-        public_network_access: str
-        redundancy_mode: Union[str, RedundancyMode]
-        repository_site_name: str
+        hostNamesDisabled: bool
+        hostingEnvironmentProfile: HostingEnvironmentProfile
+        httpsOnly: bool
+        hyperV: bool
+        inProgressOperationId: str
+        isDefaultContainer: bool
+        isXenon: bool
+        keyVaultReferenceIdentity: str
+        lastModifiedTimeUtc: str
+        maxNumberOfWorkers: int
+        outboundIpAddresses: str
+        possibleOutboundIpAddresses: str
+        publicNetworkAccess: str
+        redundancyMode: Union[str, RedundancyMode]
+        repositorySiteName: str
         reserved: bool
-        resource_group: str
-        scm_site_also_stopped: bool
-        server_farm_id: str
-        site_config: SiteConfig
-        slot_swap_status: SlotSwapStatus
+        resourceGroup: str
+        scmSiteAlsoStopped: bool
+        serverFarmId: str
+        siteConfig: SiteConfig
+        siteScopedCertificatesEnabled: bool
+        slotSwapStatus: SlotSwapStatus
         state: str
-        storage_account_required: bool
-        suspended_till: str
-        target_swap_slot: str
+        storageAccountRequired: bool
+        suspendedTill: str
+        targetSwapSlot: str
         trafficManagerHostNames: list[str]
-        traffic_manager_host_names: list[str]
-        usage_state: Union[str, UsageState]
-        virtual_network_subnet_id: str
+        usageState: Union[str, UsageState]
+        virtualNetworkSubnetId: str
 
 
     class azure.mgmt.web.types.SiteProperties(TypedDict, total=False):
+        key "aiIntegration": ForwardRef('AiIntegration', module='types')
         key "autoGeneratedDomainNameLabelScope": Union[str, AutoGeneratedDomainNameLabelScope]
         key "availabilityState": Union[str, SiteAvailabilityState]
         key "clientAffinityEnabled": bool
@@ -37148,6 +37904,7 @@ namespace azure.mgmt.web.types
         key "maxNumberOfWorkers": int
         key "outboundIpAddresses": str
         key "outboundVnetRouting": ForwardRef('OutboundVnetRouting', module='types')
+        key "platformReleaseChannel": Union[str, PlatformReleaseChannel]
         key "possibleOutboundIpAddresses": str
         key "publicNetworkAccess": str
         key "redundancyMode": Union[str, RedundancyMode]
@@ -37158,6 +37915,7 @@ namespace azure.mgmt.web.types
         key "scmSiteAlsoStopped": bool
         key "serverFarmId": str
         key "siteConfig": ForwardRef('SiteConfig', module='types')
+        key "siteScopedCertificatesEnabled": bool
         key "sku": str
         key "slotSwapStatus": ForwardRef('SlotSwapStatus', module='types')
         key "sshEnabled": bool
@@ -37168,66 +37926,65 @@ namespace azure.mgmt.web.types
         key "usageState": Union[str, UsageState]
         key "virtualNetworkSubnetId": str
         key "workloadProfileName": str
-        auto_generated_domain_name_label_scope: Union[str, AutoGeneratedDomainNameLabelScope]
-        availability_state: Union[str, SiteAvailabilityState]
-        client_affinity_enabled: bool
-        client_affinity_partitioning_enabled: bool
-        client_affinity_proxy_enabled: bool
-        client_cert_enabled: bool
-        client_cert_exclusion_paths: str
-        client_cert_mode: Union[str, ClientCertMode]
-        cloning_info: CloningInfo
-        container_size: int
-        custom_domain_verification_id: str
-        daily_memory_time_quota: int
-        dapr_config: DaprConfig
-        default_host_name: str
-        dns_configuration: SiteDnsConfig
+        aiIntegration: AiIntegration
+        autoGeneratedDomainNameLabelScope: Union[str, AutoGeneratedDomainNameLabelScope]
+        availabilityState: Union[str, SiteAvailabilityState]
+        clientAffinityEnabled: bool
+        clientAffinityPartitioningEnabled: bool
+        clientAffinityProxyEnabled: bool
+        clientCertEnabled: bool
+        clientCertExclusionPaths: str
+        clientCertMode: Union[str, ClientCertMode]
+        cloningInfo: CloningInfo
+        containerSize: int
+        customDomainVerificationId: str
+        dailyMemoryTimeQuota: int
+        daprConfig: DaprConfig
+        defaultHostName: str
+        dnsConfiguration: SiteDnsConfig
         enabled: bool
         enabledHostNames: list[str]
-        enabled_host_names: list[str]
-        end_to_end_encryption_enabled: bool
-        function_app_config: FunctionAppConfig
+        endToEndEncryptionEnabled: bool
+        functionAppConfig: FunctionAppConfig
         hostNameSslStates: list[HostNameSslState]
         hostNames: list[str]
-        host_name_ssl_states: list[HostNameSslState]
-        host_names: list[str]
-        host_names_disabled: bool
-        hosting_environment_profile: HostingEnvironmentProfile
-        https_only: bool
-        hyper_v: bool
-        in_progress_operation_id: str
-        ip_mode: Union[str, IPMode]
-        is_default_container: bool
-        is_xenon: bool
-        key_vault_reference_identity: str
-        last_modified_time_utc: str
-        managed_environment_id: str
-        max_number_of_workers: int
-        outbound_ip_addresses: str
-        outbound_vnet_routing: OutboundVnetRouting
-        possible_outbound_ip_addresses: str
-        public_network_access: str
-        redundancy_mode: Union[str, RedundancyMode]
-        repository_site_name: str
+        hostNamesDisabled: bool
+        hostingEnvironmentProfile: HostingEnvironmentProfile
+        httpsOnly: bool
+        hyperV: bool
+        inProgressOperationId: str
+        ipMode: Union[str, IPMode]
+        isDefaultContainer: bool
+        isXenon: bool
+        keyVaultReferenceIdentity: str
+        lastModifiedTimeUtc: str
+        managedEnvironmentId: str
+        maxNumberOfWorkers: int
+        outboundIpAddresses: str
+        outboundVnetRouting: OutboundVnetRouting
+        platformReleaseChannel: Union[str, PlatformReleaseChannel]
+        possibleOutboundIpAddresses: str
+        publicNetworkAccess: str
+        redundancyMode: Union[str, RedundancyMode]
+        repositorySiteName: str
         reserved: bool
-        resource_config: ResourceConfig
-        resource_group: str
-        scm_site_also_stopped: bool
-        server_farm_id: str
-        site_config: SiteConfig
+        resourceConfig: ResourceConfig
+        resourceGroup: str
+        scmSiteAlsoStopped: bool
+        serverFarmId: str
+        siteConfig: SiteConfig
+        siteScopedCertificatesEnabled: bool
         sku: str
-        slot_swap_status: SlotSwapStatus
-        ssh_enabled: bool
+        slotSwapStatus: SlotSwapStatus
+        sshEnabled: bool
         state: str
-        storage_account_required: bool
-        suspended_till: str
-        target_swap_slot: str
+        storageAccountRequired: bool
+        suspendedTill: str
+        targetSwapSlot: str
         trafficManagerHostNames: list[str]
-        traffic_manager_host_names: list[str]
-        usage_state: Union[str, UsageState]
-        virtual_network_subnet_id: str
-        workload_profile_name: str
+        usageState: Union[str, UsageState]
+        virtualNetworkSubnetId: str
+        workloadProfileName: str
 
 
     class azure.mgmt.web.types.SiteSourceControl(ProxyResource):
@@ -37241,7 +37998,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: SiteSourceControlProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -37254,12 +38011,12 @@ namespace azure.mgmt.web.types
         key "isMercurial": bool
         key "repoUrl": str
         branch: str
-        deployment_rollback_enabled: bool
-        git_hub_action_configuration: GitHubActionConfiguration
-        is_git_hub_action: bool
-        is_manual_integration: bool
-        is_mercurial: bool
-        repo_url: str
+        deploymentRollbackEnabled: bool
+        gitHubActionConfiguration: GitHubActionConfiguration
+        isGitHubAction: bool
+        isManualIntegration: bool
+        isMercurial: bool
+        repoUrl: str
 
 
     class azure.mgmt.web.types.SkuCapacity(TypedDict, total=False):
@@ -37269,10 +38026,10 @@ namespace azure.mgmt.web.types
         key "minimum": int
         key "scaleType": str
         default: int
-        elastic_maximum: int
+        elasticMaximum: int
         maximum: int
         minimum: int
-        scale_type: str
+        scaleType: str
 
 
     class azure.mgmt.web.types.SkuDescription(TypedDict, total=False):
@@ -37288,17 +38045,14 @@ namespace azure.mgmt.web.types
         locations: list[str]
         name: str
         size: str
-        sku_capacity: SkuCapacity
+        skuCapacity: SkuCapacity
         tier: str
 
 
     class azure.mgmt.web.types.SlotConfigNames(TypedDict, total=False):
         appSettingNames: list[str]
-        app_setting_names: list[str]
         azureStorageConfigNames: list[str]
-        azure_storage_config_names: list[str]
         connectionStringNames: list[str]
-        connection_string_names: list[str]
 
 
     class azure.mgmt.web.types.SlotConfigNamesResource(ProxyResource):
@@ -37312,7 +38066,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: SlotConfigNames
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -37320,9 +38074,9 @@ namespace azure.mgmt.web.types
         key "destinationSlotName": str
         key "sourceSlotName": str
         key "timestampUtc": str
-        destination_slot_name: str
-        source_slot_name: str
-        timestamp_utc: str
+        destinationSlotName: str
+        sourceSlotName: str
+        timestampUtc: str
 
 
     class azure.mgmt.web.types.SlowRequestsBasedTrigger(TypedDict, total=False):
@@ -37332,8 +38086,8 @@ namespace azure.mgmt.web.types
         key "timeTaken": str
         count: int
         path: str
-        time_interval: str
-        time_taken: str
+        timeInterval: str
+        timeTaken: str
 
 
     class azure.mgmt.web.types.SnapshotRecoverySource(TypedDict, total=False):
@@ -37363,12 +38117,12 @@ namespace azure.mgmt.web.types
         key "recoverySource": ForwardRef('SnapshotRecoverySource', module='types')
         key "snapshotTime": str
         key "useDRSecondary": bool
-        ignore_conflicting_host_names: bool
+        ignoreConflictingHostNames: bool
         overwrite: bool
-        recover_configuration: bool
-        recovery_source: SnapshotRecoverySource
-        snapshot_time: str
-        use_dr_secondary: bool
+        recoverConfiguration: bool
+        recoverySource: SnapshotRecoverySource
+        snapshotTime: str
+        useDRSecondary: bool
 
 
     class azure.mgmt.web.types.SourceControl(ProxyResource):
@@ -37382,7 +38136,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: SourceControlProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -37391,10 +38145,10 @@ namespace azure.mgmt.web.types
         key "refreshToken": str
         key "token": str
         key "tokenSecret": str
-        expiration_time: str
-        refresh_token: str
+        expirationTime: str
+        refreshToken: str
         token: str
-        token_secret: str
+        tokenSecret: str
 
 
     class azure.mgmt.web.types.StaticSite(TypedDict, total=False):
@@ -37411,29 +38165,24 @@ namespace azure.mgmt.web.types
         key "repositoryUrl": str
         key "stagingEnvironmentPolicy": Union[str, StagingEnvironmentPolicy]
         key "templateProperties": ForwardRef('StaticSiteTemplateOptions', module='types')
-        allow_config_file_updates: bool
+        allowConfigFileUpdates: bool
         branch: str
-        build_properties: StaticSiteBuildProperties
-        content_distribution_endpoint: str
+        buildProperties: StaticSiteBuildProperties
+        contentDistributionEndpoint: str
         customDomains: list[str]
-        custom_domains: list[str]
         databaseConnections: list[DatabaseConnectionOverview]
-        database_connections: list[DatabaseConnectionOverview]
-        default_hostname: str
-        enterprise_grade_cdn_status: Union[str, EnterpriseGradeCdnStatus]
-        key_vault_reference_identity: str
+        defaultHostname: str
+        enterpriseGradeCdnStatus: Union[str, EnterpriseGradeCdnStatus]
+        keyVaultReferenceIdentity: str
         linkedBackends: list[StaticSiteLinkedBackend]
-        linked_backends: list[StaticSiteLinkedBackend]
         privateEndpointConnections: list[ResponseMessageEnvelopeRemotePrivateEndpointConnection]
-        private_endpoint_connections: list[ResponseMessageEnvelopeRemotePrivateEndpointConnection]
         provider: str
-        public_network_access: str
-        repository_token: str
-        repository_url: str
-        staging_environment_policy: Union[str, StagingEnvironmentPolicy]
-        template_properties: StaticSiteTemplateOptions
+        publicNetworkAccess: str
+        repositoryToken: str
+        repositoryUrl: str
+        stagingEnvironmentPolicy: Union[str, StagingEnvironmentPolicy]
+        templateProperties: StaticSiteTemplateOptions
         userProvidedFunctionApps: list[StaticSiteUserProvidedFunctionApp]
-        user_provided_function_apps: list[StaticSiteUserProvidedFunctionApp]
 
 
     class azure.mgmt.web.types.StaticSiteARMResource(TrackedResource):
@@ -37453,7 +38202,7 @@ namespace azure.mgmt.web.types
         name: str
         properties: StaticSite
         sku: SkuDescription
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -37469,7 +38218,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: StaticSiteBasicAuthPropertiesARMResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -37478,11 +38227,11 @@ namespace azure.mgmt.web.types
         key "password": str
         key "secretState": str
         key "secretUrl": str
-        applicable_environments_mode: str
+        applicableEnvironmentsMode: str
         environments: list[str]
         password: str
-        secret_state: str
-        secret_url: str
+        secretState: str
+        secretUrl: str
 
 
     class azure.mgmt.web.types.StaticSiteBuildProperties(TypedDict, total=False):
@@ -37494,14 +38243,14 @@ namespace azure.mgmt.web.types
         key "githubActionSecretNameOverride": str
         key "outputLocation": str
         key "skipGithubActionWorkflowGeneration": bool
-        api_build_command: str
-        api_location: str
-        app_artifact_location: str
-        app_build_command: str
-        app_location: str
-        github_action_secret_name_override: str
-        output_location: str
-        skip_github_action_workflow_generation: bool
+        apiBuildCommand: str
+        apiLocation: str
+        appArtifactLocation: str
+        appBuildCommand: str
+        appLocation: str
+        githubActionSecretNameOverride: str
+        outputLocation: str
+        skipGithubActionWorkflowGeneration: bool
 
 
     class azure.mgmt.web.types.StaticSiteCustomDomainRequestPropertiesARMResource(ProxyOnlyResource):
@@ -37519,7 +38268,7 @@ namespace azure.mgmt.web.types
 
     class azure.mgmt.web.types.StaticSiteCustomDomainRequestPropertiesARMResourceProperties(TypedDict, total=False):
         key "validationMethod": str
-        validation_method: str
+        validationMethod: str
 
 
     class azure.mgmt.web.types.StaticSiteDatabaseConnectionConfigurationFileOverview(TypedDict, total=False):
@@ -37527,7 +38276,7 @@ namespace azure.mgmt.web.types
         key "fileName": str
         key "type": str
         contents: str
-        file_name: str
+        fileName: str
         type: str
 
 
@@ -37536,9 +38285,9 @@ namespace azure.mgmt.web.types
         key "createdOn": str
         key "provisioningState": str
         key "region": str
-        backend_resource_id: str
-        created_on: str
-        provisioning_state: str
+        backendResourceId: str
+        createdOn: str
+        provisioningState: str
         region: str
 
 
@@ -37553,7 +38302,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: StaticSiteLinkedBackendARMResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -37562,9 +38311,9 @@ namespace azure.mgmt.web.types
         key "createdOn": str
         key "provisioningState": str
         key "region": str
-        backend_resource_id: str
-        created_on: str
-        provisioning_state: str
+        backendResourceId: str
+        createdOn: str
+        provisioningState: str
         region: str
 
 
@@ -37597,8 +38346,8 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.StaticSiteResetPropertiesARMResourceProperties(TypedDict, total=False):
         key "repositoryToken": str
         key "shouldUpdateRepository": bool
-        repository_token: str
-        should_update_repository: bool
+        repositoryToken: str
+        shouldUpdateRepository: bool
 
 
     class azure.mgmt.web.types.StaticSiteTemplateOptions(TypedDict, total=False):
@@ -37608,10 +38357,10 @@ namespace azure.mgmt.web.types
         key "repositoryName": str
         key "templateRepositoryUrl": str
         description: str
-        is_private: bool
+        isPrivate: bool
         owner: str
-        repository_name: str
-        template_repository_url: str
+        repositoryName: str
+        templateRepositoryUrl: str
 
 
     class azure.mgmt.web.types.StaticSiteUserARMResource(ProxyOnlyResource):
@@ -37632,10 +38381,10 @@ namespace azure.mgmt.web.types
         key "provider": str
         key "roles": str
         key "userId": str
-        display_name: str
+        displayName: str
         provider: str
         roles: str
-        user_id: str
+        userId: str
 
 
     class azure.mgmt.web.types.StaticSiteUserInvitationRequestResource(ProxyOnlyResource):
@@ -37658,10 +38407,10 @@ namespace azure.mgmt.web.types
         key "roles": str
         key "userDetails": str
         domain: str
-        num_hours_to_expiration: int
+        numHoursToExpiration: int
         provider: str
         roles: str
-        user_details: str
+        userDetails: str
 
 
     class azure.mgmt.web.types.StaticSiteUserProvidedFunctionApp(ProxyOnlyResource):
@@ -37688,7 +38437,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: StaticSiteUserProvidedFunctionAppARMResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -37696,18 +38445,18 @@ namespace azure.mgmt.web.types
         key "createdOn": str
         key "functionAppRegion": str
         key "functionAppResourceId": str
-        created_on: str
-        function_app_region: str
-        function_app_resource_id: str
+        createdOn: str
+        functionAppRegion: str
+        functionAppResourceId: str
 
 
     class azure.mgmt.web.types.StaticSiteUserProvidedFunctionAppProperties(TypedDict, total=False):
         key "createdOn": str
         key "functionAppRegion": str
         key "functionAppResourceId": str
-        created_on: str
-        function_app_region: str
-        function_app_resource_id: str
+        createdOn: str
+        functionAppRegion: str
+        functionAppResourceId: str
 
 
     class azure.mgmt.web.types.StaticSiteZipDeployment(TypedDict, total=False):
@@ -37716,10 +38465,10 @@ namespace azure.mgmt.web.types
         key "deploymentTitle": str
         key "functionLanguage": str
         key "provider": str
-        api_zip_url: str
-        app_zip_url: str
-        deployment_title: str
-        function_language: str
+        apiZipUrl: str
+        appZipUrl: str
+        deploymentTitle: str
+        functionLanguage: str
         provider: str
 
 
@@ -37754,8 +38503,8 @@ namespace azure.mgmt.web.types
         key "buildProperties": ForwardRef('StaticSiteBuildProperties', module='types')
         key "repositoryUrl": str
         branch: str
-        build_properties: StaticSiteBuildProperties
-        repository_url: str
+        buildProperties: StaticSiteBuildProperties
+        repositoryUrl: str
 
 
     class azure.mgmt.web.types.StatusCodesBasedTrigger(TypedDict, total=False):
@@ -37768,9 +38517,9 @@ namespace azure.mgmt.web.types
         count: int
         path: str
         status: int
-        sub_status: int
-        time_interval: str
-        win32_status: int
+        subStatus: int
+        timeInterval: str
+        win32Status: int
 
 
     class azure.mgmt.web.types.StatusCodesRangeBasedTrigger(TypedDict, total=False):
@@ -37780,8 +38529,8 @@ namespace azure.mgmt.web.types
         key "timeInterval": str
         count: int
         path: str
-        status_codes: str
-        time_interval: str
+        statusCodes: str
+        timeInterval: str
 
 
     class azure.mgmt.web.types.StorageMigrationOptions(ProxyOnlyResource):
@@ -37802,10 +38551,10 @@ namespace azure.mgmt.web.types
         key "azurefilesShare": Required[str]
         key "blockWriteAccessToSite": bool
         key "switchSiteAfterMigration": bool
-        azurefiles_connection_string: str
-        azurefiles_share: str
-        block_write_access_to_site: bool
-        switch_site_after_migration: bool
+        azurefilesConnectionString: str
+        azurefilesShare: str
+        blockWriteAccessToSite: bool
+        switchSiteAfterMigration: bool
 
 
     class azure.mgmt.web.types.StorageMount(TypedDict, total=False):
@@ -37814,8 +38563,8 @@ namespace azure.mgmt.web.types
         key "name": str
         key "source": str
         key "type": Union[str, StorageMountType]
-        credentials_key_vault_reference: KeyVaultReferenceWithStatus
-        destination_path: str
+        credentialsKeyVaultReference: KeyVaultReferenceWithStatus
+        destinationPath: str
         name: str
         source: str
         type: Union[str, StorageMountType]
@@ -37844,15 +38593,15 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: SwiftVirtualNetworkProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.web.types.SwiftVirtualNetworkProperties(TypedDict, total=False):
         key "subnetResourceId": str
         key "swiftSupported": bool
-        subnet_resource_id: str
-        swift_supported: bool
+        subnetResourceId: str
+        swiftSupported: bool
 
 
     class azure.mgmt.web.types.SystemData(TypedDict, total=False):
@@ -37862,12 +38611,12 @@ namespace azure.mgmt.web.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.web.types.TokenStore(TypedDict, total=False):
@@ -37875,10 +38624,10 @@ namespace azure.mgmt.web.types
         key "enabled": bool
         key "fileSystem": ForwardRef('FileSystemTokenStore', module='types')
         key "tokenRefreshExtensionHours": float
-        azure_blob_storage: BlobStorageTokenStore
+        azureBlobStorage: BlobStorageTokenStore
         enabled: bool
-        file_system: FileSystemTokenStore
-        token_refresh_extension_hours: float
+        fileSystem: FileSystemTokenStore
+        tokenRefreshExtensionHours: float
 
 
     class azure.mgmt.web.types.TrackedResource(Resource):
@@ -37890,7 +38639,7 @@ namespace azure.mgmt.web.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -37905,8 +38654,8 @@ namespace azure.mgmt.web.types
     class azure.mgmt.web.types.TwitterRegistration(TypedDict, total=False):
         key "consumerKey": str
         key "consumerSecretSettingName": str
-        consumer_key: str
-        consumer_secret_setting_name: str
+        consumerKey: str
+        consumerSecretSettingName: str
 
 
     class azure.mgmt.web.types.User(ProxyResource):
@@ -37920,15 +38669,15 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: UserProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.web.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.web.types.UserProperties(TypedDict, total=False):
@@ -37937,11 +38686,11 @@ namespace azure.mgmt.web.types
         key "publishingPasswordHashSalt": str
         key "publishingUserName": Required[str]
         key "scmUri": str
-        publishing_password: str
-        publishing_password_hash: str
-        publishing_password_hash_salt: str
-        publishing_user_name: str
-        scm_uri: str
+        publishingPassword: str
+        publishingPasswordHash: str
+        publishingPasswordHashSalt: str
+        publishingUserName: str
+        scmUri: str
 
 
     class azure.mgmt.web.types.ValidateProperties(TypedDict, total=False):
@@ -37959,20 +38708,20 @@ namespace azure.mgmt.web.types
         key "needLinuxWorkers": bool
         key "serverFarmId": str
         key "skuName": str
-        app_service_environment: AppServiceEnvironment
+        appServiceEnvironment: AppServiceEnvironment
         capacity: int
-        container_image_platform: str
-        container_image_repository: str
-        container_image_tag: str
-        container_registry_base_url: str
-        container_registry_password: str
-        container_registry_username: str
-        hosting_environment: str
-        is_spot: bool
-        is_xenon: bool
-        need_linux_workers: bool
-        server_farm_id: str
-        sku_name: str
+        containerImagePlatform: str
+        containerImageRepository: str
+        containerImageTag: str
+        containerRegistryBaseUrl: str
+        containerRegistryPassword: str
+        containerRegistryUsername: str
+        hostingEnvironment: str
+        isSpot: bool
+        isXenon: bool
+        needLinuxWorkers: bool
+        serverFarmId: str
+        skuName: str
 
 
     class azure.mgmt.web.types.ValidateRequest(TypedDict, total=False):
@@ -37990,18 +38739,17 @@ namespace azure.mgmt.web.types
         key "physicalPath": str
         key "preloadEnabled": bool
         key "virtualPath": str
-        physical_path: str
-        preload_enabled: bool
+        physicalPath: str
+        preloadEnabled: bool
         virtualDirectories: list[VirtualDirectory]
-        virtual_directories: list[VirtualDirectory]
-        virtual_path: str
+        virtualPath: str
 
 
     class azure.mgmt.web.types.VirtualDirectory(TypedDict, total=False):
         key "physicalPath": str
         key "virtualPath": str
-        physical_path: str
-        virtual_path: str
+        physicalPath: str
+        virtualPath: str
 
 
     class azure.mgmt.web.types.VirtualNetworkProfile(TypedDict, total=False):
@@ -38026,15 +38774,15 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: VnetGatewayProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.web.types.VnetGatewayProperties(TypedDict, total=False):
         key "vnetName": str
         key "vpnPackageUri": Required[str]
-        vnet_name: str
-        vpn_package_uri: str
+        vnetName: str
+        vpnPackageUri: str
 
 
     class azure.mgmt.web.types.VnetInfo(TypedDict, total=False):
@@ -38044,13 +38792,13 @@ namespace azure.mgmt.web.types
         key "isSwift": bool
         key "resyncRequired": bool
         key "vnetResourceId": str
-        cert_blob: str
-        cert_thumbprint: str
-        dns_servers: str
-        is_swift: bool
-        resync_required: bool
+        certBlob: str
+        certThumbprint: str
+        dnsServers: str
+        isSwift: bool
+        resyncRequired: bool
         routes: list[VnetRoute]
-        vnet_resource_id: str
+        vnetResourceId: str
 
 
     class azure.mgmt.web.types.VnetInfoResource(ProxyResource):
@@ -38064,7 +38812,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: VnetInfo
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -38086,10 +38834,10 @@ namespace azure.mgmt.web.types
         key "vnetName": str
         key "vnetResourceGroup": str
         key "vnetSubnetName": str
-        subnet_resource_id: str
-        vnet_name: str
-        vnet_resource_group: str
-        vnet_subnet_name: str
+        subnetResourceId: str
+        vnetName: str
+        vnetResourceGroup: str
+        vnetSubnetName: str
 
 
     class azure.mgmt.web.types.VnetRoute(ProxyResource):
@@ -38103,7 +38851,7 @@ namespace azure.mgmt.web.types
         kind: str
         name: str
         properties: VnetRouteProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -38111,9 +38859,9 @@ namespace azure.mgmt.web.types
         key "endAddress": str
         key "routeType": Union[str, RouteType]
         key "startAddress": str
-        end_address: str
-        route_type: Union[str, RouteType]
-        start_address: str
+        endAddress: str
+        routeType: Union[str, RouteType]
+        startAddress: str
 
 
     class azure.mgmt.web.types.VolumeMount(TypedDict, total=False):
@@ -38121,10 +38869,10 @@ namespace azure.mgmt.web.types
         key "data": str
         key "readOnly": bool
         key "volumeSubPath": Required[str]
-        container_mount_path: str
+        containerMountPath: str
         data: str
-        read_only: bool
-        volume_sub_path: str
+        readOnly: bool
+        volumeSubPath: str
 
 
     class azure.mgmt.web.types.WorkerPool(TypedDict, total=False):
@@ -38132,12 +38880,11 @@ namespace azure.mgmt.web.types
         key "workerCount": int
         key "workerSize": str
         key "workerSizeId": int
-        compute_mode: Union[str, ComputeModeOptions]
+        computeMode: Union[str, ComputeModeOptions]
         instanceNames: list[str]
-        instance_names: list[str]
-        worker_count: int
-        worker_size: str
-        worker_size_id: int
+        workerCount: int
+        workerSize: str
+        workerSizeId: int
 
 
     class azure.mgmt.web.types.WorkerPoolResource(ProxyResource):
@@ -38153,7 +38900,7 @@ namespace azure.mgmt.web.types
         name: str
         properties: WorkerPool
         sku: SkuDescription
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -38175,10 +38922,9 @@ namespace azure.mgmt.web.types
 
     class azure.mgmt.web.types.WorkflowArtifacts(TypedDict, total=False):
         key "appSettings": Any
-        app_settings: Any
+        appSettings: Any
         files: dict[str, Any]
         filesToDelete: list[str]
-        files_to_delete: list[str]
 
 
     class azure.mgmt.web.types.WorkflowParameter(TypedDict, total=False):
@@ -38206,17 +38952,17 @@ namespace azure.mgmt.web.types
         key "sku": ForwardRef('WorkflowSku', module='types')
         key "state": Union[str, WorkflowState]
         key "version": str
-        access_control: FlowAccessControlConfiguration
-        access_endpoint: str
-        changed_time: str
-        created_time: str
+        accessControl: FlowAccessControlConfiguration
+        accessEndpoint: str
+        changedTime: str
+        createdTime: str
         definition: Any
-        endpoints_configuration: FlowEndpointsConfiguration
-        integration_account: ResourceReference
-        integration_service_environment: ResourceReference
+        endpointsConfiguration: FlowEndpointsConfiguration
+        integrationAccount: ResourceReference
+        integrationServiceEnvironment: ResourceReference
         kind: Union[str, Kind]
         parameters: dict[str, WorkflowParameter]
-        provisioning_state: Union[str, WorkflowProvisioningState]
+        provisioningState: Union[str, WorkflowProvisioningState]
         sku: WorkflowSku
         state: Union[str, WorkflowState]
         version: str

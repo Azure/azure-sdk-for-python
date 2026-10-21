@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-05-01/ListSiteDeploymentStatusSlot.json
+# x-ms-original-file: 2026-03-15/ListSiteDeploymentStatusSlot.json
 if __name__ == "__main__":
     main()

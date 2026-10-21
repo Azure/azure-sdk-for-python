@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/UpdateStaticSiteUser.json
+# x-ms-original-file: 2026-03-15/UpdateStaticSiteUser.json
 if __name__ == "__main__":
     main()

@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/GetStaticSiteBuildDatabaseConnection.json
+# x-ms-original-file: 2026-03-15/GetStaticSiteBuildDatabaseConnection.json
 if __name__ == "__main__":
     main()
