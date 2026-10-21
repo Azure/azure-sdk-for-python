@@ -752,10 +752,10 @@
 # ServiceOwners: @antcp @AzureAppServiceCLI
 
 # PRLabel: %Service Bus
-/sdk/servicebus/    @EldertGrootenboer @skarri-microsoft @j7nw4r @meetamitbhatia
+/sdk/servicebus/    @EldertGrootenboer @skarri-microsoft @j7nw4r @meetamitbhatia @ksalazar-91 @pranz1996
 
 # ServiceLabel: %Service Bus
-# ServiceOwners: @EldertGrootenboer @skarri-microsoft @j7nw4r @meetamitbhatia
+# ServiceOwners: @EldertGrootenboer @skarri-microsoft @j7nw4r @meetamitbhatia @ksalazar-91 @pranz1996
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/    @QingChenmsft @samedder
