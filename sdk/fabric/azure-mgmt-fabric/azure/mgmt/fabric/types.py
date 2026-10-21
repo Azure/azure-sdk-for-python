@@ -155,7 +155,7 @@ class FabricCapacityProperties(TypedDict, total=False):
      "Updating", "Deleting", "Suspending", "Suspended", "Pausing", "Paused", "Resuming", "Scaling",
      and "Preparing".
     :vartype state: Union[str, "ResourceState"]
-    :ivar overage: The capacity overage properties of the Fabric capacity resource.
+    :ivar overage: The capacity overage properties of the Fabric capacity resource. Required.
     :vartype overage: "CapacityOverageProperties"
     :ivar administration: The capacity administration. Required.
     :vartype administration: "CapacityAdministration"
@@ -170,8 +170,8 @@ class FabricCapacityProperties(TypedDict, total=False):
      resource provisioning. Known values are: \"Active\", \"Provisioning\", \"Failed\",
      \"Updating\", \"Deleting\", \"Suspending\", \"Suspended\", \"Pausing\", \"Paused\",
      \"Resuming\", \"Scaling\", and \"Preparing\"."""
-    overage: "CapacityOverageProperties"
-    """The capacity overage properties of the Fabric capacity resource."""
+    overage: Required["CapacityOverageProperties"]
+    """The capacity overage properties of the Fabric capacity resource. Required."""
     administration: Required["CapacityAdministration"]
     """The capacity administration. Required."""
 

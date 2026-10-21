@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -1579,6 +1580,16 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
         blob_list = []
         container_client.delete_blobs(*blob_list)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("value", ["\r", "\n", "\r\n"])
+    async def test_batch_delete_blobs_rejects_crlf_in_header(self, value):
+        container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
+
+        with pytest.raises(ValueError):
+            await container_client.delete_blobs(
+                "blob1", if_tags_match_condition=f"\"tag1\"='first{value}x-ms-lease-id: injected'"
+            )
 
     @pytest.mark.live_test_only
     @BlobPreparer()

@@ -43,19 +43,20 @@ def main():
                     "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rgcognitiveservices/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity": {}
                 },
             },
-            "location": "eastus",
             "properties": {
                 "datasetId": "dataset-12345",
+                "gpuCount": 1,
                 "idleTimeBeforeShutdown": "PT30M",
                 "imageLink": "mcr.microsoft.com/azureml/curated/pytorch-gpu:latest",
+                "instanceType": "Singularity.ND12_H100_v5-n1",
                 "sshSettings": {"adminEnabled": True, "sshPublicKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQ..."},
-                "targetClusterId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rgcognitiveservices/providers/Microsoft.CognitiveServices/accounts/myAccount/computes/myCluster",
+                "targetClusterId": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/vc-rg/providers/Microsoft.MachineLearningServices/virtualClusters/test-vc",
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-07-15-preview/PutWorkbench.json
+# x-ms-original-file: 2026-09-15-preview/PutWorkbench.json
 if __name__ == "__main__":
     main()

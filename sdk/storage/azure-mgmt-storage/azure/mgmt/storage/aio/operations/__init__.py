@@ -29,6 +29,10 @@ from ._operations import NetworkSecurityPerimeterConfigurationsOperations  # typ
 from ._operations import StorageTaskAssignmentsOperations  # type: ignore
 from ._operations import ConnectorsOperations  # type: ignore
 from ._operations import DataSharesOperations  # type: ignore
+from ._operations import ContextCachesOperations  # type: ignore
+from ._operations import ContextCacheContainersOperations  # type: ignore
+from ._operations import BlobAccessPointConfigurationsOperations  # type: ignore
+from ._operations import BlobAccessPointConnectionTestsOperations  # type: ignore
 from ._operations import AdvancedPlatformMetricsOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import StorageTaskAssignmentsInstancesReportOperations  # type: ignore
@@ -62,6 +66,10 @@ __all__ = [
     "StorageTaskAssignmentsOperations",
     "ConnectorsOperations",
     "DataSharesOperations",
+    "ContextCachesOperations",
+    "ContextCacheContainersOperations",
+    "BlobAccessPointConfigurationsOperations",
+    "BlobAccessPointConnectionTestsOperations",
     "AdvancedPlatformMetricsOperations",
     "PrivateLinkResourcesOperations",
     "StorageTaskAssignmentsInstancesReportOperations",

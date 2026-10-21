@@ -89,7 +89,12 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                             "gpuProfile": {
                                 "driver": "str",
                                 "driverType": "str",
-                                "nvidia": {"driverMode": "str", "managementMode": "str", "migStrategy": "str"},
+                                "nvidia": {
+                                    "driverMode": "str",
+                                    "managementMode": "str",
+                                    "migProfiles": ["str"],
+                                    "migStrategy": "str",
+                                },
                             },
                             "hostGroupID": "str",
                             "kubeletConfig": {
@@ -250,6 +255,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                                 "maxUnavailable": "str",
                                 "nodeSoakDurationInMinutes": 0,
                                 "undrainableNodeBehavior": "str",
+                                "upgradeGateSettings": {"enabled": bool},
                             },
                             "upgradeSettingsBlueGreen": {
                                 "batchSoakDurationInMinutes": 0,
@@ -549,7 +555,10 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                         "snapshotController": {"enabled": bool},
                     },
                     "supportPlan": "str",
-                    "upgradeSettings": {"overrideSettings": {"forceUpgrade": bool, "until": "2020-02-20 00:00:00"}},
+                    "upgradeSettings": {
+                        "overrideSettings": {"forceUpgrade": bool, "until": "2020-02-20 00:00:00"},
+                        "upgradeGateSettings": {"enabled": bool},
+                    },
                     "windowsProfile": {
                         "adminUsername": "str",
                         "adminPassword": "str",

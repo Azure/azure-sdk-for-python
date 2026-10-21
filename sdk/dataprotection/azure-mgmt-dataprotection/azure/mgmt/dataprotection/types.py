@@ -18,6 +18,7 @@ if TYPE_CHECKING:
         AbsoluteMarker,
         AlertsState,
         BCDRSecurityLevel,
+        BackupSolutionType,
         BlobBackupPatternType,
         BlobBackupRuleMode,
         CreatedByType,
@@ -32,6 +33,7 @@ if TYPE_CHECKING:
         GranularityLevel,
         IdentityType,
         ImmutabilityState,
+        ImmutabilityType,
         InfrastructureEncryptionState,
         Month,
         PersistentVolumeRestoreMode,
@@ -1326,15 +1328,38 @@ class ImmediateCopyOption(TypedDict, total=False):
      \"ImmediateCopyOption\"."""
 
 
+class ImmutabilityConfiguration(TypedDict, total=False):
+    """Immutability configuration containing type and duration.
+
+    :ivar type: Type of immutability. Supported values: AsPerPolicy or TimeBased. Known values are:
+     "AsPerPolicy" and "TimeBased".
+    :vartype type: Union[str, "ImmutabilityType"]
+    :ivar durationInDays: Duration in days for time-based immutability. Required when type is
+     TimeBased. Must be null when type is AsPerPolicy.
+    :vartype durationInDays: int
+    """
+
+    type: Union[str, "ImmutabilityType"]
+    """Type of immutability. Supported values: AsPerPolicy or TimeBased. Known values are:
+     \"AsPerPolicy\" and \"TimeBased\"."""
+    durationInDays: int
+    """Duration in days for time-based immutability. Required when type is TimeBased. Must be null
+     when type is AsPerPolicy."""
+
+
 class ImmutabilitySettings(TypedDict, total=False):
     """Immutability Settings at vault level.
 
     :ivar state: Immutability state. Known values are: "Disabled", "Unlocked", and "Locked".
     :vartype state: Union[str, "ImmutabilityState"]
+    :ivar configuration: Immutability configuration containing type and duration.
+    :vartype configuration: "ImmutabilityConfiguration"
     """
 
     state: Union[str, "ImmutabilityState"]
     """Immutability state. Known values are: \"Disabled\", \"Unlocked\", and \"Locked\"."""
+    configuration: "ImmutabilityConfiguration"
+    """Immutability configuration containing type and duration."""
 
 
 class InnerError(TypedDict, total=False):
@@ -1830,6 +1855,24 @@ class PolicyParameters(TypedDict, total=False):
     """Gets or sets the Backup Data Source Parameters."""
 
 
+class PostgreSqlFlexibleServerBackupDatasourceParameters(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Parameters to be used during configuration of backup of PostgreSQL Flexible Servers.
+
+    :ivar backupSolutionType: Type of backup taken, Logical/Physical. Known values are:
+     "LogicalBackup" and "PhysicalBackup".
+    :vartype backupSolutionType: Union[str, "BackupSolutionType"]
+    :ivar objectType: Required. Default value is
+     "PostgreSqlFlexibleServerBackupDatasourceParameters".
+    :vartype objectType: Literal["PostgreSqlFlexibleServerBackupDatasourceParameters"]
+    """
+
+    backupSolutionType: Union[str, "BackupSolutionType"]
+    """Type of backup taken, Logical/Physical. Known values are: \"LogicalBackup\" and
+     \"PhysicalBackup\"."""
+    objectType: Required[Literal["PostgreSqlFlexibleServerBackupDatasourceParameters"]]
+    """Required. Default value is \"PostgreSqlFlexibleServerBackupDatasourceParameters\"."""
+
+
 class ProtectionStatusDetails(TypedDict, total=False):
     """Protection status details.
 
@@ -2135,8 +2178,9 @@ class RetentionTag(TypedDict, total=False):
 class ScheduleBasedBackupCriteria(TypedDict, total=False):
     """Schedule based backup criteria.
 
-    :ivar absoluteCriteria: it contains absolute values like "AllBackup" / "FirstOfDay" /
-     "FirstOfWeek" / "FirstOfMonth" and should be part of AbsoluteMarker enum.
+    :ivar absoluteCriteria: It contains absolute marker values such as ``AllBackup``,
+     ``FirstOfDay``, ``FirstOfWeek``, and ``FirstOfMonth``. These values should be part of the
+     ``AbsoluteMarker`` enum.
     :vartype absoluteCriteria: list[Union[str, "AbsoluteMarker"]]
     :ivar daysOfMonth: This is day of the month from 1 to 28 other wise last of month.
     :vartype daysOfMonth: list["Day"]
@@ -2154,8 +2198,8 @@ class ScheduleBasedBackupCriteria(TypedDict, total=False):
     """
 
     absoluteCriteria: list[Union[str, "AbsoluteMarker"]]
-    """it contains absolute values like \"AllBackup\" / \"FirstOfDay\" / \"FirstOfWeek\" /
-     \"FirstOfMonth\" and should be part of AbsoluteMarker enum."""
+    """It contains absolute marker values such as ``AllBackup``, ``FirstOfDay``, ``FirstOfWeek``, and
+     ``FirstOfMonth``. These values should be part of the ``AbsoluteMarker`` enum."""
     daysOfMonth: list["Day"]
     """This is day of the month from 1 to 28 other wise last of month."""
     daysOfTheWeek: list[Union[str, "DayOfWeek"]]
@@ -2590,6 +2634,7 @@ BackupDatasourceParameters = Union[
     BlobBackupDatasourceParametersForAutoProtection,
     GenericBackupDatasourceParameters,
     KubernetesClusterBackupDatasourceParameters,
+    PostgreSqlFlexibleServerBackupDatasourceParameters,
 ]
 AuthCredentials = Union[SecretStoreBasedAuthCredentials]
 BackupParameters = Union[AzureBackupParams]

@@ -18,7 +18,6 @@ from cryptography.hazmat.primitives.keywrap import (
     aes_key_unwrap,
 )
 
-
 _ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown key wrap algorithm."
 
 
