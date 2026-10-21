@@ -26,7 +26,35 @@ stages:
     dependsOn: []
     condition: ${{ parameters.Condition }}
     jobs:
+      - job: CheckWeekend
+        displayName: 'Check weekend eligibility'
+        pool:
+          name: $(LINUXPOOL)
+          image: $(LINUXVMIMAGE)
+          os: linux
+        variables:
+          PipelineStartTime: $[ format('{0:yyyy-MM-ddTHH:mm:ssK}', pipeline.startTime) ]
+        steps:
+          - checkout: none
+          # Azure Pipelines format() does not support day-of-week specifiers.
+          - pwsh: |
+              $startTime = [DateTimeOffset]::ParseExact(
+                $env:PIPELINE_START_TIME,
+                'yyyy-MM-ddTHH:mm:ssK',
+                [Globalization.CultureInfo]::InvariantCulture
+              )
+              $isWeekend = $startTime.UtcDateTime.DayOfWeek -in @(
+                [DayOfWeek]::Saturday, [DayOfWeek]::Sunday
+              )
+              Write-Host "##vso[task.setvariable variable=IsWeekend;isOutput=true]$isWeekend"
+            name: eligibility
+            displayName: 'Check pipeline start day in UTC'
+            env:
+              PIPELINE_START_TIME: $(PipelineStartTime)
+
       - job: 'Analyze'
+        dependsOn: CheckWeekend
+        condition: and(succeeded(), eq(dependencies.CheckWeekend.outputs['eligibility.IsWeekend'], 'True'))
         timeoutInMinutes: 90
 
         pool:
