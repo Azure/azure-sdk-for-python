@@ -11,6 +11,7 @@
 
 mod credentials;
 mod download;
+mod errors;
 mod upload;
 
 #[cfg(test)]
@@ -30,6 +31,7 @@ use tokio::runtime::Runtime;
 
 use credentials::get_cached_credential;
 use download::{download_blob, NativeDownloadStream};
+use errors::{AzureError, NativeTransferError};
 use upload::upload_blob;
 
 /// Shared tokio runtime — created once, reused across all calls to avoid
@@ -56,28 +58,6 @@ static SHARED_TRANSPORT: Lazy<Transport> = Lazy::new(|| {
         automatic_decompression: false,
     })))
 });
-
-/// Custom error wrapper for mapping `azure_core::Error` to Python exceptions.
-struct AzureError(azure_core::Error);
-
-impl From<AzureError> for PyErr {
-    fn from(err: AzureError) -> PyErr {
-        let mut current: Option<&(dyn std::error::Error + 'static)> = Some(&err.0);
-        while let Some(error) = current {
-            if let Some(python_error) = error.downcast_ref::<PyErr>() {
-                return Python::attach(|py| python_error.clone_ref(py));
-            }
-            current = error.source();
-        }
-        PyValueError::new_err(format!("Azure Storage error: {}", err.0))
-    }
-}
-
-impl From<azure_core::Error> for AzureError {
-    fn from(e: azure_core::Error) -> Self {
-        Self(e)
-    }
-}
 
 /// Build a `BlobClient` from a fully-qualified blob URL and optional token provider.
 ///
@@ -147,6 +127,10 @@ fn transfer_sizes(
 /// Python module definition.
 #[pymodule]
 fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add(
+        "NativeTransferError",
+        m.py().get_type::<NativeTransferError>(),
+    )?;
     m.add_function(wrap_pyfunction!(upload_blob, m)?)?;
     m.add_function(wrap_pyfunction!(download_blob, m)?)?;
     m.add_class::<NativeDownloadStream>()?;
@@ -243,6 +227,10 @@ mod tests {
                 .getattr("NativeDownloadStream")
                 .unwrap()
                 .is_instance_of::<pyo3::types::PyType>());
+            assert!(module
+                .getattr("NativeTransferError")
+                .unwrap()
+                .is(&py.get_type::<NativeTransferError>()));
         });
     }
 
@@ -265,15 +253,21 @@ mod tests {
     }
 
     #[test]
-    fn sdk_error_mapping_is_unchanged() {
+    fn sdk_error_retains_category_and_message() {
         Python::initialize();
         Python::attach(|py| {
             let error = azure_core::Error::with_message(ErrorKind::Other, "SDK failure");
             let converted = PyErr::from(AzureError(error));
-            assert!(converted.is_instance_of::<PyValueError>(py));
+            assert!(converted.is_instance_of::<NativeTransferError>(py));
+            assert_eq!(converted.value(py).to_string(), "SDK failure");
             assert_eq!(
-                converted.value(py).to_string(),
-                "Azure Storage error: SDK failure"
+                converted
+                    .value(py)
+                    .getattr("kind")
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+                "other"
             );
         });
     }

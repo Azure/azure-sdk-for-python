@@ -21,6 +21,7 @@ __version__ = VERSION
 
 try:
     from ._native import (
+        NativeTransferError as NativeTransferError,
         upload_blob as _native_upload,
         download_blob as _native_download,
     )
@@ -119,6 +120,10 @@ def upload_blob(
     :returns: A dict containing available upload response values.
     :rtype: dict
     :raises ValueError: If the native module is not available.
+    :raises NativeTransferError: If a native transfer fails. Contains SDK-independent
+        diagnostics normalized by the Rust Blob SDK, including ``request_id``,
+        ``additional_info``, and any ``normalization_error``. Original response
+        headers/body are retained; Python callback exceptions are propagated unchanged.
     """
     if not _NATIVE_AVAILABLE:
         raise ValueError(
@@ -223,6 +228,9 @@ def download_blob(
         exposes ``size`` (total bytes to be delivered).
     :rtype: Iterator[bytes]
     :raises ValueError: If the native module is not available.
+    :raises NativeTransferError: If starting the download or consuming a later window
+        fails. Contains Rust-normalized service diagnostics and original response
+        headers/body. Python callback exceptions are propagated unchanged.
     """
     if not _NATIVE_AVAILABLE:
         raise ValueError(
