@@ -487,5 +487,5 @@
         "azure.mgmt.netapp.operations.NetAppResourceUsagesOperations.get": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.get",
         "azure.mgmt.netapp.aio.operations.NetAppResourceUsagesOperations.get": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.get"
     },
-    "CrossLanguageVersion": "a93b0f331703"
+    "CrossLanguageVersion": "364a2f7b75ab"
 }
