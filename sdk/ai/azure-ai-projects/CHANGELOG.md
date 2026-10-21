@@ -22,6 +22,7 @@
 * Added synchronous/asynchronous GPT Live REST examples for reading an existing stored conversation, its items, and audio metadata, with explicit opt-in recording downloads and conversation deletion.
 * Fixed the GPT Live WAV sample to ignore silent/very-low-level PCM when detecting reply inactivity, reject silence-only replies, and preserve captured PCM in audio counts and optional WAV output.
 * Protected the GPT Live WAV sample's input recording from being overwritten through hard-linked output paths.
+* Added `--microphone` to the existing GPT Live audio sample for nonblocking microphone capture and speaker playback with optional PyAudio, preserving the WAV workflow and reporting actual audio transfer sizes.
 
 ## 2.9.0 (2026-10-16)
 

@@ -260,6 +260,24 @@ The WAV audio example uses a bounded speech-inactivity heuristic because Live ha
 event. Continued silent PCM does not keep it waiting forever, and silence-only output is not a
 successful spoken reply. A long speech pause can still split a reply.
 
+The same [GPT Live audio sample](samples/agents/voice/sample_voice_agent_live_audio_conversation_async.py)
+also supports live microphone capture and speaker playback, following the Realtime sample's
+nonblocking PyAudio device pattern:
+
+```powershell
+pip install pyaudio
+python .\samples\agents\voice\sample_voice_agent_live_audio_conversation_async.py --microphone
+```
+
+Microphone mode requires `FOUNDRY_PROJECT_ENDPOINT` and `FOUNDRY_VOICE_AGENT_MODEL`, but not
+`FOUNDRY_VOICE_AUDIO_INPUT_PATH`. Speak normally after the sample prints "Speak now"; use
+headphones to avoid feedback, and press Ctrl-C to close the session and delete its temporary
+agent version. The sample reports actual input/output PCM bytes, durations, and any dropped
+capture frames. No audio file is saved unless `FOUNDRY_VOICE_AUDIO_OUTPUT_PATH` is explicitly
+set; that file contains the received reply, not the microphone input. Conversation persistence
+remains disabled. Live owns turn handling, so this mode does not use Realtime `response.cancel`.
+Omit `--microphone` to retain the original WAV workflow without requiring PyAudio.
+
 The [synchronous REST sample](samples/agents/voice/sample_voice_agent_live_read_conversation.py)
 and [asynchronous REST sample](samples/agents/voice/sample_voice_agent_live_read_conversation_async.py)
 read an existing stored Live conversation without opening a WebSocket. Set `FOUNDRY_PROJECT_ENDPOINT`,

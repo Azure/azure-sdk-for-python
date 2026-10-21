@@ -6,10 +6,12 @@
 
 import asyncio
 import base64
+from concurrent.futures import Future
 import importlib.util
 import io
 import json
 from pathlib import Path
+import queue
 import sys
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
@@ -1120,3 +1122,351 @@ async def test_live_rest_samples_reject_blank_resource_identifiers(rest_sample, 
 
     rest_sample.operations.get.assert_not_called()
     rest_sample.operations.delete.assert_not_called()
+
+
+@pytest.fixture
+def microphone_sample(monkeypatch, sample_environment):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")
+    speaker = MagicMock()
+    microphone = MagicMock()
+    engine = MagicMock()
+    engine.open.side_effect = [speaker, microphone]
+    backend = SimpleNamespace(PyAudio=MagicMock(return_value=engine), paInt16=8, paContinue=0, paAbort=2)
+    monkeypatch.setattr(sample, "_microphone_backend", lambda: backend)
+    return SimpleNamespace(
+        sample=sample,
+        connection=sample_environment.async_connection,
+        client=sample_environment.async_client,
+        backend=backend,
+        engine=engine,
+        speaker=speaker,
+        microphone=microphone,
+        make=lambda: sample._MicrophoneAudio(sample_environment.async_connection, backend),
+    )
+
+
+@pytest.mark.asyncio
+async def test_microphone_mode_does_not_require_a_wav_and_preserves_live_lifecycle(
+    monkeypatch, microphone_sample, capsys
+):
+    setup = microphone_sample
+    monkeypatch.delenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH")
+    setup.connection.recv.side_effect = [_started(), _closed()]
+
+    await setup.sample.main(microphone=True)
+
+    assert setup.engine.open.call_count == 2
+    output_options, input_options = [call.kwargs for call in setup.engine.open.call_args_list]
+    assert output_options["output"] is True and input_options["input"] is True
+    for options in (output_options, input_options):
+        assert options["format"] == setup.backend.paInt16
+        assert options["rate"] == 24000 and options["channels"] == 1
+        assert options["frames_per_buffer"] == 1200 and options["start"] is False
+    setup.speaker.start_stream.assert_called_once()
+    setup.microphone.start_stream.assert_called_once()
+    setup.speaker.close.assert_called_once()
+    setup.microphone.close.assert_called_once()
+    setup.engine.terminate.assert_called_once()
+    definition = setup.client.agents.create_version.call_args.kwargs["definition"]
+    assert isinstance(definition, models.VoiceAgentLiveDefinition) and definition.store is False
+    setup.client.agents.delete_version.assert_awaited_once()
+    setup.connection.session.start.assert_not_called()
+    setup.connection.response.cancel.assert_not_called()
+    setup.client.beta.voice_agents.realtime.connect.assert_not_called()
+    assert "Speak now" in capsys.readouterr().out
+
+
+@pytest.mark.asyncio
+async def test_microphone_dependency_error_precedes_agent_creation(monkeypatch, sample_environment):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")
+    monkeypatch.setitem(sys.modules, "pyaudio", None)
+    monkeypatch.delenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH")
+
+    with pytest.raises(RuntimeError, match="pip install pyaudio"):
+        await sample.main(microphone=True)
+
+    sample_environment.async_client.agents.create_version.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_microphone_counts_only_successfully_sent_pcm(microphone_sample):
+    audio = microphone_sample.make()
+    pcm = b"\x01\x02" * 1200
+    await audio._append_input_audio(pcm)
+    assert audio.input_bytes == len(pcm)
+    microphone_sample.connection.session.input_audio.append.assert_awaited_once_with(audio=pcm)
+    microphone_sample.connection.session.input_audio.append.side_effect = ConnectionError("send failed")
+    with pytest.raises(ConnectionError, match="send failed"):
+        await audio._append_input_audio(pcm)
+    assert audio.input_bytes == len(pcm)
+    await audio.stop()
+
+
+@pytest.mark.asyncio
+async def test_microphone_callback_sends_raw_pcm_on_the_event_loop(microphone_sample):
+    audio = microphone_sample.make()
+    audio.start()
+    pcm = b"\x01\x02" * 1200
+
+    assert audio._capture_callback(pcm, 1200, None, 0) == (None, microphone_sample.backend.paContinue)
+    await asyncio.wrap_future(audio._pending_send)
+
+    assert audio.input_bytes == len(pcm)
+    microphone_sample.connection.session.input_audio.append.assert_awaited_once_with(audio=pcm)
+    await audio.stop()
+
+
+@pytest.mark.asyncio
+async def test_microphone_capture_backpressure_drops_a_frame_without_creating_more_sends(microphone_sample):
+    audio = microphone_sample.make()
+    audio.start()
+    pending = Future()
+    audio._pending_send = pending
+
+    assert audio._capture_callback(b"\x01\x02" * 1200, 1200, None, 0) == (None, microphone_sample.backend.paContinue)
+    assert audio._pending_send is pending and audio.dropped_frames == 1
+    microphone_sample.connection.session.input_audio.append.assert_not_called()
+    pending.set_result(None)
+    await audio.stop()
+
+
+@pytest.mark.asyncio
+async def test_microphone_callback_send_failure_is_raised_by_the_receiver(microphone_sample):
+    audio = microphone_sample.make()
+    audio.start()
+    failure = ConnectionError("captured audio send failed")
+    pending = Future()
+    pending.set_exception(failure)
+    audio._pending_send = pending
+
+    assert audio._capture_callback(b"\x00\x00" * 1200, 1200, None, 0) == (None, microphone_sample.backend.paAbort)
+    with pytest.raises(ConnectionError) as caught:
+        audio.check_capture_error()
+    assert caught.value is failure
+    with pytest.raises(ConnectionError):
+        await audio.stop()
+    microphone_sample.speaker.close.assert_called_once()
+    microphone_sample.microphone.close.assert_called_once()
+    microphone_sample.engine.terminate.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_microphone_shutdown_waits_for_the_last_send_and_closes_once(microphone_sample):
+    audio = microphone_sample.make()
+    audio.start()
+    pending = Future()
+    audio._pending_send = pending
+    shutdown = asyncio.create_task(audio.stop())
+    await asyncio.sleep(0)
+    assert not shutdown.done()
+    microphone_sample.microphone.close.assert_called_once()
+    pending.set_result(None)
+    await shutdown
+    await audio.stop()
+    assert audio._pending_send is None
+    microphone_sample.microphone.close.assert_called_once()
+    microphone_sample.speaker.close.assert_called_once()
+    microphone_sample.engine.terminate.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_microphone_playback_preserves_remainder_and_pads_exact_callback_frames(microphone_sample):
+    audio = microphone_sample.make()
+    audio.start()
+    audio.enqueue_audio(b"\x01\x02" * 5)
+
+    first, state = audio._playback_callback(None, 3, None, 0)
+    second, _ = audio._playback_callback(None, 4, None, 0)
+
+    assert first == b"\x01\x02" * 3
+    assert second == b"\x01\x02" * 2 + b"\x00" * 4
+    assert state == microphone_sample.backend.paContinue
+    assert audio.output_bytes == 10
+    await audio.stop()
+
+
+@pytest.mark.asyncio
+async def test_microphone_rejects_partial_pcm_and_reports_playback_backpressure(microphone_sample):
+    audio = microphone_sample.make()
+    audio._playback_queue = queue.Queue(maxsize=1)
+    with pytest.raises(ValueError, match="PCM16"):
+        audio.enqueue_audio(b"\x01")
+    assert audio.output_bytes == 0
+    audio.enqueue_audio(b"\x01\x02")
+    with pytest.raises(RuntimeError, match="playback"):
+        audio.enqueue_audio(b"\x03\x04")
+    assert audio.output_bytes == 4
+    await audio.stop()
+
+
+@pytest.mark.asyncio
+async def test_microphone_input_device_failure_releases_the_opened_speaker(microphone_sample):
+    microphone_sample.engine.open.side_effect = [microphone_sample.speaker, OSError("microphone unavailable")]
+    with pytest.raises(OSError, match="microphone unavailable"):
+        await microphone_sample.sample._stream_microphone(microphone_sample.connection, microphone_sample.backend, None)
+    microphone_sample.speaker.close.assert_called_once()
+    microphone_sample.engine.terminate.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_microphone_receives_audio_and_transcripts_and_saves_only_explicit_reply_output(
+    microphone_sample, capsys
+):
+    pcm = b"\x01\x02" * 1200
+    microphone_sample.connection.recv.side_effect = [
+        models.LiveServerEventLiveInputTranscriptDelta(delta="Hello"),
+        models.LiveServerEventLiveOutputTranscriptDelta(delta="Hi"),
+        models.LiveOutputAudioDelta(delta=base64.b64encode(pcm).decode("ascii")),
+        _closed(),
+    ]
+    output_file = MagicMock()
+
+    closed = await microphone_sample.sample._stream_microphone(
+        microphone_sample.connection, microphone_sample.backend, output_file
+    )
+
+    assert closed is True
+    output_file.writeframesraw.assert_called_once_with(pcm)
+    text = capsys.readouterr().out
+    assert "You: Hello" in text and "Agent: Hi" in text
+    assert f"{len(pcm)} bytes" in text
+    microphone_sample.engine.terminate.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_microphone_cancellation_closes_the_session_and_deletes_only_its_version(microphone_sample, monkeypatch):
+    monkeypatch.delenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH")
+    microphone_sample.connection.recv.side_effect = [_started(), asyncio.CancelledError(), _closed()]
+
+    with pytest.raises(asyncio.CancelledError):
+        await microphone_sample.sample.main(microphone=True)
+
+    microphone_sample.connection.session.close.assert_awaited_once()
+    microphone_sample.client.agents.delete_version.assert_awaited_once()
+    microphone_sample.client.agents.delete.assert_not_called()
+    microphone_sample.microphone.close.assert_called_once()
+    microphone_sample.speaker.close.assert_called_once()
+    microphone_sample.engine.terminate.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_microphone_service_errors_are_not_silently_successful(microphone_sample, monkeypatch):
+    monkeypatch.delenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH")
+    microphone_sample.connection.recv.side_effect = [
+        _started(),
+        {"type": "error", "error": {"code": "offline_error", "message": "service failed"}},
+    ]
+    with pytest.raises(RuntimeError, match="service failed"):
+        await microphone_sample.sample.main(microphone=True)
+    microphone_sample.client.agents.delete_version.assert_awaited_once()
+    microphone_sample.microphone.close.assert_called_once()
+    microphone_sample.speaker.close.assert_called_once()
+    microphone_sample.engine.terminate.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_microphone_stopped_capture_does_not_schedule_an_audio_send(microphone_sample):
+    audio = microphone_sample.make()
+    assert audio._capture_callback(b"\x00\x00" * 1200, 1200, None, 0) == (None, microphone_sample.backend.paAbort)
+    microphone_sample.connection.session.input_audio.append.assert_not_called()
+    await audio.stop()
+
+
+@pytest.mark.asyncio
+async def test_cancelled_microphone_send_is_an_error_not_a_successful_user_stop(microphone_sample):
+    audio = microphone_sample.make()
+    audio.start()
+    pending = Future()
+    pending.cancel()
+    audio._pending_send = pending
+    assert audio._capture_callback(b"\x00\x00" * 1200, 1200, None, 0) == (None, microphone_sample.backend.paAbort)
+    with pytest.raises(RuntimeError, match="send was cancelled"):
+        audio.check_capture_error()
+    with pytest.raises(RuntimeError, match="send was cancelled"):
+        await audio.stop()
+    microphone_sample.engine.terminate.assert_called_once()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("device,status", [("microphone", 2), ("speaker", 4)])
+async def test_microphone_device_status_errors_are_reported_to_the_receiver(microphone_sample, device, status):
+    audio = microphone_sample.make()
+    audio.start()
+    if device == "microphone":
+        result, state = audio._capture_callback(b"\x00\x00" * 1200, 1200, None, status)
+        assert result is None
+    else:
+        result, state = audio._playback_callback(None, 1200, None, status)
+        assert len(result) == 2400
+    assert state == microphone_sample.backend.paAbort
+    with pytest.raises(RuntimeError, match="callback reported audio status"):
+        audio.check_capture_error()
+    await audio.stop()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("reason", ["connection_lost", "content"])
+async def test_microphone_abnormal_session_termination_is_not_a_normal_completion(microphone_sample, reason):
+    closed = _closed()
+    closed.reason = reason
+    microphone_sample.connection.recv.return_value = closed
+    with pytest.raises(RuntimeError, match="ended unexpectedly"):
+        await microphone_sample.sample._stream_microphone(microphone_sample.connection, microphone_sample.backend, None)
+    microphone_sample.engine.terminate.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_microphone_client_delegation_uses_associated_live_commentary(microphone_sample):
+    microphone_sample.connection.recv.side_effect = [
+        models.LiveServerEventLiveDelegationCreated(
+            {"delegation": {"id": "delegation-test", "target": "client", "created_at": 1}}
+        ),
+        _closed(),
+    ]
+    await microphone_sample.sample._stream_microphone(microphone_sample.connection, microphone_sample.backend, None)
+    microphone_sample.connection.session.commentary.append.assert_awaited_once_with(
+        content="This sample cannot look up external information. Briefly acknowledge the spoken request.",
+        delegation_id="delegation-test",
+    )
+    microphone_sample.connection.response.cancel.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_wav_mode_does_not_import_or_initialize_optional_microphone_devices(monkeypatch, sample_environment):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")
+    monkeypatch.setitem(sys.modules, "pyaudio", None)
+    microphone_backend = MagicMock(side_effect=AssertionError("WAV mode initialized a microphone backend"))
+    monkeypatch.setattr(sample, "_microphone_backend", microphone_backend)
+    monkeypatch.setattr(sample, "_stream_recording", AsyncMock())
+    sample_environment.async_connection.recv.side_effect = [_started(), _closed()]
+    with _recording() as recording:
+        monkeypatch.setattr(sample, "wave", SimpleNamespace(open=MagicMock(return_value=recording)))
+        await sample.main()
+    microphone_backend.assert_not_called()
+    sample._stream_recording.assert_awaited_once()
+    sample_environment.async_client.agents.delete_version.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_microphone_cannot_restart_devices_after_shutdown(microphone_sample):
+    audio = microphone_sample.make()
+    await audio.stop()
+    with pytest.raises(RuntimeError, match="Cannot restart closed"):
+        audio.start()
+    microphone_sample.engine.open.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_microphone_stop_failure_still_drains_the_last_send_and_releases_every_device(microphone_sample):
+    audio = microphone_sample.make()
+    audio.start()
+    pending = Future()
+    pending.set_result(None)
+    audio._pending_send = pending
+    microphone_sample.microphone.stop_stream.side_effect = OSError("device stop failed")
+    with pytest.raises(OSError, match="device stop failed"):
+        await audio.stop()
+    assert audio._pending_send is None
+    microphone_sample.microphone.close.assert_called_once()
+    microphone_sample.speaker.close.assert_called_once()
+    microphone_sample.engine.terminate.assert_called_once()

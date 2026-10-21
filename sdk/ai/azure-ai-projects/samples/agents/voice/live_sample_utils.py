@@ -52,10 +52,10 @@ def audio_settings() -> models.LiveInitialSessionAudioParam:
     )
 
 
-def safe_print(text: str) -> None:
+def safe_print(text: str, *, end: str = "\n") -> None:
     """Display model text even on a console with a legacy encoding."""
     encoding = sys.stdout.encoding or "utf-8"
-    print(text.encode(encoding, errors="replace").decode(encoding))
+    print(text.encode(encoding, errors="replace").decode(encoding), end=end, flush=True)
 
 
 @contextmanager
