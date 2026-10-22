@@ -25,7 +25,12 @@ function Invoke-SampleAzure {
     }
     $text = $output -join [Environment]::NewLine
     if (-not [string]::IsNullOrWhiteSpace($text)) {
-        return ($text | ConvertFrom-Json -AsHashtable)
+        try {
+            return ($text | ConvertFrom-Json -AsHashtable -ErrorAction Stop)
+        } catch {
+            if ($Sensitive) { throw 'Azure operation returned invalid protected JSON; response content was suppressed.' }
+            throw
+        }
     }
 }
 

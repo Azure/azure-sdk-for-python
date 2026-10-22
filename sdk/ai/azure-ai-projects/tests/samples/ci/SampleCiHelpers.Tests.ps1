@@ -262,6 +262,33 @@ Describe 'Secret-safe ARM error diagnostics' {
         @(Get-SampleAzureCliErrorCodes -Text '').Count | Should Be 0
     }
 
+    It 'keeps the protected CLI failure message limited to parsed error codes' {
+        $failure = & {
+            function az { $global:LASTEXITCODE = 1; 'ERROR: {"code":"BadRequest","message":"github_pat_unit_test_placeholder"}' }
+            if ((Get-Command az).CommandType -ne 'Function') { throw 'The native Azure CLI must not run in this unit test.' }
+            try { $null = Invoke-SampleAzure -Arguments @('deployment', 'group') -Sensitive } catch { $_.Exception.Message }
+        }
+        $failure | Should Be "Azure operation 'deployment group' failed (exit 1). ARM error codes: BadRequest."
+    }
+
+    It 'does not expose a protected response through a JSON parser error' {
+        $failure = & {
+            function az { $global:LASTEXITCODE = 0; 'not-json github_pat_unit_test_placeholder' }
+            if ((Get-Command az).CommandType -ne 'Function') { throw 'The native Azure CLI must not run in this unit test.' }
+            try { $null = Invoke-SampleAzure -Arguments @('account', 'get-access-token') -Sensitive } catch { $_.Exception.Message }
+        }
+        $failure | Should Be 'Azure operation returned invalid protected JSON; response content was suppressed.'
+    }
+
+    It 'still returns parsed protected JSON on success without logging it' {
+        $response = & {
+            function az { $global:LASTEXITCODE = 0; '{"value":"unit-test-placeholder"}' }
+            if ((Get-Command az).CommandType -ne 'Function') { throw 'The native Azure CLI must not run in this unit test.' }
+            Invoke-SampleAzure -Arguments @('account', 'show') -Sensitive
+        }
+        $response['value'] | Should Be 'unit-test-placeholder'
+    }
+
     It 'persists only error codes and resource identifiers from failed deployments' {
         $owner = '0123456789abcdef0123456789abcdef'
         $plan = @{
