@@ -475,7 +475,11 @@ class ResilientResponseOrchestrator:
         :type manager: ~azure.ai.agentserver.core.tasks._manager.TaskManager
         """
         # pylint: disable=protected-access
-        for primitive in (self._one_shot_task_fn, self._multi_turn_task_fn):
+        primitives = (self._one_shot_task_fn, self._multi_turn_task_fn)
+        if not (self._options.resilient_background or self._options.steerable_conversations):
+            manager._disable_recovery_for(*(primitive.name for primitive in primitives))
+            return
+        for primitive in primitives:
             manager.register_resume_callback(primitive.name, primitive._fn, primitive._opts)
 
     @property

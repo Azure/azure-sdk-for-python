@@ -15,6 +15,8 @@
 - Bind recovery callbacks and task options to their owning Responses host so
   constructing another host cannot redirect recovered work to its handler or
   response provider.
+- Do not recover Responses tasks when both Responses features are disabled,
+  including when Invocations enables a shared task manager.
 
 ### Breaking Changes
 

@@ -459,6 +459,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._active_tasks: dict[str, _ActiveTask] = {}
         self._resume_callbacks: dict[str, Callable[..., Any]] = {}
         self._resume_opts: dict[str, TaskOptions] = {}
+        self._disabled_recovery_names: set[str] = set()
         self._lease_owner = derive_lease_owner(
             config.agent_name or "unknown-agent",
             config.session_id or "local",
@@ -620,6 +621,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._resume_callbacks[fn_name] = fn
         if opts is not None:
             self._resume_opts[fn_name] = opts
+
+    def _disable_recovery_for(self, *fn_names: str) -> None:
+        """Exclude protocol task functions from this manager's recovery.
+
+        :param fn_names: Persisted task function names disabled by their protocol.
+        :type fn_names: str
+        """
+        self._disabled_recovery_names.update(fn_names)
 
     async def list_tasks(
         self,
@@ -3024,8 +3033,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             return
 
         for task_info in stale_tasks:
-            # Skip if we're already tracking this task
-            if task_info.id in self._active_tasks:
+            # Skip active tasks and disabled protocols before any recovery writes.
+            if task_info.id in self._active_tasks or (
+                self._disabled_recovery_names
+                and self._find_resume_callback_name(task_info) in self._disabled_recovery_names
+            ):
                 continue
 
             # (Spec 038) One-time legacy cleanup: delete pre-schema tasks
@@ -3135,20 +3147,35 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :return: A matching resume callback, or None.
         :rtype: Callable[..., Any] | None
         """
+        name = self._find_resume_callback_name(task_info)
+        if name is None or name in self._disabled_recovery_names:
+            return None
+        return self._resume_callbacks.get(name)
+
+    def _find_resume_callback_name(self, task_info: TaskInfo) -> str | None:
+        """Resolve recovery identity before checking protocol eligibility.
+
+        :param task_info: The persisted task record.
+        :type task_info: TaskInfo
+        :return: Matching callback name, including an explicitly disabled name.
+        :rtype: str | None
+        """
         # Preferred: match by source.name (framework auto-stamped fn name)
         if task_info.source and "name" in task_info.source:
             source_name = task_info.source["name"]
-            if source_name in self._resume_callbacks:
-                return self._resume_callbacks[source_name]
+            if isinstance(source_name, str) and (
+                source_name in self._disabled_recovery_names or source_name in self._resume_callbacks
+            ):
+                return source_name
 
         # Fallback: title prefix match
-        for name, fn in self._resume_callbacks.items():
+        for name in self._resume_callbacks:
             if task_info.title and task_info.title.startswith(name):
-                return fn
+                return name
 
         # Last resort: single registered callback
         if len(self._resume_callbacks) == 1:
-            return next(iter(self._resume_callbacks.values()))
+            return next(iter(self._resume_callbacks))
         return None
 
     # --------------------------------------------------------------- #

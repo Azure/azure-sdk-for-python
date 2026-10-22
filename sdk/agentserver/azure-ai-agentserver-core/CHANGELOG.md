@@ -15,6 +15,8 @@
 
 - Preserve host-owned recovery callbacks and task options when loading
   process-wide task descriptors at startup.
+- Exclude protocol-disabled task functions before startup, periodic or inline
+  recovery can reclaim their leases or dispatch their handlers.
 
 ### Other Changes
 
