@@ -1,2 +1,0 @@
-include *.md
-include azure/cognitiveservices/__init__.py

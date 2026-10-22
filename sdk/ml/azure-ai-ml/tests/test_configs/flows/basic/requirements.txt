@@ -1,4 +1,0 @@
-promptflow[azure]
-promptflow-tools
-python-dotenv
-jinja2

@@ -1,4 +1,0 @@
-directory: specification/monitor/data-plane/Ingestion
-commit: 8cb88c73041a8f3e902d117c464ff3067e68864e
-repo: Azure/azure-rest-api-specs
-additionalDirectories:

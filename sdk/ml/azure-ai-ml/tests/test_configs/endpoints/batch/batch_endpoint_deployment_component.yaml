@@ -1,5 +1,0 @@
-name: myBatchEndpoint
-description: my sample batch endpoint
-properties:
-  ComponentDeployment.Enabled: True
-auth_mode: aad_token # required

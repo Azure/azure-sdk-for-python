@@ -1,4 +1,0 @@
-jobs:
-  - template: /eng/pipelines/templates/jobs/smoke.tests.yml
-    parameters:
-      Daily: true

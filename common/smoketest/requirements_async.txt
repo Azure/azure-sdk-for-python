@@ -1,3 +1,0 @@
-aiohttp==3.14.3
-packaging==24.2
-pip==26.2.2

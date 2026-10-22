@@ -1,4 +1,0 @@
-[tool.azure-sdk-build]
-breaking = false
-mypy = false
-pyright = false

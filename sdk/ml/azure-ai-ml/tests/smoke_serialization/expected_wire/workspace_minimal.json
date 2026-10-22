@@ -1,9 +1,0 @@
-{
-  "kind": "default",
-  "location": "westus",
-  "properties": {
-    "enableDataIsolation": false,
-    "hbiWorkspace": false
-  },
-  "tags": {}
-}

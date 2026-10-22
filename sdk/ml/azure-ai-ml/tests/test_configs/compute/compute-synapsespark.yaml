@@ -1,3 +1,0 @@
-name: testdppv
-type: synapsespark
-resource_id: /subscriptions/dummy/resourceGroups/dummy/providers/Microsoft.Synapse/workspaces/dummy/bigDataPools/dummypool

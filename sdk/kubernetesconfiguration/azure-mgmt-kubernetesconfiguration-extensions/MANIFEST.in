@@ -1,8 +1,0 @@
-include *.md
-include LICENSE
-include azure/mgmt/kubernetesconfiguration/extensions/py.typed
-recursive-include tests *.py
-recursive-include samples *.py *.md
-include azure/__init__.py
-include azure/mgmt/__init__.py
-include azure/mgmt/kubernetesconfiguration/__init__.py

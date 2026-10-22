@@ -1,3 +1,0 @@
--e ../../../eng/tools/azure-sdk-tools
-../../storage/azure-mgmt-storage
-../../resources/azure-mgmt-resource

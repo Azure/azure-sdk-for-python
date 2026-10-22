@@ -1,7 +1,0 @@
-{
-  "name": "cspell-version-pin",
-  "version": "1.0.0",
-  "dependencies": {
-    "cspell": "^10.0.1"
-  }
-}

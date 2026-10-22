@@ -1,6 +1,0 @@
-$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
-type: command
-name: simple_command_component
-environment:
-  image: python
-command: echo "Hello World"

@@ -1,2 +1,0 @@
-include *.md
-include azure/__init__.py

@@ -1,3 +1,0 @@
--e ../../../eng/tools/azure-sdk-tools
-../../identity/azure-identity
-azure-mgmt-resource<=21.1.0

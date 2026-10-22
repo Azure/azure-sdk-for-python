@@ -1,5 +1,0 @@
-compute: "some_compute"
-datastore: "some_datastore"
-inputs: 
-  "test_dataset":
-    path: "some_path"

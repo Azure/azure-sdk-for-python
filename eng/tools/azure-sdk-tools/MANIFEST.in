@@ -1,2 +1,0 @@
-include ci_tools/deps.html.j2
-prune build

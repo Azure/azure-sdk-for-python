@@ -1,5 +1,0 @@
-name: testIrisData
-version: 1
-description: iris dataset
-path: ../data
-type: uri_folder

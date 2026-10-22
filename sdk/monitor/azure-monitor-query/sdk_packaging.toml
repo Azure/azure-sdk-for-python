@@ -1,7 +1,0 @@
-[packaging]
-auto_update = false
-package_name = "azure-monitor-query"
-package_pprint_name = "Monitor Query"
-package_doc_id = "monitor-query"
-is_stable = false
-is_arm = false

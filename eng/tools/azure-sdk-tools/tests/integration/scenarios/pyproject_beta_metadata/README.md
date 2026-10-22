@@ -1,1 +1,0 @@
-This folder contains a basic beta release `pyproject.toml` scenario for azure-mgmt-planetarycomputer. We use this to ensure that our metadata verification within ParsedSetup is working properly for beta packages.

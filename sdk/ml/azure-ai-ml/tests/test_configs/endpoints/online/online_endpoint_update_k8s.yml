@@ -1,7 +1,0 @@
-name: k8se2etest
-type: online
-target: azureml:sdkv2endpointk8s
-auth_mode: Key
-traffic:
-    etblue: 80
-    etgreen: 20

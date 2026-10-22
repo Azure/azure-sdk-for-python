@@ -1,8 +1,0 @@
-name: TestEnv
-version: 1
-build:
-   path: ./environment_files
-   dockerfile_path: DockerfileNonDefault
-tags:
-   test: test
-description: Docker context environment

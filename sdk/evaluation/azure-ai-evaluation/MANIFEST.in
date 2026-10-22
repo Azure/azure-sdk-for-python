@@ -1,8 +1,0 @@
-recursive-include tests *.py
-include *.md
-include azure/__init__.py
-include azure/ai/__init__.py
-include azure/ai/evaluation/py.typed
-recursive-include azure/ai/evaluation *.prompty
-include azure/ai/evaluation/simulator/_data_sources/grounding.json
-recursive-include samples *

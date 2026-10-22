@@ -1,8 +1,0 @@
-# Speckit / Specify - spec-driven development tooling
-specs/
-.specify/
-.github/
-.vscode/
-
-# Demo session state — regenerated each time the demo runs
-.demo-session

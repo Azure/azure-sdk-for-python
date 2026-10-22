@@ -1,5 +1,0 @@
-name: testFileData
-version: 1
-description: "this is a test dataset"
-path: ../data
-type: uri_folder

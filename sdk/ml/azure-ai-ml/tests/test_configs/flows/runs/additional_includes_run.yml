@@ -1,3 +1,0 @@
-$schema: https://azuremlschemas.azureedge.net/promptflow/latest/Run.schema.json
-flow: ../web_classification_with_additional_includes
-description: A run of a flow with additional includes

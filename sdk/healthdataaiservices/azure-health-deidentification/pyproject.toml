@@ -1,5 +1,0 @@
-[tool.azure-sdk-build]
-black = true
-
-[tool.azure-sdk-conda]
-in_bundle = false

@@ -1,4 +1,0 @@
-recursive-include azure *.h *.c *.pyi py.typed
-include *.md
-include LICENSE
-recursive-include tests *.py

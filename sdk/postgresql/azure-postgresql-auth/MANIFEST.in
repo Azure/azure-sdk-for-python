@@ -1,6 +1,0 @@
-recursive-include tests *.py *.yaml
-include *.md
-include LICENSE
-recursive-include samples *.py *.md
-include azure_postgresql_auth/py.typed
-recursive-include doc *.rst

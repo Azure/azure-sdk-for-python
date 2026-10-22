@@ -1,6 +1,0 @@
-include *.md
-include LICENSE
-include azure/appconfiguration/py.typed
-recursive-include tests *.py
-recursive-include samples *.py *.md
-include azure/__init__.py
