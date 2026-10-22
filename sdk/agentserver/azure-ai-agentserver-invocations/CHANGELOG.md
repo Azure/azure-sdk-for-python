@@ -10,7 +10,18 @@
 
 ### Bugs Fixed
 
+- Apply the Invocations task-runtime switch to both typed Voice WebSocket
+  endpoints, including composed Voice/Responses hosts where Responses
+  independently enables the task manager.
+
 ### Other Changes
+
+- Raised the minimum `azure-ai-agentserver-core` dependency to `2.3.0b2` for
+  protocol-scoped task-runtime support.
+- Invocations continues to opt into resilient tasks with
+  `set_resilient_tasks_enabled(True)` before host startup. Responses
+  protocol-scoped task-runtime activation does not change that global switch,
+  so enabling Responses does not implicitly activate Invocations.
 
 ## 1.2.0 (2026-09-29)
 
