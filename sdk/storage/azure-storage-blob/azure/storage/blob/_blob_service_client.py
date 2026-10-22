@@ -626,6 +626,16 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         The container and any blobs contained within it are later deleted during garbage collection.
         If the container is not found, a ResourceNotFoundError will be raised.
 
+        When a container is deleted, a container with the same name can't be created
+        for at least 30 seconds.  The container might not be available for more than
+        30 seconds if the service is still processing the request.  While the container
+        is being deleted, attempts to create a container of the same name fail with
+        status code 409 (Conflict).  The service indicates that the container is being
+        deleted.  Operations on blobs within the container, including reads and writes,
+        may continue to succeed for up to 30 seconds after the delete request is
+        accepted.  After this period, all operations on the container and its blobs
+        fail with status code 404 (Not Found).
+
         :param container:
             The container to delete. This can either be the name of the container,
             or an instance of ContainerProperties.
