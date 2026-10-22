@@ -932,7 +932,8 @@ class _BaggageLogRecordProcessor:
             entries = _otel_baggage.get_all(context=ctx)
             if entries:
                 for key, value in entries.items():
-                    attrs[key] = value  # type: ignore[index]
+                    if key not in attrs:
+                        attrs[key] = value  # type: ignore[index]
 
             attrs[_ATTR_MICROSOFT_FOUNDRY] = _MICROSOFT_FOUNDRY_VALUE
             if self.agent_name and _ATTR_GEN_AI_AGENT_NAME not in attrs:

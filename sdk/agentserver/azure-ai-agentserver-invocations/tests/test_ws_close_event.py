@@ -11,9 +11,12 @@ leaked into the structured payload.
 import logging
 
 import pytest
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import InMemoryLogRecordExporter, SimpleLogRecordProcessor
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
 
+from azure.ai.agentserver.core._tracing import _BaggageLogRecordProcessor
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from azure.ai.agentserver.invocations._constants import InvocationsWSConstants
 
@@ -89,6 +92,53 @@ def test_ws_close_event_on_handler_exception_records_1011(caplog):
     matches = _records_with_ws_extras(caplog.records)
     assert matches
     assert getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code") == 1011
+
+
+def test_exported_close_event_attributes_override_colliding_caller_baggage():
+    """SDK-authored close attributes take precedence over untrusted baggage."""
+    exporter = InMemoryLogRecordExporter()
+    provider = LoggerProvider()
+    provider.add_log_record_processor(_BaggageLogRecordProcessor())
+    provider.add_log_record_processor(SimpleLogRecordProcessor(exporter))
+    handler = LoggingHandler(logger_provider=provider)
+    agentserver_logger = logging.getLogger("azure.ai.agentserver")
+    previous_level = agentserver_logger.level
+    agentserver_logger.setLevel(logging.INFO)
+    agentserver_logger.addHandler(handler)
+    app = _make_failing_ws_app()
+
+    try:
+        with pytest.raises(WebSocketDisconnect):
+            with TestClient(app).websocket_connect(
+                "/invocations_ws",
+                headers={
+                    "baggage": (
+                        "azure.ai.agentserver.invocations_ws.close_code=1000,"
+                        "azure.ai.agentserver.invocations_ws.session_id=caller-session"
+                    )
+                },
+            ) as ws:
+                ws.send_text("trigger")
+                ws.receive_text()
+
+        close_records = [
+            record.log_record
+            for record in exporter.get_finished_logs()
+            if InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE in (record.log_record.attributes or {})
+        ]
+        assert len(close_records) == 1
+        attrs = close_records[0].attributes
+        assert (
+            attrs[InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE]
+            == InvocationsWSConstants.CLOSE_INTERNAL_ERROR
+        )
+        assert attrs[InvocationsWSConstants.ATTR_SPAN_SESSION_ID] == attrs["azure.ai.agentserver.session_id"]
+        assert attrs[InvocationsWSConstants.ATTR_SPAN_SESSION_ID] != "caller-session"
+    finally:
+        agentserver_logger.removeHandler(handler)
+        agentserver_logger.setLevel(previous_level)
+        handler.close()
+        provider.shutdown()
 
 
 # ---------------------------------------------------------------------------

@@ -1070,6 +1070,18 @@ class TestBaggageLogRecordProcessor:
         assert attrs["gen_ai.agent.version"] == "1.2.3"
         assert attrs["microsoft.session.id"] == "session-fallback-1"
 
+    def test_baggage_does_not_overwrite_existing_attributes(self) -> None:
+        proc = _BaggageLogRecordProcessor()
+        log_data = _FakeLogData({"server.attribute": "server-value"})
+        ctx = _otel_baggage.set_baggage("server.attribute", "caller-value")
+        token = _otel_context.attach(ctx)
+        try:
+            proc.on_emit(log_data)
+        finally:
+            _otel_context.detach(token)
+
+        assert log_data.log_record.attributes["server.attribute"] == "server-value"
+
     def test_prefers_baggage_session_id_over_fallback(self) -> None:
         proc = _BaggageLogRecordProcessor(
             agent_name="agent-a",
