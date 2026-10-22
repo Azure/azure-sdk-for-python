@@ -35,15 +35,55 @@ python basic_voice_agent.py
 ```
 
 The server listens on `0.0.0.0` and uses the `PORT` environment variable when
-set; otherwise it listens on port `8088`. The hosted platform connects to the
-`/invocations_ws` route.
+set; otherwise it listens on port `8088`. Foundry selects the container route
+from the hosted agent's protocol declaration: `invocations_ws` forwards to
+`/invocations_ws`, while `conversation_engine` forwards to `/conversation_engine`.
 
 ## Deploy
 
 Use the accompanying `agent.manifest.yaml` when configuring the hosted agent.
-The three declarations are required together: `invocations_ws`,
+For the legacy endpoint, the three declarations are required together: `invocations_ws`,
 `voiceLiveCompatible: "true"`, and exact `bridgeProtocolVersion: "1.0"`.
 Omitting the version selects the previously shipped non-Bridge integration.
+
+### Standalone Conversation Engine
+
+With an SDK build that includes standalone CE support, keep the existing
+`app = VoiceAgentServerHost()` construction and declare CE in the hosted agent
+definition. Use the field matching the agent's existing schema; enabling CE does
+not require a schema migration.
+
+For new-schema definitions using `container_configuration` or `code_configuration`:
+
+```yaml
+protocol_versions:
+  - protocol: conversation_engine
+    version: "1.0.0"
+```
+
+For legacy definitions using `image`:
+
+```yaml
+container_protocol_versions:
+  - protocol: conversation_engine
+    version: "1.0.0"
+```
+
+These are hosted agent definition fragments, not complete deployment manifests
+or replacements for `agent.manifest.yaml`. If the agent must also serve legacy
+Bridge calls, retain its existing `invocations_ws` declaration and Bridge metadata.
+
+The typed host exposes both `/conversation_engine` and `/invocations_ws`, but the
+Foundry protocol declaration determines which public endpoint can invoke it.
+For CE, no `invocations_ws` declaration,
+`voiceLiveCompatible`, or `bridgeProtocolVersion` metadata is required. The existing
+callbacks, IDs, cancellation and cleanup code are unchanged, and the message
+handshake still uses `protocol_version="1.0"`. The SDK does not modify the
+Foundry registration. Existing legacy deployments can keep their manifest and
+metadata unchanged. Rebuild the container
+with the new SDK before publishing a CE-declaring version. Foundry CE routing and
+CE-aware Voice Live must be deployed before enabling this registration; local SDK
+tests alone do not prove that the end-to-end route is ready.
 
 The sample intentionally uses a simulated model stream. Replace
 `generate_answer` with the application's model call while preserving the

@@ -4,7 +4,7 @@ The `azure-ai-agentserver-invocations` package provides the invocation protocol 
 
 - **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`, `GET /invocations/docs/asyncapi.{json,yaml}`.
 - **WebSocket** (`invocations_ws` protocol) — full-duplex streaming at `/invocations_ws`, registered with `@app.ws_handler`.
-- **Voice Live Bridge** — an experimental typed event relay in the `azure.ai.agentserver.invocations.voice` submodule, layered on `invocations_ws`.
+- **Voice Live Bridge** — an experimental typed event relay in the `azure.ai.agentserver.invocations.voice` submodule, available at both `/conversation_engine` and the existing `/invocations_ws` endpoint.
 
 ## Getting started
 
@@ -308,9 +308,25 @@ The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`.
 
 ## Typed Voice Live Bridge submodule (preview)
 
-`VoiceAgentServerHost` provides typed `on_<event>` decorators over the existing
-`invocations_ws` transport. Each callback receives an immutable event and a
-send-only `Session`:
+`VoiceAgentServerHost` provides typed `on_<event>` decorators at both
+`/invocations_ws` and `/conversation_engine`. Existing applications keep using
+`VoiceAgentServerHost()` and `/invocations_ws` without code, manifest, or metadata
+changes. To use standalone CE, declare `conversation_engine` version `1.0.0` on
+the deployed hosted agent. Neither legacy Bridge metadata flag is required for CE.
+The SDK does not create or modify hosted agent protocol declarations; registering
+the container route alone does not enable the public Foundry CE endpoint.
+
+Both endpoints reuse the same typed Bridge messages, callbacks, transport limits,
+tracing, and application-owned lifecycle. The message handshake remains
+`session.start.protocol_version="1.0"`, independent of the container protocol
+version `1.0.0`. The generic `InvocationAgentServerHost.ws_handler` and independent
+`invocations_ws` routes are unchanged. The typed host reserves both paths, applying
+the existing same-scope conflict detection and Host/Mount authority rules to each.
+Use a locally built SDK containing CE support
+until a release containing it is available; enabling CE also requires the Foundry
+CE route and CE-aware Voice Live to be deployed.
+
+Each callback receives an immutable event and a send-only `Session`:
 
 ```python
 import asyncio

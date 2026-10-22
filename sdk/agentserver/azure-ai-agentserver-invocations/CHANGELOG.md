@@ -1,5 +1,14 @@
 # Release History
 
+## 1.3.0 (Unreleased)
+
+### Features Added
+
+- Added a standalone `/conversation_engine` WebSocket route to the experimental
+  `VoiceAgentServerHost`, reusing the existing typed Bridge event relay alongside
+  `/invocations_ws`. Existing `invocations_ws` behavior and generic
+  `InvocationAgentServerHost` raw WebSocket handlers are unchanged.
+
 ## 1.2.0 (2026-09-29)
 
 ### Other Changes
