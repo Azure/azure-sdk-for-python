@@ -9,11 +9,10 @@ from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
 def handle_service_errors(client):
     # [START handle_service_errors]
-    import os
     from azure.core.exceptions import HttpResponseError
 
     try:
-        role = client.get_role(os.environ.get("WPS_CHAT_ROLE_NAME", "user.python_sample"))
+        role = client.get_role("user.example")
         print(role.name, role.permissions)
     except HttpResponseError as error:
         print(f"Chat service request failed with status {error.status_code}")

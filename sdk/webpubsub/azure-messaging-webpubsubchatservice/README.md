@@ -17,8 +17,7 @@ Use this client library in an application server to:
 | [Package (PyPI)][package]
 | [API reference documentation][api_reference]
 | [Product documentation][product_docs]
-| [Model-based samples][samples]
-| [Dictionary-based samples][generated_samples]
+| [Examples](#examples)
 | [Changelog][changelog]
 
 ## Getting started
@@ -109,12 +108,6 @@ For more information, see [Authenticate Azure-hosted Python applications][azure_
 
 ## Key concepts
 
-### Client
-
-`WebPubSubChatServiceClient` is the entry point for managing Chat resources in one Web PubSub hub. Create one client for each endpoint and hub combination. The client can be used as a context manager and is safe to reuse for multiple operations.
-
-The asynchronous client is available from the `azure.messaging.webpubsubchatservice.aio` namespace.
-
 ### Hub
 
 A hub is a logical collection of WebSocket connections. A chat hub adds built-in rooms, member management, message persistence, and chat-specific APIs.
@@ -150,33 +143,38 @@ Messages sent to a conversation are delivered in real time to the room's connect
 A topic represents a named conversation within a room. Topics can be created,
 renamed, archived, and soft deleted independently of the room's default conversation.
 
-### Request models and dictionaries
+## Examples
+
+The async snippet
+uses a client from `azure.messaging.webpubsubchatservice.aio`.
+Replace placeholders such as `<room-id>` with your application's resource identifiers.
+
+### Request-body styles
 
 You can supply a JSON request body in three ways:
 
 - **Model-based:** use classes from `azure.messaging.webpubsubchatservice.models`
   with Python-style attributes and SDK-managed serialization.
 - **Typed dictionary:** use the `TypedDict` definitions from
-  `azure.messaging.webpubsubchatservice.types` for static checking of JSON-shaped dictionaries.
+  `azure.messaging.webpubsubchatservice.types` for static checking of dictionaries
+  that use JSON field names.
 - **Plain dictionary:** pass a dictionary using JSON field names.
 
 Model-based usage is recommended for getting started and is used throughout the
 examples below. Dictionaries are useful when your application already works with
 JSON-shaped data. All three styles call the same client methods; typed dictionaries
-are ordinary dictionaries at runtime. See the
-[sample guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/README.md#request-body-styles)
+are ordinary dictionaries at runtime and do not add runtime validation. See the
+[examples guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/README.md#request-body-styles)
 for a comparison and examples of each style.
 
-## Examples
+Explore the examples:
 
-The following sections show common scenarios. Each operation snippet assumes an
-authenticated `client`, created as shown in Getting started. The async snippet
-uses a client from `azure.messaging.webpubsubchatservice.aio`.
-See the [package samples][samples] for complete synchronous and asynchronous programs.
-
-The examples below use model instances for request bodies. See the
-[sample guide and complete operation index](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/README.md)
-for more request-body styles and examples of every service operation.
+- [Model-based and scenario examples][examples], including complete synchronous and
+  asynchronous programs.
+- [Dictionary-based operation examples][generated_examples], generated from the
+  specification's examples.
+- [Complete operation index](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/README.md#complete-operation-index),
+  linking to model-based and generated examples for each service operation.
 
 ### Generate client access credentials
 
@@ -204,7 +202,7 @@ return resource models such as `ChatRole`, `ChatRoom`, and `ChatTopic`, which
 include service-assigned identifiers and ETags.
 
 Use the `ChatRoleCreateOrReplace` model and `ChatPermission` enum instead of a dictionary with
-permission string literals. This example assumes `os` is imported.
+permission string literals.
 
 <!-- SNIPPET:sample_roles_and_permissions.create_role -->
 
@@ -212,7 +210,7 @@ permission string literals. This example assumes `os` is imported.
 from azure.messaging.webpubsubchatservice.models import ChatPermission, ChatRoleCreateOrReplace
 
 role = client.create_or_replace_role(
-    os.environ.get("WPS_CHAT_ROLE_NAME", "user.python_sample"),
+    "user.example",
     ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
 )
 print(role.name, role.permissions)
@@ -220,10 +218,10 @@ print(role.name, role.permissions)
 
 <!-- END SNIPPET -->
 
-See [sample_roles_and_permissions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_roles_and_permissions.py)
-and [sample_roles_and_permissions_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_roles_and_permissions_async.py)
+See the [synchronous role example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_roles_and_permissions.py)
+and [asynchronous role example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_roles_and_permissions_async.py)
 for runnable model-and-enum examples. The selected role is created or replaced
-and remains in the hub; these samples do not create users or rooms.
+and remains in the hub; these examples do not create users or rooms.
 
 ### List roles
 
@@ -288,14 +286,12 @@ print(member.user_id, member.role_name)
 
 ### List persisted messages
 
-Set `WPS_CHAT_CONVERSATION_ID` to an existing conversation ID.
+Replace `<conversation-id>` with an existing conversation ID.
 
 <!-- SNIPPET:sample_readme_snippets.list_messages -->
 
 ```python
-import os
-
-for message in client.list_messages(os.environ["WPS_CHAT_CONVERSATION_ID"]):
+for message in client.list_messages("<conversation-id>"):
     print(message.id, message.created_by, message.content.text)
 ```
 
@@ -303,8 +299,7 @@ for message in client.list_messages(os.environ["WPS_CHAT_CONVERSATION_ID"]):
 
 ### Manage room topics
 
-These examples use an existing room identified by `WPS_CHAT_ROOM_ID` and a
-topic ID specified by `WPS_CHAT_TOPIC_ID`.
+Replace `<room-id>` with an existing room ID and `<topic-id>` with the topic ID.
 
 #### Create a topic
 
@@ -317,12 +312,11 @@ Omit `state` when creating a topic.
 <!-- SNIPPET:sample_readme_snippets.create_topic -->
 
 ```python
-import os
 from azure.messaging.webpubsubchatservice.models import ChatTopicCreateOrReplace
 
 topic = client.create_or_replace_topic(
-    os.environ["WPS_CHAT_ROOM_ID"],
-    os.environ["WPS_CHAT_TOPIC_ID"],
+    "<room-id>",
+    "<topic-id>",
     ChatTopicCreateOrReplace(title="Announcements"),
 )
 print(topic.id, topic.etag)
@@ -335,9 +329,7 @@ print(topic.id, topic.etag)
 <!-- SNIPPET:sample_readme_snippets.list_topics -->
 
 ```python
-import os
-
-for topic in client.list_topics(os.environ["WPS_CHAT_ROOM_ID"], max_page_size=10):
+for topic in client.list_topics("<room-id>", max_page_size=10):
     print(topic.id, topic.title, topic.conversation_id)
 ```
 
@@ -348,9 +340,7 @@ for topic in client.list_topics(os.environ["WPS_CHAT_ROOM_ID"], max_page_size=10
 <!-- SNIPPET:sample_readme_snippets.get_topic -->
 
 ```python
-import os
-
-topic = client.get_topic(os.environ["WPS_CHAT_ROOM_ID"], os.environ["WPS_CHAT_TOPIC_ID"])
+topic = client.get_topic("<room-id>", "<topic-id>")
 print(topic.id, topic.title, topic.state, topic.etag)
 ```
 
@@ -358,22 +348,21 @@ print(topic.id, topic.title, topic.state, topic.etag)
 
 #### Archive a topic
 
-Set `WPS_CHAT_TOPIC_ETAG` to the ETag returned by a previous create or get
-operation. The update below changes only `state`; the existing title is left
+Replace `<topic-etag>` with the ETag returned by a previous create or get
+operation, preserving its quotes. The update below changes only `state`; the existing title is left
 unchanged. To change only the title, use `ChatTopicUpdate(title="New title")`.
 
 <!-- SNIPPET:sample_readme_snippets.archive_topic -->
 
 ```python
-import os
 from azure.core import MatchConditions
 from azure.messaging.webpubsubchatservice.models import ChatTopicUpdate, ChatTopicState
 
 topic = client.update_topic(
-    os.environ["WPS_CHAT_ROOM_ID"],
-    os.environ["WPS_CHAT_TOPIC_ID"],
+    "<room-id>",
+    "<topic-id>",
     ChatTopicUpdate(state=ChatTopicState.ARCHIVED),
-    etag=os.environ["WPS_CHAT_TOPIC_ETAG"],
+    etag='"<topic-etag>"',
     match_condition=MatchConditions.IfNotModified,
 )
 print(topic.id, topic.state, topic.etag)
@@ -383,18 +372,17 @@ print(topic.id, topic.state, topic.etag)
 
 #### Soft delete a topic
 
-Set `WPS_CHAT_TOPIC_ETAG` to the current ETag, including any change from an update.
+Replace `<topic-etag>` with the current ETag, including any change from an update.
 
 <!-- SNIPPET:sample_readme_snippets.delete_topic -->
 
 ```python
-import os
 from azure.core import MatchConditions
 
 client.delete_topic(
-    os.environ["WPS_CHAT_ROOM_ID"],
-    os.environ["WPS_CHAT_TOPIC_ID"],
-    etag=os.environ["WPS_CHAT_TOPIC_ETAG"],
+    "<room-id>",
+    "<topic-id>",
+    etag='"<topic-etag>"',
     match_condition=MatchConditions.IfNotModified,
 )
 ```
@@ -407,7 +395,7 @@ For conditional updates and deletes, pass the current ETag with
 `MatchConditions.IfNotModified`. A stale ETag prevents overwriting a topic
 that another caller has changed. Deleting a topic is a soft delete.
 
-For individual API calls, see the generated samples for
+For individual API calls, see the generated examples for
 [create or replace](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/create_or_replace_topic.py),
 [list](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_topics.py), [get](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/get_topic.py),
 [update](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/update_topic.py), and
@@ -439,14 +427,12 @@ for user in client.list_users(max_page_size=10):
 
 #### List rooms for a user
 
-Set `WPS_CHAT_USER_ID` to an existing user ID.
+Replace `<user-id>` with an existing user ID.
 
 <!-- SNIPPET:sample_readme_snippets.list_rooms_for_user -->
 
 ```python
-import os
-
-for room in client.list_rooms_for_user(os.environ["WPS_CHAT_USER_ID"]):
+for room in client.list_rooms_for_user("<user-id>"):
     print(room.id, room.title)
 ```
 
@@ -462,7 +448,7 @@ Collection iterators automatically fetch subsequent pages.
 ### Use the asynchronous client
 
 Run this snippet inside an async function with an authenticated async `client`; see
-[sample_client_access_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_client_access_async.py)
+[the asynchronous client access example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_client_access_async.py)
 for the complete program.
 
 <!-- SNIPPET:sample_client_access_async.client_access_async -->
@@ -476,12 +462,12 @@ print(access["baseUrl"])
 
 <!-- END SNIPPET -->
 
-### Run the samples
+### Run the examples
 
 Set `WPS_CHAT_CONNECTION_STRING` and optionally `WPS_CHAT_HUB` (default: `test_hub`).
-The role samples accept `WPS_CHAT_ROLE_NAME` (default: `user.python_sample`).
-Use a role name reserved for the sample: an existing role with that name is
-replaced. Install `aiohttp` to run async samples.
+The role examples use `user.example`; replace it with a role name reserved for
+the example. An existing role with that name is replaced.
+Install `aiohttp` to run async examples.
 
 From the package directory, run, for example:
 
@@ -496,18 +482,17 @@ python samples/sample_roles_and_permissions_async.py
 
 Service operations raise `HttpResponseError` or a more specific subclass when a request fails:
 
-The [sample_errors.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_errors.py) example reads an existing role,
-prints the status on failure, and re-raises the error. Set `WPS_CHAT_ROLE_NAME`
-to the role to read (default: `user.python_sample`).
+The [service error example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_errors.py) reads an existing role,
+prints the status on failure, and re-raises the error. Replace `user.example`
+with the role name to read.
 
 <!-- SNIPPET:sample_errors.handle_service_errors -->
 
 ```python
-import os
 from azure.core.exceptions import HttpResponseError
 
 try:
-    role = client.get_role(os.environ.get("WPS_CHAT_ROLE_NAME", "user.python_sample"))
+    role = client.get_role("user.example")
     print(role.name, role.permissions)
 except HttpResponseError as error:
     print(f"Chat service request failed with status {error.status_code}")
@@ -548,20 +533,10 @@ with DefaultAzureCredential() as credential:
 
 HTTP logs can contain sensitive information. Do not enable detailed logging in production without reviewing how logs are collected and protected. For more information, see [Configure logging in the Azure SDK for Python][azure_sdk_logging].
 
-### Authentication and authorization
-
-- Confirm that the endpoint and hub name identify the Web PubSub resource and Chat-enabled hub you intend to use.
-- For Microsoft Entra ID, confirm that the principal has an appropriate Web PubSub data-plane role and that role assignment propagation has completed.
-- Connection-string and access-key authentication are unavailable when local authentication is disabled on the Web PubSub resource.
-
-### Message history
-
-If a newly sent message does not appear immediately, confirm that the sending user is a room member with publish permission and that message history is enabled for the member's room role.
-
 ## Next steps
 
 Explore the [README snippet sources](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_readme_snippets.py) and
-[complete package samples][samples] to learn how to:
+[complete package examples][examples] to learn how to:
 
 - Authenticate with a connection string, access key, or Microsoft Entra ID.
 - Manage roles, permissions, users, rooms, and room members.
@@ -570,15 +545,7 @@ Explore the [README snippet sources](https://github.com/Azure/azure-sdk-for-pyth
 - Manage topic lifecycles and iterate over room and user collections.
 - Use synchronous and asynchronous clients.
 
-See also the [dictionary-based operation samples][generated_samples], produced from the
-specification's examples. Each file demonstrates one operation. Replace
-`ENDPOINT`, `HUB`, and any example resource identifiers before running them,
-and configure authentication as described in each file. These generated files
-are refreshed during SDK generation. The README snippet source contains
-independent functions, not a combined workflow or a standalone program.
-The model-based operation examples accept an authenticated client and use example
-resource identifiers that you can adapt. The scenario samples demonstrate
-authentication, client access credentials, errors, and logging.
+See also the [dictionary-based operation examples][generated_examples].
 
 ## Additional resources
 
@@ -598,8 +565,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [package]: https://pypi.org/project/azure-messaging-webpubsubchatservice/
 [api_reference]: https://learn.microsoft.com/python/api/overview/azure/messaging-webpubsubchatservice-readme?view=azure-python-preview
 [product_docs]: https://learn.microsoft.com/azure/azure-web-pubsub/chat-overview
-[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples
-[generated_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples
+[examples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples
+[generated_examples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/CHANGELOG.md
 [azure_sub]: https://azure.microsoft.com/free/
 [webpubsub_docs]: https://learn.microsoft.com/azure/azure-web-pubsub/
