@@ -47,6 +47,8 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPRespons
         [
             "Authorization",
             "x-ms-authorization-auxiliary",
+            "api-key",
+            "Ocp-Apim-Subscription-Key",
         ]
     )
 
