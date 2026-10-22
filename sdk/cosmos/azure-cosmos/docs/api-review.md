@@ -173,14 +173,6 @@ backend's address) and an account key (the credential used to authenticate).
 This API creates the client from that string, so the customer app does not
 have to split the endpoint and key into separate constructor arguments.
 
-```text
-Customer configuration supplies:
-    AccountEndpoint=<account endpoint>;AccountKey=<account key>;
-        -> customer app calls CosmosClient.from_connection_string(...)
-        -> receives a client for that account
-        -> uses that client to access sales / orders
-        -> calls item APIs to store or read order-42
-```
 
 Creating the client does not create the `sales` database or the `orders`
 container, and it does not itself store or read `order-42`. Those are separate
@@ -247,29 +239,6 @@ they do not mean that those invalid values previously created a usable client.
 | Clear error for an invalid type | The connection string is not a string | Supply a string. The SDK raises an explicit `TypeError` instead of failing while trying to use a string operation on that value. |
 | Clear error for malformed text | A setting does not use `name=value` | Separate valid settings with semicolons. The SDK raises `ValueError` without including the supplied key or connection string in the error. |
 
-**Omitting `credential` is different from setting it to `None`**
-
-Some customer apps keep reusable arguments in a dictionary. `**settings`
-passes every entry as a named argument, so this call still supplies
-`credential=None` and raises `TypeError`:
-
-```python
-settings = {"credential": None, "consistency_level": "Session"}
-client = CosmosClient.from_connection_string(connection_string, **settings)
-```
-
-For the connection-string call, use settings that omit the entry:
-
-```python
-connection_string_settings = {"consistency_level": "Session"}
-client = CosmosClient.from_connection_string(
-    connection_string, **connection_string_settings
-)
-```
-
-This uses the embedded account key without changing a dictionary that other
-customer calls might still need. Other supported client settings remain
-available.
 
 **Signature on both client classes**
 

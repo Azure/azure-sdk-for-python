@@ -225,7 +225,7 @@ The following paths are relative to the package source directory:
 
 Central maintains the shared files under `eng\pipelines\templates` and the
 build tools under `eng\tools\azure-sdk-tools`. Shared engineering also maintains
-`eng\common`.
+`eng\common` and the shared Sphinx configuration under `doc\sphinx`.
 
 For example, the SDK can declare:
 
@@ -240,6 +240,13 @@ Ownership also does not override source-branch selection. A run using a
 particular branch uses that branch's same-repository SDK files and shared
 templates. Required Central-owned changes must therefore be available in the
 source used by the run, not merely present in someone else's branch.
+
+**Integration status after the October 22, 2026 rollback:** this branch keeps
+the SDK-owned implementation and configuration, but its additional changes
+under `eng` and `doc\sphinx` have been removed for Central to implement.
+Existing shared Rust build support remains. The
+[pending Central work](#central-changes-still-required) must not be mistaken
+for functionality enabled by an SDK setting alone.
 
 ## 4. Why both setup.py and pyproject.toml exist
 
@@ -378,45 +385,51 @@ files carry copies or descriptions of that version:
 | `api.metadata.yml`, `packageVersion` | The package version associated with the API metadata |
 | The first release heading in `CHANGELOG.md` | The release described by the newest notes |
 
-`setup.py` obtains the version from the shared version-check helper, which
+`setup.py` obtains the version from the SDK-owned version-check helper, which
 reads `_version.py` without loading the SDK itself. Maturin still reads the
 static copy in `pyproject.toml`. The Rust binding crate's version is separate and
 does not determine the Python package release.
 
 ### Updating a release without leaving stale copies
 
-Cosmos opts into the repository's synchronized updates:
+The SDK records that it needs synchronized version updates:
 
 ```toml
 [tool.azure-sdk-build]
 synchronize-version-metadata = true
 ```
 
-With the repository tools installed, the release owner uses a version command
-rather than editing only `_version.py`. First approve the exact v5 version,
-whether it is a preview or stable release, and its release date. Replace both
-placeholders below with those approved values, using `YYYY-MM-DD` for the
-date, then run the command from the package directory:
+**Pending Central work:** the restored shared versioning tools do not
+implement this setting. Setting it to `true` does not currently make a
+version command update all four files.
+
+Central needs to extend the shared commands so one approved version update
+also synchronizes the static package version, API metadata, and newest
+changelog heading. The stability **classifier**, a metadata label identifying
+a stable or beta release, must also agree in `setup.py` and `pyproject.toml`.
+
+After that support is integrated, the intended workflow is to approve the
+exact v5 version and release date, then run the following command from the
+package directory. Replace the placeholders with the approved values, using
+`YYYY-MM-DD` for the date:
 
 ```powershell
 sdk_update_version --package-path . --version "<approved-v5-version>" --release-date "<approved-release-date>"
 ```
 
-The updater changes the SDK version and release notes, then synchronizes
-the static package version and API metadata. It also keeps the stability
-**classifier**, a metadata label
-identifying a stable or beta release, aligned in `setup.py` and `pyproject.toml`.
-This example does not publish a package.
+This is the intended synchronized-update workflow, not a claim that the
+current command implements it. It does not publish a package.
 
-The shared `sdk_set_version` and `sdk_increment_version` commands use the same
-synchronization step after their existing changelog update. `sdk_set_dev_version`
-also synchronizes the copies, including the newest changelog heading in the
-development-build checkout.
+The same synchronization is needed in `sdk_set_version`,
+`sdk_increment_version`, and `sdk_set_dev_version`, including development
+changelog updates. Central's implementation must restore the original files
+and fail if an update or validation step fails, rather than leave a partially
+updated version.
 
-An updater or metadata-validation failure restores the original file contents
-and fails the command. This is rollback for ordinary execution errors, not a
-filesystem transaction that survives process termination or concurrent edits.
-Complete the version update before starting builds.
+Until that integration is available, the release owner must keep all four
+version files and the stability classifiers aligned explicitly. The SDK's
+existing build validation still rejects disagreements; it does not update
+the files. Complete the version update before starting builds.
 
 ### What happens if someone changes only one file?
 
@@ -1715,9 +1728,14 @@ implementation of the installer.
 
 **Checkout reviewed on October 22, 2026:** the SDK entry requests Rust
 installation, and `cosmos-sdk-client.yml` declares and forwards the installer
-inputs to `archetype-sdk-client.yml`. It also uses `RunRustTests` to add the
-required test jobs. The forwarding is present in these checked-out files;
-that does not prove a hosted pipeline has run successfully with them.
+inputs to `archetype-sdk-client.yml`. That existing toolchain support remains
+after the rollback.
+
+The test-job integration is different. The SDK entry still supplies
+`RunRustTests: true`, but the restored Cosmos template does not declare that
+input. **The pipeline cannot accept the SDK entry as written until Central
+adds this support.** The test template and runner remain SDK-owned files;
+their presence alone does not connect them to the shared pipeline.
 
 These template inputs are named settings passed from one file to the next.
 A **feed** is a service from which tools download packages or other build
@@ -1729,7 +1747,7 @@ inputs. Here, one input tells the installer which feed supplies the compiler.
 | `MsRustWorkingDirectory` | Find `rust-toolchain.toml` in this package directory and use its selected compiler version |
 | `MsRustToolchainFeed` | Download the toolchain from this package source, explained below |
 | `MsRustAdditionalTargets` | Also install support for compiling Windows ARM64 on the Windows x64 build machine |
-| `RunRustTests` | Add the required Rust-integration test jobs described below; installing a compiler alone does not run them |
+| `RunRustTests` | Request the required Rust-integration test jobs described below; Central support for this input is pending |
 
 The first three are required to enable the current installer successfully.
 The fourth is needed for our requested Windows ARM64 wheel; it is not a
@@ -1792,11 +1810,15 @@ on a Python test. Some service-parity modules have conditional skip checks but
 do not carry that label. A skip check decides whether a selected test can run;
 it does not add the label needed to select that test.
 
-The SDK entry therefore enables two additional required jobs in the Build
-stage. A **required check**, sometimes called a gate, must succeed before
-that part of the pipeline can succeed. A failed job keeps this stage from
-succeeding; neither job uses
-`continueOnError` or the inherited emulator-marker filter.
+The SDK-owned `sdk\cosmos\templates\rust-tests.yml` therefore defines two
+additional jobs intended to become required checks in the Build stage.
+A **required check**, sometimes called a gate, must succeed before that
+part of the pipeline can succeed. Neither job uses `continueOnError` or the
+inherited emulator-marker filter.
+
+**The following describes the SDK's job definitions, not jobs currently
+connected to the shared pipeline.** Central must accept the opt-in and
+include these jobs before they can enforce this requirement.
 
 | Job | What it executes |
 |---|---|
@@ -1845,14 +1867,14 @@ identified in the report; the pipeline does not use it as an execution gate.
 
 | File | Owner and responsibility |
 |---|---|
-| `sdk\cosmos\ci.yml` | SDK team opts into the required jobs with `RunRustTests: true` |
+| `sdk\cosmos\ci.yml` | SDK team requests the required jobs with `RunRustTests: true` |
 | `sdk\cosmos\templates\rust-tests.yml` | SDK team defines dependencies, emulator setup, commands, and result publication |
 | `sdk\cosmos\azure-cosmos\scripts\run_rust_ci.py` | SDK team owns suite discovery and collection/execution assertions |
-| `eng\pipelines\templates\stages\cosmos-sdk-client.yml` | Central-owned template forwards the Cosmos opt-in |
-| `eng\pipelines\templates\stages\archetype-sdk-client.yml` | Central-owned template accepts additional jobs in the existing Build stage; other callers default to no extra jobs |
+| `eng\pipelines\templates\stages\cosmos-sdk-client.yml` | Pending Central change: accept the Cosmos opt-in and select the SDK job template |
+| `eng\pipelines\templates\stages\archetype-sdk-client.yml` | Pending Central change: accept additional jobs in the existing Build stage without changing other callers |
 
-These template changes require Central review before integration. Local
-validation of the runner and YAML does not replace an Azure Pipelines run
+Central must implement and integrate these shared-template changes. Local
+validation of the SDK runner and YAML does not replace an Azure Pipelines run
 using the authenticated toolchain feed and the built wheel. Newly selected
 test failures must be investigated rather than excluded to make the gate
 green.
@@ -1932,21 +1954,21 @@ The documentation check therefore needs two different inputs:
 | Source distribution (`sdist`) | An archive supplying the README and source files used to prepare documentation pages |
 | Compatible wheel | The installed SDK, including its compiled extension, that Sphinx imports |
 
-The shared Sphinx check identifies compiled packages using the same
-`ext_modules` or `cibuildwheel` configuration as the package build.
-For those packages, it stages the sdist without installing it, then installs
-the wheel. In CI, `PREBUILT_WHEEL_DIR` points to the existing artifacts;
-wheel selection checks compatibility with the invoking Python environment.
-If a compatible wheel is missing, the check fails rather than falling back
-to a source installation.
+**Pending Central work:** the restored shared check in
+`eng\tools\azure-sdk-tools\azpysdk\sphinx.py` still installs the sdist.
+That asks the build backend to create a new wheel. For our package it invokes
+Maturin and Cargo, which require the selected Microsoft Rust toolchain.
+Installing Maturin alone does not supply that toolchain.
 
-Installing the sdist instead would ask the build backend to create a new
-wheel. For our package that invokes Maturin and Cargo, which require the
-selected Microsoft Rust toolchain. Installing Maturin alone does not supply
-that toolchain.
+Central needs to use the existing `ext_modules` or `cibuildwheel` package
+information to recognize compiled packages. For those packages, the check
+must stage the sdist without installing it, then install a compatible built
+wheel. In CI, `PREBUILT_WHEEL_DIR` identifies the existing artifacts.
+A missing compatible wheel must fail the check, not silently trigger a new
+source build.
 
-Ordinary Python packages retain the existing sdist-installation path.
-Building a compiled package locally without prebuilt artifacts still
+Ordinary Python packages should retain their existing sdist-installation
+path. Building a compiled package locally without prebuilt artifacts still
 requires its build tools. Using a wheel for documentation does not establish
 that customer installation from source is supported.
 
@@ -1985,14 +2007,33 @@ classes. That is why the documentation check can fail even when the
 docstring already contains qualified names.
 
 The correction belongs to the documentation tools, not the customer app.
-Central's `doc\sphinx\conf.py` loads `doc\sphinx\_autodoc.py`, which lets
-Sphinx inspect the original method when formatting overloaded signatures.
-This gives Sphinx the module containing the intended types.
+**Pending Central work:** the proposed `_autodoc.py` helper and its
+registration in `doc\sphinx\conf.py` have been removed from this branch.
+Central needs a correction that resolves overloaded signatures using the
+original method's types, rather than the tracing wrapper's imports.
 
-The SDK keeps its tracing wrapper and runtime behavior, and documentation
-warnings still fail the check. Regression tests under `doc\sphinx\tests`
-generate pages containing competing class names and check that both
-overloads link to the intended class.
+The SDK must keep its tracing wrapper and runtime behavior, and documentation
+warnings must remain errors. Central's regression tests should generate
+pages containing competing class names and check that both overloads link
+to the intended class. Those tests must be tracked and included in a test
+run, not left under an ignored generated-documentation directory.
+
+### Why package inspection must handle several wheels
+
+Another shared step records the package's Python **namespace**, the import
+name such as `azure.cosmos`. It obtains that information by inspecting
+Python files inside a wheel.
+
+The pure-Python package supplied one wheel, but this release supplies several
+platform wheels. The current `eng\scripts\Save-Package-Namespaces-Property.ps1`
+can pass several matching files to a helper that accepts one archive path.
+That causes the namespace step to fail before it records the package data.
+
+**Pending Central work:** select one wheel for the exact package version and
+pass its full path to the existing inspection helper. This step reads archive
+contents; it does not load the Rust extension, so it does not need a wheel
+that can execute on the inspection machine. A missing matching wheel must
+remain an explicit error.
 
 ### How three build-machine types serve five targets
 
@@ -2238,9 +2279,13 @@ not packaged in the wheel. Pip normally installs declared Python dependencies.
 
 ### What happens if there is no compatible wheel?
 
-The Rust-backed release is configured for wheels-only publication. If none of
-that version's wheels is compatible, the customer cannot install that version
-using our published packages.
+The Rust-backed release policy requires wheels-only publication. Once that
+policy is enforced, if none of that version's wheels is compatible, the
+customer cannot install that version using our published packages.
+
+The SDK records this policy, but enforcement in the restored shared
+publishers is still pending with Central. The current publishing path must
+not be used for this Rust-backed release before that work is integrated.
 
 Could we publish the source files so the customer can build a compatible wheel?
 That would offer a different installation path, with additional requirements.
@@ -2262,7 +2307,7 @@ for the customer's machine.
 ### Sdist tracking note: customer source installation
 
 **Current policy: publish prebuilt wheels only. Customer source installation
-remains unvalidated.**
+remains unvalidated. Enforcement in the shared publishers is pending.**
 
 For the existing pure-Python package, source installation primarily packages
 Python files. For the Rust-backed package, it must also compile the extension.
@@ -2361,18 +2406,27 @@ decide whether we publish it or promise customers that source installation
 works.**
 
 Internal documentation builds use the archive's README and source files, so
-we retain archive generation while blocking its publication as an installable
-package.
+we retain archive generation. Publication must be blocked separately.
 
-The `azure-cosmos` artifact in `sdk\cosmos\ci.yml` enforces this separation with
-`skipPublishSdist: true`. The release template excludes `.tar.gz` files from
-PyPI staging and omits source uploads to public and development feeds. The
-daily alpha publisher applies the same setting. Other packages retain their
-existing publication behavior unless they explicitly opt out.
+The `azure-cosmos` artifact in `sdk\cosmos\ci.yml` requests that separation
+with `skipPublishSdist: true`. **The restored publishing templates do not
+read this setting.** They still select `.tar.gz` files for publication, so
+the SDK flag alone does not protect customers.
+
+Central must update `eng\pipelines\templates\stages\release-artifact.yml`
+to exclude source archives from PyPI staging and source uploads to other
+release and development feeds. It must also reject source archives already
+present in a wheels-only staging directory. The separate
+`eng\pipelines\templates\steps\publish-alpha-package.yml` must honor the same
+setting for daily alpha packages. Packages that do not opt in should retain
+their existing behavior.
+
+Do not publish this Rust-backed package through those paths until the
+restriction is implemented and demonstrated.
 
 For customers, `pip --no-binary` requests installation from source rather than
-a prebuilt wheel. Because we do not publish the source archive, that option
-does not provide an installation path for this release.
+a prebuilt wheel. Under the required wheels-only policy, that option will not
+provide an installation path for this release.
 
 The legacy setuptools path uses different file-selection rules, including
 `MANIFEST.in`, a file containing source-inclusion instructions.
@@ -2416,6 +2470,28 @@ A **release approver** is the authorized person or group deciding whether the
 version, support policy, and final outputs are ready to publish. That owner
 must be identified.
 
+### Central changes still required
+
+The SDK owns the requested behavior and its package-side configuration.
+Central owns the shared code that must act on those requests. After the
+October 22, 2026 rollback, the following work is pending rather than part of
+this branch's shared implementation:
+
+| Work | Central-owned files | What must be delivered |
+|---|---|---|
+| Synchronized version updates | `eng\tools\azure-sdk-tools\ci_tools\versioning\*`, `packaging_tools\sdk_update_version.py` under the same tool directory | Honor the SDK setting, update all version copies and stability labels, and restore files if the update fails |
+| Required Rust test jobs | `eng\pipelines\templates\stages\cosmos-sdk-client.yml`, `archetype-sdk-client.yml` | Accept `RunRustTests` and connect the SDK's required jobs to the Build stage |
+| Documentation installation | `eng\tools\azure-sdk-tools\azpysdk\sphinx.py` | Keep sdist sources for page generation but install a compatible built wheel for compiled packages |
+| Overloaded method documentation | Shared configuration under `doc\sphinx` | Resolve types from the original method without changing SDK tracing or suppressing warnings |
+| Multi-wheel namespace inspection | `eng\scripts\Save-Package-Namespaces-Property.ps1` | Inspect one exact-version wheel instead of passing several files to a single-archive helper |
+| Wheels-only publication | `eng\pipelines\templates\stages\release-artifact.yml`, `eng\pipelines\templates\steps\publish-alpha-package.yml` | Honor `skipPublishSdist` across all publication routes while preserving other packages' behavior |
+
+Each change needs Central-owned, tracked regression coverage and integration
+into the source used by the pipeline. A saved patch or an SDK opt-in is not
+evidence that the shared implementation exists. In particular, the current
+`RunRustTests` input blocks template validation, and the current publishers
+do not enforce the source-archive restriction.
+
 ### Treat the Rust-backed release as a v5 upgrade
 
 Contoso Bank needs to distinguish an update that preserves the existing API from
@@ -2454,6 +2530,7 @@ publishing this breaking release under a 4.x version.
 | Area | What must be decided or proved | Owner |
 |---|---|---|
 | Existing production builds | Preserve the historical pure-Python production branch's build path; in the Rust-backed tree, keep setuptools metadata-only and build artifacts through Maturin | Cosmos SDK team and Central team |
+| Shared engineering integration | Complete the [pending Central changes](#central-changes-still-required), including pipeline-input support and publication enforcement | Central team, with SDK requirements and scenarios |
 | Release identity and migration | Complete the [v5 release requirements](#treat-the-rust-backed-release-as-a-v5-upgrade), including approved metadata, final artifact identity, and customer migration guidance | Cosmos SDK team and release approver |
 | Rust driver | Select the approved published driver for release, preserve required features, and review the synchronized lock | Cosmos SDK team and Rust driver team |
 | Compiler policy | Approve the release toolchain and validate or correct the declared compiler minimum | Cosmos SDK team and Central team |
