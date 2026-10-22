@@ -86,7 +86,7 @@ def test_ca_file_atomic_replacement(tmp_path):
     def replace_after_read(*args, **kwargs):
         with original_open(*args, **kwargs) as stream:
             yield stream
-            os.replace(replacement, ca_file)
+        os.replace(replacement, ca_file)
 
     with patch("builtins.open", replace_after_read):
         transport = TokenBindingTransportMixin(ca_file=str(ca_file))
