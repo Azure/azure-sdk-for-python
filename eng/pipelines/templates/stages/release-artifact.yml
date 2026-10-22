@@ -65,9 +65,6 @@ stages:
       - template: /eng/pipelines/templates/variables/image.yml
       - template: /eng/common/pipelines/templates/variables/api-review-break-glass.yml
       - template: /eng/pipelines/templates/variables/globals.yml
-      - ${{ if and(eq(parameters.ServiceDirectory, 'template'), eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
-          - name: AutoReleaseSdkPullRequestUrl
-            value: $[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs['resolve.AutoReleaseSdkPullRequestUrl'] ]
     # Auto-release CI: only release when the shared prepare stage flagged this artifact as changed.
     # Manual runs: every declared artifact remains eligible (existing behavior).
     ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(parameters.SignedArtifactTargetingStage, '')) }}:
@@ -248,6 +245,14 @@ stages:
       - job: MarkPackageReleaseCompletion
         displayName: "Mark package release completion"
         dependsOn: PublishPackage
+        variables:
+          # Only the template auto-release pilot consumes the prepare-stage PR output.
+          # Manual releases and other callers always have a defined, empty value.
+          - name: AutoReleaseSdkPullRequestUrl
+            ${{ if and(eq(parameters.ServiceDirectory, 'template'), eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+              value: $[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs['resolve.AutoReleaseSdkPullRequestUrl'] ]
+            ${{ else }}:
+              value: ''
 
         pool:
           image: ubuntu-24.04
@@ -272,10 +277,8 @@ stages:
             parameters:
               ConfigFileDir: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo'
               PackageArtifactName: ${{parameters.Artifact.name}}
-              ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-                ReleasePlanId: ${{ parameters.ReleasePlanId }}
-                ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
-                  SdkPullRequest: $(AutoReleaseSdkPullRequestUrl)
+              ReleasePlanId: ${{ parameters.ReleasePlanId }}
+              SdkPullRequest: $(AutoReleaseSdkPullRequestUrl)
 
           # Management-plane-only workaround: skip marking packages that do not generate an APIView revision.
           - pwsh: |

@@ -32,7 +32,7 @@ pr:
 
 parameters:
   - name: ReleasePlanId
-    displayName: 'Release plan ID (0 uses package-based lookup)'
+    displayName: 'Release plan ID (0 uses package name based lookup)'
     type: string
     default: '0'
   - name: ReleaseToDevOpsOnly
