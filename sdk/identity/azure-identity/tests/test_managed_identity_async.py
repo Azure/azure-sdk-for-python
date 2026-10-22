@@ -10,7 +10,8 @@ from unittest import mock
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
-from azure.identity.aio import ManagedIdentityCredential
+from azure.identity.aio import DefaultAzureCredential, ManagedIdentityCredential
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
@@ -1011,6 +1012,64 @@ async def test_azure_arc(tmpdir, get_token_method):
             token = await getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
             assert token.token == access_token
             assert token.expires_on == expires_on
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("through_dac", [False, True], ids=["managed-identity", "default"])
+@pytest.mark.parametrize("policy_form", ["single", "list", "tuple", "generator", "none", "empty"])
+async def test_azure_arc_per_retry_policies(tmp_path, through_dac, policy_form):
+    calls = []
+
+    class TrackingPolicy(SansIOHTTPPolicy):
+        def on_request(self, request):
+            calls.append(request.http_request.url)
+            request.http_request.headers["custom-policy"] = "called"
+
+    policy = TrackingPolicy()
+    policies = {
+        "single": policy,
+        "list": [policy],
+        "tuple": (policy,),
+        "generator": (item for item in [policy]),
+        "none": None,
+        "empty": [],
+    }[policy_form]
+    env = {
+        "IDENTITY_ENDPOINT": "http://localhost:42/token",
+        "IMDS_ENDPOINT": "http://localhost:42",
+        "AZURE_TOKEN_CREDENTIALS": "ManagedIdentityCredential",
+    }
+    key_file = tmp_path / "challenge.key"
+    key_file.write_text("test-secret", encoding="utf-8")
+    custom_headers = {} if policy_form in ("none", "empty") else {"custom-policy": "called"}
+    transport = async_validating_transport(
+        requests=[
+            Request(method="GET", required_headers={"Metadata": "true", **custom_headers}),
+            Request(method="GET", required_headers={"Metadata": "true", **custom_headers}),
+            Request(
+                method="GET",
+                required_headers={"Metadata": "true", "Authorization": "Basic test-secret", **custom_headers},
+            ),
+        ],
+        responses=[
+            mock_response(status_code=503),
+            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_file)}),
+            mock_response(json_payload={"access_token": "test-token", "expires_in": 3600, "resource": "scope"}),
+        ],
+    )
+    credential_type = DefaultAzureCredential if through_dac else ManagedIdentityCredential
+    with mock.patch.dict(os.environ, env, clear=True):
+        with mock.patch("azure.identity._credentials.azure_arc._validate_key_file", return_value=None):
+            async with credential_type(
+                transport=transport, per_retry_policies=policies, retry_backoff_factor=0
+            ) as credential:
+                token = await credential.get_token("scope")
+
+    assert token.token == "test-token"
+    assert transport.send.call_count == 3
+    assert len(calls) == (0 if policy_form in ("none", "empty") else 3)
+    if policy_form == "list":
+        assert policies == [policy]
 
 
 @pytest.mark.asyncio

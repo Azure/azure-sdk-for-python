@@ -14,7 +14,7 @@ from ..._credentials.workload_identity import (
     CUSTOM_PROXY_ENV_ERROR,
 )
 from ..._constants import EnvironmentVariables
-from ..._internal import within_credential_chain
+from ..._internal import within_credential_chain, within_dac
 
 
 class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
@@ -84,7 +84,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
         self._token_file_path = token_file_path
 
-        if kwargs.pop("enable_azure_proxy", False) and not within_credential_chain.get():
+        if kwargs.pop("enable_azure_proxy", False) and not within_dac.get() and not within_credential_chain.get():
             token_proxy_endpoint = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY)
             sni = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_SNI_NAME)
             ca_file = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_FILE)

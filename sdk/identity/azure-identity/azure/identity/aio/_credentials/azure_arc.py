@@ -4,6 +4,7 @@
 # ------------------------------------
 import functools
 import os
+from collections.abc import Iterable
 from typing import Optional, Any
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
@@ -23,8 +24,13 @@ class AzureArcCredential(AsyncManagedIdentityBase):
         if client_id:
             identity_config["client_id"] = client_id
         if url and imds:
+            per_retry_policies = kwargs.pop("per_retry_policies", None) or []
+            if isinstance(per_retry_policies, Iterable):
+                per_retry_policies = list(per_retry_policies)
+            else:
+                per_retry_policies = [per_retry_policies]
             return AsyncManagedIdentityClient(
-                per_retry_policies=[ArcChallengeAuthPolicy()],
+                per_retry_policies=[ArcChallengeAuthPolicy()] + per_retry_policies,
                 request_factory=functools.partial(_get_request, url),
                 identity_config=identity_config,
                 _content_callback=functools.partial(_validate_user_assigned_identity, identity_config),

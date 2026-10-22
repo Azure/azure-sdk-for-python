@@ -1,0 +1,142 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+from contextlib import contextmanager
+import os
+from unittest.mock import patch
+
+import pytest
+from azure.core.pipeline import AsyncPipeline, Pipeline
+from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
+from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.rest import HttpRequest
+from azure.identity import WorkloadIdentityCredential
+from azure.identity._internal import within_credential_chain, within_dac
+from azure.identity._internal.token_binding_transport_mixin import TokenBindingTransportMixin
+from azure.identity._internal.token_binding_transport_requests import CustomRequestsTransport
+from azure.identity.aio import WorkloadIdentityCredential as AsyncWorkloadIdentityCredential
+from azure.identity.aio._internal.token_binding_transport_aiohttp import CustomAioHttpTransport
+from azure.identity.aio._internal.token_binding_transport_asyncio import CustomAsyncioRequestsTransport
+
+from proxy_server import TokenProxyHandler, TokenProxyTestServer
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("credential_type", [WorkloadIdentityCredential, AsyncWorkloadIdentityCredential])
+@pytest.mark.parametrize("in_dac", [False, True])
+@pytest.mark.parametrize("in_chain", [False, True])
+async def test_proxy_selection_respects_credential_context(credential_type, in_dac, in_chain):
+    dac_context = within_dac.set(in_dac)
+    chain_context = within_credential_chain.set(in_chain)
+    try:
+        with patch.dict(os.environ, {"AZURE_KUBERNETES_TOKEN_PROXY": "https://proxy.example/binding"}, clear=True):
+            credential = credential_type(
+                tenant_id="tenant-id",
+                client_id="client-id",
+                token_file_path="token-file",
+                enable_azure_proxy=True,
+            )
+            try:
+                transport = credential._client._pipeline._transport
+                assert isinstance(transport, TokenBindingTransportMixin) == (not in_dac and not in_chain)
+            finally:
+                if isinstance(credential, AsyncWorkloadIdentityCredential):
+                    await credential.close()
+                else:
+                    credential.close()
+    finally:
+        within_credential_chain.reset(chain_context)
+        within_dac.reset(dac_context)
+
+
+@pytest.mark.parametrize(
+    "url,expected",
+    [
+        ("https://login.example/tenant/token?q=1", "https://proxy.example/binding/tenant/token?q=1"),
+        ("https://proxy.example/binding/tenant/token?q=1", "https://proxy.example/binding/tenant/token?q=1"),
+        ("https://PROXY.example:443/binding/tenant/token", "https://PROXY.example:443/binding/tenant/token"),
+        ("https://proxy.example/binding", "https://proxy.example/binding"),
+        ("https://proxy.example/binding-other/token", "https://proxy.example/binding/binding-other/token"),
+        ("https://proxy.example:444/binding/token", "https://proxy.example/binding/binding/token"),
+        ("https://proxy.example:0/binding/token", "https://proxy.example/binding/binding/token"),
+        ("https://proxy.example.other/binding/token", "https://proxy.example/binding/binding/token"),
+        ("http://proxy.example/binding/token", "https://proxy.example/binding/binding/token"),
+    ],
+)
+def test_proxy_url_rewrite_is_idempotent(url, expected):
+    transport = TokenBindingTransportMixin(proxy_endpoint="https://proxy.example/binding/")
+    request = HttpRequest("POST", url)
+    transport._update_request_url(request)
+    assert request.url == expected
+    transport._update_request_url(request)
+    assert request.url == expected
+
+
+def test_ca_file_atomic_replacement(tmp_path):
+    ca_file = tmp_path / "ca.pem"
+    ca_file.write_text("old CA", encoding="utf-8")
+    old_mtime = ca_file.stat().st_mtime
+    replacement = tmp_path / "replacement.pem"
+    replacement.write_text("new CA", encoding="utf-8")
+    os.utime(replacement, (old_mtime + 60, old_mtime + 60))
+    original_open = open
+
+    @contextmanager
+    def replace_after_read(*args, **kwargs):
+        with original_open(*args, **kwargs) as stream:
+            yield stream
+            os.replace(replacement, ca_file)
+
+    with patch("builtins.open", replace_after_read):
+        transport = TokenBindingTransportMixin(ca_file=str(ca_file))
+
+    assert transport._ca_data == "old CA"
+    assert transport._ca_file_mtime == old_mtime
+    assert transport._has_ca_file_changed()
+    transport._load_ca_file_to_data()
+    assert transport._ca_data == "new CA"
+    assert transport._ca_file_mtime == ca_file.stat().st_mtime
+    assert not transport._has_ca_file_changed()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "transport_type", [CustomRequestsTransport, CustomAioHttpTransport, CustomAsyncioRequestsTransport]
+)
+@pytest.mark.parametrize("proxy_path", ["", "/binding", "/binding/"])
+@pytest.mark.parametrize("recover", [True, False], ids=["recovers", "exhausted"])
+async def test_proxy_url_with_pipeline_retry(transport_type, proxy_path, recover):
+    paths = []
+    bodies = []
+    expected_path = proxy_path.rstrip("/") + "/tenant/oauth2/v2.0/token?test=1"
+    body = b"client_assertion=test-assertion"
+
+    def handle_request(handler):
+        paths.append(handler.path)
+        bodies.append(handler.rfile.read(int(handler.headers["Content-Length"])))
+        if handler.path != expected_path:
+            handler._send_json_response({"error": "wrong path"}, status_code=404)
+        elif len(paths) == 1 or not recover:
+            handler._send_json_response({"error": "temporarily unavailable"}, status_code=503)
+        else:
+            handler._send_json_response({"access_token": "test-token"})
+
+    with patch.object(TokenProxyHandler, "_handle_request", handle_request):
+        with TokenProxyTestServer() as server:
+            transport = transport_type(
+                proxy_endpoint=server.base_url + proxy_path, ca_file=server.ca_file, use_env_settings=False
+            )
+            request = HttpRequest("POST", "https://login.example/tenant/oauth2/v2.0/token?test=1", content=body)
+            retry_options = {"retry_total": 1, "retry_status": 1, "retry_backoff_factor": 0}
+            if isinstance(transport, AsyncHttpTransport):
+                async with AsyncPipeline(transport, policies=[AsyncRetryPolicy(**retry_options)]) as pipeline:
+                    response = await pipeline.run(request, retry_on_methods=["POST"])
+            else:
+                with Pipeline(transport, policies=[RetryPolicy(**retry_options)]) as pipeline:
+                    response = pipeline.run(request, retry_on_methods=["POST"])
+
+            assert response.http_response.status_code == (200 if recover else 503)
+            assert request.url == server.base_url + expected_path
+    assert paths == [expected_path, expected_path]
+    assert bodies == [body, body]

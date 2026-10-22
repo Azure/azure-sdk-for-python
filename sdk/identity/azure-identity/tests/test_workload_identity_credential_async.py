@@ -13,7 +13,7 @@ from unittest.mock import mock_open, patch, MagicMock
 import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-from azure.identity.aio import WorkloadIdentityCredential
+from azure.identity.aio import DefaultAzureCredential, WorkloadIdentityCredential
 from azure.identity.aio._credentials.workload_identity import _get_transport
 from azure.identity.aio._internal.token_binding_transport_aiohttp import CustomAioHttpTransport
 from azure.identity.aio._internal.token_binding_transport_asyncio import CustomAsyncioRequestsTransport
@@ -71,6 +71,24 @@ async def test_workload_identity_credential_get_token(get_token_method):
 
 class TestWorkloadIdentityCredentialTokenProxyAsync:
     """Async test cases for WorkloadIdentityCredential with enable_azure_proxy=True."""
+
+    @pytest.mark.asyncio
+    async def test_default_credential_ignores_proxy_configuration(self):
+        env = {
+            "AZURE_TENANT_ID": "tenant-id",
+            "AZURE_CLIENT_ID": "client-id",
+            "AZURE_FEDERATED_TOKEN_FILE": "token-file",
+            "AZURE_TOKEN_CREDENTIALS": "WorkloadIdentityCredential",
+            "AZURE_KUBERNETES_TOKEN_PROXY": "https://proxy.example/binding",
+        }
+        with patch.dict(os.environ, env, clear=True):
+            with patch("azure.identity.aio._credentials.workload_identity._get_transport") as get_transport:
+                async with DefaultAzureCredential(enable_azure_proxy=True) as credential:
+                    assert len(credential.credentials) == 1
+                    assert isinstance(credential.credentials[0], WorkloadIdentityCredential)
+                    get_transport.assert_not_called()
+                async with WorkloadIdentityCredential(enable_azure_proxy=True):
+                    get_transport.assert_called_once()
 
     def test_enable_azure_proxy_creates_custom_aiohttp_transport(self):
         """Test that enable_azure_proxy=True creates a custom aiohttp transport with correct parameters."""
