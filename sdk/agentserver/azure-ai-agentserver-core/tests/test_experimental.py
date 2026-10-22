@@ -72,6 +72,8 @@ def test_experimental_decorator_on_class(caplog) -> None:
     assert EXPERIMENTAL_LINK_MESSAGE in ExperimentalClass.__doc__
     assert len(caplog.records) == 1
     assert EXPERIMENTAL_CLASS_MESSAGE in caplog.records[0].message
+    assert caplog.records[0].message.endswith("This is an experimental class, and may change at any time.")
+    assert "https://" not in ExperimentalClass.__doc__
 
 
 def test_experimental_decorator_on_function(caplog) -> None:
@@ -85,6 +87,8 @@ def test_experimental_decorator_on_function(caplog) -> None:
     assert EXPERIMENTAL_LINK_MESSAGE in experimental_function.__doc__
     assert len(caplog.records) == 1
     assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message
+    assert caplog.records[0].message.endswith("This is an experimental method, and may change at any time.")
+    assert "https://" not in experimental_function.__doc__
 
 
 def test_experimental_decorator_on_async_function_preserves_coroutine_introspection(caplog) -> None:
@@ -101,6 +105,8 @@ def test_experimental_decorator_on_async_function_preserves_coroutine_introspect
     assert EXPERIMENTAL_LINK_MESSAGE in experimental_async_function.__doc__
     assert len(caplog.records) == 1
     assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message
+    assert caplog.records[0].message.endswith("This is an experimental method, and may change at any time.")
+    assert "https://" not in experimental_async_function.__doc__
 
 
 def test_experimental_decorator_no_duplicate_warnings(caplog) -> None:

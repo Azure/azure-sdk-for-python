@@ -1,5 +1,11 @@
 # Release History
 
+## 2.3.1 (Unreleased)
+
+### Bugs Fixed
+
+- Removed the broken documentation link from experimental API warnings and docstrings in the compatibility fallback.
+
 ## 2.3.0 (2026-10-05)
 
 ### Bugs Fixed

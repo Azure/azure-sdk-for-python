@@ -19,10 +19,7 @@ DOCSTRING_TEMPLATE = ".. note::    {0} {1}\n\n"
 DOCSTRING_DEFAULT_INDENTATION = 8
 EXPERIMENTAL_CLASS_MESSAGE = "This is an experimental class,"
 EXPERIMENTAL_METHOD_MESSAGE = "This is an experimental method,"
-EXPERIMENTAL_LINK_MESSAGE = (
-    "and may change at any time. Please see https://aka.ms/azure-ai-agentserver-experimental "
-    "for more information."
-)
+EXPERIMENTAL_LINK_MESSAGE = "and may change at any time."
 DISABLE_EXPERIMENTAL_WARNING_ENV_VAR = "AZURE_AI_AGENTSERVER_DISABLE_EXPERIMENTAL_WARNING"
 _EXPERIMENTAL_CACHE_KEY_ATTR = "_azure_agentserver_experimental_cache_key"
 _EXPERIMENTAL_MESSAGE_ATTR = "_azure_agentserver_experimental_message"
