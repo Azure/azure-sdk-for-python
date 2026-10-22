@@ -1,0 +1,236 @@
+trigger: none
+pr: none
+
+parameters:
+  - name: runMode
+    displayName: 'preview = no Azure changes; run-and-cleanup = approve, provision billable resources, test, delete'
+    type: string
+    default: preview
+    values:
+      - preview
+      - run-and-cleanup
+  - name: selectionKind
+    displayName: 'Query type (test-id example: *test_agent_tools_samples*[*mcp*project_connection*])'
+    type: string
+    default: sample-path
+    values:
+      - sample-path
+      - test-id
+  - name: selection
+    displayName: 'Pattern (path example: samples/agents/tools/*project_connection*.py; use ; for OR)'
+    type: string
+    default: samples/agents/tools/sample_agent_mcp_with_project_connection.py
+  - name: azureServiceConnection
+    displayName: 'Authorized Azure Resource Manager service connection (needed only for run-and-cleanup)'
+    type: string
+    default: not-configured
+  - name: secretVariableGroup
+    displayName: 'Optional authorized Library group containing secret MCP_GITHUB_PAT; none = pipeline secret variable'
+    type: string
+    default: none
+  - name: location
+    displayName: 'Azure region for Standard setup and models'
+    type: string
+    default: eastus2
+  - name: modelName
+    displayName: 'Sample model (gpt-5.2 is also deployed for existing harness output validation)'
+    type: string
+    default: gpt-4.1
+  - name: modelVersion
+    displayName: 'Sample model version; auto resolves the regional default before provisioning'
+    type: string
+    default: auto
+  - name: modelSku
+    displayName: 'Sample model deployment SKU'
+    type: string
+    default: GlobalStandard
+    values:
+      - GlobalStandard
+      - Standard
+  - name: modelCapacity
+    displayName: 'Sample model capacity units (quota checked before provisioning)'
+    type: number
+    default: 10
+  - name: validationModelVersion
+    displayName: 'gpt-5.2 output-validation version; auto resolves the regional default'
+    type: string
+    default: auto
+  - name: validationModelCapacity
+    displayName: 'gpt-5.2 output-validation capacity units'
+    type: number
+    default: 10
+
+variables:
+  packageRoot: $(Build.SourcesDirectory)/sdk/ai/azure-ai-projects
+  PYTHON_DOTENV_DISABLED: 'true'
+  PYTEST_ADDOPTS: ''
+
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: Preview
+        displayName: 'Collect wildcard matches and preview Bicep resources (no Azure changes)'
+        jobs:
+          - job: Preview
+            timeoutInMinutes: 45
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)/sample-plan
+                  artifactName: sample-plan
+                  sbomEnabled: false
+            steps:
+              - checkout: self
+              - template: /eng/pipelines/templates/steps/use-python-version.yml
+                parameters:
+                  versionSpec: '3.12'
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  EnableTwineAuth: false
+                  EnableUvAuth: false
+              - pwsh: |
+                  python -m pip install --disable-pip-version-check -r dev_requirements.txt -e .
+                  if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
+                workingDirectory: $(packageRoot)
+                displayName: 'Install SDK source and sample harness dependencies'
+              - pwsh: |
+                  python -m pytest tests/samples/ci --confcutdir=tests/samples/ci -q
+                  if ($LASTEXITCODE -ne 0) { throw 'Offline sample CI unit tests failed.' }
+                workingDirectory: $(packageRoot)
+                displayName: 'Validate wildcard and invocation behavior offline'
+              - pwsh: |
+                  $outputDirectory = '$(Build.ArtifactStagingDirectory)/sample-plan'
+                  $manifest = Join-Path $outputDirectory 'selected-tests.json'
+                  python tests/samples/ci/select_samples.py --selection-kind $env:SELECTION_KIND --selection $env:SAMPLE_SELECTION --output $manifest
+                  if ($LASTEXITCODE -ne 0) { throw 'No valid sample selection; no resources were provisioned.' }
+                  & ./tests/samples/ci/New-SampleDeploymentPlan.ps1 -SelectionManifest $manifest -OutputDirectory $outputDirectory `
+                    -Location $env:SAMPLE_LOCATION -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
+                    -ModelSku $env:SAMPLE_MODEL_SKU -ModelCapacity ([int] $env:SAMPLE_MODEL_CAPACITY) `
+                    -ValidationModelVersion $env:VALIDATION_MODEL_VERSION -ValidationModelCapacity ([int] $env:VALIDATION_MODEL_CAPACITY)
+                workingDirectory: $(packageRoot)
+                displayName: 'Show selected sample paths, exact pytest IDs, and a fresh deployment plan'
+                env:
+                  SELECTION_KIND: ${{ parameters.selectionKind }}
+                  SAMPLE_SELECTION: ${{ parameters.selection }}
+                  SAMPLE_LOCATION: ${{ parameters.location }}
+                  SAMPLE_MODEL: ${{ parameters.modelName }}
+                  SAMPLE_MODEL_VERSION: ${{ parameters.modelVersion }}
+                  SAMPLE_MODEL_SKU: ${{ parameters.modelSku }}
+                  SAMPLE_MODEL_CAPACITY: ${{ parameters.modelCapacity }}
+                  VALIDATION_MODEL_VERSION: ${{ parameters.validationModelVersion }}
+                  VALIDATION_MODEL_CAPACITY: ${{ parameters.validationModelCapacity }}
+              - pwsh: |
+                  $standardTemplate = & ./tests/samples/ci/Get-StandardSetupTemplate.ps1 -OutputDirectory '$(Agent.TempDirectory)/standard-bicep'
+                  & ./tests/samples/ci/Test-BicepTemplates.ps1 -StandardTemplatePath $standardTemplate
+                workingDirectory: $(packageRoot)
+                displayName: 'Verify official Bicep source hashes and compile all provisioning templates'
+
+      - ${{ if eq(parameters.runMode, 'run-and-cleanup') }}:
+        - stage: Approve
+          displayName: 'Approve the fresh preview before creating billable resources'
+          dependsOn: Preview
+          jobs:
+            - job: ApproveProvisioning
+              pool: server
+              timeoutInMinutes: 1445
+              steps:
+                - task: ManualValidation@1
+                  timeoutInMinutes: 1440
+                  inputs:
+                    notifyUsers: ''
+                    allowApproversToApproveTheirOwnRuns: true
+                    instructions: 'Review the Preview log and sample-plan artifact. Approve ONLY to create a NEW Standard Foundry account/project, Storage, Cosmos DB, AI Search, two model deployments and optional GitHub MCP connection. The run executes exactly the selected pytest sample cases, then deletes its own temporary resource group, including on failure. Charges apply until deletion completes.'
+                    onTimeout: reject
+
+        - stage: RunSamples
+          displayName: 'Bicep provision -> sample pytest -> run-owned cleanup'
+          dependsOn: Approve
+          variables:
+            - ${{ if ne(parameters.secretVariableGroup, 'none') }}:
+              - group: ${{ parameters.secretVariableGroup }}
+          jobs:
+            - job: ProvisionTestCleanup
+              timeoutInMinutes: 180
+              cancelTimeoutInMinutes: 30
+              pool:
+                name: azsdk-pool
+                image: ubuntu-24.04
+                os: linux
+              templateContext:
+                outputs:
+                  - output: pipelineArtifact
+                    targetPath: $(Build.ArtifactStagingDirectory)/sample-results
+                    artifactName: sample-results
+                    condition: always()
+                    sbomEnabled: false
+              steps:
+                - checkout: self
+                - template: /eng/pipelines/templates/steps/use-python-version.yml
+                  parameters:
+                    versionSpec: '3.12'
+                - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                  parameters:
+                    EnableTwineAuth: false
+                    EnableUvAuth: false
+                - pwsh: |
+                    New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/sample-results' -Force | Out-Null
+                    python -m pip install --disable-pip-version-check -r dev_requirements.txt -e .
+                    if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
+                  workingDirectory: $(packageRoot)
+                  displayName: 'Install SDK source and live sample dependencies'
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifactName: sample-plan
+                    targetPath: $(Pipeline.Workspace)/sample-plan
+                  displayName: 'Use this run''s reviewed sample selection and deployment plan'
+                - task: AzureCLI@2
+                  displayName: 'Provision Standard Foundry, models and MCP connection using Bicep'
+                  inputs:
+                    azureSubscription: ${{ parameters.azureServiceConnection }}
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      $standardTemplate = & '$(packageRoot)/tests/samples/ci/Get-StandardSetupTemplate.ps1' -OutputDirectory '$(Agent.TempDirectory)/standard-bicep'
+                      & '$(packageRoot)/tests/samples/ci/Invoke-SampleProvisioning.ps1' `
+                        -PlanPath '$(Pipeline.Workspace)/sample-plan/deployment-plan.json' `
+                        -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' `
+                        -StandardTemplatePath $standardTemplate -ConfirmProvisioning
+                  env:
+                    MCP_GITHUB_PAT: $(MCP_GITHUB_PAT)
+                - task: AzureCLI@2
+                  displayName: 'Run selected test_samples.py / test_samples_async.py nodes live, without recording'
+                  inputs:
+                    azureSubscription: ${{ parameters.azureServiceConnection }}
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      python '$(packageRoot)/tests/samples/ci/run_samples.py' `
+                        --state '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' `
+                        --junit '$(Build.ArtifactStagingDirectory)/sample-results/sample-tests.xml'
+                      if ($LASTEXITCODE -ne 0) { throw 'Selected sample tests failed.' }
+                - task: AzureCLI@2
+                  displayName: 'Always clean up only the run-owned temporary resources'
+                  condition: always()
+                  inputs:
+                    azureSubscription: ${{ parameters.azureServiceConnection }}
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      & '$(packageRoot)/tests/samples/ci/Remove-SampleResources.ps1' `
+                        -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' -ConfirmCleanup
+                - task: PublishTestResults@2
+                  displayName: 'Publish sample pytest results in the ADO Tests tab'
+                  condition: always()
+                  inputs:
+                    testResultsFormat: JUnit
+                    testResultsFiles: sample-tests.xml
+                    searchFolder: $(Build.ArtifactStagingDirectory)/sample-results
+                    testRunTitle: 'Foundry sample tests - $(Build.BuildNumber)'
+                    failTaskOnFailedTests: true
+                    failTaskOnMissingResultsFile: false
+

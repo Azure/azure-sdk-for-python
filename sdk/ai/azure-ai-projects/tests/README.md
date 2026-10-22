@@ -2,6 +2,8 @@
 
 The instructions below are for running tests locally, on a Windows machine, against the live service using a local build of the client library.
 
+For an on-demand Azure DevOps run that selects sample tests by wildcard, provisions a temporary Standard Foundry project and GitHub MCP connection with Bicep, and cleans up after testing, see [the sample CI guide](samples/ci/README.md).
+
 ## Build and install the client library
 
 - Clone or download this sample repository.
