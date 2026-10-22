@@ -1,15 +1,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 
-import importlib.util
 import logging
-from unittest.mock import patch
 
 import pytest
 
-from azure.ai.agentserver.responses import _experimental as experimental_module
+from azure.ai.agentserver.core import experimental
+from azure.ai.agentserver.core._experimental import (
+    DISABLE_EXPERIMENTAL_WARNING_ENV_VAR,
+    EXPERIMENTAL_CLASS_MESSAGE,
+    _warning_cache,
+)
 from azure.ai.agentserver.responses import FoundryStorageSettings, ResponsesAgentServerHost
-from azure.ai.agentserver.responses._experimental import EXPERIMENTAL_CLASS_MESSAGE, _warning_cache, experimental
+from azure.ai.agentserver.responses.store import _foundry_errors, _foundry_provider, _foundry_settings
 
 
 def test_foundry_storage_settings_is_experimental(caplog) -> None:
@@ -26,37 +29,30 @@ def test_foundry_storage_settings_is_experimental(caplog) -> None:
     assert "https://" not in FoundryStorageSettings.__doc__
 
 
-@pytest.mark.parametrize("kind", ["class", "method"])
-def test_fallback_experimental_warning_has_no_link(kind, caplog) -> None:
-    spec = importlib.util.spec_from_file_location("fallback_experimental", experimental_module.__file__)
-    assert spec is not None
-    assert spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    with patch("importlib.import_module", side_effect=ImportError):
-        spec.loader.exec_module(module)
+@pytest.mark.parametrize("module", [_foundry_errors, _foundry_provider, _foundry_settings])
+def test_storage_modules_use_core_experimental_decorator(module) -> None:
+    assert module.experimental is experimental
 
-    if kind == "class":
 
-        @module.experimental
-        class ExperimentalClass:
-            def __init__(self) -> None:
-                self.value = 1
+def test_storage_experimental_warnings_are_deduplicated(caplog) -> None:
+    _warning_cache.clear()
 
-        wrapped = ExperimentalClass
-    else:
-
-        @module.experimental
-        def experimental_function() -> bool:
-            return True
-
-        wrapped = experimental_function
-
-    with caplog.at_level(logging.WARNING, logger=module.__name__):
-        wrapped()
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        FoundryStorageSettings.from_endpoint("https://example.foundry.azure.com")
+        FoundryStorageSettings.from_endpoint("https://example.foundry.azure.com")
 
     assert len(caplog.records) == 1
-    assert caplog.records[0].message.endswith(f"This is an experimental {kind}, and may change at any time.")
-    assert "https://" not in wrapped.__doc__
+    assert caplog.records[0].name == "azure.ai.agentserver.core._experimental"
+
+
+def test_storage_experimental_warnings_can_be_suppressed(monkeypatch, caplog) -> None:
+    _warning_cache.clear()
+    monkeypatch.setenv(DISABLE_EXPERIMENTAL_WARNING_ENV_VAR, "true")
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        FoundryStorageSettings.from_endpoint("https://example.foundry.azure.com")
+
+    assert len(caplog.records) == 0
 
 
 def test_protocol_hosts_are_not_marked_experimental() -> None:

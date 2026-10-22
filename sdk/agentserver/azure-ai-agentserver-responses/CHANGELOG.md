@@ -1,10 +1,15 @@
 # Release History
 
-## 2.3.1 (Unreleased)
+## 2.4.0b1 (Unreleased)
 
 ### Bugs Fixed
 
-- Removed the broken documentation link from experimental API warnings and docstrings in the compatibility fallback.
+- Removed the broken documentation link from experimental API warnings and docstrings by using the shared Core decorator.
+
+### Other Changes
+
+- Removed the duplicated experimental decorator compatibility fallback.
+- Updated the minimum `azure-ai-agentserver-core` dependency to `2.3.0b1`.
 
 ## 2.3.0 (2026-10-05)
 
