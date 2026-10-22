@@ -1,3 +1,5 @@
 directory: specification/keyvault/data-plane/SecurityDomain
-commit: 4ee00020556f967f247c181ea8288b929488e899
+commit: ea20c467080ed3d3875c8b5aeff28ce52f6a55ca
 repo: Azure/azure-rest-api-specs
+additionalDirectories: 
+- specification/keyvault/data-plane/SecurityDomain/common

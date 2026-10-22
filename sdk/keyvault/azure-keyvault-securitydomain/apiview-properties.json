@@ -15,5 +15,6 @@
         "azure.keyvault.securitydomain.aio.SecurityDomainClient.get_upload_status": "ClientCustomizations.SecurityDomainClient.getUploadStatus",
         "azure.keyvault.securitydomain.SecurityDomainClient.get_transfer_key": "ClientCustomizations.SecurityDomainClient.getTransferKey",
         "azure.keyvault.securitydomain.aio.SecurityDomainClient.get_transfer_key": "ClientCustomizations.SecurityDomainClient.getTransferKey"
-    }
+    },
+    "CrossLanguageVersion": "3b6bba5cb19b"
 }
