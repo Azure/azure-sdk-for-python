@@ -9,22 +9,16 @@ from azure.messaging.webpubsubchatservice.models import ChatMessageUpdate, Messa
 
 
 def main():
-    required = (
-        "WPS_CHAT_CONNECTION_STRING",
-        "WPS_CHAT_CONVERSATION_ID",
-        "WPS_CHAT_MESSAGE_ID",
-    )
-    missing = [name for name in required if not os.environ.get(name)]
-    if missing:
-        print(f"Set {', '.join(missing)} to run this sample.")
+    if not os.environ.get("WPS_CHAT_CONNECTION_STRING"):
+        print("Set WPS_CHAT_CONNECTION_STRING to run this example.")
         return
 
     with WebPubSubChatServiceClient.from_connection_string(
         os.environ["WPS_CHAT_CONNECTION_STRING"],
         os.environ.get("WPS_CHAT_HUB", "test_hub"),
     ) as client:
-        conversation_id = os.environ["WPS_CHAT_CONVERSATION_ID"]
-        message_id = os.environ["WPS_CHAT_MESSAGE_ID"]
+        conversation_id = "<conversation-id>"
+        message_id = "<message-id>"
         client.update_message(
             conversation_id,
             message_id,

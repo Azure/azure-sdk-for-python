@@ -53,7 +53,9 @@ instances or paged models; their examples are not duplicated by input style.
 | [README snippet sources](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_readme_snippets.py) | Independent functions used by the README, not a standalone program. |
 
 For runnable scenario samples, follow the environment-variable instructions
-in each file and the [README run instructions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/README.md#run-the-samples).
+in each file and the [README run instructions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/README.md#run-the-examples).
+Replace resource ID placeholders such as `<conversation-id>` and `<message-id>`
+with existing resource identifiers before running the examples.
 Some samples create, replace, or delete resources; use sample-specific
 identifiers and review each file before running it.
 

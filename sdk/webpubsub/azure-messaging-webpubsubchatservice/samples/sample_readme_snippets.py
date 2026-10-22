@@ -50,21 +50,18 @@ def add_room_member(client: WebPubSubChatServiceClient) -> None:
 
 def list_messages(client: WebPubSubChatServiceClient) -> None:
     # [START list_messages]
-    import os
-
-    for message in client.list_messages(os.environ["WPS_CHAT_CONVERSATION_ID"]):
+    for message in client.list_messages("<conversation-id>"):
         print(message.id, message.created_by, message.content.text)
     # [END list_messages]
 
 
 def create_topic(client: WebPubSubChatServiceClient) -> None:
     # [START create_topic]
-    import os
     from azure.messaging.webpubsubchatservice.models import ChatTopicCreateOrReplace
 
     topic = client.create_or_replace_topic(
-        os.environ["WPS_CHAT_ROOM_ID"],
-        os.environ["WPS_CHAT_TOPIC_ID"],
+        "<room-id>",
+        "<topic-id>",
         ChatTopicCreateOrReplace(title="Announcements"),
     )
     print(topic.id, topic.etag)
@@ -73,33 +70,28 @@ def create_topic(client: WebPubSubChatServiceClient) -> None:
 
 def list_topics(client: WebPubSubChatServiceClient) -> None:
     # [START list_topics]
-    import os
-
-    for topic in client.list_topics(os.environ["WPS_CHAT_ROOM_ID"], max_page_size=10):
+    for topic in client.list_topics("<room-id>", max_page_size=10):
         print(topic.id, topic.title, topic.conversation_id)
     # [END list_topics]
 
 
 def get_topic(client: WebPubSubChatServiceClient) -> None:
     # [START get_topic]
-    import os
-
-    topic = client.get_topic(os.environ["WPS_CHAT_ROOM_ID"], os.environ["WPS_CHAT_TOPIC_ID"])
+    topic = client.get_topic("<room-id>", "<topic-id>")
     print(topic.id, topic.title, topic.state, topic.etag)
     # [END get_topic]
 
 
 def archive_topic(client: WebPubSubChatServiceClient) -> None:
     # [START archive_topic]
-    import os
     from azure.core import MatchConditions
     from azure.messaging.webpubsubchatservice.models import ChatTopicUpdate, ChatTopicState
 
     topic = client.update_topic(
-        os.environ["WPS_CHAT_ROOM_ID"],
-        os.environ["WPS_CHAT_TOPIC_ID"],
+        "<room-id>",
+        "<topic-id>",
         ChatTopicUpdate(state=ChatTopicState.ARCHIVED),
-        etag=os.environ["WPS_CHAT_TOPIC_ETAG"],
+        etag='"<topic-etag>"',
         match_condition=MatchConditions.IfNotModified,
     )
     print(topic.id, topic.state, topic.etag)
@@ -108,13 +100,12 @@ def archive_topic(client: WebPubSubChatServiceClient) -> None:
 
 def delete_topic(client: WebPubSubChatServiceClient) -> None:
     # [START delete_topic]
-    import os
     from azure.core import MatchConditions
 
     client.delete_topic(
-        os.environ["WPS_CHAT_ROOM_ID"],
-        os.environ["WPS_CHAT_TOPIC_ID"],
-        etag=os.environ["WPS_CHAT_TOPIC_ETAG"],
+        "<room-id>",
+        "<topic-id>",
+        etag='"<topic-etag>"',
         match_condition=MatchConditions.IfNotModified,
     )
     # [END delete_topic]
@@ -136,9 +127,7 @@ def list_users(client: WebPubSubChatServiceClient) -> None:
 
 def list_rooms_for_user(client: WebPubSubChatServiceClient) -> None:
     # [START list_rooms_for_user]
-    import os
-
-    for room in client.list_rooms_for_user(os.environ["WPS_CHAT_USER_ID"]):
+    for room in client.list_rooms_for_user("<user-id>"):
         print(room.id, room.title)
     # [END list_rooms_for_user]
 

@@ -11,7 +11,7 @@ def create_role(client):
     from azure.messaging.webpubsubchatservice.models import ChatPermission, ChatRoleCreateOrReplace
 
     role = client.create_or_replace_role(
-        os.environ.get("WPS_CHAT_ROLE_NAME", "user.python_sample"),
+        "user.example",
         ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
     )
     print(role.name, role.permissions)
