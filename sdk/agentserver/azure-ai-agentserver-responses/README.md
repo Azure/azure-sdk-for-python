@@ -193,6 +193,21 @@ For detailed handler implementation guidance, see [docs/handler-implementation-g
 
 Crash recovery is **opt-in** via `ResponsesServerOptions(resilient_background=True)`. When opted in, background responses with `store=True` are crash-recoverable: the handler is re-invoked on restart and the recovered context exposes `context.is_recovery == True`. Stream events are persisted incrementally so clients can reconnect and resume from where they left off. Without the opt-in (the default), a crash mid-handler marks the response `failed` instead of re-invoking the handler. For advanced scenarios (metadata checkpointing, multi-turn steering), see the [Resilient Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilient-responses-developer-guide.md).
 
+### Task-origin version in handlers
+
+`context.origin_agent_version` forwards the creating agent version stored on
+the underlying durable task. If a version `"1"` task resumes in a version `"2"`
+container, the handler still sees `"1"` and can select compatible behavior or
+explicitly migrate its application state. This is the same value exposed by
+core `TaskContext`, not a second stored version or the incoming request's
+`agent_reference.version`.
+
+The value is `None` when no durable task is bound or its creation version was
+not recorded, including legacy tasks and older task services. Handle that case
+explicitly; do not assume it means the current/latest version. Keep compatible
+task names and input/state readers for supported origins. The SDK does not
+pin an image, route unsupported versions, or automatically migrate state.
+
 ## Examples
 
 ### Echo handler

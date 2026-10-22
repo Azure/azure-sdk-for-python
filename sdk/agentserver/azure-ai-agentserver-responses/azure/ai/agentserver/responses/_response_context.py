@@ -347,6 +347,22 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self._task_context: "_CoreTaskContext[Any] | None" = None
 
     @property
+    def origin_agent_version(self) -> str | None:
+        """Version of the agent that created the underlying durable task.
+
+        The same persisted value is exposed by TaskContext. It survives
+        recovery and subsequent conversation turns even on a newer worker.
+        None means no task is bound or its origin was not recorded.
+        The application owns compatibility logic and state migration.
+
+        :return: Immutable task-origin agent version, or None when unavailable.
+        :rtype: str | None
+        """
+        if self._task_context is None:
+            return None
+        return self._task_context.origin_agent_version
+
+    @property
     def conversation_chain_id(self) -> str:
         """Stable identifier for the multi-turn conversation chain.
 

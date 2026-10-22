@@ -324,6 +324,26 @@ print(result)  # {"summary": "..."}
 See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
 See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
 
+### Task-origin agent version
+
+`TaskContext.origin_agent_version` is the immutable version of the agent that
+created the durable task. Hosted task storage records it at creation from the
+validated agent identity; the default local backend records the configured
+`FOUNDRY_AGENT_VERSION`. The SDK reads the stored value, not the version of the
+worker recovering or resuming the task.
+
+A task created by version `"1"` still exposes `"1"` when version `"2"` recovers
+it or accepts another turn. New tasks created by version `"2"` expose `"2"`.
+The value is `None` for legacy records or producers without a recorded version,
+including older task services. Do not treat `None` as the latest version.
+
+Use this value to choose application compatibility logic or perform an explicit,
+idempotent state migration. Keep task names and input envelopes compatible while
+older work remains: typed input may be decoded before your handler runs. This
+metadata does not select an image, enforce version compatibility, or migrate
+application state automatically. Migration should record its own state/schema
+version rather than changing the task's immutable origin.
+
 ## Troubleshooting
 
 ### Logging

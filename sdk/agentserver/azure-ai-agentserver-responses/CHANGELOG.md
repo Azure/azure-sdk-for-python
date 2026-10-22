@@ -1,5 +1,18 @@
 # Release History
 
+## 2.4.0b2 (Unreleased)
+
+### Features Added
+
+- Expose `ResponseContext.origin_agent_version` from the underlying durable
+  task so handlers can select compatible logic after a version change. The
+  value is unchanged on recovery or later turns and is `None` without a
+  recorded task origin. No execution pinning or migration is automatic.
+
+### Other Changes
+
+- Require `azure-ai-agentserver-core>=2.3.0b2` for task-origin version metadata.
+
 ## 2.4.0b1 (2026-10-15)
 
 ### Bugs Fixed

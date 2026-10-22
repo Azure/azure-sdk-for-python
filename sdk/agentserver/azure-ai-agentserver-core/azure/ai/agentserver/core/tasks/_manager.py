@@ -555,7 +555,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # Resolve the tasks subdirectory under the agentserver state root.
         # ``AGENTSERVER_STATE_ROOT`` is the single env-var operator knob;
         # the tasks subsystem owns the ``tasks`` subdirectory name.
-        return LocalFileTaskProvider(base_dir=resolve_state_subdir("tasks"))
+        return LocalFileTaskProvider(
+            base_dir=resolve_state_subdir("tasks"), origin_agent_version=config.agent_version or None
+        )
 
     @property
     def provider(self) -> TaskProvider:
@@ -1115,6 +1117,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             entry_mode=entry_mode,
             pending_count_provider=self._make_pending_count_provider(task_id),
             input_id=(initial_payload_extras or {}).get("last_input_id"),
+            origin_agent_version=task_info.origin_agent_version,
         )
         loop = asyncio.get_running_loop()
         result_future: asyncio.Future[Any] = loop.create_future()
@@ -1522,6 +1525,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             is_steered_turn=is_steered_turn,
             pending_count_provider=self._make_pending_count_provider(task_id),
             input_id=(task_info.payload or {}).get("last_input_id"),
+            origin_agent_version=task_info.origin_agent_version,
         )
 
         loop = asyncio.get_running_loop()
@@ -2517,6 +2521,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             is_steered_turn=True,
             pending_count_provider=self._make_pending_count_provider(task_id),
             input_id=(task_info.payload or {}).get("last_input_id"),
+            origin_agent_version=task_info.origin_agent_version,
         )
 
         # Update active task tracking
