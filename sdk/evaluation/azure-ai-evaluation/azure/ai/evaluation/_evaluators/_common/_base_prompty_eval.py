@@ -2,50 +2,31 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import json
 import math
-import re
-import os
-from typing import Dict, Optional, TypeVar, Union, List
+from typing import Dict, TypeVar, Union
 
-if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
-    from promptflow.core._flow import AsyncPrompty
-else:
-    from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 from typing_extensions import override
 
-from azure.core.credentials import TokenCredential
-from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
-from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 
 # The message-preprocessing helpers now live in ``azure.ai.evaluation._common.utils`` (single source of
 # truth). They are imported here so this module can use them and so callers that historically imported
 # them from this module keep working. ``_drop_mcp_approval_messages`` / ``_normalize_function_call_types``
 # are re-exported only (used indirectly via ``_preprocess_messages``).
-from ..._common.utils import (  # pylint: disable=unused-import
+from ..._common.utils import (  # noqa: F401  # pylint: disable=unused-import
     _is_intermediate_response,
     _drop_mcp_approval_messages,
     _normalize_function_call_types,
     _preprocess_messages,
 )
-from . import EvaluatorBase
-
-try:
-    from ..._user_agent import UserAgentSingleton
-except ImportError:
-
-    class UserAgentSingleton:
-        @property
-        def value(self) -> str:
-            return "None"
-
+from ._base_model_eval import ModelEvaluatorBase
+from ._prompty_strategy import PromptyEvaluationStrategy
+from ._model_runners import AsyncPrompty, UserAgentSingleton  # noqa: F401  # pylint: disable=unused-import
 
 T = TypeVar("T")
 
 
-class PromptyEvaluatorBase(EvaluatorBase[T]):
+class PromptyEvaluatorBase(ModelEvaluatorBase[T]):
     """Base class for all evaluators that make use of context as an input. It's also assumed that such evaluators
     make use of a prompty file, and return their results as a dictionary, with a single key-value pair
     linking the result name to a float value (unless multi-turn evaluation occurs, in which case the
@@ -61,69 +42,13 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
     :param ignore_queries: If True, queries will be ignored in conversation evaluations. Default is False.
         Useful since some evaluators of this format are response-only.
     :type ignore_queries: bool
-    :keyword is_reasoning_model: This parameter is in preview. If True, updates the config parameters in prompty file based on reasoning models. Defaults to False.
+    :keyword is_reasoning_model: This parameter is in preview. If True, updates the config parameters in
+        prompty file based on reasoning models. Defaults to False.
     :type is_reasoning_model: bool
     """
 
-    _LLM_CALL_TIMEOUT = 600
-    _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
-
-    def __init__(
-        self,
-        *,
-        result_key: str,
-        prompty_file: str,
-        model_config: dict,
-        eval_last_turn: bool = False,
-        threshold: int = 3,
-        credential: Optional[TokenCredential] = None,
-        _higher_is_better: bool = False,
-        **kwargs,
-    ) -> None:
-        self._result_key = result_key
-        self._is_reasoning_model = kwargs.get("is_reasoning_model", False)
-        self._prompty_file = prompty_file
-        self._threshold = threshold
-        self._higher_is_better = _higher_is_better
-        super().__init__(eval_last_turn=eval_last_turn, threshold=threshold, _higher_is_better=_higher_is_better)
-
-        subclass_name = self.__class__.__name__
-        user_agent = f"{UserAgentSingleton().value} (type=evaluator subtype={subclass_name})"
-        prompty_model_config = construct_prompty_model_config(
-            validate_model_config(model_config),
-            self._DEFAULT_OPEN_API_VERSION,
-            user_agent,
-        )
-
-        self._flow = AsyncPrompty.load(
-            source=self._prompty_file,
-            model=prompty_model_config,
-            token_credential=credential,
-            is_reasoning_model=self._is_reasoning_model,
-        )
-
-    # __call__ not overridden here because child classes have such varied signatures that there's no point
-    # defining a default here.
-    def _get_binary_result(self, score: float) -> str:
-        """Get the binary result based on the score.
-
-        :param score: The score to evaluate.
-        :type score: float
-        :return: The binary result.
-        :rtype: str
-        """
-        if math.isnan(score):
-            return "unknown"
-        if self._higher_is_better:
-            if score >= self._threshold:
-                return EVALUATION_PASS_FAIL_MAPPING[True]
-            else:
-                return EVALUATION_PASS_FAIL_MAPPING[False]
-        else:
-            if score <= self._threshold:
-                return EVALUATION_PASS_FAIL_MAPPING[True]
-            else:
-                return EVALUATION_PASS_FAIL_MAPPING[False]
+    # __init__ and __call__ are inherited: the constructor from ModelEvaluatorBase, and __call__ is not defined
+    # because child classes have such varied signatures that there's no point defining a default here.
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
@@ -158,243 +83,12 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         if isinstance(eval_input.get("query"), list):
             eval_input["query"] = _preprocess_messages(eval_input["query"])
 
-        # Call the prompty flow to get the evaluation result.
-        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-
-        score = math.nan
-        reason = ""
-        llm_properties = {}
-
-        if prompty_output_dict:
-            llm_output = prompty_output_dict.get("llm_output", "")
-
-            # Parse JSON output from LLM
-            parsed_output = None
-            if isinstance(llm_output, dict):
-                parsed_output = llm_output
-            elif isinstance(llm_output, str):
-                try:
-                    parsed_output = json.loads(llm_output)
-                except (json.JSONDecodeError, TypeError):
-                    parsed_output = None
-
-            if parsed_output and isinstance(parsed_output, dict):
-                # Handle skipped status from LLM
-                llm_status = parsed_output.get("status", "completed")
-                if llm_status == "skipped":
-                    skip_reason = parsed_output.get("reason", "")
-                    return self._return_not_applicable_result(skip_reason, self._threshold)
-
-                score = parsed_output.get("score", math.nan)
-                reason = parsed_output.get("reason", "")
-                llm_properties = parsed_output.get("properties", {}) or {}
-            else:
-                # Fallback: try to parse legacy XML format or extract digit
-                if isinstance(llm_output, str) and self._result_key in PROMPT_BASED_REASON_EVALUATORS:
-                    score, reason = parse_quality_evaluator_reason_score(llm_output)
-                elif isinstance(llm_output, str):
-                    match = re.search(r"\d", llm_output)
-                    if match:
-                        score = float(match.group())
-
-            score = float(score) if score is not None else math.nan
-            score_result = self._get_binary_result(score)
-
-            llm_properties.update(self._get_token_metadata(prompty_output_dict))
-
-            return {
-                self._result_key: score,
-                f"{self._result_key}_score": score,
-                f"{self._result_key}_passed": score_result == "pass",
-                f"{self._result_key}_result": score_result,
-                f"{self._result_key}_reason": reason,
-                f"{self._result_key}_status": "completed",
-                f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_properties": llm_properties,
-            }
-
-        raise EvaluationException(
-            message="Evaluator returned invalid output.",
-            blame=ErrorBlame.SYSTEM_ERROR,
-            category=ErrorCategory.FAILED_EXECUTION,
-            target=ErrorTarget.EVALUATE,
-        )
-
-    @staticmethod
-    def _get_token_metadata(prompty_output: Dict) -> Dict:
-        """Extract token usage and model metadata from the prompty output dict.
-
-        :param prompty_output: The raw output dictionary from the prompty flow.
-        :type prompty_output: Dict
-        :return: A dictionary with token counts, finish reason, model, and sample I/O.
-        :rtype: Dict
-        """
-        return {
-            "prompt_tokens": prompty_output.get("input_token_count", 0),
-            "completion_tokens": prompty_output.get("output_token_count", 0),
-            "total_tokens": prompty_output.get("total_token_count", 0),
-            "finish_reason": prompty_output.get("finish_reason", ""),
-            "model": prompty_output.get("model_id", ""),
-            "sample_input": prompty_output.get("sample_input", ""),
-            "sample_output": prompty_output.get("sample_output", ""),
-        }
-
-    @staticmethod
-    def _get_built_in_tool_definition(tool_name: str):
-        """Get the definition for the built-in tool."""
-        try:
-            from ..._converters._models import _BUILT_IN_DESCRIPTIONS, _BUILT_IN_PARAMS
-
-            if tool_name in _BUILT_IN_DESCRIPTIONS:
-                return {
-                    "type": tool_name,
-                    "description": _BUILT_IN_DESCRIPTIONS[tool_name],
-                    "name": tool_name,
-                    "parameters": _BUILT_IN_PARAMS.get(tool_name, {}),
-                }
-        except ImportError:
-            pass
-        return None
-
-    def _get_needed_built_in_tool_definitions(self, tool_calls: List[Dict]) -> List[Dict]:
-        """Extract tool definitions needed for the given built-in tool calls."""
-        needed_definitions = []
-        for tool_call in tool_calls:
-            if isinstance(tool_call, dict):
-                tool_type = tool_call.get("type")
-
-                # Only support converter format: {type: "tool_call", name: "bing_custom_search", arguments: {...}}
-                if tool_type == "tool_call":
-                    tool_name = tool_call.get("name")
-                    if tool_name:
-                        definition = self._get_built_in_tool_definition(tool_name)
-                        if definition and definition not in needed_definitions:
-                            needed_definitions.append(definition)
-
-        return needed_definitions
-
-    def _extract_tool_names_from_calls(self, tool_calls: List[Dict]) -> List[str]:
-        """Extract just the tool names from tool calls, removing parameters."""
-        tool_names = []
-        for tool_call in tool_calls:
-            if isinstance(tool_call, dict):
-                tool_type = tool_call.get("type")
-                if tool_type == "tool_call":
-                    tool_name = tool_call.get("name")
-                    if tool_name:
-                        tool_names.append(tool_name)
-                elif tool_call.get("function", {}).get("name"):
-                    # Handle function call format
-                    tool_names.append(tool_call["function"]["name"])
-                elif tool_call.get("name"):
-                    # Handle direct name format
-                    tool_names.append(tool_call["name"])
-        return tool_names
-
-    def _extract_needed_tool_definitions(
-        self, tool_calls: List[Dict], tool_definitions: List[Dict], error_target: ErrorTarget
-    ) -> List[Dict]:
-        """Extract the tool definitions that are needed for the provided tool calls.
-
-        :param tool_calls: The tool calls that need definitions
-        :type tool_calls: List[Dict]
-        :param tool_definitions: User-provided tool definitions
-        :type tool_definitions: List[Dict]
-        :param error_target: The evaluator-specific error target for exceptions
-        :type error_target: ErrorTarget
-        :return: List of needed tool definitions
-        :rtype: List[Dict]
-        :raises EvaluationException: If validation fails
-        """
-        needed_tool_definitions = []
-
-        # Add all user-provided tool definitions
-        needed_tool_definitions.extend(tool_definitions)
-
-        # Add the needed built-in tool definitions (if they are called)
-        built_in_definitions = self._get_needed_built_in_tool_definitions(tool_calls)
-        needed_tool_definitions.extend(built_in_definitions)
-
-        # An OpenAPI tool is a collection of functions. When an OpenAPI tool
-        # definition exposes its nested functions, expand it into those functions
-        # so tool calls referencing a nested function name can be matched. If an
-        # OpenAPI tool definition has no nested functions, keep the OpenAPI tool
-        # definition as is for backward compatibility.
-        tool_definitions_expanded = []
-        for tool in needed_tool_definitions:
-            openapi_functions = tool.get("functions") if tool.get("type") == "openapi" else None
-            if openapi_functions:
-                tool_definitions_expanded.extend(openapi_functions)
-            else:
-                tool_definitions_expanded.append(tool)
-
-        # Validate that all tool calls have corresponding definitions
-        for tool_call in tool_calls:
-            if isinstance(tool_call, dict):
-                tool_type = tool_call.get("type")
-
-                if tool_type == "tool_call":
-                    tool_name = tool_call.get("name")
-                    if tool_name and self._get_built_in_tool_definition(tool_name):
-                        # This is a built-in tool from converter, already handled above
-                        continue
-                    elif tool_name:
-                        # This is a regular function tool from converter
-                        tool_definition_exists = any(
-                            tool.get("name") == tool_name for tool in tool_definitions_expanded
-                        )
-                        if not tool_definition_exists:
-                            raise EvaluationException(
-                                message=f"Tool definition for {tool_name} not found",
-                                blame=ErrorBlame.USER_ERROR,
-                                category=ErrorCategory.INVALID_VALUE,
-                                target=error_target,
-                            )
-                    else:
-                        raise EvaluationException(
-                            message=f"Tool call missing name: {tool_call}",
-                            blame=ErrorBlame.USER_ERROR,
-                            category=ErrorCategory.INVALID_VALUE,
-                            target=error_target,
-                        )
-                else:
-                    # Unsupported tool format - only converter format is supported
-                    raise EvaluationException(
-                        message=f"Unsupported tool call format. Only converter format is supported: {tool_call}",
-                        blame=ErrorBlame.USER_ERROR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        target=error_target,
-                    )
-            else:
-                # Tool call is not a dictionary
-                raise EvaluationException(
-                    message=f"Tool call is not a dictionary: {tool_call}",
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.INVALID_VALUE,
-                    target=error_target,
-                )
-
-        return needed_tool_definitions
-
-    def _return_not_applicable_result(
-        self, error_message: str, threshold: Union[int, float]
-    ) -> Dict[str, Union[str, float, Dict, None]]:
-        """Return a result indicating that the tool call is not applicable for evaluation.
-
-        :param error_message: The error message indicating why the evaluation is not applicable.
-        :type error_message: str
-        :param threshold: The threshold value for the evaluation.
-        :type threshold: Union[int, float]
-        :return: A dictionary containing the result of the evaluation.
-        :rtype: Dict[str, Union[str, float, None]]
-        """
-        return {
-            f"{self._result_key}": None,
-            f"{self._result_key}_score": None,
-            f"{self._result_key}_passed": None,
-            f"{self._result_key}_result": "not_applicable",
-            f"{self._result_key}_reason": f"Not applicable: {error_message}",
-            f"{self._result_key}_status": "skipped",
-            f"{self._result_key}_threshold": threshold,
-            f"{self._result_key}_properties": None,
-        }
+        return await PromptyEvaluationStrategy(
+            self._prompty_model_runner,
+            result_key=self._result_key,
+            threshold=self._threshold,
+            timeout=self._LLM_CALL_TIMEOUT,
+            strict=False,
+            missing_score=math.nan,
+            higher_is_better=self._higher_is_better,
+        ).evaluate(eval_input)
