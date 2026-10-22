@@ -5,7 +5,6 @@
 ### Features Added
 
 - Added support for `WorkloadIdentityCredential` identity binding mode in AKS environments. This feature uses an AKS proxy to handle FIC exchanges on behalf of pods, addressing Entra's limit on federated identity credentials per managed identity. Enable it by constructing `WorkloadIdentityCredential` directly with `enable_azure_proxy=True`. Identity binding mode isn't supported through `DefaultAzureCredential`. ([#43287](https://github.com/Azure/azure-sdk-for-python/pull/43287), [#44147](https://github.com/Azure/azure-sdk-for-python/pull/44147))
-- Credential HTTP pipeline policies can now be overridden via the `headers_policy`, `logging_policy`, `http_logging_policy`, `proxy_policy`, `user_agent_policy`, `custom_hook_policy`, and `retry_policy` keyword arguments when constructing credentials. The `per_retry_policies` and `per_call_policies` keyword arguments are also supported. ([#46072](https://github.com/Azure/azure-sdk-for-python/pull/46072))
 
 ### Bugs Fixed
 
