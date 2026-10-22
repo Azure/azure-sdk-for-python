@@ -1,0 +1,12 @@
+{
+  "properties": {
+    "authType": "ApiKey",
+    "category": "Serverless",
+    "credentials": {
+      "key": "smoke-serverless-api-key"
+    },
+    "isSharedToAll": true,
+    "metadata": {},
+    "target": "https://smoke-maas.eastus.models.ai.azure.com"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-01-01",
+  "apiVersions": {
+    "Microsoft.Relay": "2026-01-01"
+  },
+  "commit": "d2815820669f2cb346a80bf6f2bda50dfa3918f6",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/relay/resource-manager/Microsoft.Relay/Relay",
+  "emitterVersion": "0.63.7",
+  "httpClientPythonVersion": "^0.37.2"
+}

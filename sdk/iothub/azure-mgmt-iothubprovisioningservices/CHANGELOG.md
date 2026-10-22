@@ -1,0 +1,247 @@
+# Release History
+
+## 2.0.0 (2026-08-26)
+
+### Features Added
+
+  - Client `IotDpsClient` added parameter `api_version` in method `__init__`
+  - Client `IotDpsClient` added parameter `cloud_setting` in method `__init__`
+  - Client `IotDpsClient` added method `send_request`
+  - Model `GroupIdInformation` added property `system_data`
+  - Model `IotDpsPropertiesDescription` added property `disable_local_auth`
+  - Model `IotDpsPropertiesDescription` added property `portal_operations_host_name`
+  - Model `IotHubDefinitionDescription` added property `authentication_type`
+  - Model `IotHubDefinitionDescription` added property `host_name`
+  - Model `IotHubDefinitionDescription` added property `selected_user_assigned_identity_resource_id`
+  - Model `ProvisioningServiceDescription` added property `identity`
+  - Model `ProvisioningServiceDescription` added property `resourcegroup`
+  - Model `ProvisioningServiceDescription` added property `subscriptionid`
+  - Model `Resource` added property `system_data`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorMessage`
+  - Added model `ErrorResponse`
+  - Added enum `IotHubAuthenticationType`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `ProxyResource`
+  - Added model `TrackedResource`
+  - Added model `UserAssignedIdentity`
+  - Operation group `DpsCertificateOperations` added parameter `kwargs` in method `__init__`
+  - Operation group `DpsCertificateOperations` added parameter `content_type` in method `create_or_update`
+  - Operation group `DpsCertificateOperations` added parameter `content_type` in method `verify_certificate`
+  - Operation group `IotDpsResourceOperations` added parameter `kwargs` in method `__init__`
+  - Operation group `IotDpsResourceOperations` added parameter `content_type` in method `begin_create_or_update`
+  - Operation group `IotDpsResourceOperations` added parameter `content_type` in method `begin_create_or_update_private_endpoint_connection`
+  - Operation group `IotDpsResourceOperations` added parameter `content_type` in method `begin_update`
+  - Operation group `IotDpsResourceOperations` added parameter `content_type` in method `check_provisioning_service_name_availability`
+  - Operation group `Operations` added parameter `kwargs` in method `__init__`
+
+### Breaking Changes
+
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `CertificateBodyDescription`
+  - Deleted or renamed model `ErrorMesssage`
+  - Method `DpsCertificateOperations.create_or_update` changed type of its parameter `certificate_description` from `CertificateBodyDescription` to `CertificateResponse`
+  - Method `DpsCertificateOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_created`/`certificate_has_private_key`/`certificate_is_verified`/`certificate_last_updated`/`certificate_name1`/`certificate_nonce`/`certificate_purpose`/`certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed type of its parameter `certificate_raw_bytes` from `bytearray` to `bytes`
+  - Method `DpsCertificateOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_created`/`certificate_has_private_key`/`certificate_is_verified`/`certificate_last_updated`/`certificate_name1`/`certificate_nonce`/`certificate_purpose`/`certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed type of its parameter `certificate_raw_bytes` from `bytearray` to `bytes`
+  - Method `DpsCertificateOperations.generate_verification_code` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.get` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_created`/`certificate_has_private_key`/`certificate_is_verified`/`certificate_last_updated`/`certificate_name1`/`certificate_nonce`/`certificate_purpose`/`certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed type of its parameter `certificate_raw_bytes` from `bytearray` to `bytes`
+  - Method `DpsCertificateOperations.verify_certificate` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Parameter `asyncinfo` of `IotDpsResourceOperations.get_operation_result` is now optional
+  - Method `IotDpsResourceOperations.get_operation_result` changed its parameter `asyncinfo` from `positional_or_keyword` to `keyword_only`
+  - Method `IotDpsResourceOperations.list_by_resource_group` changed return type from `Iterable[ProvisioningServiceDescriptionListResult]` to `ItemPaged[ProvisioningServiceDescription]`
+  - Method `IotDpsResourceOperations.list_by_subscription` changed return type from `Iterable[ProvisioningServiceDescriptionListResult]` to `ItemPaged[ProvisioningServiceDescription]`
+  - Method `IotDpsResourceOperations.list_keys` changed return type from `Iterable[SharedAccessSignatureAuthorizationRuleListResult]` to `ItemPaged[SharedAccessSignatureAuthorizationRuleAccessRightsDescription]`
+  - Method `IotDpsResourceOperations.list_valid_skus` changed return type from `Iterable[IotDpsSkuDefinitionListResult]` to `ItemPaged[IotDpsSkuDefinition]`
+  - Method `Operations.list` changed return type from `Iterable[OperationListResult]` to `ItemPaged[Operation]`
+  - Method `IotDpsResourceOperations.check_provisioning_service_name_availability` re-ordered its parameters from `['self', 'arguments', 'cls', 'kwargs']` to `['self', 'arguments', 'content_type', 'kwargs']`
+
+### Other Changes
+
+  - Deleted model `IotDpsSkuDefinitionListResult`/`OperationListResult`/`ProvisioningServiceDescriptionListResult`/`SharedAccessSignatureAuthorizationRuleListResult` which actually were not used by SDK users
+
+## 1.2.0b3 (2025-10-09)
+
+### Features Added
+
+  - Model `IotDpsClient` added parameter `cloud_setting` in method `__init__`
+  - Client `IotDpsClient` added method `send_request`
+  - Model `GroupIdInformation` added property `system_data`
+  - Model `IotDpsPropertiesDescription` added property `device_registry_namespace`
+  - Model `Resource` added property `system_data`
+  - Added enum `DeviceRegistryNamespaceAuthenticationType`
+  - Added model `DeviceRegistryNamespaceDescription`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `ProxyResource`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for mgration.
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `resourcegroup`
+  - Model `Resource` deleted or renamed its instance variable `subscriptionid`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `CertificateBodyDescription`
+  - Deleted or renamed model `CertificateListDescription`
+  - Deleted or renamed model `PrivateLinkResources`
+  - Method `DpsCertificateOperations.create_or_update` renamed positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_name1` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_is_verified` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_purpose` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_created` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_last_updated` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_has_private_key` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_nonce` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` renamed positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_name1` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_is_verified` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_purpose` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_created` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_last_updated` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_has_private_key` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_nonce` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` renamed positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.get` renamed positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_name1` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_is_verified` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_purpose` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_created` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_last_updated` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_has_private_key` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_nonce` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` renamed positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Parameter `asyncinfo` of `IotDpsResourceOperations.get_operation_result` is now required
+  - Method `IotDpsResourceOperations.get_operation_result` changed its parameter `asyncinfo` from `positional_or_keyword` to `keyword_only`
+
+## 1.2.0b2 (2023-06-16)
+
+### Features Added
+
+  - Model IotDpsPropertiesDescription has a new parameter portal_operations_host_name
+  - Model ProvisioningServiceDescription has a new parameter identity
+  - Model ProvisioningServiceDescription has a new parameter resourcegroup
+  - Model ProvisioningServiceDescription has a new parameter subscriptionid
+  - Model Resource has a new parameter resourcegroup
+  - Model Resource has a new parameter subscriptionid
+
+## 1.2.0b1 (2022-11-15)
+
+### Features Added
+
+  - Added model ErrorMessage
+
+## 1.1.0 (2022-02-07)
+
+**Features**
+
+  - Model CertificateResponse has a new parameter system_data
+  - Model IotDpsPropertiesDescription has a new parameter enable_data_residency
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model ProvisioningServiceDescription has a new parameter system_data
+
+## 1.0.0 (2021-08-18)
+
+**Features**
+
+  - Model CertificateBodyDescription has a new parameter is_verified
+
+## 1.0.0b1 (2021-05-14)
+
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+
+## 0.2.0 (2018-04-17)
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might*
+introduce breaking changes.
+
+  - Model signatures now use only keyword-argument syntax. All
+    positional arguments must be re-written as keyword-arguments. To
+    keep auto-completion in most cases, models are now generated for
+    Python 2 and Python 3. Python 3 uses the "*" syntax for
+    keyword-only arguments.
+  - Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to
+    improve the behavior when unrecognized enum values are encountered.
+    While this is not a breaking change, the distinctions are important,
+    and are documented here:
+    <https://docs.python.org/3/library/enum.html#others> At a glance:
+      - "is" should not be used at all.
+      - "format" will return the string value, where "%s" string
+        formatting will return `NameOfEnum.stringvalue`. Format syntax
+        should be prefered.
+  - New Long Running Operation:
+      - Return type changes from
+        `msrestazure.azure_operation.AzureOperationPoller` to
+        `msrest.polling.LROPoller`. External API is the same.
+      - Return type is now **always** a `msrest.polling.LROPoller`,
+        regardless of the optional parameters used.
+      - The behavior has changed when using `raw=True`. Instead of
+        returning the initial call result as `ClientRawResponse`,
+        without polling, now this returns an LROPoller. After polling,
+        the final resource will be returned as a `ClientRawResponse`.
+      - New `polling` parameter. The default behavior is
+        `Polling=True` which will poll using ARM algorithm. When
+        `Polling=False`, the response of the initial call will be
+        returned without polling.
+      - `polling` parameter accepts instances of subclasses of
+        `msrest.polling.PollingMethod`.
+      - `add_done_callback` will no longer raise if called after
+        polling is finished, but will instead execute the callback right
+        away.
+
+**Bugfixes**
+
+  - Compatibility of the sdist with wheel 0.31.0
+
+**Features**
+
+  - New ApiVersion 2018-01-22
+
+## 0.1.0 (2018-01-04)
+
+  - Initial Release

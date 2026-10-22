@@ -1,0 +1,11 @@
+[packaging]
+package_name = "azure-mgmt-appcomplianceautomation"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Appcomplianceautomation Management"
+package_doc_id = ""
+is_stable = true
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true
+sample_link = ""
+title = "AppComplianceAutomationMgmtClient"

@@ -1,0 +1,19 @@
+name: train_linear_regression_model
+display_name: TrainLinearRegressionModel
+version: 1
+type: command
+inputs:
+  training_data:
+    type: uri_folder
+outputs:
+  model_output:
+    type: uri_folder
+  test_data:
+    type: uri_folder
+code: ./train_src
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+command: >-
+  python train.py
+  --training_data ${{inputs.training_data}}
+  --test_data ${{outputs.test_data}}
+  --model_output ${{outputs.model_output}}

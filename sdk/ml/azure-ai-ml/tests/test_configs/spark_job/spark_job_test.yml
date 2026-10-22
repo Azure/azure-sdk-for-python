@@ -1,0 +1,18 @@
+$schema: http://azureml/sdk-2-0/SparkComponent.json
+name: witty_feather_2tys9tvrmc
+type: spark
+code: ./basic_spark_job/src
+description: "simply the best"
+environment: azureml:condaenv:1
+compute: azureml:douglassynapse
+entry:
+  file: main.py
+conf:
+  spark.driver.cores: 1
+  spark.driver.memory: 2g
+  spark.executor.cores: 2
+  spark.executor.memory: 2g
+  spark.executor.instances: 1
+  spark.dynamicAllocation.enabled: True
+  spark.dynamicAllocation.minExecutors: 1
+  spark.dynamicAllocation.maxExecutors: 5

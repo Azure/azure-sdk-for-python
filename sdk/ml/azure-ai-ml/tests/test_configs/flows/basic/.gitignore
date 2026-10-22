@@ -1,0 +1,5 @@
+# https://stackoverflow.com/questions/3001888/how-do-gitignore-exclusion-rules-actually-work
+.promptflow/**/*
+!.promptflow/flow.tools.json
+azure_openai.yml
+README.md

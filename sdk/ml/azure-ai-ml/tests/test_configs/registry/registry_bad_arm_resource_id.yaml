@@ -1,0 +1,15 @@
+description: This is a registry description
+name: registry_name
+id: registry_id
+tags:
+  purpose: testing
+  other_tag: value
+location: EastUS2
+public_network_access: Enabled
+intellectual_property:
+  publisher: registry_publisher
+replication_locations:
+  - location: EastUS
+    storage_config:
+    - /subscriptions/sub_id/resourceGroups/some_rg/providers/Microsoft.Storage/storageAccounts/some_storage_account
+container_registry: not/a/real/resource/id

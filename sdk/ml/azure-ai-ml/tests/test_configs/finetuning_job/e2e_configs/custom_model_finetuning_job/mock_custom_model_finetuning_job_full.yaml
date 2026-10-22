@@ -1,0 +1,26 @@
+type: finetuning
+
+name: "llama-3-8B"
+experiment_name: "llama-3-8B-finetuning-experiment"
+display_name: "llama3-8B-display-name"
+task: text_completion
+model_provider: custom
+model: 
+  path: "azureml://registries/azureml-meta/models/Meta-Llama-3-8B/versions/8"
+  type: mlflow_model
+training_data: tests/test_configs/finetuning_job/test_datasets/text_completion/train.jsonl
+validation_data:
+  path: tests/test_configs/finetuning_job/test_datasets/text_completion/validation.jsonl
+  type: uri_file
+hyperparameters:
+  num_train_epochs: "1"
+  per_device_train_batch_size: "1"
+  learning_rate: "0.00002"
+properties:
+  my_property: "my_value"
+tags:
+  foo_tag: "bar"
+outputs:
+  registered_model:
+    name: "llama-finetune-registered-1234"
+    type: mlflow_model

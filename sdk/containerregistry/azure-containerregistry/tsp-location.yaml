@@ -1,0 +1,4 @@
+directory: specification/containerregistry/data-plane/Registry
+commit: 9840b830d86d2000dd8d6dc21f63444a67b04e76
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

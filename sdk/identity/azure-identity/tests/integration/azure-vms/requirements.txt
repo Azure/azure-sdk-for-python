@@ -1,0 +1,4 @@
+../../../../../identity/azure-identity
+../../../../../core/azure-core
+azure-storage-blob
+aiohttp

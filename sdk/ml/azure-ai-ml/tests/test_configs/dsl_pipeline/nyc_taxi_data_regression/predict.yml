@@ -1,0 +1,19 @@
+name: predict_taxi_fares
+version: 1
+display_name: PredictTaxiFares
+type: command
+inputs:
+  model_input:
+    type: uri_folder
+  test_data:
+    type: uri_folder
+outputs:
+  predictions:
+    type: uri_folder
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+code: ./predict_src
+command: >-
+  python predict.py
+  --model_input ${{inputs.model_input}}
+  --test_data ${{inputs.test_data}}
+  --predictions ${{outputs.predictions}}

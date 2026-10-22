@@ -1,0 +1,20 @@
+{
+  'topic': '/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourcegroups/test/providers/Microsoft.EventHub/namespaces/test',
+  'subject': 'eventhubs/test',
+  'eventType': 'captureFileCreated',
+  'eventTime': '2017-07-14T23:10:27.7689666Z',
+  'id': '7b11c4ce-1c34-4416-848b-1730e766f126',
+  'data': {
+    'fileUrl': 'https://test.blob.core.windows.net/debugging/testblob.txt',
+    'fileType': 'AzureBlockBlob',
+    'partitionId': '1',
+    'sizeInBytes': 0,
+    'eventCount': 0,
+    'firstSequenceNumber': -1,
+    'lastSequenceNumber': -1,
+    'firstEnqueueTime': '0001-01-01T00:00:00',
+    'lastEnqueueTime': '0001-01-01T00:00:00'
+  },
+  "dataVersion": "", 
+  "metadataVersion": "1" 
+}

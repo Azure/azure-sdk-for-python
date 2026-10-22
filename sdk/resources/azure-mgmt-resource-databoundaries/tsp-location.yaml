@@ -1,0 +1,4 @@
+directory: specification/resources/resource-manager/Microsoft.Resources/databoundaries
+commit: 050576fbe2e66b311b5f72f30de27c0f04c7881d
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

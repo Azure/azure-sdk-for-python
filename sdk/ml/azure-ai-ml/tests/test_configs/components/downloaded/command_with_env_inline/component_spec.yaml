@@ -1,0 +1,42 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+name: random_component_name
+version: 0.0.1
+display_name: CommandComponentBasic
+description: This is the basic command component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+type: command
+inputs:
+  component_in_path:
+    type: uri_folder
+    description: A path
+    optional: false
+  component_in_number:
+    type: number
+    optional: true
+    default: '10.99'
+    description: A number
+outputs:
+  component_out_path:
+    type: uri_folder
+command: echo Hello World & echo $[[${{inputs.component_in_number}}]] & echo ${{inputs.component_in_path}}
+  & echo ${{outputs.component_out_path}} > ${{outputs.component_out_path}}/component_in_number
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+  conda_file:
+    channels:
+    - conda-forge
+    dependencies:
+    - python=3.6.1
+    - pip
+    - pip:
+      - nbgitpuller
+      - sphinx-gallery
+      - pandas
+      - matplotlib
+    name: example-environment
+  os_type: linux
+resources:
+  instance_count: 1
+is_deterministic: true

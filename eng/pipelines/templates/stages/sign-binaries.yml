@@ -1,0 +1,380 @@
+# Emits a single `Sign_<safeName>` stage for one artifact that ships compiled binaries.
+#
+# Packages opt in from their service ci.yml by setting `signBinaries: true` on the artifact.
+# This stage is emitted by archetype-python-release.yml, which owns the gating that decides
+# when signing runs (release + scheduled builds, never PR builds).
+#
+# The mac and windows wheels built by the Build stage contain unsigned binaries. This stage
+# unpacks only this artifact's wheels, sends the binaries through ESRP, rebuilds the wheels,
+# and republishes them as `packages_<safeName>_signed`.
+#
+# The published artifact deliberately mirrors the layout of `packages_extended`:
+#
+#   packages_<safeName>_signed/
+#     PackageInfo/<name>.json
+#     <name>/*.whl, *.tar.gz, apistub tokens
+#
+# so that every downstream release job works against it unchanged, just by swapping the
+# artifact name. `packages_extended` itself is left untouched and still contains the
+# unsigned wheels for this package alongside every other package in the service.
+
+parameters:
+  - name: Artifact
+    type: object
+  - name: DependsOn
+    type: string
+    default: Build
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
+
+stages:
+  - stage: Sign_${{ parameters.Artifact.safeName }}
+    displayName: 'Sign: ${{ parameters.Artifact.name }}'
+    dependsOn: ${{ parameters.DependsOn }}
+    # Intentionally does not check Skip.Release or SetDevVersion. Signing must run whenever
+    # *either* consumer might need the signed wheels: the Release_<safeName> stage or the
+    # Integration dev feed publish. Skip logic belongs on those consumers, which already carry
+    # it. Adding it here would propagate through Integration's dependency and silently break
+    # the nightly and manual dev version alpha publishes.
+    #
+    # Run reasons are filtered here rather than at compile time so the emission gate in
+    # archetype-python-release.yml can stay short enough to repeat verbatim wherever a
+    # Sign_* stage is referenced. Release builds are manual runs and auto-release CI on main;
+    # scheduled builds sign the alpha packages that the Integration stage publishes.
+    #
+    # The 'Schedule' term is load bearing and coupled to daily-dev-build-variable.yml, which
+    # sets SetDevVersion=true only when Build.Reason is exactly 'Schedule'. Alpha wheels exist
+    # only when that is true, so Integration needs signed wheels under exactly the same reasons.
+    # If that check ever widens (for example to ScheduleForced), widen this list to match or
+    # scheduled signing silently stops and the alpha publish falls back to skipping the package.
+    # Reasons absent from this list (BatchedCI, ScheduleForced, IndividualCI off main) produce
+    # neither alpha wheels nor a release stage, so skipping signing for them is correct.
+    condition: >-
+      and(
+        succeeded(),
+        ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'),
+        or(
+          in(variables['Build.Reason'], 'Manual', '', 'Schedule'),
+          and(
+            eq(variables['Build.Reason'], 'IndividualCI'),
+            eq(variables['Build.SourceBranch'], 'refs/heads/main')
+          )
+        )
+      )
+
+    variables:
+      - template: /eng/pipelines/templates/variables/globals.yml
+      - template: /eng/pipelines/templates/variables/image.yml
+
+    jobs:
+      - job: ResolveTargeting
+        displayName: Resolve artifact targeting
+        pool:
+          name: $(LINUXPOOL)
+          image: $(LINUXVMIMAGE)
+          os: linux
+        steps:
+          - checkout: none
+
+          # packages_extended contains PackageInfo only for artifacts retained by the build's
+          # targeting resolution. Checking that output avoids duplicating its runtime-variable,
+          # glob, and indirect-package rules here.
+          - task: DownloadPipelineArtifact@2
+            displayName: Download artifact package info
+            inputs:
+              artifactName: packages_extended
+              itemPattern: 'PackageInfo/${{ parameters.Artifact.name }}.json'
+              targetPath: $(Build.ArtifactStagingDirectory)/targeting
+
+          - pwsh: |
+              $packageInfo = "$(Build.ArtifactStagingDirectory)/targeting/PackageInfo/${{ parameters.Artifact.name }}.json"
+
+              if (Test-Path $packageInfo) {
+                Write-Host "PackageInfo exists for '${{ parameters.Artifact.name }}'; signing will run."
+                Write-Host "##vso[task.setvariable variable=ArtifactTargeted;isOutput=true]true"
+              }
+              else {
+                Write-Host "No PackageInfo exists for '${{ parameters.Artifact.name }}'; skipping signing."
+                Write-Host "##vso[task.setvariable variable=ArtifactTargeted;isOutput=true]false"
+              }
+            name: resolve
+            displayName: Check artifact build output
+
+      - job: Sign_macOS
+        displayName: Sign macOS Wheels
+        dependsOn: ResolveTargeting
+        condition: and(succeeded(), eq(dependencies.ResolveTargeting.outputs['resolve.ArtifactTargeted'], 'true'))
+        pool:
+          name: $(LINUXPOOL)
+          image: $(LINUXVMIMAGE)
+          os: linux
+        steps:
+          # The default sparse checkout always includes /eng, which is all these jobs need.
+          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+
+          - task: UsePythonVersion@0
+            displayName: "Use Python $(PythonVersion)"
+            inputs:
+              versionSpec: $(PythonVersion)
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download unsigned mac wheels
+            inputs:
+              artifactName: packages_mac
+              # Only this artifact's wheels. Other packages in the service are untouched.
+              itemPattern: '${{ parameters.Artifact.name }}/**'
+              targetPath: $(Build.ArtifactStagingDirectory)/packages_mac
+
+          - pwsh: |
+              python eng/scripts/wheel_signing/extract_sign_inputs.py `
+                --platform mac `
+                --wheels-dir "$(Build.ArtifactStagingDirectory)/packages_mac/${{ parameters.Artifact.name }}" `
+                --work-dir "$(Build.ArtifactStagingDirectory)/mac-sign-work" `
+                --sign-input-zip "$(Build.ArtifactStagingDirectory)/mac-sign-input.zip"
+            displayName: Extract mac wheel binaries
+
+          - template: pipelines/steps/azd-cli-mac-signing.yml@azure-sdk-build-tools
+            parameters:
+              MacPath: "$(Build.ArtifactStagingDirectory)"
+              MacPattern: "mac-sign-input.zip"
+              Notarize: false
+
+          - pwsh: |
+              python eng/scripts/wheel_signing/repackage_signed_wheels.py `
+                --platform mac `
+                --work-dir "$(Build.ArtifactStagingDirectory)/mac-sign-work" `
+                --signed-input-zip "$(Build.ArtifactStagingDirectory)/mac-sign-input.zip" `
+                --output-wheels-dir "$(Build.ArtifactStagingDirectory)/mac-wheels-signed"
+            displayName: Repackage mac wheels
+
+          - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+            parameters:
+              ArtifactPath: '$(Build.ArtifactStagingDirectory)/mac-wheels-signed'
+              ArtifactName: 'packages_${{ parameters.Artifact.safeName }}_mac_signed'
+
+      - job: Sign_Windows
+        displayName: Sign Windows Wheels
+        dependsOn: ResolveTargeting
+        condition: and(succeeded(), eq(dependencies.ResolveTargeting.outputs['resolve.ArtifactTargeted'], 'true'))
+        pool:
+          name: $(LINUXPOOL)
+          image: $(LINUXVMIMAGE)
+          os: linux
+        steps:
+          # The default sparse checkout always includes /eng, which is all these jobs need.
+          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+
+          - task: UsePythonVersion@0
+            displayName: "Use Python $(PythonVersion)"
+            inputs:
+              versionSpec: $(PythonVersion)
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download unsigned windows wheels
+            inputs:
+              artifactName: packages_windows
+              itemPattern: '${{ parameters.Artifact.name }}/**'
+              targetPath: $(Build.ArtifactStagingDirectory)/packages_windows
+
+          - pwsh: |
+              python eng/scripts/wheel_signing/extract_sign_inputs.py `
+                --platform windows `
+                --wheels-dir "$(Build.ArtifactStagingDirectory)/packages_windows/${{ parameters.Artifact.name }}" `
+                --work-dir "$(Build.ArtifactStagingDirectory)/win-sign-work" `
+                --sign-input-dir "$(Build.ArtifactStagingDirectory)/win-sign-input"
+            displayName: Extract windows wheel binaries
+
+          - template: pipelines/steps/azd-cli-win-signing.yml@azure-sdk-build-tools
+            parameters:
+              WinPath: "$(Build.ArtifactStagingDirectory)/win-sign-input"
+              # The extractor limits this payload to Windows signable files (.pyd and .dll).
+              WinPattern: '**/*'
+
+          - pwsh: |
+              python eng/scripts/wheel_signing/repackage_signed_wheels.py `
+                --platform windows `
+                --work-dir "$(Build.ArtifactStagingDirectory)/win-sign-work" `
+                --signed-input-dir "$(Build.ArtifactStagingDirectory)/win-sign-input" `
+                --output-wheels-dir "$(Build.ArtifactStagingDirectory)/win-wheels-signed"
+            displayName: Repackage windows wheels
+
+          - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+            parameters:
+              ArtifactPath: '$(Build.ArtifactStagingDirectory)/win-wheels-signed'
+              ArtifactName: 'packages_${{ parameters.Artifact.safeName }}_win_signed'
+
+      # Smoke_macOS and Smoke_Windows are the only jobs in this stage that actually run on the
+      # signed wheel's real target OS. Everything upstream (extract/sign/repackage/Assemble)
+      # runs on Linux and never installs or imports the signed binary, so a binary corrupted by
+      # signing, or a repackaging bug that swaps in the wrong file, would otherwise only be
+      # discovered after release. These jobs install the signed wheel produced by Sign_macOS /
+      # Sign_Windows and import its compiled extension module(s); they intentionally do not
+      # rerun the package's full test suite, which already runs against the unsigned wheel on
+      # the same OS during Build_<platform>.
+      - job: Smoke_macOS
+        displayName: Smoke test signed macOS wheel
+        dependsOn:
+          - ResolveTargeting
+          - Sign_macOS
+        condition: and(succeeded(), eq(dependencies.ResolveTargeting.outputs['resolve.ArtifactTargeted'], 'true'))
+        pool:
+          name: $(MACPOOL)
+          vmImage: $(MACVMIMAGE)
+          os: macOS
+        steps:
+          # The default sparse checkout always includes /eng, which is all this job needs.
+          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+
+          - task: UsePythonVersion@0
+            displayName: "Use Python 3.11 (arm64)"
+            inputs:
+              # The hosted macOS image is ARM64-only. The signed wheels use abi3,
+              # so Python 3.11 can install and exercise the cp310-abi3 wheel.
+              versionSpec: '3.11'
+              architecture: arm64
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download signed mac wheel
+            inputs:
+              artifactName: packages_${{ parameters.Artifact.safeName }}_mac_signed
+              targetPath: $(Build.ArtifactStagingDirectory)/mac_signed
+
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
+              EnableTwineAuth: false
+              EnableUvAuth: false
+
+          - pwsh: python -m pip install packaging
+            displayName: Install packaging (wheel tag matching)
+
+          - pwsh: |
+              python eng/scripts/wheel_signing/smoke_test_signed_wheel.py `
+                --wheel-dir "$(Build.ArtifactStagingDirectory)/mac_signed"
+            displayName: Install and import signed mac wheel
+
+      - job: Smoke_Windows
+        displayName: Smoke test signed Windows wheel
+        dependsOn:
+          - ResolveTargeting
+          - Sign_Windows
+        condition: and(succeeded(), eq(dependencies.ResolveTargeting.outputs['resolve.ArtifactTargeted'], 'true'))
+        pool:
+          name: $(WINDOWSPOOL)
+          image: $(WINDOWSVMIMAGE)
+          os: windows
+        steps:
+          # The default sparse checkout always includes /eng, which is all this job needs.
+          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+
+          - task: UsePythonVersion@0
+            displayName: "Use Python $(PythonVersion)"
+            inputs:
+              versionSpec: $(PythonVersion)
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download signed windows wheel
+            inputs:
+              artifactName: packages_${{ parameters.Artifact.safeName }}_win_signed
+              targetPath: $(Build.ArtifactStagingDirectory)/win_signed
+
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
+              EnableTwineAuth: false
+              EnableUvAuth: false
+
+          - pwsh: python -m pip install packaging
+            displayName: Install packaging (wheel tag matching)
+
+          - pwsh: |
+              python eng/scripts/wheel_signing/smoke_test_signed_wheel.py `
+                --wheel-dir "$(Build.ArtifactStagingDirectory)/win_signed"
+            displayName: Install and import signed windows wheel
+
+      - job: Assemble
+        displayName: Assemble signed artifact
+        dependsOn:
+          - ResolveTargeting
+          - Sign_macOS
+          - Sign_Windows
+          - Smoke_macOS
+          - Smoke_Windows
+        # succeeded() (the default) requires every job in dependsOn to have succeeded, so this
+        # job - and therefore the packages_<safeName>_signed publish below - never runs unless
+        # both smoke tests passed. Without this, Assemble only depends on Sign_macOS/Sign_Windows
+        # and runs in parallel with the smoke jobs, so a corrupted signed binary could still be
+        # published and picked up by Integration's succeededOrFailed()/best-effort download
+        # before the smoke failure is even known.
+        condition: and(succeeded(), eq(dependencies.ResolveTargeting.outputs['resolve.ArtifactTargeted'], 'true'))
+        pool:
+          name: $(LINUXPOOL)
+          image: $(LINUXVMIMAGE)
+          os: linux
+        steps:
+          - checkout: none
+
+          # packages_extended is the merged output of the three platform builds plus the
+          # apistub tokens and PackageInfo. Take this package's slice of it as the base,
+          # then overwrite the mac and windows wheels with their signed replacements.
+          - task: DownloadPipelineArtifact@2
+            displayName: Download package files
+            inputs:
+              artifactName: packages_extended
+              itemPattern: |
+                ${{ parameters.Artifact.name }}/**
+                PackageInfo/${{ parameters.Artifact.name }}.json
+              targetPath: $(Build.ArtifactStagingDirectory)/signed
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download signed mac wheels
+            inputs:
+              artifactName: packages_${{ parameters.Artifact.safeName }}_mac_signed
+              targetPath: $(Build.ArtifactStagingDirectory)/mac_signed
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download signed windows wheels
+            inputs:
+              artifactName: packages_${{ parameters.Artifact.safeName }}_win_signed
+              targetPath: $(Build.ArtifactStagingDirectory)/win_signed
+
+          - pwsh: |
+              $ErrorActionPreference = 'Stop'
+
+              $packageDir = "$(Build.ArtifactStagingDirectory)/signed/${{ parameters.Artifact.name }}"
+              $packageInfo = "$(Build.ArtifactStagingDirectory)/signed/PackageInfo/${{ parameters.Artifact.name }}.json"
+
+              if (-not (Test-Path $packageDir)) {
+                throw "Expected package folder '$packageDir' in packages_extended."
+              }
+              if (-not (Test-Path $packageInfo)) {
+                throw "Expected package info file '$packageInfo' in packages_extended."
+              }
+
+              $signedWheels = @(
+                Get-ChildItem "$(Build.ArtifactStagingDirectory)/mac_signed" -Recurse -Filter "*.whl"
+                Get-ChildItem "$(Build.ArtifactStagingDirectory)/win_signed" -Recurse -Filter "*.whl"
+              )
+
+              if (-not $signedWheels) {
+                throw "No signed wheels were produced for ${{ parameters.Artifact.name }}."
+              }
+
+              foreach ($wheel in $signedWheels) {
+                $target = Join-Path $packageDir $wheel.Name
+                if (-not (Test-Path $target)) {
+                  throw "Signed wheel '$($wheel.Name)' has no unsigned counterpart in packages_extended. The signed artifact would not match the build output."
+                }
+                Write-Host "Replacing $($wheel.Name) with its signed build."
+                Copy-Item -Path $wheel.FullName -Destination $target -Force
+              }
+
+              Write-Host "`nFinal contents of the signed artifact:"
+              Get-ChildItem -Recurse "$(Build.ArtifactStagingDirectory)/signed" | Select-Object -ExpandProperty FullName
+            displayName: Overlay signed wheels
+
+          - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+            parameters:
+              ArtifactPath: '$(Build.ArtifactStagingDirectory)/signed'
+              ArtifactName: 'packages_${{ parameters.Artifact.safeName }}_signed'

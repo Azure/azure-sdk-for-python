@@ -1,0 +1,33 @@
+$schema: https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json
+type: pipeline
+
+name: helloworld_pipeline_component
+display_name: Hello World Pipeline Component
+description: This is the basic pipeline component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+inputs:
+  component_in_number:
+    description: A number
+    type: number
+    default: 10.99
+    optional: True
+  component_in_path:
+    description: A path
+    type: uri_folder
+  node_compute:
+    type: string
+    default: azureml:cpu-cluster
+
+
+jobs:
+  component_a_job:
+    command: echo "hello" && echo "world" > ${{outputs.world_output}}/world.txt
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    compute: ${{parent.inputs.node_compute}}
+    outputs:
+      world_output:

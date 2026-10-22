@@ -1,0 +1,28 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'import_pipeline_test_description'
+compute: azureml:cpu-cluster
+
+jobs:
+  import_step:
+    type: import
+    component: ./import_component_test.yml
+    inputs:
+      type: azuresqldb
+      connection: azureml:my_username_password
+      query: select * from REGION
+    outputs:
+      output:
+        type: mltable
+        path: azureml://datastores/workspaceblobstore/paths/output_dir/
+
+  data_prep_step:
+    type: command
+    inputs:
+      imported_data:
+        type: mltable
+        path: ${{parent.jobs.import_step.outputs.output}}
+    code: ../python
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+    command: echo ${{inputs.imported_data}}

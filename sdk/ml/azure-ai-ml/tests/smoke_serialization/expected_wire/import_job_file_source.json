@@ -1,0 +1,30 @@
+{
+  "properties": {
+    "command": "import",
+    "computeId": "smoke-compute",
+    "displayName": "smoke-import-file-display",
+    "environmentId": "smoke-compute",
+    "experimentName": "smoke-experiment",
+    "inputs": {
+      "connection": {
+        "jobInputType": "literal"
+      },
+      "path": {
+        "jobInputType": "literal",
+        "value": "s3://my-bucket/my-folder/"
+      },
+      "type": {
+        "jobInputType": "literal",
+        "value": "s3"
+      }
+    },
+    "isArchived": false,
+    "jobType": "Command",
+    "outputs": {
+      "output": {
+        "jobOutputType": "uri_folder",
+        "uri": "azureml://datastores/workspaceblobstore/paths/imported-files/"
+      }
+    }
+  }
+}

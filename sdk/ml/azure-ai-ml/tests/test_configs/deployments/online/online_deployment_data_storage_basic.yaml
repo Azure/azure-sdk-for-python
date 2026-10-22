@@ -1,0 +1,23 @@
+$schema: http://azureml/sdk-2-0/OnlineDeployment.json
+
+name: agora
+endpoint_name: deploytest
+description: description for online deployment
+model:
+  path: ../model-5/model/
+code_configuration:
+  code: ../model-5/onlinescoring/
+  scoring_script: score.py
+environment:
+  conda_file: ../model-5/environment/conda.yml
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:latest
+instance_count: 1
+instance_type: Standard_DS3_V2
+scale_settings:
+  type: default
+data_collector:
+  collections:
+    request:
+      enabled: "true"
+    response:
+      enabled: "false"

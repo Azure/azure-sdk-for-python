@@ -1,0 +1,12 @@
+-e ../../../eng/tools/azure-sdk-tools
+aiohttp>=3.0; python_version >= '3.5'
+../../storage/azure-mgmt-storage
+../../eventhub/azure-mgmt-eventhub
+azure-mgmt-loganalytics
+../../appservice/azure-mgmt-web
+azure-mgmt-compute
+../../network/azure-mgmt-network
+../../applicationinsights/azure-mgmt-applicationinsights
+../../logic/azure-mgmt-logic
+
+../../identity/azure-identity

@@ -1,0 +1,41 @@
+$schema: http://azureml/sdk-2-0/SparkComponent.json
+name: sample_spark_component
+type: spark
+version: 1
+display_name: Aml Spark sample test module
+description: Aml Spark sample test module
+
+
+code: ./basic_src
+
+entry:
+  file: sampleword.py
+
+inputs:
+  input1:
+    type: uri_file
+    mode: direct
+  sample_rate:
+    type: number
+    default: 0.01
+
+outputs:
+  output1:
+    type: uri_file
+    mode: direct
+
+
+args: >-
+  --input1 ${{inputs.input1}}
+  --output2 ${{outputs.output1}}
+  --my_sample_rate ${{inputs.sample_rate}}
+
+conf:
+  spark.driver.cores: 1
+  spark.driver.memory: "2g"
+  spark.executor.cores: 2
+  spark.executor.memory: "2g"
+  spark.dynamicAllocation.enabled: True
+  spark.dynamicAllocation.minExecutors: 1
+  spark.dynamicAllocation.maxExecutors: 4
+#environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33

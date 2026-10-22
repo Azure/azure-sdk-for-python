@@ -1,0 +1,48 @@
+type: distillation
+
+name: distillation_job_test
+description: "Distill Llama 3.1 8b model using Llama 3.1 405B teacher model"
+experiment_name: "Distillation-Math-Test-1234"
+
+# Data Generation Properties
+data_generation_type: label_generation
+data_generation_task_type: summarization
+prompt_settings:
+  enable_chain_of_thought: false
+  enable_chain_of_density: true
+  max_len_summary: 220
+
+# Input data
+training_data: azureml:train_data:1
+validation_data: azureml:validation_data:1
+
+# Teacher model related properties
+teacher_model_endpoint_connection: 
+  type: serverless
+  name: Llama-3-1-405B-Instruct-BASE
+  endpoint: http://foo.com
+  api_key: FAKEKEY
+teacher_model_settings:
+  inference_parameters:
+    frequency_penalty: 1
+    presence_penalty: 1
+  endpoint_request_settings:
+    min_endpoint_success_ratio: 0.9
+
+# For Finetuning
+student_model:
+  type: mlflow_model
+  path: azureml://registries/azureml-meta/models/Meta-Llama-3.1-8B-Instruct/versions/1
+hyperparameters:
+  num_train_epochs: "3"
+
+# Output finetuned model and evaluation results
+outputs:
+  registered_model:
+    type: mlflow_model
+    name: llama-3-1-8b-distilled-1234
+
+# Resource for Data Generation Step and Evaluation Step.
+compute: serverless
+resources:
+  instance_type: Standard_D2_v3

@@ -1,0 +1,12 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
+name: ls_command
+display_name: Ls Command
+version: 0.0.1
+type: CommandComponent
+is_deterministic: true
+command: >-
+  ls
+environment:
+  conda:
+    pip_requirements_file: requirements.txt
+  os: Linux

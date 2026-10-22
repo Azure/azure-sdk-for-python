@@ -1,0 +1,9 @@
+-e ../../../eng/tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+../azure-keyvault-keys
+../../nspkg/azure-keyvault-nspkg
+aiohttp>=3.0
+azure-storage-blob==12.6.0
+parameterized>=0.7.3
+python-dateutil>=2.8.0

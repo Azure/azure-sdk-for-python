@@ -1,0 +1,4 @@
+-e ../../../eng/tools/azure-sdk-tools
+../../resources/azure-mgmt-resource
+azure-identity
+aiohttp

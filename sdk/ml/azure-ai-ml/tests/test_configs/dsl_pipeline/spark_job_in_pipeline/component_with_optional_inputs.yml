@@ -1,0 +1,48 @@
+$schema: http://azureml/sdk-2-0/SparkComponent.json
+name: sample_spark_component
+type: spark
+version: 1
+display_name: Aml Spark dataset sample test module
+description: Aml Spark dataset sample test module
+
+
+code: ./basic_src
+
+entry:
+  file: sampleword_with_optional_input.py
+
+inputs:
+  input1:
+    type: uri_file
+    mode: direct
+  sample_rate:
+    type: number
+    default: 0.01
+  input_optional:
+    description: An optional path
+    type: uri_folder
+    optional: True
+
+outputs:
+  output1:
+    type: uri_file
+    mode: direct
+
+
+args: >-
+  --input1 ${{inputs.input1}}
+  --output2 ${{outputs.output1}}
+  --my_sample_rate ${{inputs.sample_rate}}
+  $[[--input_optional ${{inputs.input_optional}}]]
+
+conf:
+  spark.driver.cores: 1
+  spark.driver.memory: "2g"
+  spark.executor.cores: 2
+  spark.executor.memory: "2g"
+  spark.dynamicAllocation.enabled: True
+  spark.dynamicAllocation.minExecutors: 1
+  spark.dynamicAllocation.maxExecutors: 4
+
+environment:
+  image: conda/miniconda3

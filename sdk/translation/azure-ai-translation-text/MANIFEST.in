@@ -1,0 +1,8 @@
+include *.md
+include LICENSE
+include azure/ai/translation/text/py.typed
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include azure/__init__.py
+include azure/ai/__init__.py
+include azure/ai/translation/__init__.py

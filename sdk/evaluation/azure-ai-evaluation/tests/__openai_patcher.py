@@ -1,0 +1,112 @@
+"""Implementation of an OpenAI HTTP client that forwards traffic to the Azure SDK test-proxy.
+
+.. note::
+
+    Importing this module replaces OpenAI's default sync and async HTTP
+    wrapper classes with proxy-aware subclasses. The subclasses preserve
+    whichever underlying transport OpenAI selected, including httpx2.
+
+"""
+
+from contextlib import contextmanager
+from dataclasses import dataclass
+from typing import Iterable, Iterator, Literal, Optional
+
+import httpx
+import openai._base_client
+from typing_extensions import override
+
+
+@dataclass
+class TestProxyConfig:
+    recording_id: str
+    """The ID for the ongoing test recording."""
+
+    recording_mode: Literal["playback", "record"]
+    """The current recording mode."""
+
+    proxy_url: str
+    """The url for the Azure SDK test proxy."""
+
+
+class TestProxyHttpxClientBase:
+    recording_config: Optional[TestProxyConfig] = None
+
+    @classmethod
+    def is_recording(cls) -> bool:
+        """Whether we are forwarding requests to the test proxy
+
+        :return: True if forwarding, False otherwise
+        :rtype: bool
+        """
+        return cls.recording_config is not None
+
+    @classmethod
+    @contextmanager
+    def record_with_proxy(cls, config: TestProxyConfig) -> Iterable[None]:
+        """Forward all requests made within the scope of context manager to test-proxy.
+
+        :param TestProxyConfig config: The test proxy configuration
+        """
+        cls.recording_config = config
+
+        yield
+
+        cls.recording_config = None
+
+    @contextmanager
+    def _reroute_to_proxy(self, request: httpx.Request) -> Iterator[None]:
+        """Temporarily re-route a request to be sent throught the test proxy.
+
+        The request is modified in place, but is restored once the contextmanager exits
+
+        :param httpx.Request request: The request to update
+        :return: None
+        :rtype: None
+        """
+        assert self.is_recording(), f"{self._reroute_to_proxy.__qualname__} should only be called while recording"
+        config = self.recording_config
+        original_url = request.url
+        url_type = type(original_url)
+
+        request_path = original_url.copy_with(scheme="", netloc=b"")
+        request.url = url_type(config.proxy_url).join(request_path)
+
+        original_headers = request.headers
+        request.headers = request.headers.copy()
+        request.headers.setdefault(
+            "x-recording-upstream-base-uri",
+            str(url_type(scheme=original_url.scheme, netloc=original_url.netloc)),
+        )
+        request.headers["x-recording-id"] = config.recording_id
+        request.headers["x-recording-mode"] = config.recording_mode
+
+        yield
+
+        request.url = original_url
+        request.headers = original_headers
+
+
+class TestProxyHttpxClient(TestProxyHttpxClientBase, openai._base_client.SyncHttpxClientWrapper):
+    @override
+    def _send_single_request(self, request: httpx.Request) -> httpx.Response:
+        # OpenAI auth and redirect-safety hooks must evaluate the original Azure URL before proxy routing.
+        if self.is_recording():
+            with self._reroute_to_proxy(request):
+                return super()._send_single_request(request)
+        return super()._send_single_request(request)
+
+
+class TestProxyAsyncHttpxClient(TestProxyHttpxClientBase, openai._base_client.AsyncHttpxClientWrapper):
+    @override
+    async def _send_single_request(self, request: httpx.Request) -> httpx.Response:
+        # OpenAI auth and redirect-safety hooks must evaluate the original Azure URL before proxy routing.
+        if self.is_recording():
+            with self._reroute_to_proxy(request):
+                return await super()._send_single_request(request)
+        return await super()._send_single_request(request)
+
+
+# OpenAI instantiates these aliases when no custom HTTP client is provided.
+openai._base_client.SyncHttpxClientWrapper = TestProxyHttpxClient
+openai._base_client.AsyncHttpxClientWrapper = TestProxyAsyncHttpxClient

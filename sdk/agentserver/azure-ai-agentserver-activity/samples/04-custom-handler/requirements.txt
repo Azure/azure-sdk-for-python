@@ -1,0 +1,6 @@
+# The custom-handler path does not initialize the M365 Agents SDK, so the
+# microsoft-agents-* packages are not required here. The handler makes the
+# outbound Bot Connector reply itself, so it needs azure-identity (mint the
+# token) and aiohttp (POST the reply).
+azure-identity
+aiohttp>=3.9.0

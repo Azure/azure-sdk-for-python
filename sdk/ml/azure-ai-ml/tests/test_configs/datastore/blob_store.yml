@@ -1,0 +1,6 @@
+type: azure_blob
+name: azure_blob_datastore
+account_name: sdkvnextclidcdnrc7zb7xyy
+credentials:
+  account_key: <BASE 64 ENCODED SECRET>
+container_name: testblob

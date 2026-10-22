@@ -1,0 +1,16 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: expression_component
+version: 1
+
+outputs:
+  output:
+    is_control: true
+
+code: ./src
+
+environment: azureml://registries/azureml/environments/mldesigner/labels/latest
+
+command: >-
+  {command_placeholder}

@@ -1,0 +1,7 @@
+enable_data_isolation: false
+hbi_workspace: false
+name: loader
+serverless_compute:
+  custom_subnet: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/default
+  no_public_ip: true
+tags: {}

@@ -1,0 +1,14 @@
+# install from root of repo
+aiohttp>=3.0
+eng/tools/azure-sdk-tools
+mock;
+aiodns>=2.0
+parameterized>=0.7.3
+trio
+typing_extensions>=3.7.2
+cryptography
+adal
+setuptools==83.0.0
+pytest-asyncio==0.25.3
+-e sdk/core/azure-core/tests/testserver_tests/coretestserver
+azure-mgmt-storage

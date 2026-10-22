@@ -1,0 +1,35 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: compare_2_models
+version: 0.0.1
+display_name: Compare 2 Models
+description: A dummy comparison module takes two models as input and outputs the better one
+inputs:
+  model1:
+    type: uri_folder
+    optional: true
+  eval_result1:
+    type: uri_folder
+    optional: true
+  model2:
+    type: uri_folder
+    optional: true
+  eval_result2:
+    type: uri_folder
+    optional: true
+outputs:
+  best_model:
+    type: uri_folder
+  best_result:
+    type: uri_folder
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+code: ./compare2_src
+command: >-
+  python compare2.py
+  $[[--model1 ${{inputs.model1}}]]
+  $[[--eval_result1 ${{inputs.eval_result1}}]]
+  $[[--model2 ${{inputs.model2}}]]
+  $[[--eval_result2 ${{inputs.eval_result2}}]]
+  --best_model ${{outputs.best_model}}
+  --best_result ${{outputs.best_result}}

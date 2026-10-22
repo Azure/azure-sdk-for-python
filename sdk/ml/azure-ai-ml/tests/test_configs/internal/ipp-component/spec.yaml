@@ -1,0 +1,24 @@
+$schema: http://azureml/sdk-1-5/IntellectualPropertyProtectedComponent.json
+# meta data of the IP-Protected component
+name: microsoft.com.azureml.gpt3.finetune
+version: 0.0.2
+display_name: GPT3 IP protected Fine-tune training
+is_deterministic: True
+type: IntellectualPropertyProtectedComponent
+description: Intellectual Property Protected Module for GPT3 fine tune
+tags:
+  contact: xxxxxx@microsoft.com
+
+# STEP 1. reference an existing component yaml, which implement the logic
+reference: file:gpt3finetune.spec.yaml
+
+# STEP 2. Define the "Intellectual Property" for the "IP-Protected" component
+intellectual_property:
+  publisher: Contoso
+
+# STEP 3. Specify "Intellectual Property Protected" input and output ports, not listed ports are ip-protected
+intellectual_property_protected_inputs:
+  - inputs.base_model
+  - inputs.lora_weights
+intellectual_property_protected_outputs:
+  - outputs.output_model_checkpoints

@@ -1,0 +1,7 @@
+-e ../../../eng/tools/azure-sdk-tools
+../../identity/azure-identity
+../azure-communication-identity
+../azure-communication-phonenumbers
+../../servicebus/azure-servicebus
+../../core/azure-core
+aiohttp>=3.0

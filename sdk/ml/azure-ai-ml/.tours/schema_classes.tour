@@ -1,0 +1,146 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "AML SDK Schema Classes",
+  "steps": [
+    {
+      "directory": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema",
+      "description": "This code tour covers the purpose, functionality, and details of schema classes within the AML SDK.\n\nSchema classes are hand-written python classes that define the YAML structure of entity classes. These are then used for saving and loading these objects from files. Since entity classes are the SDK representations of Azure resources, schema classes can be thought of as the YAML structure of Azure resources. \n\nOur implementation of schema classes makes generous use of a python library called [Marshmallow](https://marshmallow.readthedocs.io/en/stable/), along with a couple internal tricks layered on top of marshmallow.",
+      "title": "Introduction"
+    },
+    {
+      "directory": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/core",
+      "description": "Top-level entity classes inherit one of several base classes depending on what they represent. The classes are listed here in order of inheritance, with each class being a child of the previous class in the list:\n - PatchedBaseSchema: Prevents the writing to YAML of attributes with `None` values.\n - PathAwareSchema: Ignores the `$schema` field. Does a bunch of magic related to param overrides, and changes the behavior of dump-only values to be ignored instead of causing errors when loaded.\n - YamlFileSchema: Adds functionality to allow schema classes to be built from paths to separate YAML files in place of inline yaml definitions.\n - ResourceSchema: Auto-adds a bunch of fields that most resource objects have.\n\nDifferent schema classes inherit from a different base class from the four above, depending on how much of the cumulative functionality they need.",
+      "title": "Base Classes"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/workspace.py",
+      "description": "Let's take a look at an example with the WorkspaceSchema class. This class defines the YAML representation for the workspace resource.",
+      "line": 16,
+      "title": "Example: WorkspaceSchema"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/workspace.py",
+      "description": "Adding a primitive value to a schema is fairly straightforward. Just define a variable, and assign it the relevant field type. In this case, the \"location\" field is defined as a string.",
+      "line": 18,
+      "title": "Simple value: Location"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/tests/test_configs/workspace/workspace_full.yaml",
+      "description": "We can see the effect of the schema's \"location\" field in this yaml file that defines a workspace. A \"location\" entry exists, and can be set to an arbitrary string (although in this case, the backend will reject strings that aren't valid locations, but the schema class doesn't validate that).",
+      "line": 2,
+      "title": "Location in YAML"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/workspace.py",
+      "description": "We can configure field values to have a bunch of behaviors. We will cover the common options in this tour, starting with the \"required\" option. \n\nAs the name suggests, setting a field's \"required\" kwarg to true will make that value required for a schema to be loaded properly. It is false by default.",
+      "line": 17,
+      "title": "\"required\" Fields"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/workspace.py",
+      "description": "The \"dump_only\" field is also false by default. When it is true, the associated field is IGNORED when a yaml file is loaded. However, if an instantiated schema class object has the field and is dumped into YAML, that field will be included in the resulting YAML if it exists in the object.\n\nThis option is typically used for values that are only ever assigned by the backend during requests, and should only ever be read by users, never written. The most common example of values like this is resource ids, as is the case for the \"id\" value that we're looking at now. ",
+      "line": 19,
+      "title": "\"dump_only\" Fields"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/workspace.py",
+      "description": "The validate kwarg allows us to pass in functions that enforce requirements on inputted values. It is typically used to ensure that inputted strings match a specific format, as is the case here. Check out the implementation of the `validate_arm_str` function to understand what the required format of the `storage_account` value.",
+      "line": 25,
+      "selection": {
+        "start": {
+          "line": 25,
+          "character": 43
+        },
+        "end": {
+          "line": 25,
+          "character": 59
+        }
+      },
+      "title": "\"validate\" Functions"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/workspace.py",
+      "description": "The `customer_managed_key` variable is a \"NestedField\". This is a custom field class in which the value is an entirely new schema class, or something that'll have indented sub-values in the corresponding YAML. Most of the time, nested fields will refer to other schema classes within the folder you're working in, as is the case here.",
+      "line": 29,
+      "selection": {
+        "start": {
+          "line": 25,
+          "character": 43
+        },
+        "end": {
+          "line": 25,
+          "character": 59
+        }
+      },
+      "title": "Nested Fields"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/customer_managed_key.py",
+      "description": "Here is the `CustomerManagedKeySchema` class that was referenced by the nested field from the previous tour step. As you can see, it's another schema class, complete with its own fields, potentially including even more nested fields in some cases.",
+      "line": 12,
+      "selection": {
+        "start": {
+          "line": 12,
+          "character": 7
+        },
+        "end": {
+          "line": 12,
+          "character": 31
+        }
+      },
+      "title": "Nested Field Subclass"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/tests/test_configs/workspace/workspace_full.yaml",
+      "description": "Returning back to our example YAML, we can see that the custom_managed_key value is defined with 2 sub-values, following typical YAML child formatting. Also note that only two of the numerous values defined within `CustomerManagedKeySchema` are specified here, since none of them were marked as required fields.",
+      "line": 15,
+      "title": "Nested Field in YAML"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/compute/schedule.py",
+      "description": "Another important custom field that we make use of is the `UnionField`. This allows us to define polymorphic types. In this example, the \"trigger\" field can be one of two different classes through use of more `NestedField` instances.",
+      "line": 82,
+      "title": "UnionField"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/workspace.py",
+      "description": "Enums also have their own custom field called `StringTransformedEnum`. This field has inputs to let you define the valid enum values, as well as a field to provide a case transformation.",
+      "line": 33,
+      "selection": {
+        "start": {
+          "line": 33,
+          "character": 29
+        },
+        "end": {
+          "line": 33,
+          "character": 50
+        }
+      },
+      "title": "Enums"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/identity.py",
+      "description": "Schema classes have some annotations that can be used to mark functions for injection at specific points of the YAML conversion process. The `@pre_dump` annotation shown here marks the function below to be run before a python object is converted into a schema class object, and is useful when the two classes' fields don't match perfectly.",
+      "line": 43,
+      "title": "@pre_dump annotation"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/identity.py",
+      "description": "On the other hand, the `@post_load` annotation is needed to define the conversion from a schema class to another (typically more function) class. This function is required for all child schema classes that are defined via `NestedField` values, but it must NOT be defined by any top-level schema class in order to prevent circular import problems.",
+      "line": 49,
+      "title": "@post_load annotation"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/workspace.py",
+      "description": "The reason for the circular import risk from importing top-level entity classes is the `_load` function that all top-level entity classes are expected to implement, which converts a schema class instance into an entity instance. This is also the top-level intersection point between entity and schema classes.",
+      "line": 148,
+      "title": "Entity Class Relation: _load"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/workspace.py",
+      "description": "That concludes this introduction to schema classes and how they're used in the AML SDK. If you're curious about them, I encourage you to check out example YAML files that we have strewn about this repo (there are many that are used for [testing](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/tests/test_configs)), and cross-validate them with their schema classes to see how they line up.",
+      "line": 16,
+      "title": "Conclusion"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+Service: servicebus
+
+Project: sdk/servicebus/azure-servicebus
+
+PrimaryPackage: azure-servicebus
+
+PackageVersions:
+- azure-core: 1.31.0
+  azure-servicebus: 7.11.4
+- azure-core: source
+  azure-servicebus: source
+
+Tests:
+- Test: send-queue-messages-batch
+  Class: SendQueueMessageBatchTest
+  Arguments:
+  - --message-size 1024 --batch-size 100
+  - --message-size 1024 --batch-size 100 --transport-type 1
+
+- Test: receive-queue-messages-batch
+  Class: ReceiveQueueMessageBatchTest
+  Arguments:
+  - --message-size 2000 --num-messages 50 --preload 10000
+  - --message-size 2000 --num-messages 50 --preload 10000 --transport-type 1
+
+- Test: send-subscription-messages-batch
+  Class: SendTopicMessageBatchTest
+  Arguments:
+  - --message-size 1024 --batch-size 100
+  - --message-size 1024 --batch-size 100 --transport-type 1
+
+- Test: receive-subscription-messages-batch
+  Class: ReceiveSubscriptionMessageBatchTest
+  Arguments:
+  - --message-size 2000 --num-messages 50 --preload 10000
+  - --message-size 2000 --num-messages 50 --preload 10000 --transport-type 1

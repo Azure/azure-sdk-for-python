@@ -1,0 +1,208 @@
+parameters:
+  Artifacts: []
+  TestPipeline: false
+  ArtifactName: 'not-specified'
+  ServiceDirectory: 'not-specified'
+  DependsOn: Build
+  DocArtifact: 'documentation'
+  DevFeedName: 'public/azure-sdk-for-python'
+  PublicFeed: PyPi
+  PublicPublishEnvironment: package-publish
+  TargetDocRepoOwner: ''
+  TargetDocRepoName: ''
+  PackageSourceOverride: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+
+stages:
+  # Binary signing stages, emitted per artifact that opted in with `signBinaries: true`.
+  #
+  # INVARIANT: this compile-time gate must remain a superset of every gate that references a
+  # Sign_* stage, namely the release gate below and the Integration stage's dependsOn. If they
+  # drift so a Sign_* stage is referenced but not emitted, the pipeline fails to compile on an
+  # unresolvable dependsOn. "internal and not a PR build" is the loosest of the three, so it is
+  # repeated verbatim in all of them, and the narrower "which run reasons actually sign" logic
+  # lives in the stage's runtime condition instead of being duplicated here.
+  #
+  # Signing never runs on PR builds: the public project cannot reach internal/azure-sdk-build-tools,
+  # and ESRP must not be handed unreviewed code.
+  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - ${{ each artifact in parameters.Artifacts }}:
+      - ${{ if eq(artifact.signBinaries, true) }}:
+        - template: /eng/pipelines/templates/stages/sign-binaries.yml
+          parameters:
+            Artifact: ${{ artifact }}
+            DependsOn: ${{ parameters.DependsOn }}
+            DevFeedName: ${{ parameters.DevFeedName }}
+  # Release stages are compiled for:
+  #   * internal manual runs (existing behavior), and
+  #   * internal post-merge CI on 'main' (auto-release). For auto-release, only the packages changed by a
+  #     merged PR carrying the 'auto-release' label are released; each Release_* stage is gated at runtime
+  #     on the ReleaseArtifact_<safeName> output produced by the shared AutoReleasePrepare stage below.
+  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), or(in(variables['Build.Reason'], 'Manual', ''), and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))) }}:
+
+    # Auto-release preparation runs only for post-merge CI on 'main'. The shared (eng/common) stage resolves
+    # the merged PR from Build.SourceVersion, requires the 'auto-release' label, maps the PR's changed files
+    # to releasable packages via this repo's package detection, and emits ReleaseArtifact_<safeName> outputs.
+    # It fails closed: any error or missing/unlabeled PR leaves every artifact marked 'false'. Python has no
+    # Signing stage, so DependsOn is overridden to the Build stage.
+    - ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+        - template: /eng/common/pipelines/templates/stages/archetype-auto-release-prepare.yml
+          parameters:
+            DependsOn:
+              - ${{ parameters.DependsOn }}
+            Artifacts: ${{ parameters.Artifacts }}
+            Condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+            # Package detection installs azure-sdk-tools; set up Python and authenticate pip/uv to the
+            # internal feed first so the install does not fall back to (firewalled) public PyPI.
+            PreSteps:
+              - task: UsePythonVersion@0
+                inputs:
+                  versionSpec: '3.12'
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+                  EnableTwineAuth: false
+                  EnablePipAuth: true
+                  EnableUvAuth: true
+
+    - ${{ each artifact in parameters.Artifacts }}:
+      - template: /eng/pipelines/templates/stages/release-artifact.yml
+        parameters:
+          Artifact: ${{ artifact }}
+          # Packages that ship compiled binaries release from the artifact rebuilt by their
+          # Sign_<safeName> stage. Everything else keeps releasing from the build output, so a
+          # service can mix both kinds of packages freely.
+          ${{ if eq(artifact.signBinaries, true) }}:
+            ArtifactName: packages_${{ artifact.safeName }}_signed
+            DependsOn: Sign_${{ artifact.safeName }}
+            SignedArtifactTargetingStage: Sign_${{ artifact.safeName }}
+          ${{ else }}:
+            ArtifactName: ${{ parameters.ArtifactName }}
+            DependsOn: ${{ parameters.DependsOn }}
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          TestPipeline: ${{ parameters.TestPipeline }}
+          DocArtifact: ${{ parameters.DocArtifact }}
+          DevFeedName: ${{ parameters.DevFeedName }}
+          PublicFeed: ${{ parameters.PublicFeed }}
+          PublicPublishEnvironment: ${{ parameters.PublicPublishEnvironment }}
+          TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
+          TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
+
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      - stage: Integration
+        # Signing stages are dependencies purely for ordering, so their signed artifacts exist
+        # before this stage downloads them. The condition still keys off the build stage only,
+        # exactly as before, so a signing failure degrades to skipping that one package's alpha
+        # publish rather than taking down the dev feed publish for the whole service.
+        # The gate below must stay identical to the signing emission gate at the top of this file.
+        dependsOn:
+          - ${{ parameters.DependsOn }}
+          - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+            - ${{ each artifact in parameters.Artifacts }}:
+              - ${{ if eq(artifact.signBinaries, true) }}:
+                - Sign_${{ artifact.safeName }}
+        condition: succeededOrFailed('${{parameters.DependsOn}}')
+        jobs:
+          - job: PublishPackages
+            displayName: "Publish package to daily feed"
+            condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
+            pool:
+              image: ubuntu-24.04
+              name: azsdk-pool
+              os: linux
+            steps:
+              - download: current
+                artifact: ${{parameters.ArtifactName}}
+                timeoutInMinutes: 5
+
+              # Signed artifacts are downloaded best effort. If a Sign_* stage failed or was
+              # skipped the artifact is absent, and only that package's alpha publish is skipped.
+              - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+                - ${{ each artifact in parameters.Artifacts }}:
+                  - ${{ if eq(artifact.signBinaries, true) }}:
+                    - download: current
+                      artifact: packages_${{ artifact.safeName }}_signed
+                      timeoutInMinutes: 5
+                      continueOnError: true
+
+              - task: UsePythonVersion@0
+
+              - template: ../steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+
+              - script: |
+                  set -e
+                  python -m pip install twine
+                displayName: Install Twine
+
+              - ${{ each artifact in parameters.Artifacts }}:
+                  - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
+                      - template: /eng/pipelines/templates/steps/publish-alpha-package.yml
+                        parameters:
+                          Artifact: ${{ artifact }}
+                          # Packages that ship compiled binaries publish the wheels rebuilt by
+                          # their Sign_<safeName> stage; everything else publishes straight from
+                          # the build output, so a service can mix both kinds of packages freely.
+                          ${{ if and(eq(artifact.signBinaries, true), ne(variables['Build.Reason'], 'PullRequest')) }}:
+                            PackagePath: $(Pipeline.Workspace)/packages_${{ artifact.safeName }}_signed/${{ artifact.name }}
+                          ${{ else }}:
+                            PackagePath: $(Pipeline.Workspace)/${{ parameters.ArtifactName }}/${{ artifact.name }}
+
+          - job: PublishDocsToNightlyBranch
+            dependsOn: PublishPackages
+            condition: >-
+              and(
+                succeeded(), 
+                or(
+                  eq(variables['SetDevVersion'], 'true'), 
+                  and(
+                    eq(variables['Build.Reason'],'Schedule'), 
+                    eq(variables['System.TeamProject'], 'internal')
+                  )
+                ), 
+                ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr')
+              )
+            pool:
+              image: ubuntu-24.04
+              name: azsdk-pool
+              os: linux
+            steps:
+              - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+                parameters:
+                  Paths:
+                    - sdk/**/*.md
+                    - .github/CODEOWNERS
+              - download: current
+              - pwsh: |
+                  Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
+                displayName: Show visible artifacts
+
+              # py2docfx requires Python >= 3.11
+              - task: UsePythonVersion@0
+                displayName: 'Use Python 3.11'
+                inputs:
+                  versionSpec: '3.11'
+
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+
+              - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
+
+              - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+                parameters:
+                  PackageInfoLocations:
+                    - ${{ each artifact in parameters.Artifacts }}:
+                        - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
+                            - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
+                  WorkingDirectory: $(System.DefaultWorkingDirectory)
+                  TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+                  TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+                  Language: 'python'
+                  DailyDocsBuild: true
+                  SparseCheckoutPaths:
+                    - docs-ref-services/
+                    - metadata/
+                  PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+
+              - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml

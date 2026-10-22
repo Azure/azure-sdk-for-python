@@ -1,0 +1,6 @@
+name: march-1
+auth_mode: Key
+identity:
+  type: system_assigned
+tags:
+    endpointkey1: value1

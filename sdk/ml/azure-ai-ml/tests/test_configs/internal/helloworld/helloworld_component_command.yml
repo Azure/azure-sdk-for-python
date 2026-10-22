@@ -1,0 +1,42 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
+name: microsoft.com.azureml.samples.train
+version: 0.0.4
+display_name: Train
+type: CommandComponent
+description: A dummy training module
+tags: {category: Component Tutorial, contact: amldesigner@microsoft.com}
+inputs:
+  training_data:
+    type: path
+    description: Training data organized in the torchvision format/structure
+    optional: false
+  max_epochs:
+    type: integer
+    description: Maximum number of epochs for the training
+    optional: false
+  learning_rate:
+    type: float
+    description: Learning rate, default is 0.01
+    # TODO: can't parse 0.01 correctly
+    default: 0.01  # 0.01
+    optional: false
+outputs:
+  model_output:
+    type: path
+    description: The output model
+command: >-
+  python train.py --training_data {inputs.training_data} --max_epochs {inputs.max_epochs}
+  --learning_rate {inputs.learning_rate} --model_output {outputs.model_output}
+environment:
+  conda:
+    conda_dependencies:
+      name: project_environment
+      channels:
+      - defaults
+      dependencies:
+      - python=3.6.8
+      - pip=20.0
+      - pip:
+        - azureml-defaults
+        - azureml-dataprep>=1.6
+  os: Linux

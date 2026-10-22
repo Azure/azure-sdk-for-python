@@ -1,0 +1,7 @@
+$schema: http://azureml/sdk-2-0/AutoMLComponent.json
+name: microsoft_azureml_automl_classification_component
+display_name: AutoML Classification
+description: Component that executes an AutoML Classification task model training in a pipeline.
+version: 1.0 # anonymous components have fixed version.
+type: automl
+task: classification

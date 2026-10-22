@@ -1,0 +1,12 @@
+type: command
+
+name: hello__python__world
+display_name: Hello_Python_World
+version: 1
+
+code: ./src
+
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+
+command: >-
+  python hello.py

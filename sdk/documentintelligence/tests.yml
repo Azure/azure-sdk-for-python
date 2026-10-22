@@ -1,0 +1,18 @@
+trigger: none
+
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: azure-ai-documentintelligence
+      ServiceDirectory: documentintelligence
+      TestTimeoutInMinutes: 200
+      MatrixReplace:
+        - TestSamples=.*/true
+      Clouds: 'Public'
+      CloudConfig:
+        Public:
+          Location: eastus
+      EnvVars:
+        TEST_MODE: 'RunLiveNoRecord'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_TEST_RUN_LIVE: 'true'

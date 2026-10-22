@@ -1,0 +1,1 @@
+Please read the contributing guidelines from the [Azure Team](https://azure.microsoft.com/blog/simple-contribution-to-azure-documentation-and-sdk/)

@@ -1,0 +1,57 @@
+Service: core
+
+Project: sdk/core/azure-core
+
+PrimaryPackage: azure-core
+
+PackageVersions:
+- azure-core: 1.29.6
+- azure-core: source
+
+Tests:
+- Test: upload-binary
+  Class: UploadBinaryDataTest
+  Arguments:
+  - --size 1024 --parallel 64 --duration 60 --policies all
+  - --size 1024 --parallel 64 --duration 60 --policies all --use-entra-id
+  - --size 1024 --parallel 64 --duration 60
+  - --size 10240 --parallel 64 --duration 60
+  - --size 10240 --parallel 64 --duration 60 --transport requests
+  - --size 10240 --parallel 1 --duration 60
+
+- Test: download-binary
+  Class: DownloadBinaryDataTest
+  Arguments:
+  - --size 1024 --parallel 64 --duration 60
+  - --size 1024 --parallel 64 --duration 60 --transport requests
+  - --size 1024 --parallel 64 --duration 60 --use-entra-id
+  - --size 1024 --parallel 64 --duration 60 --policies all
+  - --size 1024 --parallel 1 --duration 60
+  - --size 10240 --parallel 64 --duration 60 --transport requests
+
+- Test: update-entity
+  Class: UpdateEntityJSONTest
+  Arguments:
+  - --size 1024 --parallel 64 --duration 60
+  - --size 1024 --parallel 64 --duration 60 --transport requests
+  - --size 1024 --parallel 64 --duration 60 --use-entra-id
+  - --size 1024 --parallel 64 --duration 60 --policies all
+  - --size 1024 --parallel 1 --duration 60
+
+- Test: query-entities
+  Class: QueryEntitiesJSONTest
+  Arguments:
+  - --size 1024 --parallel 64 --duration 60
+  - --size 1024 --parallel 64 --duration 60 --transport requests
+  - --size 1024 --parallel 64 --duration 60 --use-entra-id
+  - --size 1024 --parallel 64 --duration 60 --policies all
+  - --size 1024 --parallel 1 --duration 60
+
+- Test: list-entities
+  Class: ListEntitiesPageableTest
+  Arguments:
+  - --count 500 --parallel 32 --warmup 60 --duration 60
+  - --count 500 --parallel 32 --warmup 60 --duration 60 --transport requests
+  - --count 500 --parallel 32 --warmup 60 --duration 60 --use-entra-id
+  - --count 500 --parallel 32 --warmup 60 --duration 60 --policies all
+  - --count 500 --parallel 1 --warmup 60 --duration 60

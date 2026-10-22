@@ -1,0 +1,10 @@
+name: test_ws_conn_blob_store1
+type: azure_blob
+url: my_endpoint
+metadata:
+  four: five
+credentials:
+  type: account_key
+  account_key: "9876"
+container_name: some_container
+account_name: some_account

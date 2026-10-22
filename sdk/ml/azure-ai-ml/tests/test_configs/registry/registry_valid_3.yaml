@@ -1,0 +1,15 @@
+description: This is a registry with no acr
+name: registry_name
+id: registry_id
+tags:
+  purpose: testing
+  other_tag: value
+location: EastUS2
+public_network_access: Disabled
+intellectual_property:
+  publisher: registry_publisher
+replication_locations:
+  - location: EastUS
+    storage_config:
+      storage_account_hns: False
+      storage_account_type: Standard_RAGRS

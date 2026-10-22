@@ -1,0 +1,9 @@
+-e ../../../eng/tools/azure-sdk-tools
+../../authorization/azure-mgmt-authorization
+../../storage/azure-mgmt-storage
+../../network/azure-mgmt-network
+../../resources/azure-mgmt-resource
+aiohttp>=3.0; python_version >= '3.5'
+../../identity/azure-identity
+azure-storage-blob==12.9.0
+azure-mgmt-keyvault==10.0.0

@@ -1,0 +1,4 @@
+name: testFileData
+version: 1
+description: "this is an invalid schema"
+type: uri_folder

@@ -1,0 +1,7 @@
+name: test_ws_conn_snowflake
+type: snowflake
+target: dummy
+credentials:
+  type: username_password
+  username: dummy
+  password: dummy

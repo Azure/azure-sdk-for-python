@@ -1,0 +1,152 @@
+type: pipeline
+
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+settings:
+  default_compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  component_in_number: 10
+  hello_string: hello
+  input_data:
+    path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+    type: uri_file
+  text_ner_training_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/conll2003/train
+  text_ner_validation_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/conll2003/valid
+
+properties:
+  AZURE_ML_PathOnCompute_input_data: "/tmp/test"
+
+jobs:
+  node0:  # inline command job with properties
+    command: echo hello ${{inputs.hello_string}}
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    inputs:
+      hello_string: ${{parent.inputs.hello_string}}
+    properties:
+      AZURE_ML_PathOnCompute_hello_string: "/tmp/test"
+
+  node1:  # inline parallel job with properties
+    type: parallel
+    compute: "azureml:cpu-cluster"
+    inputs:
+      test1: ${{parent.inputs.input_data}}
+    resources:
+      instance_count: 3
+    mini_batch_size: "100kb"
+    mini_batch_error_threshold: 5
+    logging_level: "DEBUG"
+    input_data: ${{inputs.input_data}}
+    max_concurrency_per_instance: 2
+    task:
+      type: run_function
+      code: "../python"
+      entry_script: pass_through.py
+      append_row_to: ${{outputs.scored_result}} # optional, If Null, equals to summary_only mode in v1.
+      environment: azureml:my-env:1
+    properties:
+      AZURE_ML_PathOnCompute_input_data: "/tmp/test"
+
+  node2:  # inline import job with properties
+    type: import
+    source:
+      type: azuresqldb
+      query: >-
+        select * from REGION
+      connection: azureml:my_username_password
+    output:
+      type: mltable
+      path: azureml://datastores/workspaceblobstore/paths/output_dir/
+    properties:
+      AZURE_ML_PathOnCompute_output: "/tmp/test"
+
+  node3:  # inline spark job with properties
+    type: spark
+    inputs:
+      test1: ${{parent.inputs.input_data}}
+      file_input2: ${{parent.inputs.input_data}}
+    code: ../dsl_pipeline/spark_job_in_pipeline/src
+    entry:
+      file: entry.py # file path of the entry file relative to the code root folder
+    py_files:
+      - utils.zip
+    jars:
+      - scalaproj.jar
+    files:
+      - my_files.txt
+    args: >-
+      --file_input1 ${{inputs.test1}}
+      --file_input2 ${{inputs.file_input2}}
+      --output ${{outputs.output}}
+    compute: azureml:rezas-synapse-10
+    conf:
+      spark.driver.cores: 2
+      spark.driver.memory: "1g"
+      spark.executor.cores: 1
+      spark.executor.memory: "1g"
+      spark.executor.instances: 1
+    properties:
+      AZURE_ML_PathOnCompute_input_data: "/tmp/test"
+
+  node4:  # inline automl job with properties
+    type: automl
+    task: text_ner
+    log_verbosity: info
+    primary_metric: accuracy
+    limits:
+      max_trials: 1
+      timeout_minutes: 60
+    training_data: ${{parent.inputs.text_ner_training_data}}
+    validation_data: ${{parent.inputs.text_ner_validation_data}}
+    properties:
+      AZURE_ML_PathOnCompute_training_data: "/tmp/test"
+
+  node5:  # inline sweep job with properties
+    type: sweep
+    search_space:
+      component_in_number:
+        type: choice
+        values:
+          - 25
+          - 35
+    limits:
+      max_total_trials: 3
+    sampling_algorithm: random
+    objective:
+      goal: maximize
+      primary_metric: accuracy
+    trial: azureml:microsoftsamplescommandcomponentbasic_nopaths_test:1
+    properties:
+      AZURE_ML_PathOnCompute_input: "/tmp/test"
+
+  node6:  # parallel node with properties as a typical implement of base node.
+    type: parallel
+    compute: azureml:cpu-cluster
+    component: ../components/parallel_component_with_file_input.yml
+    inputs:
+      job_data_path: ${{parent.inputs.pipeline_job_data_path}}
+    outputs:
+      job_output_path:
+    mini_batch_size: "1"
+    mini_batch_error_threshold: 1
+    max_concurrency_per_instance: 1
+    properties:
+      AZURE_ML_PathOnCompute_job_data_path: "/tmp/test"
+
+  node8:  # pipeline node with properties
+    type: pipeline
+    inputs:
+      component_in_number: 11
+      component_in_path: ${{parent.inputs.input_data}}
+
+    component: ../components/helloworld_pipeline_component.yml
+    properties:
+      AZURE_ML_PathOnCompute_job_component_in_path: "/tmp/test"

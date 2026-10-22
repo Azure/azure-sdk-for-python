@@ -1,0 +1,128 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# cspell:ignore rerank reranker reranking
+import json
+import unittest
+
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.exceptions as exceptions
+from azure.cosmos.partition_key import PartitionKey
+import pytest
+
+import test_config
+
+
+@pytest.mark.semanticReranker
+class TestSemanticReranker(unittest.TestCase):
+    """Test to check semantic reranker behavior."""
+    client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
+    config = test_config.TestConfig
+    host = config.host
+    TEST_DATABASE_ID = config.TEST_DATABASE_ID
+    TEST_CONTAINER_ID = config.TEST_SINGLE_PARTITION_CONTAINER_ID
+    TEST_CONTAINER_PARTITION_KEY = config.TEST_CONTAINER_PARTITION_KEY
+
+    @classmethod
+    def setUpClass(cls):
+        if cls.host == '[YOUR_ENDPOINT_HERE]' or cls.config.masterKey == '[YOUR_KEY_HERE]':
+            raise Exception(
+                "You must specify your Azure Cosmos account values for "
+                "'host' and 'masterKey' at the top of this class to run the "
+                "tests.")
+
+        cls.key_client, cls.key_db, cls.client, cls.created_db = test_config.TestConfig.create_test_clients(
+            cls.TEST_DATABASE_ID
+        )
+        # Ensure the test database exists; TEST_DATABASE_ID defaults to a per-process UUID
+        # and is not guaranteed to be pre-provisioned by a shared fixture.
+        cls.key_client.create_database_if_not_exists(id=cls.TEST_DATABASE_ID)
+        cls.key_db.create_container_if_not_exists(
+            id=cls.TEST_CONTAINER_ID,
+            partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash')
+        )
+        cls.test_container = cls.created_db.get_container_client(cls.TEST_CONTAINER_ID)
+
+    @classmethod
+    def tearDownClass(cls):
+        try:
+            cls.key_db.delete_container(cls.TEST_CONTAINER_ID)
+        except exceptions.CosmosHttpResponseError:
+            pass
+        test_config.TestConfig.try_delete_database(cls.key_client)
+
+    def test_semantic_reranker(self):
+        documents = self._get_documents(document_type="string")
+        results = self.test_container.semantic_rerank(
+            context="What is the capital of France?",
+            documents=documents,
+            options={
+                "return_documents": True,
+                "top_k": 10,
+                "batch_size": 32,
+                "sort": True
+            }
+        )
+
+        assert len(results["Scores"]) == len(documents)
+        assert results["Scores"][0]["document"] == "Paris is the capital of France."
+
+    def test_semantic_reranker_json_documents(self):
+        documents = self._get_documents(document_type="json")
+        results = self.test_container.semantic_rerank(
+            context="What is the capital of France?",
+            documents=[json.dumps(item) for item in documents],
+            options={
+                "return_documents": True,
+                "top_k": 10,
+                "batch_size": 32,
+                "sort": True,
+                "document_type": "json",
+                "target_paths": "text",
+            }
+        )
+
+        assert len(results["Scores"]) == len(documents)
+        returned_document = json.loads(results["Scores"][0]["document"])
+        assert returned_document["text"] == "Paris is the capital of France."
+
+    def test_semantic_reranker_nested_json_documents(self):
+        documents = self._get_documents(document_type="nested_json")
+        results = self.test_container.semantic_rerank(
+            context="What is the capital of France?",
+            documents=[json.dumps(item) for item in documents],
+            options={
+                "return_documents": True,
+                "top_k": 10,
+                "batch_size": 32,
+                "sort": True,
+                "document_type": "json",
+                "target_paths": "info.text",
+            }
+        )
+
+        assert len(results["Scores"]) == len(documents)
+        returned_document = json.loads(results["Scores"][0]["document"])
+        assert returned_document["info"]["text"] == "Paris is the capital of France."
+
+    def _get_documents(self, document_type: str):
+        if document_type == "string":
+            return [
+                "Berlin is the capital of Germany.",
+                "Paris is the capital of France.",
+                "Madrid is the capital of Spain."
+            ]
+        elif document_type == "json":
+            return [
+                {"id": "1", "text": "Berlin is the capital of Germany."},
+                {"id": "2", "text": "Paris is the capital of France."},
+                {"id": "3", "text": "Madrid is the capital of Spain."}
+            ]
+        elif document_type == "nested_json":
+            return [
+                {"id": "1", "info": {"text": "Berlin is the capital of Germany."}},
+                {"id": "2", "info": {"text": "Paris is the capital of France."}},
+                {"id": "3", "info": {"text": "Madrid is the capital of Spain."}}
+            ]
+        else:
+            raise ValueError("Unsupported document type")

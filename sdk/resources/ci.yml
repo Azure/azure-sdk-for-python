@@ -1,0 +1,65 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+
+trigger:
+  branches:
+    include:
+    - main
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/resources/
+
+pr:
+  branches:
+    include:
+    - main
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/resources/
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: resources
+    TestProxy: true
+    Artifacts:
+    - name: azure-mgmt-resource
+      safeName: azuremgmtresource
+    - name: azure-mgmt-resourcegraph
+      safeName: azuremgmtresourcegraph
+    - name: azure-mgmt-msi
+      safeName: azuremgmtmsi
+    - name: azure-mgmt-resource-deployments
+      safeName: azuremgmtresourcedeployments
+    - name: azure-mgmt-resource-deploymentstacks
+      safeName: azuremgmtresourcedeploymentstacks
+    - name: azure-mgmt-resource-templatespecs
+      safeName: azuremgmtresourcetemplatespecs
+    - name: azure-mgmt-resource-deploymentscripts
+      safeName: azuremgmtresourcedeploymentscripts
+    - name: azure-mgmt-resource-bicep
+      safeName: azuremgmtresourcebicep
+    - name: azure-mgmt-resource-changes
+      safeName: azuremgmtresourcechanges
+    - name: azure-mgmt-resource-databoundaries
+      safeName: azuremgmtresourcedataboundaries
+    - name: azure-mgmt-resource-features
+      safeName: azuremgmtresourcefeatures
+    - name: azure-mgmt-resource-links
+      safeName: azuremgmtresourcelinks
+    - name: azure-mgmt-resource-locks
+      safeName: azuremgmtresourcelocks
+    - name: azure-mgmt-resource-managedapplications
+      safeName: azuremgmtresourcemanagedapplications
+    - name: azure-mgmt-resource-policy
+      safeName: azuremgmtresourcepolicy
+    - name: azure-mgmt-resource-privatelinks
+      safeName: azuremgmtresourceprivatelinks
+    - name: azure-mgmt-resource-subscriptions
+      safeName: azuremgmtresourcesubscriptions

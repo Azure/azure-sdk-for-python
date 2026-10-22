@@ -1,0 +1,28 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.changeanalysis.models.Resource": null,
+        "azure.mgmt.changeanalysis.models.ProxyResource": null,
+        "azure.mgmt.changeanalysis.models.Change": null,
+        "azure.mgmt.changeanalysis.models.ChangeList": null,
+        "azure.mgmt.changeanalysis.models.ChangeProperties": null,
+        "azure.mgmt.changeanalysis.models.ErrorAdditionalInfo": null,
+        "azure.mgmt.changeanalysis.models.ErrorDetail": null,
+        "azure.mgmt.changeanalysis.models.ErrorResponse": null,
+        "azure.mgmt.changeanalysis.models.PropertyChange": null,
+        "azure.mgmt.changeanalysis.models.ResourceProviderOperationDefinition": null,
+        "azure.mgmt.changeanalysis.models.ResourceProviderOperationDisplay": null,
+        "azure.mgmt.changeanalysis.models.ResourceProviderOperationList": null,
+        "azure.mgmt.changeanalysis.models.ChangeType": null,
+        "azure.mgmt.changeanalysis.models.ChangeCategory": null,
+        "azure.mgmt.changeanalysis.models.Level": null,
+        "azure.mgmt.changeanalysis.operations.Operations.list": null,
+        "azure.mgmt.changeanalysis.aio.operations.Operations.list": null,
+        "azure.mgmt.changeanalysis.operations.ResourceChangesOperations.list": null,
+        "azure.mgmt.changeanalysis.aio.operations.ResourceChangesOperations.list": null,
+        "azure.mgmt.changeanalysis.operations.ChangesOperations.list_changes_by_resource_group": null,
+        "azure.mgmt.changeanalysis.aio.operations.ChangesOperations.list_changes_by_resource_group": null,
+        "azure.mgmt.changeanalysis.operations.ChangesOperations.list_changes_by_subscription": null,
+        "azure.mgmt.changeanalysis.aio.operations.ChangesOperations.list_changes_by_subscription": null
+    }
+}

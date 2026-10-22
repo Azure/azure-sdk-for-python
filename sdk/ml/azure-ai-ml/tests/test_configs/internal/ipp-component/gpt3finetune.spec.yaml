@@ -1,0 +1,64 @@
+$schema: http://azureml/sdk-2-0/DistributedComponent.json
+name: microsoft.com.azureml.gpt3.finetune
+version: 0.0.1
+display_name: GPT3 Fine-tune training
+is_deterministic: True
+type: DistributedComponent@1-legacy
+description: Module for GPT3 fine tune
+tags:
+  contact: feli1@microsoft.com
+inputs:
+  input_dataset:
+    type: path
+    optional: False
+    description: Input file/tabular dataset
+  base_model:
+    type: path
+    optional: False
+    description: Model directory for previously model dump or base GTP-3 model
+  lora_weights:
+    type: path
+    optional: True
+    description: fine tuned lora weights which can be used to do continuous fine tuning
+  tuning_type:
+    type: Enum
+    optional: True
+    default: lora
+    description: Tuning type
+    enum:
+    - lora
+    - fine_tuning
+  n_epochs:
+    type: Integer
+    optional: True
+    default: 2
+    description: Number of epochs for the training
+  batch_size:
+    type: Integer
+    optional: True
+    default: 128
+    description: The batch size to use for training
+  learning_rate_multiplier:
+    type: Float
+    optional: True
+    default: 0.002
+    description: The learning rate multiplier to use for training
+  use_packing:
+    type: Boolean
+    optional: True
+    default: True
+    description: On classification tasks, we recommend setting this to False, On all other tasks, we recommend setting this to True.
+outputs:
+  output_model_checkpoints:
+    type: path
+    optional: False
+    description: directory for model checkpoints
+environment:
+  docker:
+    image: babelacr.azurecr.io/lora_aml
+successful_return_code: Zero
+meta:
+  requireGpu: True
+launcher:
+  type: mpi
+  additional_arguments: python train_wrapper.py --input_dataset {inputs.input_dataset} --output_model {outputs.output_model_checkpoints}  --base_model {inputs.base_model} [--lora_weights {inputs.lora_weights}] [--tuning_type {inputs.tuning_type}] [--learning_rate_multiplier {inputs.learning_rate_multiplier}] [--n_epochs {inputs.n_epochs}] [--batch_size {inputs.batch_size}] [--use_packing {inputs.batch_size}]

@@ -1,0 +1,22 @@
+name: unittest_test_mvnet
+location: centraluseuap
+managed_network:
+  isolation_mode: allow_only_approved_outbound
+  outbound_rules:
+  - name: microsoft
+    destination: 'microsoft.com'
+    type: fqdn
+  - name: appGwRule
+    destination:
+      service_resource_id: /someappgwid
+      spark_enabled: false
+      subresource_target: appGwPrivateFrontendIpIPv4
+    fqdns: ["contoso.com", "contoso2.com"]
+    type: private_endpoint
+  - name: servicetag-w-prefixes
+    destination:
+      port_ranges: 80, 8080-8089
+      protocol: TCP
+      service_tag: sometag
+      address_prefixes: ["168.63.129.16","10.0.0.0/24"]
+    type: service_tag

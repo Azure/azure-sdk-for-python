@@ -1,0 +1,16 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
+name: ls_command
+display_name: Ls Command
+version: 0.0.1
+type: CommandComponent
+is_deterministic: true
+tags: {}
+inputs:
+  input_dir:
+    type: path
+    optional: false
+outputs: {}
+command: >-
+  ls {inputs.input_dir}
+environment:
+  name: AzureML-Designer

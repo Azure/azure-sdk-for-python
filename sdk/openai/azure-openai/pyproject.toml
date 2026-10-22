@@ -1,0 +1,10 @@
+[tool.azure-sdk-build]
+pylint = false
+mypy = false
+pyright = false
+type_check_samples = false
+verifytypes = false
+sphinx = false
+sdist = false
+mindependency = false
+verifysdist = false

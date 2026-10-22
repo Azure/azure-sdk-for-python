@@ -1,0 +1,7 @@
+paths:
+  - file: ./iris.csv
+transformations:
+  - read_delimited:
+      delimiter: ","
+      encoding: unknownencoding
+      header: all_files_same_headers

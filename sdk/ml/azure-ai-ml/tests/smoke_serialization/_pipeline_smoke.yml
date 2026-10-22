@@ -1,0 +1,33 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+# Deterministic pipeline job for the offline serialization smoke suite.
+#
+# Nodes reference REGISTERED components by ARM id (no inline/anonymous components), so the whole
+# pipeline serializes cleanly offline via entity._to_rest_object() -> wire without needing a client
+# to resolve component ids (inline components only stringify at real submit time). This keeps the
+# smoke test fully offline and mock-free while pinning the pipeline envelope + node wire byte-for-byte.
+type: pipeline
+name: smoke_pipeline_job
+display_name: smoke pipeline job
+description: smoke pipeline job built from registry components
+experiment_name: smoke-experiment
+compute: azureml:cpu-cluster
+tags:
+  tag1: value1
+  owner: smoke
+inputs:
+  pipeline_input_string: "hello smoke"
+settings:
+  default_compute: azureml:cpu-cluster
+  continue_on_step_failure: true
+  force_rerun: false
+jobs:
+  node_a:
+    type: command
+    component: azureml://registries/smoke-registry/components/smoke_component_a/versions/1
+    compute: azureml:cpu-cluster
+  node_b:
+    type: command
+    component: azureml://registries/smoke-registry/components/smoke_component_b/versions/2
+    compute: azureml:gpu-cluster

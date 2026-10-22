@@ -1,0 +1,111 @@
+{
+  "description": "Use this auto-approved module to download data on EyesOn machine and interact with it for Compliant Annotation purpose.",
+  "tags": {
+    "category": "Component Tutorial",
+    "contact": "amldesigner@microsoft.com"
+  },
+  "version": "0.0.1",
+  "$schema": "https://componentsdk.azureedge.net/jsonschema/AE365ExePoolComponent.json",
+  "display_name": "CAX EyesOn Module [ND] v1.6",
+  "is_deterministic": true,
+  "inputs": {
+    "DataToLookAt": {
+      "type": "AnyFile",
+      "optional": false
+    },
+    "GoldHitRTAData": {
+      "type": "AnyFile",
+      "optional": true
+    },
+    "ComplianceCluster": {
+      "type": "string",
+      "default": "MsResearch-EyesOn-Annotation",
+      "description": "compliance cluster name",
+      "optional": false
+    },
+    "HeronId": {
+      "type": "string",
+      "description": "Heron ID",
+      "optional": false
+    },
+    "localoutputfolderEnc": {
+      "type": "string",
+      "optional": true,
+      "description": "local output folder for encrypted data"
+    },
+    "localoutputfolderDec": {
+      "type": "string",
+      "optional": true,
+      "description": "local output folder for decrypted data"
+    },
+    "TimeoutSeconds": {
+      "type": "integer",
+      "optional": true,
+      "default": "500000",
+      "description": "timeout in seconds"
+    },
+    "hitappid": {
+      "type": "integer",
+      "optional": true,
+      "default": "31346",
+      "description": "hitapp id"
+    },
+    "projectname": {
+      "type": "string",
+      "optional": true,
+      "default": "LatestE2Etemplate",
+      "description": "project name"
+    },
+    "judges": {
+      "type": "string",
+      "optional": true,
+      "default": "juwang;bradwall",
+      "description": "judges"
+    },
+    "annotationsMayIncludeCustomerContent": {
+      "type": "string",
+      "optional": true,
+      "default": "1",
+      "description": "annotations may include customer content"
+    },
+    "TaskGroupId": {
+      "type": "integer",
+      "optional": true,
+      "default": "86891",
+      "description": "task group id"
+    },
+    "GoldHitRTADataType": {
+      "type": "enum",
+      "optional": true,
+      "description": "gold hit rta data type",
+      "enum": [
+        "Gold",
+        "RTA",
+        "Qualification",
+        "Preview"
+      ]
+    },
+    "taskFileTimestamp": {
+      "type": "string",
+      "optional": true,
+      "default": "2021.12.21.23.55.00",
+      "description": "task file timestamp"
+    }
+  },
+  "outputs": {
+    "outputfolderEnc": {
+      "type": "AnyDirectory"
+    },
+    "outputfolderDec": {
+      "type": "AnyDirectory"
+    },
+    "OriginalHitData": {
+      "type": "AnyDirectory"
+    }
+  },
+  "type": "AE365ExePoolComponent",
+  "command": "cax.eyesonmodule.exe input={inputs.DataToLookAt} inputGoldHitRta=[{inputs.GoldHitRTAData}] localoutputfolderEnc=[{inputs.localoutputfolderEnc}] localoutputfolderDec=[{inputs.localoutputfolderDec}] timeoutSeconds=[{inputs.TimeoutSeconds}] hitappid=[{inputs.hitappid}] projectname=[{inputs.projectname}] judges=[{inputs.judges}] outputfolderEnc={outputs.outputfolderEnc} outputfolderDec={outputs.outputfolderDec} annotationsMayIncludeCustomerContent=[{inputs.annotationsMayIncludeCustomerContent}] taskGroupId=[{inputs.TaskGroupId}] goldHitRTADataType=[{inputs.GoldHitRTADataType}] outputfolderForOriginalHitData={outputs.OriginalHitData} taskFileTimestamp=[{inputs.taskFileTimestamp}]",
+  "ae365exepool": {
+    "ref_id": "654ec0ba-bed3-48eb-a594-efd0e9275e0d"
+  }
+}

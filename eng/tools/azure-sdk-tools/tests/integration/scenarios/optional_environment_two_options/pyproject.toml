@@ -1,0 +1,19 @@
+[tool.azure-sdk-build]
+mypy = true
+type_check_samples = true
+verifytypes = true
+pyright = true
+pylint = true
+black = true
+
+[[tool.azure-sdk-build.optional]]
+name = "no_requests"
+install = []
+uninstall = ["requests"]
+additional_pytest_args = ["-k", "*_async.py"]
+
+[[tool.azure-sdk-build.optional]]
+name = "no_aiohttp"
+install = []
+uninstall = ["aiohttp"]
+additional_pytest_args = ["-k", "not *_async.py"]

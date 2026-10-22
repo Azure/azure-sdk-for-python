@@ -1,0 +1,18 @@
+-e ../../../eng/tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+pytest
+pytest-asyncio
+pytest-cov
+pytest-mock
+pytest-xdist
+jsonschema>=4,<5
+azure-ai-inference>=1.0.0b4
+azure-ai-projects<=1.0.0b10
+aiohttp
+filelock
+promptflow-core>=1.17.1
+promptflow-devkit>=1.17.1
+# Note: redteam extra (pyrit) is installed separately via InjectedPackages in platform-matrix.json
+# to avoid pillow version conflicts with promptflow-devkit (pillow<11 vs >=12.1)
+../azure-ai-evaluation

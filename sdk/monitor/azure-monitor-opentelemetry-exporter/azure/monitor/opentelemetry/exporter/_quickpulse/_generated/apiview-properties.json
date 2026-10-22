@@ -1,0 +1,33 @@
+{
+    "CrossLanguagePackageId": "Azure.Monitor.LiveMetrics",
+    "CrossLanguageDefinitionId": {
+        "livemetrics.models.CollectionConfigurationError": "Azure.Monitor.LiveMetrics.CollectionConfigurationError",
+        "livemetrics.models.CollectionConfigurationInfo": "Azure.Monitor.LiveMetrics.CollectionConfigurationInfo",
+        "livemetrics.models.DerivedMetricInfo": "Azure.Monitor.LiveMetrics.DerivedMetricInfo",
+        "livemetrics.models.DocumentFilterConjunctionGroupInfo": "Azure.Monitor.LiveMetrics.DocumentFilterConjunctionGroupInfo",
+        "livemetrics.models.DocumentIngress": "Azure.Monitor.LiveMetrics.DocumentIngress",
+        "livemetrics.models.DocumentStreamInfo": "Azure.Monitor.LiveMetrics.DocumentStreamInfo",
+        "livemetrics.models.Event": "Azure.Monitor.LiveMetrics.Event",
+        "livemetrics.models.Exception": "Azure.Monitor.LiveMetrics.Exception",
+        "livemetrics.models.FilterConjunctionGroupInfo": "Azure.Monitor.LiveMetrics.FilterConjunctionGroupInfo",
+        "livemetrics.models.FilterInfo": "Azure.Monitor.LiveMetrics.FilterInfo",
+        "livemetrics.models.KeyValuePairStringString": "Azure.Monitor.LiveMetrics.KeyValuePairStringString",
+        "livemetrics.models.MetricPoint": "Azure.Monitor.LiveMetrics.MetricPoint",
+        "livemetrics.models.MonitoringDataPoint": "Azure.Monitor.LiveMetrics.MonitoringDataPoint",
+        "livemetrics.models.ProcessCpuData": "Azure.Monitor.LiveMetrics.ProcessCpuData",
+        "livemetrics.models.QuotaConfigurationInfo": "Azure.Monitor.LiveMetrics.QuotaConfigurationInfo",
+        "livemetrics.models.RemoteDependency": "Azure.Monitor.LiveMetrics.RemoteDependency",
+        "livemetrics.models.Request": "Azure.Monitor.LiveMetrics.Request",
+        "livemetrics.models.ServiceError": "Azure.Monitor.LiveMetrics.ServiceError",
+        "livemetrics.models.Trace": "Azure.Monitor.LiveMetrics.Trace",
+        "livemetrics.models.PredicateType": "Azure.Monitor.LiveMetrics.PredicateType",
+        "livemetrics.models.AggregationType": "Azure.Monitor.LiveMetrics.AggregationType",
+        "livemetrics.models.TelemetryType": "Azure.Monitor.LiveMetrics.TelemetryType",
+        "livemetrics.models.DocumentType": "Azure.Monitor.LiveMetrics.DocumentType",
+        "livemetrics.models.CollectionConfigurationErrorType": "Azure.Monitor.LiveMetrics.CollectionConfigurationErrorType",
+        "livemetrics.LiveMetricsClient.is_subscribed": "Azure.Monitor.LiveMetrics.isSubscribed",
+        "livemetrics.aio.LiveMetricsClient.is_subscribed": "Azure.Monitor.LiveMetrics.isSubscribed",
+        "livemetrics.LiveMetricsClient.publish": "Azure.Monitor.LiveMetrics.publish",
+        "livemetrics.aio.LiveMetricsClient.publish": "Azure.Monitor.LiveMetrics.publish"
+    }
+}

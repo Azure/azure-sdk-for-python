@@ -1,0 +1,4 @@
+name: content_safety_conn_api
+type: azure_content_safety
+endpoint: my_endpoint
+api_key: "2222"

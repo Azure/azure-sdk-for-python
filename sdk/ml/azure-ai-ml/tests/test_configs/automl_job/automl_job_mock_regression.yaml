@@ -1,0 +1,74 @@
+type: automl
+
+name: simpleautomljob
+experiment_name: "automl"
+compute: azureml:cpu-cluster
+
+log_verbosity: debug
+task: regression
+primary_metric: normalized_mean_absolute_error
+
+limits:
+  timeout_minutes: 180
+  max_trials: 40
+  max_concurrent_trials: 5
+  enable_early_termination: true
+  exit_score: 0.85
+
+target_column_name: safedriver
+n_cross_validations: 2
+cv_split_column_names:
+  - Quantity
+validation_data_size: 0.2
+
+training_data:
+    path: azureml:insurance-training-data:1
+    type: mltable
+validation_data:
+    path: azureml:insurance-validation-data:1
+    type: mltable
+test_data:
+    path: azureml:insurance-test-data:1
+    type: mltable
+
+featurization:
+  mode: custom
+  enable_dnn_featurization: False
+  blocked_transformers: [LabelEncoder, WordEmbedding]
+  column_name_and_types:
+    CPWVOL5: CategoricalHash
+    MYCT: Numeric
+    VendorName: CategoricalHash
+  transformer_params:
+    imputer:
+    - fields: ["Quantity"]
+      parameters:
+        strategy: constant
+        fill_value: 0
+    - fields: ["Income", "Age"]
+      parameters:
+        strategy: median
+        fill_value:
+    - fields: ["Surface", "Tax"]
+      parameters:
+        strategy: mean
+        fill_value:
+    - fields: ["Rooms"]
+      parameters:
+        strategy: most_frequent
+        fill_value: test
+    - fields: ["Price"]
+      parameters:
+        strategy: ffill
+    hash_one_hot_encoder:
+    - fields: ["Name"]
+      parameters:
+        number_of_bits: 3
+    - fields: ["Hair Color", "Eye Color"]
+      parameters:
+        number_of_bits: 1
+  dataset_language: English
+training:
+  enable_dnn_training: True
+  enable_model_explainability: True
+  ensemble_model_download_timeout_minutes: 2

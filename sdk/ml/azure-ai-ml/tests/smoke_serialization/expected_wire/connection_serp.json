@@ -1,0 +1,11 @@
+{
+  "properties": {
+    "authType": "ApiKey",
+    "category": "Serp",
+    "credentials": {
+      "key": "smoke-serp-api-key"
+    },
+    "isSharedToAll": true,
+    "metadata": {}
+  }
+}

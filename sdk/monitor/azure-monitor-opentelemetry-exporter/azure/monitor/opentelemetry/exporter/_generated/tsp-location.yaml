@@ -1,0 +1,4 @@
+directory: specification/applicationinsights/data-plane/Exporters
+commit: 098f9202ba966880b4e3fcf886cfc53154d7cd3b
+repo: Azure/azure-rest-api-specs
+additionalDirectories:

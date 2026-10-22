@@ -1,0 +1,9 @@
+compute: "some_compute"
+datastore: "some_datastore"
+inputs: 
+  "test_dataset":
+    path: "/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/data/fake-dataset/versions/2"
+    type: mltable
+  "test_string_literal": "literal string"
+  "test_literal_valued_int":
+    value: 42

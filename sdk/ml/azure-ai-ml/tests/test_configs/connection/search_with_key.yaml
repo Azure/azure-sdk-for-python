@@ -1,0 +1,4 @@
+name: search_api
+type: azure_ai_search
+endpoint: this_is_a_target
+api_key: "3333"

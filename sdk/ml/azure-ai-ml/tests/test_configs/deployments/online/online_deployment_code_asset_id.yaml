@@ -1,0 +1,19 @@
+name: blue
+endpoint_name: deploytest
+description: description for online deployment
+model:
+  name: mir_test_model
+  version: 1
+  path: ../model-1/model/sklearn_regression_model.pkl
+code_configuration:
+  code: azureml:/subscriptions/2d385bf4-0756-4a76-aa95-28bf9ed3b625/resourceGroups/namejia-dev-rg/providers/Microsoft.MachineLearningServices/workspaces/namejia-ws/codes/82ffabb8-ea16-4f6b-85b4-88df37bd44f8/versions/1
+  scoring_script: score.py
+environment:
+  name: online-endpoint-mir-test
+  version: 3
+  conda_file: ../model-1/environment/conda.yml
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1
+instance_count: 1
+instance_type: Standard_DS2_V2
+scale_settings:
+  type: default

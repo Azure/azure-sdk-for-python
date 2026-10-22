@@ -1,0 +1,6 @@
+{
+  "inferencingServer": {
+    "serverType": "AzureMLBatch"
+  },
+  "targetEnvironmentId": "smoke-batch-packaged-env"
+}

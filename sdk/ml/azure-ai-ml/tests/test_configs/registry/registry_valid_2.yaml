@@ -1,0 +1,16 @@
+description: This is a registry with a system-created acr
+name: registry_name
+id: registry_id
+tags:
+  purpose: testing
+  other_tag: value
+location: EastUS2
+public_network_access: Disabled
+intellectual_property: 
+  publisher: registry_publisher
+replication_locations:
+  - location: EastUS
+    storage_config:
+    - /subscriptions/sub_id/resourceGroups/some_rg/providers/Microsoft.Storage/storageAccounts/some_storage_account
+container_registry:
+  acr_account_sku: premium

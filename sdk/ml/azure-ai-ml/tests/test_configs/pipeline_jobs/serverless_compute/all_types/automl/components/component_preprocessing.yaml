@@ -1,0 +1,28 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: data_preprocessing
+display_name: Data Preprocessing
+version: 1
+type: command
+inputs:
+  train_data:
+    type: mltable
+  validation_data:
+    type: mltable
+outputs:
+  preprocessed_train_data:
+    type: mltable
+  preprocessed_validation_data:
+    type: mltable
+code: ./src/
+environment:
+  name: pipeline-custom-environment
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+  conda_file: ./preprocessing_env.yaml
+command: >-
+  python preprocess.py
+  --train_data ${{inputs.train_data}}
+  --validation_data ${{inputs.validation_data}}
+  --preprocessed_train_data ${{outputs.preprocessed_train_data}}
+  --preprocessed_validation_data ${{outputs.preprocessed_validation_data}}
+resources:
+  instance_type: Standard_D3_v2

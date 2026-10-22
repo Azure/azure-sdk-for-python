@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-08-01",
+  "commit": "b2965096067d6f8374b5485b0568fd36e7c9d099",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/dashboard/Dashboard.Management",
+  "emitterVersion": "0.52.1"
+}

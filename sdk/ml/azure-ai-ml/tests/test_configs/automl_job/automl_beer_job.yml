@@ -1,0 +1,35 @@
+type: automl
+
+name: simplebeerjob
+
+compute: azureml:testCompute
+
+general:
+  task: forecasting
+  primary_metric: normalized_root_mean_squared_error
+  enable_model_explainability: true
+
+limits:
+  timeout: 60
+  max_total_trials: 60
+  max_concurrent_trials: 4
+  enable_early_termination: false
+
+data:
+  target_column_name: BeerProduction
+  training:
+    dataset: azureml:train_dataset_beer:1
+  validation:
+    n_cross_validations: 5
+
+featurization:
+  featurization_config: auto
+
+training:
+  enable_dnn_training: False
+
+forecasting:
+  country_or_region_for_holidays: US
+  forecast_horizon: 12
+  target_rolling_window_size: 0
+  time_column_name: DATE

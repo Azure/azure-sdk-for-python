@@ -1,0 +1,9 @@
+name: hdfs_minimal_example
+type: hdfs
+description: HDFS example with required fields only. Defaults will apply
+name_node_address: name_node_address
+credentials:
+  kerberos_realm: testrealm
+  kerberos_kdc_address: test kdc address
+  kerberos_principal: test-principal
+  kerberos_password: test-password

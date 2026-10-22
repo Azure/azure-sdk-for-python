@@ -1,0 +1,52 @@
+type: pipeline
+
+compute: azureml:cpu-cluster
+
+inputs:
+  pipeline_job_data_path:
+    type: mltable
+    path: ./dataset/mnist-data/
+    mode: eval_mount
+
+outputs:
+  pipeline_job_out_path:
+    type: uri_folder
+    mode: upload
+
+jobs:
+  file_batch_inference_node:
+    type: parallel
+    compute: azureml:cpu-cluster
+    component: file:./score.yml
+    inputs:
+      job_data_path: ${{parent.inputs.pipeline_job_data_path}}
+    outputs:
+      job_output_path:
+
+    mini_batch_size: "1"
+    mini_batch_error_threshold: 1
+    max_concurrency_per_instance: 1
+
+  convert_data_node:
+    type: command
+    component: file:./convert_data.yml
+    inputs:
+      input_data: ${{parent.jobs.file_batch_inference_node.outputs.job_output_path}}
+    outputs:
+      file_output_data:
+        type: mltable
+
+  file_batch_inference_duplicate_node:
+    type: parallel
+    compute: azureml:cpu-cluster
+    component: file:./score.yml
+    inputs:
+      job_data_path:
+        path: ${{parent.jobs.convert_data_node.outputs.file_output_data}}
+        mode: eval_mount
+    outputs:
+      job_output_path: ${{parent.outputs.pipeline_job_out_path}}
+
+    mini_batch_size: "1"
+    mini_batch_error_threshold: 1
+    max_concurrency_per_instance: 1

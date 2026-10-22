@@ -1,0 +1,12 @@
+trigger: none
+
+extends:
+  template: ./tests.yml
+  parameters:
+    TestMarkArgument: "data_experiences_test"
+    CloudConfig:
+      Public:
+        SubscriptionConfiguration: $(python-ml-experiences-sub-scope)
+        Location: eastus
+        MatrixReplace:
+          - TestSamples=.*/true

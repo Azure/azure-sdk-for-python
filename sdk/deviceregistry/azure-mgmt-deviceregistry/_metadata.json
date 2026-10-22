@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2026-03-01-preview",
+  "apiVersions": {
+    "Microsoft.DeviceRegistry": "2026-03-01-preview"
+  },
+  "commit": "5038b362fae5e6f54bb6fe7e0a0d18370a946acf",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/deviceregistry/DeviceRegistry.Management",
+  "emitterVersion": "0.61.2"
+}

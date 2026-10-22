@@ -1,0 +1,21 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
+name: one_line_tsv
+display_name: Generate One Line Tsv
+version: 0.0.1
+type: CommandComponent
+is_deterministic: true
+inputs:
+  content:
+    type: string
+    optional: false
+  tsv_file:
+    type: string
+    optional: false
+    default: output.tsv
+outputs:
+  output_dir:
+    type: path
+command: >-
+  echo {inputs.content} > {outputs.output_dir}/{inputs.tsv_file}
+environment:
+  name: AzureML-Designer

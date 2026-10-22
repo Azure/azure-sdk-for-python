@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-06-01",
+  "commit": "802f22a25fa6938c226d518cd89e61a98201831f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/edge/Microsoft.Edge.ConfigurationManager.Management",
+  "emitterVersion": "0.47.0"
+}

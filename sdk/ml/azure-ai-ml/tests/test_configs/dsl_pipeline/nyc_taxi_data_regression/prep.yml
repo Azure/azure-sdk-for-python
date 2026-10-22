@@ -1,0 +1,16 @@
+name: prep_taxi_data
+display_name: PrepTaxiData
+version: 1
+type: command
+inputs:
+  raw_data:
+    type: uri_folder
+outputs:
+  prep_data:
+    type: uri_folder
+code: ./prep_src
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+command: >-
+  python prep.py
+  --raw_data ${{inputs.raw_data}}
+  --prep_data ${{outputs.prep_data}}

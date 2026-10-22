@@ -1,0 +1,25 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
+name: convert_file_to_boolean
+version: 0.0.1
+display_name: Convert File to Boolean
+type: CommandComponent
+description: Convert input file to boolean type output.
+tags:
+  codegenBy: dsl.component
+inputs:
+  input:
+    optional: false
+    type:
+    - AnyFile
+    - AnyDirectory
+outputs:
+  primitive_is_control:
+    is_control: true
+    type: boolean
+  path_with_optional:
+    optional: false
+    type: AnyDirectory
+command: python -m azure.ml.component.dsl.executor --file run.py --name convert_file_to_boolean
+  --params --input {inputs.input} --output {outputs.path_with_optional}
+environment:
+  name: AzureML-Component

@@ -1,0 +1,8 @@
+-e ../../../eng/tools/azure-sdk-tools
+../azure-communication-identity
+../../core/azure-core
+../../identity/azure-identity
+aiohttp>=3.0
+typing_extensions>=3.7.2
+aiounittest>=1.4
+asyncio

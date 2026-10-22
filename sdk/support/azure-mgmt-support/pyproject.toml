@@ -1,0 +1,6 @@
+[tool.azure-sdk-build]
+breaking = false
+mypy = false
+pyright = false
+type_check_samples = false
+verifytypes = false

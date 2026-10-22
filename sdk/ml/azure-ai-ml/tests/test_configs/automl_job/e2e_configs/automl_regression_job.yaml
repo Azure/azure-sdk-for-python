@@ -1,0 +1,37 @@
+type: automl
+
+experiment_name: cli_e2e_test
+compute: azureml:cpu-cluster
+
+log_verbosity: debug
+task: regression
+primary_metric: r2_score
+
+limits:
+  timeout_minutes: 180
+  trial_timeout_minutes: 20
+  max_trials: 2
+  max_concurrent_trials: 2
+  enable_early_termination: true
+  exit_score: 0.85
+
+target_column_name: ERP
+training_data:
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/machine_data/train
+  type: mltable
+
+featurization:
+  mode: custom
+  transformer_params:
+    imputer:
+      - fields: ["MYCT"]
+        parameters:
+          strategy: mean
+
+training:
+  blocked_training_algorithms:
+    - elastic_net
+    - lasso_lars
+    - xg_boost_regressor
+  enable_stack_ensemble: False
+  enable_vote_ensemble: False

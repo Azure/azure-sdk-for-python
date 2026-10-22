@@ -1,0 +1,8 @@
+recursive-include tests *.py
+include *.md
+include azure/__init__.py
+include azure/mgmt/__init__.py
+recursive-include samples *.py *.md
+recursive-include doc *.rst
+include azure/mgmt/core/py.typed
+

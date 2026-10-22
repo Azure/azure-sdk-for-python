@@ -1,0 +1,3 @@
+include *.md
+include azure/__init__.py
+include azure/media/__init__.py

@@ -1,0 +1,27 @@
+-e ../../../eng/tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+marshmallow>=3.5,<4.0.0
+marshmallow-jsonschema==0.14.0
+mock
+pytest-cov
+pytest-forked
+pytest-xdist
+pytest-timeout
+pytest-mock
+pytest
+pydash
+azure-mgmt-msi
+pywin32==311 ; sys_platform == 'win32'
+docker;platform.python_implementation!="PyPy"
+numpy;platform.python_implementation!="PyPy"
+scikit-image;platform.python_implementation!="PyPy" and python_version < "3.14"
+mldesigner
+azure-mgmt-resourcegraph<9.0.0,>=2.0.0
+azure-mgmt-resource<23.0.0,>=3.0.0
+pytest-reportlog
+python-dotenv
+azureml-dataprep-rslex>=2.22.0; platform_python_implementation == "CPython" and python_version < "3.13" and (sys_platform != "darwin" or platform_machine != "arm64")
+azureml-dataprep-rslex>=2.22.0; platform_python_implementation == "PyPy" and python_version < "3.10"
+pip
+setuptools==83.0.0

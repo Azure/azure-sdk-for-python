@@ -1,0 +1,14 @@
+name: banchci
+type: computeinstance
+size: STANDARD_DS3_V2
+description: some_desc_ci
+
+
+setup_scripts:
+   creation_script:
+      path: Users/test/creation-script.sh
+      timeout_minutes: 20
+   startup_script:
+      path: Users/test/startup-script.sh
+      command: ls
+      timeout_minutes: 15

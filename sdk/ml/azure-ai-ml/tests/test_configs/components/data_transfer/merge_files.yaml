@@ -1,0 +1,15 @@
+$schema: http://azureml/sdk-2-0/DataTransferComponent.json
+name: datatransfer_merge_files
+display_name: Data Transfer Component merge-files
+
+type: data_transfer
+task: copy_data
+inputs:
+  folder1:
+    type: uri_folder
+  folder2:
+    type: uri_folder
+outputs:
+  output_folder:
+    type: uri_folder
+data_copy_mode: merge_with_overwrite

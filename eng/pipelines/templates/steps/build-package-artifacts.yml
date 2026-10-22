@@ -1,0 +1,264 @@
+parameters:
+  - name: BeforePublishSteps
+    type: object
+    default: []
+  - name: TestPipeline
+    type: boolean
+    default: false
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: Artifacts
+    type: object
+    default: []
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
+  - name: ArtifactSuffix
+    type: string
+    default: 'linux'
+  - name: BuildTargetingString
+    type: string
+    default: '*'
+  - name: ExcludePaths
+    type: object
+    default: []
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
+  - name: MsRustAdditionalTargets
+    type: string
+    default: ''
+
+steps:
+  - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+    - checkout: self
+  - ${{ else }}:
+    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+      parameters:
+        Paths:
+          - '**'
+
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(PythonVersion)'
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+    inputs:
+      versionSpec: $(PythonVersion)
+
+  # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+  - template: auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
+      EnableTwineAuth: false
+
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+
+  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      TestPipeline: ${{ parameters.TestPipeline }}
+
+  - template: /eng/common/pipelines/templates/steps/set-default-branch.yml@self
+
+  - script: |
+      echo "##vso[build.addbuildtag]Scheduled"
+    displayName: 'Tag scheduled builds'
+    condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
+
+  - pwsh: |
+      if ("${{ parameters.ServiceDirectory }}" -ne "auto")
+      {
+        Write-Host "##vso[task.setvariable variable=ComponentDetection.SourcePath]$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}"
+      }
+    displayName: Set Component Governance Path
+
+  # Create package properties file before updating the version to daily dev build
+  # This is required to set the package version in info file before it's updated.
+  - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      ExcludePaths: ${{ parameters.ExcludePaths }}
+
+  # set dev build calls SavePackageProperties with dev version if necessary. this will never happen in a PR build
+  # however, it will set the variable SetDevVersion as appropriate for normal nightly runs
+  - template: set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
+  - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      ExcludePaths: ${{ parameters.ExcludePaths }}
+
+  - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
+    parameters:
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+
+  # Decides whether the mac/windows builds produce anything, based on whether any targeted package
+  # declares compiled binaries. If none do, only the linux build runs.
+  - template: /eng/pipelines/templates/steps/resolve-build-platforms.yml
+    parameters:
+      PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      which python
+      $(PIP_EXE) install -r eng/ci_tools.txt
+
+      if ($env:AGENT_OS -eq "Linux") {
+        Write-Host "Installing release reqs"
+        $(PIP_EXE) install -r eng/release_requirements.txt
+      }
+      $(PIP_EXE) freeze
+    displayName: 'Prep Environment'
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+
+  - script: |
+      sudo apt-get update
+      sudo apt-get install -y qemu-user-static binfmt-support
+      sudo update-binfmts --enable qemu-aarch64
+    displayName: 'Install QEMU Dependencies'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
+  - ${{ if parameters.InstallMsRustToolchain }}:
+    - template: /eng/pipelines/templates/steps/install-msrust-toolchain.yml
+      parameters:
+        ToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        WorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        ${{ if eq(parameters.ArtifactSuffix, 'windows') }}:
+          AdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
+        Condition: and(succeeded(), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+
+  # Windows: cibuildwheel fetches CPython from api.nuget.org, which is blocked.
+  # Pre-provision the interpreters from the Azure DevOps NuGet feed into the
+  # cibuildwheel cache so it skips the blocked download.
+  - task: NuGetAuthenticate@1
+    displayName: 'Authenticate to NuGet feed'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+      $version = "3.10.11"
+      $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
+      $nugetCpython = Join-Path $cache "nuget-cpython"
+      New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
+      $nuget = (Get-Command nuget).Source
+      & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
+      if ($LASTEXITCODE) { 
+        Write-Error "Failed to download python $version"
+        exit 1
+      }
+      & $nuget install pythonarm64 -Version $version -Source $feed -OutputDirectory $nugetCpython
+      if ($LASTEXITCODE) { 
+        Write-Error "Failed to download pythonarm64 $version"
+        exit 1
+      }
+      Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+
+      if ($env:INSTALL_MS_RUST_TOOLCHAIN -eq 'true') {
+        # Packages use this path as PYO3_CROSS_LIB_DIR when cross-compiling Windows ARM64 wheels.
+        $arm64Libs = Join-Path $nugetCpython "pythonarm64.$version\tools\libs"
+        if (-not (Test-Path $arm64Libs)) {
+          throw "Expected ARM64 Python import libraries at $arm64Libs"
+        }
+        Write-Host "##vso[task.setvariable variable=PYTHON_ARM64_LIB_DIR]$arm64Libs"
+      }
+    displayName: 'Pre-provision CPython for cibuildwheel'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+    env:
+      INSTALL_MS_RUST_TOOLCHAIN: ${{ format('{0}', parameters.InstallMsRustToolchain) }}
+
+  # Linux: forward PIP_INDEX_URL into the build container so pip fetches build
+  # dependencies from the Azure DevOps feed instead of PyPI. Using
+  # CIBW_ENVIRONMENT_PASS_LINUX (not CIBW_ENVIRONMENT) preserves the package's
+  # own [tool.cibuildwheel].environment (CFLAGS) setting.
+  # This replaces, rather than merges with, the package's environment-pass list.
+  # Include every variable required by its Linux build hooks.
+  - pwsh: |
+      $passVariables = @('PIP_INDEX_URL')
+      if ($env:RUST_ENVIRONMENT_PASS) {
+        $passVariables += $env:RUST_ENVIRONMENT_PASS.Split(' ')
+      }
+      Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]$($passVariables -join ' ')"
+    displayName: 'Forward build environment to cibuildwheel'
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+    env:
+      ${{ if parameters.InstallMsRustToolchain }}:
+        RUST_ENVIRONMENT_PASS: MSRUSTUP_ACCESS_TOKEN MSRUSTUP_FEED_URL CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_INDEX CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER
+
+  - pwsh: |
+      which python
+      python eng/scripts/run_with_1es_proxy_trust.py sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive --service="${{ parameters.ServiceDirectory }}"
+      exit $LASTEXITCODE
+    displayName: 'Generate Packages'
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+    ${{ if parameters.InstallMsRustToolchain }}:
+      timeoutInMinutes: 210
+    ${{ else }}:
+      timeoutInMinutes: 80
+    env:
+      CIBW_BUILD_VERBOSITY: 3
+      # The platform resolver selects DEBUG to stream native build output.
+      LOGLEVEL: $(SDK_BUILD_LOGLEVEL)
+      ${{ if parameters.InstallMsRustToolchain }}:
+        # Map secret tokens explicitly for container feed access. Package hooks can read them;
+        # enforce source-trust and credential permissions through external ADO controls.
+        MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+        MSRUSTUP_FEED_URL: $(MSRUSTUP_FEED_URL)
+        # CargoAuthenticate exports the registry token and credential-provider variables.
+        CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+        CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
+
+  - pwsh: |
+      which python
+      twine check $(Build.ArtifactStagingDirectory)/**/*.whl
+      twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
+    displayName: 'Verify Readme'
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Linux'))
+
+  - ${{ parameters.BeforePublishSteps }}
+
+  # we need to publish an empty artifact. when publishing an empty artifact, let's ensure that there isn't anything to
+  # cause CG or SBOM generation to have to do actual work.
+  - pwsh: |
+      Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse `
+        | Where-Object { !($_.Name.EndsWith("CredScanSuppression.json")) -and ($_.PSIsContainer -ne $true) } `
+        | Remove-Item -Force -Recurse
+    displayName: Clean up repo
+    condition: and(succeeded(), ne(variables['ENABLE_EXTENSION_BUILD'], 'true'), ne('${{ parameters.ArtifactSuffix }}', 'linux'))
+
+  # we need to only publish this if running on linux. we only need one for all stages
+  - pwsh: |
+      New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)/release_artifact"
+      Copy-Item -Path "$(Build.SourcesDirectory)/eng/release_requirements.txt" -Destination "$(Build.ArtifactStagingDirectory)/release_artifact/release_requirements.txt"
+    displayName: 'Assemble Static Files for Release Stage'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
+  - ${{ if eq(parameters.ArtifactSuffix, 'linux') }}:
+    - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)/release_artifact'
+        ArtifactName: 'release_artifact'
+
+  - ${{ if eq(parameters.ArtifactSuffix, '') }}:
+    - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'packages'
+
+  - ${{ if ne(parameters.ArtifactSuffix, '') }}:
+    - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'packages_${{ parameters.ArtifactSuffix }}'

@@ -1,0 +1,7 @@
+[packaging]
+auto_update = false
+package_name = "azure-communication-sms"
+package_pprint_name = "Communication SMS"
+package_doc_id = ""
+is_stable = false
+is_arm = false

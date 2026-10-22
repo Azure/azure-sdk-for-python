@@ -1,0 +1,964 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+import getpass
+import logging
+import os
+import tempfile
+import time
+import sys
+from pathlib import Path
+from enum import Enum
+from typing import Dict, List, Optional, Any
+from urllib.parse import urlparse
+import psutil
+
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    HttpLoggingPolicy,
+    RedirectPolicy,
+    RequestIdPolicy,
+)
+from azure.identity import ManagedIdentityCredential
+from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorClient
+from azure.monitor.opentelemetry.exporter._generated.exporter._configuration import (
+    AzureMonitorClientConfiguration,
+)
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
+    TelemetryItem,
+)
+from azure.monitor.opentelemetry.exporter._constants import (
+    _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
+    _AZURE_MONITOR_DISTRO_VERSION_ARG,
+    _APPLICATIONINSIGHTS_AUTHENTICATION_STRING,
+    _INVALID_STATUS_CODES,
+    _REACHED_INGESTION_STATUS_CODES,
+    _REDIRECT_STATUS_CODES,
+    _REQ_DURATION_NAME,
+    _REQ_EXCEPTION_NAME,
+    _REQ_FAILURE_NAME,
+    _REQ_RETRY_NAME,
+    _REQ_SUCCESS_NAME,
+    _REQ_THROTTLE_NAME,
+    _RETRYABLE_STATUS_CODES,
+    _THROTTLE_STATUS_CODES,
+    _ONE_SETTINGS_FEATURE_LOCAL_STORAGE,
+    DropCode,
+    _exception_categories,
+)
+from azure.monitor.opentelemetry.exporter._connection_string_parser import (
+    ConnectionStringParser,
+)
+from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._configuration._state import (
+    get_configuration_manager,
+)
+from azure.monitor.opentelemetry.exporter._configuration._utils import (
+    evaluate_feature,
+)
+from azure.monitor.opentelemetry.exporter._utils import (
+    _get_auth_policy,
+    _get_sha256_hash,
+    _get_retry_delay_from_headers,
+    _get_os_name,
+    _get_rp_name,
+    _get_attach_type_name,
+)
+from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
+from azure.monitor.opentelemetry.exporter.export._rate_limiter import (
+    _TokenBucketRateLimiter,
+    _DEFAULT_MAX_ENVELOPES_PER_SECOND,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    get_statsbeat_initial_success,
+    get_statsbeat_shutdown,
+    increment_and_check_statsbeat_failure_count,
+    is_statsbeat_enabled,
+    set_statsbeat_initial_success,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
+    _update_requests_map,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat.customer._utils import (
+    track_dropped_items_from_storage,
+    track_dropped_items,
+    track_retry_items,
+    track_successful_items,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+    get_customer_stats_manager,
+)
+
+logger = logging.getLogger(__name__)
+
+_AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
+_TEMPDIR_PREFIX = "opentelemetry-python-"
+_SERVICE_API_LATEST = "2020-09-15_Preview"
+
+
+class ExportResult(Enum):
+    SUCCESS = 0
+    FAILED_RETRYABLE = 1
+    FAILED_NOT_RETRYABLE = 2
+
+
+# pylint: disable=broad-except
+# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-statements
+# pylint: disable=C0301
+class BaseExporter:
+    """Azure Monitor base exporter for OpenTelemetry."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        """Azure Monitor base exporter for OpenTelemetry.
+
+        :keyword str api_version: The service API version used. Defaults to latest.
+        :keyword str connection_string: The connection string used for your Application Insights resource.
+        :keyword ManagedIdentityCredential/ClientSecretCredential credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
+        :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry records for retry. Defaults to `False`.
+        :keyword str storage_directory: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
+        :keyword int max_envelopes_per_second: Maximum number of telemetry envelopes sent per second. Acts as a client-side safety cap to prevent overloading shared ingestion infrastructure during telemetry bursts. Defaults to 10000. Set to 0 to disable rate limiting.
+        :rtype: None
+        """
+        parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
+
+        self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
+        # We do not need to use entra Id if this is a sdkStats exporter
+        if self._is_stats_exporter():
+            self._credential = None
+        else:
+            # We use the credential on a regular exporter or customer sdkStats exporter
+            self._credential = _get_authentication_credential(**kwargs)
+        self._consecutive_redirects = 0  # To prevent circular redirects
+        self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
+        self._connection_string = parsed_connection_string._connection_string
+        self._endpoint = parsed_connection_string.endpoint
+        self._region = parsed_connection_string.region
+        self._instrumentation_key = parsed_connection_string.instrumentation_key
+        self._aad_audience = parsed_connection_string.aad_audience
+        self._storage_maintenance_period = kwargs.get(
+            "storage_maintenance_period", 60
+        )  # Maintenance interval in seconds.
+        self._storage_max_size = kwargs.get(
+            "storage_max_size", 50 * 1024 * 1024
+        )  # Maximum size in bytes (default 50MiB)
+        self._storage_min_retry_interval = kwargs.get(
+            "storage_min_retry_interval", 60
+        )  # minimum retry interval in seconds
+        if "storage_directory" in kwargs:
+            self._storage_directory = kwargs.get("storage_directory")
+        elif not self._disable_offline_storage:
+            self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
+        else:
+            self._storage_directory = None
+        self._storage_retention_period = kwargs.get(
+            "storage_retention_period", 48 * 60 * 60
+        )  # Retention period in seconds (default 48 hrs)
+        self._timeout = kwargs.get("timeout", 10.0)  # networking timeout in seconds
+        max_eps = kwargs.get("max_envelopes_per_second", _DEFAULT_MAX_ENVELOPES_PER_SECOND)
+        if max_eps is not None and max_eps < 0:
+            raise ValueError("max_envelopes_per_second must be non-negative (0 disables rate limiting)")
+        # Each exporter instance gets its own rate limiter. This is intentional:
+        # different telemetry types (traces, logs, metrics) have different
+        # ingestion characteristics and burst profiles, so per-exporter caps
+        # provide more predictable behaviour than a shared process-wide bucket.
+        if max_eps and max_eps > 0:
+            self._rate_limiter: Optional[_TokenBucketRateLimiter] = _TokenBucketRateLimiter(max_eps)
+        else:
+            self._rate_limiter = None
+        self._distro_version = kwargs.get(
+            _AZURE_MONITOR_DISTRO_VERSION_ARG, ""
+        )  # If set, indicates the exporter is instantiated via Azure monitor OpenTelemetry distro. Versions corresponds to distro version.
+        # specifies whether current exporter is used for collection of instrumentation metrics
+        self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
+        self._retry_after_delay_seconds: Optional[int] = None
+
+        config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
+        policies = [
+            RequestIdPolicy(**kwargs),
+            config.headers_policy,
+            config.user_agent_policy,
+            config.proxy_policy,
+            ContentDecodePolicy(**kwargs),
+            # Handle redirects in exporter, set new endpoint if redirected
+            RedirectPolicy(permit_redirects=False),
+            config.retry_policy,
+            _get_auth_policy(self._credential, config.authentication_policy, self._aad_audience),
+            config.custom_hook_policy,
+            config.logging_policy,
+            # Explicitly disabling to avoid infinite loop of Span creation when data is exported
+            # DistributedTracingPolicy(**kwargs),
+        ]
+
+        # Exclude HttpLoggingPolicy for the sdkstats exporter so its HTTP
+        # traffic does not appear in the user's logs.
+        if not self._is_stats_exporter():
+            policies.append(config.http_logging_policy or HttpLoggingPolicy(**kwargs))
+
+        self.client: AzureMonitorClient = AzureMonitorClient(
+            host=self._endpoint,
+            connection_timeout=self._timeout,
+            policies=policies,
+            **kwargs,
+        )
+        self.storage: Optional[LocalFileStorage] = None
+        if not self._disable_offline_storage:
+            self._enable_local_storage()
+
+        # Register a OneSettings callback so local (offline) storage can be toggled remotely via the
+        # FEATURE_LOCAL_STORAGE feature flag. The customer-sdkstats exporter participates because it
+        # writes to the same on-disk folder as the main exporter (keyed on the customer's ikey), so it
+        # must follow the same remote kill-switch; its own manager still applies the user's static
+        # disable_offline_storage, and the callback's hard gate never re-enables a user opt-out. The
+        # statsbeat exporter is skipped: it never persists to disk (isolated Microsoft-ikey folder) and
+        # does not participate in the remote toggle.
+        # get_configuration_manager() returns None when the control plane is disabled via env var,
+        # in which case OneSettings is skipped entirely and storage keeps its statically configured
+        # state.
+        if not self._is_stats_exporter():
+            config_manager = get_configuration_manager()
+            if config_manager:
+                # Start the control-plane worker (idempotent) and describe this process to OneSettings
+                # so feature flags can be targeted (os/rp/attach/component/version/region/ikey).
+                config_manager.initialize(
+                    os=_get_os_name(),
+                    rp=_get_rp_name(),
+                    attach=_get_attach_type_name(),
+                    component="ext",
+                    version=ext_version,
+                    region=self._region,
+                    ikey=self._instrumentation_key,
+                )
+                # register_callback also replays any already-cached configuration to this callback,
+                # so a late-created exporter immediately honors an existing kill-switch. The replay is
+                # centralized in the configuration manager; no feature-specific handling is needed here.
+                config_manager.register_callback(self._local_storage_configuration_callback)
+
+        # statsbeat initialization
+        if self._should_collect_stats():
+            try:
+                # Import here to avoid circular dependencies
+                from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
+                    collect_statsbeat_metrics,
+                )
+
+                collect_statsbeat_metrics(self)
+            except Exception as e:  # pylint: disable=broad-except
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Failed to initialize statsbeat metrics: %s", e
+                )
+
+        # customer sdkstats initialization
+        if self._should_collect_customer_sdkstats():
+            from azure.monitor.opentelemetry.exporter.statsbeat.customer import (
+                collect_customer_sdkstats,
+            )
+
+            # Collect customer sdkstats metrics
+            collect_customer_sdkstats(self)
+
+    # Maximum number of blobs to drain from storage per invocation.
+    # Prevents a retry storm when many blobs have accumulated during
+    # sustained throttling (e.g. 429).
+    _MAX_STORAGE_DRAIN_BATCH = 10
+
+    def _transmit_from_storage(self) -> None:
+        # self.storage is None only when the user opted out of offline storage (it is constructed
+        # once at init and never nulled by the remote toggle, which only flips it active/inactive).
+        storage = self.storage
+        if not storage:
+            return
+        drained = 0
+        for blob in storage.gets():
+            if drained >= self._MAX_STORAGE_DRAIN_BATCH:
+                break
+            # give a few more seconds for blob lease operation
+            # to reduce the chance of race (for perf consideration)
+            if blob.lease(self._timeout + 5):
+                blob_data = blob.get()
+                if blob_data is not None:
+                    envelopes = [TelemetryItem(x) for x in blob_data]
+                    result = self._transmit(envelopes)
+                    if result == ExportResult.FAILED_RETRYABLE:
+                        blob.lease(1)
+                        # Stop draining: the service is still under
+                        # pressure.  Remaining blobs will be retried on
+                        # the next successful export cycle, avoiding a
+                        # burst of requests that re-triggers throttling.
+                        break
+                    blob.delete()
+                else:
+                    # If blob.get() returns None, delete the corrupted blob
+                    blob.delete()
+                drained += 1
+
+    def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
+        # self.storage is None only when the user opted out of offline storage (it is constructed
+        # once at init and never nulled by the remote toggle, which only flips it active/inactive).
+        storage = self.storage
+        if storage:
+            if result == ExportResult.FAILED_RETRYABLE:
+                envelopes_to_store = [x.as_dict() for x in envelopes]
+                if self._retry_after_delay_seconds is not None:
+                    result_from_storage_put = storage.put(
+                        envelopes_to_store, lease_period=self._retry_after_delay_seconds
+                    )
+                else:
+                    result_from_storage_put = storage.put(envelopes_to_store)
+                if self._should_collect_customer_sdkstats():
+                    track_dropped_items_from_storage(result_from_storage_put, envelopes)
+                self._retry_after_delay_seconds = None
+            elif result == ExportResult.SUCCESS:
+                # Try to send any cached events
+                self._transmit_from_storage()
+
+        else:
+            # Track items that would have been retried but are dropped since client has local storage disabled
+            if self._should_collect_customer_sdkstats():
+                track_dropped_items(envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+
+    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-nested-blocks
+    # pylint: disable=too-many-statements
+    # pylint: disable=too-many-locals
+    def _transmit(self, envelopes: List[TelemetryItem], _skip_rate_limit: bool = False) -> ExportResult:
+        """
+        Transmit the data envelopes to the ingestion service.
+
+        Returns an ExportResult, this function should never
+        throw an exception.
+        :param envelopes: The list of telemetry items to transmit.
+        :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.exporter.models.TelemetryItem
+        :param _skip_rate_limit: Internal flag to skip rate limiting on recursive calls (e.g. redirects).
+        :type _skip_rate_limit: bool
+        :return: The result of the export.
+        :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
+        """
+        if len(envelopes) > 0:
+            # Client-side rate limiting: cap send rate to protect shared ingestion infrastructure.
+            # Stats exporters bypass rate limiting to ensure observability data is not lost.
+            # Skip rate limiting on recursive calls (e.g. 307/308 redirects) to avoid
+            # double-consuming tokens for the same batch.
+            if (
+                not _skip_rate_limit
+                and self._rate_limiter
+                and not self._is_stats_exporter()
+                and not self._is_customer_sdkstats_exporter()
+            ):
+                granted = self._rate_limiter.try_consume(len(envelopes))
+                if granted == 0:
+                    logger.warning(
+                        "Rate limiter rejected entire batch of %d envelopes. Routing to local storage for retry.",
+                        len(envelopes),
+                    )
+                    return ExportResult.FAILED_RETRYABLE
+                if granted < len(envelopes):
+                    # Send what we can, route the rest to local storage.
+                    # We mutate the list in-place so that the caller's reference
+                    # (used later in _handle_transmit_from_storage) only sees
+                    # the admitted envelopes, preventing double-persist of the
+                    # overflow on a subsequent retryable failure.
+                    overflow = envelopes[granted:]
+                    del envelopes[granted:]
+                    logger.info(
+                        "Rate limiter admitted %d of %d envelopes; %d envelopes deferred to local storage.",
+                        granted,
+                        granted + len(overflow),
+                        len(overflow),
+                    )
+                    storage = self.storage
+                    if storage:
+                        storage.put([x.as_dict() for x in overflow])
+                    else:
+                        logger.warning(
+                            "Rate limiter deferred %d envelopes but offline "
+                            "storage is disabled; these envelopes are dropped.",
+                            len(overflow),
+                        )
+
+            result = ExportResult.SUCCESS
+            # Track whether or not exporter has successfully reached ingestion
+            # Currently only used for statsbeat exporter to detect shutdown cases
+            reach_ingestion = False
+            start_time = time.time()
+            final_result = None
+            retry_after_delay_seconds = None
+            try:
+                track_result = self.client.track(
+                    envelopes,
+                    cls=lambda pipeline_response, deserialized, _: (
+                        deserialized,
+                        pipeline_response.http_response.headers,
+                    ),
+                )
+                response_headers: Any = {}
+                if isinstance(track_result, tuple) and len(track_result) == 2:
+                    track_response, response_headers = track_result
+                else:
+                    track_response = track_result
+                if not track_response.errors:  # 200
+                    self._consecutive_redirects = 0
+                    if not self._is_stats_exporter():
+                        logger.info(
+                            "Transmission succeeded: Item received: %s. Items accepted: %s",
+                            track_response.items_received,
+                            track_response.items_accepted,
+                        )
+                    if self._should_collect_stats():
+                        _update_requests_map(_REQ_SUCCESS_NAME[1], 1)
+                    reach_ingestion = True
+                    result = ExportResult.SUCCESS
+
+                    # Track successful items in customer sdkstats
+                    if self._should_collect_customer_sdkstats():
+                        track_successful_items(envelopes)
+                else:  # 206
+                    reach_ingestion = True
+                    resend_envelopes = []
+                    for error in track_response.errors:
+                        # Check for sampling rejection - these should not be retried
+                        # because the server will always reject them based on sampling rules
+                        if _is_sampling_rejection(error.message):
+                            if not self._is_stats_exporter():
+                                logger.info(
+                                    "Data dropped due to ingestion sampling: %s %s.",
+                                    error.message,
+                                    (envelopes[error.index] if error.index is not None else ""),
+                                )
+                        elif _is_retryable_code(error.status_code):
+                            if error.status_code == 429 and response_headers != {}:
+                                delay = _get_retry_delay_from_headers(response_headers)
+                                if delay is not None and delay > 0:
+                                    retry_after_delay_seconds = delay
+
+                            resend_envelopes.append(envelopes[error.index])  # type: ignore
+                            # Track retried items in customer sdkstats
+                            if self._should_collect_customer_sdkstats():
+                                track_retry_items(resend_envelopes, error)
+                        else:
+                            if not self._is_stats_exporter():
+                                # Track dropped items in customer sdkstats, non-retryable scenario
+                                if self._should_collect_customer_sdkstats():
+                                    if (
+                                        error is not None
+                                        and hasattr(error, "index")
+                                        and error.index is not None
+                                        and isinstance(error.status_code, int)
+                                    ):
+                                        track_dropped_items([envelopes[error.index]], error.status_code)
+                                logger.error(
+                                    "Data drop %s: %s %s.",
+                                    error.status_code,
+                                    error.message,
+                                    (envelopes[error.index] if error.index is not None else ""),
+                                )
+                    storage = self.storage
+                    if storage and resend_envelopes:
+                        envelopes_to_store = [x.as_dict() for x in resend_envelopes]
+                        lease_period = (
+                            retry_after_delay_seconds
+                            if retry_after_delay_seconds is not None
+                            else self._storage_min_retry_interval
+                        )
+                        result_from_storage = storage.put(envelopes_to_store, lease_period)
+                        if self._should_collect_customer_sdkstats():
+                            track_dropped_items_from_storage(result_from_storage, resend_envelopes)
+                        self._consecutive_redirects = 0
+                    elif resend_envelopes:
+                        # Track items that would have been retried but are dropped since client has local storage disabled
+                        if self._should_collect_customer_sdkstats():
+                            track_dropped_items(resend_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+                    # Mark as not retryable because we already write to storage here
+                    result = ExportResult.FAILED_NOT_RETRYABLE
+            except HttpResponseError as response_error:
+                # HttpResponseError is raised when a response is received
+                if _reached_ingestion_code(response_error.status_code):
+                    reach_ingestion = True
+                if _is_retryable_code(response_error.status_code):
+                    if self._should_collect_stats():
+                        _update_requests_map(_REQ_RETRY_NAME[1], value=response_error.status_code)
+                    result = ExportResult.FAILED_RETRYABLE
+                    # Log error for 401: Unauthorized, 403: Forbidden to assist with customer troubleshooting
+                    if not self._is_stats_exporter():
+                        if self._should_collect_customer_sdkstats():
+                            track_retry_items(envelopes, response_error)
+                        if response_error.status_code == 401:
+                            logger.error(
+                                "Retryable server side error: %s. "
+                                "Your Application Insights resource may be configured to use entra ID authentication. "
+                                "Please make sure your application is configured to use the correct token credential.",
+                                response_error.message,
+                            )
+                        elif response_error.status_code == 403:
+                            logger.error(
+                                "Retryable server side error: %s. "
+                                "Your application may be configured with a token credential "
+                                "but your Application Insights resource may be configured incorrectly. Please make sure "
+                                "your Application Insights resource has enabled entra Id authentication and "
+                                "has the correct `Monitoring Metrics Publisher` role assigned.",
+                                response_error.message,
+                            )
+                        elif response_error.status_code == 429:
+                            headers = None
+                            if response_error.response and response_error.response.headers:  # type: ignore
+                                headers = response_error.response.headers  # type: ignore
+                            retry_after_delay_seconds = _get_retry_delay_from_headers(headers)
+                elif _is_throttle_code(response_error.status_code):
+                    if self._should_collect_stats():
+                        _update_requests_map(_REQ_THROTTLE_NAME[1], value=response_error.status_code)
+                    result = ExportResult.FAILED_NOT_RETRYABLE
+
+                    if not self._is_stats_exporter():
+                        if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
+                            track_dropped_items(envelopes, response_error.status_code)
+                elif _is_redirect_code(response_error.status_code):
+                    self._consecutive_redirects = self._consecutive_redirects + 1
+                    # pylint: disable=W0212
+                    if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # type: ignore
+                        if response_error.response and response_error.response.headers:  # type: ignore
+                            redirect_has_headers = True
+                            location = response_error.response.headers.get("location")  # type: ignore
+                            url = urlparse(location)
+                        else:
+                            redirect_has_headers = False
+                        if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
+                            current_url = urlparse(self.client._config.host)  # pylint: disable=W0212
+                            # Refuse cross-origin redirects so an attacker-controlled
+                            # `Location` header cannot cause the auth policy to attach
+                            # a freshly-signed Authorization header for a foreign host
+                            # on the recursive _transmit call.
+                            if not self._is_same_registered_domain(current_url.netloc, url.netloc):
+                                if not self._is_stats_exporter():
+                                    if self._should_collect_customer_sdkstats():
+                                        track_dropped_items(
+                                            envelopes,
+                                            DropCode.CLIENT_EXCEPTION,
+                                            _exception_categories.CLIENT_EXCEPTION.value,
+                                        )
+                                    logger.error(
+                                        "Refusing cross-origin redirect to %s://%s.",
+                                        url.scheme,
+                                        url.netloc,
+                                    )
+                                result = ExportResult.FAILED_NOT_RETRYABLE
+                            else:
+                                # Change the host to the new redirected host
+                                self.client._config.host = "{}://{}".format(
+                                    url.scheme, url.netloc
+                                )  # pylint: disable=W0212
+                                # Attempt to export again
+                                result = self._transmit(envelopes, _skip_rate_limit=True)
+                        else:
+                            if not self._is_stats_exporter():
+                                if self._should_collect_customer_sdkstats():
+                                    track_dropped_items(
+                                        envelopes,
+                                        DropCode.CLIENT_EXCEPTION,
+                                        _exception_categories.CLIENT_EXCEPTION.value,
+                                    )
+                                logger.error(
+                                    "Error parsing redirect information.",
+                                )
+                            result = ExportResult.FAILED_NOT_RETRYABLE
+                    else:
+                        if not self._is_stats_exporter():
+                            # Track dropped items in customer sdkstats, non-retryable scenario
+                            if self._should_collect_customer_sdkstats():
+                                track_dropped_items(
+                                    envelopes,
+                                    DropCode.CLIENT_EXCEPTION,
+                                    _exception_categories.CLIENT_EXCEPTION.value,
+                                )
+                            logger.error(
+                                "Error sending telemetry because of circular redirects. "
+                                "Please check the integrity of your connection string."
+                            )
+                        # If redirect but did not return, exception occurred
+                        if self._should_collect_stats():
+                            _update_requests_map(_REQ_EXCEPTION_NAME[1], value="Circular Redirect")
+                        result = ExportResult.FAILED_NOT_RETRYABLE
+                else:
+                    # Any other status code counts as failure (non-retryable)
+                    # 400 - Invalid - The server cannot or will not process the request due to the invalid telemetry (invalid data, iKey, etc.)
+                    # 404 - Ingestion is allowed only from stamp specific endpoint - must update connection string
+                    if self._should_collect_stats():
+                        _update_requests_map(_REQ_FAILURE_NAME[1], value=response_error.status_code)
+                    if not self._is_stats_exporter():
+                        logger.error(
+                            "Non-retryable server side error: %s.",
+                            response_error.message,
+                        )
+                        # Track dropped items in customer sdkstats, non-retryable scenario
+                        if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
+                            track_dropped_items(envelopes, response_error.status_code)
+                        if _is_invalid_code(response_error.status_code):
+                            # Shutdown statsbeat on invalid code from customer endpoint
+                            # Import here to avoid circular dependencies
+                            from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
+                                shutdown_statsbeat_metrics,
+                            )
+                            from azure.monitor.opentelemetry.exporter.statsbeat.customer import (
+                                shutdown_customer_sdkstats_metrics,
+                            )
+
+                            shutdown_statsbeat_metrics()
+                            # Also shutdown customer sdkstats on invalid code
+                            shutdown_customer_sdkstats_metrics()
+                    result = ExportResult.FAILED_NOT_RETRYABLE
+            except ServiceRequestError as request_error:
+                # Errors when we're fairly sure that the server did not receive the
+                # request, so it should be safe to retry.
+                # ServiceRequestError is raised by azure.core for these cases
+                logger.warning("Retrying due to server request error: %s.", request_error.message)
+
+                # Track retry items in customer sdkstats for client-side exceptions
+                if self._should_collect_customer_sdkstats():
+                    track_retry_items(envelopes, request_error)
+
+                if self._should_collect_stats():
+                    exc_type = request_error.exc_type
+                    if exc_type is None or exc_type is type(None):  # pylint: disable=unidiomatic-typecheck
+                        exc_type = request_error.__class__.__name__  # type: ignore
+                    _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
+                result = ExportResult.FAILED_RETRYABLE
+            except ServiceResponseError as response_error:
+                # The request was sent but the client failed to receive a response
+                # (e.g. read timeout).
+                logger.warning("Retrying due to server response error: %s.", response_error.message)
+
+                # Track retry items in customer sdkstats for client-side exceptions
+                if self._should_collect_customer_sdkstats():
+                    track_retry_items(envelopes, response_error)
+
+                if self._should_collect_stats():
+                    exc_type = response_error.exc_type
+                    if exc_type is None or exc_type is type(None):  # pylint: disable=unidiomatic-typecheck
+                        exc_type = response_error.__class__.__name__  # type: ignore
+                    _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
+                result = ExportResult.FAILED_RETRYABLE
+            except Exception as ex:
+                logger.exception(  # pylint: disable=do-not-log-exceptions-if-not-debug, do-not-use-logging-exception
+                    "Envelopes could not be exported and are not retryable: %s.", ex
+                )
+
+                # Track dropped items in customer sdkstats for general exceptions
+                if self._should_collect_customer_sdkstats():
+                    track_dropped_items(
+                        envelopes,
+                        DropCode.CLIENT_EXCEPTION,
+                        _exception_categories.CLIENT_EXCEPTION.value,
+                    )
+
+                if self._should_collect_stats():
+                    _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
+                result = ExportResult.FAILED_NOT_RETRYABLE
+            finally:
+                if self._should_collect_stats():
+                    end_time = time.time()
+                    _update_requests_map("count", 1)
+                    _update_requests_map(_REQ_DURATION_NAME[1], value=end_time - start_time)
+                if self._is_statsbeat_initializing_state():
+                    # Update statsbeat initial success state if reached ingestion
+                    if reach_ingestion:
+                        set_statsbeat_initial_success(True)
+                    else:
+                        # if didn't reach ingestion, increment and check if failure threshold
+                        # has been reached during attempting statsbeat initialization
+                        if increment_and_check_statsbeat_failure_count():
+                            # Import here to avoid circular dependencies
+                            from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
+                                shutdown_statsbeat_metrics,
+                            )
+
+                            shutdown_statsbeat_metrics()
+                            final_result = ExportResult.FAILED_NOT_RETRYABLE
+
+                if final_result is None:
+                    final_result = result
+                if final_result == ExportResult.FAILED_RETRYABLE:
+                    self._retry_after_delay_seconds = retry_after_delay_seconds
+                else:
+                    self._retry_after_delay_seconds = None
+            return final_result
+
+        # No spans to export
+        self._consecutive_redirects = 0
+        return ExportResult.SUCCESS
+
+    # OneSettings configuration-change callback: toggles local (offline) storage.
+    def _local_storage_configuration_callback(self, settings: Dict[str, str]) -> None:
+        """Toggle local (offline) storage in response to a OneSettings configuration change.
+
+        OneSettings acts as a remote kill-switch via the FEATURE_LOCAL_STORAGE feature flag:
+        it can force storage off, and re-enable it only when the user did not explicitly opt out
+        with ``disable_offline_storage=True``. A user opt-out is a hard gate that OneSettings can
+        never override.
+
+        :param settings: Configuration settings from OneSettings.
+        :type settings: dict[str, str]
+        """
+        # The user's explicit opt-out is a hard gate - never override it.
+        if self._disable_offline_storage:
+            return
+        local_storage_enabled = evaluate_feature(_ONE_SETTINGS_FEATURE_LOCAL_STORAGE, settings)
+        # None means the flag is absent/invalid; leave the current storage state unchanged.
+        if local_storage_enabled is None:
+            return
+        if local_storage_enabled:
+            self._enable_local_storage()
+        else:
+            self._disable_local_storage()
+
+    def _enable_local_storage(self) -> None:
+        # Construct the local file storage once (on first enable / exporter init), then keep the
+        # instance for the exporter's lifetime. A remote re-enable just flips the toggle back on
+        # rather than recreating storage or its maintenance thread.
+        if self.storage is not None:
+            self.storage.enable()
+            return
+        if self._storage_directory is None:
+            self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
+        self.storage = LocalFileStorage(  # pyright: ignore
+            path=self._storage_directory,  # type: ignore
+            max_size=self._storage_max_size,
+            maintenance_period=self._storage_maintenance_period,
+            retention_period=self._storage_retention_period,
+            name="{} Storage".format(self.__class__.__name__),
+            lease_period=self._storage_min_retry_interval,
+        )
+
+    def _disable_local_storage(self) -> None:
+        # Flip the remote toggle off so put()/gets() no-op. The storage instance and its maintenance
+        # thread are left running (torn down only at exporter shutdown), and any telemetry already
+        # persisted to disk is left in place so it can still be retried if storage is re-enabled.
+        if self.storage is not None:
+            self.storage.disable()
+
+    # check to see whether its the case of stats collection
+    def _should_collect_stats(self):
+        return (
+            is_statsbeat_enabled()
+            and not get_statsbeat_shutdown()
+            and not self._is_stats_exporter()
+            and not self._is_customer_sdkstats_exporter()
+            and not self._instrumentation_collection
+        )
+
+    # check to see whether its the case of customer sdkstats collection
+    def _should_collect_customer_sdkstats(self):
+        manager = get_customer_stats_manager()
+        return (
+            manager.is_enabled
+            and not manager.is_shutdown
+            and not self._is_stats_exporter()
+            and not self._is_customer_sdkstats_exporter()
+            and not self._instrumentation_collection
+        )
+
+    # check to see if statsbeat is in "attempting to be initialized" state
+    def _is_statsbeat_initializing_state(self):
+        return self._is_stats_exporter() and not get_statsbeat_shutdown() and not get_statsbeat_initial_success()
+
+    def _is_stats_exporter(self):
+        return getattr(self, "_is_sdkstats", False)
+
+    def _is_customer_sdkstats_exporter(self):
+        return getattr(self, "_is_customer_sdkstats", False)
+
+    def _is_same_registered_domain(self, current_netloc: str, redirect_netloc: str) -> bool:
+        """Return True if the redirect target is safe to follow.
+
+        Used to gate redirects so an attacker-controlled ``Location`` header
+        cannot cause the exporter (and its credential-bearing pipeline) to
+        send telemetry and the Authorization header to an unrelated host.
+
+        A redirect is permitted only when the target equals the currently
+        configured host exactly, or when both the current host and the
+        redirect target are under one of the known Azure Monitor ingestion
+        host suffixes (see ``_ALLOWED_REDIRECT_DOMAIN_SUFFIXES``). Customers
+        with a custom (non-Azure) ingestion host will therefore not have
+        server-issued cross-host redirects followed; such deployments should
+        configure their proxy to terminate redirects locally.
+
+        :param str current_netloc: The netloc of the currently-configured ingestion endpoint.
+        :param str redirect_netloc: The netloc of the redirect target from the server's location header.
+        :return: True if the redirect target is considered safe to follow.
+        :rtype: bool
+        """
+
+        def _host(netloc: str) -> str:
+            return netloc.split("@")[-1].split(":")[0].lower().rstrip(".")
+
+        if not current_netloc or not redirect_netloc:
+            return False
+        current_host = _host(current_netloc)
+        redirect_host = _host(redirect_netloc)
+        if not current_host or not redirect_host:
+            return False
+        # Exact host match is always safe.
+        if current_host == redirect_host:
+            return True
+        # Otherwise both hosts must live under the same trusted Azure Monitor
+        # ingestion suffix.
+        for suffix in _ALLOWED_REDIRECT_DOMAIN_SUFFIXES:
+            if current_host.endswith(suffix) and redirect_host.endswith(suffix):
+                return True
+        return False
+
+
+def _is_invalid_code(response_code: Optional[int]) -> bool:
+    """Determine if response is a invalid response.
+
+    :param int response_code: HTTP response code
+    :return: True if response is a invalid response
+    :rtype: bool
+    """
+    return response_code in _INVALID_STATUS_CODES
+
+
+def _is_redirect_code(response_code: Optional[int]) -> bool:
+    """Determine if response is a redirect response.
+
+    :param int response_code: HTTP response code
+    :return: True if response is a redirect response
+    :rtype: bool
+    """
+    return response_code in _REDIRECT_STATUS_CODES
+
+
+def _is_retryable_code(response_code: Optional[int]) -> bool:
+    """Determine if response is retryable.
+
+    :param int response_code: HTTP response code
+    :return: True if response is retryable
+    :rtype: bool
+    """
+    return response_code in _RETRYABLE_STATUS_CODES
+
+
+def _is_throttle_code(response_code: Optional[int]) -> bool:
+    """Determine if response is throttle response.
+
+    :param int response_code: HTTP response code
+    :return: True if response is throttle response
+    :rtype: bool
+    """
+    return response_code in _THROTTLE_STATUS_CODES
+
+
+def _reached_ingestion_code(response_code: Optional[int]) -> bool:
+    """Determine if response indicates ingestion service has been reached.
+
+    :param int response_code: HTTP response code
+    :return: True if response indicates ingestion service has been reached
+    :rtype: bool
+    """
+    return response_code in _REACHED_INGESTION_STATUS_CODES
+
+
+def _is_sampling_rejection(message: Optional[str]) -> bool:
+    """Determine if error message indicates ingestion-side sampling rejection.
+
+    When the server rejects telemetry due to ingestion sampling, the error message
+    will be "Telemetry sampled out." These items should not be retried or persisted
+    because the server will always reject them based on sampling rules.
+
+    :param str message: Error message from the server
+    :return: True if the error indicates a sampling rejection
+    :rtype: bool
+    """
+    if message is None:
+        return False
+    return message.lower() == "telemetry sampled out."
+
+
+# mypy: disable-error-code="union-attr"
+def _get_authentication_credential(
+    **kwargs: Any,
+) -> Optional[ManagedIdentityCredential]:
+    if "credential" in kwargs:
+        return kwargs.get("credential")
+    auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING, "")
+    try:
+        if _APPLICATIONINSIGHTS_AUTHENTICATION_STRING in os.environ:
+            kv_pairs = auth_string.split(";")
+            auth_string_d = dict(s.split("=") for s in kv_pairs)
+            auth_string_d = {key.lower(): value for key, value in auth_string_d.items()}
+            if "authorization" in auth_string_d and auth_string_d["authorization"] == "AAD":
+                if "clientid" in auth_string_d:
+                    credential = ManagedIdentityCredential(client_id=auth_string_d["clientid"])
+                    return credential
+                credential = ManagedIdentityCredential()
+                return credential
+    except ValueError as exc:
+        logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
+            "APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s",
+            auth_string,
+            exc,
+        )
+    except Exception as e:
+        logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
+            "Failed to get authentication credential and enable AAD: %s", e
+        )
+    return None
+
+
+def _get_storage_directory(instrumentation_key: str) -> str:
+    """Return the deterministic local storage path for a given instrumentation key.
+
+    On shared Linux hosts the first user to create ``/tmp/Microsoft/AzureMonitor`` can
+    block others because the directory inherits that user's ``umask``. This is avoided by
+    inserting a hash of the instrumentation key, user name, process name, and
+    application directory, giving each user their own subdirectory, e.g.
+    ``/tmp/Microsoft-AzureMonitor-1234...../opentelemetry-python-<ikey>``.
+
+    :param str instrumentation_key: Application Insights instrumentation key.
+    :return: Absolute path to the storage directory.
+    :rtype: str
+    """
+
+    def _safe_psutil_call(func, default=""):
+        try:
+            return func() or default
+        except psutil.Error:
+            return default
+
+    shared_root = tempfile.gettempdir()
+
+    process = None
+    try:
+        process = psutil.Process()
+    except psutil.Error:
+        pass
+
+    process_name = _safe_psutil_call(process.name) if process else ""
+    candidate_path = _safe_psutil_call(process.cwd) if process else ""
+
+    if not candidate_path:
+        candidate_path = sys.argv[0] if sys.argv else ""
+
+    try:
+        application_directory = Path(candidate_path or ".").resolve()
+    except Exception:
+        application_directory = Path(shared_root)
+
+    try:
+        user_segment = getpass.getuser()
+    except Exception:
+        user_segment = ""
+
+    hash_input = ";".join(
+        [
+            instrumentation_key,
+            user_segment,
+            process_name,
+            os.fspath(application_directory),  # cspell:disable-line
+        ]
+    )
+    subdirectory = _get_sha256_hash(hash_input)
+    storage_directory = os.path.join(
+        shared_root,
+        _AZURE_TEMPDIR_PREFIX + subdirectory,
+        _TEMPDIR_PREFIX + instrumentation_key,
+    )
+    return storage_directory

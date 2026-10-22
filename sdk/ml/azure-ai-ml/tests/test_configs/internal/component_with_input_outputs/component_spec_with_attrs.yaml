@@ -1,0 +1,70 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/ScopeComponent.json
+
+name: bing_relevance_convert2ss
+version: 0.0.1
+display_name: Convert Text to StructureStream
+
+type: CommandComponent
+
+is_deterministic: True
+
+tags:
+  org: bing
+  project: relevance
+
+description: Convert ADLS test data to SS format
+
+inputs:
+  param_data_path:
+    type: path
+    description: Path to the data
+    is_resource: True
+    datastore_mode: mount
+  param_string_with_default_value:
+    type: string
+    default: ","
+  param_string_with_default_value_2:
+    type: string
+    default: utf8
+  param_string_with_yes_value:
+    type: string
+    default: yes
+  param_string_with_quote_yes_value:
+    type: string
+    default: "yes"
+  param_int:
+    type: integer
+  param_float:
+    type: float
+    default: 0.15
+    max: 1.0
+    min: -1.0
+  param_bool:
+    type: boolean
+  param_enum_with_int_values:
+    type: enum
+    enum: [1, 2.0, 3, 4]
+    default: 3
+  param_enum_cap:
+    type: Enum
+    enum: [minimal, reuse, expiry, policies]
+
+outputs:
+  output_data_path:
+    type: path
+    description: Path to the data
+    is_link_mode: True
+    datastore_mode: mount
+
+environment: azureml:AzureEnv:1
+
+scope:
+  script: convert2ss.script
+  # to reference the inputs/outputs in your script
+  # you must define the argument name of your intpus/outputs in args section
+  # Both 'argument_name {inputs.input_name}' and 'argument_name={inputs.input_name}' are supported
+  # for example, if you define your args as below, you can use @@Input_TextData@@ to refer to your component's input TextData
+  args: >-
+    Input_TextData {inputs.TextData}
+    ExtractionClause={inputs.ExtractionClause}
+    Output_SSPath {outputs.SSPath}

@@ -1,0 +1,6 @@
+$schema: http://azureml/sdk-2-0/KubernetesCompute.json
+description: 'A specification of an K8S cluster (to be attached or already attached)'
+name: testarc
+namespace: default
+type: kubernetes
+resource_id : /subscriptions/dummy/resourceGroups/dummy/providers/Microsoft.Kubernetes/connectedClusters/dummy

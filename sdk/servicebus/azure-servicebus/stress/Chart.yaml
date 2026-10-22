@@ -1,0 +1,13 @@
+apiVersion: v2
+name: py-sb-stress-test
+description: python service bus stress test.
+version: 0.1.2
+appVersion: v0.2
+annotations:
+  stressTest: 'true'
+  namespace: python
+
+dependencies:
+- name: stress-test-addons
+  version: ~0.3.0
+  repository: "@stress-test-charts"
