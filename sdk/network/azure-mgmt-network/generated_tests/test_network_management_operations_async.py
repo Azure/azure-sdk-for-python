@@ -22,9 +22,7 @@ class TestNetworkManagementOperationsAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_operations_list(self, resource_group):
-        response = self.client.operations.list(
-            api_version="2026-03-01",
-        )
+        response = self.client.operations.list()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

@@ -26,7 +26,6 @@ class TestNetworkManagementExpressRouteCircuitAuthorizationsOperationsAsync(Azur
             resource_group_name=resource_group.name,
             circuit_name="str",
             authorization_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +51,6 @@ class TestNetworkManagementExpressRouteCircuitAuthorizationsOperationsAsync(Azur
                     },
                     "type": "str",
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -67,7 +65,6 @@ class TestNetworkManagementExpressRouteCircuitAuthorizationsOperationsAsync(Azur
                 resource_group_name=resource_group.name,
                 circuit_name="str",
                 authorization_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -80,7 +77,6 @@ class TestNetworkManagementExpressRouteCircuitAuthorizationsOperationsAsync(Azur
         response = self.client.express_route_circuit_authorizations.list(
             resource_group_name=resource_group.name,
             circuit_name="str",
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -93,7 +89,6 @@ class TestNetworkManagementExpressRouteCircuitAuthorizationsOperationsAsync(Azur
             resource_group_name=resource_group.name,
             circuit_name="str",
             authorization_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself

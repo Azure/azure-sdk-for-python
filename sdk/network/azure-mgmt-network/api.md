@@ -178,6 +178,7 @@ namespace azure.mgmt.network
                 subscription_id: str, 
                 base_url: Optional[str] = None, 
                 *, 
+                api_version: str = ..., 
                 cloud_setting: Optional[AzureClouds] = ..., 
                 polling_interval: Optional[int] = ..., 
                 **kwargs: Any
@@ -283,7 +284,6 @@ namespace azure.mgmt.network
             ) -> LROPoller[VpnProfileResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'bastion_host_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_get_active_sessions(
                 self, 
                 resource_group_name: str, 
@@ -325,7 +325,6 @@ namespace azure.mgmt.network
             ) -> LROPoller[ItemPaged[BastionShareableLink]]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'location', 'domain_name_label', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def check_dns_name_availability(
                 self, 
                 location: str, 
@@ -370,7 +369,6 @@ namespace azure.mgmt.network
             ) -> ItemPaged[BastionSessionState]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'providerport', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def express_route_provider_port(
                 self, 
                 providerport: str, 
@@ -563,7 +561,6 @@ namespace azure.mgmt.network
             ) -> HttpResponse: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_wan_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def supported_security_providers(
                 self, 
                 resource_group_name: str, 
@@ -751,6 +748,7 @@ namespace azure.mgmt.network.aio
                 subscription_id: str, 
                 base_url: Optional[str] = None, 
                 *, 
+                api_version: str = ..., 
                 cloud_setting: Optional[AzureClouds] = ..., 
                 polling_interval: Optional[int] = ..., 
                 **kwargs: Any
@@ -856,7 +854,6 @@ namespace azure.mgmt.network.aio
             ) -> AsyncLROPoller[VpnProfileResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'bastion_host_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_get_active_sessions(
                 self, 
                 resource_group_name: str, 
@@ -898,7 +895,6 @@ namespace azure.mgmt.network.aio
             ) -> AsyncLROPoller[AsyncItemPaged[BastionShareableLink]]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'location', 'domain_name_label', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def check_dns_name_availability(
                 self, 
                 location: str, 
@@ -943,7 +939,6 @@ namespace azure.mgmt.network.aio
             ) -> AsyncItemPaged[BastionSessionState]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'providerport', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def express_route_provider_port(
                 self, 
                 providerport: str, 
@@ -1136,7 +1131,6 @@ namespace azure.mgmt.network.aio
             ) -> Awaitable[AsyncHttpResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_wan_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def supported_security_providers(
                 self, 
                 resource_group_name: str, 
@@ -1192,6 +1186,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[AddressPrefixSet]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'application_security_group_name', 'address_prefix_set_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1201,6 +1196,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'application_security_group_name', 'address_prefix_set_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1210,6 +1206,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AddressPrefixSet: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'application_security_group_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1839,6 +1836,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[AuthenticationPolicy]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'authentication_policy_name']}, api_versions_list=['2026-01-01', '2026-03-01'])
         async def delete(
                 self, 
                 resource_group_name: str, 
@@ -1847,6 +1845,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'authentication_policy_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1855,6 +1854,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AuthenticationPolicy: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1862,6 +1862,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncItemPaged[AuthenticationPolicy]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
         def list_all(self, **kwargs: Any) -> AsyncItemPaged[AuthenticationPolicy]: ...
 
         @overload
@@ -2343,6 +2344,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[Commit]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_manager_name', 'commit_name']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2352,6 +2354,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_manager_name', 'commit_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2361,6 +2364,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> Commit: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_manager_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -2607,6 +2611,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[ConnectionPolicy]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_hub_name', 'connection_policy_name']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2616,6 +2621,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_hub_name', 'connection_policy_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2625,6 +2631,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> ConnectionPolicy: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_hub_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -4327,6 +4334,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[ExpressRouteLagAuthorization]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'authorization_name']}, api_versions_list=['2026-03-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4336,6 +4344,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'authorization_name', 'accept']}, api_versions_list=['2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -4345,6 +4354,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> ExpressRouteLagAuthorization: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'accept']}, api_versions_list=['2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -4353,6 +4363,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncItemPaged[ExpressRouteLagAuthorization]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'authorization_name', 'accept']}, api_versions_list=['2026-03-01'])
         async def list_keys(
                 self, 
                 resource_group_name: str, 
@@ -4404,6 +4415,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[ExpressRouteLag]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4445,6 +4457,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> GenerateExpressRouteLagsLOAResult: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -4453,6 +4466,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> ExpressRouteLag: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'link_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def links_get(
                 self, 
                 resource_group_name: str, 
@@ -4462,6 +4476,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> ExpressRouteLagLink: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def links_list(
                 self, 
                 resource_group_name: str, 
@@ -4470,9 +4485,11 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncItemPaged[ExpressRouteLagLink]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list(self, **kwargs: Any) -> AsyncItemPaged[ExpressRouteLag]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -4480,6 +4497,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncItemPaged[ExpressRouteLag]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'link_name', 'member_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def members_get(
                 self, 
                 resource_group_name: str, 
@@ -4490,6 +4508,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> ExpressRouteLagMember: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'link_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def members_list(
                 self, 
                 resource_group_name: str, 
@@ -5222,6 +5241,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[FirewallPolicyKubeSelectorGroup]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_policy_name', 'kube_selector_group_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5231,6 +5251,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_policy_name', 'kube_selector_group_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -5240,6 +5261,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> FirewallPolicyKubeSelectorGroup: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_policy_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -5424,6 +5446,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[FirstPartyServiceTag]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'first_party_service_tag_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5465,6 +5488,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[FirstPartyServiceTag]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'first_party_service_tag_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -5473,6 +5497,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> FirstPartyServiceTag: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -5480,6 +5505,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncItemPaged[FirstPartyServiceTag]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list_all(self, **kwargs: Any) -> AsyncItemPaged[FirstPartyServiceTag]: ...
 
 
@@ -5868,6 +5894,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'interconnect_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_get_node_availability(
                 self, 
                 resource_group_name: str, 
@@ -5909,6 +5936,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> InterconnectGroup: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'interconnect_group_name']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def delete(
                 self, 
                 resource_group_name: str, 
@@ -5917,6 +5945,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'interconnect_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -5925,6 +5954,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> InterconnectGroup: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -5932,6 +5962,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncItemPaged[InterconnectGroup]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list_all(self, **kwargs: Any) -> AsyncItemPaged[InterconnectGroup]: ...
 
         @overload
@@ -12564,6 +12595,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'interconnect_group_name', 'subgroup_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -12573,6 +12605,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> Subgroup: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'interconnect_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -13565,6 +13598,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[VirtualNetworkApplianceCapability]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_appliance_name', 'capability_name']}, api_versions_list=['2026-03-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -13574,6 +13608,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_appliance_name', 'capability_name', 'accept']}, api_versions_list=['2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -13583,6 +13618,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> VirtualNetworkApplianceCapability: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_appliance_name', 'accept']}, api_versions_list=['2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -32282,24 +32318,6 @@ namespace azure.mgmt.network.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.network.models.ProxyResourceVirtualNetworkApplianceCapabilityProperties(ArmProxyResource):
-        id: str
-        name: str
-        properties: Optional[VirtualNetworkApplianceCapabilityProperties]
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[VirtualNetworkApplianceCapabilityProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.network.models.ProxyResourceWithReadOnlyID(_Model):
         id: Optional[str]
         name: Optional[str]
@@ -36312,11 +36330,11 @@ namespace azure.mgmt.network.models
             ) -> None: ...
 
 
-    class azure.mgmt.network.models.VirtualNetworkApplianceCapability(ProxyResourceVirtualNetworkApplianceCapabilityProperties):
+    class azure.mgmt.network.models.VirtualNetworkApplianceCapability(ArmProxyResource):
         id: str
         kind: str
         name: str
-        properties: VirtualNetworkApplianceCapabilityProperties
+        properties: Optional[VirtualNetworkApplianceCapabilityProperties]
         system_data: SystemData
         type: str
 
@@ -38927,6 +38945,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[AddressPrefixSet]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'application_security_group_name', 'address_prefix_set_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -38936,6 +38955,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'application_security_group_name', 'address_prefix_set_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -38945,6 +38965,7 @@ namespace azure.mgmt.network.operations
             ) -> AddressPrefixSet: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'application_security_group_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -39574,6 +39595,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[AuthenticationPolicy]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'authentication_policy_name']}, api_versions_list=['2026-01-01', '2026-03-01'])
         def delete(
                 self, 
                 resource_group_name: str, 
@@ -39582,6 +39604,7 @@ namespace azure.mgmt.network.operations
             ) -> None: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'authentication_policy_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -39590,6 +39613,7 @@ namespace azure.mgmt.network.operations
             ) -> AuthenticationPolicy: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -39597,6 +39621,7 @@ namespace azure.mgmt.network.operations
             ) -> ItemPaged[AuthenticationPolicy]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
         def list_all(self, **kwargs: Any) -> ItemPaged[AuthenticationPolicy]: ...
 
         @overload
@@ -40078,6 +40103,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[Commit]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_manager_name', 'commit_name']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -40087,6 +40113,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_manager_name', 'commit_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -40096,6 +40123,7 @@ namespace azure.mgmt.network.operations
             ) -> Commit: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_manager_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -40342,6 +40370,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[ConnectionPolicy]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_hub_name', 'connection_policy_name']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -40351,6 +40380,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_hub_name', 'connection_policy_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -40360,6 +40390,7 @@ namespace azure.mgmt.network.operations
             ) -> ConnectionPolicy: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_hub_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -42062,6 +42093,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[ExpressRouteLagAuthorization]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'authorization_name']}, api_versions_list=['2026-03-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -42071,6 +42103,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'authorization_name', 'accept']}, api_versions_list=['2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -42080,6 +42113,7 @@ namespace azure.mgmt.network.operations
             ) -> ExpressRouteLagAuthorization: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'accept']}, api_versions_list=['2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -42088,6 +42122,7 @@ namespace azure.mgmt.network.operations
             ) -> ItemPaged[ExpressRouteLagAuthorization]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'authorization_name', 'accept']}, api_versions_list=['2026-03-01'])
         def list_keys(
                 self, 
                 resource_group_name: str, 
@@ -42139,6 +42174,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[ExpressRouteLag]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -42180,6 +42216,7 @@ namespace azure.mgmt.network.operations
             ) -> GenerateExpressRouteLagsLOAResult: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -42188,6 +42225,7 @@ namespace azure.mgmt.network.operations
             ) -> ExpressRouteLag: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'link_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def links_get(
                 self, 
                 resource_group_name: str, 
@@ -42197,6 +42235,7 @@ namespace azure.mgmt.network.operations
             ) -> ExpressRouteLagLink: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def links_list(
                 self, 
                 resource_group_name: str, 
@@ -42205,9 +42244,11 @@ namespace azure.mgmt.network.operations
             ) -> ItemPaged[ExpressRouteLagLink]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list(self, **kwargs: Any) -> ItemPaged[ExpressRouteLag]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -42215,6 +42256,7 @@ namespace azure.mgmt.network.operations
             ) -> ItemPaged[ExpressRouteLag]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'link_name', 'member_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def members_get(
                 self, 
                 resource_group_name: str, 
@@ -42225,6 +42267,7 @@ namespace azure.mgmt.network.operations
             ) -> ExpressRouteLagMember: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_lag_name', 'link_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def members_list(
                 self, 
                 resource_group_name: str, 
@@ -42957,6 +43000,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[FirewallPolicyKubeSelectorGroup]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_policy_name', 'kube_selector_group_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -42966,6 +43010,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_policy_name', 'kube_selector_group_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -42975,6 +43020,7 @@ namespace azure.mgmt.network.operations
             ) -> FirewallPolicyKubeSelectorGroup: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_policy_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -43159,6 +43205,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[FirstPartyServiceTag]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'first_party_service_tag_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -43200,6 +43247,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[FirstPartyServiceTag]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'first_party_service_tag_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -43208,6 +43256,7 @@ namespace azure.mgmt.network.operations
             ) -> FirstPartyServiceTag: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -43215,6 +43264,7 @@ namespace azure.mgmt.network.operations
             ) -> ItemPaged[FirstPartyServiceTag]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def list_all(self, **kwargs: Any) -> ItemPaged[FirstPartyServiceTag]: ...
 
 
@@ -43603,6 +43653,7 @@ namespace azure.mgmt.network.operations
             ) -> None: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'interconnect_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_get_node_availability(
                 self, 
                 resource_group_name: str, 
@@ -43644,6 +43695,7 @@ namespace azure.mgmt.network.operations
             ) -> InterconnectGroup: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'interconnect_group_name']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def delete(
                 self, 
                 resource_group_name: str, 
@@ -43652,6 +43704,7 @@ namespace azure.mgmt.network.operations
             ) -> None: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'interconnect_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -43660,6 +43713,7 @@ namespace azure.mgmt.network.operations
             ) -> InterconnectGroup: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -43667,6 +43721,7 @@ namespace azure.mgmt.network.operations
             ) -> ItemPaged[InterconnectGroup]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list_all(self, **kwargs: Any) -> ItemPaged[InterconnectGroup]: ...
 
         @overload
@@ -50299,6 +50354,7 @@ namespace azure.mgmt.network.operations
             ) -> None: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'interconnect_group_name', 'subgroup_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -50308,6 +50364,7 @@ namespace azure.mgmt.network.operations
             ) -> Subgroup: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'interconnect_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -51300,6 +51357,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[VirtualNetworkApplianceCapability]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_appliance_name', 'capability_name']}, api_versions_list=['2026-03-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -51309,6 +51367,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_appliance_name', 'capability_name', 'accept']}, api_versions_list=['2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -51318,6 +51377,7 @@ namespace azure.mgmt.network.operations
             ) -> VirtualNetworkApplianceCapability: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_appliance_name', 'accept']}, api_versions_list=['2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -59950,19 +60010,6 @@ namespace azure.mgmt.network.types
         etag: str
         id: str
         name: str
-        type: str
-
-
-    class azure.mgmt.network.types.ProxyResourceVirtualNetworkApplianceCapabilityProperties(ArmProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('VirtualNetworkApplianceCapabilityProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: VirtualNetworkApplianceCapabilityProperties
-        systemData: SystemData
         type: str
 
 

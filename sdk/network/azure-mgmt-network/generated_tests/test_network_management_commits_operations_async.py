@@ -26,7 +26,6 @@ class TestNetworkManagementCommitsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_manager_name="str",
             commit_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +63,6 @@ class TestNetworkManagementCommitsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -79,7 +77,6 @@ class TestNetworkManagementCommitsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 network_manager_name="str",
                 commit_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -92,7 +89,6 @@ class TestNetworkManagementCommitsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.commits.list(
             resource_group_name=resource_group.name,
             network_manager_name="str",
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

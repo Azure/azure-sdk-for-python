@@ -1,8 +1,9 @@
 {
+  "apiVersion": "2026-03-01",
   "apiVersions": {
     "Microsoft.Network": "2026-03-01"
   },
-  "commit": "9b36626cb702a7b71fa9f3db96ca83c39d7de027",
+  "commit": "e8310fd0a5663ff1551b67eaec73931f128ff1de",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/network/resource-manager/Microsoft.Network/Network",
   "emitterVersion": "0.63.10",

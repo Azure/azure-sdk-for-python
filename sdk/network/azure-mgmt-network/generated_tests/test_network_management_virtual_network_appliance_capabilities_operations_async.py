@@ -26,7 +26,6 @@ class TestNetworkManagementVirtualNetworkApplianceCapabilitiesOperationsAsync(Az
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
             capability_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +54,6 @@ class TestNetworkManagementVirtualNetworkApplianceCapabilitiesOperationsAsync(Az
                     },
                     "type": "str",
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -70,7 +68,6 @@ class TestNetworkManagementVirtualNetworkApplianceCapabilitiesOperationsAsync(Az
                 resource_group_name=resource_group.name,
                 virtual_network_appliance_name="str",
                 capability_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -83,7 +80,6 @@ class TestNetworkManagementVirtualNetworkApplianceCapabilitiesOperationsAsync(Az
         response = self.client.virtual_network_appliance_capabilities.list(
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

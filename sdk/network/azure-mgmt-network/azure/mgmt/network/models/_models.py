@@ -30824,52 +30824,8 @@ class MoveIpConfigurationsRequest(_Model):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
-class ProxyResourceVirtualNetworkApplianceCapabilityProperties(
-    ArmProxyResource
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """Concrete proxy resource types can be created by aliasing this type using a specific property
-    type.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
-    """
-
-    properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class VirtualNetworkApplianceCapability(
-    ProxyResourceVirtualNetworkApplianceCapabilityProperties
+    ArmProxyResource
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A capability enabled on a virtual network appliance. The top-level ``kind`` discriminator
     selects the capability family; every kind shares the same ``properties`` schema (see
@@ -30898,6 +30854,10 @@ class VirtualNetworkApplianceCapability(
     """
 
     __mapping__: dict[str, _Model] = {}
+    properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """The kind of capability (the top-level discriminator). Required. Known values are:
      \"PLGatewayFastpath\", \"PLGateway\", \"PLIPForwarders\", and \"NAT64\"."""
