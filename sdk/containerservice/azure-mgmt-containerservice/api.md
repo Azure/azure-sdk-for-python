@@ -278,7 +278,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[IdentityBinding]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -288,7 +288,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -298,7 +298,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -2169,12 +2169,14 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.GPUProfile(_Model):
         driver: Optional[Union[str, GPUDriver]]
+        nvidia: Optional[NvidiaGPUProfile]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                driver: Optional[Union[str, GPUDriver]] = ...
+                driver: Optional[Union[str, GPUDriver]] = ..., 
+                nvidia: Optional[NvidiaGPUProfile] = ...
             ) -> None: ...
 
         @overload
@@ -4402,6 +4404,11 @@ namespace azure.mgmt.containerservice.models
         principal_id: Optional[str]
 
 
+    class azure.mgmt.containerservice.models.ManagementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MANAGED = "Managed"
+        UNMANAGED = "Unmanaged"
+
+
     class azure.mgmt.containerservice.models.ManualScaleProfile(_Model):
         count: Optional[int]
         size: Optional[str]
@@ -4604,6 +4611,20 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.NodeProvisioningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AUTO = "Auto"
         MANUAL = "Manual"
+
+
+    class azure.mgmt.containerservice.models.NvidiaGPUProfile(_Model):
+        management_mode: Optional[Union[str, ManagementMode]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                management_mode: Optional[Union[str, ManagementMode]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerservice.models.OSDiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -5715,7 +5736,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[IdentityBinding]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5725,7 +5746,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5735,7 +5756,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -7004,7 +7025,9 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.GPUProfile(TypedDict, total=False):
         key "driver": Union[str, GPUDriver]
+        key "nvidia": ForwardRef('NvidiaGPUProfile', module='types')
         driver: Union[str, GPUDriver]
+        nvidia: NvidiaGPUProfile
 
 
     class azure.mgmt.containerservice.types.IPTag(TypedDict, total=False):
@@ -8141,6 +8164,11 @@ namespace azure.mgmt.containerservice.types
         key "ingress": Union[str, PolicyRule]
         egress: Union[str, PolicyRule]
         ingress: Union[str, PolicyRule]
+
+
+    class azure.mgmt.containerservice.types.NvidiaGPUProfile(TypedDict, total=False):
+        key "managementMode": Union[str, ManagementMode]
+        managementMode: Union[str, ManagementMode]
 
 
     class azure.mgmt.containerservice.types.PortRange(TypedDict, total=False):

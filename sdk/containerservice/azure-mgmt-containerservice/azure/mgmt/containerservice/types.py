@@ -52,6 +52,7 @@ if TYPE_CHECKING:
         ManagedClusterSKUName,
         ManagedClusterSKUTier,
         ManagedGatewayType,
+        ManagementMode,
         NamespaceProvisioningState,
         NetworkDataplane,
         NetworkMode,
@@ -1265,11 +1266,15 @@ class GPUProfile(TypedDict, total=False):
     :ivar driver: Whether to install GPU drivers. When it's not specified, default is Install.
      Known values are: "Install" and "None".
     :vartype driver: Union[str, "GPUDriver"]
+    :ivar nvidia: NVIDIA-specific GPU settings.
+    :vartype nvidia: "NvidiaGPUProfile"
     """
 
     driver: Union[str, "GPUDriver"]
     """Whether to install GPU drivers. When it's not specified, default is Install. Known values are:
      \"Install\" and \"None\"."""
+    nvidia: "NvidiaGPUProfile"
+    """NVIDIA-specific GPU settings."""
 
 
 class IdentityBinding(ProxyResource):
@@ -4585,6 +4590,22 @@ class NetworkPolicies(TypedDict, total=False):
     egress: Union[str, "PolicyRule"]
     """Enum representing different network policy rules. Known values are: \"DenyAll\", \"AllowAll\",
      and \"AllowSameNamespace\"."""
+
+
+class NvidiaGPUProfile(TypedDict, total=False):
+    """NVIDIA-specific GPU settings.
+
+    :ivar managementMode: The Managed GPU experience installs additional components, such as the
+     Data Center GPU Manager (DCGM) metrics for monitoring, on top of the GPU driver for you. For
+     more details of what is installed, check out aka.ms/aks/managed-gpu. Known values are:
+     "Unmanaged" and "Managed".
+    :vartype managementMode: Union[str, "ManagementMode"]
+    """
+
+    managementMode: Union[str, "ManagementMode"]
+    """The Managed GPU experience installs additional components, such as the Data Center GPU Manager
+     (DCGM) metrics for monitoring, on top of the GPU driver for you. For more details of what is
+     installed, check out aka.ms/aks/managed-gpu. Known values are: \"Unmanaged\" and \"Managed\"."""
 
 
 class PortRange(TypedDict, total=False):

@@ -1140,6 +1140,14 @@ def _build_internal_log_attributes(
     if event_data.get("threshold") is not None:
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
 
+    status = event_data.get("status")
+    if isinstance(status, str) and status:
+        internal_log_attributes["gen_ai.evaluation.status"] = status
+
+    passed = event_data.get("passed")
+    if isinstance(passed, bool):
+        internal_log_attributes["gen_ai.evaluation.passed"] = str(passed).lower()
+
     # Add testing criteria details if present
     testing_criteria_name = event_data.get("name")
     if testing_criteria_name:
@@ -3293,6 +3301,8 @@ def _add_error_summaries(
     for criteria that failed during evaluation, ensuring proper error reporting.
     When per-line errors are available, only the error for the current row is used;
     rows that succeeded are not stamped with another row's error.
+    Decision-only per-line metadata preserves known usage/provenance in ``properties`` and the
+    existing ``sample`` schema, without treating failed attempts as completed scoring results.
 
     :param run_output_results: List to append error result objects to
     :type run_output_results: List[Dict[str, Any]]
@@ -3349,6 +3359,7 @@ def _add_error_summaries(
         # Use per-line error if available, otherwise fall back to batch-level error
         per_line_errors = criteria_summary.get("per_line_errors", {})
         per_line_error_msg = per_line_errors.get(row_idx, None)
+        decision_error_metadata = criteria_summary.get("per_line_error_metadata", {}).get(row_idx)
 
         if per_line_error_msg is not None:
             # This row has a specific error
@@ -3356,6 +3367,9 @@ def _add_error_summaries(
                 "code": criteria_summary.get("error_code"),
                 "message": per_line_error_msg,
             }
+            if decision_error_metadata is not None:
+                error_info["code"] = decision_error_metadata["code"]
+                error_info["blame"] = decision_error_metadata["blame"]
         elif per_line_errors:
             # Per-line errors exist but not for this row — this row succeeded, skip error stamping
             continue
@@ -3370,6 +3384,12 @@ def _add_error_summaries(
 
         metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])
         criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "azure_ai_evaluator")
+        if decision_error_metadata is not None:
+            evaluator_name = testing_criteria_metadata.get(criteria_name, {}).get("evaluator_name")
+            if isinstance(evaluator_name, str):
+                primary_metric = evaluator_name.removeprefix("builtin.")
+                metrics = sorted(metrics, key=lambda metric: metric != primary_metric)
+        decision_usage_added = False
 
         for metric in metrics:
             if not _should_add_error_summary(run_output_results, criteria_name, metric):
@@ -3387,6 +3407,22 @@ def _add_error_summaries(
                 "status": "error",
                 "sample": sample,
             }
+            if decision_error_metadata is not None:
+                properties = decision_error_metadata["properties"]
+                error_result["properties"] = properties
+                # One failed evaluator invocation may produce several metric errors, but only one billed usage.
+                error_result["sample"] = {"error": error_info}
+                usage = {
+                    key: properties[key]
+                    for key in ("prompt_tokens", "completion_tokens", "total_tokens")
+                    if key in properties
+                }
+                if not decision_usage_added:
+                    if usage:
+                        error_result["sample"]["usage"] = usage
+                    if "model" in properties:
+                        error_result["sample"]["model"] = properties["model"]
+                    decision_usage_added = True
             run_output_results.append(error_result)
 
 

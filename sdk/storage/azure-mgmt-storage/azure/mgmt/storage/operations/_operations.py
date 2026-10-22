@@ -52,7 +52,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +73,7 @@ def build_blob_containers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -103,7 +103,7 @@ def build_blob_containers_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -135,7 +135,7 @@ def build_blob_containers_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -165,7 +165,7 @@ def build_blob_containers_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"
     path_format_arguments = {
@@ -190,7 +190,7 @@ def build_blob_containers_set_legal_hold_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -222,7 +222,7 @@ def build_blob_containers_clear_legal_hold_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -254,7 +254,7 @@ def build_blob_containers_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -284,7 +284,7 @@ def build_blob_containers_object_level_worm_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/migrate"
     path_format_arguments = {
@@ -315,7 +315,7 @@ def build_blob_containers_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -356,7 +356,7 @@ def build_blob_containers_get_immutability_policy_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -399,7 +399,7 @@ def build_blob_containers_create_or_update_immutability_policy_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -443,7 +443,7 @@ def build_blob_containers_delete_immutability_policy_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -485,7 +485,7 @@ def build_blob_containers_lock_immutability_policy_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -528,7 +528,7 @@ def build_blob_containers_extend_immutability_policy_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -565,7 +565,7 @@ def build_blob_services_get_service_properties_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -594,7 +594,7 @@ def build_blob_services_set_service_properties_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -624,7 +624,7 @@ def build_blob_services_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -653,7 +653,7 @@ def build_storage_accounts_check_name_availability_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -686,7 +686,7 @@ def build_storage_accounts_get_properties_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -717,7 +717,7 @@ def build_storage_accounts_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -748,7 +748,7 @@ def build_storage_accounts_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -777,7 +777,7 @@ def build_storage_accounts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
     path_format_arguments = {
@@ -800,7 +800,7 @@ def build_storage_accounts_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -827,7 +827,7 @@ def build_storage_accounts_list_request(subscription_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -858,7 +858,7 @@ def build_storage_accounts_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -889,7 +889,7 @@ def build_storage_accounts_regenerate_key_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -920,7 +920,7 @@ def build_storage_accounts_list_account_sas_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -951,7 +951,7 @@ def build_storage_accounts_list_service_sas_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -985,7 +985,7 @@ def build_storage_accounts_failover_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/failover"
     path_format_arguments = {
@@ -1009,7 +1009,7 @@ def build_storage_accounts_hierarchical_namespace_migration_request(  # pylint: 
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/hnsonmigration"
     path_format_arguments = {
@@ -1032,7 +1032,7 @@ def build_storage_accounts_abort_hierarchical_namespace_migration_request(  # py
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/aborthnsonmigration"
     path_format_arguments = {
@@ -1056,7 +1056,7 @@ def build_storage_accounts_customer_initiated_migration_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/startAccountMigration"
     path_format_arguments = {
@@ -1084,7 +1084,7 @@ def build_storage_accounts_restore_blob_ranges_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1113,7 +1113,7 @@ def build_storage_accounts_revoke_user_delegation_keys_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/revokeUserDelegationKeys"
     path_format_arguments = {
@@ -1140,7 +1140,7 @@ def build_storage_accounts_get_customer_initiated_migration_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1176,7 +1176,7 @@ def build_file_shares_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1216,7 +1216,7 @@ def build_file_shares_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1250,7 +1250,7 @@ def build_file_shares_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1288,7 +1288,7 @@ def build_file_shares_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares/{shareName}"
     path_format_arguments = {
@@ -1319,7 +1319,7 @@ def build_file_shares_restore_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares/{shareName}/restore"
     path_format_arguments = {
@@ -1354,7 +1354,7 @@ def build_file_shares_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1394,7 +1394,7 @@ def build_file_shares_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1428,7 +1428,7 @@ def build_file_services_get_service_properties_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1457,7 +1457,7 @@ def build_file_services_set_service_properties_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1487,7 +1487,7 @@ def build_file_services_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1515,7 +1515,7 @@ def build_file_services_get_service_usage_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1548,7 +1548,7 @@ def build_file_services_list_service_usages_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1578,7 +1578,7 @@ def build_queue_services_get_service_properties_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1607,7 +1607,7 @@ def build_queue_services_set_service_properties_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1637,7 +1637,7 @@ def build_queue_services_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1665,7 +1665,7 @@ def build_deleted_accounts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1691,7 +1691,7 @@ def build_deleted_accounts_list_request(subscription_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1721,7 +1721,7 @@ def build_management_policies_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1755,7 +1755,7 @@ def build_management_policies_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1789,7 +1789,7 @@ def build_management_policies_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/managementPolicies/{managementPolicyName}"
     path_format_arguments = {
@@ -1817,7 +1817,7 @@ def build_blob_inventory_policies_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1851,7 +1851,7 @@ def build_blob_inventory_policies_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1885,7 +1885,7 @@ def build_blob_inventory_policies_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/inventoryPolicies/{blobInventoryPolicyName}"
     path_format_arguments = {
@@ -1909,7 +1909,7 @@ def build_blob_inventory_policies_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1941,7 +1941,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1977,7 +1977,7 @@ def build_private_endpoint_connections_put_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2013,7 +2013,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -2039,7 +2039,7 @@ def build_private_endpoint_connections_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2067,7 +2067,7 @@ def build_encryption_scopes_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2097,7 +2097,7 @@ def build_encryption_scopes_put_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2129,7 +2129,7 @@ def build_encryption_scopes_patch_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2167,7 +2167,7 @@ def build_encryption_scopes_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2201,7 +2201,7 @@ def build_table_services_get_service_properties_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2230,7 +2230,7 @@ def build_table_services_set_service_properties_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2260,7 +2260,7 @@ def build_table_services_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2292,7 +2292,7 @@ def build_network_security_perimeter_configurations_get_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2323,7 +2323,7 @@ def build_network_security_perimeter_configurations_list_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2354,7 +2354,7 @@ def build_network_security_perimeter_configurations_reconcile_request(  # pylint
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/networkSecurityPerimeterConfigurations/{networkSecurityPerimeterConfigurationName}/reconcile"
     path_format_arguments = {
@@ -2380,7 +2380,7 @@ def build_storage_task_assignments_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2412,7 +2412,7 @@ def build_storage_task_assignments_create_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2446,7 +2446,7 @@ def build_storage_task_assignments_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2478,7 +2478,7 @@ def build_storage_task_assignments_delete_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/storageTaskAssignments/{storageTaskAssignmentName}"
     path_format_arguments = {
@@ -2504,7 +2504,7 @@ def build_storage_task_assignments_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2533,7 +2533,7 @@ def build_storage_task_assignments_stop_assignment_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/storageTaskAssignments/{storageTaskAssignmentName}/stopAssignment"
     path_format_arguments = {
@@ -2559,7 +2559,7 @@ def build_connectors_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2589,7 +2589,7 @@ def build_connectors_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2621,7 +2621,7 @@ def build_connectors_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2651,7 +2651,7 @@ def build_connectors_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/connectors/{connectorName}"
     path_format_arguments = {
@@ -2675,7 +2675,7 @@ def build_connectors_list_by_storage_account_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2704,7 +2704,7 @@ def build_connectors_test_existing_connection_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2735,7 +2735,7 @@ def build_data_shares_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2765,7 +2765,7 @@ def build_data_shares_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2797,7 +2797,7 @@ def build_data_shares_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2827,7 +2827,7 @@ def build_data_shares_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/dataShares/{dataShareName}"
     path_format_arguments = {
@@ -2851,7 +2851,7 @@ def build_data_shares_list_by_storage_account_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2879,7 +2879,7 @@ def build_context_caches_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2908,7 +2908,7 @@ def build_context_caches_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2939,7 +2939,7 @@ def build_context_caches_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2968,7 +2968,7 @@ def build_context_caches_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches/{contextCacheName}"
     path_format_arguments = {
@@ -2991,7 +2991,7 @@ def build_context_caches_list_by_resource_group_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3020,7 +3020,7 @@ def build_context_caches_list_by_subscription_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3040,6 +3040,35 @@ def build_context_caches_list_by_subscription_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_context_caches_check_name_availability_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/contextCacheCheckNameAvailability"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_context_cache_containers_get_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     context_cache_name: str,
@@ -3050,7 +3079,7 @@ def build_context_cache_containers_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3086,7 +3115,7 @@ def build_context_cache_containers_create_or_update_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3124,7 +3153,7 @@ def build_context_cache_containers_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3160,7 +3189,7 @@ def build_context_cache_containers_delete_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches/{contextCacheName}/contextCacheContainers/{contextCacheContainerName}"
     path_format_arguments = {
@@ -3186,7 +3215,7 @@ def build_context_cache_containers_list_by_context_cache_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3208,6 +3237,243 @@ def build_context_cache_containers_list_by_context_cache_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_blob_access_point_configurations_get_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    account_name: str,
+    blob_access_point_configuration_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobAccessPointConfigurations/{blobAccessPointConfigurationName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "blobAccessPointConfigurationName": _SERIALIZER.url(
+            "blob_access_point_configuration_name", blob_access_point_configuration_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_blob_access_point_configurations_create_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    account_name: str,
+    blob_access_point_configuration_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobAccessPointConfigurations/{blobAccessPointConfigurationName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "blobAccessPointConfigurationName": _SERIALIZER.url(
+            "blob_access_point_configuration_name", blob_access_point_configuration_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_blob_access_point_configurations_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    account_name: str,
+    blob_access_point_configuration_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobAccessPointConfigurations/{blobAccessPointConfigurationName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "blobAccessPointConfigurationName": _SERIALIZER.url(
+            "blob_access_point_configuration_name", blob_access_point_configuration_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_blob_access_point_configurations_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    account_name: str,
+    blob_access_point_configuration_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobAccessPointConfigurations/{blobAccessPointConfigurationName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "blobAccessPointConfigurationName": _SERIALIZER.url(
+            "blob_access_point_configuration_name", blob_access_point_configuration_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_blob_access_point_configurations_list_by_storage_account_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobAccessPointConfigurations"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_blob_access_point_configurations_test_existing_connection_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    account_name: str,
+    blob_access_point_configuration_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobAccessPointConfigurations/{blobAccessPointConfigurationName}/testExistingConnection"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "blobAccessPointConfigurationName": _SERIALIZER.url(
+            "blob_access_point_configuration_name", blob_access_point_configuration_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_blob_access_point_connection_tests_test_proposed_connection_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/testBlobAccessPointConfigurationProposedConnection"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_advanced_platform_metrics_get_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     account_name: str,
@@ -3218,7 +3484,7 @@ def build_advanced_platform_metrics_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3254,7 +3520,7 @@ def build_advanced_platform_metrics_create_or_update_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3290,7 +3556,7 @@ def build_advanced_platform_metrics_delete_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/advancedPlatformMetrics/{advancedPlatformMetricsRuleType}"
     path_format_arguments = {
@@ -3316,7 +3582,7 @@ def build_advanced_platform_metrics_list_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3344,7 +3610,7 @@ def build_private_link_resources_list_by_storage_account_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3378,7 +3644,7 @@ def build_storage_task_assignments_instances_report_list_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3416,7 +3682,7 @@ def build_queue_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3448,7 +3714,7 @@ def build_queue_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3478,7 +3744,7 @@ def build_queue_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3510,7 +3776,7 @@ def build_queue_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3540,7 +3806,7 @@ def build_queue_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/queueServices/default/queues/{queueName}"
     path_format_arguments = {
@@ -3564,7 +3830,7 @@ def build_object_replication_policies_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3596,7 +3862,7 @@ def build_object_replication_policies_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3628,7 +3894,7 @@ def build_object_replication_policies_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/objectReplicationPolicies/{objectReplicationPolicyId}"
     path_format_arguments = {
@@ -3654,7 +3920,7 @@ def build_object_replication_policies_list_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3682,7 +3948,7 @@ def build_local_users_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3712,7 +3978,7 @@ def build_local_users_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3742,7 +4008,7 @@ def build_local_users_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/localUsers/{username}"
     path_format_arguments = {
@@ -3773,7 +4039,7 @@ def build_local_users_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3807,7 +4073,7 @@ def build_local_users_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3836,7 +4102,7 @@ def build_local_users_regenerate_password_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3865,7 +4131,7 @@ def build_table_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3895,7 +4161,7 @@ def build_table_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3927,7 +4193,7 @@ def build_table_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3957,7 +4223,7 @@ def build_table_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/tableServices/default/tables/{tableName}"
     path_format_arguments = {
@@ -3981,7 +4247,7 @@ def build_table_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4016,7 +4282,7 @@ def build_storage_task_assignment_instances_report_list_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4049,7 +4315,7 @@ def build_skus_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4073,7 +4339,7 @@ def build_usages_list_by_location_request(location: str, subscription_id: str, *
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11614,7 +11880,7 @@ class DeletedAccountsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
         cls: ClsType[_models.DeletedAccount] = kwargs.pop("cls", None)
 
         _request = build_deleted_accounts_get_request(
@@ -15296,7 +15562,7 @@ class StorageTaskAssignmentsOperations:  # pylint: disable=docstring-missing-par
                 "storage_task_assignment_name",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def _stop_assignment_initial(
         self, resource_group_name: str, account_name: str, storage_task_assignment_name: str, **kwargs: Any
@@ -15375,7 +15641,7 @@ class StorageTaskAssignmentsOperations:  # pylint: disable=docstring-missing-par
                 "storage_task_assignment_name",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def begin_stop_assignment(
         self, resource_group_name: str, account_name: str, storage_task_assignment_name: str, **kwargs: Any
@@ -15473,7 +15739,7 @@ class ConnectorsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def get(self, resource_group_name: str, account_name: str, connector_name: str, **kwargs: Any) -> _models.Connector:
         """Get the specified Storage Connector.
@@ -15562,7 +15828,7 @@ class ConnectorsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def _create_initial(
         self,
@@ -15762,7 +16028,7 @@ class ConnectorsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def begin_create(
         self,
@@ -15860,7 +16126,7 @@ class ConnectorsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def _update_initial(
         self,
@@ -16052,7 +16318,7 @@ class ConnectorsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def begin_update(
         self,
@@ -16140,7 +16406,7 @@ class ConnectorsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "connector_name"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, account_name: str, connector_name: str, **kwargs: Any
@@ -16210,7 +16476,7 @@ class ConnectorsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "connector_name"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def begin_delete(
         self, resource_group_name: str, account_name: str, connector_name: str, **kwargs: Any
@@ -16281,7 +16547,7 @@ class ConnectorsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def list_by_storage_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -16399,7 +16665,7 @@ class ConnectorsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def _test_existing_connection_initial(
         self,
@@ -16615,7 +16881,7 @@ class ConnectorsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def begin_test_existing_connection(
         self,
@@ -16737,7 +17003,7 @@ class DataSharesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def get(
         self, resource_group_name: str, account_name: str, data_share_name: str, **kwargs: Any
@@ -16828,7 +17094,7 @@ class DataSharesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def _create_initial(
         self,
@@ -17028,7 +17294,7 @@ class DataSharesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def begin_create(
         self,
@@ -17126,7 +17392,7 @@ class DataSharesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def _update_initial(
         self,
@@ -17318,7 +17584,7 @@ class DataSharesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def begin_update(
         self,
@@ -17406,7 +17672,7 @@ class DataSharesOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "data_share_name"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, account_name: str, data_share_name: str, **kwargs: Any
@@ -17476,7 +17742,7 @@ class DataSharesOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "data_share_name"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def begin_delete(
         self, resource_group_name: str, account_name: str, data_share_name: str, **kwargs: Any
@@ -17547,7 +17813,7 @@ class DataSharesOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def list_by_storage_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -17676,7 +17942,7 @@ class ContextCachesOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-06-01": ["api_version", "subscription_id", "resource_group_name", "context_cache_name", "accept"]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def get(self, resource_group_name: str, context_cache_name: str, **kwargs: Any) -> _models.ContextCache:
         """Get a Context Cache.
@@ -17759,7 +18025,7 @@ class ContextCachesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def _create_or_update_initial(
         self,
@@ -17935,7 +18201,7 @@ class ContextCachesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def begin_create_or_update(
         self,
@@ -18024,7 +18290,7 @@ class ContextCachesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def _update_initial(
         self,
@@ -18198,7 +18464,7 @@ class ContextCachesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def begin_update(
         self,
@@ -18278,7 +18544,7 @@ class ContextCachesOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-06-01",
         params_added_on={"2026-06-01": ["api_version", "subscription_id", "resource_group_name", "context_cache_name"]},
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def _delete_initial(self, resource_group_name: str, context_cache_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18343,7 +18609,7 @@ class ContextCachesOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-06-01",
         params_added_on={"2026-06-01": ["api_version", "subscription_id", "resource_group_name", "context_cache_name"]},
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def begin_delete(self, resource_group_name: str, context_cache_name: str, **kwargs: Any) -> LROPoller[None]:
         """Delete a Context Cache.
@@ -18405,7 +18671,7 @@ class ContextCachesOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-06-01",
         params_added_on={"2026-06-01": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.ContextCache"]:
         """List Context Caches by resource group.
@@ -18507,7 +18773,7 @@ class ContextCachesOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-06-01",
         params_added_on={"2026-06-01": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.ContextCache"]:
         """List Context Caches by subscription.
@@ -18601,6 +18867,156 @@ class ContextCachesOperations:  # pylint: disable=docstring-missing-param
 
         return ItemPaged(get_next, extract_data)
 
+    @overload
+    def check_name_availability(
+        self,
+        body: _models.ContextCacheCheckNameAvailabilityParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ContextCacheCheckNameAvailabilityResult:
+        """Check the availability of a context cache resource name.
+
+        :param body: The request body. Required.
+        :type body: ~azure.mgmt.storage.models.ContextCacheCheckNameAvailabilityParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ContextCacheCheckNameAvailabilityResult. The ContextCacheCheckNameAvailabilityResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.storage.models.ContextCacheCheckNameAvailabilityResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def check_name_availability(
+        self,
+        body: _types.ContextCacheCheckNameAvailabilityParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ContextCacheCheckNameAvailabilityResult:
+        """Check the availability of a context cache resource name.
+
+        :param body: The request body. Required.
+        :type body: ~azure.mgmt.storage.types.ContextCacheCheckNameAvailabilityParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ContextCacheCheckNameAvailabilityResult. The ContextCacheCheckNameAvailabilityResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.storage.models.ContextCacheCheckNameAvailabilityResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def check_name_availability(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ContextCacheCheckNameAvailabilityResult:
+        """Check the availability of a context cache resource name.
+
+        :param body: The request body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ContextCacheCheckNameAvailabilityResult. The ContextCacheCheckNameAvailabilityResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.storage.models.ContextCacheCheckNameAvailabilityResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={"2026-09-01": ["api_version", "subscription_id", "content_type", "accept"]},
+        api_versions_list=["2026-09-01"],
+    )
+    def check_name_availability(
+        self,
+        body: Union[
+            _models.ContextCacheCheckNameAvailabilityParameters,
+            _types.ContextCacheCheckNameAvailabilityParameters,
+            IO[bytes],
+        ],
+        **kwargs: Any
+    ) -> _models.ContextCacheCheckNameAvailabilityResult:
+        """Check the availability of a context cache resource name.
+
+        :param body: The request body. Is either a ContextCacheCheckNameAvailabilityParameters type or
+         a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.storage.models.ContextCacheCheckNameAvailabilityParameters or
+         ~azure.mgmt.storage.types.ContextCacheCheckNameAvailabilityParameters or IO[bytes]
+        :return: ContextCacheCheckNameAvailabilityResult. The ContextCacheCheckNameAvailabilityResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.storage.models.ContextCacheCheckNameAvailabilityResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ContextCacheCheckNameAvailabilityResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_context_caches_check_name_availability_request(
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ContextCacheCheckNameAvailabilityResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
 
 class ContextCacheContainersOperations:  # pylint: disable=docstring-missing-param
     """
@@ -18632,7 +19048,7 @@ class ContextCacheContainersOperations:  # pylint: disable=docstring-missing-par
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def get(
         self, resource_group_name: str, context_cache_name: str, context_cache_container_name: str, **kwargs: Any
@@ -18721,7 +19137,7 @@ class ContextCacheContainersOperations:  # pylint: disable=docstring-missing-par
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def _create_or_update_initial(
         self,
@@ -18909,7 +19325,7 @@ class ContextCacheContainersOperations:  # pylint: disable=docstring-missing-par
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def begin_create_or_update(
         self,
@@ -19003,7 +19419,7 @@ class ContextCacheContainersOperations:  # pylint: disable=docstring-missing-par
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def _update_initial(
         self,
@@ -19189,7 +19605,7 @@ class ContextCacheContainersOperations:  # pylint: disable=docstring-missing-par
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def begin_update(
         self,
@@ -19281,7 +19697,7 @@ class ContextCacheContainersOperations:  # pylint: disable=docstring-missing-par
                 "context_cache_container_name",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, context_cache_name: str, context_cache_container_name: str, **kwargs: Any
@@ -19357,7 +19773,7 @@ class ContextCacheContainersOperations:  # pylint: disable=docstring-missing-par
                 "context_cache_container_name",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def begin_delete(
         self, resource_group_name: str, context_cache_name: str, context_cache_container_name: str, **kwargs: Any
@@ -19426,7 +19842,7 @@ class ContextCacheContainersOperations:  # pylint: disable=docstring-missing-par
         params_added_on={
             "2026-06-01": ["api_version", "subscription_id", "resource_group_name", "context_cache_name", "accept"]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-09-01"],
     )
     def list_by_context_cache(
         self, resource_group_name: str, context_cache_name: str, **kwargs: Any
@@ -19530,6 +19946,1592 @@ class ContextCacheContainersOperations:  # pylint: disable=docstring-missing-par
         return ItemPaged(get_next, extract_data)
 
 
+class BlobAccessPointConfigurationsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.storage.StorageManagementClient`'s
+        :attr:`blob_access_point_configurations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "blob_access_point_configuration_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def get(
+        self, resource_group_name: str, account_name: str, blob_access_point_configuration_name: str, **kwargs: Any
+    ) -> _models.BlobAccessPointConfiguration:
+        """Get the specified Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :return: BlobAccessPointConfiguration. The BlobAccessPointConfiguration is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.storage.models.BlobAccessPointConfiguration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.BlobAccessPointConfiguration] = kwargs.pop("cls", None)
+
+        _request = build_blob_access_point_configurations_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            blob_access_point_configuration_name=blob_access_point_configuration_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.BlobAccessPointConfiguration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "blob_access_point_configuration_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def _create_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        resource: Union[_models.BlobAccessPointConfiguration, _types.BlobAccessPointConfiguration, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_blob_access_point_configurations_create_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            blob_access_point_configuration_name=blob_access_point_configuration_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        resource: _models.BlobAccessPointConfiguration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConfiguration]:
+        """Creates or updates a Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.storage.models.BlobAccessPointConfiguration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConfiguration. The
+         BlobAccessPointConfiguration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        resource: _types.BlobAccessPointConfiguration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConfiguration]:
+        """Creates or updates a Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.storage.types.BlobAccessPointConfiguration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConfiguration. The
+         BlobAccessPointConfiguration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConfiguration]:
+        """Creates or updates a Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConfiguration. The
+         BlobAccessPointConfiguration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "blob_access_point_configuration_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def begin_create(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        resource: Union[_models.BlobAccessPointConfiguration, _types.BlobAccessPointConfiguration, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConfiguration]:
+        """Creates or updates a Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param resource: Resource create parameters. Is either a BlobAccessPointConfiguration type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.storage.models.BlobAccessPointConfiguration or
+         ~azure.mgmt.storage.types.BlobAccessPointConfiguration or IO[bytes]
+        :return: An instance of LROPoller that returns BlobAccessPointConfiguration. The
+         BlobAccessPointConfiguration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.BlobAccessPointConfiguration] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                blob_access_point_configuration_name=blob_access_point_configuration_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.BlobAccessPointConfiguration, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.BlobAccessPointConfiguration].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.BlobAccessPointConfiguration](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "blob_access_point_configuration_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        properties: Union[
+            _models.BlobAccessPointConfigurationUpdate, _types.BlobAccessPointConfigurationUpdate, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_blob_access_point_configurations_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            blob_access_point_configuration_name=blob_access_point_configuration_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        properties: _models.BlobAccessPointConfigurationUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConfiguration]:
+        """Update a Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.storage.models.BlobAccessPointConfigurationUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConfiguration. The
+         BlobAccessPointConfiguration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        properties: _types.BlobAccessPointConfigurationUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConfiguration]:
+        """Update a Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.storage.types.BlobAccessPointConfigurationUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConfiguration. The
+         BlobAccessPointConfiguration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConfiguration]:
+        """Update a Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConfiguration. The
+         BlobAccessPointConfiguration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "blob_access_point_configuration_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        properties: Union[
+            _models.BlobAccessPointConfigurationUpdate, _types.BlobAccessPointConfigurationUpdate, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConfiguration]:
+        """Update a Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param properties: The resource properties to be updated. Is either a
+         BlobAccessPointConfigurationUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.storage.models.BlobAccessPointConfigurationUpdate or
+         ~azure.mgmt.storage.types.BlobAccessPointConfigurationUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns BlobAccessPointConfiguration. The
+         BlobAccessPointConfiguration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.BlobAccessPointConfiguration] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                blob_access_point_configuration_name=blob_access_point_configuration_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.BlobAccessPointConfiguration, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.BlobAccessPointConfiguration].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.BlobAccessPointConfiguration](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "blob_access_point_configuration_name",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, account_name: str, blob_access_point_configuration_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_blob_access_point_configurations_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            blob_access_point_configuration_name=blob_access_point_configuration_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "blob_access_point_configuration_name",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def begin_delete(
+        self, resource_group_name: str, account_name: str, blob_access_point_configuration_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete a Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                blob_access_point_configuration_name=blob_access_point_configuration_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def list_by_storage_account(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.BlobAccessPointConfiguration"]:
+        """List all Blob Access Point configurations in a Storage Account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :return: An iterator like instance of BlobAccessPointConfiguration
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.models.BlobAccessPointConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.BlobAccessPointConfiguration]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_blob_access_point_configurations_list_by_storage_account_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.BlobAccessPointConfiguration],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponseAutoGenerated,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "blob_access_point_configuration_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def _test_existing_connection_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        body: Union[
+            _models.BlobAccessPointConnectionTestRequest, _types.BlobAccessPointConnectionTestRequest, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_blob_access_point_configurations_test_existing_connection_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            blob_access_point_configuration_name=blob_access_point_configuration_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_test_existing_connection(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        body: _models.BlobAccessPointConnectionTestRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConnectionTestResponse]:
+        """Test the connection configured on an existing Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.storage.models.BlobAccessPointConnectionTestRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConnectionTestResponse. The
+         BlobAccessPointConnectionTestResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConnectionTestResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_test_existing_connection(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        body: _types.BlobAccessPointConnectionTestRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConnectionTestResponse]:
+        """Test the connection configured on an existing Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.storage.types.BlobAccessPointConnectionTestRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConnectionTestResponse. The
+         BlobAccessPointConnectionTestResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConnectionTestResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_test_existing_connection(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConnectionTestResponse]:
+        """Test the connection configured on an existing Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConnectionTestResponse. The
+         BlobAccessPointConnectionTestResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConnectionTestResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "blob_access_point_configuration_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def begin_test_existing_connection(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        blob_access_point_configuration_name: str,
+        body: Union[
+            _models.BlobAccessPointConnectionTestRequest, _types.BlobAccessPointConnectionTestRequest, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConnectionTestResponse]:
+        """Test the connection configured on an existing Blob Access Point configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param blob_access_point_configuration_name: The name of the Blob Access Point configuration.
+         Required.
+        :type blob_access_point_configuration_name: str
+        :param body: The content of the action request. Is either a
+         BlobAccessPointConnectionTestRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.storage.models.BlobAccessPointConnectionTestRequest or
+         ~azure.mgmt.storage.types.BlobAccessPointConnectionTestRequest or IO[bytes]
+        :return: An instance of LROPoller that returns BlobAccessPointConnectionTestResponse. The
+         BlobAccessPointConnectionTestResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConnectionTestResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.BlobAccessPointConnectionTestResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._test_existing_connection_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                blob_access_point_configuration_name=blob_access_point_configuration_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.BlobAccessPointConnectionTestResponse, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.BlobAccessPointConnectionTestResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.BlobAccessPointConnectionTestResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class BlobAccessPointConnectionTestsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.storage.StorageManagementClient`'s
+        :attr:`blob_access_point_connection_tests` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def _test_proposed_connection_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: Union[
+            _models.BlobAccessPointProposedConnectionTestRequest,
+            _types.BlobAccessPointProposedConnectionTestRequest,
+            IO[bytes],
+        ],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_blob_access_point_connection_tests_test_proposed_connection_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_test_proposed_connection(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: _models.BlobAccessPointProposedConnectionTestRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConnectionTestResponse]:
+        """Test a proposed Blob Access Point connection before the configuration is created. The
+        connection is validated in the context of the storage account in the request path, so no Blob
+        Access Point configuration needs to exist beforehand.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.storage.models.BlobAccessPointProposedConnectionTestRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConnectionTestResponse. The
+         BlobAccessPointConnectionTestResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConnectionTestResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_test_proposed_connection(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: _types.BlobAccessPointProposedConnectionTestRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConnectionTestResponse]:
+        """Test a proposed Blob Access Point connection before the configuration is created. The
+        connection is validated in the context of the storage account in the request path, so no Blob
+        Access Point configuration needs to exist beforehand.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.storage.types.BlobAccessPointProposedConnectionTestRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConnectionTestResponse. The
+         BlobAccessPointConnectionTestResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConnectionTestResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_test_proposed_connection(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConnectionTestResponse]:
+        """Test a proposed Blob Access Point connection before the configuration is created. The
+        connection is validated in the context of the storage account in the request path, so no Blob
+        Access Point configuration needs to exist beforehand.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns BlobAccessPointConnectionTestResponse. The
+         BlobAccessPointConnectionTestResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConnectionTestResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def begin_test_proposed_connection(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: Union[
+            _models.BlobAccessPointProposedConnectionTestRequest,
+            _types.BlobAccessPointProposedConnectionTestRequest,
+            IO[bytes],
+        ],
+        **kwargs: Any
+    ) -> LROPoller[_models.BlobAccessPointConnectionTestResponse]:
+        """Test a proposed Blob Access Point connection before the configuration is created. The
+        connection is validated in the context of the storage account in the request path, so no Blob
+        Access Point configuration needs to exist beforehand.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param body: The content of the action request. Is either a
+         BlobAccessPointProposedConnectionTestRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.storage.models.BlobAccessPointProposedConnectionTestRequest or
+         ~azure.mgmt.storage.types.BlobAccessPointProposedConnectionTestRequest or IO[bytes]
+        :return: An instance of LROPoller that returns BlobAccessPointConnectionTestResponse. The
+         BlobAccessPointConnectionTestResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobAccessPointConnectionTestResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.BlobAccessPointConnectionTestResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._test_proposed_connection_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.BlobAccessPointConnectionTestResponse, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.BlobAccessPointConnectionTestResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.BlobAccessPointConnectionTestResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
 class AdvancedPlatformMetricsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
@@ -19560,7 +21562,7 @@ class AdvancedPlatformMetricsOperations:  # pylint: disable=docstring-missing-pa
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-06-01"],
+        api_versions_list=["2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def get(
         self,
@@ -19764,7 +21766,7 @@ class AdvancedPlatformMetricsOperations:  # pylint: disable=docstring-missing-pa
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-06-01"],
+        api_versions_list=["2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def create_or_update(
         self,
@@ -19876,7 +21878,7 @@ class AdvancedPlatformMetricsOperations:  # pylint: disable=docstring-missing-pa
                 "advanced_platform_metrics_rule_type",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-06-01"],
+        api_versions_list=["2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
@@ -19953,7 +21955,7 @@ class AdvancedPlatformMetricsOperations:  # pylint: disable=docstring-missing-pa
         params_added_on={
             "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2026-04-01", "2026-06-01"],
+        api_versions_list=["2026-04-01", "2026-06-01", "2026-09-01"],
     )
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
