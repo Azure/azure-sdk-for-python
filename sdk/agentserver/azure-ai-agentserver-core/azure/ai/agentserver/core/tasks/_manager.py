@@ -792,9 +792,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             _REGISTERED_DESCRIPTORS,
         )
 
+        registered_callbacks = self._resume_callbacks.copy()
+        registered_opts = self._resume_opts.copy()
         for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
             self._resume_callbacks[fn_name] = fn
             self._resume_opts[fn_name] = opts
+        # Explicit host bindings must win over process-wide import order.
+        self._resume_callbacks.update(registered_callbacks)
+        self._resume_opts.update(registered_opts)
 
         await self._recover_stale_tasks()
 

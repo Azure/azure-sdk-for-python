@@ -12,7 +12,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import types
 from collections.abc import AsyncIterable, Awaitable
-from typing import Any, AsyncIterator, Callable, Optional, Union
+from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, Optional, Union
 
 from starlette.routing import Route
 
@@ -33,6 +33,9 @@ from ..store._memory import InMemoryResponseProvider
 from ._endpoint_handler import _ResponseEndpointHandler
 from ._orchestrator import _ResponseOrchestrator, _close_iterator
 from ._runtime_state import _RuntimeState
+
+if TYPE_CHECKING:
+    from azure.ai.agentserver.core.tasks._manager import TaskManager
 
 CreateHandlerEvent = Union["_generated_models.ResponseStreamEvent", ResponseCheckpointEvent, dict[str, Any]]
 
@@ -539,6 +542,16 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         # --- Responses startup configuration + durability-mode logging ---
         _log_startup_configuration(resolved_provider, runtime_options)
+
+    def _register_task_callbacks(self, manager: "TaskManager") -> None:
+        """Bind this host's Responses callbacks before recovery starts.
+
+        :param manager: The owning host's task manager.
+        :type manager: ~azure.ai.agentserver.core.tasks._manager.TaskManager
+        """
+        # pylint: disable=protected-access
+        super()._register_task_callbacks(manager)
+        self._endpoint._orchestrator._resilient_orchestrator._register_task_callbacks(manager)
 
     # ------------------------------------------------------------------
     # Shutdown notification

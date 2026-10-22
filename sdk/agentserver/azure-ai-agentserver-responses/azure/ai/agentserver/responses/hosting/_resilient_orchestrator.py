@@ -33,6 +33,7 @@ from azure.ai.agentserver.core.tasks import (
     task,
 )
 from azure.ai.agentserver.core.streaming import EventStreamClosedError, EventStreamNotFoundError, streams
+from azure.ai.agentserver.core.tasks._manager import _task_manager_scope
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
@@ -44,6 +45,8 @@ from ..models import _generated as _generated_models
 from ..streaming._internals import materialize_wire_payload
 
 if TYPE_CHECKING:
+    from azure.ai.agentserver.core.tasks._manager import TaskManager
+
     from .._response_context import PlatformContext, ResponseContext
 
     from ..models.runtime import ResponseExecution
@@ -459,9 +462,21 @@ class ResilientResponseOrchestrator:
         # at __init__ time. If the core wheel does not expose both ``@task``
         # and ``@multi_turn_task`` symbols, the failure surfaces at server
         # startup instead of per-request.
-        one_shot, multi_turn = self._create_task_fns()
+        # Construction must not publish this host's callbacks into another live host.
+        with _task_manager_scope(lambda: None):
+            one_shot, multi_turn = self._create_task_fns()
         self._one_shot_task_fn: Task[dict[str, Any], None] = one_shot
         self._multi_turn_task_fn: MultiTurnTask[dict[str, Any], None] = multi_turn
+
+    def _register_task_callbacks(self, manager: "TaskManager") -> None:
+        """Register this orchestrator's callbacks and options on its own manager.
+
+        :param manager: The owning host's task manager.
+        :type manager: ~azure.ai.agentserver.core.tasks._manager.TaskManager
+        """
+        # pylint: disable=protected-access
+        for primitive in (self._one_shot_task_fn, self._multi_turn_task_fn):
+            manager.register_resume_callback(primitive.name, primitive._fn, primitive._opts)
 
     @property
     def task_fn(self) -> Task[dict[str, Any], None]:

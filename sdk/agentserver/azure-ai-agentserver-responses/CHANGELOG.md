@@ -10,6 +10,12 @@
   response is marked failed without re-running its handler, while persisted
   queued turns may continue as new steered turns.
 
+### Bugs Fixed
+
+- Bind recovery callbacks and task options to their owning Responses host so
+  constructing another host cannot redirect recovered work to its handler or
+  response provider.
+
 ### Breaking Changes
 
 - Responses task-runtime activation is now protocol-scoped. The Core

@@ -91,3 +91,32 @@ def test_scoped_manager_masks_other_host_and_receives_late_registration(tmp_path
                 get_task_manager()
         assert get_task_manager() is first
     assert get_task_manager() is second
+
+
+@pytest.mark.parametrize("explicit_registration", [False, True])
+@pytest.mark.asyncio
+async def test_startup_preserves_explicit_callbacks_over_imported_descriptors(
+    tmp_path, monkeypatch: pytest.MonkeyPatch, explicit_registration: bool
+) -> None:
+    from azure.ai.agentserver.core.tasks import _decorator, task
+
+    monkeypatch.setattr(_decorator, "_REGISTERED_DESCRIPTORS", [])
+
+    @task(name="startup_callback_owner")
+    async def owned(ctx: TaskContext[str]) -> str:
+        return "owned"
+
+    @task(name="startup_callback_owner")
+    async def later_import(ctx: TaskContext[str]) -> str:
+        return "later import"
+
+    manager = TaskManager(config=_config_stub(), provider=LocalFileTaskProvider(tmp_path / "tasks"))
+    if explicit_registration:
+        manager.register_resume_callback(owned.name, owned._fn, owned._opts)
+    await manager.startup()
+    try:
+        expected = owned if explicit_registration else later_import
+        assert manager._resume_callbacks[expected.name] is expected._fn
+        assert manager._resume_opts[expected.name] is expected._opts
+    finally:
+        await manager.shutdown()

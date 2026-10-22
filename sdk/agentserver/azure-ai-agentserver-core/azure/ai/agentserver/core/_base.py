@@ -13,7 +13,7 @@ from collections.abc import (  # pylint: disable=import-error
     Awaitable,
     Callable,
 )
-from typing import Any, MutableMapping, Optional
+from typing import TYPE_CHECKING, Any, MutableMapping, Optional
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
@@ -36,6 +36,9 @@ from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
 from ._server_version import build_server_version
 from ._types import MiddlewareFactory, P
 from ._version import VERSION as _CORE_VERSION
+
+if TYPE_CHECKING:
+    from .tasks._manager import TaskManager
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -373,6 +376,7 @@ class AgentServerHost(Starlette):
                 self._task_manager = task_manager
                 set_task_manager(task_manager)
                 try:
+                    self._register_task_callbacks(task_manager)
                     await task_manager.startup()
                 except BaseException:
                     # ``set_task_manager`` above already installed the manager
@@ -518,6 +522,13 @@ class AgentServerHost(Starlette):
         from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
 
         self.add_middleware(TraceContextMiddleware)
+
+    def _register_task_callbacks(self, manager: "TaskManager") -> None:
+        """Bind protocol recovery callbacks before the manager's startup scan.
+
+        :param manager: This host's task manager.
+        :type manager: ~azure.ai.agentserver.core.tasks._manager.TaskManager
+        """
 
     def add_middleware(
         self,
