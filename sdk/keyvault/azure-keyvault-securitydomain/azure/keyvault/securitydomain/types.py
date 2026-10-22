@@ -49,7 +49,7 @@ SecurityDomainJsonWebKey = TypedDict(
         "x5c": Required[list[str]],
         "use": str,
         "x5t": str,
-        "x5t#S256": Required[str],
+        "x5_t_s256": Required[str],
         "alg": Required[str],
     },
     total=False,
@@ -75,8 +75,8 @@ SecurityDomainJsonWebKey.__doc__ = """A JSON Web Key (JWK) for use in a security
 :vartype use: str
 :ivar x5t: X509 certificate SHA1 thumbprint. This is optional.
 :vartype x5t: str
-:ivar x5t#S256: X509 certificate SHA256 thumbprint. Required.
-:vartype x5t#S256: str
+:ivar x5_t_s256: X509 certificate SHA256 thumbprint. Required.
+:vartype x5_t_s256: str
 :ivar alg: Algorithm intended for use with the key. Required.
 :vartype alg: str
 """
