@@ -113,7 +113,9 @@ def test_request_seeding_copies_only_used_mutable_fields():
     }
     _CountedTree.visits = []
     stream = ResponseEventStream(response_id="resp_copy_reuse", request=request)
-    assert _CountedTree.visits == []
+    assert _CountedTree.visits == ["tools"]
+    assert stream.response["tools"] == request["tools"]
+    assert stream.response["tools"][0] is not request["tools"][0]
     request["metadata"]["origin"] = "raw mutation"
     reference["extension"]["versions"].append("raw")
     request["conversation"]["id"] = "conv_raw"
