@@ -35,6 +35,8 @@ from azure.ai.agentserver.core.tasks import (
 from azure.ai.agentserver.core.tasks._manager import get_task_manager, set_task_manager
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as _ro
+from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
+from azure.ai.agentserver.responses.models.runtime import ResponseExecution
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
@@ -148,7 +150,7 @@ class TestTaskStartFailureSurfacesPlatform:
 class TestNoTaskManagerStillRunsHandler:
     """No task subsystem (opt-out) → handler runs in-process (non-durable)."""
 
-    def test_no_manager_background_runs_handler_ok(self) -> None:
+    def test_no_manager_background_runs_handler_ok(self, _switch_off: Any) -> None:
         # Plain TestClient (no `with` → no lifespan → no TaskManager installed)
         # → the outer catch swallows TaskManagerNotInitialized and runs the
         # handler in-process. Legitimate opt-out path, NOT a failure.
@@ -220,3 +222,148 @@ class TestNoTaskManagerSwallowsAndRunsInProcess:
             # In-process fallback runs the handler to completion; no error surface.
             assert "error" not in types, f"must not surface an error on opt-out, got: {types}"
             assert "response.completed" in types, f"expected completion, got: {types}"
+
+
+class TestSnapshotTaskActivation:
+    """Task definitions stay process-side; requests follow session activation."""
+
+    def test_enabled_cold_start_installs_task_runtime(self, _switch_off: Any) -> None:
+        set_resilient_tasks_enabled(True)
+        with _build_client():
+            assert get_task_manager() is not None
+
+    @pytest.mark.parametrize("background", [False, True])
+    @pytest.mark.parametrize("user_id", [None, "snapshot-user"])
+    def test_deferred_start_failure_removes_scoped_runtime(
+        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, background: bool, user_id: str | None
+    ) -> None:
+        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
+        set_resilient_tasks_enabled(True)
+        registered: list[tuple[_RuntimeState, ResponseExecution]] = []
+        original_add = _RuntimeState.add
+
+        async def observe_add(
+            state: _RuntimeState,
+            record: ResponseExecution,
+            *,
+            expected_record: ResponseExecution | None = None,
+        ) -> bool:
+            registered.append((state, record))
+            return await original_add(state, record, expected_record=expected_record)
+
+        monkeypatch.setattr(_RuntimeState, "add", observe_add)
+        called: list[bool] = []
+
+        async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
+            called.append(True)
+            return await _noop_handler(request, context, cancellation_signal)
+
+        headers = {"x-agent-user-id": user_id} if user_id is not None else {}
+        with _build_client(handler) as http:
+            response = http.post(
+                "/responses",
+                headers=headers,
+                json={"model": "test", "input": "hi", "stream": False, "store": True, "background": background},
+            )
+            assert response.status_code == 500, response.text
+            assert response.headers.get(ERROR_SOURCE) == "platform"
+            assert not called
+            assert len(registered) == 1
+            state, record = registered[0]
+            assert record.user_id_key == user_id
+            assert http.portal is not None
+            assert http.portal.call(state.get, record.response_id, user_id) is None
+            assert http.portal.call(state.is_deleted, record.response_id, user_id)
+            assert not http.portal.call(state.is_deleted, record.response_id, "unrelated-user")
+            assert http.get(f"/responses/{record.response_id}", headers=headers).status_code == 404
+
+    @pytest.mark.parametrize("stream", [False, True])
+    def test_enabled_missing_runtime_does_not_fall_back(
+        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, stream: bool
+    ) -> None:
+        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
+        set_resilient_tasks_enabled(True)
+        called: list[bool] = []
+
+        async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
+            called.append(True)
+            return await _noop_handler(request, context, cancellation_signal)
+
+        with _build_client(handler) as http:
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
+            response = http.post(
+                "/responses",
+                json={"model": "test", "input": "hi", "stream": stream, "store": True},
+            )
+            if stream:
+                types = [event["type"] for event in _collect_sse_events(response.text)]
+                assert "error" in types
+                assert "response.completed" not in types
+            else:
+                assert response.status_code == 500, response.text
+                assert response.headers.get(ERROR_SOURCE) == "platform"
+            assert not called
+
+    @pytest.mark.parametrize("value", [None, "false"])
+    @pytest.mark.parametrize("stream", [False, True])
+    def test_cold_start_missing_runtime_keeps_in_process_fallback(
+        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, value: str | None, stream: bool
+    ) -> None:
+        if value is None:
+            monkeypatch.delenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", raising=False)
+        else:
+            monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", value)
+        set_resilient_tasks_enabled(True)
+        called: list[bool] = []
+
+        async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
+            called.append(True)
+            return await _noop_handler(request, context, cancellation_signal)
+
+        # Plain TestClient (no `with`): the lifespan never runs, so no manager exists.
+        response = _build_client(handler).post(
+            "/responses",
+            json={"model": "test", "input": "hi", "stream": stream, "store": True},
+        )
+        assert response.status_code == 200, response.text
+        assert ERROR_SOURCE not in response.headers
+        if stream:
+            types = [event["type"] for event in _collect_sse_events(response.text)]
+            assert "error" not in types
+            assert "response.completed" in types
+        assert called
+
+    def test_requests_after_restore_use_registered_task_runtime(
+        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.delenv("FOUNDRY_AGENT_SESSION_ID", raising=False)
+        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
+        set_resilient_tasks_enabled(True)
+        with _build_client() as http:
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
+            restored = http.post(
+                "/_agent/after-restore",
+                json={
+                    "session_context": {
+                        "session_id": "restored-session",
+                        "restore_id": "restore-1",
+                        "session_env_overrides": {},
+                    }
+                },
+            )
+            assert restored.status_code == 200, restored.text
+            manager = get_task_manager()
+            assert manager._config.session_id == "restored-session"
+            assert {
+                "responses_resilient_one_shot",
+                "responses_resilient_multi_turn",
+            }.issubset(manager._resume_callbacks)
+            response = http.post(
+                "/responses",
+                json={"model": "test", "input": "hi", "stream": False, "store": True},
+            )
+            assert response.status_code == 200, response.text
+            assert response.json()["status"] == "completed"
+            assert ERROR_SOURCE not in response.headers

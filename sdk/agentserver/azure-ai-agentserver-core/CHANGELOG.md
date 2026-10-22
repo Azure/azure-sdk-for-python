@@ -4,9 +4,38 @@
 
 ### Features Added
 
+- Allow decorated task submission inside `after_restore_handler`, preparing the
+  session-bound TaskManager before the callback and starting automatic recovery
+  only after application dependencies are ready.
+- Separate process-side task registration from session-bound task activation.
+  `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers enabled tasks during capture until
+  after-restore; absent or false keeps ordinary cold startup. Resilience opt-out
+  remains disabled for both initialization paths. Preserve
+  best-effort recovery, checkpoint initialization phases by restore ID, wait for
+  owned workers to stop before incompatible configuration rollback, and stop
+  managers created after startup at shutdown.
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Rebuild inactive task providers when hydrated configuration changes, and
+  recreate disposed runtimes for cached restore requests without replaying
+  completed application callbacks.
+- Preserve sanitized lifecycle error responses when required restore cleanup
+  fails, retaining pending rollback state for retry.
+- Preserve environment and configuration rollback snapshots across failed
+  restore cleanup retries so sparse overrides retain the captured baseline.
+- Retry interrupted restore rollback cleanup before activating a replacement
+  TaskManager, retaining queued-input reconciliation handles across transient
+  storage failures.
+- Reset task startup admission when reusing a host across sequential lifespans.
+- Reconcile interrupted steering transitions before restore rollback completes,
+  retaining queued work as recoverable without dispatching a new turn.
+- Preserve unfinished task records and saved inputs when failed restore
+  activation stops workers before rolling back session configuration.
+- Keep the lease instance stable on same-restore retries, retain worker and
+  lease handles until workers finish, and defer steering execution during
+  rollback while keeping queued input eligible for recovery.
 
 ### Other Changes
 

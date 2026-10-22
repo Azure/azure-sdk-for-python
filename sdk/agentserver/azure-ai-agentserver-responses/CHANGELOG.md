@@ -4,6 +4,8 @@
 
 ### Bugs Fixed
 
+- Remove the exact caller-scoped runtime record when deferred resilient-task
+  activation fails, rather than retaining an execution that never started.
 - Propagate source cancellation through SSE keep-alive streams instead of
   treating interrupted durable admission as successful stream completion.
 - Signal accepted durable task shutdown before awaiting response execution, so
@@ -81,6 +83,15 @@
   shared replay logs and task chains are not adopted for those users because
   their ownership cannot be verified. Drain active work before upgrading.
   Anonymous lifecycle keys retain their previous format.
+
+### Other Changes
+
+- Require Core `2.3.0b2` or later for snapshot task deferral and rollback handling.
+- Require Core's snapshot lifecycle integration. While task startup is deferred
+  (`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true`), enabled-but-uninitialized
+  task errors are propagated instead of running non-durably; intentional opt-out
+  and absent/`false` keep the existing in-process fallback. No new HTTP 503 mapping or
+  author startup-task replay is introduced.
 
 ## 2.3.0 (2026-10-05)
 

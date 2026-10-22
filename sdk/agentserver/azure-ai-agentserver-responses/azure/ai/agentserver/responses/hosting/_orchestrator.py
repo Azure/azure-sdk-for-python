@@ -14,6 +14,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import logging
+import os
 from copy import deepcopy
 from contextlib import aclosing, asynccontextmanager
 from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, Awaitable, Callable, NoReturn, cast
@@ -78,6 +79,20 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+_MEMORY_SNAPSHOT_ENV = "FOUNDRY_MEMORY_SNAPSHOT_ENABLED"
+
+
+def _task_activation_deferred() -> bool:
+    """Return whether Core defers task startup until session activation.
+
+    Core defers enabled tasks only when the memory snapshot variable is
+    explicitly ``true``. An absent or ``false`` value uses ordinary startup.
+
+    :return: True when a missing task runtime can mean activation is pending.
+    :rtype: bool
+    """
+    return os.environ.get(_MEMORY_SNAPSHOT_ENV, "").strip().lower() == "true"
 
 
 _STORAGE_ERROR_MESSAGE = (
@@ -4352,14 +4367,19 @@ class _ResponseOrchestrator:
 
         - **No manager installed** — the start raises
           :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized`.
-          Because ``AgentServerHost`` fails the lifespan when resilient tasks are
-          ENABLED but construction/startup fails, a missing manager in a running
-          deployment means resilient tasks are DISABLED (opt-out) — durability
-          was not requested (this also covers in-process test clients whose
-          lifespan never ran). The signal is **swallowed** and the handler runs
-          in-process via ``fallback_runner`` — the response still executes and
-          persists (GET works); it is simply not crash-recoverable. NOT a
-          failure.
+          When ``FOUNDRY_MEMORY_SNAPSHOT_ENABLED`` is absent or ``false`` (cold startup),
+          ``AgentServerHost`` fails the lifespan when resilient tasks are
+          ENABLED but construction/startup fails, so a missing manager in a
+          running deployment means resilient tasks are DISABLED (opt-out) —
+          durability was not requested (this also covers in-process test clients
+          whose lifespan never ran). The signal is **swallowed** and the handler
+          runs in-process via ``fallback_runner`` — the response still executes
+          and persists (GET works); it is simply not crash-recoverable. NOT a
+          failure. When the variable is ``true``, startup is deferred
+          to the after-restore hook, so a missing manager with resilient tasks
+          ENABLED means session activation is pending or failed; the error is
+          tagged as a platform infrastructure error and re-raised instead of
+          running the handler non-durably.
         - **Subsystem present but the start fails**: fail immediately. The
           exception is tagged as a platform infrastructure error and re-raised
           (no silent degradation to a non-durable task — that would hide a real
@@ -4384,7 +4404,8 @@ class _ResponseOrchestrator:
             tagged with ``PLATFORM_ERROR_TAG`` so the endpoint surfaces
             ``x-platform-error-source: platform``. A missing subsystem
             (``TaskManagerNotInitialized``) is NOT raised — it is swallowed and
-            handled via the in-process fallback (see above).
+            handled via the in-process fallback — unless resilient tasks are
+            enabled and activation is deferred (see above).
         """
         from ._resilient_orchestrator import (
             ResilientResponseOrchestrator,
@@ -4433,16 +4454,21 @@ class _ResponseOrchestrator:
             # `previous_response_id`. Propagate so the endpoint layer
             # surfaces HTTP 409 `conversation_fork_not_supported`.
             raise
-        except TaskManagerNotInitialized:
-            # No manager is installed. Because ``AgentServerHost`` fails the
-            # lifespan when resilient tasks are ENABLED but construction/startup
-            # fails, a missing manager in a running deployment means resilient
-            # tasks are simply DISABLED (opt-out) — recovery/durability was not
-            # requested. (It also covers in-process test clients whose lifespan
-            # never ran.) SWALLOW and run the handler in-process: the response
-            # still executes and persists (GET works), it is simply not
-            # crash-recoverable. This is the deliberate non-durable path, NOT a
-            # failure.
+        except TaskManagerNotInitialized as exc:
+            from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
+                resilient_tasks_enabled,
+            )
+
+            if resilient_tasks_enabled() and _task_activation_deferred():
+                logger.error(
+                    "Task runtime is not initialized for enabled resilient response %s",
+                    ctx.response_id,
+                )
+                setattr(exc, PLATFORM_ERROR_TAG, True)
+                await self._runtime_state.delete(ctx.response_id, ctx.user_id, expected_record=record)
+                raise
+            # Without deferred activation, a missing runtime means resilient
+            # tasks are disabled or the lifespan never ran (in-process clients).
             logger.info(
                 "Resilient task subsystem not enabled for response %s; running handler "
                 "in-process (non-durable). Enable via set_resilient_tasks_enabled(True) "
