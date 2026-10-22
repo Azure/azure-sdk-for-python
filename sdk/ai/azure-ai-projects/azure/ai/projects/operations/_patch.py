@@ -18,6 +18,7 @@ from ._patch_evaluation_rules import EvaluationRulesOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_jobs import JobsOperations as BetaJobsOperations
+from ._patch_pipeline_jobs import PipelineJobsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
 from ._patch_sessions import BetaAgentsOperations
@@ -165,6 +166,7 @@ __all__: List[str] = [
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",
+    "PipelineJobsOperations",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

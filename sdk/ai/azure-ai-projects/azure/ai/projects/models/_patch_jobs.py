@@ -22,6 +22,7 @@ from ._models import (
     MpiDistribution,
     Output,
     PipelineJob as _RestPipelineJob,
+    PipelineJobResource as _RestPipelineJobResource,
     PyTorchDistribution,
     QueueSettings,
     ServiceInstance as _RestServiceInstance,
@@ -265,7 +266,7 @@ class PipelineJob(_RestPipelineJob):
         return self._system_data
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: _RestJob) -> "PipelineJob":
+    def _from_rest_object(cls, rest_obj: Union[_RestJob, _RestPipelineJobResource]) -> "PipelineJob":
         props = rest_obj.properties
         if not isinstance(props, _RestPipelineJob):
             raise TypeError(
@@ -279,9 +280,14 @@ class PipelineJob(_RestPipelineJob):
         return obj
 
 
+def _from_rest_pipeline_job(rest_obj: Union[_RestJob, _RestPipelineJobResource]) -> PipelineJob:
+    """Flatten a Pipeline Job resource envelope into the public PipelineJob model."""
+    return PipelineJob._from_rest_object(rest_obj)
+
+
 def _from_rest_job(rest_obj: _RestJob) -> Union[CommandJob, PipelineJob]:
     if isinstance(rest_obj.properties, _RestPipelineJob):
-        return PipelineJob._from_rest_object(rest_obj)
+        return _from_rest_pipeline_job(rest_obj)
     return CommandJob._from_rest_object(rest_obj)
 
 

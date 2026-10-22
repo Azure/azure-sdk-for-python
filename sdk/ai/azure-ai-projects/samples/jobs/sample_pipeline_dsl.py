@@ -51,9 +51,7 @@ def main() -> None:
             retry_total=0,
         ) as client,
     ):
-        created = client.beta.jobs.create_or_update(
-            job, experiment_name="pipeline_samples", headers={"x-ms-foundry-job-route": "execution"}
-        )
+        created = client.pipeline_jobs.create_or_update(job, experiment_name="pipeline_samples")
         print(f"Submitted {created.name}: {created.id} (status: {created.status})")
 
 

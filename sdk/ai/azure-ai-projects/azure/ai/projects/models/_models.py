@@ -12627,6 +12627,52 @@ class PipelineJob(JobProperties, discriminator="Pipeline"):
         self.job_type = "Pipeline"  # type: ignore
 
 
+class PipelineJobResource(_Model):
+    """Pipeline Job resource exposed through the dedicated Pipeline Jobs ingress.
+
+    :ivar name: The name of the Pipeline Job. This is case-sensitive. Required.
+    :vartype name: str
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar properties: Properties of the Pipeline Job. The dedicated Pipeline Jobs operations
+     require jobType to be Pipeline. Required.
+    :vartype properties: ~azure.ai.projects.models.JobProperties
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.ai.projects.models.SystemData
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the Pipeline Job. This is case-sensitive. Required."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The resource ID."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The resource type."""
+    properties: "_models.JobProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Properties of the Pipeline Job. The dedicated Pipeline Jobs operations require jobType to be
+     Pipeline. Required."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Metadata pertaining to creation and last modification of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.JobProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ProceduralMemoryItem(MemoryItem, discriminator="procedural"):
     """A memory item containing a procedure extracted from conversations.
 
