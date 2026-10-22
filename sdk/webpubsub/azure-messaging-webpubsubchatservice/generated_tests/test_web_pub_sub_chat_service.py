@@ -163,7 +163,7 @@ class TestWebPubSubChatService(WebPubSubChatServiceClientTestBase):
         response = client.create_or_replace_topic(
             room_id="str",
             topic_id="str",
-            resource={"title": "str"},
+            resource={"title": "str", "state": "str"},
         )
 
         # please add some check logic here by yourself

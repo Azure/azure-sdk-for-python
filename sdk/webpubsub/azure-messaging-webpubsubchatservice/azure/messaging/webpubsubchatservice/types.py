@@ -70,10 +70,16 @@ class ChatTopicCreateOrReplace(TypedDict, total=False):
 
     :ivar title: Topic title. Required.
     :vartype title: str
+    :ivar state: Current lifecycle state of the topic. Known values are: "Normal", "Archived", and
+     "SoftDeleted".
+    :vartype state: Union[str, "ChatTopicState"]
     """
 
     title: Required[str]
     """Topic title. Required."""
+    state: Union[str, "ChatTopicState"]
+    """Current lifecycle state of the topic. Known values are: \"Normal\", \"Archived\", and
+     \"SoftDeleted\"."""
 
 
 class ChatTopicUpdate(TypedDict, total=False):
