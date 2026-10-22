@@ -34,7 +34,7 @@ BARE
         $first.Count | Should Be 1
         $first[0].Value | Should Be "effective-value"
         $first[0].LineNumber | Should Be 7
-        $multiline[0].Value | Should Be "first line`nsecond line"
+        $multiline[0].Value | Should Be ("first line", "second line" -join "`n")
     }
 
     It "uses the package-root .env by default" {
