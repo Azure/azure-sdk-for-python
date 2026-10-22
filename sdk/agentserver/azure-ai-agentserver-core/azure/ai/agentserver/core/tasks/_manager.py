@@ -3143,8 +3143,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     def _find_resume_callback(self, task_info: TaskInfo) -> Callable[..., Any] | None:
         """Find a registered resume callback for a task.
 
-        Matches by ``source.name`` (auto-stamped function name) first,
-        then falls back to title prefix match or single-callback default.
+        An explicit ``source.name`` must match a registered callback.
+        Title-prefix and single-callback fallback apply only to legacy
+        records without a source identity.
 
         :param task_info: The task record to match.
         :type task_info: TaskInfo
@@ -3166,29 +3167,27 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         """
         from ._decorator import _HOST_BOUND_TASK_NAMES  # pylint: disable=import-outside-toplevel
 
-        return name not in self._disabled_recovery_names and (
-            name not in _HOST_BOUND_TASK_NAMES or name in self._host_bound_callback_names
+        return (
+            name in self._resume_callbacks
+            and name not in self._disabled_recovery_names
+            and (name not in _HOST_BOUND_TASK_NAMES or name in self._host_bound_callback_names)
         )
 
     def _find_resume_callback_name(self, task_info: TaskInfo) -> str | None:
-        """Resolve recovery identity before checking protocol eligibility.
+        """Read explicit identity or resolve an identity-free legacy record.
 
         :param task_info: The persisted task record.
         :type task_info: TaskInfo
-        :return: Matching callback name, including an explicitly disabled name.
+        :return: Persisted function identity or a legacy callback name.
         :rtype: str | None
         """
-        from ._decorator import _HOST_BOUND_TASK_NAMES  # pylint: disable=import-outside-toplevel
-
-        # Preferred: match by source.name (framework auto-stamped fn name)
+        # Never substitute another callback for an explicit persisted identity.
         if task_info.source and "name" in task_info.source:
             source_name = task_info.source["name"]
-            if isinstance(source_name, str) and (
-                source_name in self._disabled_recovery_names
-                or source_name in _HOST_BOUND_TASK_NAMES
-                or source_name in self._resume_callbacks
-            ):
-                return source_name
+            if not isinstance(source_name, str):
+                logger.warning("Skipping task %s with invalid source.name", task_info.id)
+                return None
+            return source_name
 
         # Fallback: title prefix match
         for name in self._resume_callbacks:

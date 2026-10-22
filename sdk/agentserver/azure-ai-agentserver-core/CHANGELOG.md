@@ -19,6 +19,9 @@
   recovery can reclaim their leases or dispatch their handlers.
 - Require explicit owning-host registration for protocol-internal recovery
   callbacks instead of importing them into unrelated managers.
+- Treat a persisted task function identity as authoritative before recovery
+  cleanup or reclaim. Legacy callback fallback applies only when that
+  identity is absent.
 
 ### Other Changes
 

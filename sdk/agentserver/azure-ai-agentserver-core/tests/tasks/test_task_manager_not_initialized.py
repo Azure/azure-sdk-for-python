@@ -177,3 +177,25 @@ def test_late_host_bound_registration_does_not_publish_into_live_manager(
     assert not manager._recovery_is_authorized(owned.name)
     info = TaskInfo(id="persisted", agent_name="a", session_id="s", status="in_progress", source={"name": owned.name})
     assert manager._find_resume_callback(info) is None
+
+
+@pytest.mark.parametrize("source", [None, {}, {"name": "identity_target"}, {"name": "unknown"}, {"name": None}])
+@pytest.mark.parametrize("matching_title", [False, True])
+def test_explicit_identity_never_uses_legacy_fallback(tmp_path, source, matching_title: bool) -> None:
+    from azure.ai.agentserver.core.tasks._models import TaskInfo
+
+    async def target(ctx: TaskContext[str]) -> str:
+        return ctx.input
+
+    manager = TaskManager(config=_config_stub(), provider=LocalFileTaskProvider(tmp_path / "tasks"))
+    manager.register_resume_callback("identity_target", target)
+    info = TaskInfo(
+        id="persisted",
+        agent_name="a",
+        session_id="s",
+        status="in_progress",
+        title="identity_target old" if matching_title else "unrelated",
+        source=source,
+    )
+    expected = target if source in (None, {}, {"name": "identity_target"}) else None
+    assert manager._find_resume_callback(info) is expected
