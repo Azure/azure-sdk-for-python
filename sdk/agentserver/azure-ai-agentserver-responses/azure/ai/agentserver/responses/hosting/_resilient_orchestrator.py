@@ -33,7 +33,7 @@ from azure.ai.agentserver.core.tasks import (
     task,
 )
 from azure.ai.agentserver.core.streaming import EventStreamClosedError, EventStreamNotFoundError, streams
-from azure.ai.agentserver.core.tasks._manager import _task_manager_scope
+from azure.ai.agentserver.core.tasks._decorator import _host_bound_task_registration
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
@@ -463,7 +463,7 @@ class ResilientResponseOrchestrator:
         # and ``@multi_turn_task`` symbols, the failure surfaces at server
         # startup instead of per-request.
         # Construction must not publish this host's callbacks into another live host.
-        with _task_manager_scope(lambda: None):
+        with _host_bound_task_registration():
             one_shot, multi_turn = self._create_task_fns()
         self._one_shot_task_fn: Task[dict[str, Any], None] = one_shot
         self._multi_turn_task_fn: MultiTurnTask[dict[str, Any], None] = multi_turn

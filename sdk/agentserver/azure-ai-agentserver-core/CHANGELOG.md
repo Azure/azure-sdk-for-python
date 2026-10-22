@@ -17,6 +17,8 @@
   process-wide task descriptors at startup.
 - Exclude protocol-disabled task functions before startup, periodic or inline
   recovery can reclaim their leases or dispatch their handlers.
+- Require explicit owning-host registration for protocol-internal recovery
+  callbacks instead of importing them into unrelated managers.
 
 ### Other Changes
 

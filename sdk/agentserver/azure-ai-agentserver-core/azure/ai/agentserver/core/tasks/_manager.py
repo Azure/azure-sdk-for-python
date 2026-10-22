@@ -460,6 +460,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._resume_callbacks: dict[str, Callable[..., Any]] = {}
         self._resume_opts: dict[str, TaskOptions] = {}
         self._disabled_recovery_names: set[str] = set()
+        self._host_bound_callback_names: set[str] = set()
         self._lease_owner = derive_lease_owner(
             config.agent_name or "unknown-agent",
             config.session_id or "local",
@@ -621,6 +622,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._resume_callbacks[fn_name] = fn
         if opts is not None:
             self._resume_opts[fn_name] = opts
+            if opts._requires_host_registration:
+                self._host_bound_callback_names.add(fn_name)
 
     def _disable_recovery_for(self, *fn_names: str) -> None:
         """Exclude protocol task functions from this manager's recovery.
@@ -804,6 +807,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         registered_callbacks = self._resume_callbacks.copy()
         registered_opts = self._resume_opts.copy()
         for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
+            if opts._requires_host_registration:
+                continue
             self._resume_callbacks[fn_name] = fn
             self._resume_opts[fn_name] = opts
         # Explicit host bindings must win over process-wide import order.
@@ -3033,10 +3038,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             return
 
         for task_info in stale_tasks:
-            # Skip active tasks and disabled protocols before any recovery writes.
-            if task_info.id in self._active_tasks or (
-                self._disabled_recovery_names
-                and self._find_resume_callback_name(task_info) in self._disabled_recovery_names
+            # Check owning-host authorization before any recovery writes.
+            if task_info.id in self._active_tasks or not self._recovery_is_authorized(
+                self._find_resume_callback_name(task_info)
             ):
                 continue
 
@@ -3148,9 +3152,23 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :rtype: Callable[..., Any] | None
         """
         name = self._find_resume_callback_name(task_info)
-        if name is None or name in self._disabled_recovery_names:
+        if name is None or not self._recovery_is_authorized(name):
             return None
         return self._resume_callbacks.get(name)
+
+    def _recovery_is_authorized(self, name: str | None) -> bool:
+        """Check protocol opt-in and explicit ownership of internal callbacks.
+
+        :param name: Persisted or legacy-resolved callback name.
+        :type name: str | None
+        :return: Whether recovery may touch and dispatch this task.
+        :rtype: bool
+        """
+        from ._decorator import _HOST_BOUND_TASK_NAMES  # pylint: disable=import-outside-toplevel
+
+        return name not in self._disabled_recovery_names and (
+            name not in _HOST_BOUND_TASK_NAMES or name in self._host_bound_callback_names
+        )
 
     def _find_resume_callback_name(self, task_info: TaskInfo) -> str | None:
         """Resolve recovery identity before checking protocol eligibility.
@@ -3160,11 +3178,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :return: Matching callback name, including an explicitly disabled name.
         :rtype: str | None
         """
+        from ._decorator import _HOST_BOUND_TASK_NAMES  # pylint: disable=import-outside-toplevel
+
         # Preferred: match by source.name (framework auto-stamped fn name)
         if task_info.source and "name" in task_info.source:
             source_name = task_info.source["name"]
             if isinstance(source_name, str) and (
-                source_name in self._disabled_recovery_names or source_name in self._resume_callbacks
+                source_name in self._disabled_recovery_names
+                or source_name in _HOST_BOUND_TASK_NAMES
+                or source_name in self._resume_callbacks
             ):
                 return source_name
 

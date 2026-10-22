@@ -17,6 +17,8 @@
   response provider.
 - Do not recover Responses tasks when both Responses features are disabled,
   including when Invocations enables a shared task manager.
+- Keep eager Responses task registration host-bound so a separate
+  Invocations-only host cannot recover another host's Responses work.
 
 ### Breaking Changes
 

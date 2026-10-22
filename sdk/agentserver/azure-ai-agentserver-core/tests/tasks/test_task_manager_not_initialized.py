@@ -120,3 +120,60 @@ async def test_startup_preserves_explicit_callbacks_over_imported_descriptors(
         assert manager._resume_opts[expected.name] is expected._opts
     finally:
         await manager.shutdown()
+
+
+@pytest.mark.parametrize("explicit_registration", [False, True])
+@pytest.mark.asyncio
+async def test_host_bound_callbacks_require_explicit_registration(
+    tmp_path, monkeypatch: pytest.MonkeyPatch, explicit_registration: bool
+) -> None:
+    from azure.ai.agentserver.core.tasks import _decorator, task
+    from azure.ai.agentserver.core.tasks._models import TaskInfo
+
+    monkeypatch.setattr(_decorator, "_REGISTERED_DESCRIPTORS", [])
+    monkeypatch.setattr(_decorator, "_HOST_BOUND_TASK_NAMES", set())
+    with _decorator._host_bound_task_registration():
+
+        @task(name="host_bound")
+        async def owned(ctx: TaskContext[str]) -> str:
+            return ctx.input
+
+    @task(name="ordinary_core")
+    async def ordinary(ctx: TaskContext[str]) -> str:
+        return ctx.input
+
+    manager = TaskManager(config=_config_stub(), provider=LocalFileTaskProvider(tmp_path / "tasks"))
+    if explicit_registration:
+        manager.register_resume_callback(owned.name, owned._fn, owned._opts)
+    await manager.startup()
+    try:
+        assert manager._resume_callbacks[ordinary.name] is ordinary._fn
+        info = TaskInfo(
+            id="persisted", agent_name="a", session_id="s", status="in_progress", source={"name": owned.name}
+        )
+        assert manager._recovery_is_authorized(owned.name) is explicit_registration
+        assert (manager._find_resume_callback(info) is owned._fn) is explicit_registration
+        assert (owned.name in manager._resume_callbacks) is explicit_registration
+    finally:
+        await manager.shutdown()
+
+
+def test_late_host_bound_registration_does_not_publish_into_live_manager(
+    tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from azure.ai.agentserver.core.tasks import _decorator, task
+    from azure.ai.agentserver.core.tasks._models import TaskInfo
+
+    monkeypatch.setattr(_decorator, "_HOST_BOUND_TASK_NAMES", set())
+    manager = TaskManager(config=_config_stub(), provider=LocalFileTaskProvider(tmp_path / "tasks"))
+    set_task_manager(manager)
+    with _decorator._host_bound_task_registration():
+
+        @task(name="late_host_bound")
+        async def owned(ctx: TaskContext[str]) -> str:
+            return ctx.input
+
+    assert owned.name not in manager._resume_callbacks
+    assert not manager._recovery_is_authorized(owned.name)
+    info = TaskInfo(id="persisted", agent_name="a", session_id="s", status="in_progress", source={"name": owned.name})
+    assert manager._find_resume_callback(info) is None

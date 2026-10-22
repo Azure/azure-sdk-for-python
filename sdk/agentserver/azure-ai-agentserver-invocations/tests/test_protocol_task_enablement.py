@@ -117,9 +117,16 @@ def test_composed_protocols_use_independent_enablement(
 @pytest.mark.parametrize("responses_first", [False, True])
 @pytest.mark.parametrize("resilient,steerable", [(False, False), (False, True), (True, False), (True, True)])
 @pytest.mark.parametrize("multi_turn", [False, True])
+@pytest.mark.parametrize("separate_hosts", [False, True])
 @pytest.mark.asyncio
-async def test_composed_host_recovers_only_enabled_protocols(
-    monkeypatch: pytest.MonkeyPatch, tmp_path, responses_first: bool, resilient: bool, steerable: bool, multi_turn: bool
+async def test_protocol_recovery_requires_enabled_owning_host(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+    responses_first: bool,
+    resilient: bool,
+    steerable: bool,
+    multi_turn: bool,
+    separate_hosts: bool,
 ) -> None:
     responses = pytest.importorskip("azure.ai.agentserver.responses")
     from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
@@ -147,24 +154,26 @@ async def test_composed_host_recovers_only_enabled_protocols(
     store = FileResponseStore(storage_dir=tmp_path / "responses")
     monkeypatch.setattr(TaskManager, "_create_provider", staticmethod(lambda _: task_store))
     set_resilient_tasks_enabled(True)
-    host = CombinedHost(
+    host_type = response_host if separate_hosts else CombinedHost
+    host = host_type(
         options=responses.ResponsesServerOptions(resilient_background=resilient, steerable_conversations=steerable),
         store=store,
         configure_observability=None,
     )
+    active_host = InvocationAgentServerHost(configure_observability=None) if separate_hosts else host
     invocation_ran = asyncio.Event()
     observed = []
 
     @task(name="invocations_recovery_control")
     async def invocation_work(ctx: TaskContext[str]) -> str:
         assert ctx.entry_mode == "recovered"
-        assert get_task_manager() is host._task_manager
+        assert get_task_manager() is active_host._task_manager
         invocation_ran.set()
         return "invocations still recover"
 
     @host.response_handler
     async def handler(request, context, cancellation_signal):
-        observed.append((context.is_recovery, get_task_manager() is host._task_manager))
+        observed.append((context.is_recovery, get_task_manager() is active_host._task_manager))
         events = responses.ResponseEventStream(response_id=context.response_id, request=request)
         yield events.emit_created()
         yield events.emit_completed()
@@ -222,9 +231,9 @@ async def test_composed_host_recovers_only_enabled_protocols(
         info.lease.expires_at = (datetime.now(timezone.utc) - timedelta(minutes=10)).isoformat()
         task_store._write_task(info)
     before = await task_store.get(response_task_id)
-    async with host.router.lifespan_context(host):
+    async with active_host.router.lifespan_context(active_host):
         await asyncio.wait_for(invocation_ran.wait(), timeout=5)
-        if resilient or steerable:
+        if (resilient or steerable) and not separate_hosts:
 
             async def wait_for_terminal():
                 while (await store.get_response(response_id, context=platform_context))["status"] == "in_progress":
@@ -235,6 +244,8 @@ async def test_composed_host_recovers_only_enabled_protocols(
             assert (await store.get_response(response_id, context=platform_context))["status"] == "completed"
         else:
             assert observed == []
+            if separate_hosts:
+                assert host._task_manager is None
             after = await task_store.get(response_task_id)
             assert after.status == before.status == "in_progress"
             assert after.etag == before.etag
