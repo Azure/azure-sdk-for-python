@@ -69,7 +69,8 @@ async def test_websocket_redirects_are_rejected(
     target_app = web.Application()
     target_app.router.add_get("/redirected", capture_redirect)
 
-    async with AiohttpTestServer(target_app, host="127.0.0.2") as target:
+    # Different ports provide cross-origin coverage without requiring another loopback address.
+    async with AiohttpTestServer(target_app, host="127.0.0.1") as target:
 
         async def redirect(request):
             initial_requests.append(dict(request.headers))
