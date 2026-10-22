@@ -4,6 +4,12 @@
 
 ### Features Added
 
+- Added immutable `FoundryOriginalSubject` assertions and invocation-local
+  `FoundryAgentRequestContext.original_subject` with an explicit, model-only
+  `model_attribution_headers()` helper for the proposed `x-ms-original-subject`
+  dictionary contract. The assertions do not establish identity proof or change
+  model authentication; model integration remains an explicit per-call opt-in.
+
 ### Breaking Changes
 
 ### Bugs Fixed

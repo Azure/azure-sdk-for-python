@@ -938,15 +938,25 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             parsed, payload, env_session_id=config_session_id, agent_reference=agent_reference
         )
 
-        ctx = self._build_execution_context(
-            parsed=parsed,
-            response_id=response_id,
-            agent_reference=agent_reference,
-            agent_session_id=agent_session_id,
-            agent_session_guid=config_session_guid or None,
-            span=span,
-            request=request,
-        )
+        try:
+            ctx = self._build_execution_context(
+                parsed=parsed,
+                response_id=response_id,
+                agent_reference=agent_reference,
+                agent_session_id=agent_session_id,
+                agent_session_guid=config_session_guid or None,
+                span=span,
+                request=request,
+            )
+        except ValueError as exc:
+            logger.warning("Invalid platform request context", exc_info=True)
+            span.end(exc)
+            return _error_response(
+                exc,
+                self._session_headers(agent_session_id),
+                request_id=scope_request_id,
+                error_source=ERROR_SOURCE_PLATFORM,
+            )
 
         logger.info(
             "Creating response %s: streaming=%s background=%s store=%s model=%s "

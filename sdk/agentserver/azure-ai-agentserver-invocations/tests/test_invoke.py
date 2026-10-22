@@ -4,13 +4,77 @@
 """Tests for the POST /invocations invoke dispatch."""
 import json
 import uuid
+from importlib.metadata import requires
 
 import pytest
 import httpx
+from opentelemetry import context as otel_context
+from packaging.requirements import Requirement
+from starlette.requests import Request
 from starlette.responses import JSONResponse, StreamingResponse
 
-from azure.ai.agentserver.core import get_request_context
+from azure.ai.agentserver.core import (
+    FoundryAgentRequestContext,
+    get_request_context,
+    reset_request_context,
+    set_request_context,
+)
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from azure.ai.agentserver.invocations import _invocation
+
+
+def test_original_subject_core_dependency_floor():
+    requirements = (Requirement(value) for value in requires("azure-ai-agentserver-invocations") or [])
+    core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
+    assert "2.3.0b2" in core.specifier
+    assert "2.3.0b1" not in core.specifier
+    assert "2.1.0" not in core.specifier
+    assert callable(FoundryAgentRequestContext.model_attribution_headers)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["invoke", "get", "cancel"])
+@pytest.mark.parametrize("fields", [
+    [("x-ms-original-subject", "malformed")],
+    [("x-ms-original-subject", 'oid="one", oid="two"')],
+    [("x-ms-original-subject", 'unknown="value"')],
+    [("x-ms-original-subject", 'oid="one";parameter')],
+    [("x-ms-original-subject", 'oid="one"'), ("x-ms-original-subject", 'tid="two"')],
+])
+async def test_malformed_original_subject_preserves_ambient_context(operation, fields):
+    app = InvocationAgentServerHost(configure_observability=None)
+
+    async def unexpected_dispatch(_request):
+        pytest.fail("Malformed attribution must not reach a handler.")
+
+    app.invoke_handler(unexpected_dispatch)
+    request = Request({
+        "type": "http",
+        "method": "POST" if operation != "get" else "GET",
+        "path": "/invocations",
+        "path_params": {"invocation_id": "invocation-test"},
+        "query_string": b"",
+        "headers": [(name.encode(), value.encode()) for name, value in fields],
+    })
+    outer = FoundryAgentRequestContext(call_id="outer-call")
+    token = set_request_context(outer)
+    baggage = otel_context.get_current()
+    invocation_id = _invocation._invocation_id_var.get()
+    session_id = _invocation._session_id_var.get()
+    try:
+        if operation == "invoke":
+            response = await app._create_invocation_endpoint(request)
+        else:
+            response = await app._traced_invocation_endpoint(request, operation, unexpected_dispatch)
+        assert response.status_code == 400
+        assert response.headers["x-platform-error-source"] == "platform"
+        assert response.headers["x-platform-error-detail"] == "invalid_original_subject"
+        assert get_request_context() is outer
+        assert otel_context.get_current() == baggage
+        assert _invocation._invocation_id_var.get() == invocation_id
+        assert _invocation._session_id_var.get() == session_id
+    finally:
+        reset_request_context(token)
 
 
 @pytest.mark.asyncio

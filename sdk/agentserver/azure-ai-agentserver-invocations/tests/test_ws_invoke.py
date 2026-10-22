@@ -8,6 +8,7 @@ clean close), the unhappy path (handler exception → 1011), and the
 WebSocket-only bidirectional streaming property.
 """
 import asyncio
+import logging
 
 import pytest
 from starlette.testclient import TestClient
@@ -18,6 +19,32 @@ from azure.ai.agentserver.core import get_request_context
 from azure.ai.agentserver.invocations._constants import InvocationsWSConstants
 
 from conftest import _make_echo_ws_app, _make_failing_ws_app
+
+
+@pytest.mark.parametrize("value", ["malformed", 'oid="one", oid="two"', 'unknown="value"'])
+def test_ws_malformed_original_subject_closes_and_finalizes(value, caplog):
+    app = InvocationAgentServerHost(configure_observability=None)
+    handled = []
+
+    @app.ws_handler
+    async def handler(websocket: WebSocket) -> None:
+        handled.append(True)
+        await websocket.send_json(get_request_context().model_attribution_headers())
+
+    client = TestClient(app)
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        with pytest.raises(WebSocketDisconnect) as error:
+            with client.websocket_connect("/invocations_ws", headers={"x-ms-original-subject": value}) as websocket:
+                websocket.receive_json()
+    assert error.value.code == 1011
+    assert not handled
+    assert any(
+        getattr(record, InvocationsWSConstants.ATTR_SPAN_ERROR_CODE, None) == "invalid_original_subject"
+        for record in caplog.records
+    )
+    with client.websocket_connect("/invocations_ws") as websocket:
+        assert websocket.receive_json() == {}
+    assert get_request_context().original_subject is None
 
 
 def test_ws_original_subject_is_invocation_local():

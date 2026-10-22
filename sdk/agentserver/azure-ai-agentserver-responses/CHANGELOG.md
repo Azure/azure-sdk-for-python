@@ -1,5 +1,21 @@
 # Release History
 
+## 2.4.0b2 (Unreleased)
+
+### Features Added
+
+- Preserve original-subject assertions in `PlatformContext` and the ambient
+  request context across streaming and in-process stored Responses execution.
+
+### Bugs Fixed
+
+- Classify malformed platform attribution headers and end the request span
+  before returning an error, without invoking the handler.
+
+### Other Changes
+
+- Require Core `2.3.0b2` or later. Publish that Core version before this package.
+
 ## 2.4.0b1 (2026-10-15)
 
 ### Bugs Fixed

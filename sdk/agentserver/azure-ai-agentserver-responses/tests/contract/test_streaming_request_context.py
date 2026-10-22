@@ -17,12 +17,14 @@ Regression test for: request context not re-established for the streaming body.
 from __future__ import annotations
 
 import json
+from importlib.metadata import requires
 from pathlib import Path
 from typing import Any
 
 import httpx
 from openai import AsyncOpenAI
 import pytest
+from packaging.requirements import Requirement
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.core import (
@@ -36,6 +38,38 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesSe
 from azure.ai.agentserver.responses.store._file import FileResponseStore
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
+from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
+
+
+def test_original_subject_core_dependency_floor() -> None:
+    requirements = (Requirement(value) for value in requires("azure-ai-agentserver-responses") or [])
+    core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
+    assert "2.3.0b2" in core.specifier
+    assert "2.3.0b1" not in core.specifier
+    assert callable(FoundryAgentRequestContext.model_attribution_headers)
+
+
+@pytest.mark.parametrize("value", ["malformed", 'oid="one", oid="two"', 'unknown="value"'])
+def test_malformed_original_subject_ends_span_without_running_handler(value: str) -> None:
+    hook = InMemoryCreateSpanHook()
+    app = ResponsesAgentServerHost(
+        options=ResponsesServerOptions(create_span_hook=hook), configure_observability=None
+    )
+
+    async def handler(_request: Any, _context: Any, _cancellation_signal: Any) -> Any:
+        pytest.fail("Malformed attribution must not reach a handler.")
+
+    app.response_handler(handler)
+    response = TestClient(app).post(
+        "/responses",
+        json={"model": "test", "input": "hi", "store": False},
+        headers={"x-ms-original-subject": value},
+    )
+    assert response.status_code == 400
+    assert response.headers["x-platform-error-source"] == "platform"
+    assert len(hook.spans) == 1
+    assert hook.spans[0].error is not None
+    assert get_request_context().original_subject is None
 
 
 @pytest.mark.asyncio

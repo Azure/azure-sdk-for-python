@@ -173,6 +173,7 @@ namespace azure.ai.agentserver.core
 
     class azure.ai.agentserver.core.FoundryAgentRequestContext:
         call_id: str | None
+        original_subject: FoundryOriginalSubject | None
         session_id: str | None
         user_id: str | None
 
@@ -180,11 +181,38 @@ namespace azure.ai.agentserver.core
                 self, 
                 *, 
                 call_id: str | None = ..., 
+                original_subject: FoundryOriginalSubject | None = ...,
                 session_id: str | None = ..., 
                 user_id: str | None = ...
             ) -> None: ...
 
+        def model_attribution_headers(self) -> dict[str, str]: ...
+
         def platform_headers(self) -> dict[str, str]: ...
+
+
+    @dataclass(frozen=True, repr=False)
+    class azure.ai.agentserver.core.FoundryOriginalSubject:
+        idtype: Optional[str]
+        oid: Optional[str]
+        tid: Optional[str]
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(
+                oid: str | None,
+                tid: str | None,
+                idtype: str | None
+            ) -> None: ...
+
+        def __setattr__() -> None: ...
+
+        @classmethod
+        def from_headers(cls, headers: Mapping[str, str]) -> FoundryOriginalSubject | None: ...
 
 
     class azure.ai.agentserver.core.InboundRequestLoggingMiddleware:

@@ -1,5 +1,21 @@
 # Release History
 
+## 1.3.0b1 (Unreleased)
+
+### Features Added
+
+- Capture invocation-local original-subject assertions for HTTP, WebSocket and
+  typed Voice handlers. Model-header propagation is an explicit per-call opt-in.
+
+### Bugs Fixed
+
+- Reject malformed platform attribution before binding HTTP context, and
+  finalize WebSocket connections with a classified error on invalid metadata.
+
+### Other Changes
+
+- Require Core `2.3.0b2` or later. Publish that Core version before this package.
+
 ## 1.2.0 (2026-09-29)
 
 ### Other Changes

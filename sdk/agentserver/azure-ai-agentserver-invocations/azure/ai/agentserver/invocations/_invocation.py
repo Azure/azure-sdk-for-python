@@ -172,6 +172,17 @@ def _platform_context_from_request(
     )
 
 
+def _invalid_original_subject_response(headers: dict[str, str]) -> Response:
+    """Reject malformed platform attribution without exposing its contents."""
+    logger.warning("Request rejected: invalid original-subject platform header.")
+    return create_error_response(
+        "invalid_request",
+        "Invalid original-subject platform header.",
+        status_code=400,
+        headers=_apply_error_source_headers(headers, _ERROR_SOURCE_PLATFORM, "invalid_original_subject"),
+    )
+
+
 class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     """Invocation protocol host for Azure AI Hosted Agents.
 
@@ -529,6 +540,14 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         )
         request.state.session_id = session_id
 
+        try:
+            platform_ctx = _platform_context_from_request(request, session_id)
+        except ValueError:
+            return _invalid_original_subject_response({
+                InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
+                InvocationConstants.SESSION_ID_HEADER: session_id,
+            })
+
         # Incoming baggage and trace context are already attached by
         # BaggageMiddleware and the Starlette OTel instrumentor.
         # Add protocol-specific baggage entries for this invocation.
@@ -547,7 +566,6 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         session_token = _session_id_var.set(session_id)
         # Bind platform context so outbound 1P calls (and handler/tool code) can
         # forward the per-request call ID and user ID (protocol 2.0.0).
-        platform_ctx = _platform_context_from_request(request, session_id)
         ctx_token = set_request_context(platform_ctx)
         try:
             response = await self._dispatch_invoke(request)
@@ -631,10 +649,15 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         session_id = _sanitize_id(raw_session_id, "") if raw_session_id else ""
         request.state.session_id = session_id
 
+        try:
+            platform_ctx = _platform_context_from_request(request, session_id)
+        except ValueError:
+            return _invalid_original_subject_response({InvocationConstants.INVOCATION_ID_HEADER: invocation_id})
+
         _ensure_log_filter()
         inv_token = _invocation_id_var.set(invocation_id)
         session_token = _session_id_var.set(session_id)
-        ctx_token = set_request_context(_platform_context_from_request(request, session_id))
+        ctx_token = set_request_context(platform_ctx)
         try:
             response = await dispatch(request)
             response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id

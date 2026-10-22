@@ -29,6 +29,7 @@ from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import (
     FoundryAgentRequestContext,
+    FoundryOriginalSubject,
     configure_observability as _CORE_CONFIGURE_OBSERVABILITY,
     experimental,
     set_request_context,
@@ -610,6 +611,18 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         connection_trace = _SpanScope()
         scope = getattr(websocket, "scope", None)
         try:
+            try:
+                original_subject = FoundryOriginalSubject.from_headers(websocket.headers)
+            except ValueError:
+                logger.warning("Voice WebSocket rejected: invalid original-subject platform header.")
+                await self._finalize_session(
+                    websocket=websocket,
+                    session_id=session_id,
+                    start_ns=start_ns,
+                    close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
+                    error_code="invalid_original_subject",
+                )
+                return
             extracted_context = _extract_voice_websocket_context(websocket)
             parent_attachment = _attach_context(extracted_context)
             if parent_attachment is not None:
@@ -630,6 +643,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     call_id=websocket.headers.get(FOUNDRY_CALL_ID) or None,
                     user_id=websocket.headers.get(USER_ID) or None,
                     session_id=session_id,
+                    original_subject=original_subject,
                 )
             )
             try:
