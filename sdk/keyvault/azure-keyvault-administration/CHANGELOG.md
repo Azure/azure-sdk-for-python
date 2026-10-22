@@ -2,7 +2,13 @@
 
 ## 4.8.0b4 (2026-10-22)
 
-skip changelog generation for data-plane package and please add changelog manually.
+### Features Added
+
+- Added support for Key Vault `2026-03-01-preview` service APIs.
+
+### Other Changes
+
+- Regenerated the client using the latest TypeSpec configuration for this API version.
 
 ## 4.8.0b3 (Unreleased)
 
