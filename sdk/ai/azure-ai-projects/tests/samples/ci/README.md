@@ -51,6 +51,8 @@ Only the provisioning task receives `MCP_GITHUB_PAT`. [infra/sample-resources.bi
 
 This matches the connection contract in the supplied project-pool reference, but **does not blindly prepend `github_pat_`**. Supplying a full token avoids a duplicate token prefix. The test process receives the **connection resource ID**, never the PAT. Deployment-state and plan artifacts contain no PAT; secret-bearing deployment output/errors are not printed.
 
+On provisioning failure, the state records `provisioningStep` and the pipeline attempts to save a non-secret deployment-diagnostics artifact before cleanup. Diagnostics contain only deployment names, ARM error codes, and failed resource IDs/types. Error messages, request bodies, credentials and deployment parameters remain suppressed because Azure errors can echo secure inputs.
+
 ## ADO Run pipeline: first sample
 
 1. Open [pipeline 8392](https://dev.azure.com/azure-sdk/internal/_build?definitionId=8392) and select **Run pipeline**.
@@ -143,7 +145,7 @@ Use a supported region with available account and model quotas, or ask the subsc
 Use the package's configured virtual environment and repository Black configuration. These checks do not run service tests:
 
 - Run the unit tests under this directory with `--confcutdir=tests/samples/ci` to avoid parent service fixtures.
-- Run [SampleCiHelpers.Tests.ps1](SampleCiHelpers.Tests.ps1) with Pester for ownership, PAT-shape and model preflight tests.
+- Run [SampleCiHelpers.Tests.ps1](SampleCiHelpers.Tests.ps1) with Pester for ownership, PAT-shape, model/account preflight, and secret-safe error-diagnostic tests.
 - Fetch pinned Bicep sources to temporary storage and run [Test-BicepTemplates.ps1](Test-BicepTemplates.ps1); its parameter compilation uses fictional values and an empty PAT.
 - Collect [../test_samples.py](../test_samples.py) and [../test_samples_async.py](../test_samples_async.py) with [select_samples.py](select_samples.py), then generate an offline plan.
 - Request ADO YAML expansion with `previewRun=true` only if authorized. **Modified-YAML previews require pipeline edit permission**; queue permission alone is insufficient. Do not queue a live run as a workaround for a denied preview.

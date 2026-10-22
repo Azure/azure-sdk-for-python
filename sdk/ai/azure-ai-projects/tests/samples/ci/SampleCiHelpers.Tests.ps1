@@ -210,3 +210,73 @@ Describe 'Foundry account quota preflight' {
         { Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'eastus' } | Should Throw 'Cannot verify'
     }
 }
+
+Describe 'Secret-safe ARM error diagnostics' {
+    It 'extracts nested ARM error codes without returning messages or credentials' {
+        $details = @{ error = @{ code = 'DeploymentFailed'; message = 'Bearer secret-placeholder'; details = @(
+            @{ code = 'BadRequest'; message = 'github_pat_unit_test_placeholder'; request = @{ code = 'NotAnError' } }
+        ) } }
+        $codes = @(Get-SampleAzureErrorCodes -ErrorDetails $details)
+        ($codes -join ',') | Should Be 'BadRequest,DeploymentFailed'
+    }
+
+    It 'deduplicates error codes' {
+        $details = @{ code = 'DeploymentFailed'; details = @(@{ code = 'BadRequest' }, @{ code = 'BadRequest' }) }
+        (@(Get-SampleAzureErrorCodes -ErrorDetails $details) -join ',') | Should Be 'BadRequest,DeploymentFailed'
+    }
+
+    It 'does not treat raw text as an error code' {
+        @(Get-SampleAzureErrorCodes -ErrorDetails 'Bearer secret-placeholder').Count | Should Be 0
+    }
+
+    It 'rejects token-shaped code fields' {
+        @(Get-SampleAzureErrorCodes -ErrorDetails @{ code = 'github_pat_unit_test_placeholder' }).Count | Should Be 0
+        @(Get-SampleAzureErrorCodes -ErrorDetails @{ code = 'ghp_UnitTestPlaceholder' }).Count | Should Be 0
+    }
+
+    It 'rejects multiline code fields' {
+        @(Get-SampleAzureErrorCodes -ErrorDetails @{ code = "BadRequest`nBearer secret-placeholder" }).Count | Should Be 0
+    }
+
+    It 'handles absent ARM error details' {
+        @(Get-SampleAzureErrorCodes -ErrorDetails $null).Count | Should Be 0
+    }
+
+    It 'persists only error codes and resource identifiers from failed deployments' {
+        $owner = '0123456789abcdef0123456789abcdef'
+        $plan = @{
+            schemaVersion = 1
+            definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
+            buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
+            jobAttempt = '1'
+            ownerToken = $owner
+        }
+        $plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
+        $state = @{ plan = $plan; subscriptionId = '00000000-0000-0000-0000-000000000000' }
+        Mock Invoke-SampleAzure {
+            param($Arguments, $Sensitive)
+            if (-not $Sensitive) { throw 'Deployment diagnostics must suppress raw CLI errors.' }
+            if ($Arguments[2] -eq 'list') {
+                return @(@{ name = 'sample-resources'; state = 'Failed' })
+            }
+            if ($Arguments[2] -eq 'show') {
+                return @{ code = 'DeploymentFailed'; message = 'Bearer secret-placeholder'; details = @(@{ code = 'BadRequest' }) }
+            }
+            return @(@{
+                resourceId = '/subscriptions/placeholder/resourceGroups/run/providers/Microsoft.CognitiveServices/accounts/account/projects/project/connections/mcp'
+                resourceType = 'Microsoft.CognitiveServices/accounts/projects/connections'
+                error = '{"error":{"code":"BadRequest","message":"github_pat_unit_test_placeholder","request":{"credentials":"secret-placeholder"}}}'
+            })
+        }
+        $path = Join-Path $TestDrive 'deployment-diagnostics.json'
+        Save-SampleDeploymentDiagnostics -State $state -OutputPath $path
+        $text = Get-Content -LiteralPath $path -Raw
+        $text.Contains('DeploymentFailed') | Should Be $true
+        $text.Contains('BadRequest') | Should Be $true
+        $text.Contains('secret-placeholder') | Should Be $false
+        $text.Contains('github_pat_') | Should Be $false
+        $text.Contains('message') | Should Be $false
+        $text.Contains('credentials') | Should Be $false
+        $text.Contains('request') | Should Be $false
+    }
+}

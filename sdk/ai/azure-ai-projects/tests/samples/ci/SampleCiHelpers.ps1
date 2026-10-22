@@ -195,3 +195,59 @@ function Save-SampleInventory {
     }
     ConvertTo-Json -InputObject $resources -Depth 5 | Set-Content -LiteralPath $OutputPath -Encoding utf8
 }
+
+function Get-SampleAzureErrorCodes {
+    param([AllowNull()] [object] $ErrorDetails)
+
+    # Traverse only ARM error envelopes, never message, request, parameter or credential fields.
+    $codes = @()
+    if ($ErrorDetails -is [System.Collections.IDictionary]) {
+        $code = $ErrorDetails['code']
+        if ($code -is [string] -and $code -cmatch '^[A-Za-z][A-Za-z0-9_.-]{0,127}$' -and
+            $code -notmatch '^(github_pat_|ghp_|eyJ)') {
+            $codes += $code
+        }
+        foreach ($key in @('error', 'details')) {
+            if ($ErrorDetails.Contains($key)) { $codes += @(Get-SampleAzureErrorCodes -ErrorDetails $ErrorDetails[$key]) }
+        }
+    } elseif ($ErrorDetails -is [System.Collections.IEnumerable] -and $ErrorDetails -isnot [string]) {
+        foreach ($detail in $ErrorDetails) { $codes += @(Get-SampleAzureErrorCodes -ErrorDetails $detail) }
+    }
+    return @($codes | Sort-Object -Unique)
+}
+
+function Save-SampleDeploymentDiagnostics {
+    param([Parameter(Mandatory)] [hashtable] $State, [Parameter(Mandatory)] [string] $OutputPath)
+
+    Assert-SampleRunPlan -Plan $State.plan
+    $records = @()
+    $deployments = @(Invoke-SampleAzure -Arguments @('deployment', 'group', 'list', '--resource-group', $State.plan.resourceGroup,
+        '--subscription', $State.subscriptionId, '--query', '[].{name:name,state:properties.provisioningState}') -Sensitive)
+    foreach ($deployment in @($deployments | Where-Object { $_['state'] -in @('Failed', 'Canceled') })) {
+        $errorDetails = Invoke-SampleAzure -Arguments @('deployment', 'group', 'show', '--name', $deployment.name,
+            '--resource-group', $State.plan.resourceGroup, '--subscription', $State.subscriptionId, '--query', 'properties.error') -Sensitive
+        $operations = @(Invoke-SampleAzure -Arguments @('deployment', 'operation', 'group', 'list', '--name', $deployment.name,
+            '--resource-group', $State.plan.resourceGroup, '--subscription', $State.subscriptionId, '--query',
+            "[?properties.provisioningState=='Failed'].{resourceId:properties.targetResource.id,resourceType:properties.targetResource.resourceType,error:properties.statusMessage}") -Sensitive)
+        $safeOperations = @(foreach ($operation in $operations) {
+            $details = $operation['error']
+            if ($details -is [string]) {
+                try { $details = $details | ConvertFrom-Json -AsHashtable -ErrorAction Stop } catch { $details = $null }
+            }
+            @{
+                resourceId = $operation['resourceId']
+                resourceType = $operation['resourceType']
+                errorCodes = @(Get-SampleAzureErrorCodes -ErrorDetails $details)
+            }
+        })
+        $codes = @(Get-SampleAzureErrorCodes -ErrorDetails $errorDetails)
+        $records += @{ deployment = $deployment.name; state = $deployment.state; errorCodes = $codes; operations = $safeOperations }
+        Write-Host ('Deployment diagnostic: {0}, ARM error codes: {1}.' -f $deployment.name, ($codes -join ', '))
+        foreach ($operation in $safeOperations) {
+            Write-Host ('Failed resource type: {0}, ARM error codes: {1}.' -f $operation.resourceType, ($operation.errorCodes -join ', '))
+        }
+    }
+    # Messages and bodies can echo secure parameters. Persist only the explicit code/ID/type projection above.
+    ConvertTo-Json -InputObject @{ schemaVersion = 1; deployments = $records } -Depth 10 |
+        Set-Content -LiteralPath $OutputPath -Encoding utf8
+}

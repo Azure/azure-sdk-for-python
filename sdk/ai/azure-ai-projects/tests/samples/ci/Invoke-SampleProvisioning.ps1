@@ -70,6 +70,7 @@ $state = @{
     subscriptionId = $subscription
     resourceGroupDeployment = $groupDeploymentName
     status = 'Provisioning'
+    provisioningStep = 'ResourceGroup'
 }
 $stateDirectory = Split-Path -Parent $StatePath
 $null = New-Item -ItemType Directory -Path $stateDirectory -Force
@@ -82,6 +83,7 @@ try {
     Assert-SampleResourceGroupOwnership -Plan $plan -ResourceGroup $group -SubscriptionId $subscription
 
     # All resource creation is performed by Bicep, including the official Standard setup.
+    $state['provisioningStep'] = 'StandardSetup'
     Write-Host 'Deploying official Standard setup Bicep (capability hosts can take 10-20 minutes).' 
     $standard = Invoke-SampleAzure -Arguments @('deployment', 'group', 'create', '--name', 'standard-setup',
         '--resource-group', $plan.resourceGroup, '--subscription', $subscription, '--template-file', $StandardTemplatePath,
@@ -90,6 +92,7 @@ try {
         "deploymentTimestamp=$($plan.deploymentTimestamp)", 'deployApplicationInsights=false')
     if ($standard.properties.provisioningState -ne 'Succeeded') { throw 'Standard setup Bicep deployment did not succeed.' }
     Save-SampleInventory -State $state -OutputPath (Join-Path $stateDirectory 'inventory-standard.json')
+    Write-Host 'Official Standard setup Bicep completed successfully.'
 
     $accounts = @(Invoke-SampleAzure -Arguments @('resource', 'list', '--resource-group', $plan.resourceGroup,
         '--subscription', $subscription, '--resource-type', 'Microsoft.CognitiveServices/accounts', '--query', '[].{name:name,id:id}'))
@@ -132,6 +135,8 @@ try {
             $env:MCP_GITHUB_PAT = ''
         }
         # readEnvironmentVariable supplies the secret to @secure() without putting it on a command line or in a file.
+        $state['provisioningStep'] = 'SampleResources'
+        Write-Host 'Deploying sample models, runner roles and MCP connection; secret-bearing deployment output is suppressed.'
         $sampleResources = Invoke-SampleAzure -Arguments @('deployment', 'group', 'create', '--name', 'sample-resources',
             '--resource-group', $plan.resourceGroup, '--subscription', $subscription,
             '--parameters', (Join-Path $PSScriptRoot 'infra/sample-resources.bicepparam')) -Sensitive
@@ -145,6 +150,16 @@ try {
     $state.environment['AZURE_SUBSCRIPTION_ID'] = $subscription
     $state.environment['AZURE_RESOURCE_GROUP'] = $plan.resourceGroup
     $state['status'] = 'Ready'
+    $state['provisioningStep'] = 'Complete'
+} catch {
+    $failure = $_
+    Write-Host ('Provisioning failed during step: {0}.' -f $state.provisioningStep)
+    try {
+        Save-SampleDeploymentDiagnostics -State $state -OutputPath (Join-Path $stateDirectory 'deployment-diagnostics.json')
+    } catch {
+        Write-Warning 'ARM error-code diagnostics could not be captured. Raw deployment errors remain suppressed to protect secrets.'
+    }
+    throw $failure
 } finally {
     $state | ConvertTo-Json -Depth 15 | Set-Content -LiteralPath $StatePath -Encoding utf8
     try {
