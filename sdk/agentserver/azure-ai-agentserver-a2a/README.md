@@ -173,8 +173,9 @@ async def handle_invocation(request):
 host.run()
 ```
 
-See the [samples directory](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-a2a/samples)
-for standalone and multi-protocol examples.
+See the [sample setup and walkthroughs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-a2a/samples)
+for standalone, multi-protocol, and streaming examples, a native local client,
+and guidance on TaskStore durability and context reuse.
 
 ## Scope
 

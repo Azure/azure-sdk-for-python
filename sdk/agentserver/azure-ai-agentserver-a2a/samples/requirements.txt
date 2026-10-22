@@ -1,0 +1,6 @@
+# Run pip install from THIS samples directory so the editable paths resolve.
+# Core 2.2.1 and A2A are installed from the sibling source checkouts for previews.
+-e ../../azure-ai-agentserver-core
+-e ..
+-e ../../azure-ai-agentserver-invocations
+httpx>=0.27.0,<1.0.0

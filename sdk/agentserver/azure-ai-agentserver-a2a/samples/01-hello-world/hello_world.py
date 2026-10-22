@@ -1,7 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Host a native A2A v1.0 hello-world agent in Foundry."""
+"""Host a native A2A v1.0 hello-world agent.
+
+From the samples directory, run ``python 01-hello-world\\hello_world.py``
+and then ``python sample_client.py`` in another terminal.
+
+The in-memory TaskStore is for demonstration only; tasks are lost on restart.
+See the samples README for setup, state limitations, and hosted-agent guidance.
+"""
 
 import os
 
@@ -13,8 +20,10 @@ from a2a.server.events import EventQueue
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore, TaskUpdater
 from a2a.types import AgentCapabilities, AgentCard, AgentInterface, AgentSkill, TaskState
+from a2a.utils.errors import TaskNotCancelableError
 
 from azure.ai.agentserver.a2a import A2AAgentServerHost
+from azure.ai.agentserver.core import AgentConfig
 
 
 class HelloWorldExecutor(AgentExecutor):
@@ -39,9 +48,10 @@ class HelloWorldExecutor(AgentExecutor):
 
     async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
         del context, event_queue
-        raise NotImplementedError("Cancellation is not supported")
+        raise TaskNotCancelableError(message="Cancellation is not supported by this greeting sample")
 
 
+agent_url = os.environ.get("A2A_AGENT_URL", f"http://localhost:{AgentConfig.from_env().port}/a2a")
 card = AgentCard(
     name="Hello World Agent",
     description="Returns a greeting",
@@ -53,7 +63,7 @@ card = AgentCard(
         AgentInterface(
             protocol_binding="JSONRPC",
             protocol_version="1.0",
-            url="http://localhost:8088/a2a",
+            url=agent_url,
         )
     ],
     skills=[

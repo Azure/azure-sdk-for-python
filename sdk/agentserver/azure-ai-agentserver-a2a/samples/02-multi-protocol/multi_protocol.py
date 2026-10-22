@@ -1,7 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Host A2A v1.0 and Invocations on one Foundry agent server."""
+"""Host A2A v1.0 and Invocations on one server.
+
+From the samples directory, run ``python 02-multi-protocol\\multi_protocol.py``.
+Use ``python sample_client.py`` for A2A, or POST JSON to ``/invocations``.
+
+The in-memory TaskStore is for demonstration only; tasks are lost on restart.
+See the samples README for dependency setup and request examples.
+"""
 
 import os
 
@@ -13,10 +20,12 @@ from a2a.server.events import EventQueue
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore, TaskUpdater
 from a2a.types import AgentCapabilities, AgentCard, AgentInterface, TaskState
+from a2a.utils.errors import TaskNotCancelableError
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from azure.ai.agentserver.a2a import A2AAgentServerHost
+from azure.ai.agentserver.core import AgentConfig
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
@@ -42,13 +51,14 @@ class HelloWorldExecutor(AgentExecutor):
 
     async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
         del context, event_queue
-        raise NotImplementedError("Cancellation is not supported")
+        raise TaskNotCancelableError(message="Cancellation is not supported by this greeting sample")
 
 
 class MultiProtocolHost(A2AAgentServerHost, InvocationAgentServerHost):
     pass
 
 
+agent_url = os.environ.get("A2A_AGENT_URL", f"http://localhost:{AgentConfig.from_env().port}/a2a")
 card = AgentCard(
     name="Multi-protocol Agent",
     description="Accepts A2A and Invocations requests",
@@ -60,7 +70,7 @@ card = AgentCard(
         AgentInterface(
             protocol_binding="JSONRPC",
             protocol_version="1.0",
-            url="http://localhost:8088/a2a",
+            url=agent_url,
         )
     ],
     skills=[],

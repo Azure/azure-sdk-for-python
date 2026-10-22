@@ -26,6 +26,8 @@
   Card metadata and the non-blocking span flush helper used by A2A tracing.
 - Added an opt-in internal manual pipeline mode to publish A2A and core alpha
   packages together to the Azure SDK dev feed.
+- Added sample setup instructions, a native local client, an incremental
+  streaming Task example, and explicit in-memory state and durability guidance.
 
 ### Bugs Fixed
 
