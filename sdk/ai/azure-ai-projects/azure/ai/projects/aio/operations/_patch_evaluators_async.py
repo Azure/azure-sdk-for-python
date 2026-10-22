@@ -9,13 +9,13 @@ from collections.abc import MutableMapping
 from typing import Any, IO, Optional, Union, cast, overload
 
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ._operations import EvaluatorsOperations as EvaluatorsOperationsGenerated
 from ... import models as _models
 from ..._utils.model_base import _deserialize
+from ..._utils.polling import AsyncAIProjectsLROBasePolling
 from ...models import AsyncEvaluatorGenerationLROPoller
 
 JSON = MutableMapping[str, Any]
@@ -76,9 +76,7 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", headers.pop("Content-Type", None))
         cls = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -103,29 +101,21 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
-            response_headers["Location"] = self._deserialize(
-                "str", response.headers.get("Location")
-            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-            deserialized = _deserialize(
-                _models.EvaluatorVersion, response.json().get("result", {})
-            )
+            deserialized = _deserialize(_models.EvaluatorVersion, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncLROBasePolling(
-                    lro_delay, path_format_arguments=path_format_arguments, **kwargs
-                ),
+                AsyncAIProjectsLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())

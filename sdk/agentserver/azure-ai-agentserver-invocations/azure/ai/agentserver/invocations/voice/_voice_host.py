@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Typed event relay over the existing Invocations WebSocket transport."""
+"""Typed event relay over standalone CE or legacy Invocations WebSocket transport."""
 
 from __future__ import annotations
 
@@ -47,7 +47,6 @@ from .._invocation_ws import _websocket_session_context
 from . import _session as _session_transport
 from ._codec import MAX_FRAME_BYTES, VoiceProtocolError, decode_inbound_message
 from ._models import (
-    BargeIn,
     InboundVoiceMessage,
     ResponseAccepted,
     ResponseCancelled,
@@ -56,6 +55,7 @@ from ._models import (
     SessionDisconnected,
     SessionEnd,
     SessionStart,
+    UserBargeIn,
     UserMessage,
     UserNoInput,
     UserSpeechStarted,
@@ -73,7 +73,7 @@ SessionStartCallback = Callable[[Session, SessionStart], Awaitable[None]]
 UserMessageCallback = Callable[[Session, UserMessage], Awaitable[None]]
 UserNoInputCallback = Callable[[Session, UserNoInput], Awaitable[None]]
 UserSpeechStartedCallback = Callable[[Session, UserSpeechStarted], Awaitable[None]]
-BargeInCallback = Callable[[Session, BargeIn], Awaitable[None]]
+UserBargeInCallback = Callable[[Session, UserBargeIn], Awaitable[None]]
 ResponseAcceptedCallback = Callable[[Session, ResponseAccepted], Awaitable[None]]
 ResponseDroppedCallback = Callable[[Session, ResponseDropped], Awaitable[None]]
 ResponseCancelledCallback = Callable[[Session, ResponseCancelled], Awaitable[None]]
@@ -132,7 +132,7 @@ _VOICE_TERMINATION_DEADLINE = "azure.ai.agentserver.invocations.voice.terminatio
 _VOICE_CONNECTION_TRACE = "azure.ai.agentserver.invocations.voice.connection_trace"
 _VOICE_CONNECTION_CONTEXT = "azure.ai.agentserver.invocations.voice.connection_context"
 _VOICE_PROPAGATION_HEADERS = "azure.ai.agentserver.invocations.voice.propagation_headers"
-_VOICE_ROUTE_CONFLICT = "VoiceAgentServerHost cannot own /invocations_ws because the route is already registered"
+_VOICE_ROUTE_CONFLICT = "VoiceAgentServerHost cannot own {path} because the route is already registered"
 _VOICE_TRACE_PROPAGATOR = _get_voice_trace_propagator()
 _VOICE_BAGGAGE_KEYS = frozenset(
     {
@@ -187,10 +187,27 @@ def _is_async_callable(callback: Callable[..., Any]) -> bool:
 
 
 class _VoiceWebSocketRoute(WebSocketRoute):
-    """Reserved Voice route that preserves matching Host and Mount authority."""
+    """Reserved Voice route that preserves matching Host and Mount authority.
 
-    def __init__(self, endpoint: Callable[..., Any], *, router: Router) -> None:
-        super().__init__(InvocationsWSConstants.ROUTE_PATH, endpoint, name="invocations_ws")
+    :param endpoint: The typed Voice WebSocket endpoint.
+    :type endpoint: Callable[..., Any]
+    :keyword router: Router whose Host and Mount authority must be preserved.
+    :paramtype router: ~starlette.routing.Router
+    :keyword path: The typed Voice WebSocket route path.
+    :paramtype path: str
+    :keyword name: The typed Voice WebSocket route name.
+    :paramtype name: str
+    """
+
+    def __init__(
+        self,
+        endpoint: Callable[..., Any],
+        *,
+        router: Router,
+        path: str = InvocationsWSConstants.ROUTE_PATH,
+        name: str = "invocations_ws",
+    ) -> None:
+        super().__init__(path, endpoint, name=name)
         self._router = router
 
     def matches(self, scope: Scope) -> tuple[Match, Scope]:
@@ -553,16 +570,23 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
     Agent code owns IDs, application tasks, response lifecycle, terminal-event
     correlation, cancellation, history, and reconnect restoration.
 
+    Both ``/invocations_ws`` and ``/voice_conversation_engine`` expose the same typed
+    event relay. The legacy route and message handshake version ``1.0`` are
+    unchanged. Hosted agent protocol declarations are configured separately.
+
     Default Voice observability enables sensitive Agent Framework
     instrumentation only when
     ``OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT`` is explicitly set to
     ``true`` or ``1``. Pass a custom ``configure_observability`` callable in
     ``kwargs`` to use a different policy.
 
-    :param openapi_spec: Optional OpenAPI document inherited from Invocations.
-    :param asyncapi_spec_json: Optional AsyncAPI JSON document.
-    :param asyncapi_spec_yaml: Optional AsyncAPI YAML document.
-    :param kwargs: Remaining :class:`InvocationAgentServerHost` options.
+    :keyword openapi_spec: Optional OpenAPI document inherited from Invocations.
+    :paramtype openapi_spec: dict[str, Any] or None
+    :keyword asyncapi_spec_json: Optional AsyncAPI JSON document.
+    :paramtype asyncapi_spec_json: dict[str, Any] or None
+    :keyword asyncapi_spec_yaml: Optional AsyncAPI YAML document.
+    :paramtype asyncapi_spec_yaml: str or None
+    :keyword dict[str, Any] ``**kwargs``: Remaining :class:`InvocationAgentServerHost` options.
     """
 
     def __init__(
@@ -576,6 +600,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         self._voice_callbacks: dict[str, _VoiceCallback] = {}
         self._connection_terminating_callback: ConnectionTerminatingCallback | None = None
         self._voice_route: _VoiceWebSocketRoute | None = None
+        self._conversation_engine_route: _VoiceWebSocketRoute | None = None
         if "configure_observability" not in kwargs:
             kwargs["configure_observability"] = _configure_voice_observability
         super().__init__(
@@ -589,8 +614,9 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] == "websocket":
             self._ensure_ws_route_registered()
-            voice_route = self._voice_route
-            if voice_route is not None:
+            for voice_route in (self._voice_route, self._conversation_engine_route):
+                if voice_route is None:
+                    continue
                 match, child_scope = voice_route.matches(scope)
                 is_voice_endpoint = match is Match.FULL and _VOICE_AUTHORITY_ROUTE not in child_scope
                 if is_voice_endpoint:
@@ -606,6 +632,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     scope["headers"] = [
                         (name, value) for name, value in raw_headers if name.lower() not in propagation_headers
                     ]
+                    break
         await super().__call__(scope, receive, send)
 
     def _ensure_ws_route_registered(self) -> None:
@@ -613,17 +640,28 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         if voice_route is None:
             voice_route = _VoiceWebSocketRoute(self._ws_endpoint, router=self.router)
             self._voice_route = voice_route
+        ce_route = self._conversation_engine_route
+        if ce_route is None:
+            ce_route = _VoiceWebSocketRoute(
+                self._ws_endpoint,
+                router=self.router,
+                path="/voice_conversation_engine",
+                name="voice_conversation_engine",
+            )
+            self._conversation_engine_route = ce_route
         routes = self.router.routes
-        for route in routes:
-            if (
-                route is not voice_route
-                and isinstance(route, WebSocketRoute)
-                and getattr(route, "path", None) == InvocationsWSConstants.ROUTE_PATH
-            ):
-                raise RuntimeError(_VOICE_ROUTE_CONFLICT)
-        if voice_route in routes:
-            routes.remove(voice_route)
-        routes.insert(0, voice_route)
+        for reserved_route in (voice_route, ce_route):
+            for route in routes:
+                if (
+                    route is not reserved_route
+                    and isinstance(route, WebSocketRoute)
+                    and getattr(route, "path", None) == reserved_route.path
+                ):
+                    raise RuntimeError(_VOICE_ROUTE_CONFLICT.format(path=reserved_route.path))
+        for reserved_route in (ce_route, voice_route):
+            if reserved_route in routes:
+                routes.remove(reserved_route)
+            routes.insert(0, reserved_route)
 
     async def _ws_endpoint(self, websocket: WebSocket) -> None:
         session_id = self.config.session_id or str(uuid.uuid4())
@@ -1122,15 +1160,15 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         """
         return self._register_voice_callback(UserSpeechStarted.type, callback)
 
-    def on_barge_in(self, callback: BargeInCallback) -> BargeInCallback:
-        """Register the ``barge_in`` callback.
+    def on_user_barge_in(self, callback: UserBargeInCallback) -> UserBargeInCallback:
+        """Register the ``user.barge_in`` callback.
 
         :param callback: Async callback receiving the thin Session and event.
-        :type callback: BargeInCallback
+        :type callback: UserBargeInCallback
         :return: The callback, unchanged.
-        :rtype: BargeInCallback
+        :rtype: UserBargeInCallback
         """
-        return self._register_voice_callback(BargeIn.type, callback)
+        return self._register_voice_callback(UserBargeIn.type, callback)
 
     def on_response_accepted(self, callback: ResponseAcceptedCallback) -> ResponseAcceptedCallback:
         """Register the ``response.accepted`` callback.

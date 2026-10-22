@@ -20,7 +20,7 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry portal.
     2) FOUNDRY_AGENT_NAME              - Required. Filter the list to jobs for this agent.
-    3) JOB_ID                  - Required. If set, fetches and deletes this specific job.
+    3) JOB_ID                  - Optional. If set, fetches and deletes this specific job.
 """
 
 import os
@@ -35,7 +35,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ["FOUNDRY_AGENT_NAME"]
-job_id = os.environ["JOB_ID"]
+job_id = os.environ.get("JOB_ID")
 
 with (
     DefaultAzureCredential() as credential,

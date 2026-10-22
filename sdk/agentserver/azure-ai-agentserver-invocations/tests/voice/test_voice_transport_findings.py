@@ -487,7 +487,8 @@ def test_voice_upgrade_rejects_duplicate_traceparent():
     assert trace.get_current_span(context).get_span_context().trace_id == 0
 
 
-def test_voice_upgrade_ignores_context_extraction_failure(monkeypatch):
+@pytest.mark.parametrize("protocol", ["invocations_ws", "voice_conversation_engine"])
+def test_voice_upgrade_ignores_context_extraction_failure(monkeypatch, protocol):
     observed_baggage = []
 
     def fail_extract(*_args, **_kwargs):
@@ -502,7 +503,7 @@ def test_voice_upgrade_ignores_context_extraction_failure(monkeypatch):
         await session.send(SessionReady())
 
     with TestClient(app).websocket_connect(
-        "/invocations_ws",
+        f"/{protocol}",
         headers={"baggage": "customer-secret=private-sentinel"},
     ) as websocket:
         websocket.send_json(_session_start_frame())

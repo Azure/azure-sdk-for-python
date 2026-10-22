@@ -45,7 +45,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -89,7 +89,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class EdgeAction(TrackedResource):
+class EdgeAction(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -142,7 +142,7 @@ class EdgeAction(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class EdgeActionAttachment(_Model):
+class EdgeActionAttachment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Edge action attachment information.
 
     :ivar id: The edge action attachment id.
@@ -174,7 +174,7 @@ class EdgeActionAttachment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EdgeActionExecutionFilter(TrackedResource):
+class EdgeActionExecutionFilter(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -222,7 +222,7 @@ class EdgeActionExecutionFilter(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class EdgeActionExecutionFilterProperties(_Model):
+class EdgeActionExecutionFilterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for edge action execution filter.
 
     :ivar version_id: The referenced versionId of the edgeaction version. Required.
@@ -280,7 +280,7 @@ class EdgeActionExecutionFilterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EdgeActionExecutionFilterUpdate(_Model):
+class EdgeActionExecutionFilterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the EdgeActionExecutionFilter.
 
     :ivar tags: Resource tags.
@@ -315,7 +315,9 @@ class EdgeActionExecutionFilterUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EdgeActionExecutionFilterUpdateProperties(_Model):  # pylint: disable=name-too-long
+class EdgeActionExecutionFilterUpdateProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The updatable properties of the EdgeActionExecutionFilter.
 
     :ivar version_id: The referenced versionId of the edgeaction version.
@@ -382,14 +384,16 @@ class EdgeActionPropertiesUpdate(_Model):
     """Represents an edge action properties."""
 
 
-class EdgeActionUpdate(_Model):
+class EdgeActionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the EdgeAction.
 
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.edgeactions.models.EdgeActionPropertiesUpdate
-    :ivar sku: The sku type of the edge action.
+    :ivar sku: The SKU of the Edge Action. Do not include sku in PATCH requests; any supplied sku,
+     including null or the existing value, is rejected.
     :vartype sku: ~azure.mgmt.edgeactions.models.SkuTypeUpdate
-    :ivar tags: Resource tags.
+    :ivar tags: Resource tags. For PATCH requests, omitted tags are preserved, an empty tags object
+     clears all tags, and supplied tags replace the entire tag collection. Null tags are rejected.
     :vartype tags: dict[str, str]
     """
 
@@ -398,9 +402,11 @@ class EdgeActionUpdate(_Model):
     )
     """The resource-specific properties for this resource."""
     sku: Optional["_models.SkuTypeUpdate"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The sku type of the edge action."""
+    """The SKU of the Edge Action. Do not include sku in PATCH requests; any supplied sku, including
+     null or the existing value, is rejected."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
+    """Resource tags. For PATCH requests, omitted tags are preserved, an empty tags object clears all
+     tags, and supplied tags replace the entire tag collection. Null tags are rejected."""
 
     @overload
     def __init__(
@@ -422,7 +428,7 @@ class EdgeActionUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EdgeActionVersion(TrackedResource):
+class EdgeActionVersion(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -470,11 +476,12 @@ class EdgeActionVersion(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class EdgeActionVersionProperties(_Model):
+class EdgeActionVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an edge action version.
 
-    :ivar deployment_type: The deployment type. Required. Known values are: "zip", "file", and
-     "others".
+    :ivar deployment_type: The deployment type for the Edge Action version. Set this value when
+     creating the version. When updating an existing version, any supplied value must match the
+     existing value. Required. Known values are: "zip", "file", and "others".
     :vartype deployment_type: str or ~azure.mgmt.edgeactions.models.EdgeActionVersionDeploymentType
     :ivar validation_status: The validation status. Known values are: "Succeeded" and "Failed".
     :vartype validation_status: str or
@@ -482,7 +489,11 @@ class EdgeActionVersionProperties(_Model):
     :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
      "Canceled", "Provisioning", and "Upgrading".
     :vartype provisioning_state: str or ~azure.mgmt.edgeactions.models.ProvisioningState
-    :ivar is_default_version: The active state. Required. Known values are: "True" and "False".
+    :ivar is_default_version: Indicates whether this is the default version. When creating a
+     version, if the Edge Action has no default version, the service makes the new version the
+     default even when false is supplied. If another default version exists, supplying true is
+     rejected. When updating an existing version, any supplied value must match the existing value.
+     Use swapDefault to change the default version. Required. Known values are: "True" and "False".
     :vartype is_default_version: str or ~azure.mgmt.edgeactions.models.EdgeActionIsDefaultVersion
     :ivar last_package_update_time: The last update time in UTC for package update.
     :vartype last_package_update_time: ~datetime.datetime
@@ -491,7 +502,9 @@ class EdgeActionVersionProperties(_Model):
     deployment_type: Union[str, "_models.EdgeActionVersionDeploymentType"] = rest_field(
         name="deploymentType", visibility=["read", "create", "update"]
     )
-    """The deployment type. Required. Known values are: \"zip\", \"file\", and \"others\"."""
+    """The deployment type for the Edge Action version. Set this value when creating the version. When
+     updating an existing version, any supplied value must match the existing value. Required. Known
+     values are: \"zip\", \"file\", and \"others\"."""
     validation_status: Optional[Union[str, "_models.EdgeActionVersionValidationStatus"]] = rest_field(
         name="validationStatus", visibility=["read"]
     )
@@ -504,7 +517,11 @@ class EdgeActionVersionProperties(_Model):
     is_default_version: Union[str, "_models.EdgeActionIsDefaultVersion"] = rest_field(
         name="isDefaultVersion", visibility=["read", "create", "update"]
     )
-    """The active state. Required. Known values are: \"True\" and \"False\"."""
+    """Indicates whether this is the default version. When creating a version, if the Edge Action has
+     no default version, the service makes the new version the default even when false is supplied.
+     If another default version exists, supplying true is rejected. When updating an existing
+     version, any supplied value must match the existing value. Use swapDefault to change the
+     default version. Required. Known values are: \"True\" and \"False\"."""
     last_package_update_time: Optional[datetime.datetime] = rest_field(
         name="lastPackageUpdateTime", visibility=["read"], format="rfc3339"
     )
@@ -529,7 +546,7 @@ class EdgeActionVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EdgeActionVersionUpdate(_Model):
+class EdgeActionVersionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the EdgeActionVersion.
 
     :ivar tags: Resource tags.
@@ -564,23 +581,35 @@ class EdgeActionVersionUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EdgeActionVersionUpdateProperties(_Model):
+class EdgeActionVersionUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the EdgeActionVersion.
 
-    :ivar deployment_type: The deployment type. Known values are: "zip", "file", and "others".
+    :ivar deployment_type: The deployment type for the Edge Action version. Set this value when
+     creating the version. When updating an existing version, any supplied value must match the
+     existing value. Known values are: "zip", "file", and "others".
     :vartype deployment_type: str or ~azure.mgmt.edgeactions.models.EdgeActionVersionDeploymentType
-    :ivar is_default_version: The active state. Known values are: "True" and "False".
+    :ivar is_default_version: Indicates whether this is the default version. When creating a
+     version, if the Edge Action has no default version, the service makes the new version the
+     default even when false is supplied. If another default version exists, supplying true is
+     rejected. When updating an existing version, any supplied value must match the existing value.
+     Use swapDefault to change the default version. Known values are: "True" and "False".
     :vartype is_default_version: str or ~azure.mgmt.edgeactions.models.EdgeActionIsDefaultVersion
     """
 
     deployment_type: Optional[Union[str, "_models.EdgeActionVersionDeploymentType"]] = rest_field(
         name="deploymentType", visibility=["read", "create", "update"]
     )
-    """The deployment type. Known values are: \"zip\", \"file\", and \"others\"."""
+    """The deployment type for the Edge Action version. Set this value when creating the version. When
+     updating an existing version, any supplied value must match the existing value. Known values
+     are: \"zip\", \"file\", and \"others\"."""
     is_default_version: Optional[Union[str, "_models.EdgeActionIsDefaultVersion"]] = rest_field(
         name="isDefaultVersion", visibility=["read", "create", "update"]
     )
-    """The active state. Known values are: \"True\" and \"False\"."""
+    """Indicates whether this is the default version. When creating a version, if the Edge Action has
+     no default version, the service makes the new version the default even when false is supplied.
+     If another default version exists, supplying true is rejected. When updating an existing
+     version, any supplied value must match the existing value. Use swapDefault to change the
+     default version. Known values are: \"True\" and \"False\"."""
 
     @overload
     def __init__(
@@ -645,7 +674,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -673,7 +702,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuType(_Model):
+class SkuType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SKU type for the edge action.
 
     :ivar name: The name of the SKU. Required.
@@ -706,8 +735,9 @@ class SkuType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuTypeUpdate(_Model):
-    """The SKU type for update operations.
+class SkuTypeUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The SKU fields in the update model. Do not include sku in PATCH requests; any supplied sku,
+    including null or the existing value, is rejected.
 
     :ivar name: The name of the SKU.
     :vartype name: str
@@ -739,7 +769,7 @@ class SkuTypeUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -806,7 +836,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VersionCode(_Model):
+class VersionCode(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Version code information for edge action.
 
     :ivar content: The version code deployment content. Required.

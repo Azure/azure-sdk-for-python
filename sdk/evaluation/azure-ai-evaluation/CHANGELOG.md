@@ -2,9 +2,36 @@
 
 ## 1.18.10 (Unreleased)
 
+### Features Added
+
+- Added shared model runners and evaluation strategies for asset evaluators using Decision models in Microsoft Foundry, including Output Quality and Tool Use Quality aggregate and member metrics.
+- Decision authentication uses an explicit `api_key` or caller-owned credential with a callable `get_token`. Reuse a synchronous `azure.identity.DefaultAzureCredential` for synchronous or batch calls and close it afterward; async credentials require the same caller-managed event loop. API keys take precedence; Prompty authentication is unchanged.
+- Decision score probabilities use precision-aware sum validation: hundredth-precision values allow `0.005` rounding error per level plus `1e-12`; other values use an absolute `0.001` tolerance. Invalid distributions raise a system-classified `EvaluationException`; probabilities are not normalized.
+- Decision results expose known final-response usage, model, and provenance on completed, skipped, and failed evaluations, counting shared requests once and summing split-turn usage. Usage excludes earlier retry attempts.
+- Decision requests provide context-aware per-attempt and terminal execution observations with optional OpenTelemetry metrics. Validated shared and independent execution summaries and their distinct usage scopes are preserved in failed-row metadata.
+- Decision HTTP errors include the provider's nested `error.code` when it starts with an ASCII letter and contains only letters, digits, dots, underscores, or hyphens, up to 128 characters. This is provider-controlled diagnostic text, not a guarantee that the code is free of sensitive data. Messages, details, and raw response bodies are not exposed.
+- Decision native async HTTP supports overall deadlines and cancellation during response body reads. TLS uses Python/OpenSSL trust settings such as `SSL_CERT_FILE`, not `REQUESTS_CA_BUNDLE`; shared Prompty transport behavior is unchanged.
+
+### Breaking Changes
+
 ### Bugs Fixed
 
+- Retained known earlier-turn Decision usage and model metadata when an asynchronous split evaluation is cancelled directly, while preserving `CancelledError` and existing callback cancellation behavior.
+- Rejected non-JSON-safe native answer provenance with typed errors that retain known usage, without validating unused scores on applicability skips.
+- Accepted explicit numeric zero in zero-inclusive shared Prompty score ranges while keeping missing, invalid and boolean grades on the typed error path. Missing-score fallbacks cannot manufacture a ranged grade.
+- Validated complete signed, decimal, and exponent scores in shared Prompty text fallbacks with explicit score ranges, preventing out-of-range values from becoming passing scores through single-digit parsing.
+- Classified oversized integer scores in explicit Prompty score ranges as invalid scores, preserving the configured error target in strict and legacy parsing.
+- Preserved the primary initialization error or cancellation when legacy token-provider cleanup also fails.
+- Preserved known Decision usage when a later split conversation turn fails, without assigning mixed-model usage to one model or treating the failed turn's execution summary as a conversation summary.
+- Reconciled successful split-conversation properties with aggregate Decision usage and common model identity, omitting single-request execution summaries while preserving final-turn diagnostics and original per-turn data.
+- Kept numeric-overflow validation failures on the typed Decision error path so known usage and provenance survive failed-row conversion.
+- Classified oversized numeric execution settings as user configuration errors and safely omitted invalid probability metadata without interrupting batch error and usage summaries.
+- Preserved measured token usage, model metadata, and response properties when the shared Prompty strategy parses a post-inference skipped result. Pre-inference skips still make no model request.
 - Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
+
+### Other Changes
+
+- Decision-only execution controls supplied to a chat evaluator are rejected explicitly; they do not configure chat timeout, retry or cancellation behavior.
 
 ## 1.18.9 (2026-10-12)
 

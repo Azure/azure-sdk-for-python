@@ -30,12 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.horizon_db_clusters.begin_delete(
-        resource_group_name="exampleresourcegroup",
-        cluster_name="examplecluster",
+    client.clusters.begin_delete(
+        resource_group_name="example-resource-group",
+        cluster_name="example-cluster",
     ).result()
 
 
-# x-ms-original-file: 2026-05-01-preview/Clusters_Delete.json
+# x-ms-original-file: 2026-10-01-preview/Clusters_Delete.json
 if __name__ == "__main__":
     main()
