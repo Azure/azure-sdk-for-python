@@ -9,7 +9,7 @@ The first-run default is [../../../samples/agents/tools/sample_agent_mcp_with_pr
 1. Collect the real cases in [../test_samples.py](../test_samples.py) and [../test_samples_async.py](../test_samples_async.py). Do not execute samples during collection.
 2. Match the sample-path or test-ID wildcard and show the exact selected cases. Zero matches fail; the pipeline never falls back to all tests.
 3. Generate a non-secret provisioning plan, download integrity-pinned official Standard setup **Bicep sources**, and compile all templates. The default `preview` mode ends here and makes no Azure changes.
-4. In `run-and-cleanup` mode, pause for approval of this run's fresh preview before provisioning billable resources.
+4. In `run-and-cleanup` mode, continue automatically after this run's fresh preview succeeds. There is no YAML manual-approval stage. Selecting this mode when queueing explicitly opts in to creating billable resources and deleting this run's temporary resources afterward.
 5. Authenticate with the authorized Azure Resource Manager service connection. Check provider registration, model availability and regional quota, then deploy Bicep to create:
    - A uniquely named, run-owned resource group.
    - A Foundry account and project with managed identities.
@@ -63,9 +63,16 @@ This matches the connection contract in the supplied project-pool reference, but
 
    `tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_mcp_with_project_connection]`
 
-5. Once secret/service-connection setup is complete, run again with `runMode=run-and-cleanup`, the same selection, and your authorized `azureServiceConnection`. Approve that new run's preview at **ApproveProvisioning**. The pipeline then provisions, tests and cleans up.
+5. Once secret/service-connection setup is complete, run again with `runMode=run-and-cleanup`, the same selection, and your authorized `azureServiceConnection`. The pipeline automatically provisions, tests and cleans up after its preview succeeds; no **Review → Resume** action is required by this YAML.
 
 Do not enter the PAT into **Run pipeline** parameters. Those parameters are not secret fields.
+
+### Approval behavior
+
+- `preview` remains the default and cannot provision resources.
+- `run-and-cleanup` explicitly opts in to automatic provisioning after a successful preview, including billable resources and ownership-checked cleanup. A failed preview prevents provisioning.
+- Existing service-connection, environment, or organization-level approvals/checks are not changed or bypassed. ADO may still require those administrator-managed authorizations.
+- Runs already queued retain their original YAML snapshot. Removing the manual stage affects only **new runs from the updated, pushed commit**; it does not resume or modify an existing paused run.
 
 ## Wildcard examples shown in the ADO UI
 
@@ -97,7 +104,7 @@ Rules:
 
 | File | Responsibility |
 | --- | --- |
-| [../../../tests.yml](../../../tests.yml) | ADO parameters, preview/approval/run stages, test results and always-run cleanup. |
+| [../../../tests.yml](../../../tests.yml) | ADO parameters, preview and automatic live-run stages, test results and always-run cleanup. |
 | [infra/resource-group.bicep](infra/resource-group.bicep) | New resource group with exact CI ownership/expiry tags. |
 | [infra/standard-setup.lock.json](infra/standard-setup.lock.json) | Official Standard setup commit and SHA-256 pin for all 14 Bicep source files. |
 | [Get-StandardSetupTemplate.ps1](Get-StandardSetupTemplate.ps1) | Download those Bicep sources to agent temporary storage and fail on checksum mismatch. |
@@ -133,4 +140,4 @@ Use the package's configured virtual environment and repository Black configurat
 - Collect [../test_samples.py](../test_samples.py) and [../test_samples_async.py](../test_samples_async.py) with [select_samples.py](select_samples.py), then generate an offline plan.
 - Request ADO YAML expansion with `previewRun=true` only if authorized. **Modified-YAML previews require pipeline edit permission**; queue permission alone is insufficient. Do not queue a live run as a workaround for a denied preview.
 
-Live sample execution and resource deployment remain unverified until an authorized, approved pipeline run succeeds.
+Live sample execution and resource deployment remain unverified until an authorized live pipeline run succeeds.

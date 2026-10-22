@@ -3,7 +3,7 @@ pr: none
 
 parameters:
   - name: runMode
-    displayName: 'preview = no Azure changes; run-and-cleanup = approve, provision billable resources, test, delete'
+    displayName: 'preview = no Azure changes; run-and-cleanup = automatically provision billable resources after preview, test, delete'
     type: string
     default: preview
     values:
@@ -131,25 +131,10 @@ extends:
                 displayName: 'Verify official Bicep source hashes and compile all provisioning templates'
 
       - ${{ if eq(parameters.runMode, 'run-and-cleanup') }}:
-        - stage: Approve
-          displayName: 'Approve the fresh preview before creating billable resources'
-          dependsOn: Preview
-          jobs:
-            - job: ApproveProvisioning
-              pool: server
-              timeoutInMinutes: 1445
-              steps:
-                - task: ManualValidation@1
-                  timeoutInMinutes: 1440
-                  inputs:
-                    notifyUsers: ''
-                    allowApproversToApproveTheirOwnRuns: true
-                    instructions: 'Review the Preview log and sample-plan artifact. Approve ONLY to create a NEW Standard Foundry account/project, Storage, Cosmos DB, AI Search, two model deployments and optional GitHub MCP connection. The run executes exactly the selected pytest sample cases, then deletes its own temporary resource group, including on failure. Charges apply until deletion completes.'
-                    onTimeout: reject
-
         - stage: RunSamples
           displayName: 'Bicep provision -> sample pytest -> run-owned cleanup'
-          dependsOn: Approve
+          dependsOn: Preview
+          condition: succeeded()
           variables:
             - ${{ if ne(parameters.secretVariableGroup, 'none') }}:
               - group: ${{ parameters.secretVariableGroup }}
@@ -187,7 +172,7 @@ extends:
                   inputs:
                     artifactName: sample-plan
                     targetPath: $(Pipeline.Workspace)/sample-plan
-                  displayName: 'Use this run''s reviewed sample selection and deployment plan'
+                  displayName: 'Use this run''s collected sample selection and deployment plan'
                 - task: AzureCLI@2
                   displayName: 'Provision Standard Foundry, models and MCP connection using Bicep'
                   inputs:
