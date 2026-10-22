@@ -72,7 +72,8 @@ def _request(*, user: str = "owner", background: bool = True, stream: bool = Tru
 
 def _host() -> ResponsesAgentServerHost:
     host = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(resilient_background=False), store=InMemoryResponseProvider()
+        options=ResponsesServerOptions(resilient_background=False, steerable_conversations=True),
+        store=InMemoryResponseProvider(),
     )
 
     async def handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
