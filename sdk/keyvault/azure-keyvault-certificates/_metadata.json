@@ -3,8 +3,9 @@
   "apiVersions": {
     "KeyVault": "2026-03-01-preview"
   },
-  "commit": "44729a46b902922d8f50a383573f9c6641ce8e74",
+  "commit": "f4f159a5a3412acc3fd8793d27ecedd2f99a751c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/keyvault/data-plane/Certificates",
-  "emitterVersion": "0.62.1"
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
 }

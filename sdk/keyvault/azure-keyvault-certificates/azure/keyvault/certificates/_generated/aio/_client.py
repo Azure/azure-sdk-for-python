@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class KeyVaultClient(_KeyVaultClientOperationsMixin):
+class KeyVaultClient(_KeyVaultClientOperationsMixin):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key vault client performs cryptographic key operations and vault operations against the Key
     Vault service.
 

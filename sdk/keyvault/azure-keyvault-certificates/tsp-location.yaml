@@ -1,5 +1,5 @@
 directory: specification/keyvault/data-plane/Certificates
-commit: 44729a46b902922d8f50a383573f9c6641ce8e74
+commit: f4f159a5a3412acc3fd8793d27ecedd2f99a751c
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 
 - specification/keyvault/data-plane/Certificates/common
