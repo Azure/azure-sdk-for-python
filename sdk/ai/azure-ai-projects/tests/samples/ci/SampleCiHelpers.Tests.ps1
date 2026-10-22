@@ -242,6 +242,26 @@ Describe 'Secret-safe ARM error diagnostics' {
         @(Get-SampleAzureErrorCodes -ErrorDetails $null).Count | Should Be 0
     }
 
+    It 'extracts codes from CLI preflight errors without returning secure messages' {
+        $text = 'ERROR: {"code":"InvalidTemplateDeployment","message":"Bearer secret-placeholder","details":[{"code":"BadRequest","message":"github_pat_unit_test_placeholder"}]}'
+        (@(Get-SampleAzureCliErrorCodes -Text $text) -join ',') | Should Be 'BadRequest,InvalidTemplateDeployment'
+    }
+
+    It 'extracts inner error codes from separate CLI JSON lines' {
+        $text = "ERROR: {`"code`":`"DeploymentFailed`"}`nInner Errors:`n{`"code`":`"AuthorizationFailed`",`"message`":`"secret-placeholder`"}"
+        (@(Get-SampleAzureCliErrorCodes -Text $text) -join ',') | Should Be 'AuthorizationFailed,DeploymentFailed'
+    }
+
+    It 'extracts a standard parenthesized CLI error code without its message' {
+        (@(Get-SampleAzureCliErrorCodes -Text 'ERROR: (BadRequest) Bearer secret-placeholder') -join ',') | Should Be 'BadRequest'
+    }
+
+    It 'never returns unstructured CLI messages or token-shaped codes' {
+        @(Get-SampleAzureCliErrorCodes -Text 'ERROR: github_pat_unit_test_placeholder').Count | Should Be 0
+        @(Get-SampleAzureCliErrorCodes -Text 'ERROR: {"code":"ghp_UnitTestPlaceholder"}').Count | Should Be 0
+        @(Get-SampleAzureCliErrorCodes -Text '').Count | Should Be 0
+    }
+
     It 'persists only error codes and resource identifiers from failed deployments' {
         $owner = '0123456789abcdef0123456789abcdef'
         $plan = @{

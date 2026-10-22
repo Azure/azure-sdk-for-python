@@ -51,7 +51,7 @@ Only the provisioning task receives `MCP_GITHUB_PAT`. [infra/sample-resources.bi
 
 This matches the connection contract in the supplied project-pool reference, but **does not blindly prepend `github_pat_`**. Supplying a full token avoids a duplicate token prefix. The test process receives the **connection resource ID**, never the PAT. Deployment-state and plan artifacts contain no PAT; secret-bearing deployment output/errors are not printed.
 
-On provisioning failure, the state records `provisioningStep` and the pipeline attempts to save a non-secret deployment-diagnostics artifact before cleanup. Diagnostics contain only deployment names, ARM error codes, and failed resource IDs/types. Error messages, request bodies, credentials and deployment parameters remain suppressed because Azure errors can echo secure inputs.
+On provisioning failure, the state records `provisioningStep` and the pipeline attempts to save a non-secret deployment-diagnostics artifact before cleanup. Diagnostics contain only deployment names, ARM error codes, and failed resource IDs/types. The CLI wrapper also extracts error codes from recognized error envelopes, including preflight failures that create no deployment history. Error messages, request bodies, credentials and deployment parameters remain suppressed because Azure errors can echo secure inputs.
 
 ## ADO Run pipeline: first sample
 

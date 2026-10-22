@@ -9,13 +9,19 @@ function Invoke-SampleAzure {
     param([Parameter(Mandatory)] [string[]] $Arguments, [switch] $Sensitive)
 
     if ($Sensitive) {
-        # Deployment errors can include a submitted body. Never log secret-bearing requests.
-        $output = & az @Arguments --only-show-errors --output json 2>$null
+        # Capture both streams in memory. Only parsed error codes may leave a failed secret-bearing request.
+        $output = & az @Arguments --only-show-errors --output json 2>&1
     } else {
         $output = & az @Arguments --only-show-errors --output json
     }
-    if ($LASTEXITCODE -ne 0) {
-        throw "Azure operation '$($Arguments[0]) $($Arguments[1])' failed (exit $LASTEXITCODE)."
+    $exitCode = $LASTEXITCODE
+    if ($exitCode -ne 0) {
+        $message = "Azure operation '$($Arguments[0]) $($Arguments[1])' failed (exit $exitCode)."
+        if ($Sensitive) {
+            $codes = @(Get-SampleAzureCliErrorCodes -Text ($output -join [Environment]::NewLine))
+            if ($codes.Count -gt 0) { $message += ' ARM error codes: ' + ($codes -join ', ') + '.' }
+        }
+        throw $message
     }
     $text = $output -join [Environment]::NewLine
     if (-not [string]::IsNullOrWhiteSpace($text)) {
@@ -212,6 +218,24 @@ function Get-SampleAzureErrorCodes {
         }
     } elseif ($ErrorDetails -is [System.Collections.IEnumerable] -and $ErrorDetails -isnot [string]) {
         foreach ($detail in $ErrorDetails) { $codes += @(Get-SampleAzureErrorCodes -ErrorDetails $detail) }
+    }
+    return @($codes | Sort-Object -Unique)
+}
+
+function Get-SampleAzureCliErrorCodes {
+    param([AllowEmptyString()] [string] $Text)
+
+    $codes = @()
+    foreach ($line in ($Text -split '\r?\n')) {
+        $json = $line.Trim() -replace '^ERROR:\s*', ''
+        if ($json.StartsWith('{') -and $json.EndsWith('}')) {
+            try {
+                $details = $json | ConvertFrom-Json -AsHashtable -ErrorAction Stop
+                $codes += @(Get-SampleAzureErrorCodes -ErrorDetails $details)
+            } catch { }
+        } elseif ($line -cmatch '^ERROR:\s*\((?<armCode>[A-Za-z][A-Za-z0-9_.-]{0,127})\)') {
+            $codes += @(Get-SampleAzureErrorCodes -ErrorDetails @{ code = $Matches.armCode })
+        }
     }
     return @($codes | Sort-Object -Unique)
 }
