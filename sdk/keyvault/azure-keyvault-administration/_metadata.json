@@ -1,6 +1,11 @@
 {
-  "apiVersion": "2026-01-01-preview",
+  "apiVersion": "2026-03-01-preview",
   "apiVersions": {
-    "KeyVault": "2026-01-01-preview"
-  }
+    "KeyVault": "2026-03-01-preview"
+  },
+  "commit": "ea20c467080ed3d3875c8b5aeff28ce52f6a55ca",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/keyvault/data-plane/Administration",
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
 }

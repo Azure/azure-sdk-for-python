@@ -1,5 +1,9 @@
 # Release History
 
+## 4.8.0b4 (2026-10-22)
+
+skip changelog generation for data-plane package and please add changelog manually.
+
 ## 4.8.0b3 (Unreleased)
 
 ### Features Added
