@@ -28,9 +28,7 @@ def test_ws_original_subject_is_invocation_local():
         await websocket.send_json(get_request_context().model_attribution_headers())
 
     subject = {
-        "x-ms-original-subject-oid": "original-oid",
-        "x-ms-original-subject-tid": "original-tid",
-        "x-ms-original-subject-idtype": "user",
+        "x-ms-original-subject": 'oid="original-oid", tid="original-tid", idtype="user"',
     }
     client = TestClient(app)
     with client.websocket_connect("/invocations_ws", headers=dict(subject)) as websocket:

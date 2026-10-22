@@ -27,9 +27,7 @@ async def test_invoke_original_subject_is_available_during_body_iteration(stream
         return JSONResponse(get_request_context().model_attribution_headers())
 
     subject = {
-        "x-ms-original-subject-oid": "original-oid",
-        "x-ms-original-subject-tid": "original-tid",
-        "x-ms-original-subject-idtype": "app",
+        "x-ms-original-subject": 'oid="original-oid", tid="original-tid", idtype="app"',
     }
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:
         response = await client.post("/invocations", headers={**subject, "x-agent-user-id": "state-key"})

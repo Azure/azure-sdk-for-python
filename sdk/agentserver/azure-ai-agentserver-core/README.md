@@ -94,19 +94,46 @@ async def call_toolbox(query: str) -> str:
 ### Draft original-subject model attribution
 
 `get_request_context().original_subject` carries a separate immutable snapshot
-of the proposed original-subject `oid`, `tid`, and `idtype` headers. Responses,
+of the proposed original-subject `oid`, `tid`, and `idtype` fields. Responses,
 Invocations (HTTP, streaming, and WebSocket), and native Activity consume the
 same metadata. The existing user-state identifier and `platform_headers()`
 behavior are unchanged.
 
 This is a draft contract for owner review, not an enabled budget feature.
-The proposed wire names are `x-ms-original-subject-oid`,
-`x-ms-original-subject-tid`, and `x-ms-original-subject-idtype`.
+The proposed single header is an RFC 9651 Structured Fields dictionary:
+
+```http
+x-ms-original-subject: oid="<object-id>", tid="<tenant-id>", idtype="user"
+```
+
+This draft accepts only `oid`, `tid`, and `idtype` string members, in any
+order, without parameters. Strings use Structured Fields quoting and escaping,
+not JSON or positional CSV. Duplicate header fields or keys, unknown keys,
+malformed syntax, and non-string values raise `ValueError`. Missing keys are
+omitted, not encoded as spaces or literal `"null"`. A missing header means no
+subject; an empty string member remains distinct from a missing member.
+The retired three-header draft is not consumed as a fallback.
+
 For a supported model endpoint whose owner has enabled the contract, pass
 `get_request_context().model_attribution_headers()` as **per-call** headers
 (for example, `extra_headers` on a model SDK call). Keep the model's existing
 credential. Never put a user's tuple in shared client defaults or send it to
 external/BYO endpoints, arbitrary URLs, tools, or storage callbacks.
+
+```python
+from azure.ai.agentserver.core import get_request_context
+
+response = await model_client.responses.create(
+    model=model_deployment,
+    input="Hello",
+    extra_headers=get_request_context().model_attribution_headers(),
+)
+```
+
+The helper supplies the correctly quoted dictionary value and the current call
+ID when available. Do not `json.dumps` the original-subject value: that is a
+different wire format. Other independently supported per-call headers can be
+merged into this mapping without changing their own encoding.
 
 No model client is patched automatically. Absent metadata returns an empty
 mapping; partial, empty, or HTTP-unsafe metadata raises `ValueError` rather

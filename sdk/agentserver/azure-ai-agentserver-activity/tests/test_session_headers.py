@@ -17,9 +17,7 @@ async def test_original_subject_comes_from_headers_not_activity_payload(asgi_cli
 
     app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     subject = {
-        "x-ms-original-subject-oid": "platform-original-oid",
-        "x-ms-original-subject-tid": "platform-original-tid",
-        "x-ms-original-subject-idtype": "user",
+        "x-ms-original-subject": 'oid="platform-original-oid", tid="platform-original-tid", idtype="user"',
     }
     payload = {
         "type": "message",

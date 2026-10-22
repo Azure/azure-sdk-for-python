@@ -16,17 +16,73 @@ Regression test for: request context not re-established for the streaming body.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
+import httpx
+from openai import AsyncOpenAI
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import get_request_context
+from azure.ai.agentserver.core import (
+    FoundryAgentRequestContext,
+    FoundryOriginalSubject,
+    get_request_context,
+    reset_request_context,
+    set_request_context,
+)
 from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
 from azure.ai.agentserver.responses.store._file import FileResponseStore
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
+
+
+@pytest.mark.asyncio
+async def test_model_sdk_extra_headers_preserve_the_dictionary_and_independent_json_header() -> None:
+    observed: list[httpx.Request] = []
+
+    def receive(request: httpx.Request) -> httpx.Response:
+        observed.append(request)
+        return httpx.Response(200, json={
+            "id": "resp_test",
+            "object": "response",
+            "created_at": 0,
+            "status": "completed",
+            "model": "test",
+            "output": [],
+        })
+
+    subject_value = 'oid="original-oid", tid="original-tid", idtype="user"'
+    token = set_request_context(FoundryAgentRequestContext(
+        original_subject=FoundryOriginalSubject.from_headers({"x-ms-original-subject": subject_value}),
+        call_id="call-current",
+        user_id="different-state-key",
+    ))
+    independent_json = json.dumps({"application_id": "example"}, separators=(",", ":"), ensure_ascii=True)
+    try:
+        async with AsyncOpenAI(
+            api_key="test-model-key",
+            base_url="https://model.test",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(receive)),
+        ) as client:
+            response = await client.responses.create(
+                model="test",
+                input="Hello",
+                extra_headers={"x-example-context": independent_json, **get_request_context().model_attribution_headers()},
+            )
+        assert response.id == "resp_test"
+    finally:
+        reset_request_context(token)
+
+    assert len(observed) == 1
+    assert observed[0].headers["x-ms-original-subject"] == subject_value
+    assert observed[0].headers["x-agent-foundry-call-id"] == "call-current"
+    assert observed[0].headers["x-example-context"] == independent_json
+    assert observed[0].headers["authorization"] == "Bearer test-model-key"
+    assert "x-agent-user-id" not in observed[0].headers
+    assert "x-ms-original-subject-oid" not in observed[0].headers
+    assert get_request_context().original_subject is None
 
 
 def _build_capturing_client(
@@ -72,9 +128,7 @@ class TestStreamingRequestContext:
             captured, resilient=stored, storage_dir=tmp_path / "store" if stored else None
         )
         subject = {
-            "x-ms-original-subject-oid": "original-oid",
-            "x-ms-original-subject-tid": "original-tid",
-            "x-ms-original-subject-idtype": "user",
+            "x-ms-original-subject": 'oid="original-oid", tid="original-tid", idtype="user"',
         }
         response = client.post(
             "/responses",

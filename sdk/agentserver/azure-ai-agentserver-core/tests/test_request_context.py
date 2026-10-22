@@ -20,11 +20,9 @@ from azure.ai.agentserver.core import (
 )
 from azure.ai.agentserver.core._platform_headers import FOUNDRY_CALL_ID, USER_ID
 
-SUBJECT_HEADERS = {
-    "x-ms-original-subject-oid": "original-oid",
-    "x-ms-original-subject-tid": "original-tid",
-    "x-ms-original-subject-idtype": "user",
-}
+SUBJECT_HEADER = "x-ms-original-subject"
+SUBJECT_VALUE = 'oid="original-oid", tid="original-tid", idtype="user"'
+SUBJECT_HEADERS = {SUBJECT_HEADER: SUBJECT_VALUE}
 
 
 class TestOriginalSubject:
@@ -36,7 +34,7 @@ class TestOriginalSubject:
 
     @pytest.mark.parametrize("idtype", ["user", "app", "unknown"])
     def test_model_headers_preserve_tuple_and_platform_headers_are_unchanged(self, idtype: str) -> None:
-        expected = {**SUBJECT_HEADERS, "x-ms-original-subject-idtype": idtype}
+        expected = {SUBJECT_HEADER: f'oid="original-oid", tid="original-tid", idtype="{idtype}"'}
         context = FoundryAgentRequestContext(
             original_subject=FoundryOriginalSubject.from_headers(Headers(expected)),
             call_id="opaque-call",
@@ -45,21 +43,97 @@ class TestOriginalSubject:
         assert context.model_attribution_headers() == {**expected, FOUNDRY_CALL_ID: "opaque-call"}
         assert context.platform_headers() == {FOUNDRY_CALL_ID: "opaque-call"}
         copied = context.model_attribution_headers()
-        copied["x-ms-original-subject-oid"] = "changed"
-        assert context.model_attribution_headers()["x-ms-original-subject-oid"] == "original-oid"
+        copied[SUBJECT_HEADER] = "changed"
+        assert context.model_attribution_headers()[SUBJECT_HEADER] == expected[SUBJECT_HEADER]
 
-    @pytest.mark.parametrize("invalid", [None, "", " ", "oid\r\ninjected", "\x00", "\N{SNOWMAN}"])
-    def test_partial_or_unsafe_subject_is_preserved_but_cannot_be_forwarded(self, invalid: str | None) -> None:
-        headers = dict(SUBJECT_HEADERS)
-        if invalid is None:
-            del headers["x-ms-original-subject-oid"]
-        else:
-            headers["x-ms-original-subject-oid"] = invalid
-        subject = FoundryOriginalSubject.from_headers(headers)
+    @pytest.mark.parametrize(
+        "value,oid,tid,idtype",
+        [
+            ('tid="original-tid", idtype="user"', None, "original-tid", "user"),
+            ('oid="original-oid", idtype="user"', "original-oid", None, "user"),
+            ('oid="original-oid", tid="original-tid"', "original-oid", "original-tid", None),
+            ('oid="", tid="original-tid", idtype="user"', "", "original-tid", "user"),
+            ('oid="original-oid", tid=" ", idtype="user"', "original-oid", " ", "user"),
+        ],
+    )
+    def test_partial_or_empty_subject_is_preserved_but_cannot_be_forwarded(
+        self, value: str, oid: str | None, tid: str | None, idtype: str | None
+    ) -> None:
+        subject = FoundryOriginalSubject.from_headers({SUBJECT_HEADER: value})
         assert subject is not None
-        assert subject.oid == invalid
+        assert (subject.oid, subject.tid, subject.idtype) == (oid, tid, idtype)
         with pytest.raises(ValueError, match="complete, HTTP-safe tuple"):
             FoundryAgentRequestContext(original_subject=subject).model_attribution_headers()
+
+    @pytest.mark.parametrize("invalid", [None, "", " ", "oid\r\ninjected", "\t", "\x00", "\x7f", "\N{SNOWMAN}"])
+    def test_constructed_unsafe_subject_cannot_be_forwarded(self, invalid: str | None) -> None:
+        subject = FoundryOriginalSubject(oid=invalid, tid="tenant", idtype="user")
+        with pytest.raises(ValueError, match="complete, HTTP-safe tuple"):
+            FoundryAgentRequestContext(original_subject=subject).model_attribution_headers()
+
+    @pytest.mark.parametrize(
+        "value",
+        [
+            "",
+            " ",
+            "original-oid,original-tid,user",
+            'oid="one", oid="two"',
+            'oid="one", oid="one"',
+            'oid="one", extra="value"',
+            'oid="one";extra="value"',
+            "oid=null",
+            "oid=user",
+            "oid=123",
+            "oid=?1",
+            'OID="one"',
+            'oid = "one"',
+            'oid="unterminated',
+            'oid="one",',
+            ',oid="one"',
+            'oid="one",,tid="two"',
+            'oid="one"tid="two"',
+            r'oid="bad\escape"',
+            'oid="bad\r\ninjected"',
+            'oid="bad\tinjected"',
+            'oid="bad\x00"',
+            'oid="bad\x7f"',
+            'oid="\N{SNOWMAN}"',
+        ],
+    )
+    def test_malformed_or_ambiguous_dictionary_is_rejected(self, value: str) -> None:
+        with pytest.raises(ValueError, match="Original-subject attribution"):
+            FoundryOriginalSubject.from_headers({SUBJECT_HEADER: value})
+
+    def test_duplicate_header_fields_are_rejected(self) -> None:
+        headers = Headers(raw=[
+            (SUBJECT_HEADER.encode(), b'oid="one"'),
+            (SUBJECT_HEADER.encode(), b'tid="two", idtype="user"'),
+        ])
+        with pytest.raises(ValueError, match="single header field"):
+            FoundryOriginalSubject.from_headers(headers)
+
+    def test_order_and_optional_whitespace_do_not_change_the_snapshot(self) -> None:
+        subject = FoundryOriginalSubject.from_headers({
+            "X-MS-Original-Subject": ' \tidtype="user" \t,tid="original-tid",\t oid="original-oid"\t ',
+        })
+        assert subject == FoundryOriginalSubject(oid="original-oid", tid="original-tid", idtype="user")
+        assert FoundryAgentRequestContext(original_subject=subject).model_attribution_headers() == SUBJECT_HEADERS
+
+    def test_structured_fields_escaping_round_trips_without_splitting_quoted_commas(self) -> None:
+        value = r'oid="original\\oid\",branch", tid="original-tid", idtype="user"'
+        subject = FoundryOriginalSubject.from_headers({SUBJECT_HEADER: value})
+        assert subject == FoundryOriginalSubject(oid='original\\oid",branch', tid="original-tid", idtype="user")
+        assert FoundryAgentRequestContext(original_subject=subject).model_attribution_headers() == {SUBJECT_HEADER: value}
+
+    def test_retired_headers_are_not_used_as_fallback_or_mixed_into_the_snapshot(self) -> None:
+        retired = {
+            "x-ms-original-subject-oid": "retired-oid",
+            "x-ms-original-subject-tid": "retired-tid",
+            "x-ms-original-subject-idtype": "app",
+        }
+        assert FoundryOriginalSubject.from_headers(retired) is None
+        subject = FoundryOriginalSubject.from_headers({**retired, **SUBJECT_HEADERS})
+        assert subject == FoundryOriginalSubject(oid="original-oid", tid="original-tid", idtype="user")
 
     def test_snapshot_is_immutable_and_does_not_print_identifiers(self) -> None:
         subject = FoundryOriginalSubject(oid="private-original-oid", tid="tenant", idtype="user")
@@ -76,7 +150,9 @@ class TestOriginalSubject:
 
         def receive(request: httpx.Request) -> httpx.Response:
             observed.append(request.headers.copy())
-            oid = request.headers["x-ms-original-subject-oid"]
+            subject = FoundryOriginalSubject.from_headers(request.headers)
+            assert subject is not None and subject.oid is not None
+            oid = subject.oid
             attempts[oid] = attempts.get(oid, 0) + 1
             return httpx.Response(503 if attempts[oid] == 1 else 200)
 
@@ -107,12 +183,14 @@ class TestOriginalSubject:
                 assert get_request_context().original_subject is None
 
             await asyncio.gather(invoke("alice"), invoke("bob"))
-            assert "x-ms-original-subject-oid" not in client.headers
+            assert SUBJECT_HEADER not in client.headers
 
         assert attempts == {"alice": 2, "bob": 2}
         for headers in observed:
-            user = headers["x-ms-original-subject-oid"]
-            assert headers["x-ms-original-subject-tid"] == f"tenant-{user}"
+            subject = FoundryOriginalSubject.from_headers(headers)
+            assert subject is not None
+            user = subject.oid
+            assert subject.tid == f"tenant-{user}"
             assert headers[FOUNDRY_CALL_ID] == f"call-{user}"
             assert headers["authorization"] == "Bearer model-agent-token"
             assert USER_ID not in headers

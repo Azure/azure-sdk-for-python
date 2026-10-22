@@ -28,6 +28,7 @@ from __future__ import annotations
 
 from contextvars import ContextVar, Token
 from dataclasses import dataclass
+import re
 from typing import Mapping
 
 from ._platform_headers import FOUNDRY_CALL_ID
@@ -40,11 +41,10 @@ __all__ = [
     "reset_request_context",
 ]
 
-# Draft wire names, pending platform/model-owner review.
-_ORIGINAL_SUBJECT_HEADERS = (
-    "x-ms-original-subject-oid",
-    "x-ms-original-subject-tid",
-    "x-ms-original-subject-idtype",
+# Draft RFC 9651 dictionary profile: only these string members, without parameters.
+_ORIGINAL_SUBJECT_HEADER = "x-ms-original-subject"
+_ORIGINAL_SUBJECT_MEMBER = re.compile(
+    r'(oid|tid|idtype)="((?:[\x20-\x21\x23-\x5b\x5d-\x7e]|\\["\\])*)"'
 )
 
 
@@ -70,17 +70,40 @@ class FoundryOriginalSubject:
 
     @classmethod
     def from_headers(cls, headers: Mapping[str, str]) -> FoundryOriginalSubject | None:
-        """Snapshot proposed platform headers without interpreting user-state IDs.
+        """Snapshot the proposed platform dictionary without interpreting user-state IDs.
 
-        Missing, empty, and partial tuples remain distinguishable in the context.
+        Absent headers, omitted keys, and empty string values remain distinct.
+        Only oid/tid/idtype string members are accepted, in any order. Duplicate
+        fields/keys, unknown members, parameters, and malformed syntax raise.
 
         :param headers: Case-insensitive inbound HTTP headers.
         :type headers: Mapping[str, str]
-        :return: Subject assertions, or ``None`` if all three headers are absent.
+        :return: Subject assertions, or ``None`` if the header is absent.
         :rtype: FoundryOriginalSubject or None
+        :raises ValueError: The header does not match the draft dictionary profile.
         """
-        values = tuple(headers.get(name) for name in _ORIGINAL_SUBJECT_HEADERS)
-        return None if all(value is None for value in values) else cls(*values)
+        fields = [value for name, value in headers.items() if name.lower() == _ORIGINAL_SUBJECT_HEADER]
+        if not fields:
+            return None
+        if len(fields) != 1:
+            raise ValueError("Original-subject attribution requires a single header field.")
+
+        remaining = fields[0].strip(" \t")
+        values: dict[str, str] = {}
+        while remaining:
+            member = _ORIGINAL_SUBJECT_MEMBER.match(remaining)
+            if member is None or member[1] in values:
+                raise ValueError("Original-subject attribution requires unique oid/tid/idtype string members.")
+            values[member[1]] = re.sub(r'\\(["\\])', r"\1", member[2])
+            remaining = remaining[member.end():].lstrip(" \t")
+            if not remaining:
+                break
+            if not remaining.startswith(",") or not remaining[1:].strip(" \t"):
+                raise ValueError("Original-subject attribution requires comma-separated dictionary members.")
+            remaining = remaining[1:].lstrip(" \t")
+        if not values:
+            raise ValueError("Original-subject attribution requires a nonempty dictionary.")
+        return cls(oid=values.get("oid"), tid=values.get("tid"), idtype=values.get("idtype"))
 
 
 class FoundryAgentRequestContext:
@@ -137,12 +160,13 @@ class FoundryAgentRequestContext:
         subject = self.original_subject
         if subject is None:
             return {}
-        values = (subject.oid, subject.tid, subject.idtype)
-        headers: dict[str, str] = {}
-        for name, value in zip(_ORIGINAL_SUBJECT_HEADERS, values):
+        members = []
+        for name, value in (("oid", subject.oid), ("tid", subject.tid), ("idtype", subject.idtype)):
             if not value or any(character < "!" or character > "~" for character in value):
                 raise ValueError("Original-subject attribution requires a complete, HTTP-safe tuple.")
-            headers[name] = value
+            escaped = value.replace("\\", "\\\\").replace('"', '\\"')
+            members.append(f'{name}="{escaped}"')
+        headers = {_ORIGINAL_SUBJECT_HEADER: ", ".join(members)}
         if self.call_id is not None:
             headers[FOUNDRY_CALL_ID] = self.call_id
         return headers
