@@ -59,6 +59,10 @@ resource sampleDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025
 resource validationDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-10-01-preview' = if (sampleModel.name != validationModel.name) {
   parent: account
   name: validationModel.name
+  // Serialize sibling model writes to avoid account-level RequestConflict responses.
+  dependsOn: [
+    sampleDeployment
+  ]
   sku: {
     name: validationModel.sku
     capacity: validationModel.capacity

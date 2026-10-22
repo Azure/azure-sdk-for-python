@@ -14,7 +14,7 @@ The first-run default is [../../../samples/agents/tools/sample_agent_mcp_with_pr
    - A uniquely named, run-owned resource group.
    - A Foundry account and project with managed identities.
    - A Storage account, Cosmos DB account, AI Search service, project connections, capability hosts and runtime role assignments: the official **Standard agent setup**.
-   - The selected sample model and **gpt-5.2**, which the existing sample harness uses to validate console output. If the sample model is also gpt-5.2, only one matching deployment is created.
+   - The selected sample model and **gpt-5.2**, which the existing sample harness uses to validate console output. Model deployments are serialized to avoid concurrent writes to the same Foundry account. If the sample model is also gpt-5.2, only one matching deployment is created.
    - A project-scoped GitHub MCP connection when the selected sample requires `MCP_PROJECT_CONNECTION_ID`.
 6. Wait for project/RBAC readiness, then run only the selected pytest node IDs with live mode on and recording off. Publish JUnit results to the ADO **Tests** tab.
 7. Run cleanup even after failure or cancellation, verifying the resource-group ID and every ownership tag before deleting **only this run's temporary resource group**. Capture non-secret resource inventories before/after deployment.
@@ -146,7 +146,7 @@ Use the package's configured virtual environment and repository Black configurat
 
 - Run the unit tests under this directory with `--confcutdir=tests/samples/ci` to avoid parent service fixtures.
 - Run [SampleCiHelpers.Tests.ps1](SampleCiHelpers.Tests.ps1) with Pester for ownership, PAT-shape, model/account preflight, and secret-safe error-diagnostic tests.
-- Fetch pinned Bicep sources to temporary storage and run [Test-BicepTemplates.ps1](Test-BicepTemplates.ps1); its parameter compilation uses fictional values and an empty PAT.
+- Fetch pinned Bicep sources to temporary storage and run [Test-BicepTemplates.ps1](Test-BicepTemplates.ps1); it verifies the compiled ARM model dependency, and its parameter compilation uses fictional values and an empty PAT.
 - Collect [../test_samples.py](../test_samples.py) and [../test_samples_async.py](../test_samples_async.py) with [select_samples.py](select_samples.py), then generate an offline plan.
 - Request ADO YAML expansion with `previewRun=true` only if authorized. **Modified-YAML previews require pipeline edit permission**; queue permission alone is insufficient. Do not queue a live run as a workaround for a denied preview.
 

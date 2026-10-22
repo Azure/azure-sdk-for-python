@@ -11,8 +11,20 @@ foreach ($path in @((Join-Path $PSScriptRoot 'infra/resource-group.bicep'),
     $compiled = @(& az bicep build --file $path --stdout --only-show-errors) -join [Environment]::NewLine
     if ($LASTEXITCODE -ne 0) { throw "Bicep compilation failed: $path" }
     $template = $compiled | ConvertFrom-Json -AsHashtable
-    if ($path -eq (Join-Path $PSScriptRoot 'infra/sample-resources.bicep') -and $template.parameters.mcpPat.type -ne 'secureString') {
-        throw 'The MCP PAT must compile to an ARM secureString parameter.'
+    if ($path -eq (Join-Path $PSScriptRoot 'infra/sample-resources.bicep')) {
+        if ($template.parameters.mcpPat.type -ne 'secureString') {
+            throw 'The MCP PAT must compile to an ARM secureString parameter.'
+        }
+        # Typed parameters emit ARM languageVersion 2.0 with symbolic resource keys.
+        if ($template.resources -isnot [System.Collections.IDictionary] -or
+            $template.resources['sampleDeployment']['type'] -ne 'Microsoft.CognitiveServices/accounts/deployments' -or
+            $template.resources['validationDeployment']['type'] -ne 'Microsoft.CognitiveServices/accounts/deployments') {
+            throw 'Cannot verify the compiled ARM model deployment resources.'
+        }
+        if (@($template.resources.validationDeployment.dependsOn) -notcontains 'sampleDeployment') {
+            throw 'Model deployments must be serialized: validationDeployment must depend on sampleDeployment in compiled ARM.'
+        }
+        Write-Host 'Compiled ARM model dependency verified: sample deployment before validation deployment.'
     }
     Write-Host ('Bicep compiled: {0}' -f (Split-Path -Leaf $path))
 }
