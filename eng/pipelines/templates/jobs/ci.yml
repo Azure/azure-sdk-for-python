@@ -93,6 +93,11 @@ jobs:
         sdl:
           componentgovernance:
             enabled: true
+          sbom:
+            ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
+              buildComponentPath: $(Build.SourcesDirectory)/sdk
+            ${{ else }}:
+              buildComponentPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
 
     steps:
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
@@ -119,6 +124,14 @@ jobs:
       name: $(WINDOWSPOOL)
       image: $(WINDOWSVMIMAGE)
       os: windows
+
+    templateContext:
+      sdl:
+        sbom:
+          ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
+            buildComponentPath: $(Build.SourcesDirectory)/sdk
+          ${{ else }}:
+            buildComponentPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
 
     steps:
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
@@ -148,6 +161,11 @@ jobs:
 
     templateContext:
       sdl:
+        sbom:
+          ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
+            buildComponentPath: $(Build.SourcesDirectory)/sdk
+          ${{ else }}:
+            buildComponentPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
         codeql:
           compiled:
             enabled: false
@@ -181,6 +199,14 @@ jobs:
       name: $(LINUXPOOL)
       image: $(LINUXVMIMAGE)
       os: linux
+
+    templateContext:
+      sdl:
+        sbom:
+          ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
+            buildComponentPath: $(Build.SourcesDirectory)/sdk
+          ${{ else }}:
+            buildComponentPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
 
     steps:
     - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
@@ -221,6 +247,14 @@ jobs:
       name: $(LINUXPOOL)
       image: $(LINUXVMIMAGE)
       os: linux
+
+    templateContext:
+      sdl:
+        sbom:
+          ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
+            buildComponentPath: $(Build.SourcesDirectory)/sdk
+          ${{ else }}:
+            buildComponentPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
 
     steps:
     - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
