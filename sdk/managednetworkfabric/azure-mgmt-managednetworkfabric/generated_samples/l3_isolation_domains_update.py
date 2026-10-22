@@ -66,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/L3IsolationDomains_Update.json
+# x-ms-original-file: 2026-01-15-preview/L3IsolationDomains_Update.json
 if __name__ == "__main__":
     main()

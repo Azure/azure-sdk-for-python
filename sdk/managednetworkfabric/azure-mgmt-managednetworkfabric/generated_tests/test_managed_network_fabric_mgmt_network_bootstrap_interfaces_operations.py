@@ -48,6 +48,7 @@ class TestManagedNetworkFabricMgmtNetworkBootstrapInterfacesOperations(AzureMgmt
                     "interfaceType": "str",
                     "ipv4Address": "str",
                     "ipv6Address": "str",
+                    "operationalState": "str",
                     "physicalIdentifier": "str",
                     "provisioningState": "str",
                     "serialNumber": "str",

@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/NetworkDeviceSkus_Get.json
+# x-ms-original-file: 2026-01-15-preview/NetworkDeviceSkus_Get.json
 if __name__ == "__main__":
     main()

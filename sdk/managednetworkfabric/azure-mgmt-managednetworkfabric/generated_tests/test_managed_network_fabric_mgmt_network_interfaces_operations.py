@@ -50,6 +50,7 @@ class TestManagedNetworkFabricMgmtNetworkInterfacesOperations(AzureMgmtRecordedT
                     "ipv6Address": "str",
                     "lastOperation": {"details": "str"},
                     "networkFabricId": "str",
+                    "operationalState": "str",
                     "physicalIdentifier": "str",
                     "provisioningState": "str",
                 },

@@ -48,6 +48,7 @@ class TestManagedNetworkFabricMgmtNetworkPacketBrokersOperationsAsync(AzureMgmtR
                         "networkTapIds": ["str"],
                         "provisioningState": "str",
                         "sourceInterfaceIds": ["str"],
+                        "sourceNetworkTapRuleId": "str",
                     },
                     "id": "str",
                     "identity": {
@@ -86,6 +87,7 @@ class TestManagedNetworkFabricMgmtNetworkPacketBrokersOperationsAsync(AzureMgmtR
                         "type": "str",
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
+                    "properties": {"sourceNetworkTapRuleId": "str"},
                     "tags": {"str": "str"},
                 },
             )
