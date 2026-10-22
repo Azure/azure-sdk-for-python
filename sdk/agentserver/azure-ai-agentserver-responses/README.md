@@ -191,7 +191,32 @@ For detailed handler implementation guidance, see [docs/handler-implementation-g
 
 ### Resilience
 
-Crash recovery is **opt-in** via `ResponsesServerOptions(resilient_background=True)`. When opted in, background responses with `store=True` are crash-recoverable: the handler is re-invoked on restart and the recovered context exposes `context.is_recovery == True`. Stream events are persisted incrementally so clients can reconnect and resume from where they left off. Without the opt-in (the default), a crash mid-handler marks the response `failed` instead of re-invoking the handler. For advanced scenarios (metadata checkpointing, multi-turn steering), see the [Resilient Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilient-responses-developer-guide.md).
+Responses requests its task runtime at host startup when either
+`ResponsesServerOptions(resilient_background=True)` or
+`steerable_conversations=True`. This activation is protocol-scoped: Responses
+does not read or change Core's process-wide `set_resilient_tasks_enabled`
+switch. That switch remains the opt-in for direct Core tasks and Invocations,
+and cannot force-enable Responses when both Responses options are `False`.
+
+With both options at their default `False`, stored responses run non-durably;
+there is no Responses recovery-time mark-failed or handler re-invocation.
+`steerable_conversations=True` alone enables the persistent steering
+queue/cancel backend: after a crash, the interrupted response is marked
+`failed` with `code=server_error` and its handler is not re-run, while persisted
+queued turns may be promoted as new steered turns. With
+`resilient_background=True`, stored background handlers are re-invoked after a
+crash; steering remains disabled unless its option is also enabled. Foreground
+stored responses are never re-invoked.
+
+File-backed SSE replay, resilient-provider startup validation, response
+checkpoints, and shutdown preservation remain tied to
+`resilient_background=True` (with `store=true, background=true` where
+applicable); steering alone uses in-memory SSE replay. Request validation and
+connection behavior are unchanged: `background=true, store=false` is rejected,
+foreground disconnects cancel foreground work, and accepted background work
+survives client disconnect. For the complete request matrix and advanced
+recovery guidance, see
+the [Resilient Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilient-responses-developer-guide.md).
 
 ### Task-origin version in handlers
 

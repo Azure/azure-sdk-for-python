@@ -2006,6 +2006,7 @@ async def test_delete_then_same_id_post_resumes_same_conversation_with_a_new_inc
 
     host.response_handler(handler)
     manager = TaskManager(host.config, provider=task_store)
+    host._task_manager = manager
     set_task_manager(manager)
     monkeypatch.setattr(lifecycle, "get_task_manager", lambda: manager)
     suspended = asyncio.Queue()
