@@ -35,3 +35,5 @@
   without interpreting application metadata or data-part contents.
 - Omit A2A from the tracing-only live-test pipeline until it has a marked
   `tracing_e2e` suite; normal CI validation remains enabled.
+- Keep pipeline artifact entries compatible with raw YAML namespace metadata
+  extraction while limiting manual A2A alpha uploads to A2A and core.

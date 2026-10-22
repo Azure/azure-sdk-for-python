@@ -50,17 +50,21 @@ extends:
         Path: sdk/agentserver/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true
+    # Namespace metadata generation reads this list as raw YAML; keep every entry named.
     Artifacts:
       - name: azure-ai-agentserver-a2a
         safeName: azureaiagentservera2a
       - name: azure-ai-agentserver-core
         safeName: azureaiagentservercore
-      - ${{ if not(and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual'))) }}:
-          - name: azure-ai-agentserver-invocations
-            safeName: azureaiagentserverinvocations
-          - name: azure-ai-agentserver-responses
-            safeName: azureaiagentserverresponses
-          - name: azure-ai-agentserver-optimization
-            safeName: azureaiagentserveroptimization
-          - name: azure-ai-agentserver-activity
-            safeName: azureaiagentserveractivity
+      - name: azure-ai-agentserver-invocations
+        safeName: azureaiagentserverinvocations
+        skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
+      - name: azure-ai-agentserver-responses
+        safeName: azureaiagentserverresponses
+        skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
+      - name: azure-ai-agentserver-optimization
+        safeName: azureaiagentserveroptimization
+        skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
+      - name: azure-ai-agentserver-activity
+        safeName: azureaiagentserveractivity
+        skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
