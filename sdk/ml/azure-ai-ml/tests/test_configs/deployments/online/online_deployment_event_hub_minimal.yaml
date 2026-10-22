@@ -1,0 +1,24 @@
+name: blue
+endpoint_name: test-end
+description: description for online deployment
+model:
+  name: mir_test_model
+  version: 1
+  path: ../model-1/model/sklearn_regression_model.pkl
+code_configuration:
+  code: ../model-1/onlinescoring/
+  scoring_script: score.py
+environment:
+  name: online-endpoint-mir-test
+  version: 3
+  conda_file: ../model-1/environment/conda.yml
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1
+instance_count: 1
+instance_type: Standard_DS2_V2
+scale_settings:
+  type: default
+data_collector:
+  enabled: true
+  destination:
+    event_hub:
+      namespace: namespace.name

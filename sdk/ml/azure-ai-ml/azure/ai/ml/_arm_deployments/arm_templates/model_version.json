@@ -1,0 +1,11 @@
+{
+    "type": "Microsoft.MachineLearningServices/workspaces/models/versions",
+    "apiVersion": "2021-10-01",
+    "name": "[concat(parameters('workspaceName'), '/', parameters('model_version')[copyIndex()].name, '/', parameters('model_version')[copyIndex()].version)]",
+    "properties": "[parameters('model_version')[copyIndex()].properties]",
+    "copy": {
+        "name": "modelVersionDeploymentCopy",
+        "count": "[length(parameters('model_version'))]",
+        "mode": "serial"
+    }
+}

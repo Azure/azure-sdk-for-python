@@ -1,0 +1,11 @@
+name: banchci
+type: computeinstance
+description: some_desc_ci
+
+size: Standard_DS2_v2
+
+ssh_public_access_enabled: False
+identity:
+   type: user_assigned
+   user_assigned_identities:
+      - resource_id: /subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/test-rg-centraluseuap-v2-t-2021W35/providers/Microsoft.ManagedIdentity/userAssignedIdentities/x

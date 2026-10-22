@@ -1,0 +1,30 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: hello_pipeline_abc
+
+inputs:
+  hello_string_top_level_input: "hello world"
+
+settings:
+  continue_on_step_failure: True
+  default_compute: azureml:cpu-cluster
+  default_datastore: azureml:workspacefilestore
+  on_init: a
+  on_finalize: c
+
+jobs:
+  a:
+    command: echo hello ${{inputs.hello_string}}
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    inputs:
+      hello_string: ${{parent.inputs.hello_string_top_level_input}}
+  b:
+    command: echo "world" >> ${{outputs.world_output}}/world.txt
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    outputs:
+      world_output:
+  c:
+    command: echo ${{inputs.world_input}}/world.txt
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    inputs:
+      world_input: ${{parent.jobs.b.outputs.world_output}}

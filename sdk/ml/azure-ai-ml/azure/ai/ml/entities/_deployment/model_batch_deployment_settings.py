@@ -1,0 +1,79 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+from typing import Any, Dict, Optional, Union
+
+from azure.ai.ml._schema._deployment.batch.model_batch_deployment_settings import ModelBatchDeploymentSettingsSchema
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
+from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+
+
+class ModelBatchDeploymentSettings:
+    """Model Batch Deployment Settings entity.
+
+    :keyword mini_batch_size: Size of the mini-batch passed to each batch invocation, defaults to 10
+    :paramtype mini_batch_size: int
+    :keyword instance_count: Number of instances the inference will run on. Equivalent to resources.instance_count.
+    :paramtype instance_count: int
+    :keyword output_action: Indicates how the output will be organized. Possible values include:
+     "summary_only", "append_row". Defaults to "append_row"
+    :paramtype output_action: str or ~azure.ai.ml.constants._deployment.BatchDeploymentOutputAction
+    :keyword output_file_name: Customized output file name for append_row output action, defaults to "predictions.csv"
+    :paramtype output_file_name: str
+    :keyword max_concurrency_per_instance: Indicates maximum number of parallelism per instance, defaults to 1
+    :paramtype max_concurrency_per_instance: int
+    :keyword retry_settings: Retry settings for a batch inference operation, defaults to None
+    :paramtype retry_settings: BatchRetrySettings
+    :keyword environment_variables: Environment variables that will be set in deployment.
+    :paramtype environment_variables: dict
+    :keyword error_threshold: Error threshold, if the error count for the entire input goes above
+        this value,
+        the batch inference will be aborted. Range is [-1, int.MaxValue]
+        -1 value indicates, ignore all failures during batch inference
+        For FileDataset count of file failures
+        For TabularDataset, this is the count of record failures, defaults to -1
+    :paramtype error_threshold: int
+    :keyword logging_level: Logging level for batch inference operation, defaults to "info"
+    :paramtype logging_level: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START model_batch_deployment_settings_entity_create]
+            :end-before: [END model_batch_deployment_settings_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a Model Batch Deployment Settings object.
+    """
+
+    def __init__(
+        self,
+        *,
+        mini_batch_size: Optional[int],
+        instance_count: Optional[int] = None,
+        max_concurrency_per_instance: Optional[int] = None,
+        output_action: Optional[Union[BatchDeploymentOutputAction, str]] = None,
+        output_file_name: Optional[str] = None,
+        retry_settings: Optional[BatchRetrySettings] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
+        error_threshold: Optional[int] = None,
+        logging_level: Optional[str] = None,
+        # pylint: disable=unused-argument
+        **kwargs: Any,
+    ):
+        self.mini_batch_size = mini_batch_size
+        self.instance_count = instance_count
+        self.max_concurrency_per_instance = max_concurrency_per_instance
+        self.output_action = output_action
+        self.output_file_name = output_file_name
+        self.retry_settings = retry_settings
+        self.environment_variables = environment_variables
+        self.error_threshold = error_threshold
+        self.logging_level = logging_level
+
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        res: dict = ModelBatchDeploymentSettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res

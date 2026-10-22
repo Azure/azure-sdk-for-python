@@ -1,0 +1,67 @@
+parameters:
+  - name: CondaArtifacts
+    type: object
+    default: []
+  - name: ArtifactPrefix
+    type: string
+    default: ''
+  - name: Arguments
+    type: string
+    default: ''
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
+
+steps:
+  # Sets a default PIP_INDEX_URL before UsePythonVersion@0 so the task's own pip
+  # auto-restore does not reach pypi.org under network isolation.
+  - template: /eng/pipelines/templates/steps/use-python-version.yml
+    parameters:
+      versionSpec: $(PythonVersion)
+
+  # Authenticate to the Azure Artifacts feed before any pip install.
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org.
+  - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
+      EnableTwineAuth: false
+
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      python -m pip install "eng/tools/azure-sdk-tools[conda]"
+      python -m pip install disutils
+      python -m pip install typing-extensions==4.12.2
+    displayName: Install build script requirements
+
+  - pwsh: |
+      $argContent = @'
+      ${{ convertToJson(parameters.CondaArtifacts) }}
+      '@
+      $argFile = "$(Agent.TempDirectory)/conda-args.json"
+      Set-Content -Path $argFile -Value $argContent
+      cat $argFile
+      sdk_build_conda -f "$argFile"
+    displayName: Assemble Conda Packages
+
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/conda/assembled'
+      ArtifactName: '${{ parameters.ArtifactPrefix }}distributions'
+
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+      displayName: 'Upload Conda SBOM'
+      condition: succeededOrFailed()
+      inputs:
+        BuildDropPath: '$(Build.SourcesDirectory)/conda/output'
+
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/conda/output'
+      ArtifactName: '${{ parameters.ArtifactPrefix }}conda'
+
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/conda/broken'
+      ArtifactName: '${{ parameters.ArtifactPrefix }}broken'

@@ -1,0 +1,1222 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+from collections import namedtuple
+import base64
+import time
+from itertools import product
+from unittest.mock import Mock, patch
+
+from requests import Response
+from utils import HTTP_REQUESTS
+import pytest
+
+import azure.core
+from azure.core.credentials import (
+    AccessToken,
+    AzureKeyCredential,
+    AzureSasCredential,
+    AzureNamedKeyCredential,
+    AccessTokenInfo,
+)
+from azure.core.exceptions import ServiceRequestError, HttpResponseError, ClientAuthenticationError
+from azure.core.pipeline import Pipeline, PipelineRequest, PipelineContext, PipelineResponse
+from azure.core.pipeline.transport import HttpTransport, HttpRequest
+from azure.core.pipeline.policies import (
+    BearerTokenCredentialPolicy,
+    RedirectPolicy,
+    RetryPolicy,
+    SansIOHTTPPolicy,
+    AzureKeyCredentialPolicy,
+    AzureSasCredentialPolicy,
+    SensitiveHeaderCleanupPolicy,
+)
+from azure.core.pipeline.policies._authentication import (
+    DEFAULT_REFRESH_WINDOW_SECONDS,
+    MAX_REFRESH_JITTER_SECONDS,
+    _should_refresh_token,
+)
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_adds_header(http_request):
+    """The bearer token policy should add a header containing a token from its credential"""
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    expected_token = AccessToken("expected_token", 2524608000)
+
+    def verify_authorization_header(request):
+        assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
+        return Mock()
+
+    fake_credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=expected_token))
+    policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
+
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+
+    assert fake_credential.get_token.call_count == 1
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+
+    # Didn't need a new token
+    assert fake_credential.get_token.call_count == 1
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_authorize_request(http_request):
+    """The authorize_request method should add a header containing a token from its credential"""
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    expected_token = AccessToken("expected_token", 2524608000)
+
+    fake_credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=expected_token))
+    policy = BearerTokenCredentialPolicy(fake_credential, "scope")
+    http_req = http_request("GET", "https://spam.eggs")
+    request = PipelineRequest(http_req, PipelineContext(None))
+
+    policy.authorize_request(request, "scope", claims="foo")
+    assert policy._token is expected_token
+    assert http_req.headers["Authorization"] == f"Bearer {expected_token.token}"
+    assert fake_credential.get_token.call_count == 1
+    assert fake_credential.get_token.call_args[0] == ("scope",)
+    assert fake_credential.get_token.call_args[1] == {"claims": "foo"}
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_adds_header_access_token_info(http_request):
+    """The bearer token policy should also add an auth header when an AccessTokenInfo is returned."""
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    access_token = AccessToken("other_token", 2524608000)
+    expected_token = AccessTokenInfo("expected_token", 2524608000, refresh_on=2524608000)
+
+    def verify_authorization_header(request):
+        assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
+        return Mock()
+
+    fake_credential = Mock(get_token=Mock(return_value=access_token), get_token_info=Mock(return_value=expected_token))
+    policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
+
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+
+    assert fake_credential.get_token_info.call_count == 1
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+
+    # Didn't need a new token
+    assert fake_credential.get_token_info.call_count == 1
+
+    # get_token should not have been called
+    assert fake_credential.get_token.call_count == 0
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_authorize_request_access_token_info(http_request):
+    """The authorize_request method should add a header containing a token from its credential"""
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    expected_token = AccessTokenInfo("expected_token", 2524608000)
+    fake_credential = Mock(get_token=Mock(), get_token_info=Mock(return_value=expected_token))
+    policy = BearerTokenCredentialPolicy(fake_credential, "scope")
+    http_req = http_request("GET", "https://spam.eggs")
+    request = PipelineRequest(http_req, PipelineContext(None))
+
+    policy.authorize_request(request, "scope", claims="foo")
+    assert policy._token is expected_token
+    assert http_req.headers["Authorization"] == f"Bearer {expected_token.token}"
+    assert fake_credential.get_token_info.call_args[0] == ("scope",)
+    assert fake_credential.get_token_info.call_args[1] == {"options": {"claims": "foo"}}
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_send(http_request):
+    """The bearer token policy should invoke the next policy's send method and return the result"""
+    expected_request = http_request("GET", "https://spam.eggs")
+    expected_response = Mock()
+
+    def verify_request(request):
+        assert request.http_request is expected_request
+        return expected_response
+
+    def get_token(*_, **__):
+        return AccessToken("***", 42)
+
+    fake_credential = Mock(spec_set=["get_token"], get_token=get_token)
+    policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
+    response = Pipeline(transport=Mock(), policies=policies).run(expected_request)
+
+    assert response is expected_response
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_token_caching(http_request):
+    good_for_one_hour = AccessToken("token", int(time.time() + 3600))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=good_for_one_hour))
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token.call_count == 1  # policy has no token at first request -> it should call get_token
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token.call_count == 1  # token is good for an hour -> policy should return it from cache
+
+    expired_token = AccessToken("token", int(time.time()))
+    credential.get_token.reset_mock()
+    credential.get_token.return_value = expired_token
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token.call_count == 1
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token.call_count == 2
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_access_token_info_caching(http_request):
+    """The policy should cache AccessTokenInfo instances and refresh them when necessary."""
+
+    good_for_one_hour = AccessTokenInfo("token", int(time.time() + 3600))
+    credential = Mock(get_token=Mock(return_value=Mock()), get_token_info=Mock(return_value=good_for_one_hour))
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert (
+        credential.get_token_info.call_count == 1
+    )  # policy has no token at first request -> it should call get_token_info
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 1  # token is good for an hour -> policy should return it from cache
+
+    expired_token = AccessTokenInfo("token", int(time.time()))
+    credential.get_token_info.reset_mock()
+    credential.get_token_info.return_value = expired_token
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 1
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 2  # token is expired -> policy should call get_token_info again
+
+    refreshable_token = AccessTokenInfo(
+        "token", int(time.time() + 3600), refresh_on=int(time.time() - (MAX_REFRESH_JITTER_SECONDS + 5))
+    )
+    credential.get_token_info.reset_mock()
+    credential.get_token_info.return_value = refreshable_token
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 1
+
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 2  # token refresh-on time has passed, call again
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_optionally_enforces_https(http_request):
+    """HTTPS enforcement should be controlled by a keyword argument, and enabled by default"""
+
+    def assert_option_popped(request, **kwargs):
+        assert "enforce_https" not in kwargs, "BearerTokenCredentialPolicy didn't pop the 'enforce_https' option"
+        return Mock()
+
+    def get_token(*_, **__):
+        return AccessToken("***", 42)
+
+    credential = Mock(spec_set=["get_token"], get_token=get_token)
+    pipeline = Pipeline(
+        transport=Mock(send=assert_option_popped), policies=[BearerTokenCredentialPolicy(credential, "scope")]
+    )
+
+    # by default and when enforce_https=True, the policy should raise when given an insecure request
+    with pytest.raises(ServiceRequestError):
+        pipeline.run(http_request("GET", "http://not.secure"))
+    with pytest.raises(ServiceRequestError):
+        pipeline.run(http_request("GET", "http://not.secure"), enforce_https=True)
+
+    # when enforce_https=False, an insecure request should pass
+    pipeline.run(http_request("GET", "http://not.secure"), enforce_https=False)
+
+    # https requests should always pass
+    pipeline.run(http_request("GET", "https://secure"), enforce_https=False)
+    pipeline.run(http_request("GET", "https://secure"), enforce_https=True)
+    pipeline.run(http_request("GET", "https://secure"))
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_preserves_enforce_https_opt_out(http_request):
+    """The policy should use request context to preserve an opt out from https enforcement"""
+
+    class ContextValidator(SansIOHTTPPolicy):
+        def on_request(self, request):
+            assert "enforce_https" in request.context, "'enforce_https' is not in the request's context"
+            return Mock()
+
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", 42)))
+    policies = [BearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+
+    pipeline.run(http_request("GET", "http://not.secure"), enforce_https=False)
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_default_context(http_request):
+    """The policy should call get_token with the scopes given at construction, and no keyword arguments, by default"""
+    expected_scope = "scope"
+    token = AccessToken("", 0)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
+    policy = BearerTokenCredentialPolicy(credential, expected_scope)
+    pipeline = Pipeline(transport=Mock(), policies=[policy])
+
+    pipeline.run(http_request("GET", "https://localhost"))
+
+    credential.get_token.assert_called_once_with(expected_scope)
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_enable_cae(http_request):
+    """The policy should set enable_cae to True in the get_token request if it is set in constructor."""
+    expected_scope = "scope"
+    token = AccessToken("", 0)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
+    policy = BearerTokenCredentialPolicy(credential, expected_scope, enable_cae=True)
+    pipeline = Pipeline(transport=Mock(), policies=[policy])
+
+    pipeline.run(http_request("GET", "https://localhost"))
+
+    credential.get_token.assert_called_once_with(expected_scope, enable_cae=True)
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_context_unmodified_by_default(http_request):
+    """When no options for the policy accompany a request, the policy shouldn't add anything to the request context"""
+
+    class ContextValidator(SansIOHTTPPolicy):
+        def on_request(self, request):
+            assert not any(request.context), "the policy shouldn't add to the request's context"
+
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", 42)))
+    policies = [BearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+
+    pipeline.run(http_request("GET", "https://secure"))
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_calls_on_challenge(http_request):
+    """BearerTokenCredentialPolicy should call its on_challenge method when it receives an authentication challenge"""
+
+    class TestPolicy(BearerTokenCredentialPolicy):
+        called = False
+
+        def on_challenge(self, request, challenge):
+            self.__class__.called = True
+            return False
+
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", int(time.time()) + 3600)))
+    policies = [TestPolicy(credential, "scope")]
+    response = Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
+    transport = Mock(send=Mock(return_value=response))
+
+    pipeline = Pipeline(transport=transport, policies=policies)
+    pipeline.run(http_request("GET", "https://localhost"))
+
+    assert TestPolicy.called
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_cannot_complete_challenge(http_request):
+    """BearerTokenCredentialPolicy should return the 401 response when it can't complete its challenge"""
+
+    expected_scope = "scope"
+    expected_token = AccessToken("***", int(time.time()) + 3600)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=expected_token))
+    expected_response = Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
+    transport = Mock(send=Mock(return_value=expected_response))
+    policies = [BearerTokenCredentialPolicy(credential, expected_scope)]
+
+    pipeline = Pipeline(transport=transport, policies=policies)
+    response = pipeline.run(http_request("GET", "https://localhost"))
+
+    assert response.http_response is expected_response
+    assert transport.send.call_count == 1
+    credential.get_token.assert_called_once_with(expected_scope)
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_calls_sansio_methods(http_request):
+    """BearerTokenCredentialPolicy should call SansIOHttpPolicy methods as does _SansIOHTTPPolicyRunner"""
+
+    class TestPolicy(BearerTokenCredentialPolicy):
+        def __init__(self, *args, **kwargs):
+            super(TestPolicy, self).__init__(*args, **kwargs)
+            self.on_exception = Mock(return_value=False)
+            self.on_request = Mock()
+            self.on_response = Mock()
+
+        def send(self, request):
+            self.request = request
+            self.response = super(TestPolicy, self).send(request)
+            return self.response
+
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", int(time.time()) + 3600)))
+    policy = TestPolicy(credential, "scope")
+    transport = Mock(send=Mock(return_value=Mock(status_code=200)))
+
+    pipeline = Pipeline(transport=transport, policies=[policy])
+    pipeline.run(http_request("GET", "https://localhost"))
+
+    policy.on_request.assert_called_once_with(policy.request)
+    policy.on_response.assert_called_once_with(policy.request, policy.response)
+
+    # the policy should call on_exception when next.send() raises
+    class TestException(Exception):
+        pass
+
+    # during the first send...
+    transport = Mock(send=Mock(side_effect=TestException))
+    policy = TestPolicy(credential, "scope")
+    pipeline = Pipeline(transport=transport, policies=[policy])
+    with pytest.raises(TestException):
+        pipeline.run(http_request("GET", "https://localhost"))
+    policy.on_exception.assert_called_once_with(policy.request)
+
+    # ...or the second
+    def raise_the_second_time(*args, **kwargs):
+        if raise_the_second_time.calls == 0:
+            raise_the_second_time.calls = 1
+            return Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
+        raise TestException()
+
+    raise_the_second_time.calls = 0
+
+    policy = TestPolicy(credential, "scope")
+    policy.on_challenge = Mock(return_value=True)
+    transport = Mock(send=Mock(wraps=raise_the_second_time))
+    pipeline = Pipeline(transport=transport, policies=[policy])
+    with pytest.raises(TestException):
+        pipeline.run(http_request("GET", "https://localhost"))
+    assert transport.send.call_count == 2
+    policy.on_challenge.assert_called_once()
+    policy.on_exception.assert_called_once_with(policy.request)
+
+
+@pytest.mark.skipif(azure.core.__version__ >= "2", reason="this test applies only to azure-core 1.x")
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_key_vault_regression(http_request):
+    """Test for regression affecting azure-keyvault-* 4.0.0. This test must pass, unmodified, for all 1.x versions."""
+
+    from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
+
+    credential = Mock()
+    policy = _BearerTokenCredentialPolicyBase(credential)
+    assert policy._credential is credential
+
+    headers = {}
+    token = "alphanums"  # cspell:disable-line
+    policy._update_headers(headers, token)
+    assert headers["Authorization"] == "Bearer " + token
+
+    assert policy._need_new_token
+    policy._token = AccessToken(token, time.time() + 3600)
+    assert not policy._need_new_token
+    assert policy._token.token == token
+
+
+def test_need_new_token():
+    now = int(time.time())
+
+    # Token is expired.
+    token = AccessToken("", now - 1200)
+    assert _should_refresh_token(token, 0)
+
+    # Token is about to expire within 300 seconds.
+    token = AccessToken("", now + 299)
+    assert _should_refresh_token(token, 0)
+
+    # Token still has more than 300 seconds to live.
+    token = AccessToken("", now + 305)
+    assert not _should_refresh_token(token, 0)
+
+    # Token has both expires_on and refresh_on set well into the future.
+    token = AccessTokenInfo("", now + 1200, refresh_on=now + 1200)
+    assert not _should_refresh_token(token, 0)
+
+    # Token is not close to expiring, but refresh_on is in the past.
+    token = AccessTokenInfo("", now + 1200, refresh_on=now - 1)
+    assert _should_refresh_token(token, 0)
+
+    # No token
+    assert _should_refresh_token(None, 0)
+
+
+def test_need_new_token_with_jitter():
+    """Test that jitter affects token refresh timing for both expires_on and refresh_on scenarios."""
+    # Mock time.time() to have precise control over timing
+    with patch("azure.core.pipeline.policies._authentication.time") as mock_time:
+        mock_time.time.return_value = 1000.0  # Fixed current time
+
+        # Test jitter with expires_on based tokens (no refresh_on)
+        # Test with a token that expires in 290 seconds (would normally trigger refresh)
+        token = AccessToken("", 1290)  # 1000 + 290
+
+        # Set jitter to 0 - should need new token (290 < DEFAULT_REFRESH_WINDOW_SECONDS)
+        assert _should_refresh_token(token, 0)
+
+        # Set jitter to 10 - should NOT need new token (290 < 290 is False)
+        assert not _should_refresh_token(token, 10)
+
+        # Test with a token that expires in 250 seconds
+        token = AccessToken("", 1250)  # 1000 + 250
+
+        # With jitter of 0 - should need new token (250 < DEFAULT_REFRESH_WINDOW_SECONDS)
+        assert _should_refresh_token(token, 0)
+
+        # With jitter of 10 - should need new token (250 < 290)
+        assert _should_refresh_token(token, 10)
+
+        # With max jitter (60) - should NOT need new token (250 < 240 is False)
+        assert not _should_refresh_token(token, MAX_REFRESH_JITTER_SECONDS)
+
+        # Test with a token that expires in 200 seconds
+        token = AccessToken("", 1200)  # 1000 + 200
+
+        # Even with max jitter, should need new token (200 < 240)
+        assert _should_refresh_token(token, MAX_REFRESH_JITTER_SECONDS)
+
+
+def test_need_new_token_with_refresh_on_and_jitter():
+    """Test that jitter affects refresh_on based token refresh timing."""
+    with patch("azure.core.pipeline.policies._authentication.time") as mock_time:
+        mock_time.time.return_value = 1000.0  # Fixed current time
+
+        # Test jitter with refresh_on based tokens
+        # Token expires in 1 hour but should refresh in 5 minutes
+        refresh_time = 1300  # 1000 + 300
+        expiry_time = 4600  # 1000 + 3600
+        token = AccessTokenInfo("", expiry_time, refresh_on=refresh_time)
+
+        # Set jitter to 0 - effective refresh time is 1300, now=1000, so no refresh needed
+        assert not _should_refresh_token(token, 0)
+
+        # Set jitter to 30 - effective refresh time is 1330, now=1000, so no refresh needed
+        assert not _should_refresh_token(token, 30)
+
+        # Test with refresh_on in the past
+        token = AccessTokenInfo("", expiry_time, refresh_on=990)  # refresh_on = 1000 - 10
+
+        # With jitter of 5, effective refresh time is min(990 + 5, 4600) = 995, still < 1000
+        assert _should_refresh_token(token, 5)
+
+        # With jitter of 15, effective refresh time is min(990 + 15, 4600) = 1005, now < 1005 so no refresh
+        assert not _should_refresh_token(token, 15)
+
+        # Test jitter capping at expires_on
+        # Token expires soon but refresh_on is very close to expires_on
+        close_expiry = 1030  # 1000 + 30
+        token = AccessTokenInfo("", close_expiry, refresh_on=close_expiry - 5)
+
+        # Large jitter that would normally push refresh time past expiry
+        # Effective refresh time should be capped at expires_on
+        # min(1025 + 60, 1030) = 1030, now=1000 < 1030, so no refresh
+        assert not _should_refresh_token(token, MAX_REFRESH_JITTER_SECONDS)
+
+        # But if we're right at the expiry time, we should need a new token
+        token = AccessTokenInfo("", 1000, refresh_on=995)  # expires_on == now
+        # Effective refresh time: min(995 + 60, 1000) = 1000, now=1000 >= 1000
+        assert _should_refresh_token(token, MAX_REFRESH_JITTER_SECONDS)
+
+
+def test_need_new_token_jitter_boundary_conditions():
+    """Test boundary conditions for jitter in token refresh logic."""
+    # Mock time.time() to have precise control over timing
+    with patch("azure.core.pipeline.policies._authentication.time") as mock_time:
+        mock_time.time.return_value = 1000.0  # Fixed current time
+
+        # Test boundary at DEFAULT_REFRESH_WINDOW_SECONDS (the default refresh window)
+        token = AccessToken("", 1000 + DEFAULT_REFRESH_WINDOW_SECONDS)
+
+        # Zero jitter - exactly at refresh window boundary, not less than, so no refresh
+        assert not _should_refresh_token(token, 0)
+
+        # Test at 1 second under the refresh window
+        token = AccessToken("", 1000 + DEFAULT_REFRESH_WINDOW_SECONDS - 1)
+
+        # Zero jitter - 299 seconds remaining, 299 < DEFAULT_REFRESH_WINDOW_SECONDS = True (refresh)
+        assert _should_refresh_token(token, 0)
+
+        # Small jitter - 299 seconds remaining, 299 < 295 = False (no refresh)
+        assert not _should_refresh_token(token, 5)
+
+        # Test at 250 seconds
+        token = AccessToken("", 1250)  # 1000 + 250
+
+        # Zero jitter - 250 seconds remaining, 250 < DEFAULT_REFRESH_WINDOW_SECONDS = True (refresh)
+        assert _should_refresh_token(token, 0)
+
+        # Small jitter - 250 seconds remaining, 250 < 290 = True (refresh)
+        assert _should_refresh_token(token, 10)
+
+        # Max jitter - 250 seconds remaining, 250 < 240 = False (no refresh)
+        assert not _should_refresh_token(token, MAX_REFRESH_JITTER_SECONDS)
+
+        # Test refresh_on scenarios with jitter
+        # Test refresh_on exactly at current time
+        token = AccessTokenInfo("", 4600, refresh_on=1000)  # expires at 1000 + 3600, refresh at 1000
+        # Effective refresh time is 1000 + 0 = 1000, so 1000 >= 1000 is True
+        assert _should_refresh_token(token, 0)
+
+        # Test refresh_on with positive jitter (delays refresh)
+        token = AccessTokenInfo("", 4600, refresh_on=995)  # expires at 1000 + 3600, refresh at 995
+        # Effective refresh time is min(995 + 10, 4600) = 1005, so 1000 < 1005 (no refresh)
+        assert not _should_refresh_token(token, 10)
+
+
+def test_jitter_set_on_token_request():
+    """Test that _refresh_jitter is set when _request_token is called."""
+    expected_scope = "scope"
+    token = AccessToken("test_token", int(time.time()) + 3600)
+
+    # Mock credential that returns a token
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
+    policy = BearerTokenCredentialPolicy(credential, expected_scope)
+
+    # Initially jitter should be 0
+    assert policy._refresh_jitter == 0
+
+    # Mock random.randint to return a known value
+    with patch("azure.core.pipeline.policies._authentication.random.randint") as mock_randint:
+        mock_randint.return_value = 42
+
+        # Request a token
+        policy._request_token(expected_scope)
+
+        # Verify jitter was set
+        assert policy._refresh_jitter == 42
+        mock_randint.assert_called_once_with(0, 60)  # MAX_REFRESH_JITTER_SECONDS
+
+    # Test that jitter is updated on subsequent token requests
+    with patch("azure.core.pipeline.policies._authentication.random.randint") as mock_randint:
+        mock_randint.return_value = 25
+
+        # Request another token
+        policy._request_token(expected_scope)
+
+        # Verify jitter was updated
+        assert policy._refresh_jitter == 25
+        mock_randint.assert_called_once_with(0, 60)
+
+
+def test_need_new_token_with_external_defined_token_class():
+    """Test the case where some custom credential get_token call returns a custom token object."""
+    FooAccessToken = namedtuple("FooAccessToken", ["token", "expires_on"])
+
+    expected_scope = "scope"
+    now = int(time.time())
+
+    policy = BearerTokenCredentialPolicy(Mock(), expected_scope)
+
+    # Token is expired.
+    policy._token = FooAccessToken("", now - 1200)
+    assert policy._need_new_token
+
+    # Token is about to expire within 300 seconds.
+    policy._token = FooAccessToken("", now + 299)
+    assert policy._need_new_token
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_azure_key_credential_policy(http_request):
+    """Tests to see if we can create an AzureKeyCredentialPolicy"""
+
+    key_header = "api_key"
+    api_key = "test_key"
+
+    def verify_authorization_header(request):
+        assert request.headers[key_header] == api_key
+
+    transport = Mock(send=verify_authorization_header)
+    credential = AzureKeyCredential(api_key)
+    credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
+
+    pipeline.run(http_request("GET", "https://test_key_credential"))
+
+
+def test_azure_key_credential_policy_raises():
+    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-compliant input parameters."""
+    api_key = 1234
+    key_header = 5678
+    with pytest.raises(TypeError):
+        credential = AzureKeyCredential(api_key)
+
+    credential = AzureKeyCredential(str(api_key))
+    with pytest.raises(TypeError):
+        credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
+
+    with pytest.raises(TypeError):
+        credential_policy = AzureKeyCredentialPolicy(credential=str(api_key), name=key_header)
+
+
+def test_azure_key_credential_updates():
+    """Tests AzureKeyCredential updates"""
+    api_key = "original"
+
+    credential = AzureKeyCredential(api_key)
+    assert credential.key == api_key
+
+    api_key = "new"
+    credential.update(api_key)
+    assert credential.key == api_key
+
+
+combinations = [
+    ("sig=test_signature", "https://test_sas_credential", "https://test_sas_credential?sig=test_signature"),
+    ("?sig=test_signature", "https://test_sas_credential", "https://test_sas_credential?sig=test_signature"),
+    (
+        "sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+    ),
+    (
+        "?sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+    ),
+    ("sig=test_signature", "https://test_sas_credential?", "https://test_sas_credential?sig=test_signature"),
+    ("?sig=test_signature", "https://test_sas_credential?", "https://test_sas_credential?sig=test_signature"),
+    (
+        "sig=test_signature",
+        "https://test_sas_credential?foo=bar",
+        "https://test_sas_credential?foo=bar&sig=test_signature",
+    ),
+    (
+        "?sig=test_signature",
+        "https://test_sas_credential?foo=bar",
+        "https://test_sas_credential?foo=bar&sig=test_signature",
+    ),
+]
+
+
+@pytest.mark.parametrize("combinations,http_request", list(product(combinations, HTTP_REQUESTS)))
+def test_azure_sas_credential_policy(combinations, http_request):
+    """Tests to see if we can create an AzureSasCredentialPolicy"""
+    sas, url, expected_url = combinations
+
+    def verify_authorization(request):
+        assert request.url == expected_url
+
+    transport = Mock(send=verify_authorization)
+    credential = AzureSasCredential(sas)
+    credential_policy = AzureSasCredentialPolicy(credential=credential)
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
+
+    pipeline.run(http_request("GET", url))
+
+
+def test_azure_sas_credential_updates():
+    """Tests AzureSasCredential updates"""
+    sas = "original"
+
+    credential = AzureSasCredential(sas)
+    assert credential.signature == sas
+
+    sas = "new"
+    credential.update(sas)
+    assert credential.signature == sas
+
+
+def test_azure_sas_credential_policy_raises():
+    """Tests AzureSasCredential and AzureSasCredentialPolicy raises with non-string input parameters."""
+    sas = 1234
+    with pytest.raises(TypeError):
+        credential = AzureSasCredential(sas)
+
+
+def test_azure_named_key_credential():
+    cred = AzureNamedKeyCredential("sample_name", "samplekey")
+
+    assert cred.named_key.name == "sample_name"
+    assert cred.named_key.key == "samplekey"
+    assert isinstance(cred.named_key, tuple)
+
+    cred.update("newname", "newkey")
+    assert cred.named_key.name == "newname"
+    assert cred.named_key.key == "newkey"
+    assert isinstance(cred.named_key, tuple)
+
+
+def test_azure_named_key_credential_raises():
+    with pytest.raises(TypeError, match="Both name and key must be strings."):
+        cred = AzureNamedKeyCredential("sample_name", 123345)
+
+    cred = AzureNamedKeyCredential("sample_name", "samplekey")
+    assert cred.named_key.name == "sample_name"
+    assert cred.named_key.key == "samplekey"
+
+    with pytest.raises(TypeError, match="Both name and key must be strings."):
+        cred.update(1234, "newkey")
+
+
+def test_bearer_policy_redirect_same_domain():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+                response = Response()
+                response.status_code = 301
+                response.headers["location"] = "https://localhost"
+                return response
+            assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+            response = Response()
+            response.status_code = 200
+            return response
+
+    auth_headder = "token"
+    expected_scope = "scope"
+    token = AccessToken(auth_headder, 0)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
+    auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
+    redirect_policy = RedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy()
+    pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
+
+    pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
+def test_bearer_policy_redirect_different_domain():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+                response = Response()
+                response.status_code = 301
+                response.headers["location"] = "https://localhost1"
+                return response
+            assert not request.headers.get("Authorization")
+            response = Response()
+            response.status_code = 200
+            return response
+
+    auth_headder = "token"
+    expected_scope = "scope"
+    token = AccessToken(auth_headder, 0)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
+    auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
+    redirect_policy = RedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy()
+    pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
+
+    pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
+def test_bearer_policy_redirect_opt_out_clean_up():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+                response = Response()
+                response.status_code = 301
+                response.headers["location"] = "https://localhost1"
+                return response
+            assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+            response = Response()
+            response.status_code = 200
+            return response
+
+    auth_headder = "token"
+    expected_scope = "scope"
+    token = AccessToken(auth_headder, 0)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
+    auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
+    redirect_policy = RedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy(disable_redirect_cleanup=True)
+    pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
+
+    pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
+def test_bearer_policy_redirect_customize_sensitive_headers():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+                response = Response()
+                response.status_code = 301
+                response.headers["location"] = "https://localhost1"
+                return response
+            assert request.headers.get("Authorization")
+            response = Response()
+            response.status_code = 200
+            return response
+
+    auth_headder = "token"
+    expected_scope = "scope"
+    token = AccessToken(auth_headder, 0)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
+    auth_policy = BearerTokenCredentialPolicy(credential, expected_scope)
+    redirect_policy = RedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy(blocked_redirect_headers=["x-ms-authorization-auxiliary"])
+    pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
+
+    pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_azure_http_credential_policy(http_request):
+    """Tests to see if we can create an AzureHttpKeyCredentialPolicy"""
+
+    prefix = "SharedAccessKey"
+    api_key = "test_key"
+    header_content = f"{prefix} {api_key}"
+
+    def verify_authorization_header(request):
+        assert request.headers["Authorization"] == header_content
+
+    transport = Mock(send=verify_authorization_header)
+    credential = AzureKeyCredential(api_key)
+    credential_policy = AzureKeyCredentialPolicy(credential=credential, name="Authorization", prefix=prefix)
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
+
+    pipeline.run(http_request("GET", "https://test_key_credential"))
+
+
+def test_access_token_unpack():
+    """Test unpacking of AccessToken."""
+    token = AccessToken("token", 42)
+    assert token.token == "token"
+    assert token.expires_on == 42
+
+    token, expires_on = AccessToken("token", 42)
+    assert token == "token"
+    assert expires_on == 42
+
+    with pytest.raises(ValueError):
+        token, expires_on, _ = AccessToken("token", 42)
+
+
+def test_access_token_subscriptable():
+    """Test AccessToken property access using index values."""
+    token = AccessToken("token", 42)
+    assert len(token) == 2
+    assert token[0] == "token"
+    assert token[1] == 42
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_on_challenge_caches_token_with_claims(http_request):
+    """Test that on_challenge caches the token when handling claims challenges"""
+    # Setup credentials that return different tokens for different calls
+    initial_token = AccessToken("initial_token", int(time.time()) + 3600)
+    claims_token = AccessToken("claims_token", int(time.time()) + 3600)
+
+    call_count = 0
+
+    def mock_get_token_info(*scopes, options):
+        nonlocal call_count
+        call_count += 1
+        if options and "claims" in options:
+            return claims_token
+        return initial_token
+
+    fake_credential = Mock(spec_set=["get_token_info"], get_token_info=mock_get_token_info)
+    policy = BearerTokenCredentialPolicy(fake_credential, "scope")
+
+    # Create request and initial response
+    http_req = http_request("GET", "https://example.com")
+    request = PipelineRequest(
+        http_req, PipelineContext(None)
+    )  # Create a 401 response with insufficient_claims challenge
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    response_mock = Mock(status_code=401, headers={"WWW-Authenticate": challenge_header})
+    response = PipelineResponse(request, response_mock, PipelineContext(None))
+
+    # Call on_challenge
+    result = policy.on_challenge(request, response)
+
+    # Verify the challenge was handled successfully
+    assert result is True
+
+    # Verify the token was cached
+    assert policy._token is claims_token
+    assert policy._token.token == "claims_token"
+
+    # Verify the Authorization header was set correctly
+    assert request.http_request.headers["Authorization"] == "Bearer claims_token"
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_on_challenge_exception_chaining(http_request):
+    """Test that exceptions during on_challenge are chained with HttpResponseError"""
+
+    # Mock credential that raises an exception during get_token_info with claims
+    def mock_get_token_info(*scopes, options=None):
+        if options and "claims" in options:
+            raise ClientAuthenticationError("Failed to request token info with claims")
+        return AccessTokenInfo("initial_token", int(time.time()) + 3600)
+
+    fake_credential = Mock(
+        spec_set=["get_token", "get_token_info"],
+        get_token=Mock(return_value=AccessToken("fallback", int(time.time()) + 3600)),
+        get_token_info=mock_get_token_info,
+    )
+    policy = BearerTokenCredentialPolicy(fake_credential, "scope")
+
+    # Create a 401 response with insufficient_claims challenge
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    response_mock = Mock(status_code=401, headers={"WWW-Authenticate": challenge_header})
+
+    # Mock transport that returns the 401 response
+    def mock_transport_send(request):
+        return response_mock
+
+    transport = Mock(send=mock_transport_send)
+    pipeline = Pipeline(transport=transport, policies=[policy])
+
+    # Execute the request and verify exception chaining
+    with pytest.raises(ClientAuthenticationError) as exc_info:
+        pipeline.run(http_request("GET", "https://example.com"))
+
+    # Verify the original exception is preserved
+    original_exception = exc_info.value
+    assert original_exception.message == "Failed to request token info with claims"
+
+    # Verify the exception is chained with HttpResponseError
+    assert original_exception.__cause__ is not None
+    assert isinstance(original_exception.__cause__, HttpResponseError)
+
+    # Verify the HttpResponseError contains the original 401 response
+    http_response_error = original_exception.__cause__
+    assert http_response_error.response is response_mock
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_reads_streamed_response_on_challenge_exception(http_request):
+    """Test that the policy reads streamed response body when on_challenge raises exception"""
+
+    # Create a credential that will raise an exception when get_token is called with claims
+    def failing_get_token(*scopes, **kwargs):
+        if "claims" in kwargs:
+            raise ClientAuthenticationError("Failed to get token with claims")
+        return AccessToken("initial_token", int(time.time()) + 3600)
+
+    credential = Mock(spec_set=["get_token"], get_token=failing_get_token)
+    policy = BearerTokenCredentialPolicy(credential, "scope")
+
+    # Create a 401 response with insufficient_claims challenge that will trigger the exception
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    # Create the mock HTTP response with stream reading capability
+    http_response_mock = Mock()
+    http_response_mock.status_code = 401
+    http_response_mock.headers = {"WWW-Authenticate": challenge_header}
+    http_response_mock.read = Mock(return_value=b"Error details from server")
+
+    # Mock transport that returns the HTTP response directly (it will be wrapped by Pipeline)
+    transport = Mock(send=Mock(return_value=http_response_mock))
+
+    # Create pipeline with stream option
+    pipeline = Pipeline(transport=transport, policies=[policy])
+
+    # Execute the request and verify exception handling
+    with pytest.raises(ClientAuthenticationError) as exc_info:
+        pipeline.run(http_request("GET", "https://example.com"), stream=True)
+
+    # Verify that the response.read() was called to consume the stream
+    http_response_mock.read.assert_called_once()
+
+    # Verify the exception chaining
+    assert exc_info.value.__cause__ is not None
+    assert isinstance(exc_info.value.__cause__, HttpResponseError)
+
+
+def test_challenge_auth_header_stripped_after_redirect():
+    """Assuming the SensitiveHeaderCleanupPolicy is in the pipeline, the authorization header should be stripped after
+    a redirect to a different domain by default, and preserved if the policy is configured to disable cleanup."""
+
+    class MockTransport(HttpTransport):
+        def __init__(self, cleanup_disabled=False):
+            self._first = True
+            self._cleanup_disabled = cleanup_disabled
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_header)
+                response = Response()
+                response.status_code = 307
+                response.headers["location"] = "https://redirect-target.example.invalid"
+                return response
+
+            # Second request: after redirect
+            if self._cleanup_disabled:
+                assert request.headers.get("Authorization")
+            else:
+                assert not request.headers.get("Authorization")
+            response = Response()
+            response.status_code = 401
+            response.headers["WWW-Authenticate"] = (
+                'Bearer error="insufficient_claims", claims="eyJhY2Nlc3NfdG9rZW4iOnsiZm9vIjoiYmFyIn19"'
+            )
+            return response
+
+    auth_header = "token"
+    get_token_call_count = 0
+
+    def mock_get_token(*_, **__):
+        nonlocal get_token_call_count
+        get_token_call_count += 1
+        return AccessToken(auth_header, 0)
+
+    credential = Mock(spec_set=["get_token"], get_token=mock_get_token)
+    auth_policy = BearerTokenCredentialPolicy(credential, "scope")
+    redirect_policy = RedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy()
+    pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
+    response = pipeline.run(HttpRequest("GET", "https://legitimate.azure.com"))
+    assert response.http_response.status_code == 401
+
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy(disable_redirect_cleanup=True)
+    pipeline = Pipeline(
+        transport=MockTransport(cleanup_disabled=True), policies=[redirect_policy, auth_policy, header_clean_up_policy]
+    )
+    response = pipeline.run(HttpRequest("GET", "https://legitimate.azure.com"))
+    assert response.http_response.status_code == 401
+
+
+def test_auth_header_stripped_after_cross_domain_redirect_with_retry():
+    """After a cross-domain redirect, if the redirected-to endpoint returns a retryable status code,
+    the Authorization header should still be stripped on the retry attempt. This verifies that the
+    insecure_domain_change flag persists across retries so SensitiveHeaderCleanupPolicy continues to
+    remove the Authorization header."""
+
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._request_count = 0
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):
+            self._request_count += 1
+
+            if self._request_count == 1:
+                # First request: to the original domain — should have auth header
+                assert request.headers.get("Authorization") == "Bearer {}".format(auth_header)
+                response = Response()
+                response.status_code = 307
+                response.headers["location"] = "https://redirect-target.example.invalid"
+                return response
+
+            if self._request_count == 2:
+                # Second request: after redirect to attacker domain — auth header should be stripped
+                assert not request.headers.get(
+                    "Authorization"
+                ), "Authorization header should be stripped on first request to redirected domain"
+                response = Response()
+                response.status_code = 500
+                return response
+
+            if self._request_count == 3:
+                # Third request: retry to attacker domain — auth header should STILL be stripped
+                assert not request.headers.get(
+                    "Authorization"
+                ), "Authorization header should be stripped on retry to redirected domain"
+                response = Response()
+                response.status_code = 200
+                return response
+
+            raise RuntimeError("Unexpected request count: {}".format(self._request_count))
+
+    auth_header = "token"
+    token = AccessToken(auth_header, 0)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
+    auth_policy = BearerTokenCredentialPolicy(credential, "scope")
+    redirect_policy = RedirectPolicy()
+    retry_policy = RetryPolicy(retry_total=1, retry_backoff_factor=0)
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy()
+    transport = MockTransport()
+    # Pipeline order matches the real default: redirect -> retry -> auth -> ... -> sensitive header cleanup
+    pipeline = Pipeline(
+        transport=transport,
+        policies=[redirect_policy, retry_policy, auth_policy, header_clean_up_policy],
+    )
+    response = pipeline.run(HttpRequest("GET", "https://legitimate.azure.com"))
+    assert response.http_response.status_code == 200
+    assert transport._request_count == 3

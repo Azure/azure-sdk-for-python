@@ -1,0 +1,9 @@
+name: blue
+endpoint_name: my-new-endpoint
+model: azureml:sklearn-model:1
+code_configuration:
+  code: azureml:code-1:1
+  scoring_script: score.py
+environment: azureml:sklearn-env:1
+instance_type: Standard_F2s_v2
+instance_count: 1

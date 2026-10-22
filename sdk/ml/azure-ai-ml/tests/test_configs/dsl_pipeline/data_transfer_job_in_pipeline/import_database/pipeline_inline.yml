@@ -1,0 +1,34 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'submit a pipeline with data transfer import database job'
+settings:
+  default_compute: azureml:serverless
+inputs:
+  query_source_snowflake: 'select * from TPCH_SF1000.PARTSUPP limit 10'
+  connection_target_azuresql: 'azureml:my_snowflake_connection'
+
+jobs:
+  snowflake_blob_node_input:
+    type: data_transfer
+    task: import_data
+    source:
+      type: database
+      query: select * from TPCH_SF1000.PARTSUPP limit 10
+      connection: azureml:my_snowflake_connection
+    outputs:
+      sink:
+        type: mltable
+        path: azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/
+  snowflake_blob:
+    type: data_transfer
+    task: import_data
+    source:
+      type: database
+      query: ${{parent.inputs.query_source_snowflake}}
+      connection: ${{parent.inputs.connection_target_azuresql}}
+    outputs:
+      sink:
+        type: mltable
+        path: azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/
+      # use default compute

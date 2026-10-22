@@ -1,0 +1,11 @@
+{
+  "properties": {
+    "authType": "ApiKey",
+    "category": "OpenAi",
+    "credentials": {
+      "key": "smoke-openai-api-key"
+    },
+    "isSharedToAll": true,
+    "metadata": {}
+  }
+}

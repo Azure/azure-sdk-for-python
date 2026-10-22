@@ -1,0 +1,218 @@
+# pylint: disable=line-too-long,useless-suppression
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
+"""
+DESCRIPTION:
+    Given an AIProjectClient, this sample demonstrates how to run a conversation
+    simulation evaluation against a Foundry agent. The service generates multi-turn
+    conversations by simulating a user interacting with your agent based on seed
+    scenarios, then evaluates the generated conversations with conversation-level
+    metrics.
+
+    This is Scenario 4 of multi-turn evaluations: you provide seed scenarios
+    (each describing a test case), and the service generates full conversations
+    by replaying simulated user turns against your agent. The generated
+    conversations are then scored by conversation-level evaluators.
+
+    Key concepts:
+      - data_source type is "azure_ai_user_conversation_simulation" with a
+        seed-scenarios source, a model_configuration, and a target agent
+      - default_simulation_configuration.conversation_repetitions is per seed
+        scenario (e.g., 2 repetitions × 3 scenarios = 6 conversations total)
+      - default_simulation_configuration.max_num_turns controls the maximum
+        exchanges per conversation
+      - data_mapping binds seed-dataset columns to simulation inputs
+
+USAGE:
+    python sample_multiturn_conversation_simulation.py
+
+    Before running the sample:
+
+    pip install "azure-ai-projects>=2.8.0" python-dotenv
+
+    Set these environment variables with your own values:
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint.
+    2) FOUNDRY_MODEL_NAME - Required. The model deployment name for the simulator
+       and AI-assisted evaluators.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+"""
+
+import os
+import time
+from pprint import pprint
+from dotenv import load_dotenv
+from openai.types.eval_create_params import DataSourceConfigCustom
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import TestingCriterionAzureAIEvaluator, PromptAgentDefinition
+
+load_dotenv()
+
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+
+# Path to the simulation scenarios data file
+script_dir = os.path.dirname(os.path.abspath(__file__))
+data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
+scenarios_file = os.path.join(data_folder, "sample_data_simulation_scenarios.jsonl")
+
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as client,
+):
+    # Create (or update) an agent to simulate against
+    agent = project_client.agents.create_version(
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
+            model=model_deployment_name,
+            instructions="You are a helpful customer service agent. Be empathetic and solution-oriented.",
+        ),
+    )
+    print(f"Agent created (name: {agent.name}, version: {agent.version})")
+
+    # Simulation uses the same "custom" eval group type as dataset evaluation (S1),
+    # since the generated conversations follow the same messages schema.
+    data_source_config = DataSourceConfigCustom(
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "messages": {"type": "array"},
+            },
+            "required": ["messages"],
+        },
+        include_sample_schema=False,
+    )
+
+    # Conversation-level evaluators
+    testing_criteria = [
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="customer_satisfaction",
+            evaluator_name="builtin.customer_satisfaction",
+            initialization_parameters={"model": model_deployment_name},
+            data_mapping={"messages": "{{item.messages}}"},
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="task_completion",
+            evaluator_name="builtin.task_completion",
+            initialization_parameters={"model": model_deployment_name},
+            data_mapping={"messages": "{{item.messages}}"},
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="conversation_coherence",
+            evaluator_name="builtin.coherence",
+            initialization_parameters={"model": model_deployment_name},
+            data_mapping={"messages": "{{item.messages}}"},
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="groundedness",
+            evaluator_name="builtin.groundedness",
+            initialization_parameters={"model": model_deployment_name},
+            data_mapping={"messages": "{{item.messages}}"},
+        ),
+    ]
+
+    print("Creating simulation evaluation group")
+    eval_object = client.evals.create(
+        name="Multi-turn Conversation Simulation",
+        data_source_config=data_source_config,
+        testing_criteria=testing_criteria,
+    )
+    print(f"Evaluation created (id: {eval_object.id})")
+
+    # Upload the simulation scenarios dataset
+    try:
+        dataset = project_client.datasets.upload_file(
+            name="simulation-scenarios",
+            version="1",
+            file_path=scenarios_file,
+        )
+        assert dataset.id is not None, "Dataset upload returned no ID"
+        scenarios_id: str = dataset.id
+        print(f"Scenarios dataset uploaded (id: {scenarios_id})")
+    except Exception:
+        # Dataset already exists — use the existing URI
+        scenarios_id = f"azureai://accounts/{endpoint.split('/')[2].split('.')[0]}/projects/{endpoint.rstrip('/').split('/')[-1]}/data/simulation-scenarios/versions/1"
+        print(f"Using existing scenarios dataset (id: {scenarios_id})")
+
+    # Create a simulation run
+    # - source: the seed scenarios dataset (each row is a test case)
+    # - model_configuration: the model that drives the simulated user
+    # - default_simulation_configuration: controls conversation generation
+    #   - conversation_repetitions: conversations to generate per seed scenario
+    #   - max_num_turns: maximum exchanges per conversation
+    # - data_mapping: maps seed-dataset field names to simulation inputs
+    # - target: the agent to simulate against
+    eval_run = client.evals.runs.create(
+        eval_id=eval_object.id,
+        name="conversation-simulation-run",
+        data_source={
+            "type": "azure_ai_user_conversation_simulation",
+            "source": {
+                "type": "file_id",
+                "id": scenarios_id,
+            },
+            "model_configuration": {
+                "model": model_deployment_name,
+                "sampling_params": {
+                    "temperature": 0.7,
+                    "top_p": 1.0,
+                    "max_completion_tokens": 800,
+                },
+            },
+            "default_simulation_configuration": {
+                "max_num_turns": 2,
+                "conversation_repetitions": 1,
+                "desired_num_turns": 1,
+                "enable_conversation_dataset_generation": True,
+                "output_conversation_dataset_name": "conversation-simulation-output",
+            },
+            "data_mapping": {
+                "test_case_description": "test_case_description",
+                "id": "id",
+            },
+            "target": {
+                "type": "azure_ai_agent",
+                "name": agent.name,
+                "version": agent.version,
+            },
+        },  # type: ignore
+        extra_body={"evaluation_level": "conversation"},
+    )
+    print(f"Simulation run created (id: {eval_run.id})")
+    print("Simulation runs are slow (3-8 min). Polling...")
+
+    while True:
+        run = client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)
+        if run.status in ("completed", "failed"):
+            break
+        print(f"Waiting for simulation to complete... current status: {run.status}")
+        time.sleep(10)
+
+    if run.status == "completed":
+        print("\n✓ Simulation run completed successfully!")
+        print(f"Result Counts: {run.result_counts}")
+        # conversation_repetitions=1 generates one conversation per seed scenario
+        print("Expected: one conversation per seed scenario (conversation_repetitions=1)")
+
+        output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
+        print(f"\nOUTPUT ITEMS (Total: {len(output_items)})")
+        print(f"{'-'*60}")
+        pprint(output_items)
+        print(f"{'-'*60}")
+
+        print(f"\nEval Run Report URL: {run.report_url}")
+    else:
+        print(f"\n✗ Simulation run failed: {run.error}")
+
+    client.evals.delete(eval_id=eval_object.id)
+    print("Evaluation deleted")

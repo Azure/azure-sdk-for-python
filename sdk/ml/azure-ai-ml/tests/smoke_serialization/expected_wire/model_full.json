@@ -1,0 +1,23 @@
+{
+  "properties": {
+    "description": "smoke model",
+    "flavors": {
+      "python_function": {
+        "data": {
+          "loader_module": "smoke.loader"
+        }
+      }
+    },
+    "isAnonymous": false,
+    "isArchived": false,
+    "modelType": "custom_model",
+    "modelUri": "azureml://datastores/workspaceblobstore/paths/smoke/model/",
+    "properties": {
+      "prop1": "value1"
+    },
+    "stage": "Production",
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

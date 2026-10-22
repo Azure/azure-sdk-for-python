@@ -1,0 +1,23 @@
+[tool.azure-sdk-build]
+mypy = false
+pyright = false
+pylint = false
+black = true
+verifytypes = false
+whl_no_aio = false
+
+[tool.isort]
+profile = "black"
+line_length = 120
+known_first_party = ["azure"]
+filter_files = true
+extend_skip_glob = [
+  "*/_vendor/*",
+  "*/_generated/*",
+  "*/_restclient/*",
+  "*/doc/*",
+  "*/.tox/*",
+]
+
+[tool.azure-sdk-conda]
+in_bundle = false

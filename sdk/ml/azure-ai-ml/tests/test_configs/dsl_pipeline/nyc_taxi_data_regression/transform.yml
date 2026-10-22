@@ -1,0 +1,16 @@
+name: taxi_feature_engineering
+display_name: TaxiFeatureEngineering
+version: 1
+type: command
+inputs:
+  clean_data:
+    type: uri_folder
+outputs:
+  transformed_data:
+    type: uri_folder
+code: ./transform_src
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+command: >-
+  python transform.py
+  --clean_data ${{inputs.clean_data}}
+  --transformed_data ${{outputs.transformed_data}}

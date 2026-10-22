@@ -1,0 +1,7 @@
+[packaging]
+auto_update = false
+package_name = "azure-communication-identity"
+package_pprint_name = "Communication Identity Service"
+package_doc_id = ""
+is_stable = false
+is_arm = false

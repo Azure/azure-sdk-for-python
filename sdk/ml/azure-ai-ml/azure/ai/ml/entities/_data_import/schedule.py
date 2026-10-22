@@ -1,0 +1,130 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+# pylint: disable=protected-access
+from os import PathLike
+from pathlib import Path
+from typing import Any, Dict, Optional, Union
+
+from azure.ai.ml._restclient.arm_ml_service.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.arm_ml_service.models import ScheduleProperties
+from azure.ai.ml._schema._data_import.schedule import ImportDataScheduleSchema
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
+from azure.ai.ml.entities._data_import.data_import import DataImport
+from azure.ai.ml.entities._schedule.schedule import Schedule
+from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
+from azure.ai.ml.entities._system_data import SystemData
+from azure.ai.ml.entities._util import load_from_dict
+
+
+@experimental
+class ImportDataSchedule(Schedule):
+    """ImportDataSchedule object.
+
+    :keyword name: Name of the schedule.
+    :paramtype name: str
+    :keyword trigger: Trigger of the schedule.
+    :paramtype trigger: Union[CronTrigger, RecurrenceTrigger]
+    :keyword import_data: The schedule action data import definition.
+    :paramtype import_data: DataImport
+    :keyword display_name: Display name of the schedule.
+    :paramtype display_name: str
+    :keyword description: Description of the schedule, defaults to None
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The data import property dictionary.
+    :paramtype properties: dict[str, str]
+    """
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        trigger: Optional[Union[CronTrigger, RecurrenceTrigger]],
+        import_data: DataImport,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        **kwargs: Any,
+    ):
+        super().__init__(
+            name=name,
+            trigger=trigger,
+            display_name=display_name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            **kwargs,
+        )
+        self.import_data = import_data
+        self._type = ScheduleType.DATA_IMPORT
+
+    @classmethod
+    def _load(
+        cls,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
+        **kwargs: Any,
+    ) -> "ImportDataSchedule":
+        data = data or {}
+        params_override = params_override or []
+        context = {
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            PARAMS_OVERRIDE_KEY: params_override,
+        }
+        return ImportDataSchedule(
+            base_path=context[BASE_PATH_CONTEXT_KEY],
+            **load_from_dict(ImportDataScheduleSchema, data, context, **kwargs),
+        )
+
+    @classmethod
+    def _create_schema_for_validation(cls, context: Any) -> ImportDataScheduleSchema:
+        return ImportDataScheduleSchema(context=context)
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestSchedule) -> "ImportDataSchedule":
+        # ``ImportDataAction`` / ``DataImport`` are not in arm_ml_service, so the action is carried as a plain
+        # wire dict (camelCase keys); ``DataImport._from_rest_object`` reads that dict directly. The trigger is
+        # a present arm model.
+        action = obj.properties.action
+        data_import_definition = action["dataImportDefinition"] if action is not None else None
+        return cls(
+            trigger=TriggerBase._from_rest_object(obj.properties.trigger),
+            import_data=(
+                DataImport._from_rest_object(data_import_definition)  # type: ignore[arg-type]
+                if data_import_definition is not None
+                else None
+            ),
+            name=obj.name,
+            display_name=obj.properties.display_name,
+            description=obj.properties.description,
+            tags=obj.properties.tags,
+            properties=obj.properties.properties,
+            provisioning_state=obj.properties.provisioning_state,
+            is_enabled=obj.properties.is_enabled,
+            creation_context=SystemData._from_rest_object(obj.system_data),
+        )
+
+    def _to_rest_object(self) -> RestSchedule:
+        # ``ImportDataAction`` / ``DataImport`` are not in arm_ml_service; build the shared arm Schedule
+        # envelope and emit the import-data action as a plain wire dict (JSON-direct).
+        # ``data_import._to_rest_object()`` returns the camelCase wire dict directly.
+        rest_schedule = RestSchedule(
+            properties=ScheduleProperties(
+                description=self.description,
+                properties=self.properties,
+                tags=self.tags,
+                display_name=self.display_name,
+                is_enabled=self._is_enabled,
+                trigger=self.trigger._to_rest_object() if self.trigger is not None else None,
+            )
+        )
+        rest_schedule.properties["action"] = {
+            "actionType": "ImportData",
+            "dataImportDefinition": self.import_data._to_rest_object(),
+        }
+        return rest_schedule

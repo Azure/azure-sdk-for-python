@@ -1,0 +1,30 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'submit a pipeline with data transfer copy job'
+settings:
+  default_compute: azureml:serverless
+inputs:
+  cosmos_folder:
+    type: uri_folder
+    path: ./data/iris_model
+  cosmos_folder_dup:
+    type: uri_folder
+    path: ./data/iris_model
+
+outputs:
+  merged_blob:
+    type: uri_folder
+
+jobs:
+    merge_files:
+      type: data_transfer
+      task: copy_data
+      component: ./merge_files.yaml
+      inputs:
+        folder1: ${{parent.inputs.cosmos_folder}}
+        folder2: ${{parent.inputs.cosmos_folder_dup}}
+      outputs:
+        output_folder: ${{parent.outputs.merged_blob}}
+      # use default compute
+

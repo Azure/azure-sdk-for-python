@@ -1,0 +1,4 @@
+paths:
+  - file: ./valid.txt
+transformations:
+  - take: 1

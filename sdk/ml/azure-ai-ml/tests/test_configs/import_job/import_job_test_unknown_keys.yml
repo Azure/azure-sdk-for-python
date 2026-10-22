@@ -1,0 +1,14 @@
+type: import
+name: "test1"
+display_name: "test_display_name"
+compute: "test1"
+inputs:
+  type: azuresqldb
+outputs:
+source:
+  type: azuresqldb
+  connection: azureml:my_username_password
+  query: select * from REGION
+output:
+  type: mltable
+  path: azureml://datastores/workspaceblobstore/paths/output_dir/azuresql/

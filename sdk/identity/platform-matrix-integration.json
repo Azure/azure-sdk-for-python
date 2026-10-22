@@ -1,0 +1,15 @@
+{
+  "include": [
+    {
+      "Agent": {
+        "identity-integration": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "ArmTemplateParameters": "@{ ProvisionLiveResources = $true }"
+        }
+      },
+      "PythonVersion": "3.11",
+      "CoverageArg": ""
+    }
+  ]
+}

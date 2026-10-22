@@ -1,0 +1,14 @@
+{
+  "commit": "40390d1f34a8f74584a272d4da55f12827972357",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/informatica/Informatica.DataManagement",
+  "@azure-tools/typespec-python": "0.23.11",
+  "@autorest/python": "6.13.17",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.15.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/informatica/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.15.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/informatica/resource-manager/readme.md"
+}

@@ -1,0 +1,8 @@
+name: test-batch-endpt # required
+description: funny
+properties:
+  p1: v1
+  p2: v2
+auth_mode: aad_token # required
+tags:
+  t1: v1

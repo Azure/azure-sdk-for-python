@@ -1,0 +1,1 @@
+This folder contains a basic `setup.py` scenario that follows the azure-sdk conventions for a "metapackage." We use this to ensure that our metapackage detection within ParsedSetup is working properly.

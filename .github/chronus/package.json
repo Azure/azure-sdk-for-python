@@ -1,0 +1,9 @@
+{
+  "name": "azure-sdk-for-python-changelog-tools",
+  "private": true,
+  "description": "Pinned Node dev dependencies used by 'azpysdk changelog' (Chronus).",
+  "devDependencies": {
+    "@chronus/chronus": "1.3.1",
+    "@chronus/github": "1.0.6"
+  }
+}

@@ -1,0 +1,10 @@
+name: mire2etest
+auth_mode: aml_token
+description: some description
+identity:
+  type: system_assigned
+traffic: {}
+tags:
+    endpointkey1: newval1
+    dummy: dummy
+public_network_access: disabled

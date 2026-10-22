@@ -1,0 +1,10 @@
+command: pip freeze
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+name: "test1"
+compute: "azureml:testCompute"
+experiment_name: mfe-test1
+properties:
+   test_property: test_value
+identity:
+  type: user_identity
+

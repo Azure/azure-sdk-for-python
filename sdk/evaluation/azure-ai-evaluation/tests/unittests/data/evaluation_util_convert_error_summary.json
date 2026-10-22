@@ -1,0 +1,29 @@
+{
+    "self_harm": {
+        "status": "Failed",
+        "duration": "0:00:00.000869",
+        "completed_lines": 0,
+        "failed_lines": 0,
+        "log_path": null,
+        "error_message": "(UserError) Missing inputs for line 1: 'data.item.query, data.item.response'",
+        "error_code": "INVALID VALUE"
+    },
+    "Fluency": {
+        "status": "Failed",
+        "duration": "0:00:00.000869",
+        "completed_lines": 0,
+        "failed_lines": 0,
+        "log_path": null,
+        "error_message": "(SystemError) 100% of the batch run failed. (UserError) OpenAI API hits BadRequestError: Error code: 400 - {'error': {'message': \"Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.\", 'type': 'invalid_request_error', 'param': 'max_tokens', 'code': 'unsupported_parameter'}} [Error reference: https://platform.openai.com/docs/guides/error-codes/api-errors]",
+        "error_code": "FAILED_EXECUTION"
+    },
+    "ViolenceContentCustomEvaluator": {
+        "status": "Failed",
+        "duration": "0:00:01.002324",
+        "completed_lines": 1,
+        "failed_lines": 1,
+        "log_path": null,
+        "error_message": "(SystemError) 50% of the batch run failed. Prompt template is not initialized.",
+        "error_code": "FAILED_EXECUTION"
+    }
+}

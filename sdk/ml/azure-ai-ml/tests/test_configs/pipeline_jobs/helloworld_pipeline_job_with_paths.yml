@@ -1,0 +1,44 @@
+type: pipeline
+
+# name: microsoft.samples.PipelineJobSampleToDefineScope #follow up on schema validation error
+name: simplepipelinejobnopath
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+# Check if supported ...
+experiment_name: my_first_experiment
+
+compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  job_in_number: 10
+  job_in_other_number:
+    value: 15
+  job_in_path:
+    path: ../data
+    mode: ro_mount
+  job_in_path_other:
+    path: <not a real path>
+    mode: download
+
+jobs:
+  hello_world_component:
+    type: command
+    component: azureml:microsoftsamples_command_component_basic_with_paths_test:1
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_path_1: ${{parent.inputs.job_in_path}}
+      component_in_path_2: ${{parent.inputs.job_in_path_other}}
+
+  hello_world_component_2:
+    type: command
+    component: azureml:microsoftsamples_command_component_basic_with_paths_test:1
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_other_number}}
+      component_in_path_1: ${{parent.inputs.job_in_path}}
+      component_in_path_2: ${{parent.inputs.job_in_path_other}}

@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-04-01-preview",
+  "apiVersions": {
+    "Microsoft.HealthcareApis": "2025-04-01-preview"
+  },
+  "commit": "ecd420c9534d0dab69be38027c1723031504b081",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/healthcareapis/resource-manager/Microsoft.HealthcareApis/HealthcareApis",
+  "emitterVersion": "0.62.1"
+}

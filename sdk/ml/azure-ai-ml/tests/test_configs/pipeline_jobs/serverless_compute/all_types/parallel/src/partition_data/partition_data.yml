@@ -1,0 +1,29 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+
+type: command
+
+name: partition_data
+display_name: Partition input data by keys
+version: 1
+
+inputs:
+  data_source:
+    type: uri_file
+  partition_keys:
+    type: string
+
+outputs:
+  tabular_output_data:
+    type: mltable
+
+code: ./
+
+environment: 
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+  conda_file: ./conda.yml
+
+command: >-
+  python partition_data.py
+  --data_source ${{inputs.data_source}}
+  --partition_keys ${{inputs.partition_keys}}
+  --tabular_output_data ${{outputs.tabular_output_data}}

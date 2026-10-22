@@ -1,0 +1,25 @@
+trigger: none
+
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: openai
+      TestTimeoutInMinutes: 200
+      MatrixFilters:
+        - PythonVersion=3.11.*
+      CloudConfig:
+        Public:
+          ServiceConnection: azure-sdk-tests-openai
+      EnvVars:
+        AZ_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
+        AZURE_OPENAI_KEY: $(AOAI-API-KEY)
+        AZURE_OPENAI_CHAT_DEPLOYMENT: $(AOAI-CHAT-COMPLETIONS-MODEL-DEPLOYMENT)
+        AZURE_OPENAI_COMPLETIONS_DEPLOYMENT: $(AOAI-COMPLETIONS-MODEL-DEPLOYMENT)
+        AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT: $(AOAI-ENDPOINT-NORTHCENTRALUS)
+        AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT: $(AOAI-ENDPOINT-SWEDENCENTRAL)
+        AZURE_OPENAI_SWEDENCENTRAL_KEY: $(AOAI-API-KEY-SWEDENCENTRAL)
+        OPENAI_KEY: $(python-nonazure-openai-key)
+        AZURE_OPENAI_SEARCH_ENDPOINT: $(COGNITIVE-SEARCH-API-ENDPOINT)
+        AZURE_OPENAI_SEARCH_INDEX: $(COGNITIVE-SEARCH-API-INDEX)
+        AZURE_TEST_RUN_LIVE: 'true'
+        API_VERSION_GA: '2024-06-01'

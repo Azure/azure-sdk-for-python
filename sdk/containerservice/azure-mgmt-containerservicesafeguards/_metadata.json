@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-05-02-preview",
+  "commit": "20d6633d3f5f97f614feef2e68133a60a03bee8b",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/containerservice/DeploymentSafeguards.Management",
+  "emitterVersion": "0.45.3"
+}

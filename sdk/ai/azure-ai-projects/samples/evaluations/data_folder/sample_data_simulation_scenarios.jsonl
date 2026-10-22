@@ -1,0 +1,3 @@
+{"id": "scenario-1-greeting", "test_case_description": "User starts with a casual greeting; agent should respond warmly and offer help.", "desired_num_turns": 3}
+{"id": "scenario-2-weather-followup", "test_case_description": "User asks about the weather in a major city, then asks a follow-up about whether to bring an umbrella.", "desired_num_turns": 4}
+{"id": "scenario-3-store-hours", "test_case_description": "User asks if a store is open, then progressively narrows down to curbside-pickup hours, then places an order.", "desired_num_turns": 5}

@@ -1,0 +1,51 @@
+How do you create a run?,AML API only,"To create a run using the Azure Machine Learning API, you first need to create an Experiment. Once you have an experiment, you can create a Run object that is associated with that experiment. Here is some Python code that demonstrates this process:
+
+```
+from azureml.core import Experiment, Run
+from azureml.core.workspace import Workspace
+
+# Define workspace and experiment
+ws = Workspace.from_config()
+exp = Experiment(workspace=ws, name='my_experiment')
+
+# Create a new run
+run = exp.start_logging()
+```
+
+In this code, the `from_config()` method reads the configuration file that you created when you set up your Azure Machine Learning workspace. The `Experiment` constructor creates an Experiment object that is associated with your workspace, and the `start_logging()` method creates a new Run object that is associated with the Experiment. Now you can use the `run` object to log metrics, upload files, and track other information related to your machine learning experiment.",Paris is the capital of France.
+How do you log a model?,Logging can be done using any OSS Sdk,"There are a few ways to log models in Azure Machine Learning. 
+
+One way is to use the `register_model()` method of the `Run` object. The `register_model()` method logs a model file in the Azure Machine Learning service workspace and makes it available for deployment. Here's an example:
+
+```python
+from azureml.core import Model
+
+model_path = './outputs/my_model.pkl'
+model = Model.register(workspace=ws, model_path=model_path, model_name='my_model')
+```
+
+This code registers the model file located at `model_path` to the Azure Machine Learning service workspace with the name `my_model`. 
+
+Another way to log a model is to save it as an output of a `Run`. If your model generation code is part of a script or Jupyter notebook that runs as an Azure Machine Learning experiment, you can save the model file as an output of the `Run` object. Here's an example:
+
+```python
+from sklearn.linear_model import LogisticRegression
+from azureml.core.run import Run
+
+# Initialize a run object
+run = Run.get_context()
+
+# Train your model
+X_train, y_train = ...
+clf = LogisticRegression().fit(X_train, y_train)
+
+# Save the model to the Run object's outputs directory
+model_path = 'outputs/model.pkl'
+joblib.dump(value=clf, filename=model_path)
+
+# Log the model as a run artifact
+run.upload_file(name=model_path, path_or_stream=model_path)
+```
+
+In this code, `Run.get_context()` retrieves the current run context object, which you can use to track metadata and metrics for the run. After training your model, you can use `joblib.dump()` to save the model to a file, and then log the file as an artifact of the run using `run.upload_file()`.",Paris is the capital of France.
+"What is the capital of France?`''""</>{}{{]",France is in Europe,Paris is the capital of France.,Paris is the capital of France.

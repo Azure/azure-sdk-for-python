@@ -1,0 +1,22 @@
+parameters:
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: JobName
+    type: string
+    default: 'Test'
+
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      # The shared template checks whether the scheduled run started on a weekend (UTC).
+      - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          JobName: ${{ parameters.JobName }}
+          Condition: and(succeeded(), eq(variables['Build.Reason'], 'Schedule'))

@@ -1,0 +1,15 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: Hello_Python_World
+display_name: Hello_Python_World
+version: 1
+
+code:
+  local_path: ./src
+
+environment:
+  image: python
+
+command: >-
+  python hello.py

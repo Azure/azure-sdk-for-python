@@ -1,0 +1,12 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+name: component_return_string
+command: >-
+  mldesigner execute --source primitive_type_components.py --name component_with_string_output
+  --outputs output=${{outputs.output}}
+code: ./src
+environment: azureml://registries/azureml/environments/mldesigner/labels/latest
+outputs:
+  output:
+    type: string
+    is_control: true

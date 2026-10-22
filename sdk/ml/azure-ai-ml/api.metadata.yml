@@ -1,4 +1,5 @@
-apiMdSha256: c39d5bf8320fae3388fc50ddcd9e5a7cbca070b46ffced33935ae06133a3364e
+apiHash: e8afbd3b5c2dc17baa7cee5e3236b2d9a0043ad37105b45f932306caee1a7679
+packageRelativePath: sdk/ml/azure-ai-ml
 packageVersion: 1.36.0
 parserVersion: 0.3.31
-pythonVersion: 3.12.14
+pythonVersion: 3.12.15

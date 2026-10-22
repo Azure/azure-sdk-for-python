@@ -1,0 +1,5 @@
+name: testDatasetfolder
+version: 1
+description: "this is a test dataset"
+paths:
+  - path: https://sag3uw5aitwz5iw.blob.core.windows.net/azureml-blobstore-525ecb0d-ade1-4979-bed9-a80da71c5fba/LocalUpload/79dd8f7e00e2fe2d398effb65ff874e3/data/sample1.csv

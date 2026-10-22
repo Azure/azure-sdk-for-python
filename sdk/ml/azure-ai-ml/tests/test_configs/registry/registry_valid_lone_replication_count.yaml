@@ -1,0 +1,14 @@
+description: This is a registry description
+name: registry_name
+id: registry_id
+tags:
+  purpose: testing
+  other_tag: value
+location: EastUS2
+public_network_access: Disabled
+intellectual_property:
+  publisher: registry_publisher
+replication_locations:
+  - location: EastUS
+    storage_config:
+        replication_count: 5

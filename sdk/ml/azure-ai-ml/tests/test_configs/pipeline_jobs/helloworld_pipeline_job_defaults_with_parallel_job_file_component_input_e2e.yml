@@ -1,0 +1,29 @@
+type: pipeline
+
+description: The hello world pipeline job with inline parallel job defined by parallel component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+settings:
+  default_compute: azureml:cpu-cluster
+
+inputs:
+  pipeline_job_data_path:
+    type: mltable
+    path: ../dataset/mnist-data/
+    mode: eval_mount
+
+jobs:
+  hello_world_inline_paralleljob_1:
+    type: parallel
+    compute: azureml:cpu-cluster
+    component: file:../components/parallel_component_with_file_input.yml
+    inputs:
+      job_data_path: ${{parent.inputs.pipeline_job_data_path}}
+    outputs:
+      job_output_path:
+
+    mini_batch_size: "1"
+    mini_batch_error_threshold: 1
+    max_concurrency_per_instance: 1

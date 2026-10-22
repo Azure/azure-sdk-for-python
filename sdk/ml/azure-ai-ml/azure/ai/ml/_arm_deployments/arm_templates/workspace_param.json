@@ -1,0 +1,218 @@
+{
+    "location": {
+        "value": ""
+    },
+    "workspaceName": {
+        "value": ""
+    },
+    "resourceGroupName": {
+        "value": ""
+    },
+    "description": {
+        "value": ""
+    },
+    "kind": {
+        "value": "Default"
+    },
+    "friendlyName": {
+        "value": ""
+    },
+    "tagValues": {
+        "value": {}
+    },
+    "keyVaultOption": {
+        "value": "new"
+    },
+    "keyVaultName": {
+        "value": ""
+    },
+    "keyVaultResourceGroupName": {
+        "value": ""
+    },
+    "associatedResourcePNA": {
+        "value": "Enabled"
+    },
+    "storageAccountOption": {
+        "value": "new"
+    },
+    "storageAccountName": {
+        "value": ""
+    },
+    "storageAccountSubscriptionId": {
+        "value": ""
+    },
+    "storageAccountResourceGroupName": {
+        "value": ""
+    },
+    "applicationInsightsOption": {
+        "value": "new"
+    },
+    "applicationInsightsName": {
+        "value": ""
+    },
+    "logAnalyticsName": {
+        "value": "none"
+    },
+    "logAnalyticsArmId": {
+        "value": ""
+    },
+    "applicationInsightsResourceGroupName": {
+        "value": ""
+    },
+    "containerRegistryOption": {
+        "value": "none"
+    },
+    "containerRegistryName": {
+        "value": "name"
+    },
+    "containerRegistryResourceGroupName": {
+        "value": ""
+    },
+    "encryption_status": {
+        "value": "Disabled"
+    },
+    "cmk_keyvault": {
+        "value": ""
+    },
+    "resource_cmk_uri": {
+        "value": ""
+    },
+    "privateEndpointName": {
+        "value": "name"
+    },
+    "subnetOption": {
+        "value": "existing"
+    },
+    "subnetName": {
+        "value": "default"
+    },
+    "vnetOption": {
+        "value": "existing"
+    },
+    "vnetName": {
+        "value": "name"
+    },
+    "vnetResourceGroupName": {
+        "value": "name"
+    },
+    "privateEndpointType": {
+        "value": "none"
+    },
+    "privateEndpointResourceGroupName": {
+        "value": "name"
+    },
+    "confidential_data": {
+        "value": "false"
+    },
+    "imageBuildCompute": {
+        "value": ""
+    },
+    "publicNetworkAccess": {
+        "value": "Enabled"
+    },
+    "soft_delete_enabled": {
+        "value": "false"
+    },
+    "allow_recover_softdeleted_workspace": {
+        "value": "false"
+    },
+    "encryption_cosmosdb_resourceid": {
+        "value": ""
+    },
+    "encryption_storage_resourceid": {
+        "value": ""
+    },
+    "encryption_search_resourceid": {
+        "value": ""
+    },
+    "identity": {
+        "value": {}
+    },
+    "primaryUserAssignedIdentity": {
+        "value": ""
+    },
+    "managedNetwork": {
+        "value": {}
+    },
+    "provisionNetworkNow": {
+        "value": "false"
+    },
+    "spark_runtime_version" : {
+        "value": null
+    },
+    "offlineStoreStorageAccountOption": {
+        "value": null
+    },
+    "offline_store_storage_account_name": {
+        "value": null
+    },
+    "offline_store_container_name" : {
+        "value": null
+    },
+    "offline_store_resource_group_name" : {
+        "value": null
+    },
+    "offline_store_subscription_id" : {
+        "value": null
+    },
+    "offline_store_connection_name" : {
+        "value": null
+    },
+    "online_store_resource_id" : {
+        "value": null
+    },
+    "online_store_resource_group_name" : {
+        "value": null
+    },
+    "online_store_subscription_id" : {
+        "value": null
+    },
+    "online_store_connection_name" : {
+        "value": null
+    },
+    "grant_materialization_permissions" : {
+        "value": "true"
+    },
+    "materializationIdentityOption": {
+        "value": null
+    },
+    "materialization_identity_name": {
+        "value": null
+    },
+    "materialization_identity_resource_group_name": {
+        "value": null
+    },
+    "materialization_identity_subscription_id": {
+        "value": null
+    },
+    "workspace_hub_config" : {
+        "value": {}
+    },
+    "existing_workspaces" : {
+        "value": []
+    },
+    "workspace_hub" : {
+        "value": ""
+    },
+    "enable_data_isolation": {
+        "value": "false"
+    },
+    "allowRoleAssignmentOnRG": {
+        "value": "true"
+    },
+    "serverless_compute_settings": {
+        "value": {}
+    },
+    "systemDatastoresAuthMode": {
+        "value": ""
+    },
+    "endpoint_resource_id": {
+        "value": "null"
+    },
+    "endpoint_kind": {
+        "value": "AIServices"
+    },
+    "endpoint_option": {
+        "value": "new"
+    }
+}

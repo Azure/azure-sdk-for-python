@@ -1,0 +1,50 @@
+type: pipeline
+
+# name: microsoft.samples.PipelineJobSampleToDefineScope #follow up on schema validation error
+name: simplepipelinejobnopath
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+# Check if supported ...
+experiment_name: my_first_experiment
+
+compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  job_in_number: 10
+  job_in_other_number:
+    value: 15
+  job_in_string: a_random_string
+
+settings:
+  continue_on_step_failure: True
+
+jobs:
+  hello_world_component:
+    type: command
+    component: azureml:microsoftsamplescommandcomponentbasic_nopaths_test:1
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+
+  hello_world_component_2:
+    type: command
+    component: azureml:microsoftsamplescommandcomponentbasic_nopaths_test:1
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_other_number}}
+    resources:
+      instance_count: 2
+      properties:
+        prop1: a_prop
+        prop2: another_prop
+    distribution:
+      type: "mpi"
+      process_count_per_instance: 2
+    environment_variables:
+      FOO: "bar"
+    additional_override:
+      nested_override: 5

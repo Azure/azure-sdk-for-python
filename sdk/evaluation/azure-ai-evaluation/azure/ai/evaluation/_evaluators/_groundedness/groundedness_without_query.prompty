@@ -1,0 +1,105 @@
+---
+name: Groundedness
+description: Evaluates groundedness score for RAG scenario
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    max_tokens: 800
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: json_object
+
+inputs:
+  response:
+    type: string
+  context:
+    type: string
+
+---
+system:
+# Instruction
+## Goal
+### You are an expert in evaluating the quality of a RESPONSE from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
+- **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
+- **Data**: Your input data include CONTEXT and RESPONSE.
+- **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways.
+
+user:
+# Definition
+**Groundedness** refers to how well a response is anchored in the provided context, evaluating its relevance, accuracy, and completeness based exclusively on that context. It assesses the extent to which the response directly and fully addresses the information without introducing unrelated or incorrect information.
+
+> Context is the source of truth for evaluating the response. 
+> Evaluate the groundedness of the response message based on the provided context.
+
+# Ratings
+## [Groundedness: 1] (Completely Unrelated Response)
+**Definition:** A response that does not relate to the context in any way.
+  - Does not relate to the context at all.
+  - Talks about the general topic but does not respond to the context.
+
+**Examples:**
+  **Context:** The company's profits increased by 20% in the last quarter.
+  **Response:** I enjoy playing soccer on weekends with my friends.
+
+  **Context:** The new smartphone model features a larger display and improved battery life.
+  **Response:** The history of ancient Egypt is fascinating and full of mysteries.
+
+## [Groundedness: 2] (Attempts to Respond but Contains Incorrect Information)
+**Definition:** A response that attempts to relate to the context but includes incorrect information not supported by the context. It may misstate facts, misinterpret the context, or provide erroneous details. Even if some points are correct, the presence of inaccuracies makes the response unreliable.
+
+**Examples:**
+  **Context:** The company's profits increased by 20% in the last quarter.
+  **Response:** The company's profits decreased by 20% in the last quarter.
+
+  **Context:** The new smartphone model features a larger display and improved battery life.
+  **Response:** The new smartphone model has a smaller display and shorter battery life.
+
+## [Groundedness: 3] (Accurate but Vague Response)
+**Definition:** A response that provides accurate information from the context but is overly generic or vague, not meaningfully engaging with the specific details in the context. The information is correct but lacks specificity and detail.
+
+**Examples:**
+  **Context:** The company's profits increased by 20% in the last quarter, marking the highest growth rate in its history.
+  **Response:** The company is doing well financially.
+
+  **Context:** The new smartphone model features a larger display, improved battery life, and an upgraded camera system.
+  **Response:** The smartphone has some nice features.
+
+## [Groundedness: 4] (Partially Correct Response)
+**Definition:** A response that provides correct information from the context but is incomplete or lacks specific details mentioned in the context. It captures some of the necessary information but omits key elements needed for a full understanding.
+
+**Examples:**
+  **Context:** The company's profits increased by 20% in the last quarter, marking the highest growth rate in its history.      
+  **Response:** The company's profits increased by 20% in the last quarter.
+
+  **Context:** The new smartphone model features a larger display, improved battery life, and an upgraded camera system.        
+  **Response:** The new smartphone model features a larger display and improved battery life.
+
+## [Groundedness: 5] (Fully Grounded and Complete Response)
+**Definition:** A response that thoroughly and accurately conveys information from the context, including all relevant details. It directly addresses the context with precise information, demonstrating complete understanding without adding extraneous information.
+
+**Examples:**
+  **Context:** The company's profits increased by 20% in the last quarter, marking the highest growth rate in its history.      
+  **Response:** The company's profits increased by 20% in the last quarter, marking the highest growth rate in its history.     
+
+  **Context:** The new smartphone model features a larger display, improved battery life, and an upgraded camera system.        
+  **Response:** The new smartphone model features a larger display, improved battery life, and an upgraded camera system.  
+
+
+# Data
+CONTEXT: {{context}}
+RESPONSE: {{response}}
+
+
+# Tasks
+## Please provide your assessment for the previous RESPONSE in relation to the CONTEXT based on the Definitions above.
+Your output must be a valid JSON object with exactly these keys:
+  - reason: a string explaining your thought process and assessment. Start with "Let's think step by step:". When status is "skipped", explain why evaluation was skipped.
+  - score: an integer value between 1 and 5 based on the level definitions above. The score you give MUST be an integer score (i.e., 1, 2...) based on the levels of the definitions. Set to null when status is "skipped".
+  - status: a string indicating the evaluation status. Must be one of:
+      - "completed": evaluation was performed normally.
+      - "skipped": evaluation was not performed because the CONTEXT or RESPONSE is empty or not provided. When skipped, set score to null.
+
+# Output

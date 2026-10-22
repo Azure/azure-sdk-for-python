@@ -1,0 +1,235 @@
+parameters:
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: TestResourceDirectories
+    type: object
+    default: null
+  - name: PreSteps
+    type: object
+    default: []
+  - name: PostSteps
+    type: object
+    default: []
+  - name: EnvVars
+    type: object
+    default: {}
+  - name: MaxParallel
+    type: number
+    default: 0
+  - name: BeforeTestSteps
+    type: object
+    default: []
+  - name: AfterTestSteps
+    type: object
+    default: []
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: AdditionalTestArgs
+    type: string
+    default: ''
+  - name: TestMarkArgument
+    type: string
+    default: ''
+  - name: InjectedPackages
+    type: string
+    default: ''
+  - name: BuildDocs
+    type: boolean
+    default: true
+  - name: TestTimeoutInMinutes
+    type: number
+    default: 120
+  - name: Location
+    type: string
+    default: ''
+  - name: CloudConfig
+    type: object
+    default: {}
+  - name: Matrix
+    type: string
+  - name: DependsOn
+    type: string
+    default: ''
+  - name: UsePlatformContainer
+    type: boolean
+    default: false
+  - name: TestProxy
+    type: boolean
+    default: false
+  - name: OSName
+    type: string
+  - name: CheckEnv
+    type: string
+    default: 'whl'
+  - name: UseFederatedAuth
+    type: boolean
+    default: false
+  - name: PersistOidcToken
+    type: boolean
+    default: false
+
+jobs:
+  - job:
+    dependsOn: ${{ parameters.DependsOn }}
+    condition: ne(${{ parameters.Matrix }}, '{}')
+    strategy:
+      maxParallel: ${{ parameters.MaxParallel }}
+      matrix: $[ ${{ parameters.Matrix }} ]
+
+    variables:
+      - template: ../variables/globals.yml
+      - template: ../variables/image.yml
+
+      - name: skipComponentGovernanceDetection
+        value: true
+      - name: ArmTemplateParameters
+        value: '@{}'
+      - name: AZURE_SKIP_LIVE_RECORDING
+        value: true
+
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+    continueOnError: false
+
+    pool:
+      name: $(Pool)
+      # 1es pipeline templates converts `image` to demands: ImageOverride under the hood
+      # which is incompatible with image selection in the default non-1es hosted pools
+      ${{ if eq(parameters.OSName, 'macOS') }}:
+        vmImage: $(OSVmImage)
+      ${{ else }}:
+        image: $(OSVmImage)
+      os: ${{ parameters.OSName }}
+
+    ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
+      # Add a default so the job doesn't fail when the matrix is empty
+      container: $[ variables['Container'] ]
+
+    steps:
+      - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+        - checkout: self
+      - ${{ else }}:
+        - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+          parameters:
+            Paths:
+              - '**'
+
+      - ${{ parameters.PreSteps }}
+
+      - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+        parameters:
+          AgentImage: ${{ parameters.OSName }}
+
+      - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+      - template: /eng/common/TestResources/build-test-resource-config.yml
+        parameters:
+          SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
+          SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
+          ${{ if parameters.UseFederatedAuth }}:
+            SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
+          EnvVars:
+            Pool: $(Pool)
+            ${{ insert }}: ${{ parameters.EnvVars }}
+
+      - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
+        - template: /eng/common/TestResources/deploy-test-resources.yml
+          parameters:
+            Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
+            ServiceDirectory: '${{ directory }}'
+            SubscriptionConfiguration: $(SubscriptionConfiguration)
+            ArmTemplateParameters: $(ArmTemplateParameters)
+            UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+            PersistOidcToken: ${{ parameters.PersistOidcToken }}
+            ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+            EnvVars:
+              Pool: $(Pool)
+              ${{ insert }}: ${{ parameters.EnvVars }}
+
+      # This is a heuristic to detect compiled requirements in the service 
+      # directory. If compiled requirements are found, install dependencies for
+      # and configure cibuildwheel. 
+      - pwsh: |
+          $ErrorActionPreference = 'Stop'
+          $found = @()
+          foreach ($dir in "${{ parameters.ServiceDirectory }}".Split('|') | Where-Object { $_ }) {
+            $root = Join-Path "$(Build.SourcesDirectory)" "sdk" $dir.Trim()
+            if (-not (Test-Path $root)) { continue }
+            $found += Get-ChildItem -Path $root -Filter pyproject.toml -Recurse -ErrorAction SilentlyContinue `
+              | Where-Object { (Get-Content $_.FullName -Raw) -match '(?m)^\[tool\.cibuildwheel\]' }
+          }
+          if ($found) {
+            $found | ForEach-Object { Write-Host "Found compiled package: $($_.Directory.Name)" }
+            Write-Host "##vso[task.setvariable variable=CIBUILDWHEEL_DEV_REQ]true"
+          }
+          else {
+            Write-Host "No [tool.cibuildwheel] packages under sdk/${{ parameters.ServiceDirectory }}; nothing to configure."
+          }
+        displayName: 'Check for compiled dev requirements'
+
+      - pwsh: |
+          Write-Host "##vso[task.setvariable variable=CIBW_ARCHS]native"
+          Write-Host "##vso[task.setvariable variable=CIBW_SKIP]pp* *musllinux*"
+          Write-Host "##vso[task.setvariable variable=CIBW_TEST_SKIP]*"
+          # CIBW_ENVIRONMENT_PASS_LINUX, not CIBW_ENVIRONMENT: the latter would clobber the package's
+          # own [tool.cibuildwheel].environment (CFLAGS). PIP_INDEX_URL is set by the time the test step
+          # runs (use-python-version.yml, then auth-dev-feed.yml inside build-test.yml).
+          Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL"
+        displayName: 'Configure cibuildwheel for dev requirement builds'
+        condition: and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+
+      # Windows has no cp310 interpreter on the agent and cibuildwheel fetches one from api.nuget.org,
+      # which is blocked. Pre-provision it from the Azure DevOps feed into the cibuildwheel cache.
+      # Mirrors steps/build-package-artifacts.yml, minus pythonarm64 (CIBW_ARCHS=native drops win_arm64).
+      - task: NuGetAuthenticate@1
+        displayName: 'Authenticate to NuGet feed'
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+
+      - pwsh: |
+          $ErrorActionPreference = 'Stop'
+          $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+          $version = "3.10.11"
+          $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
+          $nugetCpython = Join-Path $cache "nuget-cpython"
+          New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
+          $nuget = (Get-Command nuget).Source
+          & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
+          if ($LASTEXITCODE) {
+            Write-Error "Failed to download python $version"
+            exit 1
+          }
+          Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+        displayName: 'Pre-provision CPython for cibuildwheel'
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+
+      - template: /eng/pipelines/templates/steps/build-test.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          CloudName: ${{ parameters.CloudConfig.Cloud }}
+          CoverageArg: $(CoverageArg)
+          EnvVars:
+            AZURE_RUN_MODE: 'Live' #Record, Playback
+            ${{ insert }}: ${{ parameters.EnvVars }}
+          PythonVersion: $(PythonVersion)
+          OSVmImage: $(OSVmImage)
+          CheckEnv: ${{ parameters.CheckEnv }}
+          AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+          TestMarkArgument: ${{ parameters.TestMarkArgument }}
+          InjectedPackages: ${{ parameters.InjectedPackages }}
+          BuildDocs: ${{ parameters.BuildDocs }}
+          TestProxy: ${{ parameters.TestProxy }}
+          UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+          ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+
+      - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
+        - template: /eng/common/TestResources/remove-test-resources.yml
+          parameters:
+            ServiceDirectory: '${{ directory }}'
+            SubscriptionConfiguration: $(SubscriptionConfiguration)
+            UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+            ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+
+      - ${{ parameters.PostSteps }}

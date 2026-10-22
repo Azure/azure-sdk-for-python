@@ -1,0 +1,54 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+name: simplepipelinejob
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+experiment_name: my_first_experiment
+
+compute: azureml:cpu-cluster
+
+settings:
+  continue_on_step_failure: false
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  automl_train_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/pipeline_e2e_data/train
+  automl_valid_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/pipeline_e2e_data/valid
+  automl_test_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/pipeline_e2e_data/test
+
+jobs:
+  regression_node:
+    type: automl
+    task: regression
+    primary_metric: r2_score
+    limits:
+      max_trials: 1
+      max_concurrent_trials: 1
+    target_column_name: SalePrice
+    training_data: ${{parent.inputs.automl_train_data}}
+    validation_data: ${{parent.inputs.automl_valid_data}}
+    test_data: ${{parent.inputs.automl_test_data}}
+    featurization:
+      mode: "off" # In YAML 1.1, literal off equals boolean false, ref: https://yaml.org/type/bool.html
+    training:
+      enable_stack_ensemble: false
+      enable_vote_ensemble: false
+    outputs:
+      best_model:
+        type: mlflow_model
+  command_node:
+    type: command
+    inputs:
+      mltable_output: ${{parent.jobs.regression_node.outputs.best_model}}
+    command: ls ${{inputs.mltable_output}}
+    environment: azureml:AzureML-Minimal:1

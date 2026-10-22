@@ -1,0 +1,23 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: score_data
+version: 0.0.1
+display_name: Score Data
+description: A dummy scoring component
+
+inputs:
+  model_input:
+    type: uri_folder
+  test_data:
+    type: uri_folder
+outputs:
+  score_output:
+    type: uri_folder
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+code: ./score_src
+command: >-
+  python score.py
+  --model_input ${{inputs.model_input}}
+  --test_data ${{inputs.test_data}}
+  --score_output ${{outputs.score_output}}

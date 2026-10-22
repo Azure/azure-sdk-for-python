@@ -1,0 +1,6 @@
+{
+  "commit": "95e89f00932d2a8f04ff80e28f8ce10ee586ca7d",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/devopsinfrastructure/Microsoft.DevOpsInfrastructure.Management",
+  "@azure-tools/typespec-python": "0.36.0"
+}

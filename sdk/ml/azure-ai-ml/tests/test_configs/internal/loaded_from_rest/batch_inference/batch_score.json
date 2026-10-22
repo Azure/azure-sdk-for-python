@@ -1,0 +1,68 @@
+{
+  "description": "Score images with MNIST image classification model.",
+  "tags": {
+    "Parallel": "",
+    "Sample": "",
+    "contact": "Microsoft Corporation <xxx@microsoft.com>",
+    "helpDocument": "https://aka.ms/parallel-modules"
+  },
+  "version": "0.0.1",
+  "$schema": "https://componentsdk.azureedge.net/jsonschema/ParallelComponent.json",
+  "display_name": "Parallel Score Image Classification with MNIST",
+  "is_deterministic": true,
+  "inputs": {
+    "model_path": {
+      "type": "path",
+      "description": "Trained MNIST image classification model.",
+      "datastore_mode": "Mount",
+      "optional": false
+    },
+    "images_to_score": {
+      "type": "path",
+      "description": "Images to score.",
+      "datastore_mode": "Mount",
+      "optional": false
+    }
+  },
+  "outputs": {
+    "scored_dataset": {
+      "type": "path",
+      "description": "Output folder to save scored result.",
+      "datastore_mode": "Upload"
+    }
+  },
+  "type": "ParallelComponent",
+  "environment": {
+    "docker": {
+      "image": "mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04"
+    },
+    "conda": {
+      "conda_dependencies": {
+        "channels": [
+          "defaults"
+        ],
+        "dependencies": [
+          "python=3.7.9",
+          "pip=20.0",
+          {
+            "pip": [
+              "protobuf==3.20.1",
+              "tensorflow==1.15.2",
+              "pillow",
+              "azureml-core",
+              "azureml-dataset-runtime[fuse, pandas]"
+            ]
+          }
+        ],
+        "name": "batch_environment"
+      }
+    },
+    "os": "Linux"
+  },
+  "parallel": {
+    "args": "--model_path {inputs.model_path} --scored_dataset {outputs.scored_dataset}",
+    "input_data": "inputs.images_to_score",
+    "output_data": "outputs.scored_dataset",
+    "entry": "batch_score.py"
+  }
+}

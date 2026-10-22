@@ -1,0 +1,8 @@
+recursive-include tests *.py
+recursive-include samples *.py *.md *.txt
+include *.md
+include azure/__init__.py
+include azure/ai/__init__.py
+include azure/ai/ml/py.typed
+include azure/ai/ml/_arm_deployments/arm_templates/*.json
+include azure/ai/ml/entities/_job/pipeline/data/*.yml

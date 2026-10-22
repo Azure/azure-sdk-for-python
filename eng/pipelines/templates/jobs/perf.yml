@@ -1,0 +1,51 @@
+parameters:
+- name: TimeoutInMinutes
+  type: number
+  default: '360'
+- name: LanguageVersion
+  type: string
+  default: '3.11'
+- name: ServiceDirectory
+  type: string
+  default: ''
+- name: PackageVersions
+  type: string
+  default: '.*'
+- name: Tests
+  type: string
+  default: '.*'
+- name: Arguments
+  type: string
+  default: '.*'
+- name: Iterations
+  type: number
+  default: '5'
+- name: AdditionalArguments
+  type: string
+  default: ''
+- name: EnvVars
+  type: object
+  default: {}
+
+extends:
+  template: /eng/common/pipelines/templates/jobs/perf.yml
+  parameters:
+    TimeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
+    Language: Python
+    LanguageVersion: ${{ parameters.LanguageVersion }}
+    Variables:
+    - template: /eng/pipelines/templates/variables/globals.yml
+    - name: PythonVersion
+      value: ${{ parameters.LanguageVersion }}
+    InstallLanguageSteps:
+    - task: UsePythonVersion@0
+      displayName: "Use Python $(PythonVersion)"
+      inputs:
+        versionSpec: $(PythonVersion)
+    ServiceDirectory: ${{ parameters.ServiceDirectory }}
+    PackageVersions: ${{ parameters.PackageVersions }}
+    Tests: ${{ parameters.Tests }}
+    Arguments: ${{ parameters.Arguments }}
+    Iterations: ${{ parameters.Iterations }}
+    AdditionalArguments: ${{ parameters.AdditionalArguments }}
+    EnvVars: ${{ parameters.EnvVars}}

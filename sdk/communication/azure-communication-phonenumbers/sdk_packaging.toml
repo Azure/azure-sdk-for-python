@@ -1,0 +1,7 @@
+[packaging]
+auto_update = false
+package_name = "azure-communication-phonenumbers"
+package_pprint_name = "Communication Phone Numbers"
+package_doc_id = ""
+is_stable = false
+is_arm = false

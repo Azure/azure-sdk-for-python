@@ -1,0 +1,16 @@
+description: This is a registry description
+name: registry_name
+id: registry_id
+tags:
+  purpose: testing
+  other_tag: value
+location: EastUS2
+public_network_access: Disabled
+intellectual_property:
+  publisher: registry_publisher
+replication_locations:
+  - location: EastUS
+    storage_config:
+        storage_account_hns: False
+        storage_account_type: Standard_RAGRS
+container_registry: /subscriptions/sub_id/resourceGroups/some_rg/providers/Microsoft.ContainerRegistry/registries/acr_id

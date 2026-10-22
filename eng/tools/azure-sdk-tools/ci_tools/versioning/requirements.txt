@@ -1,0 +1,3 @@
+packaging==23.1
+pyparsing==2.4.5
+setuptools==84.0.0

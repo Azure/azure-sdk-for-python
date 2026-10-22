@@ -1,0 +1,6 @@
+-e ../../../eng/tools/azure-sdk-tools
+aiohttp>=3.0
+-e ../../../eng/tools/azure-sdk-tools
+../../core/azure-core
+azure-identity
+../../nspkg/azure-security-nspkg

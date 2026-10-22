@@ -1,0 +1,56 @@
+type: pipeline
+
+name: simplePipelineJobWithPathInputOutput
+description: The hello world pipeline job with input/output type of path
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  job_in_mltable_mount:
+    type: mltable
+    path: file:./data
+    mode: ro_mount
+
+  job_in_mltable_url:
+    type: mltable
+    path: azureml://datastores/some_datastore/paths/data/public/mnist
+    mode: download
+
+  job_in_mltable_eval:
+    type: mltable
+    path: azureml:mnist_files:1
+    mode: download
+outputs:
+  job_out_mltable_rw_mount:
+    type: mltable
+    mode: rw_mount
+  job_out_mltable_upload:
+    type: mltable
+    mode: upload  # TODO: eval_mount not supported yet?
+
+jobs:
+  hello_world_component:
+    type: command
+    component: file:../../components/type_contract/mltable.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_mltable_mount:
+        type: mltable
+        path: file:./data
+        mode: ro_mount
+
+      component_in_mltable_url:
+        type: mltable
+        path: azureml://datastores/some_datastore/paths/data/public/mnist
+        mode: download
+
+      component_in_mltable_eval:
+        type: mltable
+        path: azureml:mnist_files:1
+        mode: download  # eval_mount
+    outputs:
+      component_out_mltable_rw_mount: ${{parent.outputs.job_out_mltable_rw_mount}}
+      component_out_mltable_upload: ${{parent.outputs.job_out_mltable_upload}}

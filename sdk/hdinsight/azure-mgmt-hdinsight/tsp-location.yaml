@@ -1,0 +1,4 @@
+directory: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsight
+commit: ecd420c9534d0dab69be38027c1723031504b081
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

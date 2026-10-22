@@ -1,0 +1,282 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+import logging
+from typing import Any, Callable, Dict, List, Optional
+
+from openai import RateLimitError as OpenAIRateLimitError
+from pyrit.exceptions import (
+    EmptyResponseException,
+    RateLimitException,
+    pyrit_target_retry,
+)
+from pyrit.models import (
+    Message,
+    construct_response_from_request,
+)
+from pyrit.prompt_target import PromptChatTarget
+
+logger = logging.getLogger(__name__)
+
+
+class _CallbackChatTarget(PromptChatTarget):
+    def __init__(
+        self,
+        *,
+        callback: Callable[[List[Dict], bool, Optional[str], Optional[Dict[str, Any]]], Dict],
+        stream: bool = False,
+        retry_enabled: bool = True,
+    ) -> None:
+        """
+        Initializes an instance of the _CallbackChatTarget class.
+
+        It is intended to be used with PyRIT where users define a callback function
+        that handles sending a prompt to a target and receiving a response.
+        The _CallbackChatTarget class is a wrapper around the callback function that allows it to be used
+        as a target in the PyRIT framework.
+        For that reason, it merely handles additional functionality such as memory.
+
+        Args:
+            callback (Callable): The callback function that sends a prompt to a target and receives a response.
+            stream (bool, optional): Indicates whether the target supports streaming. Defaults to False.
+            retry_enabled (bool, optional): Enables retry with exponential backoff for rate limit errors
+                and empty responses using PyRIT's @pyrit_target_retry decorator. Defaults to True.
+        """
+        PromptChatTarget.__init__(self)
+        self._callback = callback
+        self._stream = stream
+        self._retry_enabled = retry_enabled
+
+    async def send_prompt_async(
+        self,
+        *,
+        message: Optional[Message] = None,
+        prompt_request: Optional[Message] = None,
+    ) -> List[Message]:
+        """
+        Sends a prompt to the callback target and returns the response.
+
+        When retry_enabled=True (default), this method will retry on rate limit errors
+        and empty responses using PyRIT's exponential backoff strategy.
+
+        Args:
+            message: The message to send to the target (PyRIT standard keyword).
+            prompt_request: Alias for message (SDK compatibility keyword).
+                Either message or prompt_request must be provided, but not both.
+
+        Returns:
+            A list containing the response message.
+
+        Raises:
+            RateLimitException: When rate limit is hit and retries are exhausted.
+            EmptyResponseException: When callback returns empty response and retries are exhausted.
+            ValueError: If neither or both message and prompt_request are provided.
+        """
+        # Accept both 'message' (PyRIT standard) and 'prompt_request' (SDK convention) for compatibility
+        if message is not None and prompt_request is not None:
+            raise ValueError("Provide either 'message' or 'prompt_request', not both.")
+        request_message = message or prompt_request
+        if request_message is None:
+            raise ValueError("Either 'message' or 'prompt_request' must be provided.")
+
+        if self._retry_enabled:
+            return await self._send_prompt_with_retry(message=request_message)
+        else:
+            return await self._send_prompt_impl(message=request_message)
+
+    @pyrit_target_retry
+    async def _send_prompt_with_retry(self, *, message: Message) -> List[Message]:
+        """
+        Internal method with retry decorator applied.
+
+        This method wraps _send_prompt_impl with PyRIT's retry logic for handling
+        rate limit errors and empty responses with exponential backoff.
+        """
+        return await self._send_prompt_impl(message=message)
+
+    def _resolve_content(self, piece: Any) -> str:
+        """Resolve the text content for a message piece, reading file content for binary_path pieces.
+
+        XPIA (indirect jailbreak) strategy creates file-based context prompts with
+        binary_path data type, but model targets only support text content. This helper
+        reads the file and returns its contents for binary_path pieces, or returns the
+        converted/original value as-is for other data types.
+
+        Args:
+            piece: A message piece with converted_value, original_value, and
+                converted_value_data_type attributes.
+
+        Returns:
+            The resolved text content string.
+        """
+        value = piece.converted_value or piece.original_value or ""
+        if getattr(piece, "converted_value_data_type", None) == "binary_path" and isinstance(value, str) and value:
+            try:
+                # Synchronous read is intentional here — XPIA context files are small
+                # text files, so the blocking I/O is negligible.
+                with open(value, "r", encoding="utf-8", errors="replace") as f:
+                    return f.read()
+            except (OSError, IOError) as exc:
+                logger.warning(
+                    "Failed to read binary_path file %s: %s. Falling back to file path string.",
+                    value,
+                    exc,
+                )
+                return value
+        return value
+
+    async def _send_prompt_impl(self, *, message: Message) -> List[Message]:
+        """
+        Core implementation of send_prompt_async.
+
+        Handles conversation history, context extraction, callback invocation,
+        and response processing. Translates OpenAI RateLimitError to PyRIT's
+        RateLimitException for retry handling.
+        """
+        self._validate_request(prompt_request=message)
+        request = message.get_piece(0)
+
+        request_content = self._resolve_content(request)
+
+        # Get conversation history and convert to chat message format
+        conversation_history = self._memory.get_conversation(conversation_id=request.conversation_id)
+        messages: List[Dict[str, str]] = []
+        extracted_contexts: List[Dict[str, Any]] = []
+        for msg in conversation_history:
+            for piece in msg.message_pieces:
+                # Any SeedPrompt marked with is_context=True should be excluded from
+                # prior conversation messages so sensitive context does not leak into
+                # chat history. When a tool_name is present, extract it for the
+                # context dict used by the callback to build FunctionTool injections.
+                pm = getattr(piece, "prompt_metadata", None)
+                if isinstance(pm, dict) and pm.get("is_context") is True:
+                    if pm.get("tool_name"):
+                        extracted_contexts.append(
+                            {
+                                "content": self._resolve_content(piece),
+                                "tool_name": pm["tool_name"],
+                                "context_type": pm.get("context_type", "text"),
+                            }
+                        )
+                    continue
+
+                messages.append(
+                    {
+                        "role": (piece.api_role if hasattr(piece, "api_role") else str(piece.role)),
+                        "content": self._resolve_content(piece),
+                    }
+                )
+
+        # Add current request
+        messages.append(
+            {
+                "role": (request.api_role if hasattr(request, "api_role") else str(request.role)),
+                "content": request_content,
+            }
+        )
+
+        logger.debug(f"Sending the following prompt to the prompt target: {request}")
+
+        # Extract context from request labels if available
+        # The context is stored in memory labels when the prompt is sent by orchestrator
+        context_dict = {}
+        if hasattr(request, "labels") and request.labels and "context" in request.labels:
+            context_data = request.labels["context"]
+            if context_data and isinstance(context_data, dict):
+                # context_data is always a dict with 'contexts' list
+                # Each context can have its own context_type and tool_name
+                contexts = context_data.get("contexts", [])
+
+                # Build context_dict to pass to callback
+                context_dict = {"contexts": contexts}
+
+                # Check if any context has agent-specific fields for logging
+                has_agent_fields = any(
+                    isinstance(ctx, dict)
+                    and ("context_type" in ctx and "tool_name" in ctx and ctx["tool_name"] is not None)
+                    for ctx in contexts
+                )
+
+                if has_agent_fields:
+                    tool_names = [
+                        ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx
+                    ]
+                    logger.debug(f"Extracted agent context: {len(contexts)} context source(s), tool_names={tool_names}")
+                else:
+                    logger.debug(f"Extracted model context: {len(contexts)} context source(s)")
+
+        # Fallback: use tool context extracted from conversation history above.
+        # In the Foundry path, context SeedPrompts are stored as
+        # prepended_conversation with tool_name in prompt_metadata. They were
+        # filtered out of the messages list and collected into extracted_contexts.
+        if not context_dict.get("contexts") and extracted_contexts:
+            context_dict = {"contexts": extracted_contexts}
+            tool_names = [c["tool_name"] for c in extracted_contexts]
+            logger.debug(
+                f"Extracted tool context from conversation history: "
+                f"{len(extracted_contexts)} context source(s), tool_names={tool_names}"
+            )
+
+        # Invoke callback with exception translation for retry handling
+        try:
+            # response_context contains "messages", "stream", "session_state, "context"
+            response = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
+        except OpenAIRateLimitError as e:
+            # Translate OpenAI RateLimitError to PyRIT RateLimitException for retry decorator
+            logger.warning(f"Rate limit error from callback, translating for retry: {e}")
+            raise RateLimitException(status_code=429, message=str(e)) from e
+        except Exception as e:
+            # Check for rate limit indicators in error message (fallback detection)
+            error_str = str(e).lower()
+            if "rate limit" in error_str or "429" in error_str or "too many requests" in error_str:
+                logger.warning(f"Rate limit detected in error message, translating for retry: {e}")
+                raise RateLimitException(status_code=429, message=str(e)) from e
+            raise
+
+        # Store token_usage before processing tuple
+        token_usage = None
+        if isinstance(response, dict) and "token_usage" in response:
+            token_usage = response["token_usage"]
+
+        if type(response) == tuple:
+            response, tool_output = response
+            request.labels["tool_calls"] = tool_output
+            # Check for token_usage in the response dict from tuple
+            if isinstance(response, dict) and "token_usage" in response:
+                token_usage = response["token_usage"]
+
+        if not isinstance(response, dict) or "messages" not in response or not response["messages"]:
+            raise ValueError(
+                f"Callback returned invalid response: expected dict with non-empty 'messages', got {type(response)}"
+            )
+
+        response_text = response["messages"][-1]["content"]
+
+        # Check for empty response and raise EmptyResponseException for retry
+        if not response_text or (isinstance(response_text, str) and response_text.strip() == ""):
+            logger.warning("Callback returned empty response")
+            raise EmptyResponseException(message="Callback returned empty response")
+
+        response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text])
+
+        # Add token_usage to the response entry's labels (not the request)
+        if token_usage:
+            response_entry.get_piece(0).labels["token_usage"] = token_usage
+            logger.debug(f"Captured token usage from callback: {token_usage}")
+
+        logger.debug("Received the following response from the prompt target" + f"{response_text}")
+        return [response_entry]
+
+    def _validate_request(self, *, prompt_request: Message) -> None:
+        if len(prompt_request.message_pieces) != 1:
+            raise ValueError("This target only supports a single prompt request piece.")
+
+        data_type = prompt_request.get_piece(0).converted_value_data_type
+        if data_type not in ("text", "image_path", "binary_path"):
+            raise ValueError(
+                f"This target only supports text, image_path, and binary_path prompt input. " f"Received: {data_type}."
+            )
+
+    def is_json_response_supported(self) -> bool:
+        """Indicates that this target supports JSON response format."""
+        return False

@@ -1,0 +1,112 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/ScopeComponent.json
+
+name: bing_relevance_convert2ss
+version: 0.0.1
+display_name: Convert Text to StructureStream
+
+type: ScopeComponent
+
+is_deterministic: True
+
+tags:
+  org: bing
+  project: relevance
+
+description: Convert ADLS test data to SS format
+
+inputs:
+  # data
+  data_path:
+    type: path
+  data_azureml_dataset:
+    type: AzureMLDataset
+  # used by builtin components
+  data_any_directory:
+    type: AnyDirectory
+  data_any_file:
+    type: AnyFile
+  data_zip_file:
+    type: ZipFile
+  data_csv_file:
+    type: CsvFile
+  data_transformation_directory:
+    type: TransformationDirectory
+  data_untrained_model_directory:
+    type: UntrainedModelDirectory
+  data_image_directory:
+    type: ImageDirectory
+  data_model_directory:
+    type: ModelDirectory
+  data_data_frame_directory:
+    type: DataFrameDirectory
+  # used by Scope components
+  data_cosmos_structured_stream:
+    type: CosmosStructuredStream
+
+  # parameters
+  param_string:
+    type: string
+  param_string_cap:
+    type: String
+  param_int:
+    type: integer
+  param_int_cap:
+    type: Integer
+  param_float:
+    type: float
+  param_float_cap:
+    type: Float
+  param_bool:
+    type: boolean
+  param_bool_cap:
+    type: Boolean
+  param_enum:
+    type: enum
+    enum: [minimal, reuse, expiry, policies]
+  param_enum_cap:
+    type: Enum
+    enum: [minimal, reuse, expiry, policies]
+
+outputs:
+  # data
+  data_path:
+    type: path
+  data_azureml_dataset:
+    type: AzureMLDataset
+  # used by builtin components
+  data_any_directory:
+    type: AnyDirectory
+  data_any_file:
+    type: AnyFile
+  data_zip_file:
+    type: ZipFile
+  data_csv_file:
+    type: CsvFile
+  data_transformation_directory:
+    type: TransformationDirectory
+  data_untrained_model_directory:
+    type: UntrainedModelDirectory
+  data_image_directory:
+    type: ImageDirectory
+  data_model_directory:
+    type: ModelDirectory
+  data_data_frame_directory:
+    type: DataFrameDirectory
+  # used by Scope components
+  data_cosmos_structured_stream:
+    type: CosmosStructuredStream
+
+code: ../scope
+
+environment: azureml:AzureEnv:1
+
+scope:
+  script: convert2ss.script
+  # to reference the inputs/outputs in your script
+  # you must define the argument name of your intpus/outputs in args section
+  # Both 'argument_name {inputs.input_name}' and 'argument_name={inputs.input_name}' are supported
+  # for example, if you define your args as below, you can use @@Input_TextData@@ to refer to your component's input TextData
+  args: >-
+    Input_TextData {inputs.TextData}
+    ExtractionClause={inputs.ExtractionClause}
+    Output_SSPath {outputs.SSPath}

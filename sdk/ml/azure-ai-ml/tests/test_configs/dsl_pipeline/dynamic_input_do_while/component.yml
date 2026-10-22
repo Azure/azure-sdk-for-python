@@ -1,0 +1,20 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+name: component_with_optional_input
+command: >-
+  echo ${{inputs.required_input}}
+  && echo $[[${{inputs.optional_input}}
+  && echo ${{outputs.output1}}
+  && echo ${{outputs.output2}}
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:1
+inputs:
+  required_input:
+    type: uri_folder
+  optional_input:
+    type: uri_folder
+    optional: true
+outputs:
+  output1:
+    type: uri_folder
+  output2:
+    type: uri_folder

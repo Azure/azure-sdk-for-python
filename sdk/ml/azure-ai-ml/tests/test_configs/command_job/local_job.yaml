@@ -1,0 +1,8 @@
+type: command
+command: echo "hi world"
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+compute: local
+properties:
+  my_property: foo
+tags:
+  add_tag: "added on job"

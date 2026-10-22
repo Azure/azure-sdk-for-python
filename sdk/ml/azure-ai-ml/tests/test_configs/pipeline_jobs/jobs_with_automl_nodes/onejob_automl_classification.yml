@@ -1,0 +1,43 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+name: simplepipelinejob
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+experiment_name: my_first_experiment
+
+compute: azureml:cpu-cluster
+
+settings:
+  continue_on_step_failure: false
+inputs:
+  classification_train_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/bank_marketing/train
+  classification_validate_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/bank_marketing/valid
+  classification_test_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/bank_marketing/valid
+
+jobs:
+  hello_automl_classification:
+    type: automl
+    task: classification
+    primary_metric: accuracy
+    limits:
+      max_trials: 1
+      max_concurrent_trials: 1
+    target_column_name: y
+    training_data: ${{parent.inputs.classification_train_data}}
+    validation_data: ${{parent.inputs.classification_validate_data}}
+    test_data: ${{parent.inputs.classification_test_data}}
+    featurization:
+      mode: "auto"
+    training:
+      enable_stack_ensemble: false
+      enable_vote_ensemble: false

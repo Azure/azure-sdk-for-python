@@ -1,0 +1,260 @@
+iscai-msft is not a public member of Azure.
+luigiw is not a public member of Azure.
+singankit is not a public member of Azure.
+bhargav-kansagara is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+mametcal is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+anilba06 is not a public member of Azure.
+acsdevx-msft is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+miguhern is not a public member of Azure.
+RoyHerrod is not a public member of Azure.
+danielav7 is not a public member of Azure.
+alexokun is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Mrayyan is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+shwali-msft is not a public member of Azure.
+allchiang-msft is not a public member of Azure.
+mikehang-msft is not a public member of Azure.
+DimaKolomiiets is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+phermanov-msft is not a public member of Azure.
+Azure/acs-identity-sdk is an invalid team. Ensure the team exists and has write permissions.
+mengaims is not a public member of Azure.
+JieZhou000 is not a public member of Azure.
+azmonapplicationinsights is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+'Consumption' is not a valid label for this repository.
+sandeepnl is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+samkreter is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+xizhamsft is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+pjohari-ms is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+AbhinavTrips is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+hvermis is not a public member of Azure.
+ro-joowan is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+vchske is not a public member of Azure.
+'Device Provisioning' is not a valid label for this repository.
+c-ryan-k is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+dpokluda is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+sedols is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+idear1203 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+shutchings is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ninghu is not a public member of Azure.
+sogansky is not a public member of Azure.
+code-vicar is not a public member of Azure.
+pritamDas9191 is not a public member of Azure.
+NonStatic2014 is not a public member of Azure.
+arunsu is not a public member of Azure.
+JustinFirsching is not a public member of Azure.
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job* ends in a wildcard '*'. For directories use '*/' to match files in multiple directories starting with. For files match the file extension, '*.md' or all files in a single directory '/*'
+rtanase is not a public member of Azure.
+PhaniShekhar is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+sharma-riti is not a public member of Azure.
+jialiu103 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+nick863 is not a public member of Azure.
+yuanzhuangyuanzhuang is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+anupsms is not a public member of Azure.
+seanyao1 is not a public member of Azure.
+alextts627 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+RamonArguelles is not a public member of Azure.
+glecaros is not a public member of Azure.
+DheerendraRathor is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+QingChenmsft is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+samedder is not a public member of Azure.
+yanjungao718 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+wangyuantao is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+conhua is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+juaduan is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+moreOver0 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+sharathmalladi is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+naiteeks is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+giakas is not a public member of Azure.
+Aashish93-stack is not a public member of Azure.
+Satya-Kolluri is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+shurd is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+southpolesteve is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+adamedx is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Azure/aks-pm is an invalid team. Ensure the team exists and has write permissions.
+liadtal is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+yairgil is not a public member of Azure.
+armleads-azure is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+mojayara is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Prasanna-Padmanabhan is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+athipp is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+taiwu is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+minghan is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+miaojiang is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+'Application Insights' is not a valid label for this repository.
+antcp is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+AzureAppServiceCLI is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+mjudeikis is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+julienstroheker is not a public member of Azure.
+amanohar is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+darshanhs90 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+AshishGargMicrosoft is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+jaspkaur28 is not a public member of Azure.
+omairabdullah is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+divka78 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+amitchat is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+aishu is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+sijuman is not a public member of Azure.
+sarathys is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+rakku-ms is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+bgklein is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+cRui861 is not a public member of Azure.
+cabbpt is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+alex-frankel is not a public member of Azure.
+filizt is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+sgellock is not a public member of Azure.
+maertendMSFT is not a public member of Azure.
+ctstone is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+vkurpad is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+areddish is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+tburns10 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ryogok is not a public member of Azure.
+TFR258 is not a public member of Azure.
+dipidoo is not a public member of Azure.
+SteveMSFT is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+bingisbestest is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+nerajput1607 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+robch is not a public member of Azure.
+oscholz is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+cahann is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+kayousef is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+swiftarrow11 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+dwaijam is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+metanMSFT is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+olduroja is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+jaggerbodas-ms is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+arwong is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ms-premp is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+avirishuv is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+vaibhav-agar is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+amjads1 is not a public member of Azure.
+akashkeshari is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+toddysm is not a public member of Azure.
+jwilder is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+seanmck is not a public member of Azure.
+shefymk is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+manoharp is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+MSEvanhi is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+adriankjohnson is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+arindamc is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+tmvishwajit is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+matdickson is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+manuaery is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+madhurinms is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+a-t-mason is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ganzee is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ingave is not a public member of Azure.
+lmy269 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+sumantmehtams is not a public member of Azure.
+radjaram is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+kavitham10 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+raedJarrar is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+jifems is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+narula0781 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ashishonce is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+romil07 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+yuzorMa is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+johnsta is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+greenie-msft is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Tanmayeekamath is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+'Device Provisioning Service' is not a valid label for this repository.
+nberdy is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+inesk-vt is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+kasun04 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ahmedelnably is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+dkershaw10 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+baywet is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+mgreenegit is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+vivlingaiah is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+deshriva is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+romahamu is not a public member of Azure.
+omzevall is not a public member of Azure.
+jlichwa is not a public member of Azure.
+NarayanThiru is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ilayrn is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+orhasban is not a public member of Azure.
+zoharHenMicrosoft is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Aviv-Yaniv is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Azure/azure-logicapps-team is an invalid team. Ensure the team exists and has write permissions.
+minamnmik is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+varunkch is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+azureml-github is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Azure/azure-ml-sdk is an invalid team. Ensure the team exists and has write permissions.
+'Managed Services' is not a valid label for this repository.
+Lighthouse-Azure is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ambhatna is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+savjani is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+prbansa is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+akucer is not a public member of Azure.
+shijojoy is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+kpiteira is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+dadunl is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+AzmonAlerts is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+AzmonLogA is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+aznetsuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+appgwsuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+cdnfdsuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ddossuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+exrsuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+fwsuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+slbsupportgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+vnetsuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+netwatchsuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+dnssuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+tmsuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+vpngwsuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+tjsomasundaram is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+'Operational Insights' is not a valid label for this repository.
+aperezcloud is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+kenieva is not a public member of Azure.
+sunilagarwal is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+lfittl-msft is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+sr-msft is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+niklarin is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Daya-Patil is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Sharmistha-Rai is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+yegu-ms is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Rkapso is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+chiragg4u is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+stephbaron is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+derek1ee is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+tjacobhi is not a public member of Azure.
+miwelsh is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+chlahav is not a public member of Azure.
+EldertGrootenboer is not a public member of Azure.
+juhacket is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+arerlend is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+sffamily is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+chenkennt is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+azureSQLGitHub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+anoobbacker is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+patelkunal is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+atpham256 is not a public member of Azure.
+anuragdalmia is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+shilpigautam is not a public member of Azure.
+shahbj79 is not a public member of Azure.
+aygoya is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ganganarayanan is not a public member of Azure.
+zesluo is not a public member of Azure.
+klaaslanghout is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Shipra1Mishra is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+zhusijia26 is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+vwansuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+nvasuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+bastionsuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+privlinksuppgithub is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+rpsqrd is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+edyoung is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+amirkeren is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+Azure/azure-iot-cli-triage is an invalid team. Ensure the team exists and has write permissions.
+'ML-Hyperdrive' is not a valid label for this repository.
+'ML-Core UI' is not a valid label for this repository.
+SturgeonMi is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+kvijaykannan is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+lostmygithubaccount is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+minthigpen is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ccmaxpcrew is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ccmixpdevs is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ccmbpxpcrew is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+TiagoCrewGitHubIssues is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+ccmshowbackdevs is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+lynshi is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+maertendMSFT is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.

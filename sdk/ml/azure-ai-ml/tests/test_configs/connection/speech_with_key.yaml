@@ -1,0 +1,4 @@
+name: speech_api
+type: azure_speech_services
+endpoint: my_endpoint
+api_key: "2222"

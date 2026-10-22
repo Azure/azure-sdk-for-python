@@ -1,0 +1,4 @@
+name: testIrisData
+version: 1
+description: iris dataset
+local_path: ../data

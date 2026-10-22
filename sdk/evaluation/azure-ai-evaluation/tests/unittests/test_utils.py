@@ -1,0 +1,1677 @@
+import pytest
+import unittest
+import os
+import pathlib
+import base64
+import json
+
+from azure.ai.evaluation._common.utils import nltk_tokenize
+from azure.ai.evaluation._common.utils import validate_conversation
+from azure.ai.evaluation._common.utils import (
+    _extract_text_from_content,
+    _get_conversation_history,
+    _pretty_format_conversation_history,
+    reformat_conversation_history,
+    _get_agent_response,
+    reformat_agent_response,
+    reformat_tool_definitions,
+    construct_prompty_model_config,
+    _stringify_tool_result,
+    _log_safe_summary,
+    _coerce_bool,
+    _coerce_number,
+    _collect_failed_tool_calls,
+    _get_tool_calls_results,
+    _reformat_tool_calls_results,
+)
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage, ErrorTarget
+
+
+@pytest.mark.unittest
+class TestUtils(unittest.TestCase):
+    def test_nltk_tokenize(self):
+
+        # Test with English text
+        text = "The capital of China is Beijing."
+        tokens = nltk_tokenize(text)
+
+        assert tokens == ["The", "capital", "of", "China", "is", "Beijing", "."]
+
+        # Test with Multi-language text
+        text = "The capital of China is 北京."
+        tokens = nltk_tokenize(text)
+
+        assert tokens == ["The", "capital", "of", "China", "is", "北京", "."]
+
+    def convert_json_list_to_jsonl(self, project_scope, azure_cred):
+
+        parent = pathlib.Path(__file__).parent.resolve()
+        path = os.path.join(parent, "data")
+        image_path = os.path.join(path, "image1.jpg")
+
+        with pathlib.Path(image_path).open("rb") as image_file:
+            encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+
+        conversation = [
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                    }
+                ],
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Can you describe this image?"},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"},
+                    },
+                ],
+            },
+        ]
+
+        messages = [{"messages": conversation}]
+        datafile_jsonl_path = os.path.join(path, "datafile.jsonl")
+        with open(datafile_jsonl_path, "w") as outfile:
+            for json_obj in messages:
+                json_line = json.dumps(json_obj)
+                outfile.write(json_line + "\n")
+
+    def test_messages_with_one_assistant_message(self):
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                        }
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+        validate_conversation(conversation=conversation)
+
+    def test_messages_with_missing_assistant_message(self):
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                        }
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+            ]
+        }
+        try:
+            validate_conversation(conversation=conversation)
+        except EvaluationException as ex:
+            assert ex.message in "Assistant role required in one of the messages."
+
+    def test_messages_with_missing_user_message(self):
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                        }
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "text", "text": "Here is the picture you requested"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+            ]
+        }
+        try:
+            validate_conversation(conversation=conversation)
+        except EvaluationException as ex:
+            assert ex.message in "User role required in one of the messages."
+
+    def test_messages_with_more_than_one_assistant_message(self):
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                        }
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+        try:
+            validate_conversation(conversation=conversation)
+        except EvaluationException as ex:
+            assert (
+                ex.message
+                in "Evaluators for multimodal conversations only support single turn. User and assistant role expected as the only role in each message."
+            )
+
+    def test_messages_multi_turn(self):
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                        }
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Okay, try again with this image"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a same man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+        try:
+            validate_conversation(conversation=conversation)
+        except EvaluationException as ex:
+            assert (
+                ex.message
+                in "Evaluators for multimodal conversations only support single turn. User and assistant role expected as the only role in each message."
+            )
+
+    def test__extract_text_from_content(self):
+        """Test _extract_text_from_content function"""
+        # Test with content containing text
+        content = [
+            {"type": "text", "text": "Hello world"},
+            {"type": "text", "text": "How are you?"},
+            {"type": "image_url", "image_url": {"url": "http://example.com/image.jpg"}},
+        ]
+        result = _extract_text_from_content(content)
+        assert result == ["Hello world", "How are you?"]
+
+        # Test with empty content
+        result = _extract_text_from_content([])
+        assert result == []
+
+        # Test with content without text
+        content = [
+            {"type": "image_url", "image_url": {"url": "http://example.com/image.jpg"}},
+            {"type": "other", "data": "some data"},
+        ]
+        result = _extract_text_from_content(content)
+        assert result == []
+
+        # Test with mixed content
+        content = [
+            {"type": "text", "text": "First message"},
+            {"type": "image_url", "image_url": {"url": "http://example.com/image.jpg"}},
+            {"type": "text", "text": "Second message"},
+        ]
+        result = _extract_text_from_content(content)
+        assert result == ["First message", "Second message"]
+
+    def test__get_conversation_history(self):
+        """Test _get_conversation_history function"""
+        # Test basic conversation
+        query = [
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "What is the weather?"}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "It's sunny today."}],
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "Will it rain tomorrow?"}],
+            },
+        ]
+
+        result = _get_conversation_history(query)
+        expected = {
+            "user_queries": [[["What is the weather?"]], [["Will it rain tomorrow?"]]],
+            "agent_responses": [[["It's sunny today."]]],
+        }
+        assert result == expected
+
+        # Test conversation with multiple messages per turn
+        query = [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Hello"},
+                    {"type": "text", "text": "How are you?"},
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Hi there!"},
+                    {"type": "text", "text": "I'm doing well, thanks."},
+                ],
+            },
+        ]
+
+        # there is an assertion because there is one user query ["Hello", "How are you?"] and one agent response ["Hi there!", "I'm doing well, thanks."]
+        # the user query length needs to be one more than the agent response length
+        with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
+            _get_conversation_history(query)
+
+        # Test conversation ending with user message
+        query = [
+            {"role": "user", "content": [{"type": "text", "text": "First question"}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "First answer"}],
+            },
+            {"role": "user", "content": [{"type": "text", "text": "Second question"}]},
+        ]
+
+        result = _get_conversation_history(query)
+        expected = {
+            "user_queries": [[["First question"]], [["Second question"]]],
+            "agent_responses": [[["First answer"]]],
+        }
+        assert result == expected
+
+    def test__get_conversation_history_with_system_messages(self):
+        """Test _get_conversation_history with system messages"""
+        query = [
+            {"role": "system", "content": "This is a system message."},
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "What is the weather?"}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "It's sunny today."}],
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "Will it rain tomorrow?"}],
+            },
+        ]
+
+        result = _get_conversation_history(query, include_system_messages=True)
+        expected = {
+            "system_message": "This is a system message.",
+            "user_queries": [[["What is the weather?"]], [["Will it rain tomorrow?"]]],
+            "agent_responses": [[["It's sunny today."]]],
+        }
+        assert result == expected
+
+    def test__get_conversation_history_with_typed_system_message(self):
+        """Test typed text content in system messages."""
+        query = [
+            {
+                "role": "system",
+                "content": [{"type": "text", "text": "This is a system message."}],
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "What is the weather?"}],
+            },
+        ]
+
+        result = _get_conversation_history(query, include_system_messages=True)
+
+        assert result == {
+            "system_message": "This is a system message.",
+            "user_queries": [[["What is the weather?"]]],
+            "agent_responses": [],
+        }
+
+    def test__get_conversation_history_with_invalid_data(self):
+        """Test _get_conversation_history with edge cases"""
+        # Test with messages missing role
+        query = [
+            {"content": [{"type": "text", "text": "No role"}]},
+            {"role": "user", "content": [{"type": "text", "text": "Has role"}]},
+        ]
+
+        result = _get_conversation_history(query)
+        expected = {"user_queries": [[["Has role"]]], "agent_responses": []}
+        assert result == expected
+
+        # Test with messages missing content
+        query = [
+            {"role": "user"},
+            {"role": "user", "content": [{"type": "text", "text": "Has content"}]},
+        ]
+
+        result = _get_conversation_history(query)
+        expected = {"user_queries": [[["Has content"]]], "agent_responses": []}
+        assert result == expected
+
+    def test__pretty_format_conversation_history(self):
+        """Test _pretty_format_conversation_history function"""
+        conversation_history = {
+            "user_queries": [[["What is the weather?"]], [["Will it rain tomorrow?"]]],
+            "agent_responses": [[["It's sunny today."]]],
+        }
+
+        result = _pretty_format_conversation_history(conversation_history)
+        expected = (
+            "User turn 1:\n"
+            "  What is the weather?\n\n"
+            "Agent turn 1:\n"
+            "  It's sunny today.\n\n"
+            "User turn 2:\n"
+            "  Will it rain tomorrow?\n\n"
+        )
+        assert result == expected
+
+        # Test with multiple messages per turn
+        conversation_history = {
+            "user_queries": [[["Hello", "How are you?"]]],
+            "agent_responses": [[["Hi there!", "I'm doing well, thanks."]]],
+        }
+
+        result = _pretty_format_conversation_history(conversation_history)
+        expected = (
+            "User turn 1:\n"
+            "  Hello\n  How are you?\n\n"
+            "Agent turn 1:\n"
+            "  Hi there!\n  I'm doing well, thanks.\n\n"
+        )
+        assert result == expected
+
+    def test__pretty_format_conversation_history_with_system_messages(self):
+        """Test _pretty_format_conversation_history with system messages"""
+        conversation_history = {
+            "system_message": "This is a system message.",
+            "user_queries": [[["What is the weather?"]]],
+            "agent_responses": [[["It's sunny today."]]],
+        }
+
+        result = _pretty_format_conversation_history(conversation_history)
+        expected = (
+            "SYSTEM_PROMPT:\n"
+            "  This is a system message.\n\n"
+            "User turn 1:\n"
+            "  What is the weather?\n\n"
+            "Agent turn 1:\n"
+            "  It's sunny today.\n\n"
+        )
+        assert result == expected
+
+    def test_reformat_conversation_history(self):
+        """Test reformat_conversation_history function"""
+        # Test valid conversation
+        query = [
+            {"role": "user", "content": [{"type": "text", "text": "What is AI?"}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "AI stands for Artificial Intelligence."}],
+            },
+            {"role": "user", "content": [{"type": "text", "text": "Tell me more."}]},
+        ]
+
+        result = reformat_conversation_history(query)
+        expected = (
+            "User turn 1:\n"
+            "  What is AI?\n\n"
+            "Agent turn 1:\n"
+            "  AI stands for Artificial Intelligence.\n\n"
+            "User turn 2:\n"
+            "  Tell me more.\n\n"
+        )
+        assert result == expected
+
+        # Test fallback behavior with invalid input
+        invalid_query = "This is not a valid conversation format"
+        result = reformat_conversation_history(invalid_query)
+        assert result == invalid_query
+
+    def test_reformat_conversation_history_with_system_messages(self):
+        """Test reformat_conversation_history with system messages"""
+        query = [
+            {"role": "system", "content": "This is a system message."},
+            {"role": "user", "content": [{"type": "text", "text": "What is AI?"}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "AI stands for Artificial Intelligence."}],
+            },
+            {"role": "user", "content": [{"type": "text", "text": "Tell me more."}]},
+        ]
+
+        result = reformat_conversation_history(query, include_system_messages=True)
+        expected = (
+            "SYSTEM_PROMPT:\n"
+            "  This is a system message.\n\n"
+            "User turn 1:\n"
+            "  What is AI?\n\n"
+            "Agent turn 1:\n"
+            "  AI stands for Artificial Intelligence.\n\n"
+            "User turn 2:\n"
+            "  Tell me more.\n\n"
+        )
+        assert result == expected
+
+    def test_reformat_conversation_history_with_typed_system_message(self):
+        """Test typed system content with both conversation-history paths."""
+        query = [
+            {
+                "role": "system",
+                "content": [{"type": "text", "text": "This is a system message."}],
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "What is AI?"}],
+            },
+        ]
+        expected = "SYSTEM_PROMPT:\n" "  This is a system message.\n\n" "User turn 1:\n" "  What is AI?\n\n"
+
+        for include_tool_calls in (False, True):
+            with self.subTest(include_tool_calls=include_tool_calls):
+                result = reformat_conversation_history(
+                    query,
+                    include_system_messages=True,
+                    include_tool_calls=include_tool_calls,
+                )
+                assert result == expected
+
+    def test__get_agent_response(self):
+        """Test _get_agent_response function"""
+        # Test with valid agent response
+        agent_response_msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Hello!"},
+                    {"type": "text", "text": "How can I help you?"},
+                ],
+            }
+        ]
+
+        result = _get_agent_response(agent_response_msgs)
+        assert result == ["Hello!", "How can I help you?"]
+
+        # Test with multiple assistant messages
+        agent_response_msgs = [
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "First response"}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Second response"}],
+            },
+        ]
+
+        result = _get_agent_response(agent_response_msgs)
+        assert result == ["First response", "Second response"]
+
+        # Test with non-assistant messages
+        agent_response_msgs = [
+            {"role": "user", "content": [{"type": "text", "text": "User message"}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Assistant message"}],
+            },
+        ]
+
+        result = _get_agent_response(agent_response_msgs)
+        assert result == ["Assistant message"]
+
+        # Test with empty input
+        result = _get_agent_response([])
+        assert result == []
+
+        # Test with messages missing role or content
+        agent_response_msgs = [
+            {"content": [{"type": "text", "text": "No role"}]},
+            {"role": "assistant"},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Valid message"}],
+            },
+        ]
+
+        result = _get_agent_response(agent_response_msgs)
+        assert result == ["Valid message"]
+
+    def test__get_agent_response_with_tool_messages(self):
+        """Test _get_agent_response with tool messages"""
+        agent_response_msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Hello!"},
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "123",
+                        "name": "get_weather",
+                        "arguments": {"location": "Seattle"},
+                    },
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "123",
+                "content": [{"type": "tool_result", "tool_result": "It's sunny in Seattle."}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "How can I help you?"}],
+            },
+        ]
+
+        result = _get_agent_response(agent_response_msgs, include_tool_messages=True)
+        assert result == [
+            "Hello!",
+            '[TOOL_CALL] get_weather(location="Seattle")',
+            "[TOOL_RESULT] It's sunny in Seattle.",
+            "How can I help you?",
+        ]
+
+    def test_reformat_agent_response(self):
+        """Test reformat_agent_response function"""
+        # Test with valid agent response
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Hello!"},
+                    {"type": "text", "text": "How can I help you?"},
+                ],
+            }
+        ]
+
+        result = reformat_agent_response(response)
+        assert result == "Hello!\nHow can I help you?"
+
+        # Test with empty response
+        response = []
+        result = reformat_agent_response(response)
+        assert result == ""
+
+        # Test with no valid assistant messages
+        response = [{"role": "user", "content": [{"type": "text", "text": "User message"}]}]
+        result = reformat_agent_response(response)
+        assert result == response
+
+        # Test fallback behavior with invalid input
+        invalid_response = "This is not a valid response format"
+        result = reformat_agent_response(invalid_response)
+        assert result == invalid_response
+
+    def test_edge_cases_and_error_handling(self):
+        """Test edge cases and error handling"""
+        # Test _extract_text_from_content with malformed content
+        malformed_content = [
+            {"text": "Missing type field"},
+            {"type": "text"},  # Missing text field
+            {"type": "text", "text": ""},  # Empty text
+            {"type": "text", "text": "Valid text"},
+        ]
+        result = _extract_text_from_content(malformed_content)
+        assert result == ["Missing type field", "", "Valid text"]
+
+        # Test _get_conversation_history assertion error
+        query_with_unbalanced_turns = [
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Response without user query"}],
+            }
+        ]
+
+        with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
+            _get_conversation_history(query_with_unbalanced_turns)
+
+    def test_extract_text_from_content_with_list(self):
+        """Test _extract_text_from_content function with list input."""
+        # Test with list of dict content
+        content = [{"text": "Hello"}, {"text": " world"}]
+        assert _extract_text_from_content(content) == ["Hello", " world"]
+
+        # Test with mixed content (text and non-text)
+        content = [
+            {"text": "Hello"},
+            {"type": "image", "url": "image.jpg"},
+            {"text": " world"},
+        ]
+        assert _extract_text_from_content(content) == ["Hello", " world"]
+
+        # Test with empty list
+        assert _extract_text_from_content([]) == []
+
+        # Test with non-text items only
+        content = [
+            {"type": "image", "url": "image.jpg"},
+            {"type": "video", "url": "video.mp4"},
+        ]
+        assert _extract_text_from_content(content) == []
+
+    def test_get_conversation_history_with_queries_and_responses(self):
+        """Test _get_conversation_history function that returns user_queries and agent_responses."""
+        # Test with simple conversation
+        conversation = [
+            {"role": "user", "content": [{"text": "Hello"}]},
+            {"role": "assistant", "content": [{"text": "Hi there!"}]},
+            {"role": "user", "content": [{"text": "How are you?"}]},
+        ]
+
+        result = _get_conversation_history(conversation)
+        expected = {
+            "user_queries": [[["Hello"]], [["How are you?"]]],
+            "agent_responses": [[["Hi there!"]]],
+        }
+        assert result == expected
+
+        conversation = []
+        with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
+            _get_conversation_history(conversation)
+
+    def test_pretty_format_conversation_history_with_dict(self):
+        """Test _pretty_format_conversation_history function with dict input."""
+        # Test with conversation history dict
+        conversation_history = {
+            "user_queries": [[["Hello"]], [["How are you?"]]],
+            "agent_responses": [[["Hi there!"]]],
+        }
+
+        formatted = _pretty_format_conversation_history(conversation_history)
+        assert "User turn 1:" in formatted
+        assert "Hello" in formatted
+        assert "Agent turn 1:" in formatted
+        assert "Hi there!" in formatted
+        assert "User turn 2:" in formatted
+        assert "How are you?" in formatted
+
+    def test_conversation_history_integration(self):
+        """Test integration of conversation history functions."""
+        # Test with simple conversation
+        conversation = [
+            {"role": "user", "content": [{"text": "What's the weather?"}]},
+            {"role": "assistant", "content": [{"text": "It's sunny today."}]},
+            {"role": "user", "content": [{"text": "Will it rain tomorrow?"}]},
+        ]
+
+        # Test reformatting
+        formatted = reformat_conversation_history(conversation)
+        assert isinstance(formatted, str)
+        assert "User turn" in formatted
+
+        # Test fallback behavior with malformed conversation
+        malformed_conversation = {"invalid": "data"}
+        formatted = reformat_conversation_history(malformed_conversation)
+        assert str(formatted) == str(malformed_conversation)
+
+    def test_get_agent_response_with_list(self):
+        """Test _get_agent_response function with list input."""
+        # Test with list of messages
+        messages = [
+            {"role": "assistant", "content": [{"text": "Hello!"}]},
+            {"role": "user", "content": [{"text": "Hi"}]},
+            {"role": "assistant", "content": [{"text": "How can I help?"}]},
+        ]
+
+        result = _get_agent_response(messages)
+        assert result == ["Hello!", "How can I help?"]
+
+        # Test with empty list
+        assert _get_agent_response([]) == []
+
+        # Test with no assistant messages
+        messages = [{"role": "user", "content": [{"text": "Hello"}]}]
+        assert _get_agent_response(messages) == []
+
+    def test_agent_response_integration(self):
+        """Test integration of agent response functions."""
+        # Test with list of messages
+        response = [
+            {"role": "assistant", "content": [{"text": "Hello!"}]},
+            {"role": "assistant", "content": [{"text": "How can I help?"}]},
+        ]
+
+        formatted = reformat_agent_response(response)
+        assert formatted == "Hello!\nHow can I help?"
+
+        # Test with empty response
+        assert reformat_agent_response([]) == ""
+
+        # Test fallback behavior
+        malformed_response = {"invalid": "structure"}
+        formatted = reformat_agent_response(malformed_response)
+        assert str(formatted) == str(malformed_response)
+
+    def test_utility_functions_edge_cases(self):
+        """Test edge cases and error handling for utility functions."""
+
+        # Test _extract_text_from_content with malformed data
+        malformed_content = [{"missing_text": "Hello"}, {"text": "world"}]
+        # Should handle gracefully and extract what it can
+        result = _extract_text_from_content(malformed_content)
+        assert result == ["world"]
+
+        # Test functions with very large inputs
+        large_content = [{"text": "x" * 1000}] * 10
+        result = _extract_text_from_content(large_content)
+        assert len(result) == 10
+        assert all(len(text) == 1000 for text in result)
+
+        # Test with unicode content
+        unicode_content = [{"text": "Hello 世界 🌍"}]
+        result = _extract_text_from_content(unicode_content)
+        assert result == ["Hello 世界 🌍"]
+
+    def test_reformat_agent_response_with_tool_calls(self):
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Let me check that for you."}],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call": {
+                            "id": "tool_call_1",
+                            "type": "function",
+                            "function": {
+                                "name": "get_orders",
+                                "arguments": {"account_number": "123"},
+                            },
+                        },
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "tool_call_1",
+                "content": [{"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "You have one order on file."}],
+            },
+        ]
+
+        formatted = reformat_agent_response(response, include_tool_messages=True)
+
+        assert '[TOOL_CALL] get_orders(account_number="123")' in formatted
+        assert '[TOOL_RESULT] [{ "order_id": "A1" }]' in formatted
+        assert "Let me check that for you." in formatted
+        assert "You have one order on file." in formatted
+
+    def test_reformat_agent_response_with_tool_calls_non_function(self):
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Let me check that for you."}],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "tool_call_1",
+                        "name": "get_orders",
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "tool_call_1",
+                "content": [{"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "You have one order on file."}],
+            },
+        ]
+        formatted = reformat_agent_response(response, include_tool_messages=True)
+        assert "[TOOL_CALL] get_orders()" in formatted
+        assert '[TOOL_RESULT] [{ "order_id": "A1" }]' in formatted
+        assert "Let me check that for you." in formatted
+        assert "You have one order on file." in formatted
+
+    def test_reformat_agent_response_without_tool_calls(self):
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Let me check that for you."}],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call": {
+                            "id": "tool_call_1",
+                            "type": "function",
+                            "function": {
+                                "name": "get_orders",
+                                "arguments": {"account_number": "123"},
+                            },
+                        },
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "tool_call_1",
+                "content": [{"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "You have one order on file."}],
+            },
+        ]
+
+        formatted = reformat_agent_response(response, include_tool_messages=False)
+
+        assert formatted == "Let me check that for you.\nYou have one order on file."
+
+    def test_single_tool_with_parameters(self):
+        tools = [
+            {
+                "name": "search",
+                "description": "Searches the web.",
+                "parameters": {
+                    "properties": {
+                        "query": {"type": "string"},
+                        "lang": {"type": "string"},
+                    }
+                },
+            }
+        ]
+        expected_output = "TOOL_DEFINITIONS:\n" "- search: Searches the web. (inputs: query, lang)"
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_tool_with_no_parameters(self):
+        tools = [
+            {
+                "name": "ping",
+                "description": "Check if server is reachable.",
+                "parameters": {},
+            }
+        ]
+        expected_output = "TOOL_DEFINITIONS:\n" "- ping: Check if server is reachable. (inputs: no parameters)"
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_tool_missing_description_and_parameters(self):
+        tools = [{"name": "noop"}]
+        expected_output = "TOOL_DEFINITIONS:\n" "- noop:  (inputs: no parameters)"
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_tool_missing_name(self):
+        tools = [
+            {
+                "description": "Does something.",
+                "parameters": {"properties": {"x": {"type": "number"}}},
+            }
+        ]
+        expected_output = "TOOL_DEFINITIONS:\n" "- unnamed_tool: Does something. (inputs: x)"
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_multiple_tools(self):
+        tools = [
+            {
+                "name": "alpha",
+                "description": "Tool A.",
+                "parameters": {"properties": {"a1": {"type": "string"}}},
+            },
+            {"name": "beta", "description": "Tool B.", "parameters": {}},
+        ]
+        expected_output = (
+            "TOOL_DEFINITIONS:\n" "- alpha: Tool A. (inputs: a1)\n" "- beta: Tool B. (inputs: no parameters)"
+        )
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_empty_tool_list(self):
+        tools = []
+        expected_output = "TOOL_DEFINITIONS:"
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_reformat_conversation_history_with_tool_calls(self):
+        """Test reformat_conversation_history with tool calls included"""
+        conversation = [
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "What's the weather in Seattle?"}],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_123",
+                        "name": "get_weather",
+                        "arguments": {"location": "Seattle", "units": "fahrenheit"},
+                    },
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call_123",
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_result": "Temperature: 65F, Conditions: Partly cloudy",
+                    }
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "The weather in Seattle is 65°F and partly cloudy.",
+                    }
+                ],
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "Thanks for the weather info!"}],
+            },
+        ]
+
+        # Test with tool calls included
+        result_with_tools = reformat_conversation_history(conversation, include_tool_messages=True)
+        expected_with_tools = (
+            "User turn 1:\n"
+            "  What's the weather in Seattle?\n\n"
+            "Agent turn 1:\n"
+            '  [TOOL_CALL] get_weather(location="Seattle", units="fahrenheit")\n'
+            "  [TOOL_RESULT] Temperature: 65F, Conditions: Partly cloudy\n"
+            "  The weather in Seattle is 65°F and partly cloudy.\n\n"
+            "User turn 2:\n"
+            "  Thanks for the weather info!\n\n"
+        )
+        self.assertEqual(result_with_tools, expected_with_tools)
+
+    def test_reformat_conversation_history_multiple_tool_calls(self):
+        """Test reformat_conversation_history with multiple tool calls in one message"""
+        conversation = [
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "Get weather for Seattle and New York"}],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "I'll check the weather for both cities."},
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "name": "get_weather",
+                        "arguments": {"location": "Seattle"},
+                    },
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_2",
+                        "name": "get_weather",
+                        "arguments": {"location": "New York"},
+                    },
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call_1",
+                "content": [{"type": "tool_result", "tool_result": "Seattle: 65F"}],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call_2",
+                "content": [{"type": "tool_result", "tool_result": "New York: 72F"}],
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "Thanks for checking both cities!"}],
+            },
+        ]
+
+        result = reformat_conversation_history(conversation, include_tool_messages=True)
+        expected = (
+            "User turn 1:\n"
+            "  Get weather for Seattle and New York\n\n"
+            "Agent turn 1:\n"
+            "  I'll check the weather for both cities.\n"
+            '  [TOOL_CALL] get_weather(location="Seattle")\n'
+            "  [TOOL_RESULT] Seattle: 65F\n"
+            '  [TOOL_CALL] get_weather(location="New York")\n'
+            "  [TOOL_RESULT] New York: 72F\n\n"
+            "User turn 2:\n"
+            "  Thanks for checking both cities!\n\n"
+        )
+        self.assertEqual(result, expected)
+
+
+@pytest.mark.unittest
+class TestConstructPromptyModelConfig(unittest.TestCase):
+    def test_extra_headers_included_in_openai_config(self):
+        model_config = {
+            "api_key": "test-key",
+            "model": "gpt-4",
+            "base_url": "https://example.com",
+            "extra_headers": {"X-Custom-Header": "custom-value"},
+        }
+        result = construct_prompty_model_config(model_config, "2024-02-01", "")
+        headers = result["parameters"]["extra_headers"]
+        assert headers["X-Custom-Header"] == "custom-value"
+        assert headers["Connection"] == "close"
+
+    def test_extra_headers_cannot_override_internal_headers(self):
+        model_config = {
+            "api_key": "test-key",
+            "model": "gpt-4",
+            "base_url": "https://example.com",
+            "extra_headers": {"Connection": "keep-alive"},
+        }
+        result = construct_prompty_model_config(model_config, "2024-02-01", "")
+        headers = result["parameters"]["extra_headers"]
+        assert headers["Connection"] == "close"
+
+    def test_no_extra_headers(self):
+        model_config = {
+            "api_key": "test-key",
+            "model": "gpt-4",
+            "base_url": "https://example.com",
+        }
+        result = construct_prompty_model_config(model_config, "2024-02-01", "")
+        headers = result["parameters"]["extra_headers"]
+        assert headers["Connection"] == "close"
+        assert "X-Custom-Header" not in headers
+
+    def test_extra_headers_invalid_type_raises_error(self):
+        model_config = {
+            "api_key": "test-key",
+            "model": "gpt-4",
+            "base_url": "https://example.com",
+            "extra_headers": "not-a-dict",
+        }
+        with pytest.raises(EvaluationException):
+            construct_prompty_model_config(model_config, "2024-02-01", "")
+
+
+# ---------------------------------------------------------------------------
+# Phase 2 restricted-tool enablement: _stringify_tool_result and
+# _get_agent_response handling of structured tool_result payloads
+# (dict/list shapes from azure_ai_search, azure_fabric, sharepoint_grounding).
+# ---------------------------------------------------------------------------
+
+from azure.ai.evaluation._common.utils import _stringify_tool_result
+
+
+@pytest.mark.unittest
+class TestStringifyToolResult(unittest.TestCase):
+    """The new helper makes structured tool outputs LLM-readable."""
+
+    def test_string_passes_through_unchanged(self):
+        assert _stringify_tool_result("hello") == "hello"
+
+    def test_none_renders_as_empty_string(self):
+        # Avoid leaking the literal text "None" into the prompt.
+        assert _stringify_tool_result(None) == ""
+
+    def test_dict_is_json_encoded(self):
+        result = _stringify_tool_result({"answer": 42, "ok": True})
+        assert json.loads(result) == {"answer": 42, "ok": True}
+
+    def test_list_of_dicts_is_json_encoded(self):
+        sharepoint_payload = [
+            {
+                "documents": [
+                    {
+                        "title": "Q4 Earnings",
+                        "content": "Revenue grew 12% YoY.",
+                        "url": "https://contoso.sharepoint.com/q4",
+                    }
+                ]
+            }
+        ]
+        rendered = _stringify_tool_result(sharepoint_payload)
+        assert json.loads(rendered) == sharepoint_payload
+
+    def test_unicode_is_preserved_not_escaped(self):
+        # ``ensure_ascii=False`` keeps non-ASCII readable for the judge.
+        rendered = _stringify_tool_result({"title": "µ╡ïΦ»ò"})
+        assert "µ╡ïΦ»ò" in rendered
+
+    def test_non_json_value_falls_back_to_str(self):
+        class _Custom:
+            def __str__(self):
+                return "<custom>"
+
+        rendered = _stringify_tool_result(_Custom())
+        # Either the json fallback or the str() path is acceptable; what
+        # matters is that the helper does not raise on weird inputs.
+        assert rendered == "<custom>" or rendered == '"<custom>"'
+
+
+@pytest.mark.unittest
+class TestGetAgentResponseStructuredToolResults(unittest.TestCase):
+    """End-to-end formatting through _get_agent_response with structured payloads."""
+
+    def test_sharepoint_structured_result_is_json(self):
+        sharepoint_payload = [
+            {
+                "documents": [
+                    {
+                        "title": "Q4 Earnings",
+                        "content": "Revenue grew 12% YoY.",
+                        "url": "https://contoso.sharepoint.com/q4",
+                    }
+                ]
+            }
+        ]
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "c1",
+                        "name": "sharepoint_grounding",
+                        "arguments": {"input": "Q4"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_result": sharepoint_payload,
+                    }
+                ],
+            },
+        ]
+        out = _get_agent_response(msgs, include_tool_messages=True)
+        result_lines = [line for line in out if line.startswith("[TOOL_RESULT] ")]
+        assert len(result_lines) == 1
+        rendered_json = result_lines[0][len("[TOOL_RESULT] ") :]
+        assert json.loads(rendered_json) == sharepoint_payload
+        # Python repr would emit single quotes ΓÇö JSON must not.
+        assert "'" not in rendered_json
+
+    def test_azure_ai_search_dict_result_is_json(self):
+        aas_payload = {"results": [{"title": "Doc A", "score": 0.91}]}
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "c1",
+                        "name": "azure_ai_search",
+                        "arguments": {"input": "revenue"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_result": aas_payload,
+                    }
+                ],
+            },
+        ]
+        out = _get_agent_response(msgs, include_tool_messages=True)
+        result_lines = [line for line in out if line.startswith("[TOOL_RESULT] ")]
+        assert json.loads(result_lines[0][len("[TOOL_RESULT] ") :]) == aas_payload
+
+    def test_none_result_renders_empty(self):
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "c1",
+                        "name": "azure_fabric",
+                        "arguments": {"input": "q"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": None}],
+            },
+        ]
+        out = _get_agent_response(msgs, include_tool_messages=True)
+        assert "[TOOL_RESULT] " in out
+
+    def test_real_world_sharepoint_trace_dict_payload_round_trips(self):
+        """Smoke test mirroring a real Foundry playground OTel trace."""
+        payload = {
+            "documents": [
+                {
+                    "id": "0",
+                    "content": "Onboarding doc: see the setup guide for first-time access.",
+                    "filepath": "https://contoso.sharepoint.com/sites/it/SitePages/Onboarding.aspx",
+                    "title": "IT Onboarding Guide",
+                    "url": "https://contoso.sharepoint.com/sites/it/SitePages/Onboarding.aspx",
+                    "knowledgeSourceIndex": 0,
+                }
+            ]
+        }
+        msgs = [
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "how do I get started?"}],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_sp_1",
+                        "name": "sharepoint_grounding",
+                        "arguments": {"query": "onboarding"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call_sp_1",
+                "content": [
+                    {"type": "tool_result", "tool_result": payload},
+                ],
+            },
+        ]
+        out = _get_agent_response(msgs, include_tool_messages=True)
+        result_lines = [line for line in out if line.startswith("[TOOL_RESULT] ")]
+        assert len(result_lines) == 1
+        body = result_lines[0][len("[TOOL_RESULT] ") :]
+        assert json.loads(body) == payload
+        assert "'" not in body
+        # Distinctive structural fields must survive so the judge can
+        # ground on the documents envelope.
+        assert "knowledgeSourceIndex" in body
+        assert "IT Onboarding Guide" in body
+
+    def test_real_world_sharepoint_json_string_payload_passes_through(self):
+        """Raw JSON-string payload from upstream passes through unchanged."""
+        payload = {"documents": [{"id": "0", "title": "X"}]}
+        raw_json = json.dumps(payload)
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "c1",
+                        "name": "sharepoint_grounding",
+                        "arguments": {"query": "x"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": raw_json}],
+            },
+        ]
+        out = _get_agent_response(msgs, include_tool_messages=True)
+        body = [line for line in out if line.startswith("[TOOL_RESULT] ")][0][len("[TOOL_RESULT] ") :]
+        # String inputs pass through unchanged - no extra quoting.
+        assert body == raw_json
+        assert json.loads(body) == payload
+
+
+@pytest.mark.unittest
+class TestToolResultAndLoggingHelpers:
+    """Tests for helpers added for parity with azureml-assets builtin evaluators."""
+
+    # region _stringify_tool_result
+
+    def test_stringify_tool_result_none_returns_empty(self):
+        assert _stringify_tool_result(None) == ""
+
+    def test_stringify_tool_result_string_passthrough(self):
+        assert _stringify_tool_result("plain text") == "plain text"
+
+    def test_stringify_tool_result_dict_is_json(self):
+        result = _stringify_tool_result({"title": "Doc", "score": 1})
+        # Valid JSON with double quotes (not a Python repr with single quotes)
+        assert json.loads(result) == {"title": "Doc", "score": 1}
+        assert "'" not in result
+
+    def test_stringify_tool_result_list_is_json(self):
+        result = _stringify_tool_result([{"url": "https://x"}, {"url": "https://y"}])
+        assert json.loads(result) == [{"url": "https://x"}, {"url": "https://y"}]
+
+    def test_stringify_tool_result_non_serializable_falls_back_to_str(self):
+        class _Weird:
+            def __str__(self):
+                return "weird-value"
+
+        # default=str handles non-JSON-native values without raising
+        assert _stringify_tool_result({"k": _Weird()}) == '{"k": "weird-value"}'
+
+    # endregion
+
+    # region _get_agent_response uses _stringify_tool_result
+
+    def test_get_agent_response_serializes_dict_tool_result(self):
+        agent_msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "tool_call", "name": "search", "arguments": {"q": "hi"}, "tool_call_id": "c1"},
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": {"docs": ["a", "b"]}}],
+            },
+        ]
+        result = _get_agent_response(agent_msgs, include_tool_messages=True)
+        # tool result rendered as JSON, not python repr
+        assert '[TOOL_RESULT] {"docs": ["a", "b"]}' in result
+
+    # endregion
+
+    # region _log_safe_summary
+
+    def test_log_safe_summary_list_reports_roles(self):
+        summary = _log_safe_summary([{"role": "user"}, {"role": "assistant"}])
+        assert "type=list" in summary
+        assert "len=2" in summary
+        assert "user" in summary and "assistant" in summary
+
+    def test_log_safe_summary_dict_reports_keys_not_values(self):
+        summary = _log_safe_summary({"secret": "s3cr3t", "api_key": "abc"})
+        assert "type=dict" in summary
+        assert "api_key" in summary and "secret" in summary
+        # values must never leak
+        assert "s3cr3t" not in summary and "abc" not in summary
+
+    def test_log_safe_summary_scalar(self):
+        assert "type=int" in _log_safe_summary(42)
+
+    # endregion
+
+    # region _coerce_bool / _coerce_number
+
+    def test_coerce_bool(self):
+        assert _coerce_bool(True) is True
+        assert _coerce_bool(False) is False
+        assert _coerce_bool("true") is True
+        assert _coerce_bool("  FALSE ") is False
+        assert _coerce_bool("nonsense") is None
+        assert _coerce_bool(None) is None
+        assert _coerce_bool(1) is None
+
+    def test_coerce_number(self):
+        assert _coerce_number(3) == 3
+        assert _coerce_number(2.5) == 2.5
+        assert _coerce_number("2.5") == 2.5
+        assert _coerce_number("null") is None
+        assert _coerce_number("") is None
+        assert _coerce_number(True) is None  # bools are not numbers here
+        assert _coerce_number("abc") is None
+
+    # endregion
+
+    # region _collect_failed_tool_calls
+
+    def test_collect_failed_tool_calls_by_status_on_tool_call(self):
+        messages = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "tool_call", "name": "ok_tool", "tool_call_id": "c1", "status": "completed"},
+                    {"type": "tool_call", "name": "bad_tool", "tool_call_id": "c2", "status": "failed"},
+                ],
+            }
+        ]
+        assert _collect_failed_tool_calls(messages) == ["bad_tool"]
+
+    def test_collect_failed_tool_calls_by_status_on_tool_result(self):
+        messages = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "name": "search", "tool_call_id": "c1"}],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": "x", "status": "incomplete"}],
+            },
+        ]
+        assert _collect_failed_tool_calls(messages) == ["search"]
+
+    def test_collect_failed_tool_calls_none_failed(self):
+        messages = [
+            {"role": "assistant", "content": [{"type": "tool_call", "name": "search", "tool_call_id": "c1"}]},
+        ]
+        assert _collect_failed_tool_calls(messages) == []
+
+    def test_collect_failed_tool_calls_non_list(self):
+        assert _collect_failed_tool_calls("not a list") == []
+
+    # endregion
+
+    # region _get_tool_calls_results / _reformat_tool_calls_results
+
+    def test_get_tool_calls_results_formats_calls_and_results(self):
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "name": "search", "arguments": {"q": "cats"}, "tool_call_id": "c1"}],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": {"n": 3}}],
+            },
+        ]
+        result = _get_tool_calls_results(msgs)
+        assert result == ['[TOOL_CALL] search(q="cats")', '[TOOL_RESULT] {"n": 3}']
+
+    def test_reformat_tool_calls_results_empty(self):
+        assert _reformat_tool_calls_results([]) == ""
+        assert _reformat_tool_calls_results(None) == ""
+
+    def test_reformat_tool_calls_results_joins_lines(self):
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "name": "t", "arguments": {}, "tool_call_id": "c"}],
+            },
+            {"role": "tool", "tool_call_id": "c", "content": [{"type": "tool_result", "tool_result": "done"}]},
+        ]
+        result = _reformat_tool_calls_results(msgs)
+        assert result == "[TOOL_CALL] t()\n[TOOL_RESULT] done"
+
+    # endregion
+
+    # region _get_conversation_history include_tool_calls
+
+    def test_get_conversation_history_with_tool_calls(self):
+        query = [
+            {"role": "user", "content": [{"type": "text", "text": "Find hotels"}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Searching"},
+                    {"type": "tool_call", "name": "search", "arguments": {"loc": "Paris"}, "tool_call_id": "c1"},
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": "Found 3"}],
+            },
+            {"role": "user", "content": [{"type": "text", "text": "thanks"}]},
+        ]
+        result = _get_conversation_history(query, include_tool_calls=True)
+        assert result["user_queries"] == [[["Find hotels"]], [["thanks"]]]
+        # Agent turn contains inline tool call + result lines
+        agent_turn = result["agent_responses"][0]
+        assert ["Searching"] in agent_turn
+        assert '[TOOL_CALL] search(loc="Paris")' in agent_turn
+        assert "[TOOL_RESULT] Found 3" in agent_turn
+
+    def test_reformat_conversation_history_include_tool_calls_renders_inline(self):
+        query = [
+            {"role": "user", "content": [{"type": "text", "text": "Find hotels"}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "tool_call", "name": "search", "arguments": {"loc": "Paris"}, "tool_call_id": "c1"},
+                    {"type": "text", "text": "Found some"},
+                ],
+            },
+            {"role": "user", "content": [{"type": "text", "text": "thanks"}]},
+        ]
+        result = reformat_conversation_history(query, include_tool_calls=True)
+        assert '[TOOL_CALL] search(loc="Paris")' in result
+
+    def test_get_conversation_history_default_path_unchanged(self):
+        """Default (include_tool_calls=False) behavior must be unchanged."""
+        query = [
+            {"role": "user", "content": [{"type": "text", "text": "hi"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "hello"}]},
+            {"role": "user", "content": [{"type": "text", "text": "bye"}]},
+        ]
+        result = _get_conversation_history(query)
+        assert result == {
+            "user_queries": [[["hi"]], [["bye"]]],
+            "agent_responses": [[["hello"]]],
+        }
+
+    # endregion
+
+    # region ErrorTarget parity members
+
+    def test_error_target_parity_members_exist(self):
+        for name in (
+            "QUALITY_GRADER_EVALUATOR",
+            "CUSTOMER_SATISFACTION_EVALUATOR",
+            "DEFLECTION_RATE_EVALUATOR",
+            "REGEX_MATCH_EVALUATOR",
+        ):
+            assert hasattr(ErrorTarget, name)
+
+    # endregion

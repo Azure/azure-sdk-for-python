@@ -1,0 +1,279 @@
+# coding: utf-8
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+from datetime import datetime
+import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
+from azure.core.exceptions import (
+    HttpResponseError,
+)
+from _router_test_case_async import AsyncRouterRecordedTestCase
+
+from _decorators_async import RouterPreparersAsync
+from azure.communication.jobrouter._shared.utils import parse_connection_str
+
+from azure.communication.jobrouter.aio import (
+    JobRouterAdministrationClient,
+    JobRouterClient,
+)
+from azure.communication.jobrouter.models import (
+    LongestIdleMode,
+    RouterChannel,
+    RouterJobStatus,
+    RouterWorker,
+    RouterJobOffer,
+    AcceptJobOfferResult,
+    UnassignJobResult,
+    RouterJob,
+    RouterJobAssignment,
+    RouterWorkerState,
+    DistributionPolicy,
+    RouterQueue,
+    CancelJobOptions,
+    CompleteJobOptions,
+    CloseJobOptions,
+    DeclineJobOfferOptions,
+)
+
+
+channel_id = "fakeChannel1"
+
+
+# The test class name needs to start with "Test" to get collected by pytest
+class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
+    async def clean_up(self, **kwargs):
+        # delete in live mode
+        if not self.is_playback():
+            router_admin_client: JobRouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterClient = self.create_client()
+
+            async with router_client:
+                async with router_admin_client:
+                    if self._testMethodName in self.job_ids and any(self.job_ids[self._testMethodName]):
+                        for _id in set(self.job_ids[self._testMethodName]):
+                            await self.clean_up_job(job_id=_id, suppress_errors=True)
+
+                    if self._testMethodName in self.worker_ids and any(self.worker_ids[self._testMethodName]):
+                        for _id in set(self.worker_ids[self._testMethodName]):
+                            # delete worker
+                            await router_client.delete_worker(_id)
+
+                    if self._testMethodName in self.classification_policy_ids and any(
+                        self.classification_policy_ids[self._testMethodName]
+                    ):
+                        for policy_id in set(self.classification_policy_ids[self._testMethodName]):
+                            await router_admin_client.delete_classification_policy(policy_id)
+
+                    if self._testMethodName in self.queue_ids and any(self.queue_ids[self._testMethodName]):
+                        for policy_id in set(self.queue_ids[self._testMethodName]):
+                            await router_admin_client.delete_queue(policy_id)
+
+                    if self._testMethodName in self.distribution_policy_ids and any(
+                        self.distribution_policy_ids[self._testMethodName]
+                    ):
+                        for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
+                            await router_admin_client.delete_distribution_policy(policy_id)
+
+    def get_distribution_policy_id(self, **kwargs):
+        return self._testMethodName + "_tst_dp_async"
+
+    async def setup_distribution_policy(self, **kwargs):
+        client: JobRouterAdministrationClient = self.create_admin_client()
+
+        async with client:
+            distribution_policy_id = self.get_distribution_policy_id()
+
+            policy: DistributionPolicy = DistributionPolicy(
+                name="test",
+                offer_expires_after_seconds=10.0 * 60,
+                mode=LongestIdleMode(min_concurrent_offers=1, max_concurrent_offers=1),
+            )
+
+            distribution_policy = await client.upsert_distribution_policy(distribution_policy_id, policy)
+
+            # add for cleanup later
+            if self._testMethodName in self.distribution_policy_ids:
+                self.distribution_policy_ids[self._testMethodName] = self.distribution_policy_ids[
+                    self._testMethodName
+                ].append(distribution_policy_id)
+            else:
+                self.distribution_policy_ids[self._testMethodName] = [distribution_policy_id]
+
+    def get_job_queue_id(self, **kwargs):
+        return self._testMethodName + "_tst_q_async"
+
+    async def setup_job_queue(self, **kwargs):
+        client: JobRouterAdministrationClient = self.create_admin_client()
+
+        async with client:
+            job_queue_id = self.get_job_queue_id()
+
+            job_queue: RouterQueue = RouterQueue(name="test", distribution_policy_id=self.get_distribution_policy_id())
+
+            job_queue = await client.upsert_queue(job_queue_id, job_queue)
+
+            # add for cleanup later
+            if self._testMethodName in self.queue_ids:
+                self.queue_ids[self._testMethodName] = self.queue_ids[self._testMethodName].append(job_queue_id)
+            else:
+                self.queue_ids[self._testMethodName] = [job_queue_id]
+
+    def get_router_worker_id(self, **kwargs):
+        return self._testMethodName + "_tst_w"
+
+    async def setup_router_worker(self, **kwargs):
+        w_identifier = self.get_router_worker_id()
+        router_client: JobRouterClient = self.create_client()
+
+        async with router_client:
+            worker_queues = [self.get_job_queue_id()]
+            worker_channels = [RouterChannel(channel_id=channel_id, capacity_cost_per_job=1)]
+
+            worker: RouterWorker = RouterWorker(
+                capacity=1,
+                queues=worker_queues,
+                channels=worker_channels,
+                available_for_offers=True,
+            )
+
+            router_worker = await router_client.upsert_worker(w_identifier, worker)
+
+            # add for cleanup
+            self.worker_ids[self._testMethodName] = [w_identifier]
+
+    async def validate_job_is_queued(self, identifier, **kwargs):
+        router_client: JobRouterClient = self.create_client()
+
+        async with router_client:
+            router_job = await router_client.get_job(identifier)
+            assert router_job.status == RouterJobStatus.QUEUED
+
+    async def validate_worker_has_offer(
+        self,
+        worker_id,  # type: str
+        job_id,  # type: str
+        **kwargs,  # type: Any
+    ):
+        router_client: JobRouterClient = self.create_client()
+
+        async with router_client:
+            router_worker: RouterWorker = await router_client.get_worker(worker_id)
+            offer_for_jobs = [job_offer for job_offer in router_worker.offers if job_offer.job_id == job_id]
+            assert any(offer_for_jobs)
+
+    async def validate_worker_deregistration(  # cSpell:disable-line
+        self,
+        worker_id,  # type: str
+        **kwargs,  # type: Any
+    ):
+        router_client: JobRouterClient = self.create_client()
+
+        async with router_client:
+            router_worker: RouterWorker = await router_client.get_worker(worker_id)
+            assert router_worker.state == RouterWorkerState.INACTIVE
+
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
+    @RouterPreparersAsync.before_test_execute_async("setup_distribution_policy")
+    @RouterPreparersAsync.before_test_execute_async("setup_job_queue")
+    @RouterPreparersAsync.before_test_execute_async("setup_router_worker")
+    @RouterPreparersAsync.after_test_execute_async("clean_up")
+    async def test_assignment_scenario(self, **kwargs):
+        router_client: JobRouterClient = self.create_client()
+
+        async with router_client:
+            # create job
+            job_identifier = f"assignment_scenario_job_id"
+
+            router_job: RouterJob = RouterJob(
+                channel_id=channel_id,
+                queue_id=self.get_job_queue_id(),
+                priority=1,
+            )
+
+            router_job: RouterJob = await router_client.upsert_job(job_identifier, router_job)
+
+            # add for cleanup
+            self.job_ids[self._testMethodName] = [job_identifier]
+
+            assert router_job is not None
+
+            await self._poll_until_no_exception(
+                self.validate_worker_has_offer, AssertionError, self.get_router_worker_id(), job_identifier
+            )
+
+            router_worker = await router_client.get_worker(self.get_router_worker_id())
+            job_offers = [job_offer for job_offer in router_worker.offers if job_offer.job_id == job_identifier]
+
+            assert len(job_offers) == 1
+            job_offer: RouterJobOffer = job_offers[0]
+            assert job_offer.capacity_cost == 1
+            assert job_offer.offered_at is not None
+            assert job_offer.expires_at is not None
+
+            # accept job offer
+            offer_id = job_offer.offer_id
+            accept_job_offer_result: AcceptJobOfferResult = await router_client.accept_job_offer(
+                worker_id=self.get_router_worker_id(), offer_id=offer_id
+            )
+
+            assert accept_job_offer_result.job_id == job_identifier
+            assert accept_job_offer_result.worker_id == self.get_router_worker_id()
+
+            assignment_id = accept_job_offer_result.assignment_id
+
+            with pytest.raises(HttpResponseError) as sre:
+                await router_client.decline_job_offer(
+                    worker_id=self.get_router_worker_id(),
+                    offer_id=offer_id,
+                    options=DeclineJobOfferOptions(retry_offer_at=datetime.min),
+                )
+            assert sre is not None
+
+            # unassign job
+            unassign_job_result: UnassignJobResult = await router_client.unassign_job(router_job.id, assignment_id)
+
+            # accept unassigned job
+            await self._poll_until_no_exception(
+                self.validate_worker_has_offer, AssertionError, self.get_router_worker_id(), job_identifier
+            )
+
+            router_worker = await router_client.get_worker(self.get_router_worker_id())
+            job_offers = [job_offer for job_offer in router_worker.offers if job_offer.job_id == job_identifier]
+
+            assert len(job_offers) == 1
+            job_offer: RouterJobOffer = job_offers[0]
+            assert job_offer.capacity_cost == 1
+            assert job_offer.offered_at is not None
+            assert job_offer.expires_at is not None
+
+            # accept job offer
+            offer_id = job_offer.offer_id
+            accept_job_offer_result: AcceptJobOfferResult = await router_client.accept_job_offer(
+                worker_id=self.get_router_worker_id(), offer_id=offer_id
+            )
+
+            assert accept_job_offer_result.job_id == job_identifier
+            assert accept_job_offer_result.worker_id == self.get_router_worker_id()
+
+            assignment_id = accept_job_offer_result.assignment_id
+
+            # complete job
+            await router_client.complete_job(job_identifier, assignment_id)
+
+            # close job
+            await router_client.close_job(job_identifier, assignment_id)
+
+            # validate post closure job details
+            queried_job: RouterJob = await router_client.get_job(job_identifier)
+
+            job_assignment: RouterJobAssignment = queried_job.assignments[assignment_id]
+            assert job_assignment.assigned_at is not None
+            assert job_assignment.worker_id == self.get_router_worker_id()
+            assert job_assignment.completed_at is not None
+            assert job_assignment.closed_at is not None

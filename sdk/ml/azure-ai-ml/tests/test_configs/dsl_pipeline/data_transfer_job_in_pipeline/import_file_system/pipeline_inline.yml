@@ -1,0 +1,32 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'submit a pipeline with data transfer import file system job'
+settings:
+  default_compute: azureml:serverless
+inputs:
+  path_source_s3: test1/*
+  connection_target: azureml:my-s3-connection
+
+jobs:
+  s3_blob:
+    type: data_transfer
+    task: import_data
+    source:
+      type: file_system
+      path: ${{parent.inputs.path_source_s3}}
+      connection: ${{parent.inputs.connection_target}}
+    outputs:
+      sink:
+        type: uri_folder
+
+  s3_blob_input:
+    type: data_transfer
+    task: import_data
+    source:
+      type: file_system
+      path: test1/*
+      connection: azureml:my-s3-connection
+    outputs:
+      sink:
+        type: uri_folder

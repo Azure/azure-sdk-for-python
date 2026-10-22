@@ -1,0 +1,21 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+display_name: condition_pipeline
+
+jobs:
+  result:
+    component: ../../../components/component_with_conditional_output/spec.yaml
+  node1:
+    type: command
+    inputs:
+      component_in_number: 1
+    component: ../../../components/write_jokes/spec.yaml
+  conditionnode:
+    type: if_else
+    true_block: ${{parent.jobs.node1}}
+    condition: ${{parent.jobs.result.outputs.output}}
+tags: {}
+properties: {}
+settings:
+  default_compute: azureml:cpu-cluster

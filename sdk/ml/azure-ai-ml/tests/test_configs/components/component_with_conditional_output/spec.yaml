@@ -1,0 +1,42 @@
+name: basic_component
+version: '1'
+display_name: basic_component
+description: module run logic goes here
+type: command
+outputs:
+  output1:
+    type: boolean
+    is_control: true
+  output2:
+    type: boolean
+    is_control: true
+  output3:
+    type: boolean
+  output:
+    type: boolean
+    is_control: true
+command: mldesigner execute --source entry.py --name basic_component --outputs
+  output1=${{outputs.output1}} output2=${{outputs.output2}} output3=${{outputs.output3}}
+  output=${{outputs.output}}
+environment:
+  name: CliV2AnonymousEnvironment
+  tags: {}
+  version: de330be7295a60292e69e4d0aca3cd6b
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+  conda_file:
+    name: default_environment
+    channels:
+    - defaults
+    dependencies:
+    - python=3.8.12
+    - pip=21.2.2
+    - pip:
+      - --extra-index-url=https://azuremlsdktestpypi.azureedge.net/sdk-cli-v2
+      - mldesigner==0.0.72212755
+      - mlflow
+      - azureml-mlflow
+code: ./
+tags:
+  codegenBy: mldesigner
+is_deterministic: true
+environment_variables: {}

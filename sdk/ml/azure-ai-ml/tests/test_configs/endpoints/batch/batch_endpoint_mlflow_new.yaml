@@ -1,0 +1,3 @@
+name: myBatchEndpoint2 # required
+description: my sample batch endpoint
+auth_mode: aad_token # required

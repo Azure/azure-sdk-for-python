@@ -1,0 +1,58 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: microsoftsamples_command_component_with_parameter_group
+display_name: CommandComponentWithParameterGroup
+description: This is the command component with parameter group as input
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 0.0.1
+
+inputs:
+  component_in_path:
+    description: A path
+    type: uri_folder
+  component_in_group.number:
+    description: A number
+    type: number
+    default: 10.99
+    optional: True
+  component_in_group.sub1.number:
+    description: A number
+    type: number
+    default: 10.99
+    optional: True
+  component_in_group.sub1.integer:
+    description: An integer
+    type: integer
+    default: 10
+    optional: True
+  component_in_group.sub2.number:
+    description: A number
+    type: number
+    default: 10.99
+    optional: True
+  component_in_group.sub2.integer:
+    description: An integer
+    type: integer
+    default: 10
+    optional: True
+
+outputs:
+  component_out_path:
+    type: uri_folder
+
+# Write some output to work around a bug when pipeline node failed to run with empty dataset as input
+command: >-
+  echo Hello World &
+  echo $[[${{inputs.component_in_group.number}}]] &
+  echo $[[${{inputs.component_in_group.sub1.number}}]] &
+  echo $[[${{inputs.component_in_group.sub1.integer}}]] &
+  echo $[[${{inputs.component_in_group.sub2.number}}]] &
+  echo $[[${{inputs.component_in_group.sub2.integer}}]] &
+  echo ${{inputs.component_in_path}} &
+  echo ${{outputs.component_out_path}} > ${{outputs.component_out_path}}/component_in_number
+
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33

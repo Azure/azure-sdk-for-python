@@ -1,0 +1,51 @@
+{% set name = "azure-ai-contentunderstanding" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('CONTENTUNDERSTANDING_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - pip
+    - python
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - aiohttp
+    - isodate>=0.6.1
+    - typing-extensions>=4.6.0
+  run:
+    - python
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - aiohttp
+    - isodate>=0.6.1
+    - typing-extensions>=4.6.0
+
+test:
+  imports:
+    - azure.ai.contentunderstanding
+    - azure.ai.contentunderstanding.aio
+    - azure.ai.contentunderstanding.models
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Content Understanding Client Library for Python"
+  description: |
+    This is the Microsoft Azure Content Understanding Client Library for Python.
+    Please see https://aka.ms/azsdk/conda/releases/contentunderstanding for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - jennypng
+    - kashifkhan-msft

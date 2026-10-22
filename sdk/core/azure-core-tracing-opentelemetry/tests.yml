@@ -1,0 +1,12 @@
+trigger: none
+
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: core
+      BuildTargetingString: 'azure-core-tracing-opentelemetry'
+      EnvVars:
+        AZURE_SKIP_LIVE_RECORDING: 'true'
+        AZURE_TEST_RUN_LIVE: 'true'
+      TestResourceDirectories:
+        - core/azure-core-tracing-opentelemetry/

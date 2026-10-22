@@ -1,0 +1,29 @@
+parameters:
+  - name: BuildTargetingString
+    type: string
+    default: '*'
+  - name: PackagePropertiesFolder
+    type: string
+    default: ''
+  - name: IncludeIndirect
+    type: boolean
+    default: true
+
+steps:
+  # whether we are running within a PR build or not, we need to walk the package properties and save them to
+  # variable $(TargetingString) so that every other check and accept it as an argument.
+  - pwsh: |
+      $IncludeIndirect = [bool]::Parse("${{ parameters.IncludeIndirect }}")
+
+      ./eng/scripts/resolve-package-info.ps1 `
+          -ParameterTargetingStringSetting "${{ parameters.BuildTargetingString }}" `
+          -PackagePropertiesFolder "${{ parameters.PackagePropertiesFolder }}" `
+          -IncludeIndirect $IncludeIndirect
+    displayName: Resolve Targeted Packages
+    # if targeting has been set by matrix, this value will already be populated
+    condition: eq(variables['TargetingString'], '')
+
+  - pwsh: |
+      Write-Host "This run is targeting: `n$(TargetingString)"
+    displayName: Display Targeted Packages
+    condition: ne(variables['TargetingString'], '')

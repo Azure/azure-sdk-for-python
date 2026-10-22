@@ -1,0 +1,14 @@
+name: model-remote2
+path: azureml://datastores/workspaceblobstore/paths/az-ml-artifacts/b1946ac92492d2347c6235b4d2611184/model.pkl
+version: 3
+description: "this is my test model"
+tags:
+  foo: bar
+  abc: 123
+utc_time_created: '2020-10-19 17:44:02.096572'
+flavors:
+  sklearn:
+    sklearn_version: 0.23.2
+  python_function:
+    loader_module: office.plrmodel
+    python_version: 3.8.5

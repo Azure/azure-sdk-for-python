@@ -1,0 +1,593 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+import copy
+import errno
+import hashlib
+import logging
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+import time
+import zipfile
+import urllib.parse
+from collections import defaultdict
+from io import BytesIO
+from pathlib import Path, PureWindowsPath
+from threading import Lock
+from typing import List, Optional, Sequence, Union
+
+from typing_extensions import Literal
+
+from azure.core.exceptions import AzureError, HttpResponseError
+
+from azure.ai.ml.constants._common import DefaultOpenEncoding
+
+from ._http_utils import HttpPipeline
+from .utils import get_base_directory_for_cache
+
+_logger = logging.getLogger(__name__)
+
+
+class ArtifactCache:
+    """Disk cache of azure artifact packages.
+
+    The key of the cache is path of artifact packages in local, like this
+    azure-ai-ml/components/additional_includes/artifacts/{organization}/{project}/{feed}/{package_name}/{version}.
+    The value is the files/folders in this cache folder.
+    """
+
+    # artifact cache is shared across SDK versions and across workspaces/registries
+    DEFAULT_DISK_CACHE_DIRECTORY = get_base_directory_for_cache().joinpath(
+        "components",
+        "additional_includes",
+        "artifacts",
+    )
+    POSTFIX_CHECKSUM = "checksum"
+    _CACHE_PUBLISH_RETRIES = 50
+    _CACHE_PUBLISH_RETRY_DELAY = 0.1
+    _instance_lock = Lock()
+    _instance = None
+
+    def __new__(cls):
+        """Singleton creation disk cache."""
+        if cls._instance is None:
+            with cls._instance_lock:
+                if cls._instance is None:
+                    cls.check_artifact_extension()
+                    cls._instance = object.__new__(cls)
+        return cls._instance
+
+    @staticmethod
+    def check_artifact_extension():
+        # check az extension azure-devops installed. Install it if not installed.
+        az_executable = shutil.which("az")
+        if az_executable is None:
+            raise RuntimeError("Azure CLI is required to download Azure DevOps artifacts.")
+        result = subprocess.run(
+            [az_executable, "artifacts", "--help", "--yes"],
+            capture_output=True,
+            check=False,
+        )
+
+        if result.returncode != 0:
+            raise RuntimeError(
+                "Auto-installation failed. Please install azure-devops "
+                "extension by 'az extension add --name azure-devops'."
+            )
+
+    def __init__(self, cache_directory=None):
+        self._cache_directory = Path(cache_directory or self.DEFAULT_DISK_CACHE_DIRECTORY)
+        self._cache_directory.mkdir(exist_ok=True, parents=True)
+        self._artifacts_tool_path = None
+        self._download_locks = defaultdict(Lock)
+
+    @property
+    def cache_directory(self) -> Path:
+        """Cache directory path.
+
+        :return: The cache directory
+        :rtype: Path
+        """
+        return self._cache_directory
+
+    @staticmethod
+    def hash_files_content(file_list: List[Union[str, os.PathLike]]) -> str:
+        """Hash the file content in the file list.
+
+        :param file_list: The list of files to hash
+        :type file_list: List[Union[str, os.PathLike]]
+        :return: Hashed file contents
+        :rtype: str
+        """
+        ordered_file_list = copy.copy(file_list)
+        hasher = hashlib.sha256()
+        ordered_file_list.sort()
+        for item in ordered_file_list:
+            with open(item, "rb") as f:
+                hasher.update(f.read())
+        return hasher.hexdigest()
+
+    @staticmethod
+    def _format_organization_name(organization):
+        pattern = r'[<>:"\\/|?*]'
+        normalized_organization_name = re.sub(pattern, "_", organization)
+        return normalized_organization_name
+
+    @staticmethod
+    def get_organization_project_by_git():
+        """Get organization and project from git remote url. For example, the git remote url is
+        "https://organization.visualstudio.com/xxx/project_name/_git/repositry_name" or
+        "https://dev.azure.com/{organization}/project".
+
+        :return organization_url, project: organization_url, project
+        :rtype organization_url, project: str, str
+        """
+        result = subprocess.run(
+            [shutil.which("git"), "config", "--get", "remote.origin.url"],
+            capture_output=True,
+            encoding="utf-8",
+            check=False,
+        )
+
+        if result.returncode != 0:
+            # When organization and project cannot be retrieved from the origin url.
+            raise RuntimeError(
+                f"Get the git origin url failed, you must be in a local Git directory, "
+                f"error message: {result.stderr}"
+            )
+        origin_url = result.stdout.strip()
+
+        # Organization URL has two format, https://dev.azure.com/{organization} and
+        # https://{organization}.visualstudio.com
+        # https://learn.microsoft.com/azure/devops/extend/develop/work-with-urls?view=azure-devops&tabs=http
+        if "dev.azure.com" in origin_url:
+            regex = r"^https:\/\/\w*@?dev\.azure\.com\/(\w*)\/(\w*)"
+            results = re.findall(regex, origin_url)
+            if results:
+                organization, project = results[0]
+                return f"https://dev.azure.com/{organization}", project
+        elif "visualstudio.com" in origin_url:
+            regex = r"https:\/\/(\w*)\.visualstudio\.com.*\/(\w*)\/_git"
+            results = re.findall(regex, origin_url)
+            if results:
+                organization, project = results[0]
+                return f"https://{organization}.visualstudio.com", project
+
+        # When organization and project cannot be retrieved from the origin url.
+        raise RuntimeError(
+            f'Cannot get organization and project from git origin url "{origin_url}", '
+            f'you must be in a local Git directory that has a "remote" referencing a '
+            f"Azure DevOps or Azure DevOps Server repository."
+        )
+
+    @classmethod
+    def _get_checksum_path(cls, path):
+        artifact_path = Path(path)
+        return artifact_path.parent / f"{artifact_path.name}_{cls.POSTFIX_CHECKSUM}"
+
+    @staticmethod
+    def _cache_path_component(value: str, field: str) -> str:
+        error_message = f"Artifact {field} must be a non-empty, valid cache path component."
+        if not isinstance(value, str) or not value or value in (".", ".."):
+            raise ValueError(error_message)
+        if (
+            re.search(r'[\x00-\x1f\x7f<>:"/\\|?]', value)
+            or value.endswith((".", " "))
+            or ("*" in value and field != "version")
+        ):
+            raise ValueError(error_message)
+        # Version selectors are valid CLI arguments, but not Windows filenames.
+        cache_component = value.replace("%", "%25").replace("*", "%2A")
+        if PureWindowsPath(cache_component).is_reserved():
+            raise ValueError(error_message)
+        return cache_component
+
+    def _get_cache_path(self, organization: str, project: str, feed: str, name: str, version: str) -> Path:
+        if not isinstance(organization, str) or not organization:
+            raise ValueError("Artifact organization must be a non-empty string.")
+        components = [
+            self._cache_path_component(self._format_organization_name(organization), "organization"),
+            self._cache_path_component(project, "project"),
+            self._cache_path_component(feed, "feed"),
+            self._cache_path_component(name, "name"),
+            self._cache_path_component(version, "version"),
+        ]
+        cache_root = self.cache_directory.resolve()
+        artifact_path = cache_root.joinpath(*components)
+        for path in (artifact_path, self._get_checksum_path(artifact_path)):
+            resolved_path = path.resolve()
+            if cache_root not in resolved_path.parents:
+                raise ValueError("Artifact cache paths must remain inside the cache directory.")
+        return artifact_path
+
+    @staticmethod
+    def _safe_extractall(zip_file: zipfile.ZipFile, destination: Union[str, os.PathLike]) -> None:
+        """Safely extract all members of a zip archive, guarding against ZipSlip/path traversal.
+
+        Each member's resolved destination path is validated to remain within ``destination``.
+        Members with absolute paths or ``..`` segments that would escape the destination are rejected.
+
+        :param zip_file: The zip archive to extract.
+        :type zip_file: zipfile.ZipFile
+        :param destination: The directory to extract the archive members into.
+        :type destination: Union[str, os.PathLike]
+        :raises RuntimeError: If a member would be extracted outside of ``destination``.
+        """
+        destination_path = Path(destination).resolve()
+        for member in zip_file.namelist():
+            target_path = (destination_path / member).resolve()
+            if destination_path != target_path and destination_path not in target_path.parents:
+                raise RuntimeError(f"Illegal path traversal detected in zip archive member: {member}")
+        zip_file.extractall(destination_path)  # nosec B202
+
+    @staticmethod
+    def _get_organization_name(organization: str) -> str:
+        organization_name = r"[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?"
+        pattern = (
+            rf"https://(?:(?P<legacy>{organization_name})\.visualstudio\.com(?::443)?/?"
+            rf"|dev\.azure\.com(?::443)?/(?P<current>{organization_name})/?)"
+        )
+        match = (
+            re.fullmatch(pattern, organization, flags=re.IGNORECASE | re.ASCII)
+            if isinstance(organization, str)
+            else None
+        )
+        if match is None:
+            raise ValueError("Invalid artifact organization URL. Use an HTTPS Azure DevOps organization URL.")
+        return (match.group("legacy") or match.group("current")).lower()
+
+    @staticmethod
+    def _validate_tool_download_url(uri: object) -> str:
+        if (
+            not isinstance(uri, str)
+            or not uri
+            or any(ord(character) <= 32 or ord(character) == 127 for character in uri)
+            or "\\" in uri
+            or "#" in uri
+        ):
+            raise ValueError("Invalid artifact tool download URL.")
+        try:
+            parsed = urllib.parse.urlsplit(uri)
+            valid = (
+                parsed.scheme == "https"
+                and bool(parsed.hostname)
+                and parsed.username is None
+                and parsed.password is None
+                and parsed.port in (None, 443)
+            )
+        except ValueError as error:
+            raise ValueError("Invalid artifact tool download URL.") from error
+        if not valid:
+            raise ValueError("Invalid artifact tool download URL.")
+        return uri
+
+    def _redirect_artifacts_tool_path(self, organization: Optional[str]):
+        """Downloads the artifacts tool and redirects `az artifact` command to it.
+
+        Done to avoid the transient issue when download artifacts
+
+        :param organization:  The organization url. If None, is determined by local git repo
+        :type organization: Optional[str]
+        """
+        from azure.identity import DefaultAzureCredential
+
+        if organization is None:
+            organization, _ = self.get_organization_project_by_git()
+        organization_name = self._get_organization_name(organization)
+
+        if not self._artifacts_tool_path:
+            os_name = "Windows" if os.name == "nt" else "Linux"
+            credential = DefaultAzureCredential()
+            token = credential.get_token("https://management.azure.com/.default")
+            header = {"Authorization": "Bearer " + token.token}
+
+            # The underlying HttpTransport is meant to be user configurable.
+            # MLClient instances have a user configured Pipeline for sending http requests
+            # TODO: Replace this with MlCLient._requests_pipeline
+            requests_pipeline = HttpPipeline()
+            url = (
+                f"https://{organization_name}.vsblob.visualstudio.com/_apis/clienttools/ArtifactTool/release?"
+                f"osName={os_name}&arch=AMD64"
+            )
+            response = requests_pipeline.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+                url, headers=header, permit_redirects=False
+            )
+            if response.status_code != 200:
+                raise HttpResponseError("Download artifact tool metadata failed.", response=response)
+            metadata = response.json()
+            artifacts_tool_uri = self._validate_tool_download_url(
+                metadata.get("uri") if isinstance(metadata, dict) else None
+            )
+            # Trust only the validated service's release URI, without forwarding credentials or following redirects.
+            response = requests_pipeline.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+                artifacts_tool_uri, permit_redirects=False
+            )
+            if response.status_code != 200:
+                raise HttpResponseError("Download artifact tool failed.", response=response)
+            artifacts_tool_path = Path(tempfile.mkdtemp())  # nosec B306
+            installed = False
+            try:
+                with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
+                    self._safe_extractall(zip_file, artifacts_tool_path)
+                tool_name = "artifacttool.exe" if os_name == "Windows" else "artifacttool"
+                if not (artifacts_tool_path / tool_name).is_file():
+                    raise RuntimeError(f"Artifact tool archive does not contain {tool_name}.")
+                os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(artifacts_tool_path.resolve())
+                self._artifacts_tool_path = artifacts_tool_path
+                installed = True
+            finally:
+                if not installed:
+                    shutil.rmtree(artifacts_tool_path)
+
+    def _download_artifacts(
+        self,
+        download_cmd: Sequence[str],
+        organization: Optional[str],
+        name: str,
+        version: str,
+        feed: str,
+        max_retries: int = 3,
+    ):
+        """Download artifacts with retry.
+
+        :param download_cmd: The command used to download the artifact
+        :type download_cmd: Sequence[str]
+        :param organization: The artifact organization
+        :type organization: Optional[str]
+        :param name: The package name
+        :type name: str
+        :param version: The package version
+        :type version: str
+        :param feed: The download feed
+        :type feed: str
+        :param max_retries: The number of times to retry the download. Defaults to 3
+        :type max_retries: int
+        """
+        retries = 0
+        while retries <= max_retries:
+            try:
+                self._redirect_artifacts_tool_path(organization)
+            except (AzureError, OSError) as e:
+                _logger.warning("Redirect artifacts tool path failed")
+                _logger.debug("Details: %s", e)
+
+            retries += 1
+            result = subprocess.run(
+                download_cmd,
+                capture_output=True,
+                encoding="utf-8",
+                check=False,
+            )
+
+            if result.returncode != 0:
+                error_msg = (
+                    f"Download package {name}:{version} from the feed {feed} failed {retries} times: {result.stderr}"
+                )
+                if retries < max_retries:
+                    _logger.warning(error_msg)
+                else:
+                    error_msg = error_msg + f"\nDownload artifact debug info: {result.stdout}"
+                    raise RuntimeError(error_msg)
+            else:
+                return
+
+    def _check_artifacts(self, artifact_package_path: Union[str, os.PathLike]) -> bool:
+        """Check the artifact folder is legal.
+
+        :param artifact_package_path: The artifact package path
+        :type artifact_package_path: Union[str, os.PathLike]
+        :return:
+          * If the artifact folder or checksum file does not exist, return false.
+          * If the checksum file exists and does not equal to the hash of artifact folder, return False.
+          * If the checksum file equals to the hash of artifact folder, return true.
+        :rtype: bool
+        """
+        path = Path(artifact_package_path)
+        if not path.exists():
+            return False
+        checksum_path = self._get_checksum_path(artifact_package_path)
+        if checksum_path.exists():
+            with open(checksum_path, "r", encoding=DefaultOpenEncoding.READ) as f:
+                checksum = f.read()
+                file_list: List[Union[str, os.PathLike]] = [
+                    os.path.join(root, f) for root, _, files in os.walk(path) for f in files
+                ]
+                artifact_hash = self.hash_files_content(file_list)
+                return checksum == artifact_hash
+        return False
+
+    def get(
+        self,
+        feed: str,
+        name: str,
+        version: str,
+        scope: Literal["project", "organization"],
+        organization: Optional[str] = None,
+        project: Optional[str] = None,
+        resolve: bool = True,
+    ) -> Optional[Path]:
+        """Get the catch path of artifact package. Package path like this azure-ai-
+        ml/components/additional_includes/artifacts/{organization}/{project}/{feed}/{package_name}/{version}. If the
+        path exits, it will return the package path. If the path not exist and resolve=True, it will download the
+        artifact package and return package path. If the path not exist and resolve=False, it will return None.
+
+        :param feed: Name or ID of the feed.
+        :type feed: str
+        :param name: Name of the package.
+        :type name: str
+        :param version: Version of the package.
+        :type version: str
+        :param scope: Scope of the feed: 'project' if the feed was created in a project, and 'organization' otherwise.
+        :type scope: Literal["project", "organization"]
+        :param organization: Azure DevOps organization URL.
+        :type organization: str
+        :param project: Name or ID of the project.
+        :type project: str
+        :param resolve: Whether download package when package does not exist in local.
+        :type resolve: bool
+        :return artifact_package_path: Cache path of the artifact package
+        :rtype: Optional[Path]
+        """
+        if organization is None or project is None:
+            org_val, project_val = self.get_organization_project_by_git()
+            organization = org_val if organization is None else organization
+            project = project_val if project is None else project
+        artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+        # Use lock to avoid downloading the same package at the same time.
+        with self._download_locks[artifact_package_path]:
+            cache_exists = False
+            for attempt in range(self._CACHE_PUBLISH_RETRIES):
+                try:
+                    if attempt == 0:
+                        if self._check_artifacts(artifact_package_path):
+                            return artifact_package_path.absolute().resolve()
+                        if not resolve:
+                            return None
+                    artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+                    cache_exists = artifact_package_path.exists()
+                    if not cache_exists:
+                        break
+                    # Another process may have published the payload but not its checksum yet.
+                    checksum_exists = self._get_checksum_path(artifact_package_path).exists()
+                    if self._check_artifacts(artifact_package_path):
+                        return artifact_package_path.absolute().resolve()
+                    if checksum_exists:
+                        break
+                except PermissionError:
+                    if not resolve or attempt + 1 == self._CACHE_PUBLISH_RETRIES:
+                        raise
+                time.sleep(self._CACHE_PUBLISH_RETRY_DELAY)
+
+            if cache_exists:
+                artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+                if self._check_artifacts(artifact_package_path):
+                    return artifact_package_path.absolute().resolve()
+                check_sum_path = self._get_checksum_path(artifact_package_path)
+                if check_sum_path.exists():
+                    os.unlink(check_sum_path)
+                if artifact_package_path.exists():
+                    # Remove invalid artifact package to avoid affecting download artifact.
+                    with tempfile.TemporaryDirectory(dir=self.cache_directory) as temp_folder:
+                        os.rename(artifact_package_path, Path(temp_folder) / "invalid-artifact")
+            # Download artifact
+            return self.set(
+                feed=feed,
+                name=name,
+                version=version,
+                organization=organization,
+                project=project,
+                scope=scope,
+            )
+
+    def set(
+        self,
+        feed: str,
+        name: str,
+        version: str,
+        scope: Literal["project", "organization"],
+        organization: Optional[str] = None,
+        project: Optional[str] = None,
+    ) -> Path:
+        """Set the artifact package to the cache. The key of the cache is path of artifact packages in local. The value
+        is the files/folders in this cache folder. If package path exists, directly return package path.
+
+        :param feed: Name or ID of the feed.
+        :type feed: str
+        :param name: Name of the package.
+        :type name: str
+        :param version: Version of the package.
+        :type version: str
+        :param scope: Scope of the feed: 'project' if the feed was created in a project, and 'organization' otherwise.
+        :type scope: Literal["project", "organization"]
+        :param organization: Azure DevOps organization URL.
+        :type organization: str
+        :param project: Name or ID of the project.
+        :type project: str
+        :return artifact_package_path: Cache path of the artifact package
+        :rtype: Path
+        """
+        if organization is None or project is None:
+            org_val, project_val = self.get_organization_project_by_git()
+            organization = org_val if organization is None else organization
+            project = project_val if project is None else project
+        artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+        az_executable = shutil.which("az")
+        if az_executable is None:
+            raise RuntimeError("Azure CLI is required to download Azure DevOps artifacts.")
+        with tempfile.TemporaryDirectory(dir=self.cache_directory) as tempdir:
+            download_path = Path(tempdir) / "package"
+            download_path.mkdir()
+            download_cmd = [
+                az_executable,
+                "artifacts",
+                "universal",
+                "download",
+                "--feed",
+                feed,
+                "--name",
+                name,
+                "--version",
+                version,
+                "--scope",
+                scope,
+                "--path",
+                str(download_path),
+                "--org",
+                organization,
+                "--project",
+                project,
+            ]
+            _logger.info("Start downloading artifacts %s:%s from %s.", name, version, feed)
+            result = subprocess.run(
+                download_cmd,
+                capture_output=True,
+                encoding="utf-8",
+                check=False,
+            )
+
+            if result.returncode != 0:
+                artifacts_tool_not_find_error_pattern = "No such file or directory: .*artifacttool"
+                if re.findall(artifacts_tool_not_find_error_pattern, result.stderr):
+                    # When download artifacts tool failed retry download artifacts command
+                    _logger.warning(
+                        "Download package %s:%s from the feed %s failed: %s", name, version, feed, result.stderr
+                    )
+                    download_cmd.append("--debug")
+                    self._download_artifacts(download_cmd, organization, name, version, feed)
+                else:
+                    raise RuntimeError(
+                        f"Download package {name}:{version} from the feed {feed} failed: {result.stderr}"
+                    )
+
+            artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+            try:
+                artifact_package_path.parent.mkdir(exist_ok=True, parents=True)
+                file_list: List[Union[str, os.PathLike]] = [
+                    os.path.join(root, f) for root, _, files in os.walk(download_path) for f in files
+                ]
+                artifact_hash = self.hash_files_content(file_list)
+                os.rename(download_path, artifact_package_path)
+                temp_checksum_file = Path(tempdir) / "checksum"
+                with open(temp_checksum_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    f.write(artifact_hash)
+                os.replace(temp_checksum_file, self._get_checksum_path(artifact_package_path))
+            except OSError as error:
+                if error.errno not in (errno.EEXIST, errno.ENOTEMPTY):  # cspell:ignore EEXIST ENOTEMPTY
+                    raise
+                # A winning writer may still be publishing its separate checksum.
+                for attempt in range(self._CACHE_PUBLISH_RETRIES):
+                    try:
+                        artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+                        if self._check_artifacts(artifact_package_path):
+                            break
+                    except PermissionError:
+                        # Windows may temporarily deny reads while the checksum is being published.
+                        if attempt + 1 == self._CACHE_PUBLISH_RETRIES:
+                            raise
+                    time.sleep(self._CACHE_PUBLISH_RETRY_DELAY)
+                else:
+                    raise
+        return artifact_package_path.absolute().resolve()

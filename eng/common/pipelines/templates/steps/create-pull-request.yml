@@ -1,0 +1,75 @@
+# Expects AuthToken to be a valid GitHub token.
+# Defaults to azuresdk-github-pat for backwards compatibility.
+# New callers should pass AuthToken: '' to auto-login via login-to-github.yml.
+
+parameters:
+  BaseBranchName: $(Build.SourceBranch)
+  PRBranchName: not-specified
+  PROwner: azure-sdk
+  CommitMsg: not-specified
+  RepoOwner: Azure
+  RepoName: $(Build.Repository.Name)
+  PushArgs:
+  WorkingDirectory: $(System.DefaultWorkingDirectory)
+  PRTitle: not-specified
+  PRBody: ''
+  ScriptDirectory: eng/common/scripts
+  GHReviewers: ''
+  GHTeamReviewers: ''
+  GHAssignees: ''
+  # Multiple labels seperated by comma, e.g. "bug, APIView"
+  PRLabels: ''
+  SkipCheckingForChanges: false
+  CloseAfterOpenForTesting: false
+  OpenAsDraft: false
+  AuthToken: ''
+  # PushAuthToken: for cross-org pushes (pushing to PROwner's fork in a different org).
+  # Defaults to AuthToken when not specified.
+  PushAuthToken: ''
+
+steps:
+- ${{ if eq(parameters.AuthToken, '') }}:
+  - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+    parameters:
+      TokenOwners:
+        - ${{ parameters.PROwner }}
+        - ${{ parameters.RepoOwner }}
+      ScriptDirectory: ${{ parameters.ScriptDirectory }}
+
+- template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+  parameters:
+    BaseRepoBranch: ${{ parameters.PRBranchName }}
+    BaseRepoOwner: ${{ parameters.PROwner }}
+    CommitMsg: ${{ parameters.CommitMsg }}
+    TargetRepoOwner: ${{ parameters.RepoOwner }}
+    TargetRepoName: ${{ parameters.RepoName }}
+    PushArgs: ${{ parameters.PushArgs }}
+    WorkingDirectory: ${{ parameters.WorkingDirectory }}
+    ScriptDirectory: ${{ parameters.ScriptDirectory }}
+    SkipCheckingForChanges: ${{ parameters.SkipCheckingForChanges }}
+    AuthToken: ${{ coalesce(parameters.PushAuthToken, parameters.AuthToken, format('$(GH_TOKEN_{0})', parameters.PROwner)) }}
+
+
+- task: PowerShell@2
+  displayName: Create pull request
+  condition: and(succeeded(), eq(variables['HasChanges'], 'true'))
+  inputs:
+    pwsh: true
+    workingDirectory: ${{ parameters.WorkingDirectory }}
+    filePath: ${{ parameters.ScriptDirectory }}/Submit-PullRequest.ps1
+    arguments: >
+      -RepoOwner "${{ parameters.RepoOwner }}"
+      -RepoName "$(RepoNameWithoutOwner)"
+      -BaseBranch "${{ parameters.BaseBranchName }}"
+      -PROwner "${{ parameters.PROwner }}"
+      -PRBranch "${{ parameters.PRBranchName }}"
+      -AuthToken "${{ coalesce(parameters.AuthToken, format('$(GH_TOKEN_{0})', parameters.RepoOwner)) }}"
+      -PRTitle "${{ parameters.PRTitle }}"
+      -PRBody "${{ coalesce(parameters.PRBody, parameters.CommitMsg, parameters.PRTitle) }}"
+      -PRLabels "${{ parameters.PRLabels }}"
+      -UserReviewers "${{ parameters.GHReviewers }}"
+      -TeamReviewers "${{ parameters.GHTeamReviewers }}"
+      -Assignees "${{ parameters.GHAssignees }}"
+      -MaintainerCanModify $${{ eq(parameters.PROwner, parameters.RepoOwner) }}
+      -CloseAfterOpenForTesting $${{ coalesce(parameters.CloseAfterOpenForTesting, 'false') }}
+      -OpenAsDraft $${{ parameters.OpenAsDraft }}

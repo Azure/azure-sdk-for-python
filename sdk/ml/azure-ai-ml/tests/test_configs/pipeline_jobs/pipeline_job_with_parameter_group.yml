@@ -1,0 +1,29 @@
+type: pipeline
+
+name: PipelineJobWithParameterGroup
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  group.int_param: 10
+  group.enum_param: 'hello'
+  group.number_param: 4.0
+  group.sub_group.str_param: 'test'
+  group.sub_group.bool_param: true
+
+jobs:
+  hello_world_component_1:
+    type: command
+    inputs:
+      component_in_string: ${{parent.inputs.group.sub_group.str_param}}
+      component_in_ranged_number: ${{parent.inputs.group.number_param}}
+      component_in_enum: ${{parent.inputs.group.enum_param}}
+      component_in_boolean: ${{parent.inputs.group.sub_group.bool_param}}
+      component_in_ranged_integer: ${{parent.inputs.group.int_param}}
+
+    component: ../components/input_types_component.yml

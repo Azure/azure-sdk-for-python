@@ -1,0 +1,109 @@
+# Variable 'ACCOUNT_HOST' was defined in the Variables tab
+# Variable 'ACCOUNT_KEY' was defined in the Variables tab
+# Variable 'AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER' was defined in the Variables tab
+# Agent Queue 'Azure Pipelines' was used with unrecognized Agent Specification, vmImage property must be specified to determine image - https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#software
+name: $(date:yyyyMMdd)$(rev:.r)
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: refs/heads/main
+jobs:
+- job: Job_1
+  displayName: Python 3
+  timeoutInMinutes: 240
+  pool:
+    name: Azure Pipelines
+  steps:
+  - checkout: self
+    submodules: recursive
+    fetchDepth: 5
+    fetchTags: true
+  - task: UsePythonVersion@0
+    name: ''
+    displayName: Use Python 3.x
+    condition: succeededOrFailed()
+  - task: Bash@3
+    displayName: Install azpysdk
+    condition: succeededOrFailed()
+    inputs:
+      targetType: inline
+      script: |
+        python -m pip install ./eng/tools/azure-sdk-tools
+  - task: Bash@3
+    displayName: Bash Script
+    inputs:
+      targetType: inline
+      script: >-
+        cd ./sdk/cosmos/azure-cosmos
+
+        azpysdk whl --pytest-args -k 'not cosmosEmulator and not cosmosMultiRegion and not cosmosCircuitBreaker and not cosmosCircuitBreakerMultiRegion and not semanticReranker' # cspell:ignore Reranker
+    env:
+      ACCOUNT_KEY: $(ACCOUNT_KEY) # Maps the secret variable $(token) from my-var-group
+  - task: AzurePowerShell@5
+    displayName: Clean up resources
+    condition: always()
+    inputs:
+      ConnectedServiceNameARM: d71e80c4-c3df-4a27-9fc7-f25563bbb0d1
+      ScriptType: InlineScript
+      Inline: |
+        $uri = New-Object System.Uri("${env:ACCOUNT_HOST}")
+        $accountName = $uri.Host.Split('.')[0]
+
+        # Only remove databases this pipeline run created. The account is long lived and
+        # shared with other languages' CI and with concurrent runs of this suite, so an
+        # unfiltered sweep would delete resources that are still in use.
+        $prefix = "PythonSDKTest-$($env:BUILD_BUILDID)-"
+        Write-Host "Clean up databases matching '$prefix*' from $accountName"
+
+        $res = Get-AzResource -Name $accountName -ResourceType "Microsoft.DocumentDb/databaseAccounts"
+
+        if ($null -ne $res) {
+            $account = Get-AzCosmosDBAccount -ResourceId $res.ResourceId
+
+            $dbs = Get-AzCosmosDBSqlDatabase -ParentObject $account | Where-Object { $_.Name.TrimStart().StartsWith($prefix) }
+
+            $dbs | Write-Output
+
+            $dbs | Remove-AzCosmosDBSqlDatabase
+
+            Write-Host "$accountName is cleaned"
+        }
+        else {
+           Write-Host "Unable to find $accountName"
+        }
+      errorActionPreference: continue
+      TargetAzurePs: LatestVersion
+  - task: Bash@3
+    displayName: Additional clean up using Python SDK - install SDK
+    condition: succeededOrFailed()
+    inputs:
+      targetType: inline
+      script: pip install azure-cosmos
+  - task: PythonScript@0
+    displayName: Additional clean up using Python SDK
+    condition: succeededOrFailed()
+    inputs:
+      scriptSource: inline
+      script: |
+        # Python tests create databases with special characters (!@$%^&*()-~`'_[]{}|;:,.<>)
+        # that PS and the Portal are unable to remove. This task additionally cleans up
+        # resources that the previous PS task could not.
+        import os
+
+        import azure.cosmos.cosmos_client as cosmos_client
+
+        host = os.environ.get("ACCOUNT_HOST", "")
+        key = os.environ.get("ACCOUNT_KEY", "")
+
+        # Scoped to this run for the same reason as the PS task above.
+        prefix = "PythonSDKTest-{}-".format(os.environ.get("BUILD_BUILDID", ""))
+
+        client = cosmos_client.CosmosClient(host, key)
+
+        for db in client.list_databases():
+            if db["id"].lstrip().startswith(prefix):
+                client.delete_database(db["id"])
+    env:
+      ACCOUNT_KEY: $(ACCOUNT_KEY) # Maps the secret variable $(token) from my-var-group
+...

@@ -1,0 +1,76 @@
+# This template sets variable PROXY_PID to be used for shutdown later.
+parameters:
+  rootFolder: '$(Build.SourcesDirectory)'
+  runProxy: true
+  targetVersion: ''
+  templateRoot: '$(Build.SourcesDirectory)'
+  condition: true
+  proxyUrl: 'http://localhost:5000'
+
+steps:
+  - task: PowerShell@2
+    inputs:
+      pwsh: true
+      filePath: ${{ parameters.templateRoot }}/eng/common/scripts/trust-proxy-certificate.ps1
+    displayName: 'Language Specific Certificate Trust'
+    condition: and(succeeded(), ${{ parameters.condition }})
+
+  - task: PowerShell@2
+    displayName: 'Override proxy version if necessary'
+    condition: and(succeeded(), ${{ parameters.condition }}, ne('${{ parameters.targetVersion }}', ''))
+    inputs:
+      targetType: filePath
+      filePath: '${{ parameters.templateRoot }}/eng/common/testproxy/scripts/override-proxy-version.ps1'
+      arguments: '-TargetVersion "${{ parameters.targetVersion }}"'
+      pwsh: true
+
+  - task: PowerShell@2
+    inputs:
+      filePath: '${{ parameters.templateRoot }}/eng/common/scripts/Install-TestProxy.ps1'
+      arguments: >
+        -TemplateRoot "${{ parameters.templateRoot }}"
+        -BinariesDirectory $(Build.BinariesDirectory)
+        -RunProxy $${{ parameters.runProxy }}
+      pwsh: true
+    displayName: "Install and configure test-proxy"
+    condition: and(succeeded(), ${{ parameters.condition }})
+
+  - ${{ if eq(parameters.runProxy, 'true') }}:
+    - task: PowerShell@2
+      inputs:
+        filePath: '${{ parameters.templateRoot }}/eng/common/scripts/Start-TestProxy.ps1'
+        arguments: >
+          -RootFolder ${{ parameters.rootFolder }}
+          -ProxyUrl ${{ parameters.proxyUrl }}
+          -BinariesDirectory $(Build.BinariesDirectory)
+        pwsh: true
+      displayName: 'Run test-proxy - Windows'
+      condition: and(succeeded(), eq(variables['Agent.OS'],'Windows_NT'), ${{ parameters.condition }})
+      env:
+        DOTNET_ROLL_FORWARD: 'Major'
+
+    # nohup does NOT continue beyond the current session if you use it within PowerShell
+    - bash: |
+        if [[ "$(uname)" == "Darwin" ]]; then
+          export DOTNET_ROOT="$HOME/.dotnet"
+        fi
+        nohup $(Build.BinariesDirectory)/test-proxy/test-proxy start -u --storage-location ${{ parameters.rootFolder }} -- --urls "${{ parameters.proxyUrl }}" 1>${{ parameters.rootFolder }}/test-proxy.log 2>${{ parameters.rootFolder }}/test-proxy-error.log &
+
+        echo $! > $(Build.SourcesDirectory)/test-proxy.pid
+
+        echo "Setting PROXY_PID to $(cat $(Build.SourcesDirectory)/test-proxy.pid)"
+        echo "##vso[task.setvariable variable=PROXY_PID]$(cat $(Build.SourcesDirectory)/test-proxy.pid)"
+      displayName: "Run test-proxy - Linux/Mac"
+      condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'), ${{ parameters.condition }})
+      workingDirectory: "${{ parameters.rootFolder }}"
+      env:
+        DOTNET_ROLL_FORWARD: 'Major'
+
+    - task: PowerShell@2
+      inputs:
+        filePath: '${{ parameters.templateRoot }}/eng/common/scripts/Test-TestProxyIsAlive.ps1'
+        arguments: >
+          -ProxyUrl ${{ parameters.proxyUrl }}
+        pwsh: true
+      displayName: "Test Proxy IsAlive"
+      condition: and(succeeded(), ${{ parameters.condition }})

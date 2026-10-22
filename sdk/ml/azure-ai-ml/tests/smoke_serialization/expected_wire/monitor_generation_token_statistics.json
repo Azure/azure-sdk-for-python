@@ -1,0 +1,75 @@
+{
+  "properties": {
+    "action": {
+      "actionType": "CreateMonitor",
+      "monitorDefinition": {
+        "computeConfiguration": {
+          "computeIdentity": {
+            "computeIdentityType": "AmlToken"
+          },
+          "computeType": "ServerlessSpark",
+          "instanceType": "standard_e8s_v3",
+          "runtimeVersion": "3.4"
+        },
+        "monitoringTarget": {
+          "deploymentId": "azureml:va-endpoint:va-deployment",
+          "taskType": "questionanswering"
+        },
+        "signals": {
+          "testSignal": {
+            "metricThresholds": [
+              {
+                "metric": "TotalTokenCount",
+                "threshold": {
+                  "value": 3.0
+                }
+              },
+              {
+                "metric": "TotalTokenCountPerGroup",
+                "threshold": {
+                  "value": 10.0
+                }
+              }
+            ],
+            "mode": "Enabled",
+            "productionData": {
+              "columns": {
+                "completion_column": "answer",
+                "prompt_column": "question"
+              },
+              "inputDataType": "Trailing",
+              "jobInputType": "mltable",
+              "uri": "my_model_inputs_data:1",
+              "windowOffset": "P0D",
+              "windowSize": "P7D"
+            },
+            "samplingRate": 0.1,
+            "signalType": "GenerationTokenStatistics"
+          }
+        }
+      }
+    },
+    "properties": {
+      "prop1": "value"
+    },
+    "tags": {
+      "tag1": "tag"
+    },
+    "trigger": {
+      "frequency": "day",
+      "interval": 1,
+      "schedule": {
+        "hours": [
+          22,
+          20
+        ],
+        "minutes": [
+          0,
+          30
+        ]
+      },
+      "timeZone": "UTC",
+      "triggerType": "Recurrence"
+    }
+  }
+}

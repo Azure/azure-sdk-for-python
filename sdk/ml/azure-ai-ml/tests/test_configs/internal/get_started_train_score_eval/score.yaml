@@ -1,0 +1,46 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+$schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
+name: samples_score
+version: 0.0.5
+display_name: Score
+type: CommandComponent
+description: A dummy scoring module
+tags:
+  category: Component Tutorial
+  contact: amldesigner@microsoft.com
+inputs:
+  model_input:
+    type: path
+    description: Zipped model file
+    optional: false
+  test_data:
+    type: path
+    description: Test data organized in the torchvision format/structure
+    optional: false
+outputs:
+  score_output:
+    type: path
+    description: The scoring result in TSV
+command: >-
+  python score.py --model_input {inputs.model_input} --test_data {inputs.test_data}
+  --score_output {outputs.score_output}
+environment:
+  docker:
+    image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1
+  conda:
+    conda_dependencies:
+      name: project_environment
+      channels:
+      - conda-forge
+      dependencies:
+      - pip=20.2
+      - python=3.7.9
+      - scikit-surprise=1.0.6
+      - pip:
+        - waitress==2.0.0
+        - azureml-designer-classic-modules==0.0.161
+        - https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.1.0/en_core_web_sm-2.1.0.tar.gz#egg=en_core_web_sm
+        - spacy==2.1.7
+  os: Linux

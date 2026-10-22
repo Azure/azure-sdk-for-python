@@ -1,0 +1,1347 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+"""Response event stream builders for lifecycle and output item events."""
+
+from __future__ import annotations
+
+import logging
+from collections.abc import Mapping, MutableMapping
+from copy import deepcopy
+from datetime import datetime, timezone
+from typing import Any, Iterator, Sequence, cast
+
+from .. import models as response_models
+
+
+from .._id_generator import IdGenerator
+from .._metadata_constraints import (
+    MAX_METADATA_KEYS,
+    MAX_METADATA_KEY_LENGTH,
+    MAX_METADATA_VALUE_LENGTH,
+)
+from . import _internals
+from ._builders import (
+    OutputItemBuilder,
+    OutputItemCodeInterpreterCallBuilder,
+    OutputItemCustomToolCallBuilder,
+    OutputItemFileSearchCallBuilder,
+    OutputItemFunctionCallBuilder,
+    OutputItemFunctionCallOutputBuilder,
+    OutputItemImageGenCallBuilder,
+    OutputItemMcpCallBuilder,
+    OutputItemMcpListToolsBuilder,
+    OutputItemMessageBuilder,
+    OutputItemReasoningItemBuilder,
+    OutputItemWebSearchCallBuilder,
+)
+from ._state_machine import EventStreamValidator
+from ._checkpoint import ResponseCheckpointEvent
+from ._internal_metadata import _ResponseInternalMetadataView
+
+# Event types whose payload is a full Response snapshot.
+# Lifecycle events nest under a "response" key on the wire.
+_RESPONSE_SNAPSHOT_EVENT_TYPES = _internals._RESPONSE_SNAPSHOT_EVENT_TYPES  # pylint: disable=protected-access
+_LOGGER = logging.getLogger(__name__)
+
+
+def _resolve_conversation_param(raw: Any) -> str | None:
+    """Normalize a polymorphic conversation value to a plain string ID.
+
+    The input side of ``CreateResponse.conversation`` is ``Union[str, ConversationParam_2]``
+    whereas the output side ``ResponseObject.conversation`` is always a ``ConversationReference``
+    (object form ``{"id": "..."}``). This helper extracts the string ID from whichever
+    wire form was supplied.
+
+    :param raw: The raw conversation value from the request (string, dict, or None).
+    :type raw: Any
+    :returns: The conversation ID string, or ``None`` if absent/empty.
+    :rtype: str | None
+    """
+    if raw is None:
+        return None
+    if isinstance(raw, str):
+        return raw or None
+    if isinstance(raw, dict):
+        cid = raw.get("id")
+        return str(cid) if cid else None
+    return None
+
+
+def _require_wire_dict(obj: Any, field_name: str) -> dict[str, Any]:
+    """Validate that a convenience-method payload is already dict-native.
+
+    :param obj: The payload to validate.
+    :type obj: Any
+    :param field_name: The field name to include in error messages.
+    :type field_name: str
+    :returns: The validated wire payload.
+    :rtype: dict[str, Any]
+    """
+    if not isinstance(obj, dict):
+        raise TypeError(f"{field_name} must be a dict-native wire payload")
+    return obj
+
+
+def _merge_response_metadata(response: dict[str, Any], metadata: Mapping[str, str]) -> None:
+    """Merge validated public metadata into a response envelope.
+
+    :param response: Mutable response envelope receiving the metadata.
+    :type response: dict[str, ~typing.Any]
+    :param metadata: Public metadata values to validate and merge.
+    :type metadata: ~collections.abc.Mapping[str, str]
+    """
+    current = response.get("metadata")
+    if current is None:
+        merged: dict[str, str] = {}
+    elif isinstance(current, dict):
+        merged = dict(current)
+    else:
+        raise TypeError("response metadata must be a mapping")
+
+    for key, value in metadata.items():
+        if not isinstance(key, str):
+            raise TypeError(f"metadata keys must be str, got {type(key).__name__}")
+        if not isinstance(value, str):
+            raise TypeError(f"metadata values must be str, got {type(value).__name__}")
+        if len(key) > MAX_METADATA_KEY_LENGTH:
+            raise ValueError(
+                f"metadata key exceeds the {MAX_METADATA_KEY_LENGTH}-character limit: "
+                f"{key[:MAX_METADATA_KEY_LENGTH]}..."
+            )
+        if len(value) > MAX_METADATA_VALUE_LENGTH:
+            raise ValueError(
+                f"metadata value for key '{key}' exceeds the {MAX_METADATA_VALUE_LENGTH}-character limit"
+            )
+        merged[key] = value
+
+    if len(merged) > MAX_METADATA_KEYS:
+        raise ValueError(f"response metadata must have at most {MAX_METADATA_KEYS} key-value pairs")
+    response["metadata"] = merged
+
+
+class _MutableResponseDict(dict[str, Any]):
+    """Mutable response wire payload with legacy attribute access."""
+
+    def __getattr__(self, name: str) -> Any:
+        try:
+            return self[name]
+        except KeyError as exc:
+            raise AttributeError(name) from exc
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        self[name] = value
+
+
+class ResponseEventStream:  # pylint: disable=too-many-public-methods
+    """Response event stream with deterministic sequence numbers."""
+
+    def __init__(
+        self,
+        *,
+        response_id: str | None = None,
+        agent_reference: response_models.AgentReference | dict[str, Any] | None = None,
+        model: str | None = None,
+        request: response_models.CreateResponse | None = None,
+        response: response_models.ResponseObject | None = None,
+    ) -> None:
+        """Initialize a new response event stream.
+
+        :param response_id: Unique identifier for the response. Inferred from *response* if omitted.
+        :type response_id: str | None
+        :param agent_reference: Optional agent reference model.
+        :type agent_reference: AgentReference | None
+        :param model: Optional model identifier to stamp on the response.
+        :type model: str | None
+        :param request: Optional create-response request to seed the response envelope from.
+        :type request: ~azure.ai.agentserver.responses.models.CreateResponse | None
+        :param response: Optional pre-existing response envelope to build upon.
+        :type response: ~azure.ai.agentserver.responses.models.ResponseObject | None
+        :raises ValueError: If both *request* and *response* are provided, or if *response_id* cannot be resolved.
+        """
+        if request is not None and response is not None:
+            raise ValueError("request and response cannot both be provided")
+
+        # Request seeding reads only selected fields, copying mutable values below.
+        request_mapping = request if isinstance(request, dict) else None
+        response_mapping = _internals.coerce_model_mapping(response)
+
+        resolved_response_id = response_id
+        if resolved_response_id is None and response_mapping is not None:
+            candidate_id = response_mapping.get("id")
+            if isinstance(candidate_id, str) and candidate_id:
+                resolved_response_id = candidate_id
+
+        if not isinstance(resolved_response_id, str) or not resolved_response_id:
+            raise ValueError("response_id is required")
+
+        self._response_id = resolved_response_id
+
+        if response_mapping is not None:
+            # Coercion already detached this graph from the caller's recovery seed.
+            payload = _MutableResponseDict(response_mapping)
+            payload["id"] = self._response_id
+            payload.setdefault("object", "response")
+            payload.setdefault("output", [])
+            payload.setdefault("error", None)
+            payload.setdefault("incomplete_details", None)
+            payload.setdefault("instructions", None)
+            payload.setdefault("parallel_tool_calls", False)
+            self._response = payload
+        else:
+            self._response = _MutableResponseDict(
+                {
+                    "id": self._response_id,
+                    "object": "response",
+                    "output": [],
+                    "created_at": datetime.now(timezone.utc),
+                    "error": None,
+                    "incomplete_details": None,
+                    "instructions": None,
+                    "parallel_tool_calls": False,
+                }
+            )
+            if request_mapping is not None:
+                for field_name in ("metadata", "background", "previous_response_id"):
+                    value = request_mapping.get(field_name)
+                    if value is not None:
+                        self._response[field_name] = deepcopy(value)
+                # Normalize polymorphic conversation (str | ConversationParam_2)
+                # to the response-side ConversationReference object form.
+                conversation_id = _resolve_conversation_param(request_mapping.get("conversation"))
+                if conversation_id is not None:
+                    self._response["conversation"] = {"id": conversation_id}
+                request_model = request_mapping.get("model")
+                if isinstance(request_model, str) and request_model:
+                    self._response["model"] = request_model
+                request_agent_reference = request_mapping.get("agent_reference")
+                if isinstance(request_agent_reference, dict):
+                    self._response["agent_reference"] = deepcopy(request_agent_reference)
+
+        if model is not None:
+            self._response["model"] = model
+
+        if agent_reference is not None:
+            self._response["agent_reference"] = deepcopy(agent_reference)
+
+        _ResponseInternalMetadataView(self._response)
+        self._agent_reference, self._model = _internals.extract_response_fields(
+            cast("response_models.ResponseObject", self._response)
+        )
+        self._events: list[response_models.ResponseStreamEvent] = []
+        self._validator = EventStreamValidator()
+        output = self._response.get("output")
+        self._output_index = len(output) if isinstance(output, list) else 0
+
+    @property
+    def response(self) -> dict[str, Any]:
+        """Return the current response envelope.
+
+        :returns: The mutable response envelope being built by this stream.
+        :rtype: ~azure.ai.agentserver.responses.models.ResponseObject
+        """
+        return self._response
+
+    @property
+    def internal_metadata(self) -> "MutableMapping[str, Any]":
+        """Live, mutable response-level framework-internal metadata.
+
+        A convenience proxy backed by a reserved ``_internal_metadata`` key
+        inside the response's public ``metadata`` map. The private bag is
+        JSON-encoded into the string-valued metadata slot required by Foundry
+        storage. Read / write / delete in place
+        (``stream.internal_metadata["phase"] = 3``). Stripped from every
+        client-facing payload and persisted at the next
+        ``yield stream.checkpoint()`` (and at terminal).
+
+        :rtype: ~collections.abc.MutableMapping[str, ~typing.Any]
+        """
+        return _ResponseInternalMetadataView(self._response)
+
+    def checkpoint(self) -> "ResponseCheckpointEvent":
+        """Return a checkpoint event to ``yield`` for persistence.
+
+        Usage (inside a resilient background response handler)::
+
+            yield stream.checkpoint()
+
+        Yielding the event persists the current ``stream.response``
+        snapshot via the storage provider. It is processed by the orchestrator
+        and is NOT forwarded to the SSE wire (internal control signal).
+
+        Semantics (enforced by the orchestrator):
+
+        - **Deterministic + developer-driven** — only where the handler yields
+          one; there are no periodic / implicit checkpoints.
+        - **Backpressure** — because the orchestrator fully processes the event
+          (awaiting the provider write) before requesting the next event, the
+          handler is suspended at the yield until the persist completes.
+        - **Resilient background only** — persists only when the deployment has
+          ``resilient_background=True`` and the request is ``background=True``
+          (⇒ ``store=True``); a no-op otherwise.
+        - **Idempotent** — a snapshot byte-identical to the last persisted one
+          is skipped.
+        - **Failures swallowed** — provider errors are logged, never raised into
+          the handler; recovery falls back to the previously-persisted snapshot.
+        - **After terminal** — a checkpoint yielded after a terminal event is
+          dropped.
+
+        Persists the response with whatever ``status`` it currently has — the
+        checkpoint never overrides it.
+
+        :returns: The checkpoint event to yield.
+        :rtype: ~azure.ai.agentserver.responses.streaming._checkpoint.ResponseCheckpointEvent
+        """
+        return ResponseCheckpointEvent(cast("response_models.ResponseObject", self._response))
+
+    def emit_queued(self) -> response_models.ResponseQueuedEvent:
+        """Emit a ``response.queued`` lifecycle event.
+
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models.ResponseQueuedEvent
+        """
+        self._response["status"] = "queued"
+        return cast(
+            "response_models.ResponseQueuedEvent",
+            self._emit_event(
+                {
+                    "type": "response.queued",
+                    "response": self._response_payload(),
+                }
+            ),
+        )
+
+    def emit_created(self, *, status: str = "in_progress") -> response_models.ResponseCreatedEvent:
+        """Emit a ``response.created`` lifecycle event.
+
+        :keyword status: Initial status to set on the response. Defaults to ``"in_progress"``.
+        :keyword type status: str
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models.ResponseCreatedEvent
+        """
+        self._response["status"] = status
+        return cast(
+            "response_models.ResponseCreatedEvent",
+            self._emit_event(
+                {
+                    "type": "response.created",
+                    "response": self._response_payload(),
+                }
+            ),
+        )
+
+    def emit_in_progress(self) -> response_models.ResponseInProgressEvent:
+        """Emit a ``response.in_progress`` lifecycle event.
+
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models.ResponseInProgressEvent
+        """
+        self._response["status"] = "in_progress"
+        return cast(
+            "response_models.ResponseInProgressEvent",
+            self._emit_event(
+                {
+                    "type": "response.in_progress",
+                    "response": self._response_payload(),
+                }
+            ),
+        )
+
+    def emit_completed(
+        self, *, usage: response_models.ResponseUsage | None = None
+    ) -> response_models.ResponseCompletedEvent:
+        """Emit a ``response.completed`` terminal lifecycle event.
+
+        :keyword usage: Optional usage statistics to attach to the response.
+        :keyword type usage: ~azure.ai.agentserver.responses.models.ResponseUsage | None
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models.ResponseCompletedEvent
+        """
+        self._response["status"] = "completed"
+        self._response["error"] = None
+        self._response["incomplete_details"] = None
+        self._set_terminal_fields(usage=usage)
+        return cast(
+            "response_models.ResponseCompletedEvent",
+            self._emit_event(
+                {
+                    "type": "response.completed",
+                    "response": self._response_payload(),
+                }
+            ),
+        )
+
+    def emit_failed(
+        self,
+        *,
+        code: str = "server_error",
+        message: str = "An internal server error occurred.",
+        metadata: Mapping[str, str] | None = None,
+        usage: response_models.ResponseUsage | None = None,
+    ) -> response_models.ResponseFailedEvent:
+        """Emit a ``response.failed`` terminal lifecycle event.
+
+        :keyword code: Error code describing the failure.
+        :keyword type code: str | ~azure.ai.agentserver.responses.models.ResponseErrorCode
+        :keyword message: Human-readable error message.
+        :keyword type message: str
+        :keyword metadata: Optional public response metadata to merge into the terminal response. Invalid
+            metadata is logged and omitted so it cannot suppress the original failure.
+        :keyword type metadata: ~collections.abc.Mapping[str, str] | None
+        :keyword usage: Optional usage statistics to attach to the response.
+        :keyword type usage: ~azure.ai.agentserver.responses.models.ResponseUsage | None
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models.ResponseFailedEvent
+        """
+        self._response["status"] = "failed"
+        self._response["incomplete_details"] = None
+        self._response["error"] = {
+            "code": _internals.enum_value(code),
+            "message": message,
+        }
+        if metadata is not None:
+            try:
+                _merge_response_metadata(self._response, metadata)
+            except (TypeError, ValueError) as exc:
+                _LOGGER.warning(
+                    "Ignoring invalid metadata supplied to emit_failed; the response failure will be emitted "
+                    "without it: %s",
+                    exc,
+                )
+        self._set_terminal_fields(usage=usage)
+        return cast(
+            "response_models.ResponseFailedEvent",
+            self._emit_event(
+                {
+                    "type": "response.failed",
+                    "response": self._response_payload(),
+                }
+            ),
+        )
+
+    def emit_incomplete(
+        self,
+        *,
+        reason: str | None = None,
+        usage: response_models.ResponseUsage | None = None,
+    ) -> response_models.ResponseIncompleteEvent:
+        """Emit a ``response.incomplete`` terminal lifecycle event.
+
+        :keyword reason: Optional reason for incompleteness.
+        :keyword type reason: str | ~azure.ai.agentserver.responses.models.ResponseIncompleteReason
+                                | None
+        :keyword usage: Optional usage statistics to attach to the response.
+        :keyword type usage: ~azure.ai.agentserver.responses.models.ResponseUsage | None
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models.ResponseIncompleteEvent
+        """
+        self._response["status"] = "incomplete"
+        self._response["error"] = None
+        if reason is None:
+            self._response["incomplete_details"] = None
+        else:
+            self._response["incomplete_details"] = {"reason": _internals.enum_value(reason)}
+        self._set_terminal_fields(usage=usage)
+        return cast(
+            "response_models.ResponseIncompleteEvent",
+            self._emit_event(
+                {
+                    "type": "response.incomplete",
+                    "response": self._response_payload(),
+                }
+            ),
+        )
+
+    def add_output_item(self, item_id: str) -> OutputItemBuilder:
+        """Add a generic output item and return its builder.
+
+        :param item_id: Unique identifier for the output item.
+        :type item_id: str
+        :returns: A builder for emitting added/done events for the output item.
+        :rtype: OutputItemBuilder
+        :raises TypeError: If *item_id* is None.
+        :raises ValueError: If *item_id* is empty or has an invalid format.
+        """
+        if item_id is None:
+            raise TypeError("item_id must not be None")
+        if not isinstance(item_id, str) or not item_id.strip():
+            raise ValueError("item_id must be a non-empty string")
+
+        is_valid_id, error = IdGenerator.is_valid(item_id)
+        if not is_valid_id:
+            raise ValueError(f"invalid item_id '{item_id}': {error}")
+
+        output_index = self._output_index
+        self._output_index += 1
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_message(self) -> OutputItemMessageBuilder:
+        """Add a message output item and return its scoped builder.
+
+        :returns: A builder for emitting message content, text deltas, and lifecycle events.
+        :rtype: OutputItemMessageBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_message_item_id(self._response_id)
+        return OutputItemMessageBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_function_call(self, name: str, call_id: str) -> OutputItemFunctionCallBuilder:
+        """Add a function-call output item and return its scoped builder.
+
+        :param name: The function name being called.
+        :type name: str
+        :param call_id: Unique identifier for this function call.
+        :type call_id: str
+        :returns: A builder for emitting function-call argument deltas and lifecycle events.
+        :rtype: OutputItemFunctionCallBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_function_call_item_id(self._response_id)
+        return OutputItemFunctionCallBuilder(
+            self,
+            output_index=output_index,
+            item_id=item_id,
+            name=name,
+            call_id=call_id,
+        )
+
+    def add_output_item_function_call_output(self, call_id: str) -> OutputItemFunctionCallOutputBuilder:
+        """Add a function-call-output item and return its scoped builder.
+
+        :param call_id: The call ID of the function call this output belongs to.
+        :type call_id: str
+        :returns: A builder for emitting function-call output lifecycle events.
+        :rtype: OutputItemFunctionCallOutputBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_function_call_output_item_id(self._response_id)
+        return OutputItemFunctionCallOutputBuilder(
+            self,
+            output_index=output_index,
+            item_id=item_id,
+            call_id=call_id,
+        )
+
+    def add_output_item_reasoning_item(self) -> OutputItemReasoningItemBuilder:
+        """Add a reasoning output item and return its scoped builder.
+
+        :returns: A builder for emitting reasoning summary parts and lifecycle events.
+        :rtype: OutputItemReasoningItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_reasoning_item_id(self._response_id)
+        return OutputItemReasoningItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_file_search_call(self) -> OutputItemFileSearchCallBuilder:
+        """Add a file-search tool call output item and return its scoped builder.
+
+        :returns: A builder for emitting file-search call lifecycle events.
+        :rtype: OutputItemFileSearchCallBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_file_search_call_item_id(self._response_id)
+        return OutputItemFileSearchCallBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder:
+        """Add a web-search tool call output item and return its scoped builder.
+
+        :returns: A builder for emitting web-search call lifecycle events.
+        :rtype: OutputItemWebSearchCallBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_web_search_call_item_id(self._response_id)
+        return OutputItemWebSearchCallBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_code_interpreter_call(self) -> OutputItemCodeInterpreterCallBuilder:
+        """Add a code-interpreter tool call output item and return its scoped builder.
+
+        :returns: A builder for emitting code-interpreter call lifecycle events.
+        :rtype: OutputItemCodeInterpreterCallBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_code_interpreter_call_item_id(self._response_id)
+        return OutputItemCodeInterpreterCallBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_image_gen_call(self) -> OutputItemImageGenCallBuilder:
+        """Add an image-generation tool call output item and return its scoped builder.
+
+        :returns: A builder for emitting image-generation call lifecycle events.
+        :rtype: OutputItemImageGenCallBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_image_gen_call_item_id(self._response_id)
+        return OutputItemImageGenCallBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_mcp_call(
+        self,
+        server_label: str,
+        name: str,
+        *,
+        item_id: str | None = None,
+    ) -> OutputItemMcpCallBuilder:
+        """Add an MCP tool call output item and return its scoped builder.
+
+        :param server_label: Label identifying the MCP server.
+        :type server_label: str
+        :param name: Name of the MCP tool being called.
+        :type name: str
+        :keyword item_id: Optional caller-supplied output item identifier.
+        :keyword type item_id: str | None
+        :returns: A builder for emitting MCP call argument deltas and lifecycle events.
+        :rtype: OutputItemMcpCallBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        if item_id is None:
+            resolved_item_id = IdGenerator.new_mcp_call_item_id(self._response_id)
+        else:
+            if not isinstance(item_id, str):
+                raise TypeError("item_id must be a string")
+            resolved_item_id = item_id.strip()
+            if not resolved_item_id:
+                raise ValueError("item_id must be a non-empty string")
+        return OutputItemMcpCallBuilder(
+            self,
+            output_index=output_index,
+            item_id=resolved_item_id,
+            server_label=server_label,
+            name=name,
+        )
+
+    def add_output_item_mcp_list_tools(self, server_label: str) -> OutputItemMcpListToolsBuilder:
+        """Add an MCP list-tools output item and return its scoped builder.
+
+        :param server_label: Label identifying the MCP server.
+        :type server_label: str
+        :returns: A builder for emitting MCP list-tools lifecycle events.
+        :rtype: OutputItemMcpListToolsBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_mcp_list_tools_item_id(self._response_id)
+        return OutputItemMcpListToolsBuilder(
+            self,
+            output_index=output_index,
+            item_id=item_id,
+            server_label=server_label,
+        )
+
+    def add_output_item_custom_tool_call(self, call_id: str, name: str) -> OutputItemCustomToolCallBuilder:
+        """Add a custom tool call output item and return its scoped builder.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param name: Name of the custom tool being called.
+        :type name: str
+        :returns: A builder for emitting custom tool call input deltas and lifecycle events.
+        :rtype: OutputItemCustomToolCallBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_custom_tool_call_item_id(self._response_id)
+        return OutputItemCustomToolCallBuilder(
+            self,
+            output_index=output_index,
+            item_id=item_id,
+            call_id=call_id,
+            name=name,
+        )
+
+    def add_output_item_structured_outputs(self) -> OutputItemBuilder:
+        """Add a structured-outputs output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_structured_output_item_id(self._response_id)
+        return OutputItemBuilder(
+            self,
+            output_index=output_index,
+            item_id=item_id,
+            default_type="structured_outputs",
+        )
+
+    def add_output_item_computer_call(self) -> OutputItemBuilder:
+        """Add a computer-call output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_computer_call_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_computer_call_output(self) -> OutputItemBuilder:
+        """Add a computer-call-output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_computer_call_output_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_local_shell_call(self) -> OutputItemBuilder:
+        """Add a local-shell-call output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_local_shell_call_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_local_shell_call_output(self) -> OutputItemBuilder:
+        """Add a local-shell-call-output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_local_shell_call_output_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_function_shell_call(self) -> OutputItemBuilder:
+        """Add a function-shell-call output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_function_shell_call_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_function_shell_call_output(self) -> OutputItemBuilder:  # pylint: disable=name-too-long
+        """Add a function-shell-call-output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_function_shell_call_output_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_apply_patch_call(self) -> OutputItemBuilder:
+        """Add an apply-patch-call output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_apply_patch_call_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_apply_patch_call_output(self) -> OutputItemBuilder:
+        """Add an apply-patch-call-output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_apply_patch_call_output_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_custom_tool_call_output(self) -> OutputItemBuilder:
+        """Add a custom-tool-call-output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_custom_tool_call_output_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_mcp_approval_request(self) -> OutputItemBuilder:
+        """Add an MCP approval-request output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_mcp_approval_request_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_mcp_approval_response(self) -> OutputItemBuilder:
+        """Add an MCP approval-response output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_mcp_approval_response_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_compaction(self) -> OutputItemBuilder:
+        """Add a compaction output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_compaction_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def events(self) -> list[response_models.ResponseStreamEvent]:
+        """Return copies of all events emitted so far as typed model instances.
+
+        :returns: A list of ``ResponseStreamEvent`` model instances.
+        :rtype: list[~azure.ai.agentserver.responses.models.ResponseStreamEvent]
+        """
+        return [deepcopy(event) for event in self._events]
+
+    def _emit_event(self, event: dict[str, Any]) -> response_models.ResponseStreamEvent:
+        """Emit a single event, applying defaults and validating the stream.
+
+        Accepts a **wire-format** dict (no ``"payload"`` wrapper), stamps
+        defaults and sequence number, stores the event, and returns it.
+
+        :param event: A wire-format event dict.
+        :type event: dict[str, Any]
+        :returns: The typed event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models.ResponseStreamEvent
+        """
+        candidate = deepcopy(event)
+        # Stamp sequence number before model construction
+        candidate["sequence_number"] = len(self._events)
+
+        # Apply response-level defaults to lifecycle events
+        typed_candidate = cast("response_models.ResponseStreamEvent", candidate)
+        _internals.apply_common_defaults(
+            [typed_candidate],
+            response_id=self._response_id,
+            agent_reference=self._agent_reference,
+            model=self._model,
+        )
+        # Track completed output items on the response envelope
+        _internals.track_completed_output_item(
+            cast("response_models.ResponseObject", self._response),
+            typed_candidate,
+        )
+
+        self._validator.validate_next(candidate)
+        self._events.append(typed_candidate)
+        return typed_candidate
+
+    # ---- Generator convenience methods (S-056/S-057) ----
+    # Output-item convenience generators that encapsulate the full lifecycle.
+    # Names mirror the add_* factories with the add_ prefix removed.
+
+    # -- Helper for simple added→done items --
+
+    @staticmethod
+    def _emit_simple_item(
+        builder: OutputItemBuilder, item: dict[str, Any]
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Emit the added→done pair for a simple output item.
+
+        :param builder: The generic output item builder.
+        :type builder: OutputItemBuilder
+        :param item: The wire-format item dict.
+        :type item: dict[str, Any]
+        :returns: An iterator of two events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        yield builder._emit_added(item)  # pylint: disable=protected-access
+        yield builder._emit_done(item)  # pylint: disable=protected-access
+
+    def output_item_message(
+        self,
+        text: str,
+        *,
+        annotations: Sequence[response_models.Annotation] | None = None,
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a text message output item.
+
+        Emits output_item.added, content_part.added, output_text.delta,
+        output_text.done, optionally annotation.added events,
+        content_part.done, and output_item.done.
+
+        :param text: The text content of the message.
+        :type text: str
+        :keyword annotations: Optional annotations to attach to the text content.
+        :keyword type annotations: Sequence[Annotation] | None
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        message = self.add_output_item_message()
+        yield message.emit_added()
+        tc = message.add_text_content()
+        yield tc.emit_added()
+        yield tc.emit_delta(text)
+        yield tc.emit_text_done(text)
+        if annotations:
+            for ann in annotations:
+                yield tc.emit_annotation_added(ann)
+        yield tc.emit_done()
+        yield message.emit_done()
+
+    def output_item_function_call(
+        self, name: str, call_id: str, arguments: str
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a function call output item.
+
+        Emits output_item.added, function_call_arguments.delta,
+        function_call_arguments.done, and output_item.done.
+
+        :param name: The function name being called.
+        :type name: str
+        :param call_id: Unique identifier for this function call.
+        :type call_id: str
+        :param arguments: The function call arguments as a string.
+        :type arguments: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        fc = self.add_output_item_function_call(name=name, call_id=call_id)
+        yield fc.emit_added()
+        yield from fc.arguments(arguments)
+        yield fc.emit_done()
+
+    def output_item_function_call_output(
+        self, call_id: str, output: str
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a function call output item.
+
+        Emits output_item.added and output_item.done.
+
+        :param call_id: The call ID of the function call this output belongs to.
+        :type call_id: str
+        :param output: The output value for the function call.
+        :type output: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        fco = self.add_output_item_function_call_output(call_id=call_id)
+        yield fco.emit_added(output)
+        yield fco.emit_done(output)
+
+    def output_item_reasoning_item(self, summary_text: str) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a reasoning output item.
+
+        Emits output_item.added, reasoning_summary_part.added,
+        reasoning_summary_text.delta, reasoning_summary_text.done,
+        reasoning_summary_part.done, and output_item.done.
+
+        :param summary_text: The reasoning summary text.
+        :type summary_text: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        item = self.add_output_item_reasoning_item()
+        yield item.emit_added()
+        yield from item.summary_part(summary_text)
+        yield item.emit_done()
+
+    def output_item_image_gen_call(self, result_base64: str) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for an image generation call.
+
+        Emits added → in_progress → generating → completed → done(result).
+
+        :param result_base64: The base64-encoded image result.
+        :type result_base64: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        ig = self.add_output_item_image_gen_call()
+        yield ig.emit_added()
+        yield ig.emit_in_progress()
+        yield ig.emit_generating()
+        yield ig.emit_completed()
+        yield ig.emit_done(result_base64)
+
+    def output_item_structured_outputs(self, output: Any) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a structured outputs item.
+
+        Emits output_item.added and output_item.done.
+
+        :param output: The structured output data (will be serialized as-is).
+        :type output: Any
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_structured_outputs()
+        item = {"type": "structured_outputs", "id": builder.item_id, "output": output}
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_computer_call(
+        self,
+        call_id: str,
+        action: response_models.ComputerAction,
+        *,
+        pending_safety_checks: list[response_models.ComputerCallSafetyCheckParam] | None = None,
+        status: str = "completed",
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a computer call output item.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param action: The computer action to perform.
+        :type action: ComputerAction
+        :keyword pending_safety_checks: Optional safety checks.
+        :keyword type pending_safety_checks: list[ComputerCallSafetyCheckParam] | None
+        :keyword status: Status of the call; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_computer_call()
+        action_dict = _require_wire_dict(action, "action")
+        checks = [_require_wire_dict(c, "pending_safety_checks item") for c in (pending_safety_checks or [])]
+        item = {
+            "type": "computer_call",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "action": action_dict,
+            "pending_safety_checks": checks,
+            "status": status,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_computer_call_output(
+        self,
+        call_id: str,
+        output: response_models.ComputerScreenshotImage,
+        *,
+        acknowledged_safety_checks: list[response_models.ComputerCallSafetyCheckParam] | None = None,
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a computer call output item.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :param output: The screenshot image output.
+        :type output: ComputerScreenshotImage
+        :keyword acknowledged_safety_checks: Optional acknowledged safety checks.
+        :keyword type acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_computer_call_output()
+        output_dict = _require_wire_dict(output, "output")
+        checks = [_require_wire_dict(c, "acknowledged_safety_checks item") for c in (acknowledged_safety_checks or [])]
+        item = {
+            "type": "computer_call_output",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "output": output_dict,
+            "acknowledged_safety_checks": checks,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_local_shell_call(
+        self,
+        call_id: str,
+        action: response_models.LocalShellExecAction,
+        *,
+        status: str = "completed",
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a local shell call output item.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param action: The shell exec action.
+        :type action: LocalShellExecAction
+        :keyword status: Status of the call; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_local_shell_call()
+        action_dict = _require_wire_dict(action, "action")
+        item = {
+            "type": "local_shell_call",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "action": action_dict,
+            "status": status,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_local_shell_call_output(self, output: str) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a local shell call output item.
+
+        :param output: The shell output string.
+        :type output: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_local_shell_call_output()
+        item = {"type": "local_shell_call_output", "id": builder.item_id, "output": output}
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_function_shell_call(
+        self,
+        call_id: str,
+        action: response_models.FunctionShellAction,
+        environment: response_models.FunctionShellCallEnvironment,
+        *,
+        status: str = "completed",
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a function shell call output item.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param action: The function shell action.
+        :type action: FunctionShellAction
+        :param environment: The execution environment.
+        :type environment: FunctionShellCallEnvironment
+        :keyword status: Status of the call; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_function_shell_call()
+        action_dict = _require_wire_dict(action, "action")
+        env_dict = _require_wire_dict(environment, "environment")
+        item = {
+            "type": "shell_call",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "action": action_dict,
+            "environment": env_dict,
+            "status": status,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_function_shell_call_output(
+        self,
+        call_id: str,
+        output: list[response_models.FunctionShellCallOutputContent],
+        *,
+        status: str = "completed",
+        max_output_length: int | None = None,
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a function shell call output item.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :param output: The output content list.
+        :type output: list[FunctionShellCallOutputContent]
+        :keyword status: Status of the output; defaults to ``"completed"``.
+        :keyword type status: str
+        :keyword max_output_length: Maximum output length; defaults to ``0``.
+        :keyword type max_output_length: int | None
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_function_shell_call_output()
+        output_list = [_require_wire_dict(o, "output item") for o in output]
+        item = {
+            "type": "shell_call_output",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "output": output_list,
+            "status": status,
+            "max_output_length": max_output_length or 0,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_apply_patch_call(
+        self,
+        call_id: str,
+        operation: response_models.ApplyPatchFileOperation,
+        *,
+        status: str = "completed",
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for an apply-patch call output item.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param operation: The patch file operation.
+        :type operation: ApplyPatchFileOperation
+        :keyword status: Status of the call; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_apply_patch_call()
+        op_dict = _require_wire_dict(operation, "operation")
+        item = {
+            "type": "apply_patch_call",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "operation": op_dict,
+            "status": status,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_apply_patch_call_output(
+        self,
+        call_id: str,
+        *,
+        status: str = "completed",
+        output: str | None = None,
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for an apply-patch call output item.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :keyword status: Status of the output; defaults to ``"completed"``.
+        :keyword type status: str
+        :keyword output: Optional output string.
+        :keyword type output: str | None
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_apply_patch_call_output()
+        item: dict[str, Any] = {
+            "type": "apply_patch_call_output",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "status": status,
+        }
+        if output is not None:
+            item["output"] = output
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_custom_tool_call_output(
+        self,
+        call_id: str,
+        output: str | list[response_models.FunctionAndCustomToolCallOutput],
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a custom tool call output item.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :param output: The output value (string or structured list).
+        :type output: str | list[FunctionAndCustomToolCallOutput]
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_custom_tool_call_output()
+        output_val: Any
+        if isinstance(output, list):
+            output_val = [_require_wire_dict(o, "output item") for o in output]
+        else:
+            output_val = output
+        item = {
+            "type": "custom_tool_call_output",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "output": output_val,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_mcp_approval_request(
+        self, server_label: str, name: str, arguments: str
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for an MCP approval request item.
+
+        :param server_label: Label identifying the MCP server.
+        :type server_label: str
+        :param name: Tool name requiring approval.
+        :type name: str
+        :param arguments: JSON string of the tool arguments.
+        :type arguments: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_mcp_approval_request()
+        item = {
+            "type": "mcp_approval_request",
+            "id": builder.item_id,
+            "server_label": server_label,
+            "name": name,
+            "arguments": arguments,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_mcp_approval_response(
+        self,
+        approval_request_id: str,
+        approve: bool,
+        *,
+        reason: str | None = None,
+    ) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for an MCP approval response item.
+
+        :param approval_request_id: The request ID being responded to.
+        :type approval_request_id: str
+        :param approve: Whether to approve the request.
+        :type approve: bool
+        :keyword reason: Optional reason for the decision.
+        :keyword type reason: str | None
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_mcp_approval_response()
+        item: dict[str, Any] = {
+            "type": "mcp_approval_response",
+            "id": builder.item_id,
+            "approval_request_id": approval_request_id,
+            "approve": approve,
+        }
+        if reason is not None:
+            item["reason"] = reason
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_compaction(self, encrypted_content: str) -> Iterator[response_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a compaction output item.
+
+        :param encrypted_content: The encrypted compaction content.
+        :type encrypted_content: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_compaction()
+        item = {"type": "compaction", "id": builder.item_id, "encrypted_content": encrypted_content}
+        yield from self._emit_simple_item(builder, item)
+
+    # ---- Private helpers ----
+
+    def _response_payload(self) -> dict[str, Any]:
+        """Serialize the current response envelope to a plain dict.
+
+        :returns: A materialized dict representation of the response.
+        :rtype: dict[str, Any]
+        """
+        return _internals.materialize_wire_payload(self._response)
+
+    def _with_output_item_defaults(self, item: dict[str, Any]) -> dict[str, Any]:
+        """Stamp an output item dict with response-level defaults.
+
+        :param item: The item dict to stamp.
+        :type item: dict[str, Any]
+        :returns: A deep copy of the item with ``response_id`` and ``agent_reference`` defaults applied.
+        :rtype: dict[str, Any]
+        """
+        stamped = deepcopy(item)
+        if "response_id" not in stamped or stamped["response_id"] is None:
+            stamped["response_id"] = self._response_id
+        if "agent_reference" not in stamped or stamped["agent_reference"] is None:
+            stamped["agent_reference"] = self._agent_reference
+        return stamped
+
+    def _set_terminal_fields(self, *, usage: response_models.ResponseUsage | None) -> None:
+        """Set terminal fields on the response envelope (completed_at, usage).
+
+        :keyword usage: Optional usage statistics to attach.
+        :keyword type usage: ~azure.ai.agentserver.responses.models.ResponseUsage | None
+        :rtype: None
+        """
+        # B6: completed_at is non-null only for completed status
+        if self._response.get("status") == "completed":
+            self._response["completed_at"] = datetime.now(timezone.utc)
+        else:
+            self._response["completed_at"] = None
+        self._response["usage"] = _internals.coerce_usage(usage)

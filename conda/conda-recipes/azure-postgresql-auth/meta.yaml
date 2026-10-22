@@ -1,0 +1,45 @@
+{% set name = "azure-postgresql-auth" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('AUTH_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - pip
+    - aiohttp
+    - python
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+  run:
+    - aiohttp
+    - python
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+test:
+  imports:
+    - azure_postgresql_auth
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/postgresql/azure-postgresql-auth"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure PostgreSQL Client Library for Python"
+  description: |
+    This is the Microsoft Azure PostgreSQL Client Library for Python.
+    Please see https://aka.ms/azsdk/conda/releases/postgresql for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - jennypng
+    - kashifkhan-msft

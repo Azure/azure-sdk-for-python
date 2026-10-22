@@ -1,0 +1,11 @@
+trigger: none
+
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: azure-postgresql-auth
+      ServiceDirectory: postgresql
+      Location: eastus2
+      EnvVars:
+        AZURE_SKIP_LIVE_RECORDING: 'true'
+        AZURE_TEST_RUN_LIVE: 'true'

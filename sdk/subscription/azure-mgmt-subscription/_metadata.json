@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-11-01-preview",
+  "apiVersions": {
+    "Microsoft.Subscription": "2025-11-01-preview"
+  },
+  "commit": "8966e4942153329571a093034f4808cc06b4c9df",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/subscription/resource-manager/Microsoft.Subscription/Subscription",
+  "emitterVersion": "0.62.1"
+}

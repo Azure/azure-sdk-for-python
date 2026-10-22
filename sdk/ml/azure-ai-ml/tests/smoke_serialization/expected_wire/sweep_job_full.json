@@ -1,0 +1,71 @@
+{
+  "properties": {
+    "computeId": "smoke-compute",
+    "description": "smoke serialization sweep job",
+    "displayName": "smoke-sweep-job-display",
+    "earlyTermination": {
+      "delayEvaluation": 5,
+      "evaluationInterval": 2,
+      "policyType": "Bandit",
+      "slackAmount": 0.0,
+      "slackFactor": 0.1
+    },
+    "experimentName": "smoke-experiment",
+    "inputs": {
+      "data": {
+        "jobInputType": "uri_file",
+        "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv"
+      }
+    },
+    "isArchived": false,
+    "jobType": "Sweep",
+    "limits": {
+      "jobLimitsType": "Sweep",
+      "maxConcurrentTrials": 2,
+      "maxTotalTrials": 10,
+      "timeout": "PT1H",
+      "trialTimeout": "PT10M"
+    },
+    "objective": {
+      "goal": "maximize",
+      "primaryMetric": "accuracy"
+    },
+    "outputs": {},
+    "properties": {
+      "prop1": "value1"
+    },
+    "queueSettings": {
+      "jobTier": "Standard"
+    },
+    "samplingAlgorithm": {
+      "samplingAlgorithmType": "Random"
+    },
+    "searchSpace": {
+      "batch_size": [
+        "choice",
+        [
+          [
+            16,
+            32,
+            64
+          ]
+        ]
+      ],
+      "learning_rate": [
+        "uniform",
+        [
+          0.001,
+          0.1
+        ]
+      ]
+    },
+    "tags": {
+      "tag1": "value1"
+    },
+    "trial": {
+      "command": "python train.py --lr ${{search_space.learning_rate}} --bs ${{search_space.batch_size}}",
+      "environmentId": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+      "environmentVariables": {}
+    }
+  }
+}

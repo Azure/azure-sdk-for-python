@@ -1,0 +1,101 @@
+type: pipeline
+
+name: simplePipelineJobWithMultipleDataCases
+description: The hello world pipeline job with multiple data cases
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+inputs:
+  # examples of dataset inputs
+
+  # registered dataset with version
+  # Mount is default if mode is not specified
+  job_in_data_name_version_def_mode:
+    path: azureml:fakeData:1
+
+  # registered dataset with version
+  # Mount mode specified
+  job_in_data_name_version_mode_mount:
+    path: azureml:fakeData:1
+    mode: ro_mount
+
+  # registered dataset with version
+  # Download mode specified
+  job_in_data_name_version_mode_download:
+    path: azureml:fakeData:1
+    mode: download
+
+  # registered dataset explicitly referenced by name
+  job_in_data_by_name:
+    path: azureml:fakeData:1
+
+  # registered dataset referenced by ARM id
+  job_in_data_by_armid:
+    path: azureml:subscriptions/15ae9cb6-95c1-483d-a0e3-b1a1a3b06324/resourceGroups/ignite/providers/Microsoft.MachineLearningServices/workspaces/ignite/data/6560575d-fa06-4e7d-95fb-f962e74efd7a/versions/1
+
+  # examples of datapath and datastore inputs
+  # datapath and datastore
+  job_in_data_by_store_path:
+    path: azureml://datastores/adatastore/paths/path/on/datastore
+
+  # datapath on default workspace datastore
+  job_in_data_by_path_default_store:
+    path: azureml://datastores/workspaceblobstore/paths/path/on/datastore
+
+  # datapath and datastore with mount mode
+  job_in_data_by_store_path_and_mount:
+    path: azureml://datastores/workspaceblobstore/paths/path/on/datastore
+    mode: ro_mount
+
+  # datapath and datastore with download mode
+  job_in_data_by_store_path_and_download:
+    path: azureml://datastores/workspaceblobstore/paths/path/on/datastore
+    mode: download
+
+  # examples of blob store, url and local inputs
+
+  # blob store directory
+  job_in_data_by_blob_dir:
+    path: https://sdkvnextcli1074156529.blob.core.windows.net/azureml-blobstore-b0ca17de-3224-4653-b870-7730be964b35/az-ml-artifacts/0439c9f5aa9068ee12f3c3245eb0f9a1/
+
+  job_in_data_by_blob_file:
+    type: uri_file
+    path: https://sdkvnextcli1074156529.blob.core.windows.net/azureml-blobstore-b0ca17de-3224-4653-b870-7730be964b35/az-ml-artifacts/c3929d74644603edaef09efc0dd3274e/components/input_types_component.yml
+
+  # local directory
+  job_in_data_local_dir:
+    path: ./
+
+  # local file
+  job_in_data_local_file:
+    type: uri_file
+    path: ./helloworld_pipeline_job_inline_file_comps.yml
+
+
+  # referencing local data yaml file
+  job_in_data_local_yaml_definition:
+    type: uri_file
+    path: ../dataset/dataset_file_test.yml
+
+jobs:
+  multiple_data_component:
+    component: azureml:microsoftsamplesCommandComponentMultipleData:1
+    type: command
+    inputs:
+      component_in_1: ${{parent.inputs.job_in_data_name_version_def_mode}}
+      component_in_2: ${{parent.inputs.job_in_data_name_version_mode_mount}}
+      component_in_3: ${{parent.inputs.job_in_data_name_version_mode_download}}
+      component_in_4: ${{parent.inputs.job_in_data_by_name}}
+      component_in_5: ${{parent.inputs.job_in_data_by_armid}}
+      component_in_6: ${{parent.inputs.job_in_data_by_store_path}}
+      component_in_7: ${{parent.inputs.job_in_data_by_path_default_store}}
+      component_in_8: ${{parent.inputs.job_in_data_by_store_path_and_mount}}
+      component_in_9: ${{parent.inputs.job_in_data_by_store_path_and_download}}
+      component_in_10: ${{parent.inputs.job_in_data_by_blob_dir}}
+      component_in_11: ${{parent.inputs.job_in_data_by_blob_file}}
+      component_in_12: ${{parent.inputs.job_in_data_local_dir}}
+      component_in_13: ${{parent.inputs.job_in_data_local_file}}
+      component_in_14: ${{parent.inputs.job_in_data_local_yaml_definition}}

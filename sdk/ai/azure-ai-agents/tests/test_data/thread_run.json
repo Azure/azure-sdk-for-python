@@ -1,0 +1,31 @@
+{
+  "id": "thread_id_placeholder",
+  "object": "thread.run",
+  "created_at": 1731542794,
+  "assistant_id": "some_id",
+  "thread_id": "some_thread_id",
+  "status": "requires_action",
+  "started_at": null,
+  "expires_at": 1731543394,
+  "cancelled_at": null,
+  "failed_at": null,
+  "completed_at": null,
+  "required_action": null,
+  "last_error": null,
+  "model": "gpt-4-1106-preview",
+  "instructions": "You are a helpful agent",
+  "metadata": {},
+  "temperature": 1.0,
+  "top_p": 1.0,
+  "max_completion_tokens": null,
+  "max_prompt_tokens": null,
+  "truncation_strategy": {
+    "type": "auto",
+    "last_messages": null
+  },
+  "incomplete_details": null,
+  "usage": null,
+  "response_format": "auto",
+  "tool_choice": "auto",
+  "parallel_tool_calls": true
+}

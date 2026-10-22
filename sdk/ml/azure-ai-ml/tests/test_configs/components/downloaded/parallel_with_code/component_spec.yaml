@@ -1,0 +1,37 @@
+$schema: http://azureml/sdk-2-0/ParallelComponent.json
+name: random_component_name
+version: 1.0.0
+display_name: BatchScore
+description: parallel component for batch score
+type: parallel
+inputs:
+  component_in_path:
+    type: uri_folder
+    description: A path
+    optional: false
+  label:
+    type: string
+    optional: false
+    description: A label
+  model:
+    type: string
+    optional: false
+    description: Type of model
+outputs:
+  scoring_summary:
+    type: mltable
+error_threshold: -1
+input_data: ${{inputs.component_in_path}}
+is_deterministic: true
+logging_level: INFO
+mini_batch_size: '10485760'
+retry_settings:
+  timeout: 60
+  max_retries: 3
+task:
+  type: run_function
+  code: ./code
+  entry_script: score.py
+  program_arguments: --label ${{inputs.label}} --model ${{inputs.model}}
+  append_row_to: ${{outputs.scoring_summary}}
+  environment: azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33

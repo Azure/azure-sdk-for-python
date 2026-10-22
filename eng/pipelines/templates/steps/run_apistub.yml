@@ -1,0 +1,38 @@
+parameters:
+  ServiceDirectory: ''
+  AdditionalTestArgs: ''
+  RunApiStub: true
+
+# Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
+steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.11'
+    inputs:
+     versionSpec: '3.11'
+    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
+
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+    parameters:
+      VirtualEnvironmentName: "venv-api-stub"
+
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      $(PIP_EXE) install -r eng/ci_tools.txt
+    displayName: 'Prep Environment'
+    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
+
+  - task: PythonScript@0
+    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
+    displayName: 'Generate API stub files'
+    inputs:
+      scriptPath: 'eng/scripts/dispatch_checks.py'
+      arguments: >-
+        "$(TargetingString)"
+        ${{ parameters.AdditionalTestArgs }}
+        -d "$(Build.ArtifactStagingDirectory)"
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --checks="apistub"
+        --disablecov
+        --filter-type="Omit_management"
