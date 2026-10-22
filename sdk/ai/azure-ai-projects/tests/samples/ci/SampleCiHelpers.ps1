@@ -131,6 +131,40 @@ function Resolve-SampleModel {
     return @{ name = $Name; version = $Version; sku = $Sku; capacity = $Capacity; usageName = $skuDetails[0]['usageName'] }
 }
 
+function Assert-SampleAccountQuota {
+    param(
+        [Parameter(Mandatory)] [AllowEmptyCollection()] [object[]] $Usages,
+        [Parameter(Mandatory)] [string] $Location
+    )
+
+    # Account creation has a separate quota from the model deployment capacity checked below.
+    # https://learn.microsoft.com/rest/api/aiservices/accountmanagement/usages/list
+    $quota = @($Usages | Where-Object { $_['name']['value'] -ceq 'AccountCount' })
+    if ($quota.Count -ne 1) {
+        throw "Cannot verify Cognitive Services AccountCount quota in '$Location'; no resources were created."
+    }
+    $usage = $quota[0]
+    foreach ($key in @('currentValue', 'limit')) {
+        $value = $usage[$key]
+        if (($value -isnot [int] -and $value -isnot [long] -and $value -isnot [double] -and $value -isnot [decimal]) -or
+            -not [double]::IsFinite([double] $value) -or $value -lt 0) {
+            throw "Cannot verify Cognitive Services AccountCount quota in '$Location'; no resources were created."
+        }
+    }
+    if ($usage['unit'] -cne 'Count') {
+        throw "Cannot verify Cognitive Services AccountCount quota in '$Location'; no resources were created."
+    }
+    $current = $usage.currentValue
+    $limit = $usage.limit
+    if (($limit - $current) -lt 1 -or $usage['status'] -in @('Blocked', 'InOverage', 'Unknown')) {
+        $message = "Insufficient Cognitive Services account quota in '{0}' (AccountCount: {1}/{2}, status: {3})." -f `
+            $Location, $current, $limit, $usage['status']
+        throw ($message + ' No resources were created. Choose a region with available account quota or ask an administrator to review quota; ' +
+            'existing accounts will not be deleted.')
+    }
+    Write-Host ('Account preflight: {0}, AccountCount {1}/{2}; at least one new account slot is available.' -f $Location, $current, $limit)
+}
+
 function Get-SampleRunnerPrincipalId {
     $runnerTokenResponse = $null
     $runnerAccessToken = $null

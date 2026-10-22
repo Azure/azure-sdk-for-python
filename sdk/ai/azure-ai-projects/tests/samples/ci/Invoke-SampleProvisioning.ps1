@@ -46,6 +46,7 @@ if ($sampleModel.name -eq $validationModel.name -and
 }
 $modelDeployments = @($sampleModel, $validationModel) | Sort-Object -Property name -Unique
 $usages = @(Invoke-SampleAzure -Arguments @('cognitiveservices', 'usage', 'list', '--location', $plan.location, '--subscription', $subscription))
+Assert-SampleAccountQuota -Usages $usages -Location $plan.location
 foreach ($model in $modelDeployments) {
     $quota = @($usages | Where-Object { $_.name.value -eq $model.usageName })
     if ($quota.Count -ne 1 -or ($quota[0].limit - $quota[0].currentValue) -lt $model.capacity) {

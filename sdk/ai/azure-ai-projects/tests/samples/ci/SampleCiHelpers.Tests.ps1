@@ -124,3 +124,89 @@ Describe 'Model availability preflight' {
             Should Throw 'exactly one default'
     }
 }
+
+Describe 'Foundry account quota preflight' {
+    BeforeEach {
+        $script:accountQuota = @{ name = @{ value = 'AccountCount' }; currentValue = 3; limit = 200; unit = 'Count' }
+        $script:modelQuota = @{ name = @{ value = 'OpenAI.GlobalStandard.gpt-4.1' }; currentValue = 0; limit = 1000 }
+    }
+
+    It 'accepts available account quota independently of model quota' {
+        @(Assert-SampleAccountQuota -Usages @($script:modelQuota, $script:accountQuota) -Location 'eastus').Count | Should Be 0
+    }
+
+    It 'accepts exactly one remaining account slot' {
+        $script:accountQuota.currentValue = 199
+        Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'westus3'
+    }
+
+    It 'accepts numeric JSON doubles and an explicitly included status' {
+        $script:accountQuota.currentValue = [double] 3
+        $script:accountQuota.limit = [double] 200
+        $script:accountQuota.status = 'Included'
+        Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'westus3'
+    }
+
+    It 'rejects exhausted account quota even when model quota is available' {
+        $script:accountQuota.currentValue = 200
+        { Assert-SampleAccountQuota -Usages @($script:modelQuota, $script:accountQuota) -Location 'eastus' } |
+            Should Throw "Insufficient Cognitive Services account quota in 'eastus'"
+    }
+
+    It 'rejects account quota already in overage' {
+        $script:accountQuota.currentValue = 201
+        { Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'eastus' } | Should Throw 'No resources were created'
+    }
+
+    It 'rejects blocked account quota even when the numeric limit has room' {
+        $script:accountQuota.status = 'Blocked'
+        { Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'eastus' } | Should Throw 'status: Blocked'
+    }
+
+    It 'rejects unknown account quota status' {
+        $script:accountQuota.status = 'Unknown'
+        { Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'eastus' } | Should Throw 'status: Unknown'
+    }
+
+    It 'rejects an empty usage response' {
+        { Assert-SampleAccountQuota -Usages @() -Location 'eastus' } | Should Throw 'Cannot verify'
+    }
+
+    It 'rejects a missing account quota instead of treating model quota as account quota' {
+        { Assert-SampleAccountQuota -Usages @($script:modelQuota) -Location 'eastus' } | Should Throw 'Cannot verify'
+    }
+
+    It 'rejects ambiguous duplicate account quota entries' {
+        { Assert-SampleAccountQuota -Usages @($script:accountQuota, $script:accountQuota) -Location 'eastus' } | Should Throw 'Cannot verify'
+    }
+
+    It 'rejects a missing current count rather than assuming zero' {
+        $script:accountQuota.Remove('currentValue')
+        { Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'eastus' } | Should Throw 'Cannot verify'
+    }
+
+    It 'rejects a missing quota limit' {
+        $script:accountQuota.Remove('limit')
+        { Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'eastus' } | Should Throw 'Cannot verify'
+    }
+
+    It 'rejects nonnumeric usage values' {
+        $script:accountQuota.currentValue = 'not-a-number'
+        { Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'eastus' } | Should Throw 'Cannot verify'
+    }
+
+    It 'rejects a negative usage value' {
+        $script:accountQuota.currentValue = -1
+        { Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'eastus' } | Should Throw 'Cannot verify'
+    }
+
+    It 'rejects a nonfinite quota limit' {
+        $script:accountQuota.limit = [double]::PositiveInfinity
+        { Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'eastus' } | Should Throw 'Cannot verify'
+    }
+
+    It 'rejects a quota with the wrong unit' {
+        $script:accountQuota.unit = 'CountPerSecond'
+        { Assert-SampleAccountQuota -Usages @($script:accountQuota) -Location 'eastus' } | Should Throw 'Cannot verify'
+    }
+}

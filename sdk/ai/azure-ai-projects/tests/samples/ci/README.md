@@ -10,7 +10,7 @@ The first-run default is [../../../samples/agents/tools/sample_agent_mcp_with_pr
 2. Match the sample-path or test-ID wildcard and show the exact selected cases. Zero matches fail; the pipeline never falls back to all tests.
 3. Generate a non-secret provisioning plan, download integrity-pinned official Standard setup **Bicep sources**, and compile all templates. The default `preview` mode ends here and makes no Azure changes.
 4. In `run-and-cleanup` mode, continue automatically after this run's fresh preview succeeds. There is no YAML manual-approval stage. Selecting this mode when queueing explicitly opts in to creating billable resources and deleting this run's temporary resources afterward.
-5. Authenticate with the authorized Azure Resource Manager service connection. Check provider registration, model availability and regional quota, then deploy Bicep to create:
+5. Authenticate with the authorized Azure Resource Manager service connection. Check provider registration, model availability, Cognitive Services `AccountCount` quota, and model-deployment quota before creating a resource group, then deploy Bicep to create:
    - A uniquely named, run-owned resource group.
    - A Foundry account and project with managed identities.
    - A Storage account, Cosmos DB account, AI Search service, project connections, capability hosts and runtime role assignments: the official **Standard agent setup**.
@@ -119,6 +119,14 @@ Rules:
 Standard setup is sourced from [the official Bicep template](https://github.com/microsoft-foundry/foundry-samples/tree/fbbe89b701c758e871922adaceea0ac0e4dae40f/infrastructure/infrastructure-setup-bicep/43-standard-agent-setup-with-customization). No precompiled upstream ARM JSON is used for provisioning. Update the commit and **every source checksum together** when adopting upstream changes. Do not edit downloaded files on an agent to work around a checksum or compilation error.
 
 The pinned official template currently compiles with upstream Bicep warnings for capability-host schema metadata and optional AOAI references. The local templates compile without diagnostics. Compilation does not prove that the live subscription's policy, permissions or regional capacity will accept deployment.
+
+### Account quota versus model quota
+
+An `InsufficientQuota` error on `Microsoft.CognitiveServices/accounts` while deploying Standard setup is an account-creation failure, not a sample-test or MCP authentication failure. Available model deployment capacity does not guarantee that another Foundry account can be created.
+
+The live preflight separately checks the `AccountCount` entry from the [Cognitive Services regional usages API](https://learn.microsoft.com/rest/api/aiservices/accountmanagement/usages/list), logs its non-secret used/limit values, and stops before resource-group creation if that quota is exhausted, blocked or unverifiable. This check cannot cover every provider-specific limit or reserve capacity against concurrent runs; ARM validation remains authoritative.
+
+Use a supported region with available account and model quotas, or ask the subscription administrator to review the applicable quota. Do not delete or purge existing accounts to make this test pass. Verify the preceding attempt's ownership-checked cleanup before queueing another live attempt.
 
 ## Cost, networking and cleanup limits
 
