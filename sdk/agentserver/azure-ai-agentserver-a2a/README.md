@@ -40,19 +40,21 @@ They are not published to PyPI.
 
 The pipeline generates versions from its build number without changing the
 checked-in versions. For example, build `20261021.1` produces
-`1.0.0a20261021001` (A2A) and `2.2.0a20261021001` (core).
+`1.0.0a20261021001` (A2A) and `2.2.1a20261021001` (core).
 Replace the example versions below with those from the successful run:
 
 ```powershell
 python -m pip install --pre `
   --index-url "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" `
   "azure-ai-agentserver-a2a==1.0.0a20261021001" `
-  "azure-ai-agentserver-core==2.2.0a20261021001"
+  "azure-ai-agentserver-core==2.2.1a20261021001"
 ```
 
 Install both packages from the same run to include the core tracing enrichment
 changes. The dev-build tooling rewrites A2A's core dependency to an alpha range;
 pinning both versions also prevents accidentally testing a different core build.
+Regular preview installations require core 2.2.1 or later, which contains the
+Agent Card metadata-preservation fix.
 
 ### Prerequisites
 

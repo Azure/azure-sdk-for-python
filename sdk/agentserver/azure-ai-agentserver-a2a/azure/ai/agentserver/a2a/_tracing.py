@@ -141,14 +141,25 @@ class _ResponseObserver:
             self._error_type = str(error["code"])
 
         result = payload.get("result")
-        if isinstance(result, dict):
-            self._collect_values(result)
-
-    def _collect_values(self, value: object, parent_key: str = "") -> None:
-        if isinstance(value, list):
-            for item in value:
-                self._collect_values(item, parent_key)
+        if not isinstance(result, dict):
             return
+
+        method = self._metadata.method
+        if method in {"GetTask", "CancelTask"}:
+            self._collect_values(result, task=True, status=True)
+        elif method == "ListTasks":
+            tasks = result.get("tasks")
+            if isinstance(tasks, list):
+                for task in tasks:
+                    self._collect_values(task, task=True, status=True)
+        elif method in {"SendMessage", "SendStreamingMessage", "SubscribeToTask"}:
+            self._collect_values(result.get("task"), task=True, status=True)
+            self._collect_values(result.get("message"))
+            if method != "SendMessage":
+                self._collect_values(result.get("statusUpdate"), status=True)
+                self._collect_values(result.get("artifactUpdate"))
+
+    def _collect_values(self, value: object, *, task: bool = False, status: bool = False) -> None:
         if not isinstance(value, dict):
             return
 
@@ -156,26 +167,15 @@ class _ResponseObserver:
         if isinstance(context_id, str) and context_id:
             self._metadata.context_ids.add(context_id)
 
-        task_id = value.get("taskId")
+        task_id = value.get("id" if task else "taskId")
         if isinstance(task_id, str) and task_id:
             self._metadata.task_ids.add(task_id)
 
-        identifier = value.get("id")
-        if (
-            isinstance(identifier, str)
-            and identifier
-            and (parent_key == "task" or isinstance(value.get("status"), dict))
-        ):
-            self._metadata.task_ids.add(identifier)
-
-        status = value.get("status")
-        if isinstance(status, dict):
-            state = status.get("state")
+        task_status = value.get("status")
+        if status and isinstance(task_status, dict):
+            state = task_status.get("state")
             if isinstance(state, str) and state:
                 self._task_states.add(state)
-
-        for key, item in value.items():
-            self._collect_values(item, key)
 
 
 class _TracedResponse(Response):

@@ -10,6 +10,7 @@ from collections.abc import Awaitable, Callable
 from typing import Any, MutableMapping, Optional
 
 from starlette.datastructures import Headers
+from starlette.middleware import Middleware
 from starlette.responses import JSONResponse
 from starlette.routing import Route
 from starlette.types import ASGIApp, Receive, Scope, Send
@@ -93,12 +94,8 @@ class _A2ATransportErrorMiddleware:
             await self._app(scope, receive, send)
             return
 
-        response_started = False
-
         async def send_with_error_source(message: MutableMapping[str, Any]) -> None:
-            nonlocal response_started
             if message["type"] == "http.response.start":
-                response_started = True
                 status = int(message["status"])
                 if status >= 400:
                     headers = list(message.get("headers", []))
@@ -108,8 +105,26 @@ class _A2ATransportErrorMiddleware:
                         message = {**message, "headers": headers}
             await send(message)
 
+        await self._app(scope, receive, send_with_error_source)
+
+
+class _A2AExceptionMiddleware:
+    """Convert route exceptions before core adds shared response headers."""
+
+    def __init__(self, app: ASGIApp) -> None:
+        self._app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        response_started = False
+
+        async def send_with_response_started(message: MutableMapping[str, Any]) -> None:
+            nonlocal response_started
+            if message["type"] == "http.response.start":
+                response_started = True
+            await send(message)
+
         try:
-            await self._app(scope, receive, send_with_error_source)
+            await self._app(scope, receive, send_with_response_started)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             if response_started:
                 raise
@@ -149,7 +164,7 @@ def _get_a2a_routes(
     )
     jsonrpc_route = jsonrpc_routes[0]
     traced_endpoint = trace_jsonrpc_endpoint(jsonrpc_route.endpoint, agent_card)
-    return [
+    routes = [
         Route(
             _A2A_RPC_PATH,
             traced_endpoint,
@@ -167,6 +182,17 @@ def _get_a2a_routes(
             card_modifier=card_modifier,
             card_url=_A2A_AGENT_CARD_PATH,
         ),
+    ]
+    return [
+        Route(
+            route.path,
+            route.endpoint,
+            methods=route.methods,
+            name=route.name,
+            include_in_schema=route.include_in_schema,
+            middleware=[Middleware(_A2AExceptionMiddleware)],
+        )
+        for route in routes
     ]
 
 

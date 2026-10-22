@@ -84,6 +84,177 @@ def _attributes(span: ReadableSpan):
     return span.attributes
 
 
+def _application_data():
+    return {
+        "taskId": "application-task",
+        "contextId": "application-context",
+        "status": {"state": "application-state"},
+        "task": {"id": "application-nested-task", "status": {"state": "application-nested-state"}},
+    }
+
+
+def _task_result():
+    return {
+        "id": "task-result",
+        "contextId": "ctx-result",
+        "status": {
+            "state": "TASK_STATE_COMPLETED",
+            "message": {"parts": [{"data": _application_data()}]},
+        },
+        "metadata": _application_data(),
+        "artifacts": [
+            {
+                "artifactId": "artifact-result",
+                "metadata": _application_data(),
+                "parts": [{"data": _application_data()}],
+            }
+        ],
+        "history": [{"metadata": _application_data(), "parts": [{"data": _application_data()}]}],
+    }
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "method,result,state",
+    [
+        ("SendMessage", {"task": _task_result()}, "TASK_STATE_COMPLETED"),
+        ("GetTask", _task_result(), "TASK_STATE_COMPLETED"),
+        ("CancelTask", _task_result(), "TASK_STATE_COMPLETED"),
+        ("ListTasks", {"tasks": [_task_result()]}, "TASK_STATE_COMPLETED"),
+        (
+            "SendMessage",
+            {
+                "message": {
+                    "messageId": "message-result",
+                    "taskId": "task-result",
+                    "contextId": "ctx-result",
+                    "metadata": _application_data(),
+                    "parts": [{"data": _application_data()}],
+                }
+            },
+            None,
+        ),
+        (
+            "SubscribeToTask",
+            {
+                "statusUpdate": {
+                    "taskId": "task-result",
+                    "contextId": "ctx-result",
+                    "status": {
+                        "state": "TASK_STATE_COMPLETED",
+                        "message": {"parts": [{"data": _application_data()}]},
+                    },
+                    "metadata": _application_data(),
+                }
+            },
+            "TASK_STATE_COMPLETED",
+        ),
+        (
+            "SendStreamingMessage",
+            {
+                "artifactUpdate": {
+                    "taskId": "task-result",
+                    "contextId": "ctx-result",
+                    "artifact": {"parts": [{"data": _application_data()}], "metadata": _application_data()},
+                    "metadata": _application_data(),
+                }
+            },
+            None,
+        ),
+    ],
+)
+async def test_protocol_metadata_ignores_application_data(client_factory, span_exporter, method, result, state):
+    async def endpoint(_request: Request) -> JSONResponse:
+        return JSONResponse({"jsonrpc": "2.0", "id": "rpc-result", "result": result})
+
+    async with client_factory(_host(endpoint)) as client:
+        response = await client.post(
+            _RPC_PATH,
+            headers={"A2A-Version": "1.0"},
+            json={"jsonrpc": "2.0", "id": "rpc-result", "method": method, "params": {}},
+        )
+
+    assert response.json()["result"] == result
+    attributes = _attributes(_a2a_spans(span_exporter)[0])
+    assert attributes["a2a.task.id"] == "task-result"
+    assert attributes["gen_ai.conversation.id"] == "ctx-result"
+    if state is None:
+        assert "a2a.task.state" not in attributes
+    else:
+        assert attributes["a2a.task.state"] == state
+
+
+@pytest.mark.asyncio
+async def test_stream_updates_ignore_application_data(client_factory, span_exporter):
+    async def generate() -> AsyncIterator[bytes]:
+        for result in (
+            {
+                "artifactUpdate": {
+                    "taskId": "task-result",
+                    "contextId": "ctx-result",
+                    "artifact": {"parts": [{"data": _application_data()}]},
+                }
+            },
+            {
+                "statusUpdate": {
+                    "taskId": "task-result",
+                    "contextId": "ctx-result",
+                    "status": {"state": "TASK_STATE_COMPLETED"},
+                    "metadata": _application_data(),
+                }
+            },
+        ):
+            yield f"data: {json.dumps({'jsonrpc': '2.0', 'id': 'rpc-result', 'result': result})}\n\n".encode()
+
+    async def endpoint(_request: Request) -> StreamingResponse:
+        return StreamingResponse(generate(), media_type="text/event-stream")
+
+    async with client_factory(_host(endpoint)) as client:
+        response = await client.post(
+            _RPC_PATH,
+            headers={"A2A-Version": "1.0"},
+            json={"jsonrpc": "2.0", "id": "rpc-result", "method": "SendStreamingMessage", "params": {}},
+        )
+
+    assert response.status_code == 200
+    attributes = _attributes(_a2a_spans(span_exporter)[0])
+    assert attributes["a2a.task.id"] == "task-result"
+    assert attributes["gen_ai.conversation.id"] == "ctx-result"
+    assert attributes["a2a.task.state"] == "TASK_STATE_COMPLETED"
+
+
+@pytest.mark.asyncio
+async def test_list_tasks_omits_ambiguous_metadata(client_factory, span_exporter):
+    async def endpoint(_request: Request) -> JSONResponse:
+        return JSONResponse(
+            {
+                "jsonrpc": "2.0",
+                "id": "rpc-list",
+                "result": {
+                    "tasks": [
+                        _task_result(),
+                        {
+                            "id": "another-task",
+                            "contextId": "another-context",
+                            "status": {"state": "TASK_STATE_WORKING"},
+                        },
+                    ]
+                },
+            }
+        )
+
+    async with client_factory(_host(endpoint)) as client:
+        await client.post(
+            _RPC_PATH,
+            json={"jsonrpc": "2.0", "id": "rpc-list", "method": "ListTasks", "params": {}},
+        )
+
+    attributes = _attributes(_a2a_spans(span_exporter)[0])
+    assert "a2a.task.id" not in attributes
+    assert "gen_ai.conversation.id" not in attributes
+    assert "a2a.task.state" not in attributes
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("path", [_RPC_PATH, _FOUNDRY_COMPAT_RPC_PATH])
 async def test_send_message_emits_semantic_server_span(
