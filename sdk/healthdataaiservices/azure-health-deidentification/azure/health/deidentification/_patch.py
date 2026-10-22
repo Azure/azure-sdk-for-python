@@ -57,9 +57,8 @@ def _preserve_container_identity() -> None:
     mutations through that reference are dropped on serialization. This wrapper copies the
     new contents into the original container and keeps it in ``_data``.
 
-    TODO: remove once the emitter template is fixed (microsoft/typespec,
-    packages/http-client-python/generator/pygen/codegen/templates/model_base.py.jinja2,
-    ``_RestField.__get__``). See https://github.com/Azure/azure-sdk-for-python/pull/49627#discussion_r4342560283
+    TODO: remove once https://github.com/microsoft/typespec/pull/12359 fixes the emitter template
+    (packages/http-client-python/generator/pygen/codegen/templates/model_base.py.jinja2, ``_RestField.__get__``).
     """
     rest_field_cls = _model_base._RestField  # pylint: disable=protected-access
     original_get: Any = rest_field_cls.__get__
