@@ -7,23 +7,23 @@ namespace azure.messaging.webpubsubchatservice
         USER_NORMAL = user.normal
 
 
-    class azure.messaging.webpubsubchatservice.WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated): implements ContextManager 
+    class azure.messaging.webpubsubchatservice.WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated): implements ContextManager
 
         def __init__(
-                self, 
-                endpoint: str, 
-                hub: str, 
-                credential: Union[TokenCredential, AzureKeyCredential], 
-                *, 
-                api_version: Optional[str] = ..., 
+                self,
+                endpoint: str,
+                hub: str,
+                credential: Union[TokenCredential, AzureKeyCredential],
+                *,
+                api_version: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @classmethod
         def from_connection_string(
-                cls, 
-                conn_str: str, 
-                hub: str, 
+                cls,
+                conn_str: str,
+                hub: str,
                 **kwargs: Any
             ) -> WebPubSubChatServiceClient: ...
 
@@ -31,478 +31,478 @@ namespace azure.messaging.webpubsubchatservice
 
         @overload
         def create_or_replace_role(
-                self, 
-                role_name: str, 
+                self,
+                role_name: str,
                 resource: ChatRoleCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRole: ...
 
         @overload
         def create_or_replace_role(
-                self, 
-                role_name: str, 
+                self,
+                role_name: str,
                 resource: ChatRoleCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRole: ...
 
         @overload
         def create_or_replace_role(
-                self, 
-                role_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                role_name: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRole: ...
 
         @overload
         def create_or_replace_room(
-                self, 
-                room_id: str, 
+                self,
+                room_id: str,
                 resource: ChatRoomCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoom: ...
 
         @overload
         def create_or_replace_room(
-                self, 
-                room_id: str, 
+                self,
+                room_id: str,
                 resource: ChatRoomCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoom: ...
 
         @overload
         def create_or_replace_room(
-                self, 
-                room_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoom: ...
 
         @overload
         def create_or_replace_room_member(
-                self, 
-                room_id: str, 
-                user_id: str, 
+                self,
+                room_id: str,
+                user_id: str,
                 resource: ChatRoomMemberCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoomMember: ...
 
         @overload
         def create_or_replace_room_member(
-                self, 
-                room_id: str, 
-                user_id: str, 
+                self,
+                room_id: str,
+                user_id: str,
                 resource: ChatRoomMemberCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoomMember: ...
 
         @overload
         def create_or_replace_room_member(
-                self, 
-                room_id: str, 
-                user_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                user_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoomMember: ...
 
         @overload
         def create_or_replace_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
+                self,
+                room_id: str,
+                topic_id: str,
                 resource: ChatTopicCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @overload
         def create_or_replace_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
+                self,
+                room_id: str,
+                topic_id: str,
                 resource: ChatTopicCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @overload
         def create_or_replace_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                topic_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @overload
         def create_or_replace_user(
-                self, 
-                user_id: str, 
+                self,
+                user_id: str,
                 resource: ChatUserCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatUser: ...
 
         @overload
         def create_or_replace_user(
-                self, 
-                user_id: str, 
+                self,
+                user_id: str,
                 resource: ChatUserCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatUser: ...
 
         @overload
         def create_or_replace_user(
-                self, 
-                user_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                user_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatUser: ...
 
         @distributed_trace
         def delete_message(
-                self, 
-                conversation_id: str, 
-                message_id: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                conversation_id: str,
+                message_id: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete_role(
-                self, 
-                role_name: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                role_name: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete_room(
-                self, 
-                room_id: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete_room_member(
-                self, 
-                room_id: str, 
-                user_id: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                user_id: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'etag', 'match_condition']}, api_versions_list=['2026-08-01-preview'])
         def delete_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                topic_id: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete_user(
-                self, 
-                user_id: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                user_id: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def get_client_access_token(
-                self, 
-                *, 
-                minutes_to_expire: int = 60, 
-                user_id: Optional[str] = ..., 
+                self,
+                *,
+                minutes_to_expire: int = 60,
+                user_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> Dict[str, Any]: ...
 
         @distributed_trace
         def get_conversation(
-                self, 
-                conversation_id: str, 
+                self,
+                conversation_id: str,
                 **kwargs: Any
             ) -> ChatConversation: ...
 
         @distributed_trace
         def get_role(
-                self, 
-                role_name: str, 
+                self,
+                role_name: str,
                 **kwargs: Any
             ) -> ChatRole: ...
 
         @distributed_trace
         def get_room(
-                self, 
-                room_id: str, 
+                self,
+                room_id: str,
                 **kwargs: Any
             ) -> ChatRoom: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def get_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
+                self,
+                room_id: str,
+                topic_id: str,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @distributed_trace
         def get_user(
-                self, 
-                user_id: str, 
+                self,
+                user_id: str,
                 **kwargs: Any
             ) -> ChatUser: ...
 
         @distributed_trace
         def list_messages(
-                self, 
-                conversation_id: str, 
-                *, 
-                earliest_message_id: Optional[str] = ..., 
-                latest_message_id: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                conversation_id: str,
+                *,
+                earliest_message_id: Optional[str] = ...,
+                latest_message_id: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatMessage]: ...
 
         @distributed_trace
         def list_roles(
-                self, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatRole]: ...
 
         @distributed_trace
         def list_room_members(
-                self, 
-                room_id: str, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                room_id: str,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatRoomMember]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_rooms(
-                self, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatRoom]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'user_id', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_rooms_for_user(
-                self, 
-                user_id: str, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                user_id: str,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatUserRoom]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_topics(
-                self, 
-                room_id: str, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                room_id: str,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatTopic]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_users(
-                self, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatUser]: ...
 
         def send_request(
-                self, 
-                request: HttpRequest, 
-                *, 
-                stream: bool = False, 
+                self,
+                request: HttpRequest,
+                *,
+                stream: bool = False,
                 **kwargs: Any
             ) -> HttpResponse: ...
 
         @overload
         def update_message(
-                self, 
-                conversation_id: str, 
-                message_id: str, 
+                self,
+                conversation_id: str,
+                message_id: str,
                 resource: ChatMessageUpdate,
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatMessage: ...
 
         @overload
         def update_message(
-                self, 
-                conversation_id: str, 
-                message_id: str, 
+                self,
+                conversation_id: str,
+                message_id: str,
                 resource: ChatMessageUpdate,
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatMessage: ...
 
         @overload
         def update_message(
-                self, 
-                conversation_id: str, 
-                message_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                conversation_id: str,
+                message_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatMessage: ...
 
         @overload
         def update_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
+                self,
+                room_id: str,
+                topic_id: str,
                 resource: ChatTopicUpdate,
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @overload
         def update_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
+                self,
+                room_id: str,
+                topic_id: str,
                 resource: ChatTopicUpdate,
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @overload
         def update_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                topic_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
 
 namespace azure.messaging.webpubsubchatservice.aio
 
-    class azure.messaging.webpubsubchatservice.aio.WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated): implements AsyncContextManager 
+    class azure.messaging.webpubsubchatservice.aio.WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated): implements AsyncContextManager
 
         def __init__(
-                self, 
-                endpoint: str, 
-                hub: str, 
-                credential: Union[AsyncTokenCredential, AzureKeyCredential], 
-                *, 
-                api_version: Optional[str] = ..., 
+                self,
+                endpoint: str,
+                hub: str,
+                credential: Union[AsyncTokenCredential, AzureKeyCredential],
+                *,
+                api_version: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @classmethod
         def from_connection_string(
-                cls, 
-                conn_str: str, 
-                hub: str, 
+                cls,
+                conn_str: str,
+                hub: str,
                 **kwargs: Any
             ) -> WebPubSubChatServiceClient: ...
 
@@ -510,455 +510,455 @@ namespace azure.messaging.webpubsubchatservice.aio
 
         @overload
         async def create_or_replace_role(
-                self, 
-                role_name: str, 
+                self,
+                role_name: str,
                 resource: ChatRoleCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRole: ...
 
         @overload
         async def create_or_replace_role(
-                self, 
-                role_name: str, 
+                self,
+                role_name: str,
                 resource: ChatRoleCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRole: ...
 
         @overload
         async def create_or_replace_role(
-                self, 
-                role_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                role_name: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRole: ...
 
         @overload
         async def create_or_replace_room(
-                self, 
-                room_id: str, 
+                self,
+                room_id: str,
                 resource: ChatRoomCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoom: ...
 
         @overload
         async def create_or_replace_room(
-                self, 
-                room_id: str, 
+                self,
+                room_id: str,
                 resource: ChatRoomCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoom: ...
 
         @overload
         async def create_or_replace_room(
-                self, 
-                room_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoom: ...
 
         @overload
         async def create_or_replace_room_member(
-                self, 
-                room_id: str, 
-                user_id: str, 
+                self,
+                room_id: str,
+                user_id: str,
                 resource: ChatRoomMemberCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoomMember: ...
 
         @overload
         async def create_or_replace_room_member(
-                self, 
-                room_id: str, 
-                user_id: str, 
+                self,
+                room_id: str,
+                user_id: str,
                 resource: ChatRoomMemberCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoomMember: ...
 
         @overload
         async def create_or_replace_room_member(
-                self, 
-                room_id: str, 
-                user_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                user_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatRoomMember: ...
 
         @overload
         async def create_or_replace_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
+                self,
+                room_id: str,
+                topic_id: str,
                 resource: ChatTopicCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @overload
         async def create_or_replace_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
+                self,
+                room_id: str,
+                topic_id: str,
                 resource: ChatTopicCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @overload
         async def create_or_replace_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                topic_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @overload
         async def create_or_replace_user(
-                self, 
-                user_id: str, 
+                self,
+                user_id: str,
                 resource: ChatUserCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatUser: ...
 
         @overload
         async def create_or_replace_user(
-                self, 
-                user_id: str, 
+                self,
+                user_id: str,
                 resource: ChatUserCreateOrReplace,
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatUser: ...
 
         @overload
         async def create_or_replace_user(
-                self, 
-                user_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                user_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatUser: ...
 
         @distributed_trace_async
         async def delete_message(
-                self, 
-                conversation_id: str, 
-                message_id: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                conversation_id: str,
+                message_id: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete_role(
-                self, 
-                role_name: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                role_name: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete_room(
-                self, 
-                room_id: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete_room_member(
-                self, 
-                room_id: str, 
-                user_id: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                user_id: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'etag', 'match_condition']}, api_versions_list=['2026-08-01-preview'])
         async def delete_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                topic_id: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete_user(
-                self, 
-                user_id: str, 
-                *, 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                user_id: str,
+                *,
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def get_client_access_token(
-                self, 
-                *, 
-                minutes_to_expire: int = 60, 
-                user_id: Optional[str] = ..., 
+                self,
+                *,
+                minutes_to_expire: int = 60,
+                user_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> Dict[str, Any]: ...
 
         @distributed_trace_async
         async def get_conversation(
-                self, 
-                conversation_id: str, 
+                self,
+                conversation_id: str,
                 **kwargs: Any
             ) -> ChatConversation: ...
 
         @distributed_trace_async
         async def get_role(
-                self, 
-                role_name: str, 
+                self,
+                role_name: str,
                 **kwargs: Any
             ) -> ChatRole: ...
 
         @distributed_trace_async
         async def get_room(
-                self, 
-                room_id: str, 
+                self,
+                room_id: str,
                 **kwargs: Any
             ) -> ChatRoom: ...
 
         @distributed_trace_async
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'accept']}, api_versions_list=['2026-08-01-preview'])
         async def get_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
+                self,
+                room_id: str,
+                topic_id: str,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @distributed_trace_async
         async def get_user(
-                self, 
-                user_id: str, 
+                self,
+                user_id: str,
                 **kwargs: Any
             ) -> ChatUser: ...
 
         @distributed_trace
         def list_messages(
-                self, 
-                conversation_id: str, 
-                *, 
-                earliest_message_id: Optional[str] = ..., 
-                latest_message_id: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                conversation_id: str,
+                *,
+                earliest_message_id: Optional[str] = ...,
+                latest_message_id: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatMessage]: ...
 
         @distributed_trace
         def list_roles(
-                self, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatRole]: ...
 
         @distributed_trace
         def list_room_members(
-                self, 
-                room_id: str, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                room_id: str,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatRoomMember]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_rooms(
-                self, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatRoom]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'user_id', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_rooms_for_user(
-                self, 
-                user_id: str, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                user_id: str,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatUserRoom]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_topics(
-                self, 
-                room_id: str, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                room_id: str,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatTopic]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_users(
-                self, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                max_page_size: Optional[int] = ..., 
+                self,
+                *,
+                continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatUser]: ...
 
         def send_request(
-                self, 
-                request: HttpRequest, 
-                *, 
-                stream: bool = False, 
+                self,
+                request: HttpRequest,
+                *,
+                stream: bool = False,
                 **kwargs: Any
             ) -> Awaitable[AsyncHttpResponse]: ...
 
         @overload
         async def update_message(
-                self, 
-                conversation_id: str, 
-                message_id: str, 
+                self,
+                conversation_id: str,
+                message_id: str,
                 resource: ChatMessageUpdate,
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatMessage: ...
 
         @overload
         async def update_message(
-                self, 
-                conversation_id: str, 
-                message_id: str, 
+                self,
+                conversation_id: str,
+                message_id: str,
                 resource: ChatMessageUpdate,
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatMessage: ...
 
         @overload
         async def update_message(
-                self, 
-                conversation_id: str, 
-                message_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                conversation_id: str,
+                message_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatMessage: ...
 
         @overload
         async def update_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
+                self,
+                room_id: str,
+                topic_id: str,
                 resource: ChatTopicUpdate,
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @overload
         async def update_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
+                self,
+                room_id: str,
+                topic_id: str,
                 resource: ChatTopicUpdate,
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
         @overload
         async def update_topic(
-                self, 
-                room_id: str, 
-                topic_id: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
+                self,
+                room_id: str,
+                topic_id: str,
+                resource: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: Optional[str] = ...,
+                match_condition: Optional[MatchConditions] = ...,
                 **kwargs: Any
             ) -> ChatTopic: ...
 
@@ -972,8 +972,8 @@ namespace azure.messaging.webpubsubchatservice.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 parent_room: str
             ) -> None: ...
 
@@ -990,9 +990,9 @@ namespace azure.messaging.webpubsubchatservice.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: MessageContent, 
+                self,
+                *,
+                content: MessageContent,
                 created_by: str
             ) -> None: ...
 
@@ -1032,8 +1032,8 @@ namespace azure.messaging.webpubsubchatservice.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 permissions: list[Union[str, ChatPermission]]
             ) -> None: ...
 
@@ -1063,8 +1063,8 @@ namespace azure.messaging.webpubsubchatservice.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 title: str
             ) -> None: ...
 
@@ -1093,8 +1093,8 @@ namespace azure.messaging.webpubsubchatservice.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 role_name: str
             ) -> None: ...
 
@@ -1127,9 +1127,9 @@ namespace azure.messaging.webpubsubchatservice.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                state: Union[str, ChatTopicState], 
+                self,
+                *,
+                state: Union[str, ChatTopicState],
                 title: str
             ) -> None: ...
 
@@ -1183,9 +1183,9 @@ namespace azure.messaging.webpubsubchatservice.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                kind: str, 
+                self,
+                *,
+                kind: str,
                 nickname: str
             ) -> None: ...
 
@@ -1221,8 +1221,8 @@ namespace azure.messaging.webpubsubchatservice.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 title: str
             ) -> None: ...
 
@@ -1239,9 +1239,9 @@ namespace azure.messaging.webpubsubchatservice.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                nickname: str, 
+                self,
+                *,
+                nickname: str,
                 role_name: str
             ) -> None: ...
 
@@ -1272,9 +1272,9 @@ namespace azure.messaging.webpubsubchatservice.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                binary: Optional[bytes] = ..., 
+                self,
+                *,
+                binary: Optional[bytes] = ...,
                 text: Optional[str] = ...
             ) -> None: ...
 

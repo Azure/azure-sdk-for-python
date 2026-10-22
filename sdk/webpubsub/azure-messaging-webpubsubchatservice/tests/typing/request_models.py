@@ -2,6 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+"""Static type-checking fixture, not an executable test or customer sample.
+
+From the package directory, run:
+python -m mypy --python-version 3.10 --ignore-missing-imports --warn-unused-ignores tests/typing/request_models.py
+
+The negative cases must remain type errors; warn-unused-ignores detects them
+becoming incorrectly accepted. Runtime request tests live in test_request_models.py.
+"""
+
 from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient, models, types
 from azure.messaging.webpubsubchatservice.aio import WebPubSubChatServiceClient as AsyncClient
 

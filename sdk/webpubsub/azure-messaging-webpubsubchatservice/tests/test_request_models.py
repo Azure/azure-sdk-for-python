@@ -2,6 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+"""Runtime tests for lifecycle visibility and serialized HTTP requests.
+
+Static overload and invalid-input checks live in typing/request_models.py.
+"""
+
 # cspell:ignore kwonlyargs
 import ast
 import inspect
