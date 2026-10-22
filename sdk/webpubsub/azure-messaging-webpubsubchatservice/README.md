@@ -152,14 +152,20 @@ renamed, archived, and soft deleted independently of the room's default conversa
 
 ### Request models and dictionaries
 
-Operations with JSON request bodies accept model instances from
-`azure.messaging.webpubsubchatservice.models` or dictionaries described by the
-`TypedDict` definitions in `azure.messaging.webpubsubchatservice.types`.
-Model instances use Python property names, such as `role_name`, and provide
-attribute access and JSON serialization. Dictionaries use JSON field names,
-such as `roleName`. `TypedDict` provides static type checking for those
-dictionaries; at runtime they are ordinary dictionaries, not model instances,
-and do not perform runtime validation.
+You can supply a JSON request body in three ways:
+
+- **Model-based:** use classes from `azure.messaging.webpubsubchatservice.models`
+  with Python-style attributes and SDK-managed serialization.
+- **Typed dictionary:** use the `TypedDict` definitions from
+  `azure.messaging.webpubsubchatservice.types` for static checking of JSON-shaped dictionaries.
+- **Plain dictionary:** pass a dictionary using JSON field names.
+
+Model-based usage is recommended for getting started and is used throughout the
+examples below. Dictionaries are useful when your application already works with
+JSON-shaped data. All three styles call the same client methods; typed dictionaries
+are ordinary dictionaries at runtime. See the
+[sample guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/README.md#request-body-styles)
+for a comparison and examples of each style.
 
 ## Examples
 
@@ -168,11 +174,9 @@ authenticated `client`, created as shown in Getting started. The async snippet
 uses a client from `azure.messaging.webpubsubchatservice.aio`.
 See the [package samples][samples] for complete synchronous and asynchronous programs.
 
-The [model-based samples][samples] use model instances for request bodies.
-The [dictionary-based samples][generated_samples] use dictionary literals with
-JSON field names. Both call the same client methods. See the
+The examples below use model instances for request bodies. See the
 [sample guide and complete operation index](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/README.md)
-for a corresponding model-based example of every service operation.
+for more request-body styles and examples of every service operation.
 
 ### Generate client access credentials
 
@@ -572,7 +576,8 @@ specification's examples. Each file demonstrates one operation. Replace
 and configure authentication as described in each file. These generated files
 are refreshed during SDK generation. The README snippet source contains
 independent functions, not a combined workflow or a standalone program.
-The runnable model-based samples demonstrate model and permission-enum usage,
+The model-based operation examples accept an authenticated client and use example
+resource identifiers that you can adapt. The scenario samples demonstrate
 authentication, client access credentials, errors, and logging.
 
 ## Additional resources
