@@ -39,3 +39,6 @@
   `tracing_e2e` suite; normal CI validation remains enabled.
 - Keep pipeline artifact entries compatible with raw YAML namespace metadata
   extraction while limiting manual A2A alpha uploads to A2A and core.
+- Align manual A2A alpha documentation updates with the packages actually
+  published, register the native SDK dependency for shared analysis, and add
+  the required README troubleshooting and next-steps sections.

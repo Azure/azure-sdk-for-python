@@ -59,12 +59,16 @@ extends:
       - name: azure-ai-agentserver-invocations
         safeName: azureaiagentserverinvocations
         skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
+        skipPublishDocMs: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
       - name: azure-ai-agentserver-responses
         safeName: azureaiagentserverresponses
         skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
+        skipPublishDocMs: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
       - name: azure-ai-agentserver-optimization
         safeName: azureaiagentserveroptimization
         skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
+        skipPublishDocMs: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
       - name: azure-ai-agentserver-activity
         safeName: azureaiagentserveractivity
         skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
+        skipPublishDocMs: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}

@@ -189,6 +189,37 @@ The Foundry service rewrites the externally returned agent card. Container
 security schemes, signatures, provider/branding fields, internal URLs, and
 unsupported capabilities are not exposed to callers.
 
+## Troubleshooting
+
+- **Agent Card discovery returns 404:** check the server port and use
+  `/a2a/.well-known/agent-card.json` for a local container. The public Foundry
+  Agent Card route is different; local sample clients do not authenticate to
+  that public endpoint.
+- **A request returns `VERSION_NOT_SUPPORTED`:** use the native sample client,
+  or explicitly send `A2A-Version: 1.0` with JSON-RPC requests.
+- **Task lookup fails after restarting a sample:** the examples use
+  `InMemoryTaskStore`. Its records do not survive a process restart. Reusing a
+  context ID does not restore a lost Task or application history.
+- **The greeting does not stream:** the first two samples intentionally do not
+  advertise streaming. Start the streaming example and invoke the client with
+  `--stream`.
+
+Core provides console logging for request failures and supports distributed
+tracing through its configured exporters. See [distributed tracing](#distributed-tracing)
+for the A2A span behavior. Do not include authorization headers or sensitive
+message contents when sharing diagnostic logs.
+
+## Next steps
+
+- Follow the [sample setup and walkthroughs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-a2a/samples)
+  to discover an Agent Card, send a message, consume SSE updates, and retrieve a
+  Task locally.
+- Implement your agent with the native [A2A Python SDK](https://github.com/a2aproject/a2a-python)
+  executor, request-handler, and TaskStore interfaces.
+- Review the samples' state guidance before replacing in-memory storage, and
+  use [multi-protocol composition](#host-a2a-and-invocations-together) when
+  another Agent Server protocol must share the same process.
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions
