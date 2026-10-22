@@ -1,3 +1,5 @@
 directory: specification/keyvault/data-plane/Keys
-commit: 0aea5f5666b9d631d37074a2f9c9bd8ba0dd1eff
+commit: f4f159a5a3412acc3fd8793d27ecedd2f99a751c
 repo: Azure/azure-rest-api-specs
+additionalDirectories: 
+- specification/keyvault/data-plane/Keys/common
