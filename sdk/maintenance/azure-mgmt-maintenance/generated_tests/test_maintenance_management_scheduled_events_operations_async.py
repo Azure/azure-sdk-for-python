@@ -15,18 +15,31 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestMaintenanceManagementScheduledEventOperationsAsync(AzureMgmtRecordedTestCase):
+class TestMaintenanceManagementScheduledEventsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(MaintenanceManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_scheduled_event_acknowledge(self, resource_group):
-        response = await self.client.scheduled_event.acknowledge(
+    async def test_scheduled_events_acknowledge(self, resource_group):
+        response = await self.client.scheduled_events.acknowledge(
             resource_group_name=resource_group.name,
             resource_type="str",
             resource_name="str",
             scheduled_event_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_events_acknowledge_list(self, resource_group):
+        response = await self.client.scheduled_events.acknowledge_list(
+            resource_group_name=resource_group.name,
+            resource_type="str",
+            resource_name="str",
+            scheduled_events_id_list={"value": ["str"]},
         )
 
         # please add some check logic here by yourself

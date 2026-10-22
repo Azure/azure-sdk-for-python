@@ -6,27 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.maintenance import MaintenanceManagementClient
+from azure.mgmt.aigateway.aio import AIGatewayMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestMaintenanceManagementScheduledEventOperations(AzureMgmtRecordedTestCase):
+class TestAIGatewayMgmtOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(MaintenanceManagementClient)
+        self.client = self.create_mgmt_client(AIGatewayMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_scheduled_event_acknowledge(self, resource_group):
-        response = self.client.scheduled_event.acknowledge(
-            resource_group_name=resource_group.name,
-            resource_type="str",
-            resource_name="str",
-            scheduled_event_id="str",
-        )
-
+    @recorded_by_proxy_async
+    async def test_operations_list(self, resource_group):
+        response = self.client.operations.list()
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
