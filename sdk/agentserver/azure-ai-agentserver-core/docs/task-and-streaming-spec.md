@@ -3041,6 +3041,21 @@ in the same etag transaction.
 
 ### §52. Steering drain (two-phase, two-PATCH)
 
+If a process stops after persisting a successful turn's suspension but before
+claiming its queued head, startup and periodic recovery also inspect suspended
+framework tasks in the same agent/session scope. Only authorized, registered,
+steerable multi-turn tasks with `suspension_reason="run_completion"`, a task
+schema, and nonempty `pending_inputs` are eligible. Suspended records have no
+lease, so this scan does not filter on `lease_owner`.
+
+Recovery atomically claims the new lease, removes the FIFO head, publishes it
+as canonical `payload["input"]`, and applies its attachment changes using the
+scanned record's `if_match`. A lost claim is abandoned until the next scan.
+The completed turn is not replayed; the queued input starts with
+`entry_mode="resumed"` and `is_steered_turn=True`. A same-process scan retains
+the queued caller's result future. This requires a running task manager and
+does not itself wake a stopped hosted worker.
+
 At every turn-end boundary (suspend, complete, raise), if there
 are queued steering inputs, the framework drains the head and
 re-enters the handler. The drain is two-phase AND two-PATCH to be
