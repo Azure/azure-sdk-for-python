@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- List, dict, and set fields on models now consistently reflect in-place mutations, whether the value was obtained through dictionary access (`model["field"]`) or property access (`model.field`).
+
 ### Other Changes
 
 - Regenerated the client with the latest TypeSpec emitter and removed stale generated files.
