@@ -107,11 +107,15 @@ def test_failed_entry_preserves_primary_error_when_cleanup_fails(resources, capl
     client.close.side_effect = ValueError("private cleanup detail")
 
     async def request():
-        await providers.AsyncAzureTokenProvider().__aenter__()
+        try:
+            await providers.AsyncAzureTokenProvider().__aenter__()
+        except type(primary) as error:
+            # Python 3.10 may replace CancelledError when it crosses the task boundary.
+            assert error is primary
+            raise
 
-    with pytest.raises(type(primary)) as raised:
+    with pytest.raises(type(primary)):
         asyncio.run(request())
-    assert raised.value is primary
     client.close.assert_awaited_once_with()
     credential.close.assert_not_called()
     assert "ValueError" in caplog.text

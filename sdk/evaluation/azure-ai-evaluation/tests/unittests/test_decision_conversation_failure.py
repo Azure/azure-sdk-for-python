@@ -247,12 +247,24 @@ def test_direct_task_cancellation_preserves_completed_usage_and_closes_transport
             _model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=Transport())
         )
         evaluator = SplitDecisionEvaluator()
-        task = asyncio.create_task(evaluator._to_async()(conversation=CONVERSATION))
+        cancellations = []
+
+        async def evaluate():
+            try:
+                return await evaluator._to_async()(conversation=CONVERSATION)
+            except asyncio.CancelledError as error:
+                # Observe metadata before Python 3.10 replaces the task's cancellation exception.
+                cancellations.append(error)
+                raise
+
+        task = asyncio.create_task(evaluate())
         await asyncio.wait_for(entered.wait(), timeout=2)
         task.cancel()
-        with pytest.raises(asyncio.CancelledError) as raised:
+        with pytest.raises(asyncio.CancelledError):
             await task
-        properties = raised.value.properties
+        assert task.cancelled()
+        assert len(cancellations) == 1
+        properties = cancellations[0].properties
         if failed_turn:
             assert {field: properties[field] for field in ("prompt_tokens", "completion_tokens", "total_tokens")} == {
                 "prompt_tokens": 12,
