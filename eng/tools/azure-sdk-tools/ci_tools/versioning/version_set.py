@@ -6,8 +6,8 @@ from ci_tools.versioning.version_shared import (
     set_version_py,
     set_dev_classifier,
     update_change_log,
-    synchronized_version_update,
 )
+
 
 def version_set_main():
     parser = argparse.ArgumentParser(
@@ -64,16 +64,15 @@ def version_set_main():
 
     print("{0}: {1} -> {2}".format(package_name, target_package.version, new_version))
 
-    with synchronized_version_update(target_package.setup_filename):
-        set_version_py(target_package.setup_filename, new_version)
-        set_dev_classifier(target_package.setup_filename, new_version)
-        update_change_log(
-            target_package.setup_filename,
-            new_version,
-            args.service,
-            args.package_name,
-            False,
-            args.replace_latest_entry_title,
-            args.release_date,
-            root_dir=root_dir,
-        )
+    set_version_py(target_package.setup_filename, new_version)
+    set_dev_classifier(target_package.setup_filename, new_version)
+    update_change_log(
+        target_package.setup_filename,
+        new_version,
+        args.service,
+        args.package_name,
+        False,
+        args.replace_latest_entry_title,
+        args.release_date,
+        root_dir=root_dir,
+    )

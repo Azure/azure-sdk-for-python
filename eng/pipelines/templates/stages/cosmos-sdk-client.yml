@@ -14,9 +14,6 @@ parameters:
 - name: InstallMsRustToolchain
   type: boolean
   default: false
-- name: RunRustTests
-  type: boolean
-  default: false
 - name: MsRustWorkingDirectory
   type: string
   default: ''
@@ -37,11 +34,6 @@ extends:
     MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
     MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
     MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
-    AdditionalJobs:
-      - ${{ if parameters.RunRustTests }}:
-        - template: /sdk/cosmos/templates/rust-tests.yml
-          parameters:
-            ToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
     BeforeTestSteps:
       - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
         parameters:

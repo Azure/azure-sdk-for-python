@@ -9,8 +9,6 @@
 # package targeting during release.
 
 from argparse import Namespace
-from contextlib import contextmanager
-from pathlib import Path
 import sys
 import os
 from os import path
@@ -22,7 +20,6 @@ from packaging.version import parse
 from datetime import date
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.parsing import ParsedSetup, get_version_py, VERSION_REGEX
-from ci_tools.parsing.parse_functions import get_pyproject_dict
 from ci_tools.variables import discover_repo_root
 from ci_tools.logging import logger
 
@@ -106,91 +103,6 @@ def set_version_py(setup_path, new_version):
         version_py_file.write(replaced_version_contents)
 
 
-def _replace_metadata_version(text, pattern, version, filename):
-    matches = list(re.finditer(pattern, text, re.MULTILINE))
-    if len(matches) != 1:
-        raise ValueError(f"Expected exactly one version field in {filename}")
-    start, end = matches[0].span(1)
-    return text[:start] + version + text[end:]
-
-
-@contextmanager
-def synchronized_version_update(package_path, *, update_changelog=False):
-    """Synchronize opted-in metadata after an updater succeeds; roll back on failure.
-
-    Release updates must finish before builds start. This restores file contents
-    on Python exceptions, not on process termination or concurrent source edits.
-    """
-    root = Path(package_path).resolve()
-    if root.is_file():
-        root = root.parent
-    pyproject = root / "pyproject.toml"
-    if not pyproject.is_file():
-        yield
-        return
-    config = get_pyproject_dict(str(pyproject))
-    if not config.get("tool", {}).get("azure-sdk-build", {}).get("synchronize-version-metadata", False):
-        yield
-        return
-    if "version" not in config.get("project", {}):
-        raise ValueError(f"Synchronized metadata requires a static project.version in {pyproject}")
-    version_path = get_version_py(str(pyproject))
-    if not version_path:
-        raise ValueError(f"Missing Python version file in {root}")
-    version_file = Path(version_path)
-    api_metadata = root / "api.metadata.yml"
-    changelog = root / "CHANGELOG.md"
-    files = [version_file, pyproject, api_metadata, changelog]
-    setup = root / "setup.py"
-    if setup.is_file():
-        files.append(setup)
-    originals = {file: file.read_bytes() for file in files}
-    try:
-        yield
-        current = {file: file.read_bytes().decode("utf-8") for file in files}
-        versions = re.findall(VERSION_REGEX, current[version_file], re.MULTILINE)
-        if len(versions) != 1:
-            raise ValueError(f"Expected exactly one VERSION in {version_file}")
-        version = versions[0]
-        parse(version)
-        project = re.search(r"(?ms)^\[project\][ \t]*\r?\n(.*?)(?=^\[|\Z)", current[pyproject])
-        if project is None:
-            raise ValueError(f"Missing [project] table in {pyproject}")
-        project_text = _replace_metadata_version(
-            project.group(1), r"""^version[ \t]*=[ \t]*["']([^"'\r\n]+)["']""", version, pyproject
-        )
-        current[pyproject] = (
-            current[pyproject][: project.start(1)] + project_text + current[pyproject][project.end(1) :]
-        )
-        current[api_metadata] = _replace_metadata_version(
-            current[api_metadata], r"^packageVersion:[ \t]*([^\s#]+)", version, api_metadata
-        )
-        heading = re.search(r"(?m)^#{2,3}[ \t]+(\d+\.\d+\.\d+\S*)[ \t]+\(", current[changelog])
-        if heading is None:
-            raise ValueError(f"Missing release heading in {changelog}")
-        if update_changelog:
-            start, end = heading.span(1)
-            current[changelog] = current[changelog][:start] + version + current[changelog][end:]
-        elif heading.group(1) != version:
-            raise ValueError(f"Latest changelog version {heading.group(1)} does not match {version}")
-        for file in (pyproject, setup):
-            if file in current:
-                current[file] = re.sub(
-                    DEV_STATUS_REGEX,
-                    lambda match: match.group(1) + f'"{get_classification(version)}"',
-                    current[file],
-                )
-        for file, content in current.items():
-            encoded = content.encode("utf-8")
-            if file.read_bytes() != encoded:
-                file.write_bytes(encoded)
-    except BaseException:
-        for file, original in originals.items():
-            if not file.exists() or file.read_bytes() != original:
-                file.write_bytes(original)
-        raise
-
-
 # Get classification for PyPI (https://pypi.org/classifiers/)
 def get_classification(version):
     parsed_version = parse(version)
@@ -249,4 +161,4 @@ def update_change_log(
         commands.append("--ReleaseDate:{}".format(release_date))
 
     # Run script to update change log
-    run(commands, cwd=pkg_root, check=True)
+    run(commands, cwd=pkg_root)
