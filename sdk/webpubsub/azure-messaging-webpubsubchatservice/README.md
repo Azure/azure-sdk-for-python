@@ -304,6 +304,12 @@ topic ID specified by `WPS_CHAT_TOPIC_ID`.
 
 #### Create a topic
 
+`ChatTopicCreateOrReplace` requires a title. When replacing an existing topic,
+you can also supply `state`, for example
+`ChatTopicCreateOrReplace(title="Announcements", state=ChatTopicState.ARCHIVED)`.
+Import `ChatTopicState` from `azure.messaging.webpubsubchatservice.models`.
+Omit `state` when creating a topic.
+
 <!-- SNIPPET:sample_readme_snippets.create_topic -->
 
 ```python

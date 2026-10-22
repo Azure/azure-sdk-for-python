@@ -34,7 +34,7 @@ def main():
     response = client.create_or_replace_topic(
         room_id="general",
         topic_id="product-updates",
-        resource={"title": "Product updates"},
+        resource={"state": "Normal", "title": "Product updates"},
     )
     print(response)
 

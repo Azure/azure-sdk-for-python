@@ -73,5 +73,5 @@
         "azure.messaging.webpubsubchatservice.WebPubSubChatServiceClient.list_rooms_for_user": "WebPubSubChat.WebPubSubChatServiceClient.listRoomsForUser",
         "azure.messaging.webpubsubchatservice.aio.WebPubSubChatServiceClient.list_rooms_for_user": "WebPubSubChat.WebPubSubChatServiceClient.listRoomsForUser"
     },
-    "CrossLanguageVersion": "584f70179c70"
+    "CrossLanguageVersion": "e41a201baeb5"
 }

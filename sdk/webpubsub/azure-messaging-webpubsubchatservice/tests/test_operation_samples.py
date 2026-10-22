@@ -169,7 +169,7 @@ def test_sample_runner_closes_client_and_propagates_errors(monkeypatch, sample_i
     manager.__exit__.assert_called_once()
 
 
-def test_generated_topic_create_example_contains_only_title():
+def test_generated_topic_put_example_serializes_replace_state():
     tree = ast.parse((PACKAGE / "generated_samples" / "create_or_replace_topic.py").read_text())
     calls = [
         node
@@ -180,4 +180,6 @@ def test_generated_topic_create_example_contains_only_title():
     ]
     assert len(calls) == 1
     body = next(keyword.value for keyword in calls[0].keywords if keyword.arg == "resource")
-    assert ast.literal_eval(body) == {"title": "Product updates"}
+    request = ast.literal_eval(body)
+    assert request["state"] == models.ChatTopicState.NORMAL
+    assert models.ChatTopicCreateOrReplace(request).as_dict() == request

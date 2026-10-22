@@ -6,6 +6,7 @@
 import ast
 import inspect
 import json
+from typing import get_args
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
@@ -16,15 +17,15 @@ from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 from azure.messaging.webpubsubchatservice.aio import WebPubSubChatServiceClient as AsyncClient
 from azure.messaging.webpubsubchatservice import models, types
 
-MODEL_SHAPES = [
-    (models.ChatTopicCreateOrReplace, {"title"}, {"title"}),
-    (models.ChatTopicUpdate, {"title", "state"}, set()),
-    (models.ChatMessageUpdate, {"created_by", "content"}, set()),
-    (models.ChatRoleCreateOrReplace, {"permissions"}, {"permissions"}),
-    (models.ChatRoomCreateOrReplace, {"title"}, {"title"}),
-    (models.ChatRoomMemberCreateOrReplace, {"role_name"}, {"role_name"}),
-    (models.ChatUserCreateOrReplace, {"kind", "nickname"}, {"kind", "nickname"}),
-    (models.HumanChatUserCreateOrReplace, {"kind", "nickname", "role_name"}, {"nickname", "role_name"}),
+REQUEST_PROJECTIONS = [
+    (models.ChatTopicCreateOrReplace, models.ChatTopic, {"create", "update"}),
+    (models.ChatTopicUpdate, models.ChatTopic, {"update"}),
+    (models.ChatMessageUpdate, models.ChatMessage, {"update"}),
+    (models.ChatRoleCreateOrReplace, models.ChatRole, {"create", "update"}),
+    (models.ChatRoomCreateOrReplace, models.ChatRoom, {"create", "update"}),
+    (models.ChatRoomMemberCreateOrReplace, models.ChatRoomMember, {"create", "update"}),
+    (models.ChatUserCreateOrReplace, models.ChatUser, {"create", "update"}),
+    (models.HumanChatUserCreateOrReplace, models.HumanChatUser, {"create", "update"}),
 ]
 
 CASES = [
@@ -34,6 +35,27 @@ CASES = [
         models.ChatTopicCreateOrReplace(title="Title"),
         models.ChatTopic,
         {"title": "Title"},
+    ),
+    (
+        "create_or_replace_topic",
+        ("room", "topic"),
+        types.ChatTopicCreateOrReplace(title="Title"),
+        models.ChatTopic,
+        {"title": "Title"},
+    ),
+    (
+        "create_or_replace_topic",
+        ("room", "topic"),
+        models.ChatTopicCreateOrReplace(title="Title", state=models.ChatTopicState.ARCHIVED),
+        models.ChatTopic,
+        {"title": "Title", "state": "Archived"},
+    ),
+    (
+        "create_or_replace_topic",
+        ("room", "topic"),
+        types.ChatTopicCreateOrReplace(title="Title", state=models.ChatTopicState.ARCHIVED),
+        models.ChatTopic,
+        {"title": "Title", "state": "Archived"},
     ),
     (
         "update_topic",
@@ -129,19 +151,46 @@ CASES = [
 ]
 
 
-@pytest.mark.parametrize("model,fields,required", MODEL_SHAPES)
-def test_request_model_constructor_shape(model, fields, required):
-    assert set(model({})._attr_to_rest_field) == fields
+def _required_constructor_fields(model):
     definition = ast.parse(inspect.getsource(model)).body[0]
     constructor = next(
         node for node in definition.body if isinstance(node, ast.FunctionDef) and node.name == "__init__"
     )
-    assert {
+    return {
         parameter.arg
         for parameter, default in zip(constructor.args.kwonlyargs, constructor.args.kw_defaults)
         if default is None
-    } == required
-    assert not {"id", "etag", "created_at", "default_conversation"} & fields
+    }
+
+
+@pytest.mark.parametrize("request_model,resource_model,lifecycle", REQUEST_PROJECTIONS)
+def test_request_fields_follow_resource_lifecycle_visibility(request_model, resource_model, lifecycle):
+    resource_fields = resource_model({})._attr_to_rest_field
+    request_fields = request_model({})._attr_to_rest_field
+    writable_fields = {name for name, field in resource_fields.items() if lifecycle.intersection(field._visibility)}
+    assert set(request_fields) == writable_fields
+    for name, field in request_fields.items():
+        assert field._rest_name == resource_fields[name]._rest_name
+        assert lifecycle.intersection(field._visibility)
+
+    required = _required_constructor_fields(resource_model)
+    if lifecycle == {"update"}:
+        required = set()
+    else:
+        required = {name for name in required & writable_fields if "create" in resource_fields[name]._visibility}
+    assert _required_constructor_fields(request_model) == required
+    dictionary_projection = getattr(types, request_model.__name__)
+    # Discriminated dictionary requests are unions of their concrete subtypes.
+    for dictionary_type in get_args(dictionary_projection) or (dictionary_projection,):
+        concrete_request = getattr(models, dictionary_type.__name__)
+        concrete_fields = concrete_request({})._attr_to_rest_field
+        assert set(dictionary_type.__annotations__) == {field._rest_name for field in concrete_fields.values()}
+        required_dictionary_fields = _required_constructor_fields(concrete_request) | {
+            name for name, field in concrete_fields.items() if field._is_discriminator
+        }
+        assert dictionary_type.__required_keys__ == {
+            concrete_fields[name]._rest_name for name in required_dictionary_fields
+        }
 
 
 def _response(body):

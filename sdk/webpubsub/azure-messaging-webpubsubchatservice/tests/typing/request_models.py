@@ -18,6 +18,13 @@ def check_request_types(client: WebPubSubChatServiceClient) -> None:
     client.update_message("conversation", "message", types.ChatMessageUpdate(createdBy="user"))
     client.update_message("conversation", "message", types.ChatMessageUpdate(content={"text": "Updated"}))
     client.create_or_replace_topic("room", "topic", models.ChatTopicCreateOrReplace(title="Title"))
+    client.create_or_replace_topic(
+        "room", "topic", models.ChatTopicCreateOrReplace(title="Title", state=models.ChatTopicState.ARCHIVED)
+    )
+    client.create_or_replace_topic("room", "topic", types.ChatTopicCreateOrReplace(title="Title"))
+    client.create_or_replace_topic(
+        "room", "topic", types.ChatTopicCreateOrReplace(title="Title", state=models.ChatTopicState.ARCHIVED)
+    )
     client.create_or_replace_role("user.role", models.ChatRoleCreateOrReplace(permissions=["user.create_room"]))
     client.create_or_replace_role("user.role", types.ChatRoleCreateOrReplace(permissions=["user.create_room"]))
     client.create_or_replace_room("room", models.ChatRoomCreateOrReplace(title="Room"))
@@ -36,7 +43,7 @@ def check_request_types(client: WebPubSubChatServiceClient) -> None:
     models.ChatMessageUpdate(created_by=123)  # type: ignore[call-overload]
     models.ChatMessageUpdate(content=123)  # type: ignore[call-overload]
     models.ChatTopicCreateOrReplace()  # type: ignore[call-overload]
-    models.ChatTopicCreateOrReplace(title="Title", state=models.ChatTopicState.ARCHIVED)  # type: ignore[call-overload]
+    models.ChatTopicCreateOrReplace(title="Title", state=123)  # type: ignore[call-overload]
     types.ChatTopicUpdate(title=123)  # type: ignore[typeddict-item]
     types.ChatTopicUpdate(id="read-only")  # type: ignore[typeddict-unknown-key]
     types.ChatMessageUpdate(content=123)  # type: ignore[typeddict-item]
@@ -44,6 +51,14 @@ def check_request_types(client: WebPubSubChatServiceClient) -> None:
 
 
 async def check_async_request_types(client: AsyncClient) -> None:
+    await client.create_or_replace_topic("room", "topic", models.ChatTopicCreateOrReplace(title="Title"))
+    await client.create_or_replace_topic(
+        "room", "topic", models.ChatTopicCreateOrReplace(title="Title", state=models.ChatTopicState.ARCHIVED)
+    )
+    await client.create_or_replace_topic("room", "topic", types.ChatTopicCreateOrReplace(title="Title"))
+    await client.create_or_replace_topic(
+        "room", "topic", types.ChatTopicCreateOrReplace(title="Title", state=models.ChatTopicState.ARCHIVED)
+    )
     await client.create_or_replace_role("user.role", models.ChatRoleCreateOrReplace(permissions=["user.create_room"]))
     await client.create_or_replace_role("user.role", types.ChatRoleCreateOrReplace(permissions=["user.create_room"]))
     await client.create_or_replace_room("room", models.ChatRoomCreateOrReplace(title="Room"))

@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Added topic lifecycle operations (create or replace, list, get, update, and soft delete). Creation or replacement accepts `ChatTopicCreateOrReplace`, which requires only `title`; updates accept `ChatTopicUpdate`, whose fields are optional.
+  - Added topic lifecycle operations (create or replace, list, get, update, and soft delete). Creation or replacement accepts `ChatTopicCreateOrReplace`, which requires `title` and accepts optional `state` for replacement; updates accept `ChatTopicUpdate`, whose fields are optional.
   - Added room, user, and user-room collection operations
 
 ### Other Changes

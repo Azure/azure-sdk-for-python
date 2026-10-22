@@ -1138,12 +1138,14 @@ namespace azure.messaging.webpubsubchatservice.models
 
 
     class azure.messaging.webpubsubchatservice.models.ChatTopicCreateOrReplace(_Model):
+        state: Optional[Union[str, ChatTopicState]]
         title: str
 
         @overload
         def __init__(
                 self,
                 *,
+                state: Optional[Union[str, ChatTopicState]] = ...,
                 title: str
             ) -> None: ...
 
@@ -1305,7 +1307,9 @@ namespace azure.messaging.webpubsubchatservice.types
 
 
     class azure.messaging.webpubsubchatservice.types.ChatTopicCreateOrReplace(TypedDict, total=False):
+        key "state": Union[str, ChatTopicState]
         key "title": Required[str]
+        state: Union[str, ChatTopicState]
         title: str
 
 

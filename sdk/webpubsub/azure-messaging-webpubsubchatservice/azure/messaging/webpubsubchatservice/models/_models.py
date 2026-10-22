@@ -397,16 +397,25 @@ class ChatTopicCreateOrReplace(_Model):  # pylint: disable=docstring-keyword-sho
 
     :ivar title: Topic title. Required.
     :vartype title: str
+    :ivar state: Current lifecycle state of the topic. Known values are: "Normal", "Archived", and
+     "SoftDeleted".
+    :vartype state: str or ~azure.messaging.webpubsubchatservice.models.ChatTopicState
     """
 
     title: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Topic title. Required."""
+    state: Optional[Union[str, "_models.ChatTopicState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current lifecycle state of the topic. Known values are: \"Normal\", \"Archived\", and
+     \"SoftDeleted\"."""
 
     @overload
     def __init__(
         self,
         *,
         title: str,
+        state: Optional[Union[str, "_models.ChatTopicState"]] = None,
     ) -> None: ...
 
     @overload
