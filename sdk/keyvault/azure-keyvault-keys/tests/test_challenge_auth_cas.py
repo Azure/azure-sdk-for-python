@@ -27,7 +27,6 @@ from test_challenge_auth import (
     get_random_url,
 )
 
-
 HEADER = 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'
 CLAIMS = 'Bearer authorization="https://authority.net/replacement", scope=https://vault.azure.net/new, claims="e30="'
 FLOWS = {
