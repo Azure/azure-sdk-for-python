@@ -519,7 +519,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         """
         super().add_middleware(middleware_class, *args, **kwargs)
 
-    async def _activate_task_manager(self, restore_id: str | None = None) -> None:
+    async def _activate_task_manager(self, restore_id: str | None = None, *, prepare_only: bool = False) -> None:
         if not _resilient_tasks_enabled():
             return
         from .tasks._exceptions import (
@@ -541,6 +541,15 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 installed = None
             if installed is not None and installed is not self._task_manager:
                 raise RuntimeError("TaskManager is already owned by another host")
+            if (
+                self._task_manager is not None
+                and not self._task_manager._provider_configuration_matches()  # pylint: disable=protected-access
+            ):
+                if self._task_manager._has_live_workers:  # pylint: disable=protected-access
+                    raise RuntimeError("Cannot change task provider configuration while workers are running")
+                await self._task_manager.shutdown(wait_for_workers=True)
+                self._task_manager = None
+                self._task_manager_binding = None
             if self._task_manager is None:
                 self._task_manager = TaskManager(
                     config=self.config,
@@ -553,6 +562,9 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 set_task_manager(self._task_manager)
             elif self._task_manager_binding != binding:
                 raise RuntimeError("TaskManager is bound to a different session")
+            if prepare_only:
+                self._task_manager._prepare(restore_id)  # pylint: disable=protected-access
+                return
             if restore_id is None:
                 await self._task_manager.startup()
                 logger.info("TaskManager initialized with startup recovery")
@@ -704,6 +716,9 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         """Register a function to rebuild process state after snapshot restore.
 
         Environment overrides are applied before the function is called.
+        Enabled resilient tasks are prepared for submission inside the handler.
+        Automatic initial recovery follows the handler so application dependencies
+        can be rebuilt before recovered tasks execute.
 
         :param fn: Async function called with the restored session context.
         :type fn: Callable[[AgentSessionContext], Awaitable[None]]
@@ -861,7 +876,19 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             self._lifecycle.before_snapshot_completed = True
             return JSONResponse({"status": "ok"})
 
-    async def _after_restore_endpoint(self, request: Request) -> Response:  # pylint: disable=too-many-statements
+    async def _after_restore_endpoint(self, request: Request) -> Response:
+        try:
+            return await AgentServerHost._run_after_restore(self, request)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.error("The after-restore hook failed; unfinished rollback state is retained")
+            logger.debug("After-restore failure details", exc_info=True)
+            return create_error_response(
+                "after_restore_failed",
+                "The after-restore hook failed.",
+                status_code=500,
+            )
+
+    async def _run_after_restore(self, request: Request) -> Response:  # pylint: disable=too-many-statements
         try:
             payload = await AgentServerHost._read_json_object(request)
             context = AgentServerHost._parse_session_context(payload)
@@ -889,8 +916,6 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                     "The restored process is already assigned to another session.",
                     status_code=409,
                 )
-            if context.restore_id in self._lifecycle.completed_restore_ids:
-                return JSONResponse({"status": "ok"})
             if assigned_session_id is None:
                 self._lifecycle.assigned_session_id = context.session_id
 
@@ -899,6 +924,13 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             AgentServerHost._restore_lifecycle_environment(self)
             if interrupted:
                 raise asyncio.CancelledError
+
+            if context.restore_id in self._lifecycle.completed_restore_ids:
+                restored = self._lifecycle.restored_session_context
+                if restored is None:
+                    raise RuntimeError("Completed restore is missing its session context")
+                await self._activate_task_manager(restored.restore_id)
+                return JSONResponse({"status": "ok"})
 
             effective_environment = dict(context.session_env_overrides)
             effective_environment.setdefault(_SESSION_ID_ENV, context.session_id)
@@ -938,6 +970,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 )
                 try:
                     await self._after_restore(context)
+                    await self._activate_task_manager(context.restore_id, prepare_only=True)
                     if self._lifecycle.after_restore_fn is not None:
                         await self._lifecycle.after_restore_fn(context)
                     await self._activate_task_manager(context.restore_id)

@@ -259,6 +259,26 @@ request with the same `restore_id` does not invoke the handler again, while a
 new `restore_id` for the same session starts a new restore cycle. The server
 rejects attempts to reuse a restored process for a different session.
 
+With resilient tasks enabled, the SDK prepares a session-bound TaskManager before
+the application `after_restore_handler`. Rebuild application dependencies first,
+then submit `@task`/`@multi_turn_task` work using the normal task APIs:
+
+```python
+@app.after_restore_handler
+async def after_restore(context: AgentSessionContext):
+    await database.connect()
+    await startup_work.start(input={"session_id": context.session_id})
+```
+
+Here `startup_work` is an application's decorated task method. Automatic initial
+recovery and the periodic scanner start after the handler returns; HTTP 200 waits
+for that initialization, not for background work to finish. `.run()` is also
+available for bounded work, but awaiting long-running completion can exceed the
+restore timeout. A failed hook can be retried: reconcile unfinished task IDs and
+persist completion state if startup must run only once per logical session.
+Resilience opt-out still disables task submission, and ordinary cold startup
+does not invoke the restore handler.
+
 Protocol-specific hosts can override the protected `_before_snapshot` and
 `_after_restore` methods to extend the lifecycle before application callbacks
 run. The host still performs validation, session environment and configuration
