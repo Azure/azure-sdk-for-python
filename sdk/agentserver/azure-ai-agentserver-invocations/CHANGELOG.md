@@ -10,6 +10,10 @@
 
 ### Bugs Fixed
 
+- Apply the Invocations task-runtime switch to both typed Voice WebSocket
+  endpoints, including composed Voice/Responses hosts where Responses
+  independently enables the task manager.
+
 ### Other Changes
 
 - Raised the minimum `azure-ai-agentserver-core` dependency to `2.3.0b2` for

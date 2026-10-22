@@ -48,6 +48,79 @@ def manager_available() -> bool:
         return False
 
 
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+@pytest.mark.parametrize("responses_first", [False, True])
+@pytest.mark.parametrize("resilient,steerable", [(False, False), (False, True), (True, False), (True, True)])
+@pytest.mark.parametrize("enabled", [False, True])
+def test_composed_voice_routes_mask_disabled_invocations_tasks(
+    path: str, responses_first: bool, resilient: bool, steerable: bool, enabled: bool
+) -> None:
+    responses = pytest.importorskip("azure.ai.agentserver.responses")
+    from azure.ai.agentserver.invocations.voice import SessionReady, VoiceAgentServerHost
+
+    response_host = responses.ResponsesAgentServerHost
+    if responses_first:
+
+        class CombinedHost(response_host, VoiceAgentServerHost):
+            pass
+
+    else:
+
+        class CombinedHost(VoiceAgentServerHost, response_host):
+            pass
+
+    set_resilient_tasks_enabled(enabled)
+    host = CombinedHost(
+        options=responses.ResponsesServerOptions(resilient_background=resilient, steerable_conversations=steerable),
+        configure_observability=None,
+    )
+    voice_seen = []
+    responses_seen = []
+    executed = []
+
+    @task(name="voice_protocol_probe")
+    async def probe(ctx: TaskContext[str]) -> str:
+        executed.append(ctx.input)
+        return ctx.input
+
+    @host.on_session_start
+    async def start(session, event):
+        voice_seen.append(manager_available())
+        if manager_available():
+            run = await probe.start(task_id="voice-probe", input="ran")
+            assert await run.result() == "ran"
+        else:
+            with pytest.raises(TaskManagerNotInitialized):
+                await probe.start(task_id="voice-probe", input="must not run")
+        await session.send(SessionReady())
+
+    @host.response_handler
+    async def response_handler(request, context, cancellation_signal):
+        responses_seen.append(manager_available())
+        events = responses.ResponseEventStream(response_id=context.response_id, request=request)
+        yield events.emit_created()
+        yield events.emit_completed()
+
+    with TestClient(host) as client:
+        with client.websocket_connect(path) as websocket:
+            websocket.send_json(
+                {
+                    "type": "session.start",
+                    "id": "m_start",
+                    "ts": "2026-10-15T00:00:00Z",
+                    "protocol_version": "1.0",
+                    "reconnect": False,
+                    "response_timeouts": {"first_output_ms": 1000, "idle_ms": 1000, "max_duration_ms": 3000},
+                }
+            )
+            assert websocket.receive_json()["type"] == "session.ready"
+        assert voice_seen == [enabled]
+        assert executed == (["ran"] if enabled else [])
+        response = client.post("/responses", json={"input": "hello", "store": False})
+        assert response.status_code == 200, response.text
+        assert responses_seen == [resilient or steerable]
+
+
 @pytest.mark.parametrize("enabled", [False, True])
 def test_invocations_switch_controls_http_and_websocket(enabled: bool) -> None:
     set_resilient_tasks_enabled(enabled)

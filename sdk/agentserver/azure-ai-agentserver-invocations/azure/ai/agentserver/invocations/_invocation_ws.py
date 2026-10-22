@@ -168,9 +168,8 @@ class _WSHandlerMixin(_MixinBase):
         until ``@ws_handler`` is called is safe.
         """
         from starlette.routing import WebSocketRoute  # pylint: disable=import-outside-toplevel
-        from starlette.middleware import Middleware  # pylint: disable=import-outside-toplevel
         from azure.ai.agentserver.core._middleware import (  # pylint: disable=import-outside-toplevel
-            _TaskManagerMiddleware,
+            _task_access_middleware,
         )
         from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
             resilient_tasks_enabled,
@@ -184,12 +183,7 @@ class _WSHandlerMixin(_MixinBase):
                 InvocationsWSConstants.ROUTE_PATH,
                 self._ws_endpoint,
                 name="invocations_ws",
-                middleware=[
-                    Middleware(
-                        _TaskManagerMiddleware,
-                        get_manager=lambda: self._task_manager if resilient_tasks_enabled() else None,
-                    )
-                ],
+                middleware=_task_access_middleware(self, resilient_tasks_enabled),
             )
         )
 

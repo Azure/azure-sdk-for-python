@@ -42,6 +42,24 @@ class _TaskManagerMiddleware:
             await self.app(scope, receive, send)
 
 
+def _task_access_middleware(host: Any, enabled: Callable[[], bool]) -> list[Middleware]:
+    """Scope task access to this host only when its protocol is enabled.
+
+    :param host: The owning protocol host.
+    :type host: Any
+    :param enabled: Whether the protocol permits task execution.
+    :type enabled: Callable[[], bool]
+    :return: Protocol-scoped task middleware.
+    :rtype: list[~starlette.middleware.Middleware]
+    """
+    return [
+        Middleware(
+            _TaskManagerMiddleware,
+            get_manager=lambda: host._task_manager if enabled() else None,  # pylint: disable=protected-access
+        )
+    ]
+
+
 def _task_runtime_middleware(host: Any, kwargs: dict[str, Any], enabled: Callable[[], bool]) -> list[Middleware]:
     """Register protocol activation and scope its routes to the host's runtime.
 
@@ -57,12 +75,7 @@ def _task_runtime_middleware(host: Any, kwargs: dict[str, Any], enabled: Callabl
     requirements = list(kwargs.pop("_task_manager_requirements", []))
     requirements.append(enabled)
     kwargs["_task_manager_requirements"] = requirements
-    return [
-        Middleware(
-            _TaskManagerMiddleware,
-            get_manager=lambda: host._task_manager if enabled() else None,  # pylint: disable=protected-access
-        )
-    ]
+    return _task_access_middleware(host, enabled)
 
 
 def _extract_header(headers: list[tuple[bytes, bytes]], name: bytes) -> str | None:
