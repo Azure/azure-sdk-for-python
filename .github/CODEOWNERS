@@ -752,10 +752,10 @@
 # ServiceOwners: @antcp @AzureAppServiceCLI
 
 # PRLabel: %Service Bus
-/sdk/servicebus/    @EldertGrootenboer @skarri-microsoft @j7nw4r @meetamitbhatia
+/sdk/servicebus/    @EldertGrootenboer @skarri-microsoft @j7nw4r @meetamitbhatia @pranz1996
 
 # ServiceLabel: %Service Bus
-# ServiceOwners: @EldertGrootenboer @skarri-microsoft @j7nw4r @meetamitbhatia
+# ServiceOwners: @EldertGrootenboer @skarri-microsoft @j7nw4r @meetamitbhatia @pranz1996
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/    @QingChenmsft @samedder
@@ -864,5 +864,5 @@
 # Add Johnathan Walker as code owner for Event Hubs SDK
 /sdk/eventhub/azure-eventhub/* @j7nw4r @meetamitbhatia @SwayGom @sagar0207
 
-# Add Johnathan Walker as code owner for Service Bus SDK
-/sdk/servicebus/azure-servicebus/* @j7nw4r @meetamitbhatia @SwayGom @sagar0207
+# Service Bus SDK team code owners
+/sdk/servicebus/azure-servicebus/* @j7nw4r @meetamitbhatia @SwayGom @sagar0207 @pranz1996 @EldertGrootenboer
