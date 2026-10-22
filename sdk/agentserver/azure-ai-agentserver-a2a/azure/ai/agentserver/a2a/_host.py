@@ -45,11 +45,13 @@ from ._version import VERSION as _A2A_VERSION
 _A2A_RPC_PATH = "/a2a"
 _A2A_FOUNDRY_COMPAT_RPC_PATH = "/invocations/a2a"
 _A2A_AGENT_CARD_PATH = "/a2a/.well-known/agent-card.json"
+_A2A_FOUNDRY_COMPAT_AGENT_CARD_PATH = _A2A_FOUNDRY_COMPAT_RPC_PATH + "/.well-known/agent-card.json"
 _A2A_PATHS = frozenset(
     (
         _A2A_RPC_PATH,
         _A2A_FOUNDRY_COMPAT_RPC_PATH,
         _A2A_AGENT_CARD_PATH,
+        _A2A_FOUNDRY_COMPAT_AGENT_CARD_PATH,
     )
 )
 _ERROR_SOURCE_USER = "user"
@@ -164,6 +166,12 @@ def _get_a2a_routes(
     )
     jsonrpc_route = jsonrpc_routes[0]
     traced_endpoint = trace_jsonrpc_endpoint(jsonrpc_route.endpoint, agent_card)
+    agent_card_routes = create_agent_card_routes(
+        agent_card=agent_card,
+        card_modifier=card_modifier,
+        card_url=_A2A_AGENT_CARD_PATH,
+    )
+    agent_card_route = agent_card_routes[0]
     routes = [
         Route(
             _A2A_RPC_PATH,
@@ -177,10 +185,13 @@ def _get_a2a_routes(
             methods=["POST"],
             name=f"{jsonrpc_route.name}-foundry-compat",
         ),
-        *create_agent_card_routes(
-            agent_card=agent_card,
-            card_modifier=card_modifier,
-            card_url=_A2A_AGENT_CARD_PATH,
+        *agent_card_routes,
+        Route(
+            _A2A_FOUNDRY_COMPAT_AGENT_CARD_PATH,
+            agent_card_route.endpoint,
+            methods=agent_card_route.methods,
+            name=f"{agent_card_route.name}-foundry-compat",
+            include_in_schema=False,
         ),
     ]
     return [

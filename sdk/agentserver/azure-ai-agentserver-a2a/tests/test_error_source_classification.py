@@ -25,6 +25,7 @@ from azure.ai.agentserver.a2a import A2AAgentServerHost
 
 _RPC_PATH = "/a2a"
 _RPC_PATHS = [_RPC_PATH, "/invocations/a2a"]
+_CARD_PATHS = ["/a2a/.well-known/agent-card.json", "/invocations/a2a/.well-known/agent-card.json"]
 
 
 def _agent_card() -> AgentCard:
@@ -173,7 +174,8 @@ async def test_method_not_allowed_keeps_error_classification(client_factory, pat
 
 
 @pytest.mark.asyncio
-async def test_agent_card_exception_has_shared_headers(client_factory):
+@pytest.mark.parametrize("path", _CARD_PATHS)
+async def test_agent_card_exception_has_shared_headers(client_factory, path):
     async def card_modifier(_card: AgentCard) -> AgentCard:
         raise RuntimeError("card modifier failed")
 
@@ -185,13 +187,26 @@ async def test_agent_card_exception_has_shared_headers(client_factory):
     )
     async with client_factory(host) as client:
         response = await client.get(
-            "/a2a/.well-known/agent-card.json",
+            path,
             headers={REQUEST_ID: "request-card"},
         )
 
     assert response.status_code == 500
     assert response.headers[ERROR_SOURCE] == "upstream"
     _assert_shared_headers(response, "request-card")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("path", _CARD_PATHS)
+async def test_agent_card_method_error_has_shared_headers(client_factory, path):
+    async def endpoint(_request: Request) -> JSONResponse:
+        return JSONResponse({"ok": True})
+
+    async with client_factory(_host(endpoint)) as client:
+        response = await client.post(path, headers={REQUEST_ID: "card-method"})
+    assert response.status_code == 405
+    assert response.headers[ERROR_SOURCE] == "user"
+    _assert_shared_headers(response, "card-method")
 
 
 @pytest.mark.asyncio

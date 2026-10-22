@@ -16,9 +16,9 @@
 - Added development-stage OpenTelemetry A2A server spans for JSON-RPC
   operations, including streaming lifetime, Agent Card metadata, task and
   conversation correlation, and JSON-RPC error classification.
-- Added a non-advertised `/invocations/a2a` compatibility alias for Foundry
-  passthrough services that have not yet switched to the canonical `/a2a`
-  container route.
+- Added non-advertised compatibility aliases at `POST /invocations/a2a` and
+  `GET /invocations/a2a/.well-known/agent-card.json` for older Foundry
+  passthrough services and clients.
 
 ### Other Changes
 

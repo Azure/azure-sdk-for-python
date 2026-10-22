@@ -25,6 +25,8 @@ from azure.ai.agentserver.invocations import InvocationAgentServerHost
 _RPC_PATH = "/a2a"
 _FOUNDRY_COMPAT_RPC_PATH = "/invocations/a2a"
 _CARD_PATH = "/a2a/.well-known/agent-card.json"
+_FOUNDRY_COMPAT_CARD_PATH = "/invocations/a2a/.well-known/agent-card.json"
+_CARD_PATHS = [_CARD_PATH, _FOUNDRY_COMPAT_CARD_PATH]
 
 
 class _NoOpExecutor(AgentExecutor):
@@ -93,6 +95,7 @@ def test_registers_canonical_and_foundry_compatibility_routes():
         _RPC_PATH,
         _FOUNDRY_COMPAT_RPC_PATH,
         _CARD_PATH,
+        _FOUNDRY_COMPAT_CARD_PATH,
         "/readiness",
     ]
     assert "/.well-known/agent-card.json" not in paths
@@ -100,14 +103,63 @@ def test_registers_canonical_and_foundry_compatibility_routes():
 
 
 @pytest.mark.asyncio
-async def test_serves_canonical_agent_card_route(client_factory):
+@pytest.mark.parametrize("path", _CARD_PATHS)
+async def test_serves_agent_card_route(client_factory, path):
     host = _host()
 
     async with client_factory(host) as client:
-        response = await client.get(_CARD_PATH)
+        response = await client.get(path, headers={"x-request-id": "card-request"})
 
     assert response.status_code == 200
     assert response.json()["name"] == "hello"
+    assert response.json()["supportedInterfaces"][0]["url"] == "http://localhost:8088/a2a"
+    assert response.headers["x-request-id"] == "card-request"
+    assert "azure-ai-agentserver-a2a/" in response.headers["x-platform-server"]
+    assert "location" not in response.headers
+
+
+def test_agent_card_alias_reuses_native_endpoint():
+    routes = {route.path: route for route in _host().routes if isinstance(route, Route)}
+    assert routes[_CARD_PATH].endpoint is routes[_FOUNDRY_COMPAT_CARD_PATH].endpoint
+    assert not routes[_FOUNDRY_COMPAT_CARD_PATH].include_in_schema
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("path", _CARD_PATHS)
+async def test_agent_card_modifier_has_platform_context(client_factory, path):
+    seen = []
+
+    async def modify_card(card: AgentCard) -> AgentCard:
+        context = get_request_context()
+        seen.append((context.call_id, context.user_id))
+        modified = AgentCard()
+        modified.CopyFrom(card)
+        modified.description = "Modified card"
+        return modified
+
+    async with client_factory(_host(card_modifier=modify_card)) as client:
+        response = await client.get(
+            path,
+            headers={"x-agent-foundry-call-id": "card-call", "x-agent-user-id": "card-user"},
+        )
+
+    assert response.status_code == 200
+    assert response.json()["description"] == "Modified card"
+    assert seen == [("card-call", "card-user")]
+    assert get_request_context().call_id is None
+    assert get_request_context().user_id is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("path", _CARD_PATHS)
+async def test_agent_card_routes_support_head(client_factory, path):
+    async with client_factory(_host()) as client:
+        response = await client.head(path, headers={"x-request-id": "card-head"})
+    assert response.status_code == 200
+    assert response.content == b""
+    assert response.headers["content-type"].startswith("application/json")
+    assert response.headers["x-request-id"] == "card-head"
+    assert "azure-ai-agentserver-a2a/" in response.headers["x-platform-server"]
 
 
 @pytest.mark.asyncio
@@ -299,3 +351,4 @@ def test_native_route_factories_receive_canonical_paths():
 
     assert create_rpc_routes.call_args.kwargs["rpc_url"] == _RPC_PATH
     assert create_card_routes.call_args.kwargs["card_url"] == _CARD_PATH
+    assert create_card_routes.call_count == 1

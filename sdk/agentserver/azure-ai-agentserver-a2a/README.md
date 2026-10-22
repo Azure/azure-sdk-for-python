@@ -68,8 +68,9 @@ Agent Card metadata-preservation fix.
 `A2AAgentServerHost` is an `AgentServerHost` subclass that:
 
 - registers the native JSON-RPC handler at `POST /a2a`;
-- accepts `POST /invocations/a2a` as a non-advertised compatibility alias for
-  Foundry service versions that still forward to the legacy container path;
+- accepts `POST /invocations/a2a` and
+  `GET /invocations/a2a/.well-known/agent-card.json` as non-advertised
+  compatibility aliases for older Foundry service versions and clients;
 - registers the native public agent card at
   `GET /a2a/.well-known/agent-card.json`;
 - captures `x-agent-foundry-call-id` and `x-agent-user-id` in the
@@ -78,6 +79,8 @@ Agent Card metadata-preservation fix.
   through `azure-ai-agentserver-core`.
 
   Both POST routes execute the same native handler and semantic tracing wrapper.
+  Both card routes use the same native card handler and `card_modifier`; the
+  compatibility alias does not rewrite the card or advertise an extra interface.
 
 The Foundry passthrough advertises only the JSON-RPC binding, including
 `SendStreamingMessage` responses over SSE. Push notifications, the authenticated
