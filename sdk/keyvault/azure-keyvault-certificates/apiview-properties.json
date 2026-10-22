@@ -96,5 +96,5 @@
         "azure.keyvault.certificates._generated.KeyVaultClient.recover_deleted_certificate": "KeyVault.recoverDeletedCertificate",
         "azure.keyvault.certificates._generated.aio.KeyVaultClient.recover_deleted_certificate": "KeyVault.recoverDeletedCertificate"
     },
-    "CrossLanguageVersion": "62e5a7e522bd"
+    "CrossLanguageVersion": "94bcad016791"
 }
