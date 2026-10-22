@@ -83,6 +83,66 @@ class DataAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Generate random numbers."""
 
 
+class EkmConnectivityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The connectivity mode used to reach the EKM proxy."""
+
+    PUBLIC = "Public"
+    """The EKM proxy is reachable over the public internet; host is a DNS name or IP address."""
+    PRIVATE_ENDPOINT = "PrivateEndpoint"
+    """The EKM proxy is reachable through a private endpoint; host is the name of a private endpoint
+    (peName)."""
+
+
+class EkmPrivateEndpointConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the connection between the private endpoint and the Private Link Service."""
+
+    PENDING = "Pending"
+    """The connection is awaiting approval by the Private Link Service owner."""
+    APPROVED = "Approved"
+    """The connection has been approved by the Private Link Service owner."""
+    REJECTED = "Rejected"
+    """The connection has been rejected by the Private Link Service owner."""
+    DISCONNECTED = "Disconnected"
+    """The connection has been disconnected by the Private Link Service owner."""
+
+
+class EkmPrivateEndpointOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a long-running EKM proxy private endpoint operation."""
+
+    CREATE = "Create"
+    """A private endpoint create operation."""
+    DELETE = "Delete"
+    """A private endpoint delete operation."""
+
+
+class EkmPrivateEndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the EKM proxy private endpoint."""
+
+    SUCCEEDED = "Succeeded"
+    """The private endpoint has been successfully provisioned."""
+    FAILED = "Failed"
+    """The private endpoint provisioning failed."""
+    UPDATING = "Updating"
+    """The private endpoint is being updated."""
+    DELETING = "Deleting"
+    """The private endpoint is being deleted."""
+
+
+class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum describing allowed operation states."""
+
+    NOT_STARTED = "NotStarted"
+    """The operation has not started."""
+    RUNNING = "Running"
+    """The operation is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The operation has completed successfully."""
+    FAILED = "Failed"
+    """The operation has failed."""
+    CANCELED = "Canceled"
+    """The operation has been canceled by the user."""
+
+
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of a long-running operation."""
 
