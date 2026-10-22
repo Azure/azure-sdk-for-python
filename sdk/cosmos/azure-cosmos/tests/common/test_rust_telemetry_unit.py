@@ -1646,6 +1646,630 @@ def item_runtime_harness(request, recording):  # pylint: disable=unused-argument
     return harness
 
 
+@pytest.fixture(name="range_discovery")
+def range_discovery_harness(item_runtime, monkeypatch):
+    harness = item_runtime
+    harness.asynchronous = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
+    harness.connection = SimpleNamespace(_backend=harness.backend, last_response_headers={"previous": "response"})
+    harness.container.client_connection = harness.connection
+    harness.body = {
+        "PartitionKeyRanges": [
+            {"minInclusive": "", "maxExclusive": "3f"},
+            {"minInclusive": "3f", "maxExclusive": "FF"},
+        ]
+    }
+    harness.status = 200
+    harness.payload = None
+    harness.gate = None
+    harness.states = []
+    harness.forbidden = Mock(side_effect=AssertionError("Rust discovery used Python metadata"))
+    monkeypatch.setattr(harness.container, "_get_properties_with_options", harness.forbidden)
+    module = binding_adapter if harness.asynchronous else sync_binding_adapter
+
+    def dispatch(handle, prepared, timeout_seconds, include_attempts):
+        assert handle == "test-driver" and prepared.op == "read_feed_ranges"
+        harness.calls.append((include_attempts, timeout_seconds, json.loads(prepared.body_bytes)))
+        harness.states.append(telemetry._OPERATION.get())
+        harness.prepared_requests.append(prepared)
+
+    def complete(include_attempts):
+        if harness.error is not None:
+            if include_attempts and harness.payload is not None:
+                harness.error._cosmos_attempt_payload = harness.payload
+            raise harness.error
+        response = (harness.status, 0, {"owned-header": "discovery"}, json.dumps(harness.body).encode(), None)
+        response, payload = harness.transform((response, deepcopy(harness.payload)))
+        return (response, payload) if include_attempts else response
+
+    def native(handle, prepared, *, timeout_seconds=None, include_attempts=False):
+        dispatch(handle, prepared, timeout_seconds, include_attempts)
+        return complete(include_attempts)
+
+    async def native_async(handle, prepared, *, timeout_seconds=None, include_attempts=False):
+        dispatch(handle, prepared, timeout_seconds, include_attempts)
+        if harness.gate is not None:
+            harness.gate.set()
+            await asyncio.Future()
+        await asyncio.sleep(0)
+        return complete(include_attempts)
+
+    monkeypatch.setattr(
+        module._rust_module,
+        "read_feed_ranges_async" if harness.asynchronous else "read_feed_ranges",
+        native_async if harness.asynchronous else native,
+        raising=False,
+    )
+
+    async def collect_async(pager):
+        return [value async for value in pager]
+
+    async def replay_async(pager):
+        return [value async for value in await pager.by_page().__anext__()]
+
+    harness.collect = lambda pager: asyncio.run(collect_async(pager)) if harness.asynchronous else list(pager)
+    harness.replay = lambda pager: (
+        asyncio.run(replay_async(pager)) if harness.asynchronous else list(next(pager.by_page()))
+    )
+    return harness
+
+
+def discovery_spans(recording):
+    return [s for s in recording.exporter.get_finished_spans() if s.name == "ContainerProxy.read_feed_ranges.fetch"]
+
+
+@pytest.mark.parametrize("refresh", [False, True])
+@pytest.mark.parametrize("mode", ["enabled", "disabled", "handler-only", "sampled-out", "no-handlers"])
+def test_feed_range_discovery_belongs_to_consumer_and_finishes_once(range_discovery, recording, refresh, mode):
+    harness = range_discovery
+    seen = []
+    collect = mode != "disabled"
+    harness.container._item_context = replace(
+        harness.container._item_context,
+        telemetry_handlers=(
+            () if mode == "no-handlers" else (telemetry.CompletionHandler(seen.append, collect_attempts=collect),)
+        ),
+    )
+    if mode in ("disabled", "handler-only"):
+        settings.tracing_enabled = False
+    if mode == "sampled-out":
+        recording.provider.sampler = ALWAYS_OFF
+    with trace.get_tracer("customer").start_as_current_span("prepare_scan") as producer:
+        pager = harness.container.read_feed_ranges(force_refresh=refresh)
+    assert not harness.calls and not seen and not discovery_spans(recording)
+    assert pager.get_response_headers() == {}
+    assert telemetry._OPERATION.get() is None
+    with trace.get_tracer("customer").start_as_current_span("discover_scan") as consumer:
+        values = harness.collect(pager)
+        assert trace.get_current_span() is consumer
+    expected = [
+        {"Range": {"min": "", "max": "3F", "isMinInclusive": True, "isMaxInclusive": False}},
+        {"Range": {"min": "3F", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}},
+    ]
+    assert values == expected
+    assert harness.calls == [(collect, None, {"forceRefresh": refresh})]
+    assert len(seen) == int(mode != "no-handlers")
+    if seen:
+        assert seen[0].operation == "read_feed_ranges" and seen[0].outcome == "success"
+        assert seen[0].diagnostics is None
+    values[0]["Range"]["max"] = "customer mutation"
+    assert harness.replay(pager) == expected
+    assert len(harness.calls) == 1 and len(seen) == int(mode != "no-handlers")
+    headers = pager.get_response_headers()
+    headers["owned-header"] = "customer mutation"
+    harness.connection.last_response_headers["owned-header"] = "another operation"
+    assert pager.get_response_headers()["owned-header"] == "discovery"
+    creation = [s for s in recording.exporter.get_finished_spans() if s.name == "ContainerProxy.read_feed_ranges"]
+    fetch = discovery_spans(recording)
+    assert len(creation) == len(fetch) == int(mode in ("enabled", "no-handlers"))
+    if fetch:
+        assert creation[0].parent.span_id == producer.get_span_context().span_id
+        assert fetch[0].parent.span_id == consumer.get_span_context().span_id
+        assert fetch[0].start_time >= creation[0].end_time
+        assert fetch[0].status.status_code is trace.StatusCode.UNSET
+        assert not any(key.startswith("cosmos.poc.") for key in fetch[0].attributes)
+    assert not attempt_spans(recording)
+    harness.forbidden.assert_not_called()
+    assert telemetry._OPERATION.get() is None
+
+
+def test_feed_range_discovery_partial_consumption_has_no_open_operation(range_discovery, recording):
+    harness = range_discovery
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    pager = harness.container.read_feed_ranges()
+    first = asyncio.run(pager.__anext__()) if harness.asynchronous else next(pager)
+    assert first["Range"]["max"] == "3F"
+    assert len(harness.calls) == len(seen) == len(discovery_spans(recording)) == 1
+    assert harness.states[0].closed
+    assert telemetry._OPERATION.get() is None
+    assert harness.collect(pager)[0]["Range"]["min"] == "3F"
+    assert len(discovery_spans(recording)) == 1
+
+
+@pytest.mark.parametrize("failure", ["service", "transport", "timeout", "parse", "malformed-diagnostics", "stop"])
+def test_feed_range_discovery_failure_preserves_attempts_and_public_error(range_discovery, recording, failure):
+    harness = range_discovery
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    _, harness.payload = contribution_response(5, time.time_ns())
+    harness.payload["complete"] = False
+    expected = None
+    if failure == "service":
+        harness.status, harness.body = 404, {"message": "not found"}
+        expected = CosmosResourceNotFoundError
+    elif failure == "transport":
+        harness.error, expected = DriverTransportError("discovery failure"), ServiceResponseError
+    elif failure == "timeout":
+        harness.error, expected = TimeoutError("discovery timeout"), TimeoutError
+    elif failure == "parse":
+        harness.body, expected = {"PartitionKeyRanges": []}, ValueError
+    elif failure == "stop":
+        harness.error, expected = StopAsyncIteration("no result"), RuntimeError
+    else:
+        harness.payload = {"schema_version": 99}
+    pager = harness.container.read_feed_ranges()
+    if expected:
+        with pytest.raises(expected) as caught:
+            harness.collect(pager)
+        if failure == "timeout":
+            assert caught.value is harness.error
+        if failure in ("transport", "stop"):
+            assert caught.value.__cause__ is harness.error
+        assert pager.get_response_headers() == {}
+    else:
+        assert len(harness.collect(pager)) == 2
+    assert len(harness.calls) == len(seen) == len(discovery_spans(recording)) == 1
+    assert seen[0].outcome == ("error" if expected else "success")
+    (span,) = discovery_spans(recording)
+    assert (span.status.status_code == trace.StatusCode.ERROR) == (expected is not None)
+    assert not any(key.startswith("cosmos.poc.") for key in span.attributes)
+    assert len(attempt_spans(recording)) == (0 if failure in ("stop", "malformed-diagnostics") else 2)
+    assert all(child.parent.span_id == span.context.span_id for child in attempt_spans(recording))
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("case", ["unconsumed", "bad-refresh", "continuation", "unsupported", "disabled-option"])
+def test_feed_range_discovery_does_not_run_for_construction_or_rejected_inputs(range_discovery, recording, case):
+    harness = range_discovery
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    if case == "bad-refresh":
+        with pytest.raises(TypeError, match="force_refresh"):
+            harness.container.read_feed_ranges(force_refresh="true")
+    else:
+        kwargs = {"timeout": 5} if case == "unsupported" else {}
+        if case == "disabled-option":
+            kwargs = {"tracing_options": {"enabled": False}}
+        pager = harness.container.read_feed_ranges(**kwargs)
+        assert not seen
+        if case == "continuation":
+            with pytest.raises(ValueError, match="continuation"):
+                pages = pager.by_page(continuation_token="not-supported")
+                if harness.asynchronous:
+                    asyncio.run(pages.__anext__())
+                else:
+                    next(pages)
+        elif case in ("unsupported", "disabled-option"):
+            with pytest.raises(NotImplementedError, match="read_feed_ranges"):
+                harness.collect(pager)
+    assert not harness.calls
+    assert len(seen) == int(case in ("unsupported", "disabled-option"))
+    if seen:
+        assert seen[0].outcome == "error" and seen[0].diagnostics is None
+    assert len(discovery_spans(recording)) == int(case == "unsupported")
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("failure", ["handler", "emitter", "optional-import"])
+def test_feed_range_discovery_reporting_never_repeats_fetch(range_discovery, recording, monkeypatch, failure):
+    harness = range_discovery
+    seen = []
+    handlers = (telemetry.CompletionHandler(seen.append, collect_attempts=True),)
+    if failure == "handler":
+        handlers = (telemetry.CompletionHandler(Mock(side_effect=ValueError("reporting"))),) + handlers
+    elif failure == "emitter":
+        monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=ValueError("reporting")))
+    else:
+        importer = builtins.__import__
+
+        def without_otel(name, *args, **kwargs):
+            if name == "opentelemetry":
+                raise ImportError("optional tracing unavailable")
+            return importer(name, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "__import__", without_otel)
+    harness.container._item_context = replace(harness.container._item_context, telemetry_handlers=handlers)
+    pager = harness.container.read_feed_ranges()
+    expected = harness.collect(pager)
+    assert harness.replay(pager) == expected
+    assert len(harness.calls) == len(seen) == 1 and seen[0].outcome == "success"
+    assert not attempt_spans(recording)
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("enabled_at_fetch", [False, True])
+def test_feed_range_discovery_uses_recording_settings_at_consumption(range_discovery, recording, enabled_at_fetch):
+    harness = range_discovery
+    settings.tracing_enabled = not enabled_at_fetch
+    pager = harness.container.read_feed_ranges()
+    assert not harness.calls
+    settings.tracing_enabled = enabled_at_fetch
+    assert len(harness.collect(pager)) == 2
+    assert harness.calls[0][0] is enabled_at_fetch
+    assert len(discovery_spans(recording)) == int(enabled_at_fetch)
+    assert telemetry._OPERATION.get() is None
+
+
+def test_feed_range_discovery_can_move_to_another_thread(range_discovery, recording):
+    harness = range_discovery
+    if harness.asynchronous:
+        pytest.skip("Synchronous cross-thread consumption")
+    with trace.get_tracer("customer").start_as_current_span("producer"):
+        pager = harness.container.read_feed_ranges()
+
+    def consume():
+        with trace.get_tracer("customer").start_as_current_span("worker") as parent:
+            values = harness.collect(pager)
+            assert telemetry._OPERATION.get() is None
+            return values, parent.get_span_context().span_id
+
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        values, parent_id = executor.submit(consume).result(timeout=5)
+    assert len(values) == 2 and len(harness.calls) == 1
+    assert discovery_spans(recording)[0].parent.span_id == parent_id
+    assert harness.states[0].closed and telemetry._OPERATION.get() is None
+
+
+def test_feed_range_discovery_async_cancellation_allows_explicit_retry(range_discovery, recording):
+    harness = range_discovery
+    if not harness.asynchronous:
+        pytest.skip("Async cancellation")
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+
+    async def run():
+        harness.gate = asyncio.Event()
+        pager = harness.container.read_feed_ranges()
+        with trace.get_tracer("customer").start_as_current_span("first_consumer") as first_parent:
+            first = asyncio.create_task(pager.by_page().__anext__())
+            await harness.gate.wait()
+            # The rejected competing fetch must not join the in-flight operation.
+            with pytest.raises(RuntimeError, match="concurrent"):
+                await pager.by_page().__anext__()
+            first.cancel("stop discovery")
+            with pytest.raises(asyncio.CancelledError, match="stop discovery"):
+                await first
+        assert len(harness.calls) == len(seen) == 1 and seen[0].outcome == "cancelled"
+        assert pager.get_response_headers() == {}
+        assert telemetry._OPERATION.get() is None
+        harness.gate = None
+        with trace.get_tracer("customer").start_as_current_span("retry_consumer") as second_parent:
+            assert len([value async for value in pager]) == 2
+        spans = discovery_spans(recording)
+        assert len(spans) == 2
+        assert spans[0].parent.span_id == first_parent.get_span_context().span_id
+        assert spans[1].parent.span_id == second_parent.get_span_context().span_id
+
+    asyncio.run(run())
+    assert len(harness.calls) == len(seen) == 2 and seen[1].outcome == "success"
+    assert harness.states[0] is not harness.states[1] and all(s.closed for s in harness.states)
+
+
+@pytest.fixture(name="range_subset")
+def range_subset_harness(item_runtime, monkeypatch):
+    harness = item_runtime
+    harness.parent_range = {"Range": {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}}
+    harness.child_range = {"Range": {**harness.parent_range["Range"], "min": "20", "max": "40"}}
+    harness.connection = SimpleNamespace(_backend=harness.backend, last_response_headers={"owned": "unchanged"})
+    harness.container.client_connection = harness.connection
+    harness.result_body = {"IsSubset": True}
+    harness.gate = None
+    harness.states = []
+    harness.forbidden = Mock(side_effect=AssertionError("Subset comparison accessed container metadata"))
+    for name in ("read", "_get_properties", "feed_range_from_partition_key"):
+        monkeypatch.setattr(harness.container, name, harness.forbidden)
+    asynchronous = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
+    module = binding_adapter if asynchronous else sync_binding_adapter
+
+    def dispatch(handle, prepared, timeout_seconds, include_attempts):
+        assert handle == "test-driver"
+        assert prepared.op == "is_feed_range_subset" and prepared.container_link == ""
+        assert json.loads(prepared.body_bytes) == {"parent": harness.parent_range, "child": harness.child_range}
+        harness.calls.append((include_attempts, timeout_seconds))
+        harness.prepared_requests.append(prepared)
+        harness.states.append(telemetry._OPERATION.get())
+
+    def complete(include_attempts):
+        if harness.error is not None:
+            raise harness.error
+        response = (200, 0, {}, json.dumps(harness.result_body).encode(), None)
+        response, payload = harness.transform((response, None))
+        return (response, payload) if include_attempts else response
+
+    def native(handle, prepared, *, timeout_seconds=None, include_attempts=False):
+        dispatch(handle, prepared, timeout_seconds, include_attempts)
+        return complete(include_attempts)
+
+    async def native_async(handle, prepared, *, timeout_seconds=None, include_attempts=False):
+        dispatch(handle, prepared, timeout_seconds, include_attempts)
+        if harness.gate is not None:
+            harness.gate.set()
+            await asyncio.Future()
+        await asyncio.sleep(0)
+        return complete(include_attempts)
+
+    monkeypatch.setattr(
+        module._rust_module,
+        "is_feed_range_subset_async" if asynchronous else "is_feed_range_subset",
+        native_async if asynchronous else native,
+        raising=False,
+    )
+    harness.compare = lambda: harness.invoke(
+        harness.container.is_feed_range_subset, harness.parent_range, harness.child_range
+    )
+    return harness
+
+
+@pytest.mark.parametrize(
+    "mode", ["enabled", "disabled", "handler-only", "sampled-out", "sampled-out-no-handlers", "disabled-no-handlers"]
+)
+@pytest.mark.parametrize("result", [False, True])
+def test_range_subset_records_operation_without_request_spans(range_subset, recording, mode, result):
+    harness = range_subset
+    harness.result_body = {"IsSubset": result}
+    original = deepcopy((harness.parent_range, harness.child_range))
+    headers = harness.connection.last_response_headers
+    seen = []
+    has_handlers = not mode.endswith("no-handlers")
+    collect = mode in ("enabled", "handler-only", "sampled-out")
+    harness.container._item_context = replace(
+        harness.container._item_context,
+        telemetry_handlers=(
+            (telemetry.CompletionHandler(seen.append, collect_attempts=collect),) if has_handlers else ()
+        ),
+    )
+    if mode in ("disabled", "disabled-no-handlers", "handler-only"):
+        settings.tracing_enabled = False
+    if mode.startswith("sampled-out"):
+        recording.provider.sampler = ALWAYS_OFF
+    with trace.get_tracer("customer").start_as_current_span("check_coverage") as outer:
+        assert harness.compare() is result
+        assert trace.get_current_span() is outer
+    assert harness.calls == [(collect, None)]
+    harness.backend._ensure_driver_handle.assert_called_once()
+    harness.forbidden.assert_not_called()
+    assert (harness.parent_range, harness.child_range) == original
+    assert harness.connection.last_response_headers is headers and headers == {"owned": "unchanged"}
+    assert len(seen) == int(has_handlers)
+    if seen:
+        assert seen[0].operation == "is_feed_range_subset" and seen[0].outcome == "success"
+        assert seen[0].execution_duration_ns >= 0 and seen[0].diagnostics is None
+    public = [s for s in recording.exporter.get_finished_spans() if s.name.startswith("ContainerProxy.")]
+    assert len(public) == int(mode == "enabled")
+    if public:
+        span = public[0]
+        assert span.name == "ContainerProxy.is_feed_range_subset" and span.kind is trace.SpanKind.INTERNAL
+        assert span.parent.span_id == outer.get_span_context().span_id
+        assert span.status.status_code is trace.StatusCode.UNSET and not span.events
+        assert not any(key.startswith("cosmos.poc.") for key in span.attributes)
+    assert not attempt_spans(recording)
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("side", ["parent_range", "child_range"])
+@pytest.mark.parametrize("invalid", ["inverted", "nonhex", "missing", "flag", "extra", "type"])
+def test_range_subset_rejects_unsupported_input_before_binding(range_subset, recording, side, invalid):
+    harness = range_subset
+    value = deepcopy(harness.child_range)
+    if invalid == "inverted":
+        value["Range"].update(min="40", max="20")
+    elif invalid == "nonhex":
+        value["Range"]["min"] = "GG"
+    elif invalid == "missing":
+        del value["Range"]["max"]
+    elif invalid == "flag":
+        value["Range"]["isMinInclusive"] = 1
+    elif invalid == "extra":
+        value["extra"] = "private-input"
+    else:
+        value = None
+    setattr(harness, side, value)
+    before = deepcopy((harness.parent_range, harness.child_range, harness.connection.last_response_headers))
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    with pytest.raises(NotImplementedError, match="is_feed_range_subset requires supported"):
+        harness.compare()
+    assert not harness.calls
+    harness.backend._ensure_driver_handle.assert_not_called()
+    harness.forbidden.assert_not_called()
+    assert (harness.parent_range, harness.child_range, harness.connection.last_response_headers) == before
+    assert len(seen) == 1 and seen[0].outcome == "error" and seen[0].diagnostics is None
+    (span,) = [s for s in recording.exporter.get_finished_spans() if s.name == "ContainerProxy.is_feed_range_subset"]
+    assert span.status.status_code is trace.StatusCode.ERROR
+    assert "private-input" not in repr((span.attributes, span.events, span.status.description))
+    assert not attempt_spans(recording)
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize(
+    "failure", ["driver", "timeout", "transport", "validation", "parse", "response", "diagnostics"]
+)
+def test_range_subset_error_completion_does_not_replay(range_subset, recording, failure):
+    harness = range_subset
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    expected = ValueError
+    if failure in ("driver", "validation"):
+        harness.error = ValueError("controlled failure")
+        if failure == "driver":
+            harness.backend._ensure_driver_handle.side_effect = harness.error
+    elif failure == "timeout":
+        harness.error = TimeoutError("controlled timeout")
+        expected = TimeoutError
+    elif failure == "transport":
+        harness.error = DriverTransportError("controlled failure")
+        expected = ServiceResponseError
+    elif failure == "parse":
+        harness.result_body = {"IsSubset": 1}
+    elif failure == "response":
+        harness.transform = lambda pair: (None, pair[1])
+        expected = BindingProtocolError
+    else:
+        harness.transform = lambda pair: (pair[0], {"schema_version": 99})
+        expected = None
+    headers = harness.connection.last_response_headers
+    if expected is None:
+        assert harness.compare() is True
+    else:
+        with pytest.raises(expected) as caught:
+            harness.compare()
+        if failure in ("driver", "timeout", "validation"):
+            assert caught.value is harness.error
+        elif failure == "transport":
+            assert caught.value.__cause__ is harness.error
+    assert len(harness.calls) == int(failure != "driver")
+    assert harness.connection.last_response_headers is headers
+    assert len(seen) == 1 and seen[0].outcome == ("error" if expected else "success")
+    assert seen[0].diagnostics is None
+    (span,) = [s for s in recording.exporter.get_finished_spans() if s.name == "ContainerProxy.is_feed_range_subset"]
+    assert (span.status.status_code == trace.StatusCode.ERROR) == (expected is not None)
+    assert not any(key.startswith("cosmos.poc.") for key in span.attributes)
+    assert not attempt_spans(recording)
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("failure", ["handler", "emitter", "unavailable"])
+@pytest.mark.parametrize("raises", [False, True])
+def test_range_subset_reporting_preserves_original_outcome(range_subset, monkeypatch, failure, raises):
+    harness = range_subset
+    seen = []
+    handlers = (telemetry.CompletionHandler(seen.append, collect_attempts=True),)
+    if failure == "handler":
+        handlers = (telemetry.CompletionHandler(Mock(side_effect=ValueError("reporter"))),) + handlers
+    elif failure == "emitter":
+        monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=ValueError("reporter")))
+    else:
+        importer = builtins.__import__
+
+        def without_otel(name, *args, **kwargs):
+            if name == "opentelemetry":
+                raise ImportError("optional tracing unavailable")
+            return importer(name, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "__import__", without_otel)
+    harness.container._item_context = replace(harness.container._item_context, telemetry_handlers=handlers)
+    if raises:
+        harness.error = ValueError("original")
+        with pytest.raises(ValueError) as caught:
+            harness.compare()
+        assert caught.value is harness.error
+    else:
+        assert harness.compare() is True
+    assert len(harness.calls) == len(seen) == 1
+    assert seen[0].outcome == ("error" if raises else "success")
+    assert telemetry._OPERATION.get() is None
+
+
+def test_range_subset_completion_includes_result_parsing(range_subset, monkeypatch):
+    from azure.cosmos._helpers import _feed_range_operations
+
+    harness = range_subset
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    original = _feed_range_operations.parse_is_feed_range_subset_payload
+    error = ValueError("result parsing")
+
+    def parse(response):
+        assert original(response) is True
+        assert telemetry._OPERATION.get() is not None and not seen
+        assert not telemetry._OPERATION.get().closed
+        raise error
+
+    monkeypatch.setattr(_feed_range_operations, "parse_is_feed_range_subset_payload", parse)
+    with pytest.raises(ValueError) as caught:
+        harness.compare()
+    assert caught.value is error
+    assert len(seen) == len(harness.calls) == 1 and seen[0].outcome == "error"
+
+
+@pytest.mark.parametrize("disabled", [False, True])
+def test_range_subset_masks_and_restores_outer_operation(range_subset, disabled):
+    harness = range_subset
+    with telemetry._operation_scope(harness.container, "create_item", {}, "create_item"):
+        outer = telemetry._OPERATION.get()
+        assert outer is not None
+        settings.tracing_enabled = not disabled
+        assert harness.compare() is True
+        assert telemetry._OPERATION.get() is outer
+        assert outer.collector.contributions == 0 and not outer.closed
+        if disabled:
+            assert harness.states == [None]
+        else:
+            assert harness.states[0] is not outer and harness.states[0].closed
+            assert harness.states[0].collector.contributions == 1
+        outer.finish()
+    assert telemetry._OPERATION.get() is None
+
+
+def test_range_subset_disabled_needs_no_optional_imports(range_subset, monkeypatch):
+    import inspect
+
+    harness = range_subset
+    method = harness.container.is_feed_range_subset
+    assert inspect.signature(method) == inspect.signature(method.__wrapped__).replace(
+        parameters=list(inspect.signature(method.__wrapped__).parameters.values())[1:]
+    )
+    assert inspect.iscoroutinefunction(method) == isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
+    settings.tracing_enabled = False
+    importer = builtins.__import__
+
+    def without_otel(name, *args, **kwargs):
+        if name.startswith("opentelemetry"):
+            raise AssertionError("Disabled subset operation imported optional tracing")
+        return importer(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", without_otel)
+    assert harness.compare() is True
+    assert harness.calls == [(False, None)] and harness.states == [None]
+
+
+def test_range_subset_async_cancellation(range_subset):
+    harness = range_subset
+    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
+        pytest.skip("Async cancellation")
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+
+    async def run():
+        harness.gate = asyncio.Event()
+        task = asyncio.create_task(harness.container.is_feed_range_subset(harness.parent_range, harness.child_range))
+        await harness.gate.wait()
+        task.cancel("subset cancellation")
+        with pytest.raises(asyncio.CancelledError, match="subset cancellation"):
+            await task
+        assert telemetry._OPERATION.get() is None
+
+    asyncio.run(run())
+    assert len(harness.calls) == len(seen) == 1
+    assert seen[0].outcome == "cancelled" and seen[0].diagnostics is None
+
+
 @pytest.fixture(name="partition_key_range")
 def partition_key_range_harness(item_runtime, monkeypatch):
     harness = item_runtime

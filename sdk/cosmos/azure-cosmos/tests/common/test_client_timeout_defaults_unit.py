@@ -406,7 +406,7 @@ def test_default_override_and_next_call_reset_rust(case, clock, options, expecte
 
 
 def test_driver_setup_consumes_default_budget_before_dispatch_rust(case, clock):
-    def setup():
+    def setup(**_kwargs):
         clock[0] += 1.25
         return "test-driver"
 
@@ -414,6 +414,54 @@ def test_driver_setup_consumes_default_budget_before_dispatch_rust(case, clock):
     dispatch = case.install("create_database", result=_response())
     with pytest.raises(CosmosClientTimeoutError):
         _complete(case.client.create_database("sales"))
+    dispatch.assert_not_called()
+
+
+def _collect_feed_ranges(result, asynchronous):
+    async def collect():
+        return [value async for value in result]
+
+    return asyncio.run(collect()) if asynchronous else list(result)
+
+
+@pytest.mark.parametrize("options,expected", [({}, 1), ({"timeout": 5}, 5), ({"timeout": None}, 1)])
+@pytest.mark.parametrize("force_refresh", [False, True])
+def test_feed_range_discovery_keeps_default_and_override_budgets_rust(case, clock, options, expected, force_refresh):
+    def setup(**_kwargs):
+        clock[0] += 0.25
+        return "test-driver"
+
+    case.acquisition.side_effect = setup
+    dispatch = case.install(
+        "read_feed_ranges",
+        result=_response(200, body={"PartitionKeyRanges": [{"minInclusive": "", "maxExclusive": "FF"}]}),
+    )
+    container = case.client.get_database_client("sales").get_container_client("orders")
+    result = container.read_feed_ranges(force_refresh=force_refresh, **options)
+    case.acquisition.assert_not_called()
+    dispatch.assert_not_called()
+    clock[0] += 100
+    values = _collect_feed_ranges(result, case.asynchronous)
+    assert values == [{"Range": {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}}]
+    assert dispatch.call_args.kwargs["timeout_seconds"] == expected - 0.25
+    assert json.loads(dispatch.call_args.args[1].body_bytes) == {"forceRefresh": force_refresh}
+
+    clock[0] += 100
+    _collect_feed_ranges(container.read_feed_ranges(), case.asynchronous)
+    assert dispatch.call_args.kwargs["timeout_seconds"] == 0.75
+    assert dispatch.call_count == 2
+
+
+def test_feed_range_discovery_does_not_restart_budget_after_setup_rust(case, clock):
+    def setup(**_kwargs):
+        clock[0] += 1.25
+        return "test-driver"
+
+    case.acquisition.side_effect = setup
+    dispatch = case.install("read_feed_ranges")
+    container = case.client.get_database_client("sales").get_container_client("orders")
+    with pytest.raises(CosmosClientTimeoutError):
+        _collect_feed_ranges(container.read_feed_ranges(), case.asynchronous)
     dispatch.assert_not_called()
 
 

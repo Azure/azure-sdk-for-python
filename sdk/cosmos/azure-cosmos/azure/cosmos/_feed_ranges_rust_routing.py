@@ -40,12 +40,10 @@ def can_use_rust_backend_for_read_feed_ranges(
     backend: Any,
     kwargs: Mapping[str, Any],
 ) -> bool:
-    """Check that the selected Python backend is Rust-backed and no extra options remain."""
+    """Allow the discovery deadline, but reject unsupported request options."""
     if not is_rust_backend(backend):
         return False
-    # This request carries the container link and forceRefresh, not arbitrary
-    # options. Let the caller's operation policy handle unsupported arguments.
-    return len(kwargs) == 0
+    return kwargs.keys() <= {"timeout"}
 
 
 def validate_read_feed_ranges_force_refresh(force_refresh: bool) -> None:

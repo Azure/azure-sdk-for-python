@@ -85,12 +85,12 @@ def summary_rows(rows):
     for row in rows:
         if row.get("record_type") in ("error", "completion") or "count" not in row:
             continue
-        for field in ("count", "errors", "window_seconds", "elapsed_seconds"):
+        for field in ("count", "errors", "interval_duration_seconds", "elapsed_seconds"):
             value = row.get(field)
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
                 raise ValueError(f"Invalid {field} in measurement {row.get('id', row.get('workload_id'))}")
-        if row["window_seconds"] <= 0:
-            raise ValueError("Measurement window must be positive")
+        if row["interval_duration_seconds"] <= 0:
+            raise ValueError("Measurement interval must be positive")
         if any(int(row[field]) != row[field] for field in ("count", "errors")):
             raise ValueError("Measurement counts must be integers")
         yield row
@@ -107,11 +107,11 @@ def split_workload_id(workload_id, prefix=None):
     return op, backend, stamp
 
 
-def window_key(row):
-    if row.get("window_id"):
-        return row["window_id"]
+def interval_key(row):
+    if row.get("interval_id"):
+        return row["interval_id"]
     if row.get("elapsed_seconds") is None:
-        raise ValueError("Cannot identify the process window; elapsed_seconds is missing")
+        raise ValueError("Cannot identify the process interval; elapsed_seconds is missing")
     return (row["workload_id"], row.get("process_id"), row["elapsed_seconds"])
 
 
@@ -129,5 +129,5 @@ def add_histogram(target, encoded, expected_count):
 
 
 def post_warmup(row, seconds):
-    # A window straddling warmup still contains warmup calls; drop the whole window.
-    return row["elapsed_seconds"] - row["window_seconds"] >= seconds - 0.001
+    # An interval straddling warmup still contains warmup calls; drop the whole interval.
+    return row["elapsed_seconds"] - row["interval_duration_seconds"] >= seconds - 0.001

@@ -9,8 +9,8 @@
 builds everything the backend needs to send the request. It does five
 small things in order:
 
-* Turn the customer's keyword arguments (``pre_trigger_include=...``,
-  ``priority=...`` and the rest) into the internal options dict.
+* Turn supported keyword arguments such as ``priority=...`` into the
+  internal options dict; reject trigger inputs instead of sending them.
 * Set the container's resource id into the headers, so the service can
   tell when a container was dropped and recreated under the same name.
 * Generate a random id for the item when the body has none and id

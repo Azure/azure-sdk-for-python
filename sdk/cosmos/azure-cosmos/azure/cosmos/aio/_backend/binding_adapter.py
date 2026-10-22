@@ -518,6 +518,13 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         binding_function = _binding_function_by_name(binding_function_name)
         if binding_function is None:
             raise BindingProtocolError("Validated page binding function is no longer available")
+        operation = (
+            get_operation(self, prepared.op)
+            if prepared.op in ("list_databases", "query_databases", "list_containers", "query_containers")
+            or (prepared.op in ("read_all_items", "query_items") and prepared.cursor is not None)
+            else None
+        )
+        contribution = operation.begin_contribution() if operation is not None else None
         driver_handle = await run_with_deadline(self._ensure_driver_handle, deadline)
         binding_request = self._with_client_headers(build_binding_request_from_page(prepared))
         _LOGGER.debug(
@@ -528,7 +535,24 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         )
         with page_binding_call_errors(deadline, _UNSUPPORTED_QUERY_ERROR, _DRIVER_TRANSPORT_ERROR):
             args, kwargs = page_binding_call_arguments(driver_handle, binding_request, prepared, deadline)
-            result = await binding_function(*args, **kwargs)
+            if contribution is not None:
+                kwargs["include_attempts"] = True
+            try:
+                result = await binding_function(*args, **kwargs)
+            except TimeoutError as exc:
+                if contribution is not None:
+                    contribution.error(exc)
+                raise
+            except _DRIVER_TRANSPORT_ERROR as exc:
+                if contribution is not None:
+                    contribution.error(exc)
+                raise
+            except _UNSUPPORTED_QUERY_ERROR as exc:
+                if contribution is not None:
+                    contribution.error(exc)
+                raise
+            if contribution is not None:
+                result = contribution.response(result)
             response = build_backend_response(*result)
         yield build_backend_page(prepared, response)
 

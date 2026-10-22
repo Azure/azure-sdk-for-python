@@ -6,7 +6,7 @@ The single-process sweep (scale_verdict.py) finds each engine's per-process
 ceiling and knee concurrency C*. This script runs N copies of the workload at C*
 and sums their achieved req/s into a per-N throughput curve.
 
-  1. Per-process throughput = SUM(count)/SUM(window_seconds) over that process's
+  1. Per-process throughput = SUM(count)/SUM(interval_duration_seconds) over that process's
      post-warmup windows, never a single window's max or last. Each of the N
      processes writes its own rows (unique workload_id ...-pI-...), pooled per
      point rather than averaged.
@@ -176,7 +176,7 @@ def main():
                              {"cnt": 0, "wsec": 0.0, "err": 0, "ru": 0.0,
                               "ruc": 0, "syscpu": 0.0})
         d["cnt"] += r.get("count") or 0
-        d["wsec"] += r.get("window_seconds") or 0.0
+        d["wsec"] += r.get("interval_duration_seconds") or 0.0
         d["err"] += r.get("errors") or 0
         d["ru"] += r.get("ru_sum") or 0.0
         d["ruc"] += r.get("ru_count") or 0

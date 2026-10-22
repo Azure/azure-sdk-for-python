@@ -10,6 +10,7 @@ import json
 import math
 import os
 from pathlib import Path
+import runpy
 import shutil
 import subprocess
 import sys
@@ -56,12 +57,12 @@ def measurement(modules, **changes):
     return {
         **summary, "workload_id": f"baseline-read-rust-{STAMP}",
         "record_type": "measurement", "process_id": "process-1",
-        "window_id": "window-1", "window_index": 1,
-        "window_seconds": 60.0, "elapsed_seconds": 60.0,
+        "interval_id": "process-1-1", "interval_number": 1,
+        "interval_duration_seconds": 60.0, "elapsed_seconds": 60.0,
         "driver_commit": "a" * 40, "config_backend": "rust",
         "runtime_backend": "AsyncBindingAdapter", "rust_execute_calls": 2,
         "binding_calls": 2, "attempt_calls": 2, "retry_calls": 0,
-        "throttled_429": 0, "config_arrival_rate": 250,
+        "throttled_429": 0, "config_arrival_rate": 0,
         "config_concurrency": 1, "config_num_clients": 1,
         "config_use_sync": False, "config_proxy_enabled": False,
         **changes,
@@ -71,10 +72,85 @@ def measurement(modules, **changes):
 def completion(row, **changes):
     return {
         "record_type": "completion", "workload_id": row["workload_id"],
-        "process_id": row["process_id"], "window_count": 1,
+        "process_id": row["process_id"], "interval_count": 1,
         "summary_count": 1, "total_count": row["count"],
         "total_errors": row["errors"], **changes,
     }
+
+
+def test_interval_readers_preserve_source_and_duration_rust(modules):
+    current = measurement(modules, elapsed_seconds=660)
+    source = current.copy()
+    before = dict(source)
+    results = modules["perf_results"]
+    assert list(results.summary_rows([source])) == [current]
+    assert results.interval_key(source) == current["interval_id"]
+    assert results.post_warmup(source, 600)
+    assert not results.post_warmup(source, 601)
+    assert source == before
+
+
+def test_interval_duration_must_be_positive_rust(modules):
+    row = measurement(modules, interval_duration_seconds=0)
+    with pytest.raises(ValueError, match="positive"):
+        list(modules["perf_results"].summary_rows([row]))
+
+
+def test_interval_completion_matches_measurement_rust(modules):
+    row = measurement(modules)
+    done = completion(row)
+    ok, _ = modules["perf_validate"].check_completion(Rows([row, done]), "baseline-", STAMP)
+    assert ok
+
+
+def test_mixed_interval_summaries_share_one_duration_rust(modules):
+    read = measurement(modules, workload_id=f"mixed-blend-rust-{STAMP}")
+    patch = {**read, "operation": "PatchItem"}
+    _, blended, _ = modules["mixed_report"]._aggregate(Rows([read, patch]), "mixed-", STAMP)
+    assert blended["rust"]["count"] == 4
+    assert blended["rust"]["window_s"] == 60
+
+
+@pytest.mark.parametrize("name", ["latency_report", "client_service_duration_report"])
+def test_interval_report_totals_rust(modules, name):
+    row = measurement(modules)
+    report = modules[name]
+    current = report._aggregate(Rows([row]), "baseline-", STAMP)[0][("read", "rust")]
+    assert current["count"] == 2
+    assert current["errors"] == 0
+    assert current["window_s"] == 60
+    histogram = "hist" if name == "latency_report" else "client"
+    assert current[histogram].total_count == 2
+
+
+def test_reporter_interval_numbers_and_execution_completion_rust(modules):
+    stats = modules["perf_stats"].Stats()
+    reporter = modules["perf_reporter"].PerfReporter(
+        stats, {"report_interval": 60, "workload_id": f"baseline-read-rust-{STAMP}",
+                "commit_sha": "x", "driver_commit": "y"})
+    reporter._container = Rows()
+    stats.record("ReadItem", 1)
+    stats.record_error("DeleteItemSetUpFailure", "setup failed", "")
+    reporter._flush()
+    reporter._flush()
+    stats.record("ReadItem", 2)
+    reporter.stop()
+    summaries = [row for row in reporter._container.rows if row["record_type"] == "measurement"]
+    assert sorted(row["interval_number"] for row in summaries) == [1, 1, 2]
+    for row in summaries:
+        assert row["interval_id"] == f'{row["process_id"]}-{row["interval_number"]}'
+        assert row["interval_duration_seconds"] > 0
+        assert "measurement_version" not in row
+        assert not any(field.startswith("window_") for field in row)
+    completed = [row for row in reporter._container.rows if row["record_type"] == "completion"]
+    assert len(completed) == 1
+    done = completed[0]
+    assert done["interval_count"] == 2 and done["summary_count"] == 3
+    assert done["total_count"] == 2 and done["total_errors"] == 1
+    assert "measurement_version" not in done and "operation" not in done
+    assert not any(field.startswith("window_") for field in done)
+    ok, _ = modules["perf_validate"].check_completion(reporter._container, "baseline-", STAMP)
+    assert ok
 
 
 def test_terminal_throttles_not_limited_by_error_detail_buffer_rust(modules):
@@ -161,7 +237,7 @@ def test_stats_reject_invalid_measurements_rust(modules, method, value):
 def test_latency_ignores_error_completion_and_cleanup_rows_rust(modules):
     row = measurement(modules)
     error = {"record_type": "error", "workload_id": row["workload_id"], "error_message": "failed"}
-    cleanup = measurement(modules, operation="CreateCleanupDelete", count=0, errors=1, hist_b64=None)
+    cleanup = measurement(modules, operation="CreateItemCleanUpFailure", count=0, errors=1, hist_b64=None)
     cells, provenance = modules["latency_report"]._aggregate(
         Rows([row, error, completion(row), cleanup]), "baseline-", STAMP)
     cell = cells[("read", "rust")]
@@ -183,7 +259,7 @@ def test_wrong_histogram_sample_count_fails_rust(modules):
 
 def test_missing_retry_evidence_cannot_cancel_positive_counts_rust(modules):
     row = measurement(modules, retry_calls=-1)
-    next_row = measurement(modules, retry_calls=1, window_id="window-2", elapsed_seconds=120)
+    next_row = measurement(modules, retry_calls=1, interval_id="process-1-2", elapsed_seconds=120)
     cells, _ = modules["latency_report"]._aggregate(Rows([row, next_row]), "baseline-", STAMP)
     assert cells[("read", "rust")]["retry_calls"] is None
 
@@ -231,7 +307,7 @@ def test_zero_success_error_window_needs_no_histogram_rust(modules):
 def test_cold_samples_deduplicate_process_windows_rust(modules):
     row = measurement(modules, workload_id=f"cold-read-rust-{STAMP}",
                       cold_first_ms=20, cold_first_n_ms=[20, 5])
-    later = {**row, "window_id": "window-2", "cold_first_n_ms": [20, 5, 2]}
+    later = {**row, "interval_id": "process-1-2", "cold_first_n_ms": [20, 5, 2]}
     cells, _, _ = modules["coldstart_report"]._aggregate(Rows([row, later]), "cold-", STAMP)
     assert cells[("rust", "read")] == {"firsts": [20], "curves": [[20, 5, 2]]}
 
@@ -253,7 +329,7 @@ def test_invalid_commit_labels_fail_every_report_gate_rust(modules, value):
 
 def test_partial_unknown_binding_or_wrong_runtime_does_not_pass_rust(modules):
     first = measurement(modules)
-    unknown = measurement(modules, binding_calls=-1, elapsed_seconds=120, window_id="window-2")
+    unknown = measurement(modules, binding_calls=-1, elapsed_seconds=120, interval_id="process-1-2")
     validator = modules["perf_validate"]
     assert not validator.check_backend_execution(Rows([first, unknown]), "baseline-", STAMP)[0]
     wrong = measurement(modules, runtime_backend="AsyncLegacyBackend")
@@ -286,7 +362,7 @@ def test_final_missing_window_and_entire_cell_fail_rust(modules):
     assert validator.check_completion(Rows([row, completion(row)]), "baseline-", STAMP)[0]
     assert not validator.check_completion(Rows([row]), "baseline-", STAMP)[0]
     assert not validator.check_completion(
-        Rows([row, completion(row, window_count=2, summary_count=2, total_count=4)]),
+        Rows([row, completion(row, interval_count=2, summary_count=2, total_count=4)]),
         "baseline-", STAMP)[0]
     assert not validator.check_completion(
         Rows([row, completion(row)]), "baseline-", STAMP,
@@ -1960,7 +2036,7 @@ def test_throughput_launcher_keeps_earlier_child_failure_rust(tmp_path):
 
 def test_duplicate_processes_cannot_reuse_one_workload_id_rust(modules):
     row = measurement(modules)
-    second = {**row, "process_id": "process-2", "window_id": "other-window"}
+    second = {**row, "process_id": "process-2", "interval_id": "process-2-1"}
     ok, lines = modules["perf_validate"].check_completion(
         Rows([row, second, completion(row), completion(second)]), "baseline-", STAMP, [row["workload_id"]])
     assert not ok and any("reused" in line for line in lines)
@@ -1999,11 +2075,11 @@ def test_existing_run_directory_is_not_reused_rust(tmp_path):
 def test_report_cli_accepts_valid_measurement_population_rust(modules, monkeypatch, name, prefix, middle):
     module = importlib.import_module(name)
     rows = [measurement(
-        modules, workload_id=f"{prefix}{middle}-{STAMP}", window_id=f"window-{i}", window_index=i,
+        modules, workload_id=f"{prefix}{middle}-{STAMP}", interval_id=f"process-1-{i}", interval_number=i,
         elapsed_seconds=600 + i * 60, memory_bytes=100_000_000, system_cpu_percent=10,
         ru_sum=2, ru_count=2, cold_first_ms=1, cold_first_n_ms=[1, 2],
     ) for i in range(1, 4)]
-    rows.append(completion(rows[0], window_count=3, summary_count=3, total_count=6))
+    rows.append(completion(rows[0], interval_count=3, summary_count=3, total_count=6))
     monkeypatch.setattr(module, "_connect", lambda: Rows(rows))
     monkeypatch.setattr(sys, "argv", [name, "--prefix", prefix, "--stamp", STAMP])
     with pytest.raises(SystemExit) as result:
@@ -2016,6 +2092,116 @@ def test_read_preparation_does_not_generate_write_body_rust(modules, monkeypatch
     monkeypatch.setattr(utils, "create_random_item", lambda: pytest.fail("Read generated a write body"))
     keys = utils.get_existing_random_keys()
     assert set(keys) == {"id", "pk"}
+
+
+@pytest.mark.parametrize("index", [0, 204, 999])
+def test_order_seed_and_selection_use_matching_identities_rust(modules, monkeypatch, index):
+    utils = modules["workload_utils"]
+    monkeypatch.setattr(utils, "WORKLOAD_DOC_PROFILE", "orders")
+    monkeypatch.setattr(utils, "MAX_ITEM_INDEX", 999)
+    monkeypatch.setattr(utils.random, "randint", lambda low, high: index if high == 999 else 3)
+    body = utils.create_seed_item(index)
+    assert body == {
+        "id": f"order-{index}", "customerId": f"customer-{index}",
+        "countryCode": "US", "quantity": 2, "status": "Pending",
+    }
+    assert utils.get_existing_random_keys() == {
+        "id": body["id"], "customerId": body["customerId"],
+    }
+    replacement = utils.get_existing_random_item()
+    assert replacement == {**body, "quantity": 3}
+
+
+def test_order_random_items_have_fresh_matching_identities_rust(modules, monkeypatch):
+    utils = modules["workload_utils"]
+    monkeypatch.setattr(utils, "WORKLOAD_DOC_PROFILE", "orders")
+    first, second = utils.create_random_item(), utils.create_random_item()
+    assert first["id"] != second["id"]
+    for item in (first, second):
+        assert item["id"].removeprefix("order-") == item["customerId"].removeprefix("customer-")
+        assert set(item) == {"id", "customerId", "countryCode", "quantity", "status"}
+        assert 1 <= item["quantity"] <= 10
+
+
+@pytest.mark.parametrize("mode", ["sync", "async", "fixed"])
+def test_order_patch_changes_quantity_rust(modules, monkeypatch, mode):
+    utils = modules["workload_utils"]
+    monkeypatch.setattr(utils, "WORKLOAD_DOC_PROFILE", "orders")
+    monkeypatch.setattr(utils, "PARTITION_KEY", "id")
+    monkeypatch.setattr(utils, "get_existing_random_keys",
+                        lambda: {"id": "order-204", "customerId": "customer-204"})
+    calls = []
+
+    class Container:
+        def patch_item(self, item_id, partition_key, operations, **kwargs):
+            calls.append((item_id, partition_key, operations))
+            return {}
+
+    class AsyncContainer:
+        async def patch_item(self, *args, **kwargs):
+            return Container().patch_item(*args, **kwargs)
+
+    stats = modules["perf_stats"].Stats()
+    if mode == "sync":
+        utils.patch_item(Container(), [], 1, stats)
+    elif mode == "async":
+        asyncio.run(utils.patch_item_concurrently(AsyncContainer(), [], 1, stats))
+    else:
+        _, call, args, kwargs = utils._build_fixed_rate_call(Container(), "patch", {})
+        call(*args, **kwargs)
+    assert len(calls) == 1
+    item_id, partition_key, operations = calls[0]
+    assert item_id == partition_key == "order-204"
+    assert operations[0]["op"] == "set" and operations[0]["path"] == "/quantity"
+    assert 1 <= operations[0]["value"] <= 10
+
+
+def test_order_seed_prepares_exact_range_rust(modules, monkeypatch):
+    utils = modules["workload_utils"]
+    monkeypatch.setattr(utils, "WORKLOAD_DOC_PROFILE", "orders")
+    setup = runpy.run_path(str(WORKLOADS / "initial-setup.py"))
+    saved = {}
+
+    class Container:
+        async def upsert_item(self, body):
+            assert body["id"] not in saved
+            saved[body["id"]] = body
+            return body
+
+    asyncio.run(setup["write_item_concurrently_initial"](Container(), 1000))
+    assert set(saved) == {f"order-{index}" for index in range(1000)}
+    assert all(saved[f"order-{index}"] == utils.create_seed_item(index) for index in range(1000))
+
+
+@pytest.mark.parametrize("profile", ["default", "large", "nested", "orders"])
+def test_workload_seed_and_query_match_profile_rust(modules, monkeypatch, profile):
+    utils = modules["workload_utils"]
+    monkeypatch.setattr(utils, "WORKLOAD_DOC_PROFILE", profile)
+    monkeypatch.setattr(utils, "PARTITION_KEY", "id")
+    body = utils.create_seed_item(204)
+    field = "customerId" if profile == "orders" else "pk"
+    prefix = "order" if profile == "orders" else "test"
+    assert body["id"] == f"{prefix}-204"
+    query = utils._query_item_args(body)
+    assert query["partition_key"] == body["id"]
+    assert query["query"] == f"SELECT * FROM c where c.id=@id and c.{field}=@{field}"
+    assert query["parameters"] == [
+        {"name": "@id", "value": body["id"]}, {"name": f"@{field}", "value": body[field]},
+    ]
+    if profile != "orders":
+        assert body["pk"] == "pk-204" and "value" in body
+        assert ("details" in body) == (profile in ("large", "nested"))
+
+
+@pytest.mark.parametrize("partition_key", ["id", "pk"])
+def test_order_config_requires_id_partition_key_rust(modules, monkeypatch, partition_key):
+    monkeypatch.setenv("WORKLOAD_DOC_PROFILE", "orders")
+    monkeypatch.setenv("COSMOS_PARTITION_KEY", partition_key)
+    if partition_key == "pk":
+        with pytest.raises(ValueError, match="orders workload requires"):
+            runpy.run_path(str(WORKLOADS / "workload_configs.py"))
+    else:
+        assert runpy.run_path(str(WORKLOADS / "workload_configs.py"))["WORKLOAD_DOC_PROFILE"] == "orders"
 
 
 def test_fixed_rate_keeps_lateness_over_five_seconds_rust(modules, monkeypatch):
@@ -2045,8 +2231,8 @@ def fixed_rate_row(modules, *, delay_ms=20, sdk_ms=5, failed=False, **changes):
                      delay_before_call_ms=delay_ms, sdk_call_ms=sdk_ms)
     summary = stats.drain_all()[0][0]
     return measurement(modules, **{
-        **summary, "measurement_version": 2, "duration_kind": "total",
-        "config_max_inflight": 10, "window_seconds": 0.004,
+        **summary, "config_arrival_rate": 250, "duration_kind": "total",
+        "config_max_inflight": 10, "interval_duration_seconds": 0.004,
         **changes,
     })
 
@@ -2115,6 +2301,18 @@ def test_fixed_rate_timing_and_schedule_survive_reporter_persistence_rust(module
     assert row["fixed_rate_timings"]["success"]["sdk_call"]["max_observed_ms"] == 5
     assert done["fixed_rate_schedules"] == [schedule_record()]
     assert modules["perf_validate"].check_completion(Rows([row, done]), "baseline-", STAMP)[0]
+
+
+@pytest.mark.parametrize("missing", ["schedule", "timings"])
+def test_fixed_rate_completion_requires_evidence_without_version_rust(modules, missing):
+    row = fixed_rate_row(modules)
+    done = completion(row, fixed_rate_schedules=[schedule_record()])
+    if missing == "schedule":
+        del done["fixed_rate_schedules"]
+    else:
+        del row["fixed_rate_timings"]
+    ok, _ = modules["perf_validate"].check_completion(Rows([row, done]), "baseline-", STAMP)
+    assert not ok
 
 
 def test_ten_slots_hold_eleventh_call_and_stop_drains_only_launched_work_rust(modules, monkeypatch):
@@ -2228,8 +2426,8 @@ def test_unknown_old_overflow_evidence_cannot_hide_known_clipping_rust(modules):
 def test_component_histograms_pool_across_reporting_windows_rust(modules):
     first = fixed_rate_row(modules, delay_ms=1, sdk_ms=2)
     second = fixed_rate_row(modules, delay_ms=20, sdk_ms=5,
-                            window_index=2, window_id="window-2", elapsed_seconds=120)
-    done = completion(first, window_count=2, summary_count=2, total_count=2, fixed_rate_schedules=[
+                            interval_number=2, interval_id="process-1-2", elapsed_seconds=120)
+    done = completion(first, interval_count=2, summary_count=2, total_count=2, fixed_rate_schedules=[
         schedule_record(scheduled_count=2, launched_count=2)])
     cell = modules["latency_report"]._aggregate(Rows([first, second, done]), "baseline-", STAMP)[0][("read", "rust")]
     for name in ("delay_before_call", "sdk_call", "total"):
@@ -2362,8 +2560,8 @@ def test_missing_one_clients_schedule_is_rejected_rust(modules):
 
 def test_multiple_clients_schedules_reconcile_with_process_totals_rust(modules):
     first = fixed_rate_row(modules, config_num_clients=2)
-    second = {**first, "window_id": "window-2", "window_index": 2, "elapsed_seconds": 120}
-    done = completion(first, window_count=2, summary_count=2, total_count=2, fixed_rate_schedules=[
+    second = {**first, "interval_id": "process-1-2", "interval_number": 2, "elapsed_seconds": 120}
+    done = completion(first, interval_count=2, summary_count=2, total_count=2, fixed_rate_schedules=[
         schedule_record(), schedule_record(schedule_id="schedule-2")])
     assert modules["perf_validate"].check_completion(Rows([first, second, done]), "baseline-", STAMP)[0]
     cell = modules["latency_report"]._aggregate(Rows([first, second, done]), "baseline-", STAMP)[0][("read", "rust")]
@@ -2433,7 +2631,7 @@ def test_mixed_fixed_rate_schedule_is_counted_once_rust(modules):
         schedule_record(scheduled_count=2, launched_count=2)])
     per_op, blended, _ = modules["mixed_report"]._aggregate(Rows([read, patch, done]), "mixed-", STAMP)
     assert blended["rust"]["schedule"]["launched_count"] == 2
-    assert blended["rust"]["window_s"] == read["window_seconds"]
+    assert blended["rust"]["window_s"] == read["interval_duration_seconds"]
     assert blended["rust"]["timings"]["success"]["sdk_call"]["hist"].total_count == 2
     assert per_op[("rust", "read")]["timings"]["success"]["sdk_call"]["hist"].total_count == 1
 
@@ -2459,21 +2657,95 @@ def test_total_and_sdk_call_durations_cannot_be_pooled_rust(modules):
         modules["latency_report"]._aggregate(Rows([fixed, waiting]), "baseline-", STAMP)
 
 
-def test_delete_setup_failure_is_not_a_successful_delete_rust(modules):
+@pytest.mark.parametrize("use_async", [False, True])
+def test_create_cleanup_failure_is_separate_from_successful_create_rust(modules, use_async):
     utils = modules["workload_utils"]
     stats = modules["perf_stats"].Stats()
+
     class Container:
-        async def create_item(self, *args, **kwargs):
-            raise RuntimeError("setup failed")
+        def create_item(self, body, **kwargs):
+            return body
+
+        def delete_item(self, *args, **kwargs):
+            raise RuntimeError("cleanup failed")
+
+    class AsyncContainer(Container):
+        async def create_item(self, body, **kwargs):
+            return super().create_item(body, **kwargs)
+
         async def delete_item(self, *args, **kwargs):
+            return super().delete_item(*args, **kwargs)
+
+    if use_async:
+        asyncio.run(utils.create_item_concurrently(AsyncContainer(), [], 1, stats))
+    else:
+        utils.create_item(Container(), [], 1, stats)
+
+    reporter = modules["perf_reporter"].PerfReporter(
+        stats, {"report_interval": 60, "workload_id": "create-cleanup",
+                "commit_sha": "x", "driver_commit": "y"})
+    reporter._container = Rows()
+    reporter.stop()
+    summaries = {
+        row["operation"]: row for row in reporter._container.rows
+        if row["record_type"] == "measurement"
+    }
+    assert set(summaries) == {"CreateItem", "CreateItemCleanUpFailure"}
+    assert summaries["CreateItem"]["count"] == 1
+    assert summaries["CreateItem"]["errors"] == 0
+    assert summaries["CreateItemCleanUpFailure"]["count"] == 0
+    assert summaries["CreateItemCleanUpFailure"]["errors"] == 1
+    errors = [row for row in reporter._container.rows if row["record_type"] == "error"]
+    assert len(errors) == 1
+    assert errors[0]["operation"] == "CreateItemCleanUpFailure"
+    assert errors[0]["error_message"] == "cleanup failed"
+    final = reporter._container.rows[-1]
+    assert final["record_type"] == "completion"
+    assert final["total_count"] == 1 and final["total_errors"] == 1
+
+
+@pytest.mark.parametrize("use_async", [False, True])
+def test_delete_setup_failure_is_not_a_successful_delete_rust(modules, use_async):
+    utils = modules["workload_utils"]
+    stats = modules["perf_stats"].Stats()
+
+    class Container:
+        def create_item(self, *args, **kwargs):
+            raise RuntimeError("setup failed")
+
+        def delete_item(self, *args, **kwargs):
             pytest.fail("Delete issued after setup failed")
-    asyncio.run(utils.delete_item_concurrently(Container(), [], 1, stats))
-    summary = stats.drain_all()[0][0]
-    assert summary["operation"] == "DeleteSetupCreate" and summary["errors"] == 1
+
+    class AsyncContainer(Container):
+        async def create_item(self, *args, **kwargs):
+            return super().create_item(*args, **kwargs)
+
+        async def delete_item(self, *args, **kwargs):
+            return super().delete_item(*args, **kwargs)
+
+    if use_async:
+        asyncio.run(utils.delete_item_concurrently(AsyncContainer(), [], 1, stats))
+    else:
+        utils.delete_item(Container(), [], 1, stats)
+
+    reporter = modules["perf_reporter"].PerfReporter(
+        stats, {"report_interval": 60, "workload_id": "delete-setup",
+                "commit_sha": "x", "driver_commit": "y"})
+    reporter._container = Rows()
+    reporter.stop()
+    summary, error, final = reporter._container.rows
+    assert summary["record_type"] == "measurement"
+    assert summary["operation"] == "DeleteItemSetUpFailure"
+    assert summary["count"] == 0 and summary["errors"] == 1
+    assert error["record_type"] == "error"
+    assert error["operation"] == "DeleteItemSetUpFailure"
+    assert error["error_message"] == "setup failed"
+    assert final["record_type"] == "completion"
+    assert final["total_count"] == 0 and final["total_errors"] == 1
 
 
 def test_straddling_warmup_window_is_excluded_rust(modules):
     assert not modules["perf_results"].post_warmup(
-        {"elapsed_seconds": 610, "window_seconds": 60}, 600)
+        {"elapsed_seconds": 610, "interval_duration_seconds": 60}, 600)
     assert modules["perf_results"].post_warmup(
-        {"elapsed_seconds": 660, "window_seconds": 60}, 600)
+        {"elapsed_seconds": 660, "interval_duration_seconds": 60}, 600)

@@ -28,7 +28,7 @@ def test_every_page_dispatch_preserves_cursor_and_deadline_arguments_rust(
 ):
     module = async_rust if async_mode else sync_rust
     cls = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
-    backend = object.__new__(cls)
+    backend = cls("https://paging.invalid", master_key="test-key")
     acquire = AsyncMock(return_value="handle") if async_mode else MagicMock(return_value="handle")
     monkeypatch.setattr(backend, "_ensure_driver_handle", acquire)
     response = (206, 7, {"x-ms-continuation": "next", "x-custom": "value"}, b"{}", {"elapsed": 2})
@@ -97,7 +97,8 @@ def test_page_error_translation_preserves_cause_and_cancellation_rust(
         "cancelled": asyncio.CancelledError,
     }[error_kind]("page dispatch failed")
     module = async_rust if async_mode else sync_rust
-    backend = object.__new__(module.AsyncBindingAdapter if async_mode else module.BindingAdapter)
+    cls = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
+    backend = cls("https://paging.invalid", master_key="test-key")
     mock = AsyncMock if async_mode else MagicMock
     monkeypatch.setattr(backend, "_ensure_driver_handle", mock(return_value="handle"))
     dispatch = mock(side_effect=error)
@@ -130,7 +131,7 @@ def test_page_error_translation_preserves_cause_and_cancellation_rust(
 
 
 def test_async_page_cancellation_reaches_pending_native_await_rust(monkeypatch):
-    backend = object.__new__(async_rust.AsyncBindingAdapter)
+    backend = async_rust.AsyncBindingAdapter("https://paging.invalid", master_key="test-key")
     monkeypatch.setattr(backend, "_ensure_driver_handle", AsyncMock(return_value="handle"))
 
     async def run():
@@ -162,7 +163,8 @@ def test_async_page_cancellation_reaches_pending_native_await_rust(monkeypatch):
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("op,method", list(STATELESS_PAGE_BINDING_FUNCTION_NAMES.items()))
-def test_native_page_entry_validates_timeout_before_driver_lookup_rust(op, method, async_mode):
+def test_native_page_entry_checks_handle_before_timeout_rust(op, method, async_mode):
+    """Reject string handles; Windows-emulator binding tests check timeouts with real handles."""
     from azure.cosmos import _rust
 
     link = "" if "databases" in op else "dbs/d" if "containers" in op else "dbs/d/colls/c"
@@ -170,5 +172,5 @@ def test_native_page_entry_validates_timeout_before_driver_lookup_rust(op, metho
         PreparedPageRequest(op=op, container_link=link, query="SELECT * FROM c")
     )
     call = getattr(_rust, method + ("_async" if async_mode else ""))
-    with pytest.raises(ValueError, match="timeout_seconds"):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         call("unregistered-driver", prepared, timeout_seconds=0)

@@ -34,8 +34,9 @@ import shutil
 import tempfile
 import time
 from contextlib import contextmanager
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Iterator, Mapping, Optional
+from zipfile import ZipFile
 
 import maturin
 from azure_cosmos_build_metadata import validate_version_metadata
@@ -250,6 +251,31 @@ def _without_packaging_source() -> Iterator[None]:
             os.environ[_SOURCE_DIRECTORY_ENV] = source_value
 
 
+def _validate_native_wheel(wheel_path: Path) -> None:
+    """Require one nonempty extension in the final, platform-specific archive.
+
+    :param pathlib.Path wheel_path: The completed wheel returned by Maturin.
+    """
+    with ZipFile(wheel_path) as wheel:
+        extensions = [
+            member
+            for member in wheel.infolist()
+            if PurePosixPath(member.filename).parent == PurePosixPath("azure/cosmos")
+            and PurePosixPath(member.filename).name.startswith("_rust.")
+            and PurePosixPath(member.filename).suffix in {".so", ".pyd"}
+        ]
+    if (
+        wheel_path.name.endswith("-any.whl")
+        or len(extensions) != 1
+        or extensions[0].file_size == 0
+    ):
+        raise RuntimeError(
+            f"{wheel_path.name} must be a platform wheel containing exactly one "
+            "nonempty native Rust extension at azure/cosmos/_rust*.so or _rust*.pyd; "
+            "a Python stub is not a compiled extension"
+        )
+
+
 def build_wheel(
     wheel_directory: str,
     config_settings: Optional[Mapping[str, Any]] = None,
@@ -258,18 +284,20 @@ def build_wheel(
     """Build a wheel after temporarily staging configured native sidecars."""
     validate_version_metadata()
     with _staged_query_plan_interop():
-        return maturin.build_wheel(
+        wheel_name = maturin.build_wheel(
             wheel_directory,
             config_settings=config_settings,
             metadata_directory=metadata_directory,
         )
+        _validate_native_wheel(Path(wheel_directory) / wheel_name)
+        return wheel_name
 
 
 def build_sdist(
     sdist_directory: str,
     config_settings: Optional[Mapping[str, Any]] = None,
 ) -> str:
-    """Build a source distribution without native sidecars."""
+    """Build an internal source archive; the release pipeline excludes it from publication."""
     validate_version_metadata()
     return maturin.build_sdist(sdist_directory, config_settings=config_settings)
 

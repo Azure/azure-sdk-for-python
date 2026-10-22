@@ -33,6 +33,7 @@
   - [`ContainerProxy.query_items_change_feed` - Polling item changes](#containerproxyquery_items_change_feed)
   - [`ContainerProxy.replace_item` - Replacing an existing order](#containerproxyreplace_item)
   - [`ContainerProxy.patch_item` - Patch compatibility decisions](#containerproxypatch_item)
+  - [`ContainerProxy.execute_item_batch` - Sending transactional batches through Rust](#containerproxyexecute_item_batch)
 - [Throughput management](#throughput-management)
   - [`DatabaseProxy.get_throughput` - Keeping database throughput results independent of response hooks](#databaseproxyget_throughput)
   - [`DatabaseProxy.read_offer` - Omitted throughput alias](#databaseproxyread_offer)
@@ -371,6 +372,21 @@ Finish operations before closing. Close does not delete service data, drain
 in-flight work, or close the application's credential. Repeated calls do not
 release another client's driver acquisition. A client or runtime still owned
 elsewhere remains usable; close is not process-wide runtime shutdown.
+
+<a id="first-use-initialization-deadlines"></a>
+
+**First-use initialization and close:** Synchronous operations now wait for
+shared background driver acquisition within their own remaining timeout.
+For example, a first read with `timeout=1` can stop waiting while a second read
+with `timeout=5` continues waiting for the same acquisition. The expired read
+is not dispatched when the handle later arrives. Callers still waiting receive
+the same result or failure; after failure, a later call can retry acquisition.
+
+Close does not wait for that worker to finish. If the client remains open, the
+worker retains a late handle for later calls; if close wins, the worker releases
+it instead. The worker retains its original credential and runtime inputs even
+if close clears the adapter's fields. This bounds the customer's acquisition
+wait, not the lifetime of a synchronous credential callback or native setup.
 
 Cancelling an async caller's wait does not cancel backend cleanup that has
 already started. A later close waits for that same completion, and the
@@ -2376,8 +2392,9 @@ propagate outside retries and do not replay the write. A service 409 remains
 
 **Timeout and encoding:** A supported explicit `timeout` is one budget for
 metadata and create, including metadata-cache lock waits. Remaining durations
-below one second are not rounded up. Lazy driver initialization consumes
-elapsed budget but is not forcibly interrupted. The client's
+below one second are not rounded up. The
+[first-use acquisition wait](#first-use-initialization-deadlines) uses that same
+budget without forcibly stopping the shared worker. The client's
 `enable_compact_utf8_item_writes` option is honored by Rust-backed create,
 upsert, replace, and patch serialization; its default remains `False`, and
 metadata/query encoding is unchanged.
@@ -2602,7 +2619,7 @@ capability:
 |---|---|
 | `feed_options` could be hidden behind an empty `request_options` mapping. | Use `feed_options` when `request_options` is absent. A supplied `request_options`, including `{}` or `None`, still wins. Recognized explicit options override nested settings; the required partition-key argument wins over a nested key. |
 | An invalid response hook failed only after the read. | Reject non-callable hooks before metadata or item execution. `response_hook=False` raises `TypeError`; omit the hook or pass `None` instead. |
-| A per-read consistency setting could be overwritten by the driver's client setting. | Pass supported read settings through the driver's actual consistency option, not only a custom header. This also controls automatic cached-session-token selection. |
+| A per-read consistency setting could be overwritten by the driver's client setting. | Typed read-strategy selection fixes precedence and cached-session-token selection for that strategy, but does not establish parity for all five ordinary consistency levels. The semantic correction remains open; see below. |
 | Per-read `availability_strategy=True` replaced the client's configured hedge threshold with the default. | Preserve the client's first threshold, as legacy does. A client configured for 20 ms keeps 20 ms, not 500 ms. With no configured client strategy, `True` uses 500 ms; `False` disables the item strategy and an explicit dictionary supplies its own threshold. |
 
 For example, with a client configured for Session consistency:
@@ -2614,19 +2631,26 @@ order = container.read_item(
 )
 ```
 
-The binding selects Eventual for this read without changing the client or
-preliminary metadata settings. Both synchronous and asynchronous clients
-use the same mapping for client defaults and point-read overrides: Eventual
-and Session map directly, ConsistentPrefix maps to Eventual, BoundedStaleness
-to LatestCommitted, and Strong to GlobalStrong. Omitting a per-read override
-preserves the client's choice.
+The binding selects the Eventual read strategy for this read without changing
+the client or preliminary metadata settings. Omitting a per-read override
+preserves the client's choice. That precedence correction is implemented;
+preserving all five ordinary Cosmos consistency levels is not established.
 
-LatestCommitted reads committed data in the selected region; it does not
-configure account staleness bounds or wait for cross-region replication.
-Writes still follow account settings. The Python names remain available;
-Rust strategy names are not added as Python aliases. Actual service guarantees
-still require comparison on a suitably configured account, not just inspection
-of an outgoing request.
+**Open consistency gap:** Both clients translate ConsistentPrefix to the
+Eventual strategy and BoundedStaleness to LatestCommitted. These strategies
+override ordinary consistency rather than represent those levels directly.
+The earlier parity claim is withdrawn. LatestCommitted behaves like the
+account default on Strong or Bounded Staleness accounts, so this is not proof
+that an existing account bound is removed. On weaker accounts it requests a
+region-local quorum read, not a cross-region staleness bound.
+
+Simply retaining `x-ms-consistency-level` and selecting the Default strategy
+does not fix the pinned driver: Gateway V2 encoding and automatic session-token
+selection still resolve from account settings. The driver needs a supported
+ordinary-level path, and the binding must use it without substituting
+strategies. Writes remain account-governed. No runtime fix is included in this
+review; [Gap 8](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-8) records ownership,
+pinned evidence and required legacy-versus-Rust comparisons.
 
 **Conditional results:** `IfModified` uses If-None-Match; an unchanged item
 returns an empty `CosmosDict` on 304. If-Match on item GET is service-enforced,
@@ -2668,8 +2692,9 @@ With `timeout=5`, spending 2 seconds obtaining container metadata leaves
 approximately 3 for the item read, not a fresh 5. Waiting for the legacy
 metadata-cache lock consumes time too. `timeout=None` inherits the client
 default and overrides a nested timeout; separate transport settings still
-apply. Python initialization, parsing and synchronous callback code are not
-forcibly interrupted at every instruction. The async client requests
+apply. The [acquisition wait](#first-use-initialization-deadlines) is bounded;
+Python parsing and synchronous callback code are not forcibly interrupted at
+every instruction. The async client requests
 cancellation of pending binding work, but cannot guarantee immediate
 cancellation of work already received by the service backend.
 
@@ -2931,8 +2956,9 @@ remaining fraction of a second rather than restarting or rounding up the
 budget. Async failure/cancellation cancels outstanding work and waits for
 it to stop.
 Sync cancels pending work and leaves caller-owned executors open; already-running
-synchronous requests may finish later. Lazy driver initialization consumes
-elapsed budget but is not forcibly interrupted.
+synchronous requests may finish later. The
+[first-use acquisition wait](#first-use-initialization-deadlines) uses the same
+remaining budget without cancelling shared initialization.
 
 **Customer migration:** Supply complete partition keys and valid positive
 concurrency values, or omit concurrency to use its default. Remove duplicate
@@ -3079,9 +3105,9 @@ requests or failed attempts.
 **Timeout contract:** A supported explicit `timeout` is one budget per public
 page fetch, spanning metadata, planning, and internal empty pages. Remaining
 sub-second time reaches the binding; processing time between pages consumes
-none of the next budget. Async cancellation waits for outstanding work to stop. Lazy
-synchronous driver initialization consumes elapsed budget but is not forcibly
-interrupted.
+none of the next budget. Async cancellation waits for outstanding work to stop.
+The [first-use acquisition wait](#first-use-initialization-deadlines) is bounded
+by that page's deadline without forcibly terminating shared initialization.
 
 **Customer migration:** Use keyword arguments and valid page/cache settings;
 remove query metrics. Finish bookmarked scans using the earlier SDK version
@@ -3313,9 +3339,9 @@ Concurrent fetches on one result iterator are rejected.
 
 **Timeout contract:** One explicit supported timeout budget per public page,
 including metadata, routing, retries and internal polls. Customer processing
-between pages is excluded. Async cancellation waits for outstanding work to stop; lazy
-synchronous driver initialization consumes elapsed budget but is not forcibly
-interrupted. Available response charges are aggregated, not represented as
+between pages is excluded. Async cancellation waits for outstanding work to stop;
+the [first-use acquisition wait](#first-use-initialization-deadlines) is bounded
+without cancelling the shared worker. Available response charges are aggregated, not represented as
 complete accounting for all metadata or driver-internal work.
 
 **Current capability restriction:** The binding rejects scopes spanning multiple
@@ -3446,7 +3472,8 @@ Region exclusions retain their fallback semantics, not a strict network boundary
 Replacement also now carries one remaining timeout budget. With `timeout=5`,
 two seconds of initialization and two of metadata work leave one second for
 replacement. The Rust-backed public timeout must be finite and at least one
-second. Initialization is counted but not forcibly interrupted. Timeout or
+second. The [acquisition wait](#first-use-initialization-deadlines) is bounded
+by that same budget; the shared worker is not forcibly interrupted. Timeout or
 cancellation does not roll back a write already accepted by the service backend.
 Legacy ID validation is restored: for example, `"order/42"` in the replacement
 body fails locally rather than proceeding into driver acquisition.
@@ -3532,6 +3559,65 @@ than ten instructions or intentionally allow these calls.
 Accepting the larger list changes which customer calls succeed. Retaining
 the legacy limit would require explicit validation on the Rust path.
 Neither choice has been approved. Accepting the call does not establish equivalence with legacy behavior.
+
+<a id="containerproxyexecute_item_batch"></a>
+
+### `ContainerProxy.execute_item_batch`
+
+#### Why the customer needs one batch
+
+Contoso Bank stores two account records under the same partition key. The
+customer app submits their updates together so the service backend applies
+both or neither. This is a **transactional batch**. It is not the separate
+API that deletes every item with a particular partition key.
+
+Selecting Rust must also select the Rust execution path for this batch.
+Previously, both Python client types called legacy `Batch` directly even
+when the client selected Rust.
+
+#### How the SDK now sends the request
+
+The Python wrapper formats the existing operation tuples into one request,
+retaining per-operation ETag conditions and patch filters. It registers
+`execute_item_batch` as a native capability without legacy fallback, then
+calls the synchronous or asynchronous binding entry point.
+
+The binding resolves the container through the selected Rust driver and
+executes `CosmosOperation::batch` with the supplied partition key and body.
+Metadata resolution and execution share the remaining operation budget.
+The Python wrapper returns `CosmosList` on success or constructs
+`CosmosBatchOperationError` with the failing index and per-operation results.
+An execution, parsing, or response-hook failure does not replay the batch
+through legacy Python.
+
+An explicitly selected `core-python` client retains the legacy path for
+comparison. This integration does not implement partition-wide deletion or
+close the separately documented Rust driver gaps.
+
+#### What remains to prove
+
+The original nine synchronous and nine asynchronous functional test bodies
+are copied under `tests/execute_item_batch/sync/legacy` and
+`tests/execute_item_batch/aio/legacy`. Only setup, resource cleanup, backend
+selection, and the `_rust` method-name suffix change. An offline comparison
+checks that the copied test bodies still match the originals.
+
+Run those copies with `COSMOS_BACKEND=core-python`, then with
+`COSMOS_BACKEND=rust`, using `--noconftest`. Their setup creates uniquely named
+databases and deletes only resources it owns. For operation captures, also
+set `COSMOS_PARITY_CAPTURE_OP=execute_item_batch` and load
+`-p common.parity_capture_plugin`. The Rust runs reject calls to legacy
+`Batch`; captures additionally record native binding and fallback counters.
+
+The native extension has been built and its two batch exports loaded.
+Offline routing and result-contract checks passed. **Live functional parity
+is not established:** the first legacy probe failed during container
+creation with emulator status `503`, substatus `1007`. An async test-guard
+import was corrected, but terminal execution subsequently became unavailable
+before both surfaces could be rerun against both backends. None of those
+probes reached a batch operation. Atomic rollback, mixed-operation results,
+conditions, patch filters, size limits, and hierarchical keys still require
+the service-backed comparisons; matching setup failures would not prove them.
 
 ## Throughput management
 
@@ -3826,16 +3912,25 @@ The legacy controls above did not apply to the preliminary container-property
 lookup. A timeout spanning that lookup and all range fetches would be a new
 guarantee, not restoration of the old per-fetch limit.
 
-The current Rust lookup rejects additional per-call settings. Removing
-`timeout=5`, for example, makes the call run without the requested limit.
-That is not equivalent behavior. The driver must expose the relevant request
-controls and response details through the binding; the Python wrapper owns
-invoking the customer's callbacks.
+The Rust lookup supports `timeout` as one overall discovery budget, including
+first-use driver acquisition and metadata resolution. For example, with
+`CosmosClient(..., timeout=5)`, creating `ranges = container.read_feed_ranges()`
+does not start the timer. Iterating `ranges` starts the five-second budget.
+If acquisition consumes one second, the binding receives four seconds, not
+another five. A per-call `timeout=10` replaces the default for that discovery;
+`timeout=None` inherits the default. Expiry raises `CosmosClientTimeoutError`,
+and a result completing after expiry is not cached as a successful discovery.
+
+Other unsupported per-call settings still raise instead of silently losing
+their behavior. The driver must expose the remaining request controls and
+response details through the binding; the Python wrapper owns invoking the
+customer's callbacks. Timeout support does not close those separate gaps.
 
 | Area | New contract and customer reason |
 |---|---|
 | Refresh flag | Require `True` or `False`. Other values raise `TypeError` when the iterable is constructed; `"false"` is not a boolean setting. |
-| Extra options | The current Rust lookup rejects additional per-call options with `NotImplementedError` when fetching. Restore confirmed legacy request controls and the response callback without running legacy Python. Separately decide compatibility for `initial_headers` and `excluded_locations`, which this legacy API did not apply as header or routing settings. |
+| Timeout | Support the client default and per-call override as one lazy discovery budget, not the legacy per-fetch limit. Replaying an already successful result uses its cached list, not a new discovery or deadline. |
+| Extra options | Apart from `timeout`, the current Rust lookup rejects additional per-call options with `NotImplementedError` when fetching. Restore remaining confirmed legacy request controls and the response callback without running legacy Python. Separately decide compatibility for `initial_headers` and `excluded_locations`, which this legacy API did not apply as header or routing settings. |
 | Iteration | Preserve lazy discovery and return dictionaries. One iterable retains one complete range list; requesting its page again gives independent copies. Make a new API call for another discovery. |
 | Continuation | Reject a non-`None` token passed to `by_page` with `ValueError` rather than ignore it and start again. There is no public resumable range enumeration or page-size control. |
 | Parallel calls | Separate result iterators are independent. Concurrent fetches on one result iterator raise `RuntimeError` rather than race two discoveries. |

@@ -29,6 +29,7 @@ extends:
   parameters:
     ServiceDirectory: cosmos
     InstallMsRustToolchain: true
+    RunRustTests: true
     MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/cosmos/azure-cosmos
     MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
     MsRustAdditionalTargets: aarch64-pc-windows-msvc
@@ -36,5 +37,6 @@ extends:
     - name: azure-cosmos
       safeName: azurecosmos
       signBinaries: true
+      skipPublishSdist: true
     - name: azure-mgmt-cosmosdb
       safeName: azuremgmtcosmosdb

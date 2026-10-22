@@ -4,8 +4,7 @@
 """Async data-plane versions of the encoding round-trip tests.
 
 This mirrors the sync document/partition-key checks and emoji round-trips
-using the async client. The stored-procedure control-plane check remains in
-the sync file because it relies on key-auth script operations.
+using the async client.
 """
 import json
 import unittest

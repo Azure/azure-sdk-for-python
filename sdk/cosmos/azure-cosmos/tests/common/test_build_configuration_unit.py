@@ -6,7 +6,7 @@
 """Offline checks that the files describing how this package is built still say what the
 release process needs them to say.
 
-Nothing here builds anything. These tests read the build configuration files and check
+No test compiles Rust. These tests read the build configuration files and check
 the values that, if changed by accident, would produce a package that looks fine and is
 wrong: built for the wrong Python, missing an architecture, or built against a driver
 from somebody's laptop instead of a fixed revision.
@@ -19,11 +19,12 @@ from pathlib import Path
 from functools import partial
 import runpy
 import shutil
+import subprocess
+import sys
 from unittest.mock import patch
 
 import pytest
-import azure_cosmos_build_backend as build_backend
-import azure_cosmos_build_metadata as build_metadata
+from setuptools.errors import SetupError
 
 try:
     import tomllib
@@ -32,6 +33,102 @@ except ImportError:
 
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[2]
+
+with pytest.MonkeyPatch.context() as _build_imports:
+    # Build helpers belong to the checkout, not to the installed SDK wheel.
+    _build_imports.syspath_prepend(str(PACKAGE_ROOT))
+    import azure_cosmos_build_backend as build_backend
+    import azure_cosmos_build_metadata as build_metadata
+
+
+@pytest.fixture(name="setuptools_source")
+def _setuptools_source(tmp_path):
+    """Copy only packaging inputs so rejected commands cannot affect the checkout."""
+    for relative in (
+        "setup.py",
+        "azure_cosmos_build_metadata.py",
+        "pyproject.toml",
+        "api.metadata.yml",
+        "README.md",
+        "CHANGELOG.md",
+        Path("azure") / "__init__.py",
+        Path("azure") / "cosmos" / "__init__.py",
+        Path("azure") / "cosmos" / "_version.py",
+        Path("azure") / "cosmos" / "_rust.pyi",
+    ):
+        destination = tmp_path / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(PACKAGE_ROOT / relative, destination)
+    return tmp_path
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        ["bdist_wheel"],
+        ["sdist"],
+        ["build"],
+        ["build_py"],
+        ["bdist_egg"],
+        ["editable_wheel"],
+        ["egg_info", "bdist_wheel"],
+    ],
+)
+def test_setuptools_artifact_commands_fail_closed_rust(setuptools_source, commands):
+    result = subprocess.run(
+        [sys.executable, "setup.py", *commands],
+        cwd=setuptools_source,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=60,
+    )
+    assert result.returncode != 0, result.stdout
+    assert "setup.py is metadata-only" in result.stderr
+    assert "python -m build" in result.stderr
+    assert not (setuptools_source / "dist").exists()
+    assert not (setuptools_source / "build").exists()
+    assert not list(setuptools_source.glob("*.egg-info"))
+
+
+@pytest.mark.parametrize(
+    "commands", [["--name"], ["--version"], ["egg_info"], ["dist_info"]]
+)
+def test_setuptools_metadata_commands_remain_available_rust(
+    setuptools_source, commands
+):
+    result = subprocess.run(
+        [sys.executable, "setup.py", *commands],
+        cwd=setuptools_source,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=60,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    if commands == ["--name"]:
+        assert "azure-cosmos" in result.stdout
+    elif commands == ["--version"]:
+        assert build_metadata.validate_version_metadata(PACKAGE_ROOT) in result.stdout
+    elif commands == ["egg_info"]:
+        assert list(setuptools_source.glob("*.egg-info/PKG-INFO"))
+    else:
+        assert list(setuptools_source.glob("*.dist-info/METADATA"))
+    assert not (setuptools_source / "dist").exists()
+    assert not (setuptools_source / "build").exists()
+
+
+@pytest.mark.parametrize("command", ["install", "develop"])
+def test_setuptools_install_commands_never_execute_rust(monkeypatch, command):
+    monkeypatch.chdir(PACKAGE_ROOT)
+    with patch("setuptools.setup") as setup:
+        runpy.run_path(str(PACKAGE_ROOT / "setup.py"))
+    distribution = setup.call_args.kwargs["distclass"]()
+    distribution.commands = [command]
+    with patch("setuptools.Distribution.run_commands") as run_commands:
+        with pytest.raises(SetupError, match="setup.py is metadata-only"):
+            distribution.run_commands()
+    run_commands.assert_not_called()
 
 
 def _read_toml(path):
@@ -117,7 +214,7 @@ def test_driver_source_and_features_are_preserved_rust():
         assert dependency["workspace"] is True
         assert "path" not in dependency
     assert set(binding["dependencies"]["azure_data_cosmos_driver"]["features"]) == {
-        "__internal_native_query_plan", "fault_injection", "preview_patch"
+        "__internal_native_query_plan", "fault_injection", "unstable_patch"
     }
     assert binding["dev-dependencies"]["azure_data_cosmos_driver"]["features"] == [
         "__internal_in_memory_emulator"

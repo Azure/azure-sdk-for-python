@@ -28,6 +28,7 @@ from .._backend.operations import OP_QUERY_ITEMS
 from .._backend.partition_key_input import BindingPartitionKey
 from .._cosmos_responses import CosmosItemPaged
 from .._query_advisor import get_query_advice_info
+from .._telemetry import trace_operation
 from ._partition_key import query_partition_key_components
 from ._read_all_items import ReadAllConfig, ReadAllPageState
 from ._read_items import partition_key_components
@@ -274,6 +275,28 @@ class QueryPageState(ReadAllPageState):
         return False
 
 
+@trace_operation(
+    binding_operation="query_items",
+    operation_name="query_items",
+    name_of_span="ContainerProxy.query_items.fetch",
+)
+def _fetch_rust_page(config: QueryConfig, state: QueryPageState, deadline: Optional[float]) -> Optional[list[Any]]:
+    """Record one internal fetch, accepting the public page only when ready."""
+    previous = state.token
+    pages = config.backend.execute_pages(
+        config.prepared(state.token, state.cursor, deadline),
+        deadline=deadline,
+    )
+    try:
+        page = next(pages)
+    except StopIteration as error:
+        raise RuntimeError("Rust backend returned no query page.") from error
+    finally:
+        pages.close()
+    rows = state.parse(page)
+    return state.accept(rows, deadline) if state.should_deliver(rows, previous) else None
+
+
 class QueryPageIterator(Iterator[Iterator[Any]]):
     """Fetch query pages, using has_more rather than token availability to finish."""
 
@@ -307,23 +330,9 @@ class QueryPageIterator(Iterator[Iterator[Any]]):
             deadline = state.config.deadline()
             state.begin()
             while True:
-                previous = state.token
-                pages = state.config.backend.execute_pages(
-                    state.config.prepared(state.token, state.cursor, deadline),
-                    deadline=deadline,
-                )
-                try:
-                    page = next(pages)
-                except StopIteration as error:
-                    raise RuntimeError(
-                        "Rust backend returned no query page."
-                    ) from error
-                finally:
-                    pages.close()
-                rows = state.parse(page)
-                if state.should_deliver(rows, previous):
+                rows = _fetch_rust_page(state.config, state, deadline)
+                if rows is not None:
                     break
-            state.accept(rows, deadline)
         except BaseException as error:
             state.invalidate(error)
             raise

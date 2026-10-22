@@ -5,7 +5,7 @@
 Reading a knee off a chart by eye is subjective and unreproducible. This script
 turns the sweep rows into an explicit verdict per (op, backend):
 
-  1. Pooled throughput per concurrency point: SUM(count)/SUM(window_seconds) over
+  1. Pooled throughput per concurrency point: SUM(count)/SUM(interval_duration_seconds) over
      post-warmup windows, never the max or last of a single window.
 
   2. Automated knee. Walking the concurrency ladder, the first level whose
@@ -203,7 +203,7 @@ def main():
             print(f"  FAIL {key}: no complete post-warmup windows")
             continue
         cnt = sum(r.get("count") or 0 for r in post)
-        wsec = sum(r.get("window_seconds") or 0 for r in post)
+        wsec = sum(r.get("interval_duration_seconds") or 0 for r in post)
         err = sum(r.get("errors") or 0 for r in post)
         ru = sum(r.get("ru_sum") or 0 for r in post)
         ruc = sum(r.get("ru_count") or 0 for r in post)

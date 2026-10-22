@@ -250,7 +250,7 @@ def _aggregate(container, prefix: str, run_id: str):
         _us = r.get("config_use_sync")
         a["sync_values"].add(bool(_us) if _us is not None else None)
         a["proxy_values"].add(r.get("config_proxy_enabled"))
-        a["window_s"] += float(r.get("window_seconds", 0.0) or 0.0)
+        a["window_s"] += float(r.get("interval_duration_seconds", 0.0) or 0.0)
         a["ru_weighted"] += float(r.get("ru_sum", 0.0) or 0.0)
         a["ru_count"] += int(r.get("ru_count", 0) or 0)
         hb = r.get("hist_b64")

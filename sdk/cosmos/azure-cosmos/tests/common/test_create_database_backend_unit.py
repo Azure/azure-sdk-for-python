@@ -2194,19 +2194,15 @@ def test_create_async_timeout_drains_pending_work_rust():
 @pytest.mark.parametrize("name", ["create_database", "create_database_async"])
 @pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
 @pytest.mark.parametrize("include_attempts", [False, True])
-def test_create_native_binding_accepts_remaining_budget_rust(name, remaining, include_attempts):
-    """The native create entry points, sync and async, accept a prepared request plus
-    whatever time is left, and get as far as looking for the driver.
+def test_create_native_binding_rejects_string_handle_rust(name, remaining, include_attempts):
+    """A prepared create cannot use a string in place of the owning driver handle.
 
-    The handle passed in was never registered, so the expected outcome is a
-    driver error. That failure is the proof: the call was accepted and rejected
-    on the missing driver, not on the shape of its arguments. If the remaining
-    budget were the wrong type or in the wrong units the call would have failed
-    earlier and differently.
+    Windows-emulator binding tests exercise real handles and service responses;
+    rejecting this handle does not prove timeout handling.
     """
     from azure.cosmos import _rust
     prepared = build_create_database_prepared({"id": "db1"}, {})
-    with pytest.raises(RuntimeError, match="(?i)driver"):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         function = getattr(_rust, name)
         assert inspect.signature(function).parameters["include_attempts"].default is False
         function(
@@ -3228,18 +3224,14 @@ def test_if_not_exists_async_timeout_or_cancellation_drains_each_stage_rust(stag
 @pytest.mark.parametrize("name", ["read_database", "read_database_async"])
 @pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
 @pytest.mark.parametrize("include_attempts", [False, True])
-def test_database_read_native_binding_accepts_remaining_budget_rust(name, remaining, include_attempts):
-    """The native read entry points, sync and async, accept a prepared read plus the
-    time remaining, including no limit at all.
+def test_database_read_native_binding_rejects_string_handle_rust(name, remaining, include_attempts):
+    """Reject string handles independently of the requested budget and diagnostics.
 
-    As with the create binding, the handle is unregistered, so reaching a driver
-    error proves the arguments themselves were accepted. Passing no limit is
-    included because a read with no deadline is a normal call, not a special
-    case.
+    Windows-emulator binding tests cover successful reads with real handles.
     """
     from azure.cosmos import _rust
     prepared = build_read_database_prepared("db1", {})
-    with pytest.raises(RuntimeError, match="(?i)driver"):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         getattr(_rust, name)(
             "unregistered-read-test-handle", prepared, timeout_seconds=remaining, include_attempts=include_attempts
         )
@@ -3959,14 +3951,14 @@ def test_delete_database_invalid_guards_fail_before_dispatch_rust(
 @pytest.mark.parametrize("name", ["delete_database", "delete_database_async"])
 @pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
 @pytest.mark.parametrize("include_attempts", [False, True])
-def test_delete_native_binding_accepts_remaining_budget_rust(name, remaining, include_attempts):
-    """Reach driver lookup with the exact remaining budget, without acquiring a driver."""
+def test_delete_native_binding_rejects_string_handle_rust(name, remaining, include_attempts):
+    """Reject string handles; Windows-emulator binding tests cover real-handle deletion."""
     from azure.cosmos import _rust
 
     prepared = build_delete_database_prepared("dbs/sales", {})
     function = getattr(_rust, name)
     assert inspect.signature(function).parameters["include_attempts"].default is False
-    with pytest.raises(RuntimeError, match="(?i)driver"):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         function(
             "unregistered-delete-test-handle", prepared, timeout_seconds=remaining, include_attempts=include_attempts
         )
@@ -3974,12 +3966,12 @@ def test_delete_native_binding_accepts_remaining_budget_rust(name, remaining, in
 
 @pytest.mark.parametrize("name", ["delete_database", "delete_database_async"])
 @pytest.mark.parametrize("remaining", [0, -1, float("inf"), float("nan")])
-def test_delete_native_binding_rejects_invalid_remaining_budget_rust(name, remaining):
-    """Reject invalid remaining durations before driver lookup or deletion."""
+def test_delete_native_binding_checks_handle_before_remaining_budget_rust(name, remaining):
+    """Check the handle first; Windows-emulator binding tests cover invalid budgets with real handles."""
     from azure.cosmos import _rust
 
     prepared = build_delete_database_prepared("dbs/sales", {})
-    with pytest.raises(ValueError, match="timeout_seconds"):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         getattr(_rust, name)("unregistered-delete-test-handle", prepared, timeout_seconds=remaining)
 
 

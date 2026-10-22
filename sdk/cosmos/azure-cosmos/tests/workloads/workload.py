@@ -256,7 +256,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
                     # waits for the whole wave before the next op runs. A wave does not
                     # refill as calls finish, so in-flight decays from N toward 0, and
                     # the enabled ops run one phase at a time. Read achieved req/s from
-                    # the rows as count / window_seconds, not from concurrency / latency.
+                    # the rows as count / interval_duration_seconds, not from concurrency / latency.
                     #
                     # The loop runs until stop_event is set between waves, so the run
                     # ends by falling out of the loop. KeyboardInterrupt is only the

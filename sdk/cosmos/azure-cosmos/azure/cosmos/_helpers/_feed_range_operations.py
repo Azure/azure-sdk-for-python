@@ -25,6 +25,7 @@ from contextlib import contextmanager
 from copy import deepcopy
 from dataclasses import replace
 import threading
+import time
 
 from azure.cosmos._backend.capabilities import OperationRouting
 
@@ -58,7 +59,10 @@ from .._feed_ranges_rust_routing import (
 )
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._helpers._response_parse import build_response_headers, parse_response_body, process_backend_response
+from .._helpers._item_prep import prepare_item_deadline
+from .._operation_deadline import remaining_timeout, run_with_deadline
 from .._routing.routing_range import Range
+from .._telemetry import trace_operation, trace_operation_async
 
 
 class _FeedRangesResult:
@@ -113,6 +117,7 @@ def read_feed_ranges(
     get_properties: Callable[[], Mapping[str, Any]],
     force_refresh: bool,
     kwargs: Mapping[str, Any],
+    telemetry_owner: Any = None,
 ) -> CosmosItemPaged:
     """Fetch one complete range set lazily; return copies on subsequent iteration."""
     validate_read_feed_ranges_force_refresh(force_refresh)
@@ -151,16 +156,35 @@ def read_feed_ranges(
                 for partition_key_range in partition_key_ranges
             ]
 
+        @trace_operation(
+            binding_operation="read_feed_ranges",
+            operation_name="read_feed_ranges",
+            name_of_span="ContainerProxy.read_feed_ranges.fetch",
+        )
+        def discover(_owner: Any, **_tracing_kwargs: Any) -> list[dict[str, Any]]:
+            deadline = (
+                prepare_item_deadline(dict(kwargs), "read_feed_ranges", time.monotonic()) if rust_eligible else None
+            )
+            ranges = backend.run_operation(
+                build_request=lambda: build_read_feed_ranges_prepared_request(
+                    container_link=container_link,
+                    force_refresh=force_refresh,
+                ),
+                routing=OperationRouting("read_feed_ranges", rust_eligible),
+                legacy_call=run_legacy,
+                process_response=result.process_response,
+                deadline=deadline,
+            )
+            values = deepcopy(ranges)
+            remaining_timeout(deadline)
+            result.ranges = ranges
+            return values
+
         with result.fetch(continuation_token):
             if result.ranges is None:
-                result.ranges = backend.run_operation(
-                    build_request=lambda: build_read_feed_ranges_prepared_request(
-                        container_link=container_link,
-                        force_refresh=force_refresh,
-                    ),
-                    routing=OperationRouting("read_feed_ranges", rust_eligible),
-                    legacy_call=run_legacy,
-                    process_response=result.process_response,
+                return discover(
+                    telemetry_owner,
+                    **{key: kwargs[key] for key in ("tracing_options", "tracing_attributes") if key in kwargs},
                 )
             return deepcopy(result.ranges)
 
@@ -250,6 +274,7 @@ def read_feed_ranges_async(
     get_properties: Callable[[], Awaitable[Mapping[str, Any]]],
     force_refresh: bool,
     kwargs: Mapping[str, Any],
+    telemetry_owner: Any = None,
 ) -> CosmosAsyncItemPaged:
     """Async twin of :func:`read_feed_ranges`."""
     validate_read_feed_ranges_force_refresh(force_refresh)
@@ -294,13 +319,35 @@ def read_feed_ranges_async(
                 for partition_key_range in partition_key_ranges
             ]
 
-        with result.fetch(continuation_token):
-            if result.ranges is None:
-                result.ranges = await backend.run_operation(
+        @trace_operation_async(
+            binding_operation="read_feed_ranges",
+            operation_name="read_feed_ranges",
+            name_of_span="ContainerProxy.read_feed_ranges.fetch",
+        )
+        async def discover(_owner: Any, **_tracing_kwargs: Any) -> list[dict[str, Any]]:
+            deadline = (
+                prepare_item_deadline(dict(kwargs), "read_feed_ranges", time.monotonic()) if rust_eligible else None
+            )
+            ranges = await run_with_deadline(
+                lambda: backend.run_operation(
                     build_request=build_request,
                     routing=OperationRouting("read_feed_ranges", rust_eligible),
                     legacy_call=run_legacy,
                     process_response=result.process_response,
+                    deadline=deadline,
+                ),
+                deadline,
+            )
+            values = deepcopy(ranges)
+            remaining_timeout(deadline)
+            result.ranges = ranges
+            return values
+
+        with result.fetch(continuation_token):
+            if result.ranges is None:
+                return await discover(
+                    telemetry_owner,
+                    **{key: kwargs[key] for key in ("tracing_options", "tracing_attributes") if key in kwargs},
                 )
             return deepcopy(result.ranges)
 

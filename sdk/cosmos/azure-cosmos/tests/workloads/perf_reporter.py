@@ -101,7 +101,7 @@ class PerfReporter:
         self._container = None
         self._failure = None
         self._process_id = str(uuid.uuid4())
-        self._window_index = 0
+        self._interval_number = 0
         self._summary_count = 0
         self._total_count = 0
         self._total_errors = 0
@@ -109,8 +109,8 @@ class PerfReporter:
         self._sdk_version = _get_sdk_version()
         self._process = psutil.Process()
         # Monotonic time of the last successful drain. Each row stores the actual
-        # seconds it covers (window_seconds = now - this), so throughput is
-        # count / window_seconds. If a flush is skipped the next drain covers a
+        # seconds it covers (interval_duration_seconds = now - this), so throughput is
+        # count / interval_duration_seconds. If a flush is skipped the next drain covers a
         # longer window, which keeps req/s correct instead of too high.
         self._last_flush_monotonic = time.monotonic()
         # Reporter start (monotonic), for the elapsed_seconds each row carries so
@@ -191,18 +191,18 @@ class PerfReporter:
         _get_system_cpu_percent()
 
         # Start the window clock now, after warmup, so the first row's
-        # window_seconds reflects the first interval rather than any startup gap
+        # interval_duration_seconds reflects the first interval rather than any startup gap
         # between construction and the thread actually running.
         self._last_flush_monotonic = time.monotonic()
         self._start_monotonic = self._last_flush_monotonic
         # Re-prime the CPU/GC baselines at the same instant the window clock
-        # starts, so the first window's deltas line up with its window_seconds.
+        # starts, so the first interval's deltas line up with its duration.
         self._last_cpu_user, self._last_cpu_system = _get_cpu_times(self._process)
         self._last_gc_collections, self._last_gc_collected, self._last_gc_uncollectable = (
             _get_gc_stats()
         )
         # Reset the backend-counter baselines at the same instant, so the first
-        # post-warmup window's execute/binding deltas line up with window_seconds.
+        # post-warmup interval's execute/binding deltas line up with its duration.
         self._last_execute_calls = backend_counters.execute_count()
         self._last_binding_calls = backend_counters.binding_operation_count() or 0
         self._last_attempt_calls = backend_counters.binding_attempt_count() or 0
@@ -226,11 +226,10 @@ class PerfReporter:
             "record_type": "completion",
             "workload_id": self._config["workload_id"],
             "process_id": self._process_id,
-            "window_count": self._window_index,
+            "interval_count": self._interval_number,
             "summary_count": self._summary_count,
             "total_count": self._total_count,
             "total_errors": self._total_errors,
-            "measurement_version": 2,
             "fixed_rate_schedules": self._stats.schedule_snapshot(),
         })
 
@@ -310,16 +309,16 @@ class PerfReporter:
         summaries, errors = self._stats.drain_all()
         if not summaries and not errors:
             return
-        self._window_index += 1
-        window_id = f"{self._process_id}-{self._window_index}"
+        self._interval_number += 1
+        interval_id = f"{self._process_id}-{self._interval_number}"
         self._summary_count += len(summaries)
         self._total_count += sum(s["count"] for s in summaries)
         self._total_errors += sum(s["errors"] for s in summaries)
         # The drain is when these counts stop accumulating, so measure the window
         # here. It is normally the configured interval, but longer when a previous
-        # flush was skipped; storing it keeps count / window_seconds accurate.
+        # flush was skipped; storing it keeps count / interval_duration_seconds accurate.
         now_monotonic = time.monotonic()
-        window_seconds = now_monotonic - self._last_flush_monotonic
+        interval_duration_seconds = now_monotonic - self._last_flush_monotonic
         self._last_flush_monotonic = now_monotonic
         # Seconds since the (post-warmup) reporter start, so a query can drop
         # warmup windows instead of letting cold start decide the result.
@@ -381,8 +380,8 @@ class PerfReporter:
                 "workload_id": self._config["workload_id"],
                 "record_type": "measurement",
                 "process_id": self._process_id,
-                "window_id": window_id,
-                "window_index": self._window_index,
+                "interval_id": interval_id,
+                "interval_number": self._interval_number,
                 "commit_sha": self._config["commit_sha"],
                 "driver_commit": self._config["driver_commit"],
                 "hostname": self._hostname,
@@ -392,9 +391,9 @@ class PerfReporter:
                 "errors": s["errors"],
                 "throttled_429": s["throttled_429"],
                 # Actual seconds this row covers, so throughput is
-                # count / window_seconds. Do not divide count by the configured
+                # count / interval_duration_seconds. Do not divide count by the configured
                 # interval; that is wrong for merged windows and the final flush.
-                "window_seconds": window_seconds,
+                "interval_duration_seconds": interval_duration_seconds,
                 # Seconds since (post-warmup) start, so warmup windows can be
                 # dropped from the result.
                 "elapsed_seconds": elapsed_seconds,
@@ -409,7 +408,6 @@ class PerfReporter:
                 # Lets an offline analyzer merge every window of a point for a true
                 # pooled p50/p99/p99.9, which the per-window scalars cannot give.
                 "hist_b64": s.get("hist_b64"),
-                "measurement_version": 2,
                 "duration_kind": "total" if arrival_rate > 0 and not use_sync else "sdk_call",
                 "fixed_rate_timings": s["fixed_rate_timings"],
                 "latency_overflow_count": s["latency_overflow_count"],

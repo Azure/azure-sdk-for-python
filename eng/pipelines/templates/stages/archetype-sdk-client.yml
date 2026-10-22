@@ -17,6 +17,9 @@ parameters:
   - name: AfterTestSteps
     type: object
     default: []
+  - name: AdditionalJobs
+    type: jobList
+    default: []
   - name: ExcludePaths
     type: object
     default: []
@@ -131,6 +134,7 @@ extends:
       - stage: Build
         condition: not(and(eq(${{ parameters.SkipPrValidation }}, true), eq(variables['Build.Reason'], 'Manual')))
         jobs:
+          - ${{ parameters.AdditionalJobs }}
           - template: /eng/pipelines/templates/jobs/ci.yml
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}

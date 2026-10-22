@@ -6,7 +6,7 @@ Self-contained: builds its own database + container in ``setUp`` and
 registers cleanup immediately. The class name and method names match the
 source (apart from the method's ``_rust`` suffix) at ``tests/test_query.py`` so test IDs
 differ by path and method suffix.
-The None-parameters, ordered-paging, OFFSET LIMIT, COUNT, MAX, and query/index-metrics tests reuse the
+The positional-argument, None-parameters, ordered-paging, OFFSET LIMIT, COUNT, MAX, and query/index-metrics tests reuse the
 owned container; their query inputs and assertions are unchanged.
 DISTINCT retains its original composite indexes in a separate owned container.
 Query advice retains the original unconditional emulator-related skip.
@@ -217,6 +217,53 @@ class TestQuery(unittest.TestCase):
         item_list = list(query_results)
         assert len(item_list) == 1
         assert item_list[0] == 3
+
+    def test_query_positional_args_rust(self):
+        # Source: tests/test_query.py::TestQuery.test_query_positional_args
+        container = self.container
+        partition_key_value1 = "pk1"
+        partition_key_value2 = "pk2"
+
+        num_items = 10
+        new_items = []
+        for pk_value in [partition_key_value1, partition_key_value2]:
+            for i in range(num_items):
+                item = {
+                    'pk': pk_value,
+                    'id': f"{pk_value}_{i}",
+                    'name': 'sample name'
+                }
+                new_items.append(item)
+
+        for item in new_items:
+            container.upsert_item(body=item)
+
+        query = "SELECT * FROM root r WHERE r.name=@name"
+        parameters = [{'name': '@name', 'value': 'sample name'}]
+        partition_key_value = partition_key_value2
+        enable_cross_partition_query = True
+        max_item_count = 3
+        enable_scan_in_query = True
+        populate_query_metrics = True
+        pager = container.query_items(
+            query,
+            parameters,
+            partition_key_value,
+            enable_cross_partition_query,
+            max_item_count,
+            enable_scan_in_query,
+            populate_query_metrics,
+        ).by_page()
+
+        ids = []
+        for page in pager:
+            items = list(page)
+            num_items = len(items)
+            for item in items:
+                assert item['pk'] == partition_key_value
+                ids.append(item['id'])
+            assert num_items <= max_item_count
+        assert ids == [item['id'] for item in new_items if item['pk'] == partition_key_value]
 
     def test_query_items_with_parameters_none_rust(self):
         """Test that query_items handles parameters=None correctly (issue #43662)."""

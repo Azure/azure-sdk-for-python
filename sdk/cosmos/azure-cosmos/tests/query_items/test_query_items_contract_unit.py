@@ -33,6 +33,7 @@ from common.typed_requests import wire_headers, settings_options, legacy_setting
 import asyncio
 import inspect
 import json
+from copy import deepcopy
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
@@ -48,6 +49,38 @@ from azure.cosmos._helpers import _read_all_items
 from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
+from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
+from azure.cosmos._routing.routing_range import Range
+
+
+@pytest.mark.parametrize("key,epk", [
+    ("customer-501", "11622DAA78F835834610ABE56EFF5CB5"),
+    ("customer-501", "000000000000000000000000000000FF"),
+    (["tenant-1", "West US", "customer-501"], "01" * 48),
+])
+def test_query_accepts_sdk_point_range_without_mutating_it_rust(query, key, epk):
+    expected_range = FeedRangeInternalEpk(Range(epk, epk, True, True)).get_normalized_range()
+    payload = {"Range": {"min": epk, "max": epk, "isMinInclusive": True, "isMaxInclusive": True}}
+    result = (200, 0, {}, json.dumps(payload).encode(), None)
+    name = "feed_range_from_partition_key" + ("_async" if query.async_mode else "")
+    producer = AsyncMock(return_value=result) if query.async_mode else MagicMock(return_value=result)
+    setattr(query.binding, name, producer)
+    point = query.proxy.feed_range_from_partition_key(key)
+    if query.async_mode:
+        point = asyncio.run(point)
+    original = deepcopy(point)
+    query.pages = [[{"id": "selected-order"}], None]
+    assert query.collect(query.proxy.query_items("SELECT * FROM c", feed_range=point)) == [
+        {"id": "selected-order"}
+    ]
+    assert point == original == payload
+    assert query.calls
+    assert all(
+        prepared.query_scope.feed_range == (expected_range.min, expected_range.max)
+        for prepared, _, _ in query.calls
+    )
+    producer.assert_called_once()
+    assert not query.connection.mock_calls
 
 
 def test_deployed_udf_call_remains_an_ordinary_item_query_rust(query):

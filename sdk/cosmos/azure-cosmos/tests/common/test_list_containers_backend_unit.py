@@ -469,7 +469,7 @@ def test_timeout_restarts_between_public_page_fetches_rust(listing_case, monkeyp
     """
     case = listing_case
     clock = [100.0]
-    monkeypatch.setattr(time, "time", lambda: clock[0])
+    monkeypatch.setattr(time, "monotonic", lambda: clock[0])
     pager = case.database.list_containers(timeout=1).by_page()
     clock[0] += 10
 
@@ -508,7 +508,7 @@ def test_empty_service_page_does_not_reset_current_page_budget_rust(listing_case
     if not case.rust:
         pytest.skip("Legacy transport timeout checks are bypassed by the fake HTTP response")
     clock = [100.0]
-    monkeypatch.setattr(time, "time", lambda: clock[0])
+    monkeypatch.setattr(time, "monotonic", lambda: clock[0])
     case.responses[""] = _page([], "next")
 
     def hook(headers, results_iterator):

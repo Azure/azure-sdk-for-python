@@ -103,6 +103,9 @@ class OpCapability:
 
 
 CAPABILITIES: dict[str, OpCapability] = {
+    ops.OP_EXECUTE_ITEM_BATCH: OpCapability(
+        frozenset({ops.OP_EXECUTE_ITEM_BATCH}),
+    ),
     GET_CONTAINER_THROUGHPUT: OpCapability(
         frozenset({ops.OP_GET_THROUGHPUT}),
         unsupported_message=(
@@ -246,7 +249,7 @@ CAPABILITIES: dict[str, OpCapability] = {
         frozenset({ops.OP_READ_FEED_RANGES}),
         unsupported_message=(
             "read_feed_ranges cannot honor additional per-call options on Rust; "
-            "only force_refresh is supported by this range lookup. "
+            "only force_refresh and timeout are supported by this range lookup. "
             "The request will not be sent through legacy Python."
         ),
     ),

@@ -1247,8 +1247,8 @@ def test_container_feeds_are_paged_operations_rust():
 @pytest.mark.parametrize("suffix", ["", "_async"])
 @pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
 @pytest.mark.parametrize("include_attempts", [False, True])
-def test_container_composed_native_accepts_remaining_timeout_rust(operation, suffix, remaining, include_attempts):
-    """Read/create accept a subsecond remaining budget before looking up the driver."""
+def test_container_composed_native_rejects_string_handle_rust(operation, suffix, remaining, include_attempts):
+    """Reject string handles; Windows-emulator binding tests cover successful calls with real handles."""
     from azure.cosmos import _rust
 
     prepared = (
@@ -1259,7 +1259,7 @@ def test_container_composed_native_accepts_remaining_timeout_rust(operation, suf
     native = getattr(_rust, operation + suffix)
     assert inspect.signature(native).parameters["timeout_seconds"].default is None
     assert inspect.signature(native).parameters["include_attempts"].default is False
-    with pytest.raises(RuntimeError, match="(?i)driver"):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         native("unregistered-container-composed-test", prepared,
                timeout_seconds=remaining, include_attempts=include_attempts)
 
@@ -1267,8 +1267,8 @@ def test_container_composed_native_accepts_remaining_timeout_rust(operation, suf
 @pytest.mark.parametrize("operation", ["read_container", "create_container"])
 @pytest.mark.parametrize("suffix", ["", "_async"])
 @pytest.mark.parametrize("remaining", [0, -1, float("inf"), float("nan")])
-def test_container_composed_native_rejects_invalid_remaining_timeout_rust(operation, suffix, remaining):
-    """An invalid remaining duration fails before driver acquisition or dispatch."""
+def test_container_composed_native_checks_handle_before_remaining_timeout_rust(operation, suffix, remaining):
+    """Check the handle first; Windows-emulator binding tests reject invalid budgets with real handles."""
     from azure.cosmos import _rust
 
     prepared = (
@@ -1276,7 +1276,7 @@ def test_container_composed_native_rejects_invalid_remaining_timeout_rust(operat
         if operation == "read_container"
         else build_create_container_prepared("dbs/db1", {"id": "c1"}, {})
     )
-    with pytest.raises(ValueError, match="timeout_seconds"):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         getattr(_rust, operation + suffix)(
             "unregistered-container-composed-test", prepared, timeout_seconds=remaining
         )

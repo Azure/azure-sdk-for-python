@@ -19,6 +19,35 @@ from azure.core.utils import CaseInsensitiveDict
 from ..._cosmos_responses import CosmosAsyncItemPaged
 from ..._helpers._query_items import QueryConfig, QueryPageState
 from ..._operation_deadline import run_with_deadline
+from ..._telemetry import trace_operation_async
+
+
+@trace_operation_async(
+    binding_operation="query_items",
+    operation_name="query_items",
+    name_of_span="ContainerProxy.query_items.fetch",
+)
+async def _fetch_rust_page(
+    config: QueryConfig, state: QueryPageState, deadline: Optional[float]
+) -> Optional[list[Any]]:
+    """Record one internal fetch and finish its authorized work before acceptance."""
+    previous = state.token
+
+    async def fetch_one() -> list[Any]:
+        pages = config.backend.execute_pages(
+            config.prepared(state.token, state.cursor, deadline),
+            deadline=deadline,
+        )
+        try:
+            page = await pages.__anext__()
+        except StopAsyncIteration as error:
+            raise RuntimeError("Rust backend returned no query page.") from error
+        finally:
+            await pages.aclose()
+        return state.parse(page)
+
+    rows = await run_with_deadline(fetch_one, deadline)
+    return state.accept(rows, deadline) if state.should_deliver(rows, previous) else None
 
 
 class AsyncQueryPageIterator(AsyncIterator[AsyncIterator[Any]]):
@@ -67,27 +96,10 @@ class AsyncQueryPageIterator(AsyncIterator[AsyncIterator[Any]]):
             deadline = state.config.deadline()
             state.begin()
 
-            async def fetch() -> list[Any]:
-                while True:
-                    previous = state.token
-                    pages = state.config.backend.execute_pages(
-                        state.config.prepared(state.token, state.cursor, deadline),
-                        deadline=deadline,
-                    )
-                    try:
-                        page = await pages.__anext__()
-                    except StopAsyncIteration as error:
-                        raise RuntimeError(
-                            "Rust backend returned no query page."
-                        ) from error
-                    finally:
-                        await pages.aclose()
-                    rows = state.parse(page)
-                    if state.should_deliver(rows, previous):
-                        return rows
-
-            rows = await run_with_deadline(fetch, deadline)
-            state.accept(rows, deadline)
+            while True:
+                rows = await _fetch_rust_page(state.config, state, deadline)
+                if rows is not None:
+                    break
         except BaseException as error:
             state.invalidate(error)
             raise

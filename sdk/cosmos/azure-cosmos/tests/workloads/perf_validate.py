@@ -23,7 +23,7 @@ import os
 import re
 import sys
 from perf_results import (
-    EXPECTED_RUNTIME, TIMING_COMPONENTS, summary_rows, window_key,
+    EXPECTED_RUNTIME, TIMING_COMPONENTS, summary_rows, interval_key,
     fixed_rate_timing, fixed_rate_schedule_totals, add_histogram,
 )
 
@@ -182,19 +182,19 @@ def check_continuity(container, prefix: str, run_id: str, report_interval_s: flo
     # strictly by workload_id so each timeline is a single process.
     cells = {}
     for r in summary_rows(rows):
-        cells.setdefault((r["workload_id"], r.get("process_id")), {})[window_key(r)] = r
+        cells.setdefault((r["workload_id"], r.get("process_id")), {})[interval_key(r)] = r
 
     tol = _gap_tolerance_s(report_interval_s)
     all_ok = bool(cells)
     for wid in sorted(cells):
         recs = sorted(cells[wid].values(), key=lambda x: x.get("elapsed_seconds", 0.0))
-        sum_window = sum(float(x.get("window_seconds", 0.0)) for x in recs)
+        sum_window = sum(float(x.get("interval_duration_seconds", 0.0)) for x in recs)
         max_elapsed = max(float(x.get("elapsed_seconds", 0.0)) for x in recs)
         holes = []
         prev = None
         for x in recs:
             el = float(x.get("elapsed_seconds", 0.0))
-            wl = float(x.get("window_seconds", 0.0))
+            wl = float(x.get("interval_duration_seconds", 0.0))
             if prev is not None:
                 jump = el - prev
                 # A healthy jump equals THIS row's window. A bigger jump means
@@ -315,9 +315,9 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
         a["count"] += int(r.get("count", 0) or 0)
         a["runtimes"].add(r.get("runtime_backend"))
         a["labels"].add(r.get("config_backend"))
-        if window_key(r) in a["windows"]:
+        if interval_key(r) in a["windows"]:
             continue
-        a["windows"].add(window_key(r))
+        a["windows"].add(interval_key(r))
         a["execute"] += int(r.get("rust_execute_calls", 0) or 0)
         b = r.get("binding_calls", -1)
         b = int(b if b is not None else -1)
@@ -438,15 +438,15 @@ def check_completion(container, prefix, run_id, expected_workloads=None):
         lines.append("  [BAD] process measurements and completion records do not match")
     for key, summaries in grouped.items():
         record = done.get(key, {})
-        windows = {r.get("window_index") for r in summaries}
+        intervals = {r.get("interval_number") for r in summaries}
         valid = (
             isinstance(key[1], str) and bool(key[1])
             and record.get("summary_count") == len(summaries)
             and record.get("total_count") == sum(r["count"] for r in summaries)
             and record.get("total_errors") == sum(r["errors"] for r in summaries)
-            and windows == set(range(1, record.get("window_count", 0) + 1))
+            and intervals == set(range(1, record.get("interval_count", 0) + 1))
         )
-        if any(r.get("measurement_version", 0) >= 2 and r.get("config_arrival_rate", 0) > 0
+        if any(r.get("config_arrival_rate", 0) > 0
                and r.get("config_use_sync") is False for r in summaries):
             schedule = fixed_rate_schedule_totals(summaries, record)
             valid = valid and schedule is not None

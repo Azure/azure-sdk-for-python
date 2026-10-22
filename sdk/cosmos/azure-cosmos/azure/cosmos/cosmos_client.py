@@ -178,9 +178,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     is valid or that the service is reachable.
 
     :param str url: The URL of the Cosmos DB account.
-    :param credential: An account key or Microsoft Entra token credential.
-        Resource-token dictionaries and permission lists are supported only by
-        legacy Python and are intentionally excluded from the Rust-backed release.
+    :param credential: An account key, a dictionary containing ``masterKey``,
+        or a Microsoft Entra token credential. Resource-token dictionaries and
+        permission lists are not supported by either backend.
     :type credential: Union[str, dict[str, str], ~azure.core.credentials.TokenCredential]
     :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels

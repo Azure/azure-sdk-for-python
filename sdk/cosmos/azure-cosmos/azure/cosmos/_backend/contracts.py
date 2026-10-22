@@ -218,6 +218,9 @@ class PreparedClientConfig(_ValidatedSettings):
     #: Application-header defaults, copied independently of the caller's mapping.
     headers: Mapping[str, str] = field(default_factory=dict, repr=False)
 
+    #: Token scope override captured at client construction; None uses the account scope.
+    aad_scope_override: Optional[str] = None
+
     def __post_init__(self) -> None:
         for name in ("preferred_locations", "excluded_locations", "fault_injection_rules"):
             value = getattr(self, name)
@@ -243,6 +246,7 @@ class PreparedClientConfig(_ValidatedSettings):
             type(key) is not str or type(value) is not str for key, value in self.headers.items()
         ):
             self._invalid_type("headers")
+        self._check_type("aad_scope_override", self.aad_scope_override, str)
         object.__setattr__(self, "headers", freeze_headers(self.headers))
 
 

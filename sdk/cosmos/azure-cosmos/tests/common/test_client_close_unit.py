@@ -102,8 +102,8 @@ def test_dispatch_keeps_owning_handle_across_close_rust(monkeypatch, async_mode,
         async def paused_ensure():
             return await asyncio.to_thread(pause, await ensure())
     else:
-        def paused_ensure():
-            return pause(ensure())
+        def paused_ensure(**kwargs):
+            return pause(ensure(**kwargs))
     monkeypatch.setattr(adapter, "_ensure_driver_handle", paused_ensure)
     request = PreparedRequest(
         op="read_database", container_link="", body_bytes=b"",

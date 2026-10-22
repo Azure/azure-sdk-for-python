@@ -17,16 +17,14 @@ from workload_configs import (
     PREFERRED_LOCATIONS,
     THROUGHPUT,
 )
-from workload_utils import create_logger, create_random_item
+from workload_utils import create_logger, create_seed_item
 
 
 async def write_item_concurrently_initial(container, num_upserts):
     for start in range(0, num_upserts, 100):
         tasks = []
         for i in range(start, min(start + 100, num_upserts)):
-            item = create_random_item()
-            item["id"] = "test-" + str(i)
-            item["pk"] = "pk-" + str(i)
+            item = create_seed_item(i)
             tasks.append(container.upsert_item(item))
         await asyncio.gather(*tasks)
 
@@ -43,7 +41,7 @@ async def run_workload(client_id: str):
         await asyncio.sleep(1)
 
         try:
-            # MAX_ITEM_INDEX is inclusive, so test-0 through test-N require N + 1 items.
+            # MAX_ITEM_INDEX is inclusive: suffixes 0 through N require N + 1 items.
             await write_item_concurrently_initial(cont, MAX_ITEM_INDEX + 1)
         except Exception as e:
             logger.error(e)

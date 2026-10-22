@@ -111,6 +111,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, ffi::delete_item);
     add_pyfn!(m, ffi::read_item);
     add_pyfn!(m, ffi::patch_item);
+    add_pyfn!(m, wire::batch::execute_item_batch);
     add_pyfn!(m, ffi::query_items);
     add_pyfn!(m, ffi::read_all_items);
     add_pyfn!(m, ffi::read_feed_ranges);
@@ -138,6 +139,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, ffi::delete_item_async);
     add_pyfn!(m, ffi::read_item_async);
     add_pyfn!(m, ffi::patch_item_async);
+    add_pyfn!(m, wire::batch::execute_item_batch_async);
     add_pyfn!(m, ffi::query_items_async);
     add_pyfn!(m, ffi::read_all_items_async);
     add_pyfn!(m, ffi::read_feed_ranges_async);

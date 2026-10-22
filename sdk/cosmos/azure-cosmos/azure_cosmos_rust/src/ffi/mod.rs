@@ -82,7 +82,7 @@ type ReadAllInputs = (String, BindingPartitionKey, RequestHeadersAndOptions);
 type ReadFeedRangesInputs = (String, bool);
 type FeedRangeFromPartitionKeyInputs = (String, BindingPartitionKey);
 
-fn validate_prepared_operation(prepared: &Bound<'_, PyAny>, expected: &str) -> PyResult<()> {
+pub(crate) fn validate_prepared_operation(prepared: &Bound<'_, PyAny>, expected: &str) -> PyResult<()> {
     crate::wire::settings::validate_request_protocol(prepared)?;
     if prepared.getattr("op")?.extract::<String>()? != expected {
         return Err(PyValueError::new_err(format!(

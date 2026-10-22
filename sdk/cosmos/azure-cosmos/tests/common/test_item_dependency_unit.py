@@ -10,11 +10,10 @@ plausibly normalize the arguments. Doing it twice is not harmless: deadlines get
 recomputed from a later start, defaults get applied to values that already have
 them, and the caller's own options risk being consumed along the way.
 
-The second is that the two paths address items differently, and neither should
-inherit the other's way. The legacy path builds a link out of the container
-address and the item id; the Rust path sends the id and lets the driver work out
-the rest. Keeping a link on the Rust path would be dead weight that looks
-authoritative, and it is exactly the sort of thing that later gets trusted.
+The second is that string ids and resource addresses remain distinct. For a
+string id, the legacy path builds a link from the container address while the
+Rust path lets the driver resolve the id. For a mapping, both paths preserve
+the supplied resource address rather than rebuilding it from the item id.
 
 Around both sits a smaller theme: helpers are reused for speed, so the tests
 here check that a reused helper holds nothing belonging to a particular call and
@@ -174,13 +173,13 @@ def test_rust_helper_never_repeats_public_create_preparation_rust(monkeypatch, a
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy_rust(async_mode):
+def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy_rust(async_mode, monkeypatch):
     """A container reuses one helper across calls, rebuilds it when its settings change, and
     does not keep the container alive.
 
-    Choosing which backend to use happens once, not per call, and two creates go
-    through the same helper. Repeating that choice on every item operation would
-    be pure overhead on the hottest path in the SDK.
+    Two creates go through the same helper, constructed once for this context.
+    Count construction directly: per-call option validation also reads the
+    backend name, but that does not construct or replace a helper.
 
     When the container's defaults are replaced the helper is rebuilt, because a
     helper carries those defaults. Keeping the old one would leave the customer
@@ -191,26 +190,18 @@ def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy_rust(asyn
     container object alive for the life of the program -- a slow leak in exactly
     the applications that create containers dynamically.
     """
-    base = AsyncBackend if async_mode else Backend
-
-    class CountingBackend(base):
-        selections = 0
-
-        @property
-        def name(self):
-            self.selections += 1
-            return "rust"
-
-    backend = CountingBackend()
+    backend = AsyncBackend() if async_mode else Backend()
+    proxy_type = AsyncContainerProxy if async_mode else ContainerProxy
+    helper_type = AsyncItemHelper if async_mode else ItemHelper
+    construct = MagicMock(wraps=helper_type)
+    monkeypatch.setattr(inspect.getmodule(proxy_type), helper_type.__name__, construct)
     context = ItemClientContext(backend)
-    proxy = (AsyncContainerProxy if async_mode else ContainerProxy)(
-        None, "dbs/d", "c", _item_context=context
-    )
+    proxy = proxy_type(None, "dbs/d", "c", _item_context=context)
     helper = proxy._get_item_helper()
     finish(proxy.create_item({"id": "one"}))
     finish(proxy.create_item({"id": "two"}))
     assert proxy._get_item_helper() is helper
-    assert backend.selections == 1
+    construct.assert_called_once_with(backend, context.defaults, context.response_state)
     assert len(backend.events) == 2
     assert not hasattr(proxy, "_create_item_helper")
 
@@ -220,6 +211,11 @@ def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy_rust(asyn
     replacement = proxy._get_item_helper()
     assert replacement is not helper
     assert replacement._defaults.no_response_on_write is True
+    assert proxy._get_item_helper() is replacement
+    assert construct.call_count == 2
+    construct.assert_called_with(
+        backend, proxy._item_context.defaults, proxy._item_context.response_state
+    )
     reference = weakref.ref(proxy)
     del proxy
     gc.collect()
@@ -331,12 +327,14 @@ def call_target(proxy, operation, item, **kwargs):
     return finish(getattr(proxy, operation)(item, "p", **kwargs))
 
 
-@pytest.mark.parametrize(
-    "operation", ["read_item", "delete_item", "replace_item", "patch_item"]
-)
-@pytest.mark.parametrize("mapping", [False, True])
+@pytest.mark.parametrize("operation,target_kind", [
+    (operation, target_kind)
+    for operation in ("read_item", "delete_item", "replace_item", "patch_item")
+    for target_kind in ("id", "mapping", "address-only")
+    if operation != "replace_item" or target_kind != "address-only"
+])
 def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once_rust(
-    point_read, monkeypatch, operation, mapping
+    point_read, monkeypatch, operation, target_kind
 ):
     """Only the legacy path builds an item link, and an item passed as a set of values has
     its fields read exactly once.
@@ -344,8 +342,9 @@ def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once_rust(
     Four operations are covered, with the item given either as an id or as
     something holding an id and its own address. On the legacy path a link is
     built from the container address and the id, or taken from the item's own
-    address when it has one. Rust reads preserve a mapping's resource address
-    without inspecting its id. String targets retain the item id for the driver.
+    address when it has one. Read, delete, and patch accept address-only mappings
+    without inspecting an id. Replace still requires both fields. String targets
+    retain the item id for the driver.
 
     The fields are counted as they are read, using stand-ins that record each
     access. Reading them more than once is not free and not safe: these may be
@@ -360,6 +359,11 @@ def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once_rust(
     mock = AsyncMock if async_mode else MagicMock
     formatted = []
     lookups = []
+    mapping = target_kind != "id"
+    resource_address = "dbs/rid/colls/rid/docs/opaque"
+    item_fields = {"_self": resource_address}
+    if target_kind != "address-only":
+        item_fields["id"] = "target"
 
     class ItemId(str):
         def __format__(self, specification):
@@ -369,13 +373,13 @@ def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once_rust(
     class Reference(Mapping):
         def __getitem__(self, key):
             lookups.append(key)
-            return {"id": "target", "_self": "dbs/rid/colls/rid/docs/opaque"}[key]
+            return item_fields[key]
 
         def __iter__(self):
-            return iter(("id", "_self"))
+            return iter(item_fields)
 
         def __len__(self):
-            return 2
+            return len(item_fields)
 
     capture = mock(return_value=(200, 0, {}, b"{}", None))
     if context.rust:
@@ -402,15 +406,16 @@ def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once_rust(
     capture.assert_called_once()
     assert not hasattr(context.proxy, "_get_document_link")
     if mapping:
-        assert lookups == (["_self"] if operation == "read_item" else ["_self", "id"])
+        assert lookups == (["_self", "id"] if operation == "replace_item" else ["_self"])
     assert len(formatted) == (0 if context.rust or mapping else 1)
     if context.rust:
         prepared = capture.call_args.args[1]
-        assert prepared.item_id == (None if mapping and operation == "read_item" else "target")
+        assert prepared.item_id == (None if mapping and operation != "replace_item" else "target")
+        assert prepared.item_self_link == (resource_address if mapping else None)
         assert prepared.container_link == context.proxy.container_link
     else:
         expected = (
-            "dbs/rid/colls/rid/docs/opaque"
+            resource_address
             if mapping
             else context.proxy.container_link + "/docs/target"
         )
@@ -423,7 +428,7 @@ def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once_rust(
         (operation, item, missing)
         for operation in ("read_item", "delete_item", "replace_item", "patch_item")
         for item, missing in (({"id": "target"}, "_self"), ({"_self": "opaque"}, "id"))
-        if operation != "read_item" or missing == "_self"
+        if operation == "replace_item" or missing == "_self"
     ],
 )
 def test_mapping_validation_still_precedes_item_io_rust(
@@ -431,9 +436,9 @@ def test_mapping_validation_still_precedes_item_io_rust(
 ):
     """An item missing a field the call needs is refused before anything is sent.
 
-    The error names the missing required field. Read mappings only require _self;
-    the other operations still require both fields. Nothing reached the backend
-    and no Rust call was made.
+    The error names the missing required field. Read, delete, and patch mappings
+    only require _self; replace still requires both fields. Nothing reached the
+    backend and no Rust call was made.
 
     Checking first is what makes the message useful. Left until later, the same
     mistake would surface as a request built around an empty address and come

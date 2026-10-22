@@ -3509,7 +3509,7 @@ def test_pick_backend_uses_getattr_fallback_for_slots_connection_rust():
 
 @pytest.mark.parametrize("first_attempt_fails", [False, True], ids=["reuse", "retry-after-failure"])
 def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads_rust(monkeypatch, first_attempt_fails):
-    """A caller that already saw None rechecks after the first attempt finishes."""
+    """Concurrent waiters share one outcome; a later call can retry a failed attempt."""
     first_started = threading.Event()
     finish_first = threading.Event()
     second_waiting = threading.Event()
@@ -3517,20 +3517,17 @@ def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads_rus
     fake_module = MagicMock()
     monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
     backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
-    acquisition_lock = backend._driver_handle_lock
+    wait_lock = threading.Lock()
+    waiters = []
 
-    class ObservedLock:
-        def __enter__(self):
-            if not acquisition_lock.acquire(blocking=False):
-                # Prove the second caller reached the lock while the first owns it.
+    def observed_wait(futures, timeout=None):
+        with wait_lock:
+            waiters.append(tuple(futures))
+            if len(waiters) == 2:
                 second_waiting.set()
-                assert acquisition_lock.acquire(timeout=5), "acquisition lock was not released"
-            return self
+        return concurrent.futures.wait(futures, timeout=timeout)
 
-        def __exit__(self, *_):
-            acquisition_lock.release()
-
-    monkeypatch.setattr(backend, "_driver_handle_lock", ObservedLock())
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter.wait", observed_wait)
 
     def acquire(_endpoint, _key, _config):
         assert backend._driver_handle is None
@@ -3558,7 +3555,8 @@ def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads_rus
         assert first_started.wait(5), "first caller did not begin acquisition"
         threads[1].start()
         started_threads.append(threads[1])
-        assert second_waiting.wait(5), "second caller did not wait for the acquisition lock"
+        assert second_waiting.wait(5), "second caller did not wait for the shared acquisition"
+        assert waiters[0] == waiters[1]
         assert backend._driver_handle is None
         assert not results[0].done()
         assert not results[1].done()
@@ -3566,12 +3564,15 @@ def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads_rus
 
         finish_first.set()
         if first_attempt_fails:
-            with pytest.raises(RuntimeError) as caught:
-                results[0].result(timeout=5)
-            assert caught.value is first_error
+            for result in results:
+                with pytest.raises(RuntimeError) as caught:
+                    result.result(timeout=5)
+                assert caught.value is first_error
+            assert backend._driver_handle is None
+            assert backend._ensure_driver_handle() == "handle-1"
         else:
             assert results[0].result(timeout=5) == "handle-1"
-        assert results[1].result(timeout=5) == "handle-1"
+            assert results[1].result(timeout=5) == "handle-1"
         assert backend._driver_handle == "handle-1"
         assert backend._ensure_driver_handle() == "handle-1"
         assert fake_module.acquire_driver_handle.call_count == (2 if first_attempt_fails else 1)

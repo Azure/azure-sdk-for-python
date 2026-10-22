@@ -20,7 +20,9 @@
 //! Dropping that Rust wait requests cancellation of the Python future.
 //!
 //! Both paths parse the returned token and expiry, then retain one cached token
-//! with its scopes. This adapter does not run the Python event loop, close the
+//! with the scope actually requested from Python. Account credentials use the
+//! saved override or endpoint-derived scope, with the legacy policy's restricted
+//! fallback to the global scope. This adapter does not run the Python event loop, close the
 //! customer app's credential, or establish that it supports arbitrary thread use.
 
 use pyo3::prelude::*;
@@ -30,8 +32,43 @@ use azure_core::credentials::{AccessToken, TokenCredential, TokenRequestOptions}
 use azure_core::error::{Error as AzureError, ErrorKind as AzureErrorKind};
 use azure_core::time::{Duration, OffsetDateTime};
 use parking_lot::{Mutex, RwLock};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use tokio::sync::oneshot;
+
+const COSMOS_DEFAULT_SCOPE: &str = "https://cosmos.azure.com/.default";
+
+struct TokenScopePolicy {
+    initial_scope: String,
+    allow_fallback: bool,
+    fallback: AtomicBool,
+}
+
+impl TokenScopePolicy {
+    fn current_scope(&self) -> &str {
+        if self.fallback.load(Ordering::Acquire) {
+            COSMOS_DEFAULT_SCOPE
+        } else {
+            &self.initial_scope
+        }
+    }
+
+    fn try_fallback(&self, py: Python<'_>, error: &PyErr) -> PyResult<bool> {
+        if !self.allow_fallback || self.current_scope() == COSMOS_DEFAULT_SCOPE {
+            return Ok(false);
+        }
+        let http_error = py
+            .import_bound("azure.core.exceptions")?
+            .getattr("HttpResponseError")?;
+        let value = error.value_bound(py);
+        if !value.is_instance(&http_error)? || !value.str()?.to_str()?.contains("AADSTS500011") {
+            return Ok(false);
+        }
+        // Match the Python policy: the scope remains switched even if fallback fails.
+        self.fallback.store(true, Ordering::Release);
+        Ok(true)
+    }
+}
 
 struct CachedToken {
     scopes: Vec<String>,
@@ -75,16 +112,39 @@ pub(crate) struct PyTokenCredential {
     // Keep one scope-qualified entry rather than an unbounded scope cache.
     cached_token: Arc<RwLock<Option<CachedToken>>>,
     refresh: Arc<tokio::sync::Mutex<()>>,
+    scope_policy: Option<Arc<TokenScopePolicy>>,
 }
 
 impl PyTokenCredential {
     /// Retain the Python credential object supplied during driver acquisition.
     /// Clients reusing a cached CosmosDriver also reuse this adapter and its cache.
-    pub(crate) fn new(credential: Py<PyAny>) -> Self {
+    fn new(credential: Py<PyAny>) -> Self {
         Self {
             credential,
             cached_token: Arc::new(RwLock::new(None)),
             refresh: Arc::new(tokio::sync::Mutex::new(())),
+            scope_policy: None,
+        }
+    }
+
+    pub(crate) fn for_account(
+        credential: Py<PyAny>,
+        account_scope: String,
+        override_scope: Option<String>,
+    ) -> Self {
+        let mut result = Self::new(credential);
+        result.scope_policy = Some(Arc::new(TokenScopePolicy {
+            allow_fallback: override_scope.is_none(),
+            initial_scope: override_scope.unwrap_or(account_scope),
+            fallback: AtomicBool::new(false),
+        }));
+        result
+    }
+
+    fn effective_scopes(&self, requested: &[&str]) -> Vec<String> {
+        match &self.scope_policy {
+            Some(policy) => vec![policy.current_scope().to_owned()],
+            None => requested.iter().map(|scope| (*scope).to_owned()).collect(),
         }
     }
 
@@ -95,13 +155,30 @@ impl PyTokenCredential {
     /// token is not checked for expiry against the current time here.
     fn fetch_token(
         credential: &Bound<'_, PyAny>,
-        scopes: &[&str],
+        scopes: &mut Vec<String>,
+        policy: Option<&TokenScopePolicy>,
     ) -> azure_core::Result<AccessToken> {
         let py = credential.py();
-        let scopes_arg = PyTuple::new_bound(py, scopes);
-        let token_obj = credential
-            .call_method1("get_token", scopes_arg)
-            .map_err(|e| credential_error(format!("token credential get_token() failed: {e}")))?;
+        let token_obj = loop {
+            match credential.call_method1("get_token", PyTuple::new_bound(py, &*scopes)) {
+                Ok(token) => break token,
+                Err(error) => {
+                    let fallback = match policy {
+                        Some(policy) => policy.try_fallback(py, &error),
+                        None => Ok(false),
+                    }
+                    .map_err(|e| {
+                        credential_error(format!("token scope fallback check failed: {e}"))
+                    })?;
+                    if !fallback {
+                        return Err(credential_error(format!(
+                            "token credential get_token() failed: {error}"
+                        )));
+                    }
+                    *scopes = vec![COSMOS_DEFAULT_SCOPE.to_owned()];
+                }
+            }
+        };
         Self::parse_token(&token_obj)
     }
 
@@ -152,84 +229,115 @@ impl PyTokenCredential {
     /// Test-only synchronous path for token validation and cache behavior.
     #[cfg(test)]
     fn get_token_sync(&self, scopes: &[&str]) -> azure_core::Result<AccessToken> {
-        if let Some(token) = self.cached_fresh_token(scopes) {
+        let mut scopes = self.effective_scopes(scopes);
+        let scope_refs: Vec<&str> = scopes.iter().map(String::as_str).collect();
+        if let Some(token) = self.cached_fresh_token(&scope_refs) {
             return Ok(token);
         }
 
-        let fresh = Python::with_gil(|py| Self::fetch_token(self.credential.bind(py), scopes))?;
+        let fresh = Python::with_gil(|py| {
+            Self::fetch_token(
+                self.credential.bind(py),
+                &mut scopes,
+                self.scope_policy.as_deref(),
+            )
+        })?;
         *self.cached_token.write() = Some(CachedToken {
-            scopes: scopes.iter().map(|scope| (*scope).to_owned()).collect(),
+            scopes,
             token: fresh.clone(),
         });
         Ok(fresh)
     }
 
     async fn get_token_async(&self, scopes: &[&str]) -> azure_core::Result<AccessToken> {
-        if let Some(token) = self.cached_fresh_token(scopes) {
+        let requested = scopes;
+        let scopes = self.effective_scopes(requested);
+        let scope_refs: Vec<&str> = scopes.iter().map(String::as_str).collect();
+        if let Some(token) = self.cached_fresh_token(&scope_refs) {
             return Ok(token);
         }
         let refresh = self.refresh.clone().lock_owned().await;
-        if let Some(token) = self.cached_fresh_token(scopes) {
+        let mut scopes = self.effective_scopes(requested);
+        let scope_refs: Vec<&str> = scopes.iter().map(String::as_str).collect();
+        if let Some(token) = self.cached_fresh_token(&scope_refs) {
             return Ok(token);
         }
-        let pending = Python::with_gil(|py| -> PyResult<_> {
-            let credential = self.credential.bind(py);
-            if !credential.hasattr("_start_token_request")? {
-                return Ok(None);
-            }
-            let future =
-                credential.call_method1("_start_token_request", PyTuple::new_bound(py, scopes))?;
-            let guard = CancelTokenRequest(future.unbind());
-            let (sender, receiver) = oneshot::channel();
-            let callback = Py::new(
-                py,
-                TokenResultSender {
-                    sender: Mutex::new(Some(sender)),
-                },
-            )?;
-            guard
-                .0
-                .bind(py)
-                .call_method1("add_done_callback", (callback,))?;
-            Ok(Some((guard, receiver)))
-        })
-        .map_err(|error| {
-            credential_error(format!("token credential scheduling failed: {error}"))
-        })?;
+        let fresh = loop {
+            let pending = Python::with_gil(|py| -> PyResult<_> {
+                let credential = self.credential.bind(py);
+                if !credential.hasattr("_start_token_request")? {
+                    return Ok(None);
+                }
+                let future = credential
+                    .call_method1("_start_token_request", PyTuple::new_bound(py, &scopes))?;
+                let guard = CancelTokenRequest(future.unbind());
+                let (sender, receiver) = oneshot::channel();
+                let callback = Py::new(
+                    py,
+                    TokenResultSender {
+                        sender: Mutex::new(Some(sender)),
+                    },
+                )?;
+                guard
+                    .0
+                    .bind(py)
+                    .call_method1("add_done_callback", (callback,))?;
+                Ok(Some((guard, receiver)))
+            })
+            .map_err(|error| {
+                credential_error(format!("token credential scheduling failed: {error}"))
+            })?;
 
-        let fresh = match pending {
-            Some((_guard, receiver)) => {
-                let result = receiver
-                    .await
-                    .map_err(|_| credential_error("token result sender was dropped".to_string()))?
-                    .map_err(|error| {
-                        credential_error(format!("token credential get_token() failed: {error}"))
+            match pending {
+                Some((_guard, receiver)) => {
+                    let result = receiver.await.map_err(|_| {
+                        credential_error("token result sender was dropped".to_string())
                     })?;
-                Python::with_gil(|py| Self::parse_token(result.bind(py)))?
-            }
-            None => {
-                let credential = Python::with_gil(|py| self.credential.clone_ref(py));
-                let scopes: Vec<String> = scopes.iter().map(|scope| (*scope).to_string()).collect();
-                let cache = self.cached_token.clone();
-                return tokio::task::spawn_blocking(move || {
-                    // Cancellation stops waiting, not synchronous Python code. Keep
-                    // the refresh lock until that code finishes and publishes its token.
-                    let _refresh = refresh;
-                    let scope_refs: Vec<&str> = scopes.iter().map(String::as_str).collect();
-                    let fresh =
-                        Python::with_gil(|py| Self::fetch_token(credential.bind(py), &scope_refs))?;
-                    *cache.write() = Some(CachedToken {
-                        scopes,
-                        token: fresh.clone(),
-                    });
-                    Ok(fresh)
-                })
-                .await
-                .map_err(|error| credential_error(format!("token worker failed: {error}")))?;
+                    match result {
+                        Ok(token) => {
+                            break Python::with_gil(|py| Self::parse_token(token.bind(py)))?
+                        }
+                        Err(error) => {
+                            let fallback = Python::with_gil(|py| match &self.scope_policy {
+                                Some(policy) => policy.try_fallback(py, &error),
+                                None => Ok(false),
+                            })
+                            .map_err(|e| {
+                                credential_error(format!("token scope fallback check failed: {e}"))
+                            })?;
+                            if !fallback {
+                                return Err(credential_error(format!(
+                                    "token credential get_token() failed: {error}"
+                                )));
+                            }
+                            scopes = vec![COSMOS_DEFAULT_SCOPE.to_owned()];
+                        }
+                    }
+                }
+                None => {
+                    let credential = Python::with_gil(|py| self.credential.clone_ref(py));
+                    let cache = self.cached_token.clone();
+                    let policy = self.scope_policy.clone();
+                    return tokio::task::spawn_blocking(move || {
+                        // Cancellation stops waiting, not synchronous Python code. Keep
+                        // the refresh lock until that code finishes and publishes its token.
+                        let _refresh = refresh;
+                        let fresh = Python::with_gil(|py| {
+                            Self::fetch_token(credential.bind(py), &mut scopes, policy.as_deref())
+                        })?;
+                        *cache.write() = Some(CachedToken {
+                            scopes,
+                            token: fresh.clone(),
+                        });
+                        Ok(fresh)
+                    })
+                    .await
+                    .map_err(|error| credential_error(format!("token worker failed: {error}")))?;
+                }
             }
         };
         *self.cached_token.write() = Some(CachedToken {
-            scopes: scopes.iter().map(|scope| (*scope).to_owned()).collect(),
+            scopes,
             token: fresh.clone(),
         });
         Ok(fresh)
@@ -276,6 +384,231 @@ mod tests {
             .getattr("Credential")?
             .call0()
             .map(|obj| obj.unbind())
+    }
+
+    #[tokio::test]
+    async fn account_scope_policy_matches_legacy_for_sync_and_async_credentials() {
+        use azure_core::credentials::TokenCredential;
+        pyo3::prepare_freethreaded_python();
+        for async_bridge in [false, true] {
+            for scenario in [
+                "success",
+                "fallback",
+                "other_error",
+                "wrong_type",
+                "fallback_fails",
+            ] {
+                for override_scope in [
+                    None,
+                    Some("https://override.example/.default"),
+                    Some("https://alpha-bank-account.documents.azure.com/.default"),
+                    Some(super::COSMOS_DEFAULT_SCOPE),
+                ] {
+                    let (object, expected_scopes, expected_outcomes) = Python::with_gil(|py| {
+                        let module = PyModule::from_code_bound(
+                            py,
+                            r#"
+import asyncio
+from concurrent.futures import Future
+from azure.core.credentials import AccessToken
+from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline import PipelineContext, PipelineRequest
+from azure.core.rest import HttpRequest
+from azure.cosmos._auth_policy import CosmosBearerTokenCredentialPolicy
+from azure.cosmos.aio._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
+
+ACCOUNT = "https://alpha-bank-account.documents.azure.com/.default"
+GLOBAL = "https://cosmos.azure.com/.default"
+
+class Credential:
+    def __init__(self, scenario):
+        self.scenario = scenario
+        self.scopes = []
+    def get_token(self, *scopes, **kwargs):
+        assert len(scopes) == 1
+        scope = scopes[0]
+        self.scopes.append(scope)
+        if self.scenario == "fallback_fails":
+            raise HttpResponseError(message="AADSTS500011: test resource unavailable")
+        if self.scenario == "fallback" and scope != GLOBAL:
+            raise HttpResponseError(message="AADSTS500011: test resource unavailable")
+        if self.scenario == "other_error":
+            raise HttpResponseError(message="AADSTS700016: unrelated failure")
+        if self.scenario == "wrong_type":
+            raise ValueError("AADSTS500011: not an HTTP authentication error")
+        return AccessToken("example-token-not-for-use", 4102444800)
+    def _start_token_request(self, *scopes):
+        result = Future()
+        try:
+            result.set_result(self.get_token(*scopes))
+        except Exception as error:
+            result.set_exception(error)
+        return result
+
+class AsyncCredential(Credential):
+    async def get_token(self, *scopes, **kwargs):
+        return super().get_token(*scopes, **kwargs)
+
+def legacy(async_mode, scenario, override):
+    credential = (AsyncCredential if async_mode else Credential)(scenario)
+    policy = (AsyncCosmosBearerTokenCredentialPolicy if async_mode
+              else CosmosBearerTokenCredentialPolicy)(credential, ACCOUNT, override)
+    outcomes = []
+    async def invoke_async(request):
+        await policy.on_request(request)
+    for _ in range(2):
+        request = PipelineRequest(HttpRequest("GET", "https://example.test"),
+                                  PipelineContext(None))
+        try:
+            if async_mode:
+                asyncio.run(invoke_async(request))
+            else:
+                policy.on_request(request)
+            outcomes.append(True)
+        except (HttpResponseError, ValueError):
+            outcomes.append(False)
+    return credential.scopes, outcomes
+"#,
+                            "scope_parity.py",
+                            "scope_parity",
+                        )
+                        .unwrap();
+                        let expected: (Vec<String>, Vec<bool>) = module
+                            .getattr("legacy")
+                            .unwrap()
+                            .call1((async_bridge, scenario, override_scope))
+                            .unwrap()
+                            .extract()
+                            .unwrap();
+                        let object = module
+                            .getattr("Credential")
+                            .unwrap()
+                            .call1((scenario,))
+                            .unwrap();
+                        if !async_bridge {
+                            object.get_type().delattr("_start_token_request").unwrap();
+                        }
+                        (object.unbind(), expected.0, expected.1)
+                    });
+                    let credential = Python::with_gil(|py| {
+                        PyTokenCredential::for_account(
+                            object.clone_ref(py),
+                            "https://alpha-bank-account.documents.azure.com/.default".to_owned(),
+                            override_scope.map(str::to_owned),
+                        )
+                    });
+                    let mut outcomes = Vec::new();
+                    for _ in 0..2 {
+                        outcomes.push(
+                            credential
+                                .get_token(&[super::COSMOS_DEFAULT_SCOPE], None)
+                                .await
+                                .is_ok(),
+                        );
+                    }
+                    assert_eq!(
+                        outcomes, expected_outcomes,
+                        "{async_bridge} {scenario} {override_scope:?}"
+                    );
+                    Python::with_gil(|py| {
+                        let actual: Vec<String> = object
+                            .bind(py)
+                            .getattr("scopes")
+                            .unwrap()
+                            .extract()
+                            .unwrap();
+                        assert_eq!(
+                            actual, expected_scopes,
+                            "{async_bridge} {scenario} {override_scope:?}"
+                        );
+                    });
+                }
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn concurrent_account_refresh_shares_fallback_and_effective_scope_cache() {
+        use std::sync::Arc;
+        pyo3::prepare_freethreaded_python();
+        for async_bridge in [false, true] {
+            let object = Python::with_gil(|py| {
+                let object = make_python_credential(
+                    py,
+                    r#"
+import threading
+import time
+from concurrent.futures import Future
+from azure.core.credentials import AccessToken
+from azure.core.exceptions import HttpResponseError
+class Credential:
+    def __init__(self):
+        self.scopes = []
+    def get_token(self, *scopes):
+        self.scopes.append(scopes[0])
+        time.sleep(0.01)
+        if scopes[0] != "https://cosmos.azure.com/.default":
+            raise HttpResponseError(message="AADSTS500011: test resource unavailable")
+        return AccessToken("example-token-not-for-use", 4102444800)
+    def _start_token_request(self, *scopes):
+        result = Future()
+        def complete():
+            try:
+                result.set_result(self.get_token(*scopes))
+            except Exception as error:
+                result.set_exception(error)
+        threading.Timer(0.01, complete).start()
+        return result
+"#,
+                )
+                .unwrap();
+                if !async_bridge {
+                    object
+                        .bind(py)
+                        .get_type()
+                        .delattr("_start_token_request")
+                        .unwrap();
+                }
+                object
+            });
+            let credential = Arc::new(Python::with_gil(|py| {
+                PyTokenCredential::for_account(
+                    object.clone_ref(py),
+                    "https://alpha-bank-account.documents.azure.com/.default".to_owned(),
+                    None,
+                )
+            }));
+            let mut tasks = tokio::task::JoinSet::new();
+            for _ in 0..12 {
+                let credential = credential.clone();
+                tasks.spawn(async move {
+                    credential
+                        .get_token_async(&[super::COSMOS_DEFAULT_SCOPE])
+                        .await
+                });
+            }
+            while let Some(result) = tasks.join_next().await {
+                assert_eq!(
+                    result.unwrap().unwrap().token.secret(),
+                    "example-token-not-for-use"
+                );
+            }
+            Python::with_gil(|py| {
+                let scopes: Vec<String> = object
+                    .bind(py)
+                    .getattr("scopes")
+                    .unwrap()
+                    .extract()
+                    .unwrap();
+                assert_eq!(
+                    scopes,
+                    vec![
+                        "https://alpha-bank-account.documents.azure.com/.default",
+                        super::COSMOS_DEFAULT_SCOPE,
+                    ]
+                );
+            });
+        }
     }
 
     #[test]

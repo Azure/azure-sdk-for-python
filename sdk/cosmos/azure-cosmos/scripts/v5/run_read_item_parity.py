@@ -23,6 +23,11 @@ Use --expected-count 2 for each surface's comparison report.
 query each logical key via feed_range_from_partition_key. It also expects
 two test cases per surface, with three key-scoped queries in each case.
 --query-test ordering selects partition-scoped ORDER BY/paging.
+--query-test positional selects the synchronous seven-positional-argument
+query, preserving the original scope, page-size and ordered-ID assertions.
+--query-test vector-ordering selects the synchronous original 90-query
+distance-ordering test. Core Python provisions three owned 12,000 RU/s
+vector containers; only the query client changes backend.
 --query-test offset selects seven OFFSET LIMIT queries; --surface aio selects
 the async counterpart (sync is default).
 --query-test distinct selects four DISTINCT queries on either surface.
@@ -73,6 +78,8 @@ QUERY_METHODS = {
     "partition-feed-range": "::TestQueryFeedRange::test_query_with_feed_range_for_partition_key",
     "none-options": "::TestNoneOptions::test_container_query_items_none_options_partition",
     "parameters": "::TestQuery::test_query_items_with_parameters_none",
+    "positional": "::TestQuery::test_query_positional_args",
+    "vector-ordering": "::TestVectorSimilarityQuery::test_ordering_distances",
     "ordering": "::TestQuery::test_query_pagination_with_max_item_count",
     "top": "::TestCrossPartitionTopOrderBy::test_orderby_top_query",
     "offset": "::TestQuery::test_offset_limit",
@@ -183,6 +190,8 @@ def main(argv=None):
     source_file = "test_query.py" if args.op == "query_items" else "test_none_options.py"
     if args.query_test == "top":
         source_file = "test_orderby.py"
+    if args.query_test == "vector-ordering":
+        source_file = "test_query_vector_similarity.py"
     if args.surface == "aio":
         source_file = "test_query_async.py"
         method = ASYNC_QUERY_METHODS[args.query_test]

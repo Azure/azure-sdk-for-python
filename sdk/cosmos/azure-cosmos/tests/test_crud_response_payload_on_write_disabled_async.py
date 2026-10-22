@@ -27,17 +27,6 @@ from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
-# Tests that exercise Cosmos endpoints unsupported under AAD/RBAC
-# (server-side scripts: sprocs/triggers/UDFs) are skipped
-# automatically when the data-plane lane is configured for AAD.
-# Stored procedure EXECUTE is currently also skipped under AAD in this class.
-# TODO: re-enable these under AAD once the service exposes RBAC actions for these APIs.
-_skip_under_aad = pytest.mark.skipif(
-    test_config.TestConfig.data_auth_mode == 'aad',
-    reason="server-side scripts CRUD is not authorized via AAD/RBAC "
-           "data plane today (403). See https://aka.ms/cosmos-native-rbac.",
-)
-
 class CosmosResponseHeaderEnvelope:
     def __init__(self):
         self.headers: Optional[Dict[str, Any]] = None

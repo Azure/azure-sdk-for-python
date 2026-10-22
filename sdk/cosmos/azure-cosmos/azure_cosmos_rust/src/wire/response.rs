@@ -97,7 +97,8 @@ pub(super) fn with_attempt_diagnostics<'py>(
         )),
         Err(error) => {
             if (error.is_instance_of::<_DriverTransportError>(py)
-                || error.is_instance_of::<PyTimeoutError>(py))
+                || error.is_instance_of::<PyTimeoutError>(py)
+                || error.is_instance_of::<_UnsupportedQueryFeatureError>(py))
                 && !payload.is_none(py)
             {
                 attach_attempt_payload(py, &error, payload);
@@ -242,6 +243,24 @@ pub(super) fn tuple_from_database_feed_result<'py>(
     tuple_from_database_feed_result_for(py, response_result, "list_databases")
 }
 
+/// Preserve the database page or error while attaching its available diagnostics.
+pub(super) fn tuple_from_database_feed_result_with_attempts<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let diagnostics = match &response_result {
+        Ok(Some(response)) => Some(response.diagnostics()),
+        Ok(None) => None,
+        Err(error) => error.diagnostics(),
+    };
+    with_attempt_diagnostics(
+        py,
+        tuple_from_database_feed_result(py, response_result),
+        diagnostics,
+        true,
+    )
+}
+
 /// Convert a database-query result into a `Databases` response tuple.
 /// Unsupported query plans are returned as `_UnsupportedQueryFeatureError`.
 pub(super) fn tuple_from_query_databases_result<'py>(
@@ -258,6 +277,24 @@ pub(super) fn tuple_from_query_databases_result<'py>(
     tuple_from_database_feed_result_for(py, response_result, "query_databases")
 }
 
+/// Preserve query response conversion, including unsupported-query errors.
+pub(super) fn tuple_from_query_databases_result_with_attempts<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let diagnostics = match &response_result {
+        Ok(Some(response)) => Some(response.diagnostics()),
+        Ok(None) => None,
+        Err(error) => error.diagnostics(),
+    };
+    with_attempt_diagnostics(
+        py,
+        tuple_from_query_databases_result(py, response_result),
+        diagnostics,
+        true,
+    )
+}
+
 /// Convert a container-feed result into a `DocumentCollections` response tuple.
 pub(super) fn tuple_from_container_feed_result<'py>(
     py: Python<'py>,
@@ -269,6 +306,24 @@ pub(super) fn tuple_from_container_feed_result<'py>(
         "list_containers",
         b"DocumentCollections",
         br#"{"DocumentCollections":[]}"#,
+    )
+}
+
+/// Preserve a container-listing response or error with its available diagnostics.
+pub(super) fn tuple_from_container_feed_result_with_attempts<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let diagnostics = match &response_result {
+        Ok(Some(response)) => Some(response.diagnostics()),
+        Ok(None) => None,
+        Err(error) => error.diagnostics(),
+    };
+    with_attempt_diagnostics(
+        py,
+        tuple_from_container_feed_result(py, response_result),
+        diagnostics,
+        true,
     )
 }
 
@@ -291,6 +346,24 @@ pub(super) fn tuple_from_query_containers_result<'py>(
         "query_containers",
         b"DocumentCollections",
         br#"{"DocumentCollections":[]}"#,
+    )
+}
+
+/// Preserve container query conversion and attach available attempt diagnostics.
+pub(super) fn tuple_from_query_containers_result_with_attempts<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let diagnostics = match &response_result {
+        Ok(Some(response)) => Some(response.diagnostics()),
+        Ok(None) => None,
+        Err(error) => error.diagnostics(),
+    };
+    with_attempt_diagnostics(
+        py,
+        tuple_from_query_containers_result(py, response_result),
+        diagnostics,
+        true,
     )
 }
 
@@ -913,10 +986,12 @@ mod tests {
         attempt_payload_or_error, backend_response_tuple_from_feed_error_parts,
         feed_range_to_response_body, named_feed_response_body_to_vec,
         record_diagnostics_for_responseless, response_body_to_vec, response_headers_dict,
-        tuple_from_database_feed_result, tuple_from_feed_result,
-        tuple_from_partition_key_ranges_result, tuple_from_query_containers_result,
-        tuple_from_query_databases_result, tuple_from_result, tuple_from_result_with_attempts,
-        FeedRangeFromPartitionKeyPayload,
+        tuple_from_container_feed_result, tuple_from_container_feed_result_with_attempts,
+        tuple_from_database_feed_result, tuple_from_database_feed_result_with_attempts,
+        tuple_from_feed_result, tuple_from_partition_key_ranges_result,
+        tuple_from_query_containers_result, tuple_from_query_containers_result_with_attempts,
+        tuple_from_query_databases_result, tuple_from_query_databases_result_with_attempts,
+        tuple_from_result, tuple_from_result_with_attempts, FeedRangeFromPartitionKeyPayload,
     };
     use azure_core::Bytes;
     use azure_data_cosmos_driver::error::{status_codes, CosmosError, CosmosStatus};
@@ -1505,6 +1580,64 @@ def record_unraisable(args):
         assert_eq!(body, br#"{"Databases":[{"id":"db-1"},{"id":"db-2"}]}"#);
     }
 
+    #[tokio::test]
+    async fn database_feed_attempt_envelope_preserves_results_and_errors() {
+        pyo3::prepare_freethreaded_python();
+        let (_, read, conflict) = create_read_and_conflict().await;
+        let diagnostics = read.diagnostics();
+        Python::with_gil(|py| {
+            for result in [Ok(Some(read)), Err(conflict), Ok(None)] {
+                let expected_count = match &result {
+                    Ok(Some(response)) => Some(response.diagnostics().request_count()),
+                    Err(error) => error.diagnostics().map(|d| d.request_count()),
+                    Ok(None) => None,
+                };
+                let ordinary = tuple_from_database_feed_result(py, result.clone()).unwrap();
+                let envelope = tuple_from_database_feed_result_with_attempts(py, result).unwrap();
+                assert!(envelope.get_item(0).unwrap().eq(ordinary).unwrap());
+                let payload = envelope.get_item(1).unwrap();
+                if let Some(count) = expected_count {
+                    assert_eq!(
+                        payload
+                            .get_item("request_count")
+                            .unwrap()
+                            .extract::<usize>()
+                            .unwrap(),
+                        count
+                    );
+                } else {
+                    assert!(payload.is_none());
+                }
+            }
+            for status in [
+                CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout),
+                CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
+                    .with_sub_status(status_codes::substatus::CLIENT_OPERATION_TIMEOUT.value()),
+            ] {
+                let error = CosmosError::builder()
+                    .with_status(status)
+                    .with_diagnostics(diagnostics.clone())
+                    .build();
+                let ordinary = tuple_from_database_feed_result(py, Err(error.clone())).unwrap_err();
+                let recorded =
+                    tuple_from_database_feed_result_with_attempts(py, Err(error)).unwrap_err();
+                assert!(ordinary.get_type_bound(py).is(&recorded.get_type_bound(py)));
+                assert_eq!(ordinary.to_string(), recorded.to_string());
+                assert_eq!(
+                    recorded
+                        .value_bound(py)
+                        .getattr("_cosmos_attempt_payload")
+                        .unwrap()
+                        .get_item("request_count")
+                        .unwrap()
+                        .extract::<usize>()
+                        .unwrap(),
+                    diagnostics.request_count()
+                );
+            }
+        });
+    }
+
     #[test]
     fn database_feed_service_errors_preserve_wire_tuple_fields() {
         pyo3::prepare_freethreaded_python();
@@ -1566,6 +1699,67 @@ def record_unraisable(args):
         });
     }
 
+    #[tokio::test]
+    async fn metadata_query_attempt_envelope_preserves_results_and_errors() {
+        pyo3::prepare_freethreaded_python();
+        let (_, read, conflict) = create_read_and_conflict().await;
+        let diagnostics = read.diagnostics();
+        Python::with_gil(|py| {
+            for (convert, convert_with_attempts) in [
+                tuple_from_query_databases_result,
+                tuple_from_query_containers_result,
+            ]
+            .into_iter()
+            .zip([
+                tuple_from_query_databases_result_with_attempts,
+                tuple_from_query_containers_result_with_attempts,
+            ]) {
+                for result in [Ok(Some(read.clone())), Err(conflict.clone()), Ok(None)] {
+                    let exhausted = matches!(&result, Ok(None));
+                    let ordinary = convert(py, result.clone()).unwrap();
+                    let envelope = convert_with_attempts(py, result).unwrap();
+                    assert!(envelope.get_item(0).unwrap().eq(ordinary).unwrap());
+                    assert_eq!(envelope.len(), 2);
+                    assert_eq!(envelope.get_item(1).unwrap().is_none(), exhausted);
+                }
+                for status in [
+                    status_codes::CLIENT_UNSUPPORTED_QUERY_FEATURE,
+                    CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout),
+                    CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
+                        .with_sub_status(status_codes::substatus::CLIENT_OPERATION_TIMEOUT.value()),
+                ] {
+                    for include_diagnostics in [false, true] {
+                        let mut builder = CosmosError::builder()
+                            .with_status(status)
+                            .with_message("metadata query failed");
+                        if include_diagnostics {
+                            builder = builder.with_diagnostics(diagnostics.clone());
+                        }
+                        let error = builder.build();
+                        let ordinary = convert(py, Err(error.clone())).unwrap_err();
+                        let recorded = convert_with_attempts(py, Err(error)).unwrap_err();
+                        assert!(ordinary.get_type_bound(py).is(&recorded.get_type_bound(py)));
+                        assert_eq!(ordinary.to_string(), recorded.to_string());
+                        let payload = recorded.value_bound(py).getattr("_cosmos_attempt_payload");
+                        if include_diagnostics {
+                            assert_eq!(
+                                payload
+                                    .unwrap()
+                                    .get_item("request_count")
+                                    .unwrap()
+                                    .extract::<usize>()
+                                    .unwrap(),
+                                diagnostics.request_count()
+                            );
+                        } else {
+                            assert!(payload.is_err());
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     #[test]
     fn unsupported_query_feature_uses_typed_binding_error() {
         pyo3::prepare_freethreaded_python();
@@ -1581,6 +1775,56 @@ def record_unraisable(args):
                     .build();
                 let py_error = convert(py, Err(error)).unwrap_err();
                 assert!(py_error.is_instance_of::<_UnsupportedQueryFeatureError>(py));
+            }
+        });
+    }
+
+    #[tokio::test]
+    async fn container_feed_attempt_envelope_preserves_results_and_errors() {
+        pyo3::prepare_freethreaded_python();
+        let (_, read, conflict) = create_read_and_conflict().await;
+        let diagnostics = read.diagnostics();
+        Python::with_gil(|py| {
+            for result in [Ok(Some(read)), Err(conflict), Ok(None)] {
+                let exhausted = matches!(&result, Ok(None));
+                let ordinary = tuple_from_container_feed_result(py, result.clone()).unwrap();
+                let envelope = tuple_from_container_feed_result_with_attempts(py, result).unwrap();
+                assert_eq!(envelope.len(), 2);
+                assert!(envelope.get_item(0).unwrap().eq(ordinary).unwrap());
+                assert_eq!(envelope.get_item(1).unwrap().is_none(), exhausted);
+            }
+            for status in [
+                CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout),
+                CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
+                    .with_sub_status(status_codes::substatus::CLIENT_OPERATION_TIMEOUT.value()),
+            ] {
+                for include_diagnostics in [false, true] {
+                    let mut builder = CosmosError::builder().with_status(status);
+                    if include_diagnostics {
+                        builder = builder.with_diagnostics(diagnostics.clone());
+                    }
+                    let error = builder.build();
+                    let ordinary =
+                        tuple_from_container_feed_result(py, Err(error.clone())).unwrap_err();
+                    let recorded =
+                        tuple_from_container_feed_result_with_attempts(py, Err(error)).unwrap_err();
+                    assert!(ordinary.get_type_bound(py).is(&recorded.get_type_bound(py)));
+                    assert_eq!(ordinary.to_string(), recorded.to_string());
+                    let payload = recorded.value_bound(py).getattr("_cosmos_attempt_payload");
+                    if include_diagnostics {
+                        assert_eq!(
+                            payload
+                                .unwrap()
+                                .get_item("request_count")
+                                .unwrap()
+                                .extract::<usize>()
+                                .unwrap(),
+                            diagnostics.request_count()
+                        );
+                    } else {
+                        assert!(payload.is_err());
+                    }
+                }
             }
         });
     }

@@ -3,7 +3,7 @@
 """Unit coverage for the named settings that travel with a request, and for keeping the
 Python and Rust views of them in step.
 
-Most of what a caller asks for -- a session token, a timeout, triggers, which regions to
+Most of what a caller asks for -- a session token, a timeout, which regions to
 avoid -- used to travel as free-form strings. It now travels as a fixed set of named
 fields with declared types. That buys three things this file checks.
 
@@ -150,7 +150,11 @@ def test_explicit_validation_matches_former_reflection_rust(cls, field_name, val
     except (TypeError, ValueError) as error:
         with pytest.raises(type(error)) as caught:
             cls(**kwargs)
-        assert str(caught.value) == str(error)
+        expected_message = str(error)
+        if cls is PreparedFaultInjectionRule and field_name == "response_headers":
+            # Header snapshot validation has its own message, but the same type contract.
+            expected_message = "Prepared headers must be a mapping of strings to strings"
+        assert str(caught.value) == expected_message
     else:
         actual = cls(**kwargs)
         assert {member.name: getattr(actual, member.name) for member in fields(cls)} == expected

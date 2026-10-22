@@ -175,40 +175,57 @@ pub(crate) fn delete_database_async<'py>(
 /// container operations use, because at account scope there is no
 /// container link or partition key to read.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn list_databases<'py>(
     py: Python<'py>,
     driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "list_databases")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
-    run_list_databases_operation(py, &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?, modifiers, "list_databases", timeout_seconds)
+    run_list_databases_operation(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        "list_databases",
+        timeout_seconds,
+        include_attempts,
+    )
 }
 
 /// Async counterpart of [`list_databases`].
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn list_databases_async<'py>(
     py: Python<'py>,
     driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "list_databases")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
-    run_list_databases_operation_async(py, &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?, modifiers, "list_databases_async", timeout_seconds)
+    run_list_databases_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        "list_databases_async",
+        timeout_seconds,
+        include_attempts,
+    )
 }
 
 /// Run a database query and return one page of matching databases.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn query_databases<'py>(
     py: Python<'py>,
     driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "query_databases")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
@@ -220,17 +237,19 @@ pub(crate) fn query_databases<'py>(
         body_bytes,
         "query_databases",
         timeout_seconds,
+        include_attempts,
     )
 }
 
 /// Return an awaitable that runs one page of a database query.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn query_databases_async<'py>(
     py: Python<'py>,
     driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "query_databases")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
@@ -242,5 +261,6 @@ pub(crate) fn query_databases_async<'py>(
         body_bytes,
         "query_databases_async",
         timeout_seconds,
+        include_attempts,
     )
 }

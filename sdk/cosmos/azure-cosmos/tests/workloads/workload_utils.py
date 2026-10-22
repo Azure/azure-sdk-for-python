@@ -160,9 +160,22 @@ def get_user_agent(client_id):
     return prefix + str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
 
 
+def _item_keys(suffix):
+    if WORKLOAD_DOC_PROFILE == "orders":
+        return {"id": f"order-{suffix}", "customerId": f"customer-{suffix}"}
+    return {"id": f"test-{suffix}", "pk": f"pk-{suffix}"}
+
+
 def get_existing_random_keys():
-    random_int = random.randint(0, MAX_ITEM_INDEX)
-    return {"id": f"test-{random_int}", "pk": f"pk-{random_int}"}
+    return _item_keys(random.randint(0, MAX_ITEM_INDEX))
+
+
+def create_seed_item(index):
+    if WORKLOAD_DOC_PROFILE == "orders":
+        return {**_item_keys(index), "countryCode": "US", "quantity": 2, "status": "Pending"}
+    item = create_random_item()
+    item.update(_item_keys(index))
+    return item
 
 
 def get_existing_random_item():
@@ -172,6 +185,11 @@ def get_existing_random_item():
 
 
 def create_random_item():
+    if WORKLOAD_DOC_PROFILE == "orders":
+        return {
+            **_item_keys(uuid.uuid4()), "countryCode": "US",
+            "quantity": random.randint(1, 10), "status": "Pending",
+        }
     # "default" serializes to about 732 bytes of JSON (a single fixed flat shape).
     # "large" grows the body and adds nested objects/arrays (about 4,670 bytes,
     # roughly 6.4x the default) so a run can check whether conclusions hold for a
@@ -216,6 +234,23 @@ def _get_upsert_item():
     return create_random_item() if random.random() < 0.1 else get_existing_random_item()
 
 
+def _patch_operations():
+    field, maximum = ("quantity", 10) if WORKLOAD_DOC_PROFILE == "orders" else ("value", 1000000000)
+    return [{"op": "set", "path": f"/{field}", "value": random.randint(1, maximum)}]
+
+
+def _query_item_args(item):
+    field = "customerId" if WORKLOAD_DOC_PROFILE == "orders" else "pk"
+    return {
+        "query": f"SELECT * FROM c where c.id=@id and c.{field}=@{field}",
+        "parameters": [
+            {"name": "@id", "value": item["id"]},
+            {"name": f"@{field}", "value": item[field]},
+        ],
+        "partition_key": item[PARTITION_KEY],
+    }
+
+
 # ---------------------------------------------------------------------------
 # Sync operations
 # ---------------------------------------------------------------------------
@@ -253,7 +288,7 @@ def create_item(container, excluded_locations, num_creates, stats=None):
         except Exception as e:
             # A failed cleanup delete leaves synthetic documents behind and can
             # contaminate later runs on shared containers, so surface it explicitly.
-            _record_error(stats, "CreateCleanupDelete", e)
+            _record_error(stats, "CreateItemCleanUpFailure", e)
 
 
 def replace_item(container, excluded_locations, num_replaces, stats=None):
@@ -271,7 +306,7 @@ def delete_item(container, excluded_locations, num_deletes, stats=None):
         try:
             container.create_item(item, **extra)
         except Exception as exc:
-            _record_error(stats, "DeleteSetupCreate", exc)
+            _record_error(stats, "DeleteItemSetUpFailure", exc)
             continue
         _timed_call("DeleteItem", stats, container.delete_item, item["id"], item[PARTITION_KEY], **extra)
 
@@ -280,7 +315,7 @@ def patch_item(container, excluded_locations, num_patches, stats=None):
     extra = _extra_kwargs(excluded_locations)
     for _ in range(num_patches):
         item = get_existing_random_keys()
-        operations = [{"op": "set", "path": "/value", "value": random.randint(1, 1000000000)}]
+        operations = _patch_operations()
         _timed_call(
             "PatchItem", stats,
             container.patch_item, item["id"], item[PARTITION_KEY], operations, **extra,
@@ -294,12 +329,7 @@ def query_items(container, excluded_locations, num_queries, stats=None):
 
         def _do_query(ri=random_item, **call_kwargs):
             results = container.query_items(
-                query="SELECT * FROM c where c.id=@id and c.pk=@pk",
-                parameters=[
-                    {"name": "@id", "value": ri["id"]},
-                    {"name": "@pk", "value": ri["pk"]},
-                ],
-                partition_key=ri[PARTITION_KEY],
+                **_query_item_args(ri),
                 **call_kwargs,
                 **extra,
             )
@@ -352,7 +382,7 @@ async def create_item_concurrently(container, excluded_locations, num_creates, s
     cleanup_results = await asyncio.gather(*cleanup, return_exceptions=True)
     for err in cleanup_results:
         if isinstance(err, Exception):
-            _record_error(stats, "CreateCleanupDelete", err)
+            _record_error(stats, "CreateItemCleanUpFailure", err)
 
 
 async def replace_item_concurrently(container, excluded_locations, num_replaces, stats=None):
@@ -375,7 +405,7 @@ async def delete_item_concurrently(container, excluded_locations, num_deletes, s
     ready = []
     for item, result in zip(items, setup_results):
         if isinstance(result, BaseException):
-            _record_error(stats, "DeleteSetupCreate", result)
+            _record_error(stats, "DeleteItemSetUpFailure", result)
         else:
             ready.append(item)
     tasks = [
@@ -392,7 +422,7 @@ async def patch_item_concurrently(container, excluded_locations, num_patches, st
     tasks = []
     for _ in range(num_patches):
         item = get_existing_random_keys()
-        operations = [{"op": "set", "path": "/value", "value": random.randint(1, 1000000000)}]
+        operations = _patch_operations()
         tasks.append(
             _timed_call_async(
                 "PatchItem", stats,
@@ -410,12 +440,7 @@ async def query_items_concurrently(container, excluded_locations, num_queries, s
 
         async def _do_query(ri=random_item, **call_kwargs):
             results = container.query_items(
-                query="SELECT * FROM c where c.id=@id and c.pk=@pk",
-                parameters=[
-                    {"name": "@id", "value": ri["id"]},
-                    {"name": "@pk", "value": ri["pk"]},
-                ],
-                partition_key=ri[PARTITION_KEY],
+                **_query_item_args(ri),
                 **call_kwargs,
                 **extra,
             )
@@ -521,7 +546,7 @@ def _build_fixed_rate_call(container, op, extra):
         return ("ReplaceItem", container.replace_item, (item["id"], item), dict(extra))
     if op == "patch":
         item = get_existing_random_keys()
-        operations = [{"op": "set", "path": "/value", "value": random.randint(1, 1000000000)}]
+        operations = _patch_operations()
         return (
             "PatchItem", container.patch_item,
             (item["id"], item[PARTITION_KEY], operations), dict(extra),

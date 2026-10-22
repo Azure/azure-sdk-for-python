@@ -383,12 +383,13 @@ def test_dictionary_target_requires_self_instead_of_falling_back_to_id_rust(poin
 @pytest.mark.parametrize("method", ["read_item", "read_item_async"])
 @pytest.mark.parametrize("self_link,error,message", [
     ("dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
-     RuntimeError, "no driver registered for handle"),
+     TypeError, "_DriverHandle"),
     (None, ValueError, "item_id is required"),
     ("", ValueError, "target _self"),
     ("dbs/db/colls/c", ValueError, "target _self"),
 ])
-def test_native_read_accepts_address_only_and_rejects_missing_or_invalid_targets_rust(method, self_link, error, message):
+def test_native_read_validates_targets_before_rejecting_string_handle_rust(method, self_link, error, message):
+    """Validate targets first; Windows-emulator parity tests cover address-only reads."""
     from azure.cosmos._helpers._request_item import build_read_item_request
 
     binding = pytest.importorskip("azure.cosmos._rust")
@@ -556,15 +557,12 @@ def test_expired_cache_lock_does_not_start_metadata_rust(point_read):
     "create_item", "create_item_async",
 ])
 @pytest.mark.parametrize("seconds", [0, -1, float("nan"), float("inf"), 2**64])
-def test_native_remaining_timeout_rejects_invalid_durations_without_dispatch_rust(method, seconds):
-    """The binding re-checks the timeout itself, for every entry point it exposes.
+def test_native_invalid_timeout_and_handle_validation_order_rust(method, seconds):
+    """Item entry points check the duration first; metadata checks the handle first.
 
-    The Python layer already rejects these values, but the binding is a
-    public boundary and must not trust its caller: an unusable duration has
-    to raise before the driver is invoked. Checked on every exported
-    function so a newly added one cannot quietly skip the check. The driver
-    handle is deliberately invalid -- if validation ever stopped running
-    first, the call would fail with a different, unmistakable error.
+    Both supplied arguments are invalid, so this checks error precedence, not
+    successful handle use. Windows-emulator binding tests separately verify
+    metadata timeout rejection with real handles.
     """
     from azure.cosmos._backend.contracts import PreparedRequest
     binding = pytest.importorskip("azure.cosmos._rust")
@@ -574,7 +572,11 @@ def test_native_remaining_timeout_rejects_invalid_durations_without_dispatch_rus
     )
     argument = prepared if method.startswith(("read_item", "create_item")) else prepared.container_link
     argument_name = "prepared" if method.startswith(("read_item", "create_item")) else "container_link"
-    with pytest.raises(ValueError, match="timeout_seconds"):
+    error, message = (
+        (TypeError, "_DriverHandle") if method.startswith("get_container_metadata")
+        else (ValueError, "timeout_seconds")
+    )
+    with pytest.raises(error, match=message):
         getattr(binding, method)(
             driver_handle="invalid-driver-handle", **{argument_name: argument}, timeout_seconds=seconds
         )
@@ -648,7 +650,8 @@ def test_native_unknown_read_consistency_fails_before_driver_lookup_rust(
 @pytest.mark.parametrize("method", ["read_item", "read_item_async"])
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong", None])
 @pytest.mark.parametrize("raw_header", [False, True])
-def test_native_supported_read_consistency_reaches_driver_lookup_rust(method, level, raw_header):
+def test_native_supported_read_consistency_reaches_handle_validation_rust(method, level, raw_header):
+    """Supported settings reach handle validation; service parity tests check read outcomes."""
     from azure.cosmos._backend.contracts import PreparedRequest
     from azure.cosmos._backend.request_settings import RequestSettings
 
@@ -659,5 +662,5 @@ def test_native_supported_read_consistency_reaches_driver_lookup_rust(method, le
         headers={"x-ms-consistency-level": level} if raw_header and level is not None else {},
         settings=RequestSettings(consistency_level=None if raw_header else level),
     )
-    with pytest.raises(RuntimeError, match="no driver registered for handle"):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         getattr(binding, method)(driver_handle="invalid-driver-handle", prepared=prepared)

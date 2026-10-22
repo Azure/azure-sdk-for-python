@@ -139,7 +139,7 @@ def _aggregate(container, prefix: str, run_id: str):
         a["count"] += int(r.get("count", 0) or 0)
         a["errors"] += int(r.get("errors", 0) or 0)
         a["server_count"] += int(r.get("server_count", 0) or 0)
-        a["window_s"] += float(r.get("window_seconds", 0.0) or 0.0)
+        a["window_s"] += float(r.get("interval_duration_seconds", 0.0) or 0.0)
         cb = r.get("hist_b64")
         if not add_histogram(a["client"], cb, r["count"]):
             a["no_client_windows"] += 1

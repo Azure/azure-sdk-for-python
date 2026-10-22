@@ -8,6 +8,7 @@
 import asyncio
 import base64
 import json
+from copy import deepcopy
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
@@ -24,6 +25,8 @@ from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from azure.cosmos.partition_key import NonePartitionKeyValue
 from read_all_items.test_read_all_items_contract_unit import feed as base_feed
+from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
+from azure.cosmos._routing.routing_range import Range
 
 
 @pytest.fixture
@@ -43,6 +46,31 @@ def feed(base_feed):
         ([], "c1.d"),
     ]
     return base_feed
+
+
+@pytest.mark.parametrize("mode", ["LatestVersion", "AllVersionsAndDeletes"])
+@pytest.mark.parametrize("epk", ["11622DAA78F835834610ABE56EFF5CB5", "00FF", "01" * 48])
+def test_change_feed_accepts_sdk_point_range_and_preserves_resume_scope_rust(feed, mode, epk):
+    expected_range = FeedRangeInternalEpk(Range(epk, epk, True, True)).get_normalized_range()
+    payload = {"Range": {"min": epk, "max": epk, "isMinInclusive": True, "isMaxInclusive": True}}
+    result = (200, 0, {}, json.dumps(payload).encode(), None)
+    name = "feed_range_from_partition_key" + ("_async" if feed.async_mode else "")
+    producer = AsyncMock(return_value=result) if feed.async_mode else MagicMock(return_value=result)
+    setattr(feed.binding, name, producer)
+    point = feed.proxy.feed_range_from_partition_key("customer-501")
+    if feed.async_mode:
+        point = asyncio.run(point)
+    original = deepcopy(point)
+    pages = feed.proxy.query_items_change_feed(feed_range=point, mode=mode).by_page()
+    feed.next_page(pages)
+    token = pages.continuation_token
+    resumed = feed.proxy.query_items_change_feed(continuation=token, feed_range=point).by_page()
+    feed.next_page(resumed)
+    assert len(feed.calls) == 2
+    for prepared, _, _ in feed.calls:
+        assert json.loads(prepared.body_bytes)["feed_range"] == [expected_range.min, expected_range.max]
+    assert point == original == payload
+    producer.assert_called_once()
 
 
 @pytest.mark.parametrize("status", [429, 503])

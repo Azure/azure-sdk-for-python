@@ -12,6 +12,21 @@ urlFragment: cosmos-db-samples
 
 The following are code samples that show common scenario operations with the Azure Cosmos DB SQL API client library. Note that the samples use the terms 'Document' and 'Item' interchangably.
 
+These samples target the Rust-backed SDK. Stored-procedure management and
+execution, trigger management and invocation, and UDF definition management
+are not exposed by either the synchronous or asynchronous client. Samples
+for those operations have been retired, not left waiting for Rust parity.
+
+`query_items` can still call an already-deployed UDF in its SQL expression.
+Deploying the function is separate from querying items; this exception does
+not restore `ContainerProxy.scripts` or UDF-management methods.
+
+Authentication samples use an account key or Microsoft Entra ID (AAD).
+Resource-token authentication and Cosmos user/permission management are
+removed from both clients; selecting the legacy backend does not restore
+them. Entra identities and role assignments are separate from Cosmos users
+and resource permissions, so the AAD samples remain.
+
 * [client_from_connection_string.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/client_from_connection_string.py) and
   [client_from_connection_string_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/client_from_connection_string_async.py) -
   Create a client from a connection string, read an existing order, and close

@@ -255,12 +255,13 @@ pub(crate) fn replace_container_async<'py>(
 
 /// Read one page of containers in a database.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn list_containers<'py>(
     py: Python<'py>,
     driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "list_containers")?;
     let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
@@ -271,17 +272,19 @@ pub(crate) fn list_containers<'py>(
         database_id,
         "list_containers",
         timeout_seconds,
+        include_attempts,
     )
 }
 
 /// Return an awaitable that reads one page of containers.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn list_containers_async<'py>(
     py: Python<'py>,
     driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "list_containers")?;
     let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
@@ -292,17 +295,19 @@ pub(crate) fn list_containers_async<'py>(
         database_id,
         "list_containers_async",
         timeout_seconds,
+        include_attempts,
     )
 }
 
 /// Run a container query and return one page of matching containers.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn query_containers<'py>(
     py: Python<'py>,
     driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "query_containers")?;
     let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
@@ -315,17 +320,19 @@ pub(crate) fn query_containers<'py>(
         body_bytes,
         "query_containers",
         timeout_seconds,
+        include_attempts,
     )
 }
 
 /// Return an awaitable that runs one page of a container query.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn query_containers_async<'py>(
     py: Python<'py>,
     driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "query_containers")?;
     let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
@@ -338,5 +345,6 @@ pub(crate) fn query_containers_async<'py>(
         body_bytes,
         "query_containers_async",
         timeout_seconds,
+        include_attempts,
     )
 }

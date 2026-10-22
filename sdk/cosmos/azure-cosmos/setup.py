@@ -8,8 +8,24 @@
 
 # Shared metadata must match pyproject.toml; Maturin does not read setup.py.
 from io import open
-from setuptools import find_packages, setup
+from setuptools import Distribution, find_packages, setup
+from setuptools.errors import SetupError
 from azure_cosmos_build_metadata import validate_version_metadata
+
+
+class MetadataOnlyDistribution(Distribution):
+    def run_commands(self):
+        unsupported = set(self.commands) - {"egg_info", "dist_info"}
+        if unsupported:
+            raise SetupError(
+                "setup.py is metadata-only for the Rust-backed SDK; "
+                f"unsupported commands: {', '.join(sorted(unsupported))}. "
+                "Use python -m build --wheel or python -m build --sdist "
+                "to invoke the Maturin backend, or python -m pip install -e . "
+                "for development."
+            )
+        super().run_commands()
+
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-cosmos"
@@ -35,6 +51,7 @@ exclude_packages = [
 ]
 
 setup(
+    distclass=MetadataOnlyDistribution,
     name=PACKAGE_NAME,
     version=version,
     include_package_data=True,

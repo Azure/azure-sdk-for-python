@@ -433,18 +433,13 @@ class TestItemBodySerialization(unittest.TestCase):
         self.assertEqual(captured["content_length"], len('{"text":"日本"}'.encode("utf-8")))
 
     def test_enabled_option_does_not_change_other_request_bodies(self):
-        """The option is scoped to item writes only. Control-plane bodies
-        (databases, containers, sprocs, triggers, UDFs)
+        """The option is scoped to item writes only. Database/container bodies
         and document queries all stay ASCII-escaped even when it is on."""
         data = {"text": "日本"}
         expected = json.dumps(data, separators=(",", ":"))
         unaffected_requests = (
             (http_constants.ResourceType.Database, _OperationType.Create),
             (http_constants.ResourceType.Collection, _OperationType.Replace),
-            (http_constants.ResourceType.StoredProcedure, _OperationType.Create),
-            (http_constants.ResourceType.StoredProcedure, _OperationType.ExecuteJavaScript),
-            (http_constants.ResourceType.Trigger, _OperationType.Create),
-            (http_constants.ResourceType.UserDefinedFunction, _OperationType.Create),
             (http_constants.ResourceType.Document, _OperationType.SqlQuery),
         )
 

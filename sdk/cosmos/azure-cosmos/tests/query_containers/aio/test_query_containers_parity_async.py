@@ -205,8 +205,11 @@ async def test_query_containers_page_hooks_and_timeout_async_rust(database_with_
             )
             assert snapshots == []
             connection = client.client_connection
-            with patch.object(connection, "_CosmosClientConnection__QueryFeed",
-                              wraps=connection._CosmosClientConnection__QueryFeed) as fetch:
+            owner, method = (
+                (client._adapter, "execute_pages") if client._adapter.name == "rust"
+                else (connection, "_CosmosClientConnection__QueryFeed")
+            )
+            with patch.object(owner, method, wraps=getattr(owner, method)) as fetch:
                 rows = [row async for row in pager]
             assert len(snapshots) == fetch.call_count >= CONTAINER_COUNT
             assert len({headers["x-ms-activity-id"] for headers in snapshots}) == len(snapshots)

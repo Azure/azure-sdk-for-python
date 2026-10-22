@@ -483,14 +483,21 @@ class _LocalOperationError(Exception):
         self.original = error
 
 
-def trace_operation(*, binding_operation: _BindingOperation) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]:
-    """Reuse Azure Core's span while owning diagnostics until public completion.
+def trace_operation(
+    *,
+    binding_operation: _BindingOperation,
+    operation_name: Optional[str] = None,
+    name_of_span: Optional[str] = None,
+) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]:
+    """Reuse Azure Core's span through method or deferred-callback completion.
 
     :keyword binding_operation: One binding operation, or the ordered steps of a bounded
         composed call. A tuple allows a prefix of that sequence, not arbitrary repeated calls.
         BindingAlternatives narrows permitted paths with each actual binding call.
         An empty tuple records local execution without accepting binding contributions.
     :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives
+    :keyword str operation_name: Completion identity for a deferred callback; defaults to the method name.
+    :keyword str name_of_span: Explicit span name for deferred execution; defaults to the qualified method name.
     :return: A decorator with operation-scoped diagnostic collection.
     :rtype: callable
     """
@@ -506,14 +513,14 @@ def trace_operation(*, binding_operation: _BindingOperation) -> Callable[[Callab
                     raise _LocalOperationError(error) from None
                 raise
 
-        traced = distributed_trace(record)
+        traced = distributed_trace(name_of_span=name_of_span)(record)
 
         @wraps(func)
         def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _T:
             owner = args[0] if args else kwargs.get("self")
             if _consume_delegated_call(owner, func.__name__):
                 return func(*args, **kwargs)
-            with _operation_scope(owner, func.__name__, kwargs, binding_operation):
+            with _operation_scope(owner, operation_name or func.__name__, kwargs, binding_operation):
                 try:
                     return traced(*args, **kwargs)
                 except _LocalOperationError as error:
@@ -528,7 +535,10 @@ def trace_operation(*, binding_operation: _BindingOperation) -> Callable[[Callab
 
 
 def trace_operation_async(
-    *, binding_operation: _BindingOperation
+    *,
+    binding_operation: _BindingOperation,
+    operation_name: Optional[str] = None,
+    name_of_span: Optional[str] = None,
 ) -> Callable[[Callable[_P, Awaitable[_T]]], Callable[_P, Awaitable[_T]]]:
     """Async execution with the same ownership and recording rules as sync.
 
@@ -537,6 +547,8 @@ def trace_operation_async(
         BindingAlternatives narrows permitted paths with each actual binding call.
         An empty tuple records local execution without accepting binding contributions.
     :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives
+    :keyword str operation_name: Completion identity for a deferred callback; defaults to the method name.
+    :keyword str name_of_span: Explicit span name for deferred execution; defaults to the qualified method name.
     :return: A decorator with operation-scoped diagnostic collection.
     :rtype: callable
     """
@@ -552,14 +564,14 @@ def trace_operation_async(
                     raise _LocalOperationError(error) from None
                 raise
 
-        traced = distributed_trace_async(record)
+        traced = distributed_trace_async(name_of_span=name_of_span)(record)
 
         @wraps(func)
         async def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _T:
             owner = args[0] if args else kwargs.get("self")
             if _consume_delegated_call(owner, func.__name__):
                 return await func(*args, **kwargs)
-            with _operation_scope(owner, func.__name__, kwargs, binding_operation):
+            with _operation_scope(owner, operation_name or func.__name__, kwargs, binding_operation):
                 try:
                     return await traced(*args, **kwargs)
                 except _LocalOperationError as error:

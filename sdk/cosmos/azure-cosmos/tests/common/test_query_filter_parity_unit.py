@@ -98,10 +98,14 @@ def test_owned_item_runner_selects_original_or_copy_rust(monkeypatch, backend, o
     ("_validate_offset_limit", 0, None),
     ("_validate_distinct_offset_limit", 0, None),
     ("_validate_distinct", 0, None),
+    ("test_query_positional_args", 1, None),
 ])
 def test_sync_query_helpers_preserve_original_body_rust(method_name, start, stop):
     def body(path):
-        module = ast.parse(path.read_text(encoding="utf-8"))
+        source = path.read_text(encoding="utf-8")
+        if method_name == "test_query_positional_args":
+            source = source.replace("self.config.TEST_CONTAINER_PARTITION_KEY", "'pk'")
+        module = ast.parse(source)
         cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == "TestQuery")
         method = next(
             node for node in cls.body
@@ -124,6 +128,8 @@ def test_query_selector_rejects_other_operations_rust():
     ["--op", "query_items"],
     ["--op", "query_items", "--query-test", "ordering"],
     ["--op", "query_items", "--query-test", "top"],
+    ["--op", "query_items", "--query-test", "positional"],
+    ["--op", "query_items", "--query-test", "vector-ordering"],
 ])
 def test_async_selector_rejects_unsupported_selections_rust(options):
     runner = load_module("_async_query_selector_guard", ROOT / "scripts" / "v5" / "run_read_item_parity.py")
@@ -254,6 +260,7 @@ def test_async_fixture_cleans_database_when_container_setup_fails_rust(monkeypat
     (selection, surface, f"test_query{suffix}.py", f"TestQuery{class_suffix}", method + suffix)
     for selection, method in (
         ("parameters", "test_query_items_with_parameters_none"),
+        ("positional", "test_query_positional_args"),
         ("ordering", "test_query_pagination_with_max_item_count"),
         ("offset", "test_offset_limit"),
         ("distinct", "test_distinct"),
@@ -267,8 +274,10 @@ def test_async_fixture_cleans_database_when_container_setup_fails_rust(monkeypat
         ("token-limit", "test_continuation_token_size_limit_query"),
     )
     for surface, suffix, class_suffix in (("sync", "", ""), ("aio", "_async", "Async"))
-    if surface == "sync" or selection not in ("parameters", "ordering")
+    if surface == "sync" or selection not in ("parameters", "ordering", "positional")
 ] + [
+    ("vector-ordering", "sync", "test_query_vector_similarity.py", "TestVectorSimilarityQuery",
+     "test_ordering_distances"),
     ("partition-feed-range", "sync", "test_query_feed_range_discovery.py", "TestQueryFeedRange",
      "test_query_with_feed_range_for_partition_key"),
     ("partition-feed-range", "aio", "test_query_feed_range_discovery_async.py", "TestQueryFeedRangeAsync",
@@ -362,6 +371,63 @@ def test_top_copy_preserves_queries_and_public_assertions_rust(method_name):
     assert body(ROOT / "tests" / "test_orderby.py") == body(
         ROOT / "tests" / "query_items" / "sync" / "legacy" / "test_orderby.py"
     )
+
+
+@pytest.mark.parametrize("name", ["verify_ordering", "test_ordering_distances"])
+def test_vector_ordering_preserves_original_body_rust(name):
+    def body(path):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        function = next(node for node in ast.walk(tree)
+                        if isinstance(node, ast.FunctionDef) and node.name == _method_name(path, name))
+        return ast.dump(function.args), [ast.dump(node) for node in function.body]
+
+    filename = "test_query_vector_similarity.py"
+    assert body(ROOT / "tests" / filename) == body(COPY.with_name(filename))
+
+
+@pytest.mark.parametrize("failure_stage", [None, "container", "item"])
+def test_vector_ordering_fixture_preserves_profiles_and_cleans_up_rust(monkeypatch, failure_stage):
+    monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    module = load_module("_vector_ordering_copy", COPY.with_name("test_query_vector_similarity.py"))
+    setup_client, query_client = MagicMock(), MagicMock()
+    factory = MagicMock(side_effect=[setup_client, query_client])
+    monkeypatch.setattr(module, "CosmosClient", factory)
+    database = setup_client.create_database.return_value
+    create_container = database.create_container
+    create_item = create_container.return_value.create_item
+    if failure_stage == "container":
+        create_container.side_effect = RuntimeError("container failed")
+    elif failure_stage == "item":
+        create_item.side_effect = RuntimeError("item failed")
+    case = module.TestVectorSimilarityQuery("test_ordering_distances_rust")
+    try:
+        if failure_stage is None:
+            case.setUp()
+            assert create_container.call_count == 3
+            assert create_item.call_count == 30
+            for call, index_type, distance in zip(
+                create_container.call_args_list,
+                ("quantizedFlat", "flat", "diskANN"),
+                ("cosine", "euclidean", "dotproduct"),
+            ):
+                assert call.kwargs["offer_throughput"] == module.test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS
+                assert call.kwargs["indexing_policy"] == module.test_config.get_vector_indexing_policy(index_type)
+                assert call.kwargs["vector_embedding_policy"] == module.test_config.get_vector_embedding_policy(
+                    distance, "float32", 128
+                )
+            assert [call.args[0] for call in create_item.call_args_list] == (
+                module.vector_test_data.get_vector_items() * 3
+            )
+        else:
+            with pytest.raises(RuntimeError, match=f"{failure_stage} failed"):
+                case.setUp()
+    finally:
+        assert case.doCleanups()
+    assert [call.kwargs["_backend"] for call in factory.call_args_list] == ["core-python", "rust"]
+    setup_client.delete_database.assert_called_once_with(case.database_id)
+    setup_client.close.assert_called_once()
+    query_client.close.assert_called_once()
 
 
 @pytest.mark.parametrize("filename,class_name,method_name,id_attribute", [

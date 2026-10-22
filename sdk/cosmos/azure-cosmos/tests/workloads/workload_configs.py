@@ -99,7 +99,7 @@ CONCURRENT_QUERIES = _safe_int(os.environ.get("COSMOS_CONCURRENT_QUERIES", "2"),
 WORKLOAD_NUM_CLIENTS = _safe_int(os.environ.get("WORKLOAD_NUM_CLIENTS", "1"), 1)
 PARTITION_KEY = os.environ.get("COSMOS_PARTITION_KEY", "id")
 # Inclusive highest suffix used by seeded item ids. For example, 1000 means the
-# workload uses test-0 through test-1000, so setup must create 1001 items.
+# workload uses suffixes 0 through 1000, so setup must create 1001 items.
 MAX_ITEM_INDEX = int(os.environ.get("COSMOS_MAX_ITEM_INDEX", "10000"))
 THROUGHPUT = _safe_int(os.environ.get("COSMOS_THROUGHPUT", "100000"), 100000)  # For DR drills, set COSMOS_THROUGHPUT=1000000
 
@@ -198,11 +198,12 @@ if _raw_mix:
 
 # Document size/shape profile for GENERATED item bodies (create/upsert/replace/
 # patch). "large" has nested objects and arrays; "nested" is an alias for it.
+# "orders" uses matching order/customer suffixes and the /id partition key.
 # Actual serialized sizes depend on generated values. Reads return whatever already
 # exists in the container, so a read-side size test needs the container seeded
 # with that profile separately.
 WORKLOAD_DOC_PROFILE = os.environ.get("WORKLOAD_DOC_PROFILE", "default").strip().lower()
-_VALID_DOC_PROFILES = {"default", "large", "nested"}
+_VALID_DOC_PROFILES = {"default", "large", "nested", "orders"}
 if WORKLOAD_DOC_PROFILE not in _VALID_DOC_PROFILES:
     raise ValueError(
         "Unknown WORKLOAD_DOC_PROFILE: "
@@ -221,6 +222,8 @@ if not WORKLOAD_OPERATIONS and not WORKLOAD_MIX:
     raise ValueError("Select at least one workload operation")
 if PARTITION_KEY not in ("id", "pk"):
     raise ValueError("The seeded workload supports COSMOS_PARTITION_KEY=id or pk")
+if WORKLOAD_DOC_PROFILE == "orders" and PARTITION_KEY != "id":
+    raise ValueError("The orders workload requires COSMOS_PARTITION_KEY=id")
 if WORKLOAD_USE_SYNC and (WORKLOAD_ARRIVAL_RATE or WORKLOAD_NUM_CLIENTS != 1 or not WORKLOAD_MANAGE_CLIENT_LIFECYCLE):
     raise ValueError("Sync workloads require zero arrival rate, one client and explicit cleanup")
 if WORKLOAD_ARRIVAL_RATE:

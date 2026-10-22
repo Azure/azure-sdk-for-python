@@ -46,7 +46,7 @@ use super::{
         build_operation_options, extract_common_prepared_inputs, parse_container_link,
         RequestHeadersAndOptions,
     },
-    response::tuple_from_feed_result,
+    response::{tuple_from_feed_result, with_attempt_diagnostics},
     AbortOnDrop,
 };
 use super::{partition_key_input::BindingPartitionKey, query::QueryTarget};
@@ -268,7 +268,11 @@ impl ItemFeedCursor {
     }
 }
 
-type PageResult = (Result<Option<CosmosResponse>, CosmosError>, Option<String>);
+type PageResult = (
+    Result<Option<CosmosResponse>, CosmosError>,
+    Option<String>,
+    bool,
+);
 
 fn page_timeout<T>(
     timeout: Option<Duration>,
@@ -320,6 +324,9 @@ async fn next_plan_page(
     // Take ownership before awaiting. A cancelled/failed fetch must not leave a
     // partly advanced plan available for another fetch to skip undelivered rows.
     let progress = state.progress.take();
+    // Successful resolution and planning do not return diagnostics through this
+    // path, so the first execution cannot describe the complete fetch.
+    let diagnostics_complete = progress.is_some();
     if state.started && progress.is_none() {
         return Err(PyRuntimeError::new_err(
             "Feed cursor failed; resume using the last delivered continuation token",
@@ -352,12 +359,12 @@ async fn next_plan_page(
             .await
         {
             Ok(container) => container,
-            Err(error) => return Ok((Err(error), None)),
+            Err(error) => return Ok((Err(error), None, false)),
         };
         if let FeedRequest::ChangeFeed(request) = &request {
             let width = match request.scope_width(&driver, &container).await? {
                 Ok(width) => width,
-                Err(error) => return Ok((Err(error), None)),
+                Err(error) => return Ok((Err(error), None, false)),
             };
             ChangeFeedRequest::validate_width(width)?;
         }
@@ -383,7 +390,7 @@ async fn next_plan_page(
             .await
         {
             Ok(plan) => plan,
-            Err(error) => return Ok((Err(error), None)),
+            Err(error) => return Ok((Err(error), None, false)),
         };
         Progress {
             plan,
@@ -407,14 +414,14 @@ async fn next_plan_page(
         .await
     {
         Ok(response) => response,
-        Err(error) => return Ok((Err(error), None)),
+        Err(error) => return Ok((Err(error), None, diagnostics_complete)),
     };
     // Split recovery may expand a previously safe scope. Do not publish a
     // continuation token or an empty poll covering only one of its children.
     if let FeedRequest::ChangeFeed(request) = &progress.request {
         let width = match request.scope_width(&driver, &progress.container).await? {
             Ok(width) => width,
-            Err(error) => return Ok((Err(error), None)),
+            Err(error) => return Ok((Err(error), None, false)),
         };
         ChangeFeedRequest::validate_width(width)?;
     }
@@ -433,7 +440,7 @@ async fn next_plan_page(
                 state.continuation_unsupported = true;
                 None
             }
-            Err(error) => return Ok((Err(error), None)),
+            Err(error) => return Ok((Err(error), None, false)),
         }
     } else {
         None
@@ -459,7 +466,7 @@ async fn next_plan_page(
         u8::from(state.has_more) | (u8::from(state.continuation_unsupported) << 1),
         Ordering::Release,
     );
-    Ok((Ok(response), token))
+    Ok((Ok(response), token, diagnostics_complete))
 }
 
 fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: BindingPartitionKey) -> PyResult<FeedRequest> {
@@ -508,17 +515,37 @@ fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: BindingPartitionKey) -> PyRes
     .map_err(|error| PyValueError::new_err(format!("Invalid retained feed request: {error}")))
 }
 
-fn finish_page<'py>(py: Python<'py>, result: PageResult) -> PyResult<Bound<'py, PyTuple>> {
-    let (result, continuation) = result;
-    let tuple = tuple_from_feed_result(py, result)?;
-    let headers = tuple.get_item(2)?;
-    let headers = headers.downcast::<PyDict>()?;
-    if let Some(token) = continuation {
-        headers.set_item("x-ms-continuation", token)?;
-    } else if headers.contains("x-ms-continuation")? {
-        headers.del_item("x-ms-continuation")?;
+fn finish_page<'py>(
+    py: Python<'py>,
+    result: PageResult,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let (result, continuation, complete) = result;
+    let diagnostics = if include_attempts {
+        match &result {
+            Ok(Some(response)) => Some(response.diagnostics()),
+            Err(error) => error.diagnostics(),
+            Ok(None) => None,
+        }
+    } else {
+        None
+    };
+    let response = (|| {
+        let tuple = tuple_from_feed_result(py, result)?;
+        let headers = tuple.get_item(2)?;
+        let headers = headers.downcast::<PyDict>()?;
+        if let Some(token) = continuation {
+            headers.set_item("x-ms-continuation", token)?;
+        } else if headers.contains("x-ms-continuation")? {
+            headers.del_item("x-ms-continuation")?;
+        }
+        Ok(tuple)
+    })();
+    if include_attempts {
+        with_attempt_diagnostics(py, response, diagnostics, complete)
+    } else {
+        response
     }
-    Ok(tuple)
 }
 
 fn inputs(
@@ -549,13 +576,14 @@ fn inputs(
 }
 
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, cursor, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, cursor, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn fetch_page_with_cursor<'py>(
     py: Python<'py>,
     driver_handle: &crate::runtime::DriverHandle,
     prepared: &Bound<'py, PyAny>,
     cursor: PyRef<'py, ItemFeedCursor>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let (link, modifiers, token, scope) = inputs(prepared)?;
     let timeout = parse_remaining_timeout(timeout_seconds)?;
@@ -578,17 +606,18 @@ pub(crate) fn fetch_page_with_cursor<'py>(
         ),
     );
     let result = py.allow_threads(|| runtime.tokio_rt.block_on(future))??;
-    finish_page(py, result)
+    finish_page(py, result, include_attempts)
 }
 
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, cursor, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, cursor, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn fetch_page_with_cursor_async<'py>(
     py: Python<'py>,
     driver_handle: &crate::runtime::DriverHandle,
     prepared: &Bound<'py, PyAny>,
     cursor: PyRef<'py, ItemFeedCursor>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     let (link, modifiers, token, scope) = inputs(prepared)?;
     let timeout = parse_remaining_timeout(timeout_seconds)?;
@@ -617,7 +646,9 @@ pub(crate) fn fetch_page_with_cursor_async<'py>(
         let result = join
             .await
             .map_err(|error| PyRuntimeError::new_err(error.to_string()))???;
-        Python::with_gil(|py| finish_page(py, result).map(|value| value.into_any().unbind()))
+        Python::with_gil(|py| {
+            finish_page(py, result, include_attempts).map(|value| value.into_any().unbind())
+        })
     })
 }
 
@@ -767,6 +798,132 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn retained_fetch_diagnostics_preserve_pages_and_mark_initial_setup_incomplete() {
+        let (_emulator, driver) = setup(7).await;
+        let cursor = ItemFeedCursor::default();
+        let mut token = None;
+        let mut fetches = 0;
+        loop {
+            let result = next_page(
+                driver.clone(),
+                cursor.state.clone(),
+                ("test".into(), "dbs/db/colls/c".into()),
+                token,
+                modifiers(),
+            )
+            .await
+            .unwrap();
+            assert_eq!(result.2, fetches != 0);
+            let exhausted = result.0.as_ref().unwrap().is_none();
+            token = result.1.clone();
+            Python::with_gil(|py| {
+                let ordinary = finish_page(py, result.clone(), false).unwrap();
+                let envelope = finish_page(py, result, true).unwrap();
+                assert_eq!(envelope.len(), 2);
+                assert!(envelope.get_item(0).unwrap().eq(&ordinary).unwrap());
+                let payload = envelope.get_item(1).unwrap();
+                assert_eq!(payload.is_none(), exhausted);
+                if !exhausted {
+                    if fetches == 0 {
+                        assert!(!payload
+                            .get_item("complete")
+                            .unwrap()
+                            .extract::<bool>()
+                            .unwrap());
+                    } else {
+                        assert!(payload.get_item("complete").is_err());
+                    }
+                    let headers = ordinary.get_item(2).unwrap();
+                    assert_eq!(
+                        headers
+                            .get_item("x-ms-continuation")
+                            .unwrap()
+                            .extract::<String>()
+                            .unwrap(),
+                        token.clone().unwrap()
+                    );
+                } else {
+                    assert!(!ordinary
+                        .get_item(2)
+                        .unwrap()
+                        .contains("x-ms-continuation")
+                        .unwrap());
+                }
+            });
+            fetches += 1;
+            if exhausted {
+                break;
+            }
+            assert!(fetches < 100);
+        }
+        assert!(fetches > 2);
+    }
+
+    #[tokio::test]
+    async fn retained_fetch_attempt_envelope_preserves_errors() {
+        let (_emulator, driver) = setup(1).await;
+        let first = next_page(
+            driver,
+            ItemFeedCursor::default().state,
+            ("test".into(), "dbs/db/colls/c".into()),
+            None,
+            modifiers(),
+        )
+        .await
+        .unwrap();
+        let diagnostics = first.0.unwrap().unwrap().diagnostics();
+        Python::with_gil(|py| {
+            for status in [
+                status_codes::CLIENT_UNSUPPORTED_QUERY_FEATURE,
+                azure_data_cosmos_driver::error::CosmosStatus::new(
+                    azure_core::http::StatusCode::RequestTimeout,
+                ),
+                azure_data_cosmos_driver::error::CosmosStatus::new(
+                    azure_core::http::StatusCode::RequestTimeout,
+                )
+                .with_sub_status(status_codes::substatus::CLIENT_OPERATION_TIMEOUT.value()),
+            ] {
+                for complete in [false, true] {
+                    for include_diagnostics in [false, true] {
+                        let mut builder = CosmosError::builder().with_status(status);
+                        if include_diagnostics {
+                            builder = builder.with_diagnostics(diagnostics.clone());
+                        }
+                        let error = builder.build();
+                        let ordinary = finish_page(py, (Err(error.clone()), None, complete), false)
+                            .unwrap_err();
+                        let recorded =
+                            finish_page(py, (Err(error), None, complete), true).unwrap_err();
+                        assert!(ordinary.get_type_bound(py).is(&recorded.get_type_bound(py)));
+                        assert_eq!(ordinary.to_string(), recorded.to_string());
+                        let payload = recorded.value_bound(py).getattr("_cosmos_attempt_payload");
+                        if include_diagnostics {
+                            let payload = payload.unwrap();
+                            assert_eq!(
+                                payload
+                                    .get_item("request_count")
+                                    .unwrap()
+                                    .extract::<usize>()
+                                    .unwrap(),
+                                diagnostics.request_count()
+                            );
+                            if !complete {
+                                assert!(!payload
+                                    .get_item("complete")
+                                    .unwrap()
+                                    .extract::<bool>()
+                                    .unwrap());
+                            }
+                        } else {
+                            assert!(payload.is_err());
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    #[tokio::test]
     async fn cursor_properties_remain_readable_during_a_fetch() {
         let (_emulator, driver) = setup(3).await;
         let cursor = ItemFeedCursor::default();
@@ -838,7 +995,7 @@ mod tests {
             let (driver, rule) = setup_fault(operation, Duration::ZERO).await;
             let cursor = ItemFeedCursor::default();
             let identity = ("test".into(), "dbs/db/colls/other".into());
-            let (result, token) = next_page(
+            let (result, token, complete) = next_page(
                 driver.clone(),
                 cursor.state.clone(),
                 identity.clone(),
@@ -848,6 +1005,7 @@ mod tests {
             .await
             .unwrap();
             assert!(result.is_err(), "{operation}");
+            assert!(!complete, "{operation}");
             assert!(token.is_none(), "{operation}");
             assert!(rule.hit_count() > 0, "{operation}");
             let setup_failed = operation != "QueryItem";
@@ -922,7 +1080,7 @@ mod tests {
         state: &Arc<Mutex<CursorState>>,
         token: Option<String>,
     ) -> (Option<Vec<String>>, Option<String>) {
-        let (response, token) = next_page(
+        let (response, token, _) = next_page(
             driver.clone(),
             state.clone(),
             ("test".into(), "dbs/db/colls/c".into()),
@@ -1090,7 +1248,7 @@ mod tests {
         request: &FeedRequest,
         token: Option<String>,
     ) -> (Option<Vec<serde_json::Value>>, Option<String>) {
-        let (response, token) = next_plan_page(
+        let (response, token, _) = next_plan_page(
             driver.clone(),
             state.clone(),
             ("query-test".into(), "dbs/db/colls/c".into()),
@@ -1236,7 +1394,7 @@ mod tests {
             HeaderValue::from_static("1"),
         );
         let state = Arc::new(Mutex::new(CursorState::default()));
-        let (response, token) = next_plan_page(
+        let (response, token, _) = next_plan_page(
             driver.clone(),
             state.clone(),
             ("query-test".into(), "dbs/db/colls/c".into()),
@@ -1346,7 +1504,7 @@ mod tests {
             "SELECT DISTINCT VALUE c.id FROM c OFFSET 1000 LIMIT 1",
         ] {
             let cursor = ItemFeedCursor::default();
-            let (result, token) = next_plan_page(
+            let (result, token, _) = next_plan_page(
                 driver.clone(),
                 cursor.state.clone(),
                 ("test".into(), "dbs/db/colls/c".into()),
@@ -1583,7 +1741,7 @@ mod tests {
             ("dbs/db/colls/other", token),
         ] {
             let state = Arc::new(Mutex::new(CursorState::default()));
-            let (result, _) = next_page(
+            let (result, _, _) = next_page(
                 driver.clone(),
                 state,
                 ("test".into(), link.into()),

@@ -8,18 +8,16 @@ The customer app receives an ItemPaged pager, not the page iterator itself.
 """
 from __future__ import annotations
 
-import threading
 import time
 from copy import deepcopy
 from dataclasses import replace
 from typing import Any, Optional
 
-from azure.core.paging import ItemPaged, PageIterator
+from azure.core.paging import ItemPaged
 from azure.core.utils import CaseInsensitiveDict
 
 from .. import http_constants
-from .._backend.errors import BindingProtocolError
-from .._backend.contracts import PreparedPageRequest, BackendPage
+from .._backend.contracts import PreparedPageRequest
 from .._constants import _Constants, TimeoutScope
 from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout
 from .._query_rust_routing import (
@@ -27,16 +25,17 @@ from .._query_rust_routing import (
     build_query_databases_prepared_page_request,
     can_use_rust_backend_for_list_databases_page,
     can_use_rust_backend_for_query_databases_page,
-    page_to_backend_response,
 )
 from ._request_settings import (
     build_customer_headers, compose_item_options, is_supported_operation_timeout, normalize_query_specification,
 )
-from ._response_parse import process_backend_response
+from ._metadata_feed import MetadataFeedPageIterator
 
 
 class ListDatabasesConfig:
     operation = "list_databases"
+    response_key = "Databases"
+    owner_name = "CosmosClient"
     query_payload: Optional[dict[str, Any]] = None
     unsupported_options: tuple[tuple[str, str], ...] = (
         ("session_token", "sessionToken"),
@@ -92,6 +91,7 @@ class ListDatabasesConfig:
             initial.pop(page_size_header, None)
             self.options["initialHeaders"] = initial
         self.kwargs = kwargs
+        self.telemetry_owner = client
         self.backend = client._adapter
         self.rust = self.backend.name != "core-python"
         self.response_state = client._item_context.response_state
@@ -101,6 +101,10 @@ class ListDatabasesConfig:
         if self.operation_deadline is not None:
             return self.operation_deadline
         return None if self.timeout is None else time.monotonic() + self.timeout
+
+    @property
+    def binding_operation(self) -> str:
+        return "list_databases" if self.query_payload is None else "query_databases"
 
     def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedPageRequest:
         eligible = can_use_rust_backend_for_list_databases_page(
@@ -170,102 +174,11 @@ class QueryDatabasesConfig(ListDatabasesConfig):
         return super().prepared(token, deadline)
 
 
-class ListDatabasesPageState:
-    def __init__(self, config: ListDatabasesConfig, token: Optional[str]) -> None:
-        self.config = config
-        self.token = token if token is not None else config.options.get("continuation")
-        self.failed = False
-        self.done = False
-        self.lock = threading.Lock()
-
-    def parse(self, page: BackendPage) -> tuple[list[Any], CaseInsensitiveDict]:
-        result = process_backend_response(
-            page_to_backend_response(page), response_state=self.config.response_state,
-        )
-        rows = result.get("Databases")
-        if not isinstance(rows, list) or (
-            self.config.query_payload is None and any(not isinstance(row, dict) for row in rows)
-        ):
-            raise BindingProtocolError(f"{self.config.operation} received an invalid Databases response.")
-        return rows, CaseInsensitiveDict(result.get_response_headers())
-
-    def accept(
-        self, response: tuple[list[Any], Any], deadline: Optional[float],
-    ) -> list[Any]:
-        rows, headers = response
-        remaining_timeout(deadline)
-        previous = self.token
-        self.token = headers.get("x-ms-continuation") or None
-        self.done = self.token is None
-        if self.config.hook is not None:
-            try:
-                self.config.hook(dict(headers))
-            except (StopIteration, StopAsyncIteration) as error:
-                raise RuntimeError(f"{self.config.operation} response_hook raised an iteration-stop exception.") from error
-        if not rows and not self.done and self.token == previous:
-            raise BindingProtocolError(f"{self.config.operation} returned an empty page without continuation progress.")
-        return rows
-
-    def acquire(self) -> None:
-        if not self.lock.acquire(blocking=False):
-            raise RuntimeError(f"Concurrent use of a {self.config.operation} pager is not supported.")
-        if self.failed:
-            self.lock.release()
-            raise RuntimeError(f"{self.config.operation} pager failed; resume a new pager from the last delivered bookmark.")
-
-
-class ListDatabasesPageIterator(PageIterator):
-    def __init__(self, config: ListDatabasesConfig, continuation_token: Optional[str] = None) -> None:
-        self.state = ListDatabasesPageState(config, continuation_token)
-        super().__init__(self._fetch, lambda value: value, continuation_token=self.state.token)
-
-    def __next__(self) -> Any:
-        self.state.acquire()
-        try:
-            return super().__next__()
-        except StopIteration:
-            raise
-        except BaseException:
-            self.state.failed = True
-            raise
-        finally:
-            self.state.lock.release()
-
-    next = __next__
-
-    def _fetch(self, _token: Optional[str]) -> Any:
-        state = self.state
-        if state.done:
-            raise StopIteration
-        deadline = state.config.deadline()
-        while True:
-            remaining_timeout(deadline)
-            if state.config.rust:
-                pages = state.config.backend.execute_pages(
-                    state.config.prepared(state.token, deadline), deadline=deadline,
-                )
-                try:
-                    page = next(pages)
-                except StopIteration as error:
-                    raise BindingProtocolError(f"Rust backend returned no {state.config.operation} page.") from error
-                finally:
-                    pages.close()
-                response = state.parse(page)
-            else:
-                response = state.config.legacy_page(state.token, deadline)
-            rows = state.accept(response, deadline)
-            if rows:
-                return state.token, rows
-            if state.done:
-                self.continuation_token = None
-                raise StopIteration
-
-
 def list_databases(client: Any, kwargs: dict[str, Any]) -> ItemPaged[dict[str, Any]]:
-    return ItemPaged(ListDatabasesConfig(client, kwargs), page_iterator_class=ListDatabasesPageIterator)
+    return ItemPaged(ListDatabasesConfig(client, kwargs), page_iterator_class=MetadataFeedPageIterator)
 
 
 def query_databases(client: Any, query: Any, parameters: Any, kwargs: dict[str, Any]) -> ItemPaged[Any]:
     return ItemPaged(
-        QueryDatabasesConfig(client, query, parameters, kwargs), page_iterator_class=ListDatabasesPageIterator,
+        QueryDatabasesConfig(client, query, parameters, kwargs), page_iterator_class=MetadataFeedPageIterator,
     )

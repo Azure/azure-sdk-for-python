@@ -28,8 +28,9 @@ use super::deadline::{parse_remaining_timeout, with_timeout};
 use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync};
 use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{
-    tuple_from_container_feed_result, tuple_from_query_containers_result, tuple_from_result,
-    tuple_from_result_with_attempts,
+    tuple_from_container_feed_result, tuple_from_container_feed_result_with_attempts,
+    tuple_from_query_containers_result, tuple_from_query_containers_result_with_attempts,
+    tuple_from_result, tuple_from_result_with_attempts,
 };
 
 /// Create a container and convert the response for synchronous Python code.
@@ -278,6 +279,7 @@ pub(crate) fn run_list_containers_operation<'py>(
     database_id: String,
     operation_name: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let timeout = super::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
@@ -290,7 +292,11 @@ pub(crate) fn run_list_containers_operation<'py>(
                 run_list_containers_future(driver, modifiers, database_id),
             )
         },
-        |py, result| tuple_from_container_feed_result(py, result?),
+        if include_attempts {
+            |py, result| tuple_from_container_feed_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_container_feed_result(py, result?)
+        },
     )
 }
 
@@ -302,6 +308,7 @@ pub(crate) fn run_list_containers_operation_async<'py>(
     database_id: String,
     operation_name: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     let timeout = super::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
@@ -314,7 +321,11 @@ pub(crate) fn run_list_containers_operation_async<'py>(
                 run_list_containers_future(driver, modifiers, database_id),
             )
         },
-        |py, result| tuple_from_container_feed_result(py, result?),
+        if include_attempts {
+            |py, result| tuple_from_container_feed_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_container_feed_result(py, result?)
+        },
     )
 }
 
@@ -327,6 +338,7 @@ pub(crate) fn run_query_containers_operation<'py>(
     body_bytes: Vec<u8>,
     operation_name: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let timeout = super::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
@@ -339,7 +351,11 @@ pub(crate) fn run_query_containers_operation<'py>(
                 run_query_containers_future(driver, modifiers, database_id, body_bytes),
             )
         },
-        |py, result| tuple_from_query_containers_result(py, result?),
+        if include_attempts {
+            |py, result| tuple_from_query_containers_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_query_containers_result(py, result?)
+        },
     )
 }
 
@@ -352,6 +368,7 @@ pub(crate) fn run_query_containers_operation_async<'py>(
     body_bytes: Vec<u8>,
     operation_name: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     let timeout = super::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
@@ -364,7 +381,11 @@ pub(crate) fn run_query_containers_operation_async<'py>(
                 run_query_containers_future(driver, modifiers, database_id, body_bytes),
             )
         },
-        |py, result| tuple_from_query_containers_result(py, result?),
+        if include_attempts {
+            |py, result| tuple_from_query_containers_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_query_containers_result(py, result?)
+        },
     )
 }
 

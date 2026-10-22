@@ -142,6 +142,7 @@ mod databases;
 mod feed_range;
 pub(crate) mod item_feed;
 mod items;
+pub(crate) mod batch;
 mod offers;
 mod query;
 pub(crate) mod settings;

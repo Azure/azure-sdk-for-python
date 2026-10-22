@@ -1,9 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """Removed APIs stay absent; Rust-only exclusions leave legacy behavior intact."""
+import ast
 import asyncio
 import importlib
 import inspect
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
@@ -196,6 +198,56 @@ def test_removed_container_properties_are_absent_on_both_backends_rust(api, lega
         getattr(api.container, name)
     assert api.backend.events == []
     assert api.connection.mock_calls == []
+
+
+@pytest.mark.parametrize("method", [name for name, _ in ITEM_CALLS] + ["read_items"])
+def test_public_item_signatures_do_not_advertise_triggers_rust(api, method):
+    parameters = inspect.signature(getattr(type(api.container), method)).parameters
+    assert "pre_trigger_include" not in parameters
+    assert "post_trigger_include" not in parameters
+
+
+def test_samples_do_not_use_removed_apis_rust():
+    samples = sorted((Path(__file__).resolve().parents[2] / "samples").rglob("*.py"))
+    assert samples
+    methods = {
+        f"{operation}_{resource}"
+        for operation in ("create", "upsert", "get", "read", "list", "query", "replace", "delete", "execute")
+        for resource in (
+            "stored_procedure", "stored_procedures", "trigger", "triggers",
+            "user_defined_function", "user_defined_functions", "user", "users", "permission", "permissions",
+        )
+    }
+    names = methods | {
+        "scripts", "ScriptsProxy", "TriggerType", "TriggerOperation",
+        "get_user_client", "UserProxy", "Permission", "PermissionMode",
+    }
+    removed_modules = {
+        "azure.cosmos.scripts", "azure.cosmos.aio._scripts",
+        "azure.cosmos.user", "azure.cosmos.aio._user", "azure.cosmos.permission",
+    }
+    options = {
+        "pre_trigger_include", "post_trigger_include", "preTriggerInclude", "postTriggerInclude",
+        "resourceTokens", "permissionFeed", "resource_token_expiry_seconds", "resourceTokenExpirySeconds",
+    }
+    for sample in samples:
+        tree = ast.parse(sample.read_text(encoding="utf-8-sig"), filename=str(sample))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Attribute):
+                assert node.attr not in names, (sample, node.lineno, node.attr)
+            elif isinstance(node, ast.ImportFrom):
+                assert node.module not in removed_modules, sample
+                assert not names.intersection(alias.name for alias in node.names), sample
+            elif isinstance(node, ast.Import):
+                assert not removed_modules.intersection(alias.name for alias in node.names), sample
+            elif isinstance(node, ast.keyword):
+                assert node.arg not in options, (sample, node.lineno, node.arg)
+            elif isinstance(node, ast.Constant) and isinstance(node.value, str):
+                assert node.value not in options, (sample, node.lineno, node.value)
+                assert node.value.lower() not in (
+                    "x-ms-documentdb-pre-trigger-include", "x-ms-documentdb-post-trigger-include",
+                    "x-ms-documentdb-expiry-seconds",
+                ), (sample, node.lineno, node.value)
 
 
 @pytest.mark.parametrize("definition", [
@@ -460,7 +512,7 @@ def test_account_key_forms_remain_supported_rust(client_constructor, backend, cr
 
 @pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("async_credential", [False, True])
-def test_entra_credentials_remain_supported_without_fetching_a_token_rust(
+def test_entra_credentials_match_client_type_without_fetching_a_token_rust(
     client_constructor, backend, async_credential,
 ):
     class Credential:
@@ -472,6 +524,11 @@ def test_entra_credentials_remain_supported_without_fetching_a_token_rust(
             raise AssertionError("Construction must not fetch a token")
 
     credential = AsyncCredential() if async_credential else Credential()
+    if backend == "rust" and client_constructor.cls is CosmosClient and async_credential:
+        with pytest.raises(TypeError, match="requires a synchronous token credential"):
+            client_constructor.cls("https://example.invalid", credential, _backend=backend)
+        client_constructor.connection.assert_not_called()
+        return
     client = client_constructor.cls("https://example.invalid", credential, _backend=backend)
     try:
         assert client_constructor.connection.call_args.kwargs["auth"]["clientSecretCredential"] is credential

@@ -32,6 +32,7 @@ OP_READ_ITEM = "read_item"
 OP_UPSERT_ITEM = "upsert_item"
 OP_REPLACE_ITEM = "replace_item"
 OP_PATCH_ITEM = "patch_item"
+OP_EXECUTE_ITEM_BATCH = "execute_item_batch"
 OP_QUERY_ITEMS = "query_items"
 OP_QUERY_DATABASES = "query_databases"
 OP_LIST_CONTAINERS = "list_containers"
@@ -66,6 +67,7 @@ OP_TO_BINDING_FUNCTION_NAME = {
     OP_DELETE_ITEM: "delete_item",
     OP_READ_ITEM: "read_item",
     OP_PATCH_ITEM: "patch_item",
+    OP_EXECUTE_ITEM_BATCH: "execute_item_batch",
     OP_READ_FEED_RANGES: "read_feed_ranges",
     OP_FEED_RANGE_FROM_PARTITION_KEY: "feed_range_from_partition_key",
     # A local key-range check reached through the Python/Rust binding.

@@ -17,7 +17,7 @@ import argparse
 import sys
 
 import perf_driver_commit_gate as _driver_gate
-from perf_results import add_histogram, split_workload_id, summary_rows, window_key
+from perf_results import add_histogram, split_workload_id, summary_rows, interval_key
 from latency_report import (
     HdrHistogram,
     MAX_US,
@@ -82,13 +82,13 @@ def _add_row(cell, r, c):
         cell["throttled_429"] = None
     else:
         cell["throttled_429"] += int(throttled)
-    key = window_key(r)
-    duration = r["window_seconds"]
+    key = interval_key(r)
+    duration = r["interval_duration_seconds"]
     if key not in cell["windows"]:
         cell["window_s"] += duration
         cell["windows"][key] = duration
     elif cell["windows"][key] != duration:
-        raise ValueError("Conflicting durations for one process window")
+        raise ValueError("Conflicting durations for one process interval")
     cell["ru_weighted"] += r.get("ru_sum", 0.0) or 0.0
     cell["ru_count"] += r.get("ru_count", 0) or 0
     hb = r.get("hist_b64")

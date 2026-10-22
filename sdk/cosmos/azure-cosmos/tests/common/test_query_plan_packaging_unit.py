@@ -26,8 +26,11 @@ fake files in a temporary directory.
 import importlib.util
 import json
 import os
+import subprocess
+import sys
 import threading
 from pathlib import Path
+from zipfile import ZipFile
 
 import pytest
 
@@ -37,7 +40,61 @@ _BACKEND_SPEC = importlib.util.spec_from_file_location("azure_cosmos_build_backe
 if _BACKEND_SPEC is None or _BACKEND_SPEC.loader is None:
     raise ImportError(f"Cannot load build backend from {_BACKEND_PATH}")
 build_backend = importlib.util.module_from_spec(_BACKEND_SPEC)
-_BACKEND_SPEC.loader.exec_module(build_backend)
+with pytest.MonkeyPatch.context() as _backend_imports:
+    # Resolve checkout-only build helpers without changing later SDK imports.
+    _backend_imports.syspath_prepend(str(_BACKEND_PATH.parent))
+    _BACKEND_SPEC.loader.exec_module(build_backend)
+
+
+@pytest.mark.parametrize(
+    "module_names",
+    [
+        ("test_query_plan_packaging_unit.py",),
+        ("test_build_configuration_unit.py",),
+        ("test_query_plan_packaging_unit.py", "test_build_configuration_unit.py"),
+        ("test_build_configuration_unit.py", "test_query_plan_packaging_unit.py"),
+    ],
+    ids=["query-plan-only", "configuration-only", "query-plan-first", "configuration-first"],
+)
+def test_build_helpers_import_without_retaining_checkout_path_rust(tmp_path, module_names):
+    """Collect either module first without PYTHONPATH or a cached helper masking errors."""
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-I",
+            "-c",
+            """
+import runpy
+import sys
+from pathlib import Path
+from setuptools.errors import SetupError
+
+original_path = list(sys.path)
+assert "azure_cosmos_build_backend" not in sys.modules
+assert "azure_cosmos_build_metadata" not in sys.modules
+for argument in sys.argv[1:]:
+    test_path = Path(argument)
+    namespace = runpy.run_path(str(test_path))
+    assert sys.path == original_path
+    metadata = sys.modules["azure_cosmos_build_metadata"]
+    assert Path(metadata.__file__).resolve() == (
+        test_path.parents[2] / "azure_cosmos_build_metadata.py"
+    ).resolve()
+    backend = namespace["build_backend"]
+    assert Path(backend.__file__).resolve() == (
+        test_path.parents[2] / "azure_cosmos_build_backend.py"
+    ).resolve()
+    assert callable(backend.validate_version_metadata)
+""",
+            *(str(Path(__file__).resolve().with_name(name)) for name in module_names),
+        ],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=60,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def _configure_test_paths(monkeypatch, tmp_path):
@@ -280,3 +337,71 @@ def test_editable_build_ignores_release_sidecar_source_rust(monkeypatch, tmp_pat
     assert os.environ["AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR"] == str(
         source_directory
     )
+
+
+@pytest.mark.parametrize(
+    "wheel_name, native_name",
+    [
+        ("azure_cosmos-4.17.2-cp310-abi3-win_amd64.whl", "_rust.pyd"),
+        ("azure_cosmos-4.17.2-cp310-abi3-win_arm64.whl", "_rust.cp310-win_arm64.pyd"),
+        ("azure_cosmos-4.17.2-cp310-abi3-manylinux_2_28_x86_64.whl", "_rust.abi3.so"),
+        ("azure_cosmos-4.17.2-cp310-abi3-manylinux_2_28_aarch64.whl", "_rust.abi3.so"),
+        ("azure_cosmos-4.17.2-cp310-abi3-macosx_11_0_arm64.whl", "_rust.abi3.so"),
+    ],
+)
+def test_final_wheel_contains_native_module_rust(
+    monkeypatch, tmp_path, wheel_name, native_name
+):
+    """Inspect the returned archive without relying on the build host's extension suffix."""
+    libs_directory, _, manifest_file = _configure_test_paths(monkeypatch, tmp_path)
+    config = {"build-args": "--release"}
+    metadata = str(tmp_path / "metadata")
+
+    def fake_build_wheel(wheel_directory, config_settings, metadata_directory):
+        assert config_settings == config
+        assert metadata_directory == metadata
+        assert (libs_directory / "Cosmos.QueryPlanInterop.dll").is_file()
+        with ZipFile(Path(wheel_directory) / wheel_name, "w") as wheel:
+            wheel.writestr(f"azure/cosmos/{native_name}", b"native fixture")
+            wheel.writestr("azure/cosmos/_rust.pyi", b"stub")
+        return wheel_name
+
+    monkeypatch.setattr(build_backend.maturin, "build_wheel", fake_build_wheel)
+    assert build_backend.build_wheel(str(tmp_path), config, metadata) == wheel_name
+    assert not libs_directory.exists()
+    assert not manifest_file.exists()
+
+
+@pytest.mark.parametrize(
+    "wheel_name, entries",
+    [
+        ("azure_cosmos-4.17.2-py3-none-any.whl", {"azure/cosmos/_rust.pyi": b"stub"}),
+        (
+            "azure_cosmos-4.17.2-cp310-abi3-win_amd64.whl",
+            {"azure/cosmos/_rust.pyi": b"stub"},
+        ),
+        ("azure_cosmos-4.17.2-cp310-abi3-win_amd64.whl", {"other/_rust.pyd": b"native"}),
+        ("azure_cosmos-4.17.2-cp310-abi3-win_amd64.whl", {"azure/cosmos/_rust.pyd": b""}),
+        (
+            "azure_cosmos-4.17.2-cp310-abi3-win_amd64.whl",
+            {"azure/cosmos/_rust.pyd": b"native", "azure/cosmos/_rust.stale.pyd": b"stale"},
+        ),
+        ("azure_cosmos-4.17.2-py3-none-any.whl", {"azure/cosmos/_rust.pyd": b"native"}),
+    ],
+)
+def test_final_wheel_rejects_missing_or_invalid_native_module_rust(
+    monkeypatch, tmp_path, wheel_name, entries
+):
+    libs_directory, _, manifest_file = _configure_test_paths(monkeypatch, tmp_path)
+
+    def fake_build_wheel(wheel_directory, **_kwargs):
+        with ZipFile(Path(wheel_directory) / wheel_name, "w") as wheel:
+            for name, content in entries.items():
+                wheel.writestr(name, content)
+        return wheel_name
+
+    monkeypatch.setattr(build_backend.maturin, "build_wheel", fake_build_wheel)
+    with pytest.raises(RuntimeError, match="native Rust extension"):
+        build_backend.build_wheel(str(tmp_path))
+    assert not libs_directory.exists()
+    assert not manifest_file.exists()

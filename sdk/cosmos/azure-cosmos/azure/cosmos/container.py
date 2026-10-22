@@ -49,6 +49,7 @@ from ._helpers._item_arguments import (
     get_selected_backend,
 )
 from ._helpers._item_operations import ItemHelper
+from ._helpers._batch_operations import execute_batch
 from ._helpers._item_prep import prepare_read_item_kwargs, prepare_create_item_kwargs, prepare_item_target
 from ._helpers._read_items import complete_read_items_response, prepare_read_items
 from ._helpers._read_all_items import read_all_items as _read_all_items
@@ -1583,7 +1584,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs,
         )
 
-    @distributed_trace
+    @trace_operation(binding_operation="execute_item_batch")
     def execute_item_batch(
         self,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]],
@@ -1656,6 +1657,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
+        if uses_rust(self):
+            return execute_batch(self, batch_operations, partition_key, kwargs)
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
@@ -2085,13 +2088,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             refresh when iteration starts. Both settings may
             require network requests; create a new iterable to discover ranges again.
             A cached map may be returned if refresh fails.
+        :keyword float timeout:
+            Overall discovery budget in seconds, starting when iteration begins.
+            Overrides the client default; None inherits that default. Must be a
+            finite, non-boolean number >= 1 and < 2**64, or None.
         :returns: A lazy iterable of feed-range dictionaries, with available
             response headers accessible through get_response_headers().
         :rtype: CosmosItemPaged
         :raises TypeError: If force_refresh is not a boolean.
         :raises NotImplementedError: When iteration encounters additional per-call
             options unsupported by this range lookup.
-        :raises ValueError: If a continuation token is supplied through by_page.
+        :raises ValueError: If timeout is invalid or a continuation token is supplied through by_page.
+        :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: If the discovery budget expires.
 
         .. warning::
           The structure of the dict representation of a feed range may vary, including which keys
@@ -2100,6 +2108,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         prepare_operation_kwargs(self, kwargs)
         return _read_feed_ranges(
+            telemetry_owner=self,
             client_connection=self.client_connection,
             container_link=self.container_link,
             get_properties=self._get_properties_with_options,
@@ -2177,6 +2186,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             ),
         )
 
+    @trace_operation(binding_operation="is_feed_range_subset")
     def is_feed_range_subset(self, parent_feed_range: dict[str, Any], child_feed_range: dict[str, Any]) -> bool:
         """ Checks if child feed range is a subset of parent feed range.
         :param parent_feed_range: left feed range

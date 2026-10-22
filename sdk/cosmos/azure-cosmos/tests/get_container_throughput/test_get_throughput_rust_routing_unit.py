@@ -37,8 +37,8 @@ _OFFER_QUERY = {
 @pytest.mark.parametrize("suffix", ["", "_async"])
 @pytest.mark.parametrize("remaining", [None, 0.25, 2])
 @pytest.mark.parametrize("include_attempts", [False, True])
-def test_offer_native_accepts_remaining_timeout_rust(suffix, remaining, include_attempts):
-    """Native offer reads accept remaining budgets without changing default diagnostics."""
+def test_offer_native_rejects_string_handle_rust(suffix, remaining, include_attempts):
+    """Reject string handles; Windows-emulator binding tests cover budgets with real handles."""
     from azure.cosmos import _rust
 
     prepared = build_get_throughput_request(
@@ -47,20 +47,20 @@ def test_offer_native_accepts_remaining_timeout_rust(suffix, remaining, include_
     native = getattr(_rust, "get_throughput" + suffix)
     assert inspect.signature(native).parameters["timeout_seconds"].default is None
     assert inspect.signature(native).parameters["include_attempts"].default is False
-    with pytest.raises(RuntimeError, match="(?i)driver"):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         native("unregistered-offer-test", prepared, timeout_seconds=remaining, include_attempts=include_attempts)
 
 
 @pytest.mark.parametrize("suffix", ["", "_async"])
 @pytest.mark.parametrize("remaining", [0, -1, float("inf"), float("nan")])
-def test_offer_native_rejects_invalid_remaining_timeout_rust(suffix, remaining):
-    """Reject invalid durations before looking up a driver or dispatching a request."""
+def test_offer_native_checks_handle_before_remaining_timeout_rust(suffix, remaining):
+    """Check the handle first; Windows-emulator binding tests reject invalid budgets with real handles."""
     from azure.cosmos import _rust
 
     prepared = build_get_throughput_request(
         resource_link="dbs/db", offer_query=_OFFER_QUERY, request_options={}, default_headers={}
     )
-    with pytest.raises(ValueError, match="timeout_seconds"):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         getattr(_rust, "get_throughput" + suffix)("unregistered-offer-test", prepared, timeout_seconds=remaining)
 
 
@@ -301,20 +301,15 @@ def test_offer_headers_belong_to_response_not_later_client_diagnostics_rust():
 
 @pytest.mark.parametrize("is_async", [False, True])
 @pytest.mark.parametrize("replace_throughput", [False, True])
-def test_native_offer_entries_accept_direct_requests_before_io_rust(monkeypatch, is_async, replace_throughput):
-    """The real Rust entry points accept a prepared offer request without any account.
+def test_native_offer_entries_reject_string_handles_after_request_parsing_rust(monkeypatch, is_async, replace_throughput):
+    """Prepared offer requests reach typed-handle validation without an account.
 
     Covers read and replace, sync and async, against the actual compiled
     module with strict request parsing switched on.
 
-    Each call is expected to fail with "no driver registered for handle". That
-    specific failure is the result being checked: the request was fully parsed
-    and accepted before the driver handle was looked up, which means the
-    prepared shape really does satisfy the Rust side.
-
-    Checking it this way needs no driver and no network, so a mismatch between
-    what Python builds and what Rust expects is caught here rather than in a
-    live test.
+    Each call rejects a string handle after extracting the prepared request.
+    Windows-emulator binding tests separately exercise successful reads and
+    replacements with real handles and the external service.
     """
     native = pytest.importorskip("azure.cosmos._rust")
     monkeypatch.setenv("COSMOS_WIRE_STRICT", "1")
@@ -335,7 +330,5 @@ def test_native_offer_entries_accept_direct_requests_before_io_rust(monkeypatch,
     else:
         prepared = build_get_throughput_request(offer_query=_OFFER_QUERY, **kwargs)
     entrypoint = getattr(native, prepared.op + ("_async" if is_async else ""))
-    # Extraction runs before handle lookup. This verifies the real ABI and strict
-    # request parser without creating a driver or contacting an account.
-    with pytest.raises(RuntimeError, match="no driver registered for handle"):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         entrypoint("unused-direct-offer-test-handle", prepared)

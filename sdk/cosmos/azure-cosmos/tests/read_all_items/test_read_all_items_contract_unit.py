@@ -117,7 +117,7 @@ def feed(request, monkeypatch):
             None,
         )
 
-    def ensure():
+    def ensure(**_kwargs):
         clock.now += context.init_delay
         return "handle"
 

@@ -29,6 +29,7 @@ from .contracts import PreparedClientConfig, PreparedPageRequest, PreparedReques
 from .errors import PagePreflightError, UnsupportedQueryError
 from .operations import get_page_binding_function_name
 from ..exceptions import CosmosClientTimeoutError
+from .._constants import _Constants
 from ..runtime import CosmosRuntime
 
 if TYPE_CHECKING:
@@ -303,6 +304,12 @@ class BindingAdapterShared:
         # The async adapter binds async credentials to the application loop on first use.
         # Master-key clients have no token credential.
         self._token_credential = token_credential
+        if token_credential is not None:
+            override = os.environ.get(_Constants.AAD_SCOPE_OVERRIDE) or None
+            if override is not None:
+                client_config = replace(
+                    client_config or PreparedClientConfig(), aad_scope_override=override
+                )
         # Pass these settings, such as preferred regions, when acquiring a driver.
         self._client_config = client_config
         self._runtime = runtime
@@ -359,7 +366,13 @@ class BindingAdapterShared:
             timeout = self._client_config.operation_timeout_seconds
         return None if timeout is None else time.monotonic() + timeout
 
-    def _initialize_driver(self, binding: Any, runtime: Optional[CosmosRuntime] = None) -> _DriverHandle:
+    def _initialize_driver(
+        self,
+        binding: Any,
+        runtime: Optional[CosmosRuntime] = None,
+        *,
+        acquisition_args: Optional[tuple[Any, ...]] = None,
+    ) -> _DriverHandle:
         """Ask the binding to acquire a driver handle using this client's saved inputs.
 
         Pass the saved account address, credential, PreparedClientConfig, and
@@ -385,7 +398,8 @@ class BindingAdapterShared:
         operation.
         """
         configure_packaged_query_plan_interop(binding)
-        args = self._acquire_driver_handle_args()
+        # A background acquisition retains its inputs even if close clears the adapter.
+        args = self._acquire_driver_handle_args() if acquisition_args is None else acquisition_args
         if runtime is not None:
             return binding.acquire_driver_handle(*args, runtime=runtime._handle)
         return binding.acquire_driver_handle(*args)

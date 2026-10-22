@@ -29,18 +29,6 @@ from azure.cosmos.partition_key import PartitionKey
 from _client_transport import create_client_with_transport
 
 
-# Server-side scripts CRUD (sproc/trigger/UDF create/list/get/replace/delete)
-# is not in the AAD/RBAC data-plane action set today.
-# Empirically these operations return 403 under AAD in data-plane tests.
-# Stored procedure EXECUTE is currently also skipped under AAD in this class.
-# TODO: re-enable these under AAD once the service exposes RBAC actions for these APIs.
-_skip_under_aad = pytest.mark.skipif(
-    test_config.TestConfig.data_auth_mode == 'aad',
-    reason="server-side scripts CRUD is not authorized via AAD/RBAC "
-           "data plane today (403).",
-)
-
-
 class TimeoutTransport(RequestsTransport):
 
     def __init__(self, response, passthrough=False):
@@ -99,7 +87,7 @@ class TestCRUDOperations(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        # Key-auth client for control-plane operations (create/delete containers, sprocs)
+        # Key-auth client for container setup and cleanup.
         cls.key_client, cls.key_databaseForTest, cls.client, cls.databaseForTest = (
             test_config.TestConfig.create_test_clients(cls.configs.TEST_DATABASE_ID, multiple_write_locations=use_multiple_write_locations))
 

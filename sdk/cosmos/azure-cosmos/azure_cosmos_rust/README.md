@@ -253,6 +253,208 @@ not provision the first container: the loopback service returned 503/1007.
 Those additional live assertions remain unverified. Both reruns deleted their
 owned databases and created no containers.
 
+`ContainerProxy.is_feed_range_subset` owns sync/async telemetry through input
+preparation, the single binding call and boolean-result parsing. Both `True`
+and `False` are successful outcomes. Unsupported inputs, binding failures and
+parsing errors complete as errors; cancellation remains cancellation.
+Inputs, response-header state and existing strict input rejection are unchanged.
+
+The binding performs the comparison locally and returns no attempt diagnostics.
+The operation therefore emits no request spans or driver totals. This differs
+from the zero-binding session-token calculation: the wrapper still acquires a
+driver handle, although the comparison binding ignores it. The async binding
+requires the initialized runtime. No initialization or timeout behavior changed.
+
+Bite 47's compiled proof covered 224 supported-input cases and 96
+unsupported-input observations across sync/async, legacy/Rust, native/plugin
+tracing and tracing enabled/disabled. It also executed 72 retained original
+sync assertions: nine cases repeated across those settings. Supported results matched, while
+the existing strict Rust rejection of unsupported inputs was preserved.
+Binding/fallback counters, input and response-header preservation, and
+operation-only spans were checked. Direct sync/async binding calls also
+returned `None` diagnostics with a `None` driver handle after runtime
+initialization. The proof provisioned no resources and made no Azure export
+claim; it does not establish network-free client initialization.
+
+`ContainerProxy.read_feed_ranges` keeps its existing iterable-creation span.
+Its deferred callback now records `ContainerProxy.read_feed_ranges.fetch`
+under the app span active during consumption. The shared Python decorators
+accept an explicit span name and completion identity, allowing the callback
+to report `read_feed_ranges` completion without tracing iterable creation as
+completed discovery. Default naming for existing callers is unchanged.
+
+Only an uncached discovery enters that recording scope. The scope includes
+the binding call, response parsing, result storage and the returned copy.
+It ends before the app consumes the first range. Saved-result replay neither
+calls the binding nor creates another fetch span. Guards still reject invalid
+continuations and overlapping fetches before discovery. Error/cancellation
+unwinds the state; an explicit retry creates a new one. The callback retains
+the owner, not the creation-time operation state or parent.
+
+The binding remains unchanged: successful range resolution has no attempt
+diagnostics, while returned error diagnostics may be incomplete. Available
+attempts belong to the fetch span, and incomplete totals are not published.
+
+Bite 48 remains partially verified. Controlled tests cover lazy timing,
+consumer parentage, partial consumption, cached replay, errors, cancellation
+and reporting failures. Sixteen compiled missing-resource cases exercised
+both runtimes, both backend selections, native/plugin tracing and recording
+enabled/disabled, without provisioning resources. The success-parity proof
+and original range-query assertions were blocked twice by loopback container
+provisioning returning `503/1007`; both owned databases were deleted and no
+containers were created. No successful compiled discovery or Azure export is
+claimed by this bite.
+
+For database listing, the customer app needs the duration of each page fetch,
+not its time spent processing database properties. Bite 49 keeps the
+`CosmosClient.list_databases` creation span and records
+`CosmosClient.list_databases.fetch` during sync/async consumption. Each
+service page, including an empty one, owns one completion through parsing,
+continuation handling and the response hook. Skipped empty pages retain the
+existing shared timeout budget. Exhaustion adds no error span; continuation
+replay performs a fresh fetch and gets new recording state.
+
+The binding's `list_databases` and `list_databases_async` functions now accept
+`include_attempts=False`. Opting in wraps the unchanged response tuple with
+diagnostics from its returned driver result. Response-less transport errors
+and driver-returned timeouts retain available diagnostics on the original
+exception. `Ok(None)` has no diagnostic context and must not imply zero
+requests. An outer timeout or cancellation before a driver result returns
+still cannot recover partial detail.
+
+Database and container listing and queries enable this
+page-adapter diagnostic path.
+The Rust SDK's feed iterator is the reference for per-page
+diagnostic dispatch; the Python wrapper additionally owns completion through
+the customer's response hook. Neither the Rust SDK nor driver was modified.
+
+Compiled loopback evidence covers 16 recording/runtime/backend combinations
+and 24 executions of six copied original functional test bodies. Exact
+binding counters and a forbidden legacy-feed call check show that Rust pages
+do not fall back. The three uniquely owned databases were identity-checked
+and deleted; no containers were provisioned. Controlled tests cover empty
+pages, error causes, diagnostic/reporting failures and cancellation. The
+existing paging/routing tests also have 22 failures reproduced with the HEAD
+Python modules in a separate process; this bite does not claim a clean full
+suite or Azure export verification.
+
+Bite 50 extends the same boundary to `CosmosClient.query_databases.fetch`.
+The shared pager uses the public operation name for its span and completion,
+but selects diagnostic ownership from the actual binding operation.
+Consequently, `query_databases(None)` keeps query identity while collecting
+its listing binding's diagnostics. SQL queries use `query_databases` or
+`query_databases_async`, which now also accept `include_attempts=False`.
+Query parsing, parameter snapshots, projected rows and continuation behavior
+are unchanged.
+
+The opt-in query converter keeps the existing response tuple and error
+conversion. Unsupported-query exceptions now retain available diagnostic
+payloads before the Python adapter translates them to `UnsupportedQueryError`
+with the original cause. They never trigger legacy fallback. The existing
+page timeout wrapper is unchanged, including its interrupted-result limits.
+
+The baseline passed 28 compiled cases and eight copied original test bodies.
+The instrumented run passed 112 cases and 32 executions of those eight bodies,
+covering parameterized/query-dictionary inputs, projections, empty results,
+explicit `None`, invalid SQL and continuation replay. Both native and plugin
+tracing were exercised with recording enabled and disabled. Exact binding
+counters, a forbidden legacy-feed call and span-parent checks passed.
+All three uniquely owned databases were identity-checked and deleted; no
+containers were created and no Azure export is claimed.
+
+Final lint and broader paging-regression checks remain pending after a
+terminal session-host failure, including a failed direct retry. The focused
+Python suite passed 898 cases with eight runtime-specific skips, MyPy passed
+for the four production Python files, and Rust response tests passed 26 cases
+with one existing ignored test. These results do not establish that the
+remaining final checks passed.
+
+Bite 51 adds `DatabaseProxy.list_containers.fetch` for sync/async container
+listing. The customer app needs the time spent obtaining a page, not its
+own time processing the returned properties. The shared metadata pager
+therefore records each service-page fetch through parsing, continuation
+handling and the response hook. That hook receives headers and the same
+iterator returned by `list_containers()`. Empty pages share the current
+deadline, and replay gets fresh recording state. The obsolete wrapper on
+the older connection-based paging path was removed.
+
+`list_containers` and `list_containers_async` accept `include_attempts=False`.
+Their opt-in converter preserves the response tuple and existing error
+conversion while returning available driver diagnostics. Exhaustion without
+a driver result and interruption before a result returns have the same
+diagnostic limits as database paging. Container queries extend this boundary
+in Bite 52 below. Existing Azure Core nested-span suppression is
+preserved; nested listing completion state does not contaminate its caller.
+
+After the metadata-pager change, the compiled empty/missing-database proof
+passed 32 cases and eight executions of the copied original empty-listing
+test bodies. The owned database was identity-checked and deleted. The
+populated baseline remains blocked by a `503` while creating its first
+container; both owned databases from that attempt were deleted. Controlled
+container tests passed 608 cases with 106 skips, but they do not replace
+the missing populated compiled comparison. The release build and 27 Rust
+response tests passed; Clippy completed with warnings. See the
+[telemetry progress guide](../docs/V5/testing/rust-telemetry.md#record-container-listing-while-pages-arrive)
+for the remaining proof and broader-check limitations. No Azure export is
+claimed.
+
+Bite 52 adds `DatabaseProxy.query_containers.fetch` using the same pager.
+The customer app can query properties of `orders` in `sales` without
+changing how its page work is recorded. The binding's `query_containers`
+and `query_containers_async` functions accept `include_attempts=False`;
+their opt-in converter preserves response tuples and errors, including
+available diagnostics on unsupported-query exceptions. Explicit
+`query_containers(None)` retains query identity while collecting diagnostics
+from the listing binding.
+
+The rebuilt extension passed 112 empty-query and error cases across
+sync/async, legacy/Rust and native/plugin tracing with recording on/off.
+Two copied original no-match test bodies ran eight times against an empty
+owned database. Populated setup returned `503/1007` on the first container;
+that database and all empty-proof databases were identity-checked and
+deleted, with no containers created. Nonempty query results and replay
+remain unproved against the compiled binding. See the
+[query telemetry progress](../docs/V5/testing/rust-telemetry.md#record-a-query-for-the-orders-container)
+for the controlled coverage and remaining original functional comparisons.
+
+Bite 53 adds `ContainerProxy.read_all_items.fetch` for each internal fetch
+on the retained Rust path. The customer app can enumerate `sales.orders`
+without changing the returned items, continuation replay or response-hook
+contract. Empty fetches needed for one customer-visible page share its
+deadline; its final fetch span includes the one response-hook invocation.
+The legacy path is unchanged.
+
+`fetch_page_with_cursor` and `fetch_page_with_cursor_async` accept
+`include_attempts=False`. Their opt-in envelope preserves ordinary results
+and errors. First-fetch diagnostics are marked incomplete because successful
+metadata resolution and planning do not return diagnostics through this
+path; available attempts are recorded without complete `cosmos.poc.*`
+totals. Local cursor exhaustion has no service response or request attempts.
+The adapter enabled this collection for retained read-all calls in Bite 53;
+Bite 54 adds retained item queries. Change-feed calls remain outside it.
+
+The rebuilt extension passed populated legacy/Rust enumeration and replay,
+including all six copied original functional test bodies across recording
+modes. Owned databases and containers were identity-checked and deleted.
+See the [read-all telemetry progress](../docs/V5/testing/rust-telemetry.md#record-orders-as-the-customer-app-reads-the-container)
+for the executed comparisons, diagnostic limits and broader-check findings.
+No Azure export is claimed.
+
+Bite 54 adds sync/async `ContainerProxy.query_items.fetch` using the same
+retained binding diagnostics. Each internal fetch owns parsing and, when
+the customer-visible page is ready, its response hook and accepted
+continuation token. Queries that cannot provide a bookmark still advance
+using the retained cursor's `has_more` value. Stateless queries and the
+legacy query path are unchanged.
+
+Compiled before/after comparisons preserved existing customer outcomes,
+including aggregate and unbounded DISTINCT limitations and the original
+invalid-SQL header-parity failures. These are recorded differences, not
+claims of full legacy parity. See the
+[item-query telemetry progress](../docs/V5/testing/rust-telemetry.md#record-a-query-for-one-customers-orders)
+for the evidence, unchanged first-fetch diagnostic limits and remaining
+migration gaps. No Rust driver or Rust SDK changes were made.
+
 Exports are registered in `src/lib.rs` (`#[pymodule] fn _rust(...)`).
 Current surface:
 

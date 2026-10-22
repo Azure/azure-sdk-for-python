@@ -263,6 +263,7 @@ fn config_fingerprint(config: Option<&Bound<'_, PyAny>>) -> PyResult<String> {
         "hedging_threshold_ms": field!("hedging_threshold_ms", u64),
         "user_agent_suffix": field!("user_agent_suffix", String).filter(|value| !value.is_empty()),
         "consistency_level": field!("consistency_level", String),
+        "aad_scope_override": field!("aad_scope_override", String).filter(|value| !value.is_empty()),
         "proxy_allowed": field!("proxy_allowed", bool),
         "connection_timeout_seconds": finite(field!("connection_timeout_seconds", f64), "connection_timeout_seconds")?,
         "operation_timeout_seconds": finite(field!("operation_timeout_seconds", f64), "operation_timeout_seconds")?,
@@ -284,6 +285,13 @@ fn compose_cache_key(endpoint: &str, credential_fp: &str, config_fp: &str) -> St
     )
 }
 
+fn account_scope(py: Python<'_>, endpoint: &str) -> PyResult<String> {
+    py.import_bound("azure.cosmos._base")?
+        .getattr("create_scope_from_url")?
+        .call1((endpoint,))?
+        .extract()
+}
+
 /// Compute the driver identity without initializing RuntimeContext,
 /// acquiring a CosmosDriver reference, or asking the credential for a token.
 fn driver_identity(
@@ -293,16 +301,20 @@ fn driver_identity(
     credential: Option<&Bound<'_, PyAny>>,
 ) -> PyResult<String> {
     validate_auth_inputs(master_key, credential)?;
-    let endpoint = Url::parse(endpoint)
+    let endpoint_url = Url::parse(endpoint)
         .map_err(|error| PyValueError::new_err(format!("invalid endpoint URL: {error}")))?;
     let credential_fp = match credential {
-        Some(token_credential) => token_credential_fingerprint(token_credential.as_ptr() as usize),
+        Some(token_credential) => format!(
+            "{}:scope:{}",
+            token_credential_fingerprint(token_credential.as_ptr() as usize),
+            fingerprint(&[account_scope(token_credential.py(), endpoint)?.as_bytes()])
+        ),
         None => master_key_fingerprint(
             master_key.ok_or_else(|| PyValueError::new_err(AUTH_REQUIRED_ERROR))?,
         )?,
     };
     Ok(compose_cache_key(
-        endpoint.as_str(),
+        endpoint_url.as_str(),
         &credential_fp,
         &config_fingerprint(config)?,
     ))
@@ -514,9 +526,19 @@ pub(crate) fn acquire_driver_handle(
         let account = match credential {
             Some(token_credential) => {
                 let py_credential: Py<PyAny> = token_credential.clone().unbind();
+                let account_scope = account_scope(py, endpoint)?;
+                let override_scope = config
+                    .map(|config| get_config_opt::<String>(config, "aad_scope_override"))
+                    .transpose()?
+                    .flatten()
+                    .filter(|value| !value.is_empty());
                 AccountReference::with_credential(
                     endpoint_url,
-                    Arc::new(PyTokenCredential::new(py_credential)),
+                    Arc::new(PyTokenCredential::for_account(
+                        py_credential,
+                        account_scope,
+                        override_scope,
+                    )),
                 )
             }
             None => {
@@ -1669,7 +1691,44 @@ variants = [
             let credential = module.getattr("credential").unwrap();
             let token_identity = super::driver_identity(url, None, None, Some(&credential)).unwrap();
             assert_ne!(identity, token_identity);
-            assert_eq!(token_identity, super::driver_identity(url, None, None, Some(&credential)).unwrap());
+            assert_eq!(
+                token_identity,
+                super::driver_identity(url, None, None, Some(&credential)).unwrap()
+            );
+            let unicode_endpoint = "https://b\u{fc}cher.invalid";
+            let ascii_endpoint = "https://xn--bcher-kva.invalid";
+            assert_eq!(
+                url::Url::parse(unicode_endpoint).unwrap(),
+                url::Url::parse(ascii_endpoint).unwrap()
+            );
+            assert_ne!(
+                super::driver_identity(unicode_endpoint, None, None, Some(&credential)).unwrap(),
+                super::driver_identity(ascii_endpoint, None, None, Some(&credential)).unwrap()
+            );
+            let scope_config = module.getattr("Config").unwrap().call0().unwrap();
+            scope_config.setattr("aad_scope_override", "").unwrap();
+            assert_eq!(
+                token_identity,
+                super::driver_identity(url, None, Some(&scope_config), Some(&credential)).unwrap()
+            );
+            scope_config
+                .setattr("aad_scope_override", "https://identity.invalid/.default")
+                .unwrap();
+            let overridden =
+                super::driver_identity(url, None, Some(&scope_config), Some(&credential)).unwrap();
+            // Even the same initial scope has a different no-fallback policy.
+            assert_ne!(token_identity, overridden);
+            assert_eq!(
+                overridden,
+                super::driver_identity(url, None, Some(&scope_config), Some(&credential)).unwrap()
+            );
+            scope_config
+                .setattr("aad_scope_override", "https://other.invalid/.default")
+                .unwrap();
+            assert_ne!(
+                overridden,
+                super::driver_identity(url, None, Some(&scope_config), Some(&credential)).unwrap()
+            );
         });
     }
 

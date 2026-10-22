@@ -13,7 +13,7 @@
 #   honest shape of how each backend scales.
 #
 #   It is CLOSED-LOOP on purpose -- concurrency is the independent variable here,
-#   so we hold it fixed per point and read the achieved req/s (count/window_seconds)
+#   so we hold it fixed per point and read the achieved req/s (count/interval_duration_seconds)
 #   from the result rows. We sweep READ and UPSERT by default, because
 #   "thousands/sec" must be shown for reads AND writes, which scale differently.
 #

@@ -146,6 +146,22 @@ def _aio_create_item_target() -> Tuple[Any, str, str]:
 
 _register_op("create_item", sync=_sync_create_item_target, aio=_aio_create_item_target)
 
+def _sync_execute_item_batch_target() -> Tuple[Any, str, str]:
+    """Return the synchronous transactional batch method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "execute_item_batch"
+
+
+def _aio_execute_item_batch_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous transactional batch method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "execute_item_batch"
+
+
+_register_op(
+    "execute_item_batch", sync=_sync_execute_item_batch_target, aio=_aio_execute_item_batch_target
+)
+
 
 # create_database -------------------------------------------------------------
 

@@ -18,6 +18,7 @@ import asyncio
 import inspect
 import json
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 from typing import get_type_hints
@@ -26,7 +27,7 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 
 from azure.cosmos import ContainerProxy
-from azure.cosmos.exceptions import CosmosResourceNotFoundError
+from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceNotFoundError
 from azure.cosmos.aio import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey, UNDEFINED_PARTITION_KEY
@@ -219,6 +220,7 @@ class _RecordingBackend(CosmosBackend):
 
     def __init__(self):
         self.requests = []
+        self.deadlines = []
         self.error = None
         self.response = BackendResponse(
             200, 0,
@@ -228,6 +230,7 @@ class _RecordingBackend(CosmosBackend):
 
     def execute(self, prepared, *, deadline=None):
         self.requests.append(prepared)
+        self.deadlines.append(deadline)
         if self.error is not None:
             raise self.error
         return self.response
@@ -313,7 +316,7 @@ def test_read_feed_ranges_builder_does_not_coerce_refresh_rust(value):
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("options", [
-    {"response_hook": None}, {"timeout": 5},
+    {"response_hook": None}, {"timeout": 5, "response_hook": None},
     {"excluded_locations": ["West US"]}, {"max_item_count": 1},
     {"initial_headers": {"x-customer": "orders"}}, {"request_options": {}},
     {"unknown_option": False},
@@ -330,21 +333,28 @@ def test_read_feed_ranges_rejects_extra_options_without_legacy_execution_rust(as
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("force_refresh", [False, True])
-def test_read_feed_ranges_is_lazy_and_returns_an_owned_result_rust(async_client, force_refresh):
+@pytest.mark.parametrize("timeout", [None, 5])
+def test_read_feed_ranges_is_lazy_and_returns_an_owned_result_rust(async_client, force_refresh, timeout, monkeypatch):
+    clock = [100.0]
+    monkeypatch.setattr(time, "monotonic", lambda: clock[0])
     container, recording = _container(async_client)
-    results = container.read_feed_ranges(force_refresh=force_refresh)
+    results = container.read_feed_ranges(force_refresh=force_refresh, timeout=timeout)
     assert not recording.requests
     assert results.get_response_headers() == {}
     values = _collect(results, async_client)
     assert values == [{"Range": {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}}]
     assert len(recording.requests) == 1
+    assert recording.deadlines == [None if timeout is None else 105]
     assert json.loads(recording.requests[0].body_bytes) == {"forceRefresh": force_refresh}
     assert results.get_response_headers() == {"content-type": "application/json", "x-ms-item-count": "0"}
     values[0]["Range"]["max"] = "changed by the customer"
+    clock[0] += 100
     if async_client:
+
         async def repeat():
             pages = results.by_page()
             return await _collect_async(await pages.__anext__())
+
         again = asyncio.run(repeat())
     else:
         again = list(next(results.by_page()))
@@ -355,6 +365,62 @@ def test_read_feed_ranges_is_lazy_and_returns_an_owned_result_rust(async_client,
     container.client_connection.last_response_headers["x-ms-item-count"] = "another call"
     assert results.get_response_headers()["x-ms-item-count"] == "0"
     container._get_properties_with_options.assert_not_called()
+
+
+@pytest.mark.parametrize("async_client", [False, True])
+@pytest.mark.parametrize("timeout", [True, False, 0, -1, 0.5, "5", float("inf"), float("nan"), 2**64])
+def test_read_feed_ranges_rejects_invalid_timeout_without_dispatch_rust(async_client, timeout):
+    container, recording = _container(async_client)
+    with pytest.raises(ValueError, match="read_feed_ranges timeout"):
+        _collect(container.read_feed_ranges(timeout=timeout), async_client)
+    assert not recording.requests
+    container._get_properties_with_options.assert_not_called()
+
+
+@pytest.mark.parametrize("async_client", [False, True])
+def test_read_feed_ranges_does_not_cache_success_after_deadline_rust(async_client, monkeypatch):
+    from azure.cosmos._helpers import _feed_range_operations as operations
+
+    clock = [100.0]
+    monkeypatch.setattr(time, "monotonic", lambda: clock[0])
+    original_parse = operations.parse_read_feed_ranges_payload
+
+    def parse(payload):
+        value = original_parse(payload)
+        clock[0] += 5
+        return value
+
+    monkeypatch.setattr(operations, "parse_read_feed_ranges_payload", parse)
+    container, recording = _container(async_client)
+    results = container.read_feed_ranges(timeout=5)
+    with pytest.raises(CosmosClientTimeoutError):
+        _collect(results, async_client)
+    monkeypatch.setattr(operations, "parse_read_feed_ranges_payload", original_parse)
+    if async_client:
+
+        async def retry():
+            return await _collect_async(await results.by_page().__anext__())
+
+        values = asyncio.run(retry())
+    else:
+        values = list(next(results.by_page()))
+    assert len(values) == 1
+    assert recording.deadlines == [105, 110]
+
+
+@pytest.mark.asyncio
+async def test_read_feed_ranges_timeout_releases_async_fetch_for_retry_rust():
+    container, recording = _container(True)
+    backend = container.client_connection._backend
+    backend.started, backend.release = asyncio.Event(), asyncio.Event()
+    results = container.read_feed_ranges(timeout=1)
+    with pytest.raises(CosmosClientTimeoutError):
+        await asyncio.wait_for(_collect_async(results), timeout=3)
+    assert backend.started.is_set()
+    assert not recording.requests
+    backend.release.set()
+    assert len(await _collect_async(results)) == 1
+    assert len(recording.requests) == 1
 
 
 @pytest.mark.parametrize("async_client", [False, True])

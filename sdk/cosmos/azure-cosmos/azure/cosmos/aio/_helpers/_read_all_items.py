@@ -17,11 +17,44 @@ from azure.core.utils import CaseInsensitiveDict
 
 from ..._cosmos_responses import CosmosAsyncItemPaged
 from ..._helpers._read_all_items import ReadAllConfig, ReadAllPageState
+from ..._telemetry import trace_operation_async
 from ..._operation_deadline import (
     legacy_deadline_options,
     remaining_timeout,
     run_with_deadline,
 )
+
+
+@trace_operation_async(
+    binding_operation="read_all_items",
+    operation_name="read_all_items",
+    name_of_span="ContainerProxy.read_all_items.fetch",
+)
+async def _fetch_rust_page(
+    config: ReadAllConfig, state: ReadAllPageState, deadline: Optional[float]
+) -> Optional[tuple[Optional[str], list[dict[str, Any]]]]:
+    """Record one internal fetch, draining deadline work before completion."""
+    previous = state.token
+
+    async def fetch_one() -> list[dict[str, Any]]:
+        pages = config.backend.execute_pages(
+            config.prepared(state.token, state.cursor, deadline),
+            deadline=deadline,
+        )
+        try:
+            page = await pages.__anext__()
+        except StopAsyncIteration as exc:
+            raise RuntimeError("Rust backend returned no read_all_items page.") from exc
+        finally:
+            await pages.aclose()
+        return state.parse(page)
+
+    rows = await run_with_deadline(fetch_one, deadline)
+    if rows or state.token is None:
+        return state.finish(rows, deadline)
+    if state.token == previous:
+        raise RuntimeError("read_all_items returned an empty page without continuation progress.")
+    return None
 
 
 class AsyncReadAllPageIterator(AsyncPageIterator):
@@ -70,32 +103,18 @@ class AsyncReadAllPageIterator(AsyncPageIterator):
             deadline = config.deadline()
             state.begin()
 
+            if config.rust:
+                while True:
+                    result = await _fetch_rust_page(config, state, deadline)
+                    if result is not None:
+                        break
+                rows = result[1]
+                if not rows and state.done:
+                    raise StopAsyncIteration
+                return result
+
             async def fetch() -> list[dict[str, Any]]:
-                if config.rust:
-                    while True:
-                        previous = state.token
-                        pages = config.backend.execute_pages(
-                            config.prepared(state.token, state.cursor, deadline),
-                            deadline=deadline,
-                        )
-                        try:
-                            page = await pages.__anext__()
-                        except StopAsyncIteration as exc:
-                            raise RuntimeError(
-                                "Rust backend returned no read_all_items page."
-                            ) from exc
-                        finally:
-                            await pages.aclose()
-                        rows = state.parse(page)
-                        if rows or state.token is None:
-                            return rows
-                        if state.token == previous:
-                            raise RuntimeError(
-                                "read_all_items returned an empty page without continuation progress."
-                            )
-                state.legacy_options.update(
-                    legacy_deadline_options(config.options, deadline)
-                )
+                state.legacy_options.update(legacy_deadline_options(config.options, deadline))
                 if state.legacy_pages is None:
                     await config.proxy._get_properties_with_options(
                         state.legacy_options

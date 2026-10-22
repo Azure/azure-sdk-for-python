@@ -59,7 +59,7 @@ from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 from .._cosmos_responses import CosmosDict
 from .._helpers._item_arguments import get_selected_backend
-from .._helpers._page_response_hook import wrap_page_response_hook
+from ._helpers._list_containers import list_containers as _list_containers, query_containers as _query_containers
 from ._helpers._container_operations import AsyncContainerHelper
 from .._helpers._request_container import (
     parse_container_create_args,
@@ -913,6 +913,13 @@ class DatabaseProxy(object):
         and ``availability_strategy`` are rejected, including explicit ``None`` or ``False``.
         Unsupported Rust page options raise during iteration instead of using legacy Python.
 
+        Each page iterator owns its continuation token; other operations cannot
+        overwrite it. A final empty page clears it. Empty service pages share the
+        current page-fetch deadline. Cancellation waits for page work to stop.
+        After a failed or cancelled fetch, or a failed hook, resume a new pager from
+        the last fully processed page's bookmark. Hook iteration-stop exceptions
+        become ``RuntimeError``; other hook failures propagate without replay.
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/examples_async.py
@@ -929,21 +936,10 @@ class DatabaseProxy(object):
                 raise TypeError(f"list_containers() does not support the '{option}' keyword argument")
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-
-        if response_hook is not None:
-            hook = response_hook
-
-            def on_page(headers: Mapping[str, Any]) -> None:
-                hook(headers, result)
-
-            kwargs["response_hook"] = wrap_page_response_hook(on_page)
-        result = self.client_connection.ReadContainers(
-            database_link=self.database_link, options=feed_options, **kwargs
-        )
-        return result
+            kwargs["max_item_count"] = max_item_count
+        kwargs["response_hook"] = response_hook
+        return _list_containers(self, kwargs)
 
     @distributed_trace
     def query_containers(
@@ -981,6 +977,13 @@ class DatabaseProxy(object):
         ``availability_strategy``, and ``enable_cross_partition_query`` are rejected,
         including explicit ``None`` or ``False``. Unsupported Rust options raise during iteration rather than
         switching to legacy Python.
+
+        Query inputs and settings are copied at construction. Each page iterator owns
+        its bookmark; other operations cannot overwrite it. A final empty page clears
+        the bookmark. Cancellation waits for page work to stop. After a failed or
+        cancelled fetch, or a failed hook, resume a new pager from the last fully
+        processed page's bookmark. Hook iteration-stop exceptions become
+        ``RuntimeError``; other hook failures propagate without replaying the request.
         """
         prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         for option in ("session_token", "populate_query_metrics", "availability_strategy",
@@ -989,24 +992,10 @@ class DatabaseProxy(object):
                 raise TypeError(f"query_containers() does not support the '{option}' keyword argument")
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-
-        if response_hook is not None:
-            hook = response_hook
-
-            def on_page(headers: Mapping[str, Any]) -> None:
-                hook(headers, result)
-
-            kwargs["response_hook"] = wrap_page_response_hook(on_page)
-        result = self.client_connection.QueryContainers(
-            database_link=self.database_link,
-            query=query if parameters is None else {"query": query, "parameters": parameters},
-            options=feed_options,
-            **kwargs
-        )
-        return result
+            kwargs["max_item_count"] = max_item_count
+        kwargs["response_hook"] = response_hook
+        return _query_containers(self, query, parameters, kwargs)
 
     @overload
     async def replace_container(

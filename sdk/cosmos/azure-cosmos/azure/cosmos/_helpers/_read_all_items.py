@@ -37,6 +37,7 @@ from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict, CosmosItemPaged
 from ..exceptions import CosmosClientTimeoutError
 from .._operation_deadline import legacy_deadline_options, remaining_timeout
+from .._telemetry import trace_operation
 from ._read_items import ResponseHeaderAccumulator
 from ._response_parse import process_backend_response
 from .._query_rust_routing import page_to_backend_response
@@ -106,6 +107,7 @@ class ReadAllConfig:
         self.proxy = proxy
         self.connection = proxy.client_connection
         context = proxy._item_context
+        self._item_context = context
         self.response_state = context.response_state if context is not None else None
         self.backend = (
             context.adapter if context is not None else self.connection._backend
@@ -325,6 +327,34 @@ class ReadAllPageState:
         return self.token is None
 
 
+@trace_operation(
+    binding_operation="read_all_items",
+    operation_name="read_all_items",
+    name_of_span="ContainerProxy.read_all_items.fetch",
+)
+def _fetch_rust_page(
+    config: ReadAllConfig, state: ReadAllPageState, deadline: Optional[float]
+) -> Optional[tuple[Optional[str], list[dict[str, Any]]]]:
+    """Record one internal fetch; finish the public page only when it is ready."""
+    previous = state.token
+    pages = config.backend.execute_pages(
+        config.prepared(state.token, state.cursor, deadline),
+        deadline=deadline,
+    )
+    try:
+        page = next(pages)
+    except StopIteration as exc:
+        raise RuntimeError("Rust backend returned no read_all_items page.") from exc
+    finally:
+        pages.close()
+    rows = state.parse(page)
+    if rows or state.token is None:
+        return state.finish(rows, deadline)
+    if state.token == previous:
+        raise RuntimeError("read_all_items returned an empty page without continuation progress.")
+    return None
+
+
 class ReadAllPageIterator(PageIterator):
     """Advance the item feed; the customer-facing pager uses this page iterator."""
 
@@ -369,26 +399,10 @@ class ReadAllPageIterator(PageIterator):
             state.begin()
             if config.rust:
                 while True:
-                    previous = state.token
-                    pages = config.backend.execute_pages(
-                        config.prepared(state.token, state.cursor, deadline),
-                        deadline=deadline,
-                    )
-                    try:
-                        page = next(pages)
-                    except StopIteration as exc:
-                        raise RuntimeError(
-                            "Rust backend returned no read_all_items page."
-                        ) from exc
-                    finally:
-                        pages.close()
-                    rows = state.parse(page)
-                    if rows or state.token is None:
+                    result = _fetch_rust_page(config, state, deadline)
+                    if result is not None:
                         break
-                    if state.token == previous:
-                        raise RuntimeError(
-                            "read_all_items returned an empty page without continuation progress."
-                        )
+                rows = result[1]
             else:
                 state.legacy_options.update(
                     legacy_deadline_options(config.options, deadline)
@@ -415,7 +429,7 @@ class ReadAllPageIterator(PageIterator):
                     state.token = None
                 else:
                     state.token = state.legacy_pages.continuation_token
-            result = state.finish(rows, deadline)
+                result = state.finish(rows, deadline)
             if not rows and state.done:
                 raise StopIteration
             return result

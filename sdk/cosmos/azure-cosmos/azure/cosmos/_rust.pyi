@@ -8,6 +8,7 @@ page iterator. Other binding exports remain typed as Any through __getattr__.
 """
 
 from typing import Any, Awaitable
+from ._backend.contracts import PreparedRequest
 from .runtime import ConnectionPoolOptions
 
 def _validate_runtime_configuration(config: Any = None) -> None:
@@ -31,6 +32,16 @@ def acquire_driver_handle(
 def release_driver_handle(driver_handle: _DriverHandle) -> None:
     """Release this handle's cache acquisition without revoking outstanding references."""
     ...
+
+def execute_item_batch(
+    driver_handle: _DriverHandle, prepared: PreparedRequest, *,
+    timeout_seconds: float | None = None, include_attempts: bool = False,
+) -> tuple[Any, ...]: ...
+
+def execute_item_batch_async(
+    driver_handle: _DriverHandle, prepared: PreparedRequest, *,
+    timeout_seconds: float | None = None, include_attempts: bool = False,
+) -> Awaitable[tuple[Any, ...]]: ...
 
 def _create_runtime(options: ConnectionPoolOptions | None = None) -> _CosmosRuntime: ...
 def _create_runtime_async(options: ConnectionPoolOptions | None = None) -> Awaitable[_CosmosRuntime]: ...

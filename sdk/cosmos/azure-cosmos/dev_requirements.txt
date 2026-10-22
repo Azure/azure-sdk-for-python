@@ -4,6 +4,7 @@ hdrhistogram
 maturin==1.15.0
 psutil
 ../../core/azure-core
+../../core/azure-core-tracing-opentelemetry
 ../../identity/azure-identity
 -e ../../../eng/tools/azure-sdk-tools
 pytest-timeout>=2.3.1

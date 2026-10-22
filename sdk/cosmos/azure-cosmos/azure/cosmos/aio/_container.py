@@ -48,6 +48,7 @@ from .._helpers._read_items import complete_read_items_response, prepare_read_it
 from ._helpers._read_all_items import read_all_items as _read_all_items
 from ._helpers._query_items import query_items as _query_items
 from .._helpers._query_items import uses_rust, reject_rust_continuation_token
+from .._helpers._batch_operations import execute_batch_async
 from .._helpers._response_parse import complete_item_response
 from .._operation_deadline import async_deadline_lock, legacy_deadline_options, remaining_timeout, run_with_deadline
 from .._helpers._item_arguments import (
@@ -2032,7 +2033,7 @@ class ContainerProxy:
         await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                                   options=request_options, **kwargs)
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="execute_item_batch")
     async def execute_item_batch(
         self,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]],
@@ -2101,6 +2102,8 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
+        if uses_rust(self):
+            return await execute_batch_async(self, batch_operations, partition_key, kwargs)
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
@@ -2129,13 +2132,18 @@ class ContainerProxy:
             refresh when iteration starts. Both settings may
             require network requests; create a new iterable to discover ranges again.
             A cached map may be returned if refresh fails.
+        :keyword float timeout:
+            Overall discovery budget in seconds, starting when iteration begins.
+            Overrides the client default; None inherits that default. Must be a
+            finite, non-boolean number >= 1 and < 2**64, or None.
         :returns: A lazy asynchronous iterable of feed-range dictionaries, with
             available response headers accessible through get_response_headers().
         :rtype: CosmosAsyncItemPaged
         :raises TypeError: If force_refresh is not a boolean.
         :raises NotImplementedError: When iteration encounters additional per-call
             options unsupported by this range lookup.
-        :raises ValueError: If a continuation token is supplied through by_page.
+        :raises ValueError: If timeout is invalid or a continuation token is supplied through by_page.
+        :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: If the discovery budget expires.
 
         .. warning::
           The structure of the dict representation of a feed range may vary, including which keys
@@ -2144,6 +2152,7 @@ class ContainerProxy:
         """
         prepare_operation_kwargs(self, kwargs)
         return _read_feed_ranges(
+            telemetry_owner=self,
             client_connection=self.client_connection,
             container_link=self.container_link,
             get_properties=self._get_properties_with_options,
@@ -2219,6 +2228,7 @@ class ContainerProxy:
             get_legacy_epk_range=self._get_epk_range_for_partition_key,
         )
 
+    @trace_operation_async(binding_operation="is_feed_range_subset")
     async def is_feed_range_subset(self, parent_feed_range: dict[str, Any],
                                    child_feed_range: dict[str, Any]) -> bool:
         """Checks if child feed range is a subset of parent feed range.

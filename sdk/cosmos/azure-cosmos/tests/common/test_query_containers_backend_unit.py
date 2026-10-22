@@ -456,7 +456,7 @@ def test_timeout_restarts_between_public_pages_rust(query_case, monkeypatch):
     """
     case = query_case
     clock = [100.0]
-    monkeypatch.setattr(time, "time", lambda: clock[0])
+    monkeypatch.setattr(time, "monotonic", lambda: clock[0])
     pages = case.database.query_containers(SQL, timeout=1).by_page()
     clock[0] += 10
 
@@ -494,7 +494,7 @@ def test_empty_page_does_not_reset_current_budget_rust(query_case, monkeypatch):
     if not case.rust:
         pytest.skip("Fake legacy transport does not enforce socket timeouts")
     clock = [100.0]
-    monkeypatch.setattr(time, "time", lambda: clock[0])
+    monkeypatch.setattr(time, "monotonic", lambda: clock[0])
     case.responses[""] = _page([], "next")
 
     def hook(headers, results_iterator):
