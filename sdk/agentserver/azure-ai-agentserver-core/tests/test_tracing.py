@@ -961,22 +961,6 @@ class TestBaggageLogRecordProcessor:
         assert attrs["gen_ai.agent.version"] == "0.0.1"
         assert attrs["microsoft.session.id"] == "existing-session"
 
-    def test_maps_conversation_baggage_to_gen_ai_attribute(self) -> None:
-        proc = _BaggageLogRecordProcessor()
-        attrs = {}
-        log_data = _FakeLogData(attrs)
-        ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.conversation_id",
-            "ctx-a2a",
-        )
-        token = _otel_context.attach(ctx)
-        try:
-            proc.on_emit(log_data)
-        finally:
-            _otel_context.detach(token)
-
-        assert attrs["gen_ai.conversation.id"] == "ctx-a2a"
-
 
 # ------------------------------------------------------------------ #
 # flush_spans_async / schedule_flush_spans (non-blocking flush)
