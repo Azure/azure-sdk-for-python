@@ -2,6 +2,10 @@
 
 ## 1.3.1 (Unreleased)
 
+### Bugs Fixed
+
+- WebSocket connections now reject HTTP redirects to prevent forwarding authentication headers to redirected endpoints.
+
 ### Other Changes
 
 - The SDK now identifies Voice Live WebSocket connections through the `User-Agent` header and
