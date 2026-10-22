@@ -2203,6 +2203,8 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WEB_IQ_PREVIEW."""
     BROWSER_AUTOMATION = "browser_automation"
     """BROWSER_AUTOMATION."""
+    CLOUD_COMPUTER_USE_PREVIEW = "cloud_computer_use_preview"
+    """CLOUD_COMPUTER_USE_PREVIEW."""
 
 
 class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2333,6 +2335,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OPENAPI."""
     MICROSOFT_COPILOT_TOOLSET_PREVIEW = "microsoft_copilot_toolset_preview"
     """MICROSOFT_COPILOT_TOOLSET_PREVIEW."""
+    CLOUD_COMPUTER_USE_PREVIEW = "cloud_computer_use_preview"
+    """CLOUD_COMPUTER_USE_PREVIEW."""
 
 
 class TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

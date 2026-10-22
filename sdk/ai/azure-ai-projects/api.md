@@ -5825,6 +5825,35 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.CloudComputerUsePreviewTool(Tool, discriminator='cloud_computer_use_preview'):
+        type: Literal[ToolType.CLOUD_COMPUTER_USE_PREVIEW]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CloudComputerUsePreviewToolboxTool(ToolboxTool, discriminator='cloud_computer_use_preview'):
+        description: str
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.CLOUD_COMPUTER_USE_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ClusterInsightResult(_Model):
         clusters: list[InsightCluster]
         coordinates: Optional[dict[str, ChartCoordinate]]
@@ -8340,6 +8369,7 @@ namespace azure.ai.projects.models
         code_configuration: Optional[CodeConfiguration]
         container_configuration: Optional[ContainerConfiguration]
         cpu: str
+        enable_memory_snapshot: Optional[bool]
         environment_variables: Optional[dict[str, str]]
         kind: Literal[AgentKind.HOSTED]
         memory: str
@@ -8355,6 +8385,7 @@ namespace azure.ai.projects.models
                 code_configuration: Optional[CodeConfiguration] = ..., 
                 container_configuration: Optional[ContainerConfiguration] = ..., 
                 cpu: str, 
+                enable_memory_snapshot: Optional[bool] = ..., 
                 environment_variables: Optional[dict[str, str]] = ..., 
                 memory: str, 
                 protocol_versions: Optional[list[ProtocolVersionRecord]] = ..., 
@@ -14510,6 +14541,7 @@ namespace azure.ai.projects.models
         BROWSER_AUTOMATION = "browser_automation"
         BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
         CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
+        CLOUD_COMPUTER_USE_PREVIEW = "cloud_computer_use_preview"
         CODE_INTERPRETER = "code_interpreter"
         COMPUTER = "computer"
         COMPUTER_USE_PREVIEW = "computer_use_preview"
@@ -14742,6 +14774,7 @@ namespace azure.ai.projects.models
         AZURE_AI_SEARCH = "azure_ai_search"
         BROWSER_AUTOMATION = "browser_automation"
         BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
+        CLOUD_COMPUTER_USE_PREVIEW = "cloud_computer_use_preview"
         CODE_INTERPRETER = "code_interpreter"
         FABRIC_IQ_PREVIEW = "fabric_iq_preview"
         FILE_SEARCH = "file_search"
