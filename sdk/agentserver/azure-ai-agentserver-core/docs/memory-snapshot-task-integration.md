@@ -5,8 +5,10 @@
 This design builds on the snapshot lifecycle hooks in
 [Python SDK PR #49217](https://github.com/Azure/azure-sdk-for-python/pull/49217).
 It separates process-side task definitions from session-bound TaskManager
-construction and startup. Application startup task submissions remain an open
-design question; neither a new callback nor automatic replay is implemented.
+construction and startup. Applications submit startup work from the existing
+`after_restore_handler`: the requested manager is prepared before the handler,
+and automatic recovery starts after the handler finishes rebuilding dependencies.
+No new public callback or capture-time launch registry is required.
 
 ## Problem
 
@@ -33,6 +35,7 @@ Included:
 - Python Core task runtime activation through ordinary cold startup or the
   existing `after-restore` hook.
 - Process-side task definitions and existing Responses task registration.
+- Calling decorated task methods from the existing application restore handler.
 - Immediate recovery, initialization retry checkpoints, runtime ownership,
   and shutdown/rollback handling.
 - A distinction between intentional resilience opt-out and an enabled runtime
@@ -84,7 +87,7 @@ declaration alone does not enable the subsystem.
 |---|---|---|---|
 | No | absent, `false`, or `true` | No task subsystem | No task subsystem |
 | Yes | absent or `false` | Activate immediately | Activate/retain the same session runtime |
-| Yes | `true` | Defer activation | Activate after hydration and dependency callbacks |
+| Yes | `true` | Defer activation | Prepare before the application callback; recover after it |
 
 Present values must be case-insensitive `true` or `false`; surrounding
 whitespace is accepted. Empty/malformed values fail explicitly. Missing is
@@ -153,22 +156,30 @@ session activation; disabled tasks remain disabled.
 ```text
 apply real-session environment/configuration
   -> protected SDK restore extension
-  -> optional author dependency-rebinding callback
   -> construct/bind requested TaskManager
   -> load existing registered definitions
+  -> optional application after_restore_handler:
+       rebuild application dependencies
+       submit decorated startup tasks using normal .start()/.run() APIs
   -> initial recovery: detect, reclaim, dispatch immediately
   -> ensure one periodic scanner
   -> commit successful restore
   -> platform admits new requests
 ```
 
-Recovered tasks may execute and renew leases while after-restore is still
+Submitted and recovered tasks may execute and renew leases while after-restore is still
 running. There is no barrier waiting for the hook response or platform
 acknowledgment, and the hook does not wait for LRA completion.
 
-Dependencies needed by recovered callbacks must be prepared before manager
-startup. This design keeps the existing author restore callback before task
-activation; it is not a post-task-start callback.
+The manager has a provider, real session/worker identity and registered task
+definitions when the application handler runs. It has not yet started its
+automatic recovery scan or periodic scanner. Applications rebuild dependencies
+before submitting their own tasks. Recovery waits until the handler returns,
+so previously persisted work cannot race ahead of that preparation.
+
+This ordering applies to a newly prepared runtime. An already-active cold or
+retained runtime/scanner is not paused by this change; live idle-snapshot
+quiescence is a separate lifecycle requirement.
 
 ## Initialization phases and retry
 
@@ -176,9 +187,9 @@ TaskManager retains private phase state:
 
 | Phase | Completion means |
 |---|---|
-| Construct/bind | A manager exists for the bound session |
-| Register | Captured task definitions/options are installed |
-| Recovery | Existing best-effort initial scan attempt completed |
+| Construct/bind | A manager exists for the bound session, before the app handler |
+| Register | Captured definitions/options are installed; task submission is available |
+| Recovery | The application handler returned; best-effort initial scan completed |
 | Periodic | One scanner is present and running |
 | Ready | Required initialization completed |
 
@@ -191,6 +202,9 @@ inventing a platform restore event.
 - TaskManager's startup lock independently prevents concurrent startup from
   duplicating workers.
 - A same-ID retry reuses valid completed phases and retries unfinished steps.
+- A completed restore ID does not replay the application handler. If host
+  shutdown disposed the runtime, the same payload re-establishes it before
+  acknowledging success; delayed older IDs use the latest committed binding.
 - Recovery is reconsidered for a different restore ID without creating an
   additional valid manager/scanner for the same binding.
 - A stopped scanner is not silently counted as readiness. A scanner exception
@@ -198,6 +212,9 @@ inventing a platform restore event.
 - Shutdown invalidates phase state. A stopped manager cannot restart.
 - A host refuses a manager owned by another host or a conflicting session
   binding rather than replacing it silently.
+- An inactive manager whose construction-time provider configuration no longer
+  matches hydrated settings is disposed and rebuilt. Provider changes while
+  workers are live fail explicitly instead of sending work to a stale endpoint.
 
 This is not a general retained-memory reconciliation framework. Changes to
 session-incarnation binding require explicit lifecycle treatment rather than
@@ -251,7 +268,9 @@ binding. In that case the host first stops the owned runtime, waits for cleanup,
 and invalidates its state before rolling back environment/configuration.
 
 Cleanup is shielded against cancellation of the hook caller. A cleanup failure
-is reported rather than claiming rollback safely completed.
+is reported as the sanitized `after_restore_failed` JSON error rather than
+claiming rollback safely completed. Pending cleanup and rollback state remain
+owned for a later retry.
 
 A client HTTP timeout/disconnect is not necessarily Python coroutine
 cancellation. In the tested server configuration, work continues and a retry
@@ -295,15 +314,52 @@ propagating the error, so an execution that never started is not retained.
 No new HTTP 503 contract is introduced. Normal platform request admission
 occurs after successful restore.
 
-## Q3: customer task submissions during startup
+## Customer startup tasks: selected existing-handler design
+
+Declare `@task` or `@multi_turn_task` methods normally, then submit them from
+`@app.after_restore_handler` after rebuilding the dependencies they use:
+
+```python
+@app.after_restore_handler
+async def initialize_session(context):
+    await rebuild_dependencies()
+    await startup_work.start(input={"session_id": context.session_id})
+```
+
+The callback remains an ordinary async function receiving `AgentSessionContext`;
+the submitted decorated method receives its normal `TaskContext`. Task methods
+defined inside the handler also register with the prepared live manager.
+Neither task declaration nor handler registration submits work during capture.
+Calls in capture-time `__main__` are not automatically queued or replayed.
+
+Await `.start()` only for acceptance/its handle. `.run()` also works for bounded
+work, but awaiting a long-running result delays the hook response and can exceed
+the platform timeout. Put long result-dependent sequences in a launched durable
+orchestration instead.
+
+The existing restore lock/completed-ID guard deduplicates concurrent and repeated
+successful hooks. On failure, normal ownership/rollback rules preserve unfinished
+records and inputs; a retry may execute the callback again. Use task IDs and
+`get_active_run()` to reconcile unfinished submissions. A completed one-shot
+record may be deleted, so once-per-logical-session behavior also needs an
+application-owned durable completion marker. No generic exactly-once guarantee,
+automatic task replay, or new receipt type is added.
+
+Opt-out remains authoritative: when resilience is disabled the callback still
+runs, but durable task submission retains `TaskManagerNotInitialized`.
+Ordinary cold startup remains unchanged and does not manufacture a restore event
+or invoke this callback.
+
+## Historical startup alternatives (not selected)
 
 Registering decorated definitions is supported. Explicitly calling `.start()`
 or `.run()` before the deferred manager exists is not automatically queued,
 and restore does not rerun already completed `__main__`/lifespan statements.
 
-Two possible approaches are documented below. Option B is now being evaluated
-in a separate controlled prototype; this PR's base implementation does not
-automatically acquire that prototype's API or release guarantees.
+The following earlier alternatives are retained as design history, not the
+current implementation. The selected approach above reuses the existing handler
+by splitting preparation from recovery. Separate registry-prototype evidence
+does not qualify the selected handler implementation.
 
 ### Option A: explicit session-start callback
 
@@ -349,9 +405,10 @@ materialization ID. Cold initialization has no platform restore ID. Inputs
 can therefore be computed from current session identity rather than retaining
 capture-time placeholder values.
 
-The existing `after_restore_handler` prepares dependencies before recovery.
-It must not be reordered to serve as this new callback, because recovered
-handlers can already be executing by the time the post-task callback runs.
+This historical proposal assumed manager preparation and recovery were
+inseparable. The selected existing-handler design instead prepares the manager
+before the handler and delays recovery until afterward, removing the need for
+that separate callback.
 
 #### Results, failure, and repetition
 
@@ -402,7 +459,7 @@ open. Before-snapshot freezes enrollment. After-restore also freezes it before
 dependency preparation.
 
 The earlier registry prototype also collected in absent mode; it must be aligned
-and requalified before adoption. This PR does not implement that registry.
+and validated again before adoption. This PR does not implement that registry.
 
 HTTP/WebSocket request execution is excluded through an ASGI request boundary.
 Missing-manager requests must not become queued startup work. Resilience
@@ -560,9 +617,9 @@ Stable task IDs help, but one-shot records are deleted at terminal exit.
 Once-per-session guarantees need durable reconciliation or application
 idempotency; neither option provides generic exactly-once execution.
 
-Option A remains a proposal. Option B's separate restore-scoped prototype now
-has its own local and hosted evidence below. It is not yet included in this
-PR's base implementation or proposed as a released API.
+Neither historical option is selected. Option B's separate restore-scoped
+prototype has its own local and hosted evidence below, but is not included in
+this implementation or proposed as a released API.
 
 ## Persistence boundaries and limitations
 
@@ -587,12 +644,14 @@ typed-input behavior is not broadened or redesigned.
 | Recovery LIST failure | Best-effort completion and periodic retry test |
 | Recovery/lease filtering/fencing | Existing targeted task suites |
 | Execution/renewal during hook | Real recovered task/heartbeat integration test |
+| Application handler task submission | Decorated `.start()`/bounded `.run()`, nested definitions, no automatic recovery before dependencies, failed/cancelled-hook retries |
+| Inactive provider configuration changes | Cancelled initial scan followed by omitted endpoint override rebuilds the provider |
 | Cold and initial golden LRA activation | Controlled hosted sample, actual external lease renewal |
 | Hard crash after checkpoints 1 and 2 | Controlled hosted recovery; no new invocation during orphan interval |
 | Independent sessions/concurrent tasks | Controlled hosted owner/worker/lease observations |
 | Cancellation | Controlled hosted terminal cancellation, no task resurrection during observation |
 | Natural idle/resume | Controlled hosted test: 120-second policy; after six quiet minutes, same session/capture with a new restore ID and worker, followed by renewed leases and completion |
-| Customer startup submissions (Q3), Option B | Separate prototype: real decorated startup submission deferred in capture, activated/reconciled after restore; verified with actual task leases |
+| Historical Option B startup submissions | Separate unselected prototype; not qualification of the existing-handler implementation |
 
 The controlled hosted test runs the existing resilient streaming sample.
 A test-only wrapper exits the process with code 137 after a committed
@@ -611,7 +670,7 @@ exact suspension timestamp or a guarantee of suspension at exactly 120 seconds.
 These observations do not replace CI, public rollout qualification, or an
 unobserved scenario.
 
-### Separate Option B prototype qualification
+### Historical, unselected Option B prototype qualification
 
 The fixed registry prototype passed 220 selected local/package tests and nine
 controlled hosted cases. The hosted sample executes a real decorated startup

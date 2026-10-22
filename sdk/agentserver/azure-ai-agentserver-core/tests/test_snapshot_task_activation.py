@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Session activation tests; author startup task submissions are out of scope."""
+"""Session activation and application restore-handler task submissions."""
 
 from __future__ import annotations
 
@@ -9,9 +9,8 @@ import contextlib
 import logging
 import os
 import socket
-import time
 from collections.abc import Iterator
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from unittest.mock import Mock
@@ -266,7 +265,7 @@ async def test_cold_runtime_rejects_restore_for_another_session(
 
 
 @pytest.mark.asyncio
-async def test_restore_binds_after_dependencies_and_loads_saved_definitions(
+async def test_restore_prepares_manager_before_handler_and_recovers_after_dependencies(
     provider_factory: tuple[LocalFileTaskProvider, Mock],
 ) -> None:
     _, factory = provider_factory
@@ -283,7 +282,12 @@ async def test_restore_binds_after_dependencies_and_loads_saved_definitions(
         nonlocal callback_seen
         assert context.session_id == "session-1"
         assert app.config.session_guid == "a" * 32
-        assert app._task_manager is None
+        manager = get_task_manager()
+        assert app._task_manager is manager
+        assert manager._resume_callbacks[declaration.name] is declaration._fn
+        assert manager._startup_phases["register"].completed
+        assert not manager._startup_phases["recovery"].completed
+        assert manager._periodic_recovery_task is None
         callback_seen = True
 
     async with app.router.lifespan_context(app), client(app) as http:
@@ -301,6 +305,276 @@ async def test_restore_binds_after_dependencies_and_loads_saved_definitions(
         assert (await http.post("/_agent/after-restore", json=payload())).status_code == 200
         factory.assert_called_once()
     assert app._task_manager is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("kind", ["one_shot", "multi_turn", "steerable"])
+@pytest.mark.parametrize("inside_handler", [False, True])
+@pytest.mark.parametrize("submission", ["start", "run"])
+async def test_restore_handler_submits_tasks_before_automatic_recovery(
+    provider_factory: tuple[LocalFileTaskProvider, Mock],
+    inside_handler: bool,
+    submission: str,
+    kind: str,
+) -> None:
+    provider, factory = provider_factory
+    started, finish, recovered = asyncio.Event(), asyncio.Event(), asyncio.Event()
+    dependencies_ready = False
+    callback_finished = False
+    calls: list[str] = []
+    app = host()
+
+    def declare() -> Any:
+        decorator = (
+            task(name="handler_startup")
+            if kind == "one_shot"
+            else multi_turn_task(name="handler_startup", steerable=kind == "steerable")
+        )
+
+        @decorator
+        async def startup(ctx: TaskContext[dict[str, str]]) -> str:
+            assert dependencies_ready
+            assert ctx.input == {"session": "session-1"}
+            calls.append(ctx.task_id)
+            started.set()
+            if submission == "start":
+                await finish.wait()
+            return "initialized"
+
+        return startup
+
+    startup = None if inside_handler else declare()
+
+    @task(name="recover_after_dependencies")
+    async def previous(ctx: TaskContext[dict[str, str]]) -> str:
+        assert dependencies_ready and callback_finished
+        assert ctx.input == {"value": "saved-input"}
+        recovered.set()
+        return "recovered"
+
+    await seed_expired_task(provider, previous.name)
+    callbacks = 0
+
+    @app.after_restore_handler
+    async def initialize(context: AgentSessionContext) -> None:
+        nonlocal dependencies_ready, callback_finished, callbacks
+        callbacks += 1
+        manager = get_task_manager()
+        assert manager._periodic_recovery_task is None
+        assert not manager._startup_phases["recovery"].completed
+        dependencies_ready = True
+        declaration = declare() if inside_handler else startup
+        if submission == "start":
+            run = await declaration.start(task_id="handler-startup", input={"session": context.session_id})
+            assert run.task_id == "handler-startup"
+            await asyncio.wait_for(started.wait(), 2)
+        else:
+            assert (
+                await declaration.run(task_id="handler-startup", input={"session": context.session_id})
+            ) == "initialized"
+        assert not recovered.is_set()
+        callback_finished = True
+
+    async with app.router.lifespan_context(app), client(app) as http:
+        try:
+            responses = await asyncio.gather(
+                http.post("/_agent/after-restore", json=payload()),
+                http.post("/_agent/after-restore", json=payload()),
+            )
+            assert [response.status_code for response in responses] == [200, 200]
+            await asyncio.wait_for(recovered.wait(), 2)
+            assert calls == ["handler-startup"]
+            assert callbacks == 1
+            manager = get_task_manager()
+            assert all(phase.completed for phase in manager._startup_phases.values())
+            assert manager._periodic_recovery_task is not None
+            assert not manager._periodic_recovery_task.done()
+            factory.assert_called_once()
+        finally:
+            finish.set()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("failure", ["exception", "cancel"])
+@pytest.mark.parametrize("matching_binding", [False, True])
+async def test_restore_handler_task_survives_failed_hook_without_duplicate_execution(
+    provider_factory: tuple[LocalFileTaskProvider, Mock],
+    monkeypatch: pytest.MonkeyPatch,
+    failure: str,
+    matching_binding: bool,
+) -> None:
+    if matching_binding:
+        monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "session-1")
+        monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
+    provider, factory = provider_factory
+    running, finish, callback_failed = asyncio.Event(), asyncio.Event(), asyncio.Event()
+    calls: list[tuple[str, str, Any]] = []
+    managers: list[TaskManager] = []
+    app = host()
+
+    @task(name="retry_handler_task")
+    async def startup(ctx: TaskContext[dict[str, str]]) -> str:
+        calls.append((ctx.task_id, ctx.entry_mode, ctx.input))
+        running.set()
+        await finish.wait()
+        return "finished"
+
+    callbacks = 0
+
+    @app.after_restore_handler
+    async def initialize(context: AgentSessionContext) -> None:
+        nonlocal callbacks
+        callbacks += 1
+        managers.append(get_task_manager())
+        run = await startup.get_active_run("retry-startup")
+        if run is None:
+            await startup.start(task_id="retry-startup", input={"session": context.session_id})
+        await asyncio.wait_for(running.wait(), 2)
+        if callbacks == 1:
+            callback_failed.set()
+            if failure == "exception":
+                raise RuntimeError("Failure after startup submission")
+            await asyncio.Event().wait()
+
+    async with app.router.lifespan_context(app), client(app) as http:
+        request = asyncio.create_task(http.post("/_agent/after-restore", json=payload()))
+        try:
+            await asyncio.wait_for(callback_failed.wait(), 2)
+            if failure == "cancel":
+                request.cancel()
+                with pytest.raises(asyncio.CancelledError):
+                    await request
+            else:
+                assert (await request).status_code == 500
+            stored = await provider.get("retry-startup")
+            assert stored is not None and stored.status == "in_progress"
+            assert stored.payload is not None and stored.payload["input"] == {"session": "session-1"}
+            if not matching_binding:
+                assert app._task_manager is None
+                assert not managers[0]._has_live_workers
+                running.clear()
+            response = await http.post("/_agent/after-restore", json=payload())
+            assert response.status_code == 200, response.text
+            await asyncio.wait_for(running.wait(), 2)
+            assert calls == [
+                ("retry-startup", "fresh", {"session": "session-1"}),
+                *([] if matching_binding else [("retry-startup", "recovered", {"session": "session-1"})]),
+            ]
+            assert (managers[0] is managers[1]) == matching_binding
+            assert factory.call_count == (1 if matching_binding else 2)
+            assert (await http.post("/_agent/after-restore", json=payload())).status_code == 200
+            assert callbacks == 2
+        finally:
+            finish.set()
+            if not request.done():
+                request.cancel()
+            await asyncio.gather(request, return_exceptions=True)
+
+
+@pytest.mark.asyncio
+async def test_restore_handler_task_submission_honors_disabled_resilience(
+    provider_factory: tuple[LocalFileTaskProvider, Mock],
+) -> None:
+    set_resilient_tasks_enabled(False)
+    _, factory = provider_factory
+    app = host()
+
+    @task(name="disabled_handler_task")
+    async def startup(ctx: TaskContext[str]) -> str:
+        pytest.fail("Disabled task must not execute")
+
+    @app.after_restore_handler
+    async def initialize(context: AgentSessionContext) -> None:
+        with pytest.raises(TaskManagerNotInitialized):
+            await startup.start(input=context.session_id)
+
+    async with app.router.lifespan_context(app), client(app) as http:
+        assert (await http.post("/_agent/after-restore", json=payload())).status_code == 200
+        factory.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_inactive_prepared_provider_is_rebuilt_for_changed_restore_configuration(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from azure.ai.agentserver.core.tasks._client import HostedTaskProvider
+
+    entered = asyncio.Event()
+    providers: list[HostedTaskProvider] = []
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "hosted")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
+    monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://captured.example.invalid/project")
+
+    def create_provider(config: Any) -> HostedTaskProvider:
+        provider = HostedTaskProvider(project_endpoint=config.project_endpoint, credential=Mock())
+        providers.append(provider)
+
+        async def listing(**_kwargs: Any) -> list[Any]:
+            if len(providers) == 1:
+                entered.set()
+                await asyncio.Event().wait()
+            return []
+
+        monkeypatch.setattr(provider, "list", listing)
+        return provider
+
+    monkeypatch.setattr(TaskManager, "_create_provider", staticmethod(create_provider))
+    app = host()
+    async with app.router.lifespan_context(app), client(app) as http:
+        first_payload = payload()
+        first_payload["session_context"]["session_env_overrides"][
+            "FOUNDRY_PROJECT_ENDPOINT"
+        ] = "https://failed.example.invalid/project"
+        request = asyncio.create_task(http.post("/_agent/after-restore", json=first_payload))
+        try:
+            await asyncio.wait_for(entered.wait(), 2)
+            stale = get_task_manager()
+            request.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await request
+            assert app._task_manager is stale
+            assert not stale._has_live_workers
+            assert providers[0]._base_url == "https://failed.example.invalid/project/tasks"
+            response = await http.post("/_agent/after-restore", json=payload())
+            assert response.status_code == 200, response.text
+            assert get_task_manager() is not stale
+            assert stale._shutdown_event.is_set()
+            assert len(providers) == 2
+            assert get_task_manager().provider is providers[1]
+            assert providers[1]._base_url == "https://captured.example.invalid/project/tasks"
+        finally:
+            if not request.done():
+                request.cancel()
+            await asyncio.gather(request, return_exceptions=True)
+
+
+@pytest.mark.asyncio
+async def test_completed_restore_recreates_disposed_runtime_without_replaying_handler(
+    provider_factory: tuple[LocalFileTaskProvider, Mock],
+) -> None:
+    _, factory = provider_factory
+    app = host()
+    calls = 0
+    managers: list[TaskManager] = []
+
+    @app.after_restore_handler
+    async def initialize(context: AgentSessionContext) -> None:
+        nonlocal calls
+        assert context.restore_id == "restore-1"
+        calls += 1
+
+    for _ in range(2):
+        async with app.router.lifespan_context(app), client(app) as http:
+            response = await http.post("/_agent/after-restore", json=payload())
+            assert response.status_code == 200, response.text
+            manager = get_task_manager()
+            managers.append(manager)
+            assert manager._startup_phases["ready"].completed
+            assert manager._periodic_recovery_task is not None
+            assert not manager._periodic_recovery_task.done()
+    assert calls == 1
+    assert managers[0] is not managers[1]
+    assert factory.call_count == 2
 
 
 @pytest.mark.asyncio
@@ -613,7 +887,7 @@ async def test_cancelled_recovery_stops_workers_before_binding_rollback_and_retr
             assert stored.status == "in_progress"
             assert stored.payload["input"] == {"value": "saved-input"}
             assert stored.lease is not None
-            assert datetime.fromisoformat(stored.lease.expires_at).timestamp() <= time.time()
+            assert datetime.fromisoformat(stored.lease.expires_at) <= datetime.now(timezone.utc)
             if kind == "steerable":
                 assert stored.payload["steering"]["pending_inputs"] == [{"value": "queued-input"}]
             running.clear()
@@ -734,7 +1008,7 @@ async def test_rollback_joins_renewal_after_handler_observes_shutdown(
         assert app.config.session_id == ""
         stored = await provider.get("existing-task")
         assert stored is not None and stored.lease is not None
-        assert datetime.fromisoformat(stored.lease.expires_at).timestamp() <= time.time()
+        assert datetime.fromisoformat(stored.lease.expires_at) <= datetime.now(timezone.utc)
 
 
 @pytest.mark.asyncio
@@ -919,7 +1193,8 @@ async def test_restore_retries_pending_cleanup_without_losing_queued_inputs(
         )
         assert os.environ["FOUNDRY_PROJECT_ENDPOINT"] == app.config.project_endpoint == endpoint
         if len(callbacks) < 3:
-            assert app._task_manager is None
+            assert app._task_manager is get_task_manager()
+            assert not get_task_manager()._startup_phases["ready"].completed
 
     @multi_turn_task(name="retry_cleanup", steerable=True)
     async def existing(ctx: TaskContext[dict[str, str]]) -> str:
@@ -1005,7 +1280,11 @@ async def test_restore_retries_pending_cleanup_without_losing_queued_inputs(
         ) as http,
     ):
         try:
-            assert (await http.post("/_agent/after-restore", json=first_payload)).status_code == 500
+            failed = await http.post("/_agent/after-restore", json=first_payload)
+            assert failed.status_code == 500
+            assert failed.json() == {
+                "error": {"code": "after_restore_failed", "message": "The after-restore hook failed."}
+            }
             stopped = app._task_manager
             assert stopped is not None and stopped._shutdown_event.is_set()
             assert stopped._pending_shutdown_tasks
@@ -1016,7 +1295,9 @@ async def test_restore_retries_pending_cleanup_without_losing_queued_inputs(
             assert drain_cancelled.is_set()
             assert not queued.is_set()
             for _ in range(failures - 1):
-                assert (await http.post("/_agent/after-restore", json=retry_payload)).status_code == 500
+                failed = await http.post("/_agent/after-restore", json=retry_payload)
+                assert failed.status_code == 500
+                assert failed.json()["error"]["code"] == "after_restore_failed"
                 assert app._task_manager is get_task_manager() is stopped
                 assert app._lifecycle.pending_rollback is rollback
                 assert callbacks == ["restore-1"]

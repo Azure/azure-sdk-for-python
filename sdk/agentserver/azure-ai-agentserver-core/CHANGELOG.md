@@ -4,10 +4,25 @@
 
 ### Features Added
 
+- Allow decorated task submission inside `after_restore_handler`, preparing the
+  session-bound TaskManager before the callback and starting automatic recovery
+  only after application dependencies are ready.
+- Separate process-side task registration from session-bound task activation.
+  `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers enabled tasks during capture until
+  after-restore; absent or false keeps ordinary cold startup. Resilience opt-out
+  remains disabled for both initialization paths. Preserve
+  best-effort recovery, checkpoint initialization phases by restore ID, wait for
+  owned workers to stop before incompatible configuration rollback, and stop
+  managers created after startup at shutdown.
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- Rebuild inactive task providers when hydrated configuration changes, and
+  recreate disposed runtimes for cached restore requests without replaying
+  completed application callbacks.
+- Preserve sanitized lifecycle error responses when required restore cleanup
+  fails, retaining pending rollback state for retry.
 - Preserve environment and configuration rollback snapshots across failed
   restore cleanup retries so sparse overrides retain the captured baseline.
 - Retry interrupted restore rollback cleanup before activating a replacement
@@ -44,13 +59,6 @@
   the restored session through the ambient request context during callbacks.
   Environment-backed `AgentConfig` values are refreshed in place before
   callbacks run, and `AgentSessionContext` is marked experimental.
-- Separate process-side task registration from session-bound task activation.
-  `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers enabled tasks during capture until
-  after-restore; absent or false keeps ordinary cold startup. Resilience opt-out
-  remains disabled for both initialization paths. Preserve
-  best-effort recovery, checkpoint initialization phases by restore ID, wait for
-  owned workers to stop before incompatible configuration rollback, and stop
-  managers created after startup at shutdown.
 
 ### Bugs Fixed
 

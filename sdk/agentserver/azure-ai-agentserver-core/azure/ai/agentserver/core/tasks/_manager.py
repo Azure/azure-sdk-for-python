@@ -431,6 +431,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     ) -> None:
         self._config = config
         self._provider = provider or self._create_provider(config)
+        self._provider_binding = self._provider_configuration()
         self._active_tasks: dict[str, _ActiveTask] = {}
         self._owned_workers: set[asyncio.Task[None]] = set()
         self._resume_callbacks: dict[str, Callable[..., Any]] = {}
@@ -479,6 +480,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if restore_id is not None and restore_id != self._materialization_restore_id:
             self._instance_id = generate_instance_id()
             self._materialization_restore_id = restore_id
+
+    def _provider_configuration(self) -> tuple[str, str | None]:
+        backend = os.environ.get("AGENTSERVER_TASKS_BACKEND", "").strip().lower()
+        backend = backend or ("hosted" if self._config.is_hosted else "local")
+        return backend, (
+            self._config.project_endpoint if backend == "hosted" else os.environ.get("AGENTSERVER_STATE_ROOT")
+        )
+
+    def _provider_configuration_matches(self) -> bool:
+        return self._provider_binding == self._provider_configuration()
 
     @staticmethod
     def _build_source(fn_name: str) -> dict[str, str]:
@@ -773,6 +784,21 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         worker.add_done_callback(self._owned_workers.discard)
         return worker
 
+    def _prepare(self, restore_id: str | None = None) -> None:
+        if self._shutdown_event.is_set():
+            raise RuntimeError("Cannot initialize a stopped TaskManager")
+        self._startup_phases["construct"].complete(restore_id)
+        register = self._startup_phases["register"]
+        if not register.completed:
+            from ._decorator import (  # pylint: disable=import-outside-toplevel
+                _REGISTERED_DESCRIPTORS,
+            )
+
+            for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
+                self._resume_callbacks[fn_name] = fn
+                self._resume_opts[fn_name] = opts
+        register.complete(restore_id)
+
     async def startup(self, *, restore_id: str | None = None) -> None:
         """Initialize the manager and recover stale tasks.
 
@@ -782,8 +808,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :paramtype restore_id: str or None
         """
         async with self._startup_lock:
-            if self._shutdown_event.is_set():
-                raise RuntimeError("Cannot initialize a stopped TaskManager")
+            self._prepare(restore_id)
             logger.info(
                 "TaskManager starting (owner=%s, instance=%s, hosted=%s, restore_id=%s)",
                 self._lease_owner,
@@ -791,18 +816,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 self._config.is_hosted,
                 restore_id,
             )
-            self._startup_phases["construct"].complete(restore_id)
-            register = self._startup_phases["register"]
-            if not register.completed:
-                from ._decorator import (  # pylint: disable=import-outside-toplevel
-                    _REGISTERED_DESCRIPTORS,
-                )
-
-                for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
-                    self._resume_callbacks[fn_name] = fn
-                    self._resume_opts[fn_name] = opts
-            register.complete(restore_id)
-
             recovery = self._startup_phases["recovery"]
             if not recovery.completed or recovery.completed_restore_id != restore_id:
                 await self._recover_stale_tasks()
