@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Removed the broken documentation link from experimental API warnings and docstrings.
+
 ### Other Changes
 
 ## 2.3.0b1 (2026-10-15)
