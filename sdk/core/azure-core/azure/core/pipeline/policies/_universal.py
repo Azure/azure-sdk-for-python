@@ -293,7 +293,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTy
         """
         http_request = request.http_request
         options = request.context.options
-        logging_enable = options.pop("logging_enable", self.enable_http_logger)
+        logging_enable = options.pop("logging_enable", request.context.get("logging_enable", self.enable_http_logger))
         request.context["logging_enable"] = logging_enable
         if logging_enable:
             if not _LOGGER.isEnabledFor(logging.DEBUG):
