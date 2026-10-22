@@ -124,7 +124,7 @@ def test_exported_close_event_attributes_override_colliding_caller_baggage():
         close_records = [
             record.log_record
             for record in exporter.get_finished_logs()
-            if InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE in (record.log_record.attributes or {})
+            if str(record.log_record.body).startswith("invocations_ws connection closed:")
         ]
         assert len(close_records) == 1
         attrs = close_records[0].attributes
