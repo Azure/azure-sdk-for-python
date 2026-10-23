@@ -31,7 +31,7 @@ class AccessKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -218,11 +218,38 @@ class MigrationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The migration operation has been cancelled."""
     CANCELLATION_FAILED = "CancellationFailed"
     """The migration operation cancellation has failed."""
+    UNLINKING = "Unlinking"
+    """The migrated endpoint is being unlinked from the cluster."""
+    UNLINKED = "Unlinked"
+    """The migrated endpoint has been unlinked from the cluster."""
+    UNLINK_FAILED = "UnlinkFailed"
+    """Unlinking the migrated endpoint from the cluster has failed."""
+
+
+class MigrationRollbackReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason a migration operation is being undone (rolled back)."""
+
+    PERFORMANCE = "performance"
+    """The target cache did not meet the expected performance characteristics."""
+    COMPATIBILITY = "compatibility"
+    """The target cache was not compatible with the client application or workload."""
+    CLIENT_CONNECTION = "clientConnection"
+    """The client application was unable to connect to the target cache."""
+    COST = "cost"
+    """The target cache did not meet the expected cost characteristics."""
+    TESTING = "testing"
+    """The migration was performed as a test and is being reverted."""
+    STABILITY = "stability"
+    """The target cache did not meet the expected stability characteristics."""
+    DATA_LOSS = "dataLoss"
+    """Data was lost during or after the migration."""
+    OTHER = "other"
+    """The migration is being undone for a reason not covered by the other values."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"

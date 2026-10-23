@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._operations import Operations  # type: ignore
+from ._operations import ClustersOperations  # type: ignore
 from ._operations import DatabasesOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import MigrationsOperations  # type: ignore
@@ -27,6 +28,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Operations",
+    "ClustersOperations",
     "DatabasesOperations",
     "PrivateEndpointConnectionsOperations",
     "MigrationsOperations",

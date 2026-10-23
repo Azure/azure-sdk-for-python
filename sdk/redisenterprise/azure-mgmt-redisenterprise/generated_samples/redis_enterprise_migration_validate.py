@@ -35,14 +35,13 @@ def main():
         resource_group_name="rg1",
         cluster_name="cache1",
         body={
-            "forceMigrate": False,
             "skipDataMigration": True,
-            "sourceResourceId": "/subscriptions/e7b5a9d2-6b6a-4d2f-9143-20d9a10f5b8f/resourceGroups/rg1/providers/Microsoft.Cache/redis/cache1",
+            "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Cache/redis/cache1",
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseMigrationValidate.json
+# x-ms-original-file: 2026-09-01/RedisEnterpriseMigrationValidate.json
 if __name__ == "__main__":
     main()

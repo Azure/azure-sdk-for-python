@@ -51,6 +51,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseDatabasesForceLink.json
+# x-ms-original-file: 2026-09-01/RedisEnterpriseDatabasesForceLink.json
 if __name__ == "__main__":
     main()
