@@ -6,80 +6,28 @@ from __future__ import annotations
 
 from functools import wraps
 import hashlib
-from io import StringIO
 import os
 from pathlib import Path
-import re
 
 import pytest
 
 _ATTACHMENTS = pytest.StashKey[list[Path]]()
-_MAX_LOG_CHARACTERS = 8 * 1024 * 1024
-_SECRET_NAMES = (
-    r"authorization|proxy-authorization|x-api-key|api[-_]?key|ocp-apim-subscription-key|"
-    r"access[-_]?token|refresh[-_]?token|id[-_]?token|client[-_]?secret|password|"
-    r"accountkey|sharedaccesssignature|cookie|set-cookie"
-)
 
 
-def sanitize_log(text: str) -> str:
-    """Redact credential-shaped fields and known secret environment values before writing files."""
-    # The provisioning PAT is never passed to this process; this also protects other supplied secrets.
-    secrets = {
-        value
-        for name, value in os.environ.items()
-        if len(value) >= 8
-        and name != "AZURE_TOKEN_CREDENTIALS"
-        and re.search(r"(?i)secret|password|token|(?:^|_)pat(?:_|$)|(?:^|_)key(?:_|$)|connection_string", name)
-    }
-    for value in sorted(secrets, key=len, reverse=True):
-        text = text.replace(value, "<REDACTED>")
-    text = re.sub(r"\b(?:github_pat_[A-Za-z0-9_]+|gh[opusr]_[A-Za-z0-9]+)\b", "<REDACTED>", text)
-    text = re.sub(r"\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b", "<REDACTED>", text)
-    text = re.sub(r"(?i)\b(Bearer|Basic)\s+[A-Za-z0-9_.~+/-]+=*", r"\1 <REDACTED>", text)
-    # JSON request bodies and Python-style header dictionaries can contain non-Bearer credentials.
-    text = re.sub(rf'(?i)("(?:{_SECRET_NAMES})"\s*:\s*)"(?:\\.|[^"\\])*"', r'\1"<REDACTED>"', text)
-    text = re.sub(rf"(?i)('(?:{_SECRET_NAMES})'\s*:\s*)'(?:\\.|[^'\\])*'", r"\1'<REDACTED>'", text)
-    text = re.sub(rf"(?im)^([ \t]*(?:{_SECRET_NAMES})[ \t]*:[ \t]*).*$", r"\1<REDACTED>", text)
-    text = re.sub(rf"(?i)(\b(?:{_SECRET_NAMES})=)[^;\s&\"'<>]+", r"\1<REDACTED>", text)
-    text = re.sub(
-        r"(?i)([?&](?:sig|token|access_token|api[-_]?key|key|code|client_secret)=)[^&\s\"'<>]+",
-        r"\1<REDACTED>",
-        text,
-    )
-    text = re.sub(r"(https?://)[^\s/@:]+:[^\s/@]+@", r"\1<REDACTED>@", text)
-    return text
-
-
-def write_sample_attachments(executors: list, node_id: str, directory: Path) -> list[Path]:
-    """Write only sanitized in-memory executor capture, never copy arbitrary temporary files."""
-    if not executors:
-        return []
-    target = directory.resolve() / hashlib.sha256(node_id.encode("utf-8")).hexdigest()[:20]
+def sample_log_directory(node_id: str, directory: Path, executor_index: int = 0) -> Path:
+    """Keep the executor's own log files isolated per pytest node and executor."""
+    target = directory.resolve() / hashlib.sha256(node_id.encode("utf-8")).hexdigest()[:20] / str(executor_index)
     if any(character in str(target) for character in "\r\n|[]"):
         raise ValueError("The attachment directory cannot contain JUnit attachment-marker delimiters.")
-    combined = StringIO()
-    printed = StringIO()
-    for executor in executors:
-        header = f"Sample: {executor._get_sample_display_path()}\n"
-        combined.write(header + "API Logs and Print Statements:\n" + "=" * 80 + "\n")
-        executor._write_numbered_print_calls(combined)
-        printed.write(header + "Print Output:\n" + "=" * 80 + "\n")
-        printed.write("\n".join(executor.print_output_calls) or "(No print() output was captured.)")
-        printed.write("\n")
-    target.mkdir(parents=True, exist_ok=True)
-    paths = []
-    for name, buffer in (("api-and-print.log", combined), ("print-output.log", printed)):
-        text = buffer.getvalue()
-        # Omit oversized content rather than truncating a credential before it can be recognized.
-        content = (
-            sanitize_log(text)
-            if len(text) <= _MAX_LOG_CHARACTERS
-            else "Log omitted because it exceeds the safe attachment size limit.\n"
-        )
-        path = target / name
-        path.write_text(content, encoding="utf-8")
-        paths.append(path)
+    return target
+
+
+def sample_attachment_paths(executors: list, directory: Path) -> list[Path]:
+    """Attach the shared executor's already-sanitized logs without copying or reformatting them."""
+    paths = [Path(path) for executor in executors for path in executor.write_capture_logs()]
+    root = directory.resolve()
+    if any(not path.is_file() or path.is_symlink() or not path.resolve().is_relative_to(root) for path in paths):
+        raise ValueError("Sample log files must remain within this run's attachment directory.")
     return paths
 
 
@@ -111,13 +59,14 @@ def _capture_sample_attachments(request, monkeypatch):
 
     @wraps(original_init)
     def tracked_init(executor, *args, **kwargs):
+        kwargs["log_directory"] = str(sample_log_directory(request.node.nodeid, Path(directory), len(executors)))
         original_init(executor, *args, **kwargs)
         executors.append(executor)
 
     monkeypatch.setattr(BaseSampleExecutor, "__init__", tracked_init)
     yield
     try:
-        request.node.stash[_ATTACHMENTS] = write_sample_attachments(executors, request.node.nodeid, Path(directory))
+        request.node.stash[_ATTACHMENTS] = sample_attachment_paths(executors, Path(directory))
     except Exception:  # pylint: disable=broad-exception-caught
         pytest.fail("Sample attachments could not be created; raw log content was suppressed.", pytrace=False)
 
