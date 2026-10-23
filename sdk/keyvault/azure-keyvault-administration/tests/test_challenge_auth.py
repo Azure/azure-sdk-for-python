@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -409,7 +410,9 @@ def test_rejected_challenge_is_not_cached(fresh_policy):
     url = "https://example.net/backup/canary"
     challenge = Mock(
         status_code=401,
-        headers={"WWW-Authenticate": 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'},
+        headers={
+            "WWW-Authenticate": 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'
+        },
     )
 
     class Requests:
@@ -445,7 +448,9 @@ async def test_rejected_challenge_is_not_cached_async(fresh_policy):
     url = "https://example.net/backup/canary"
     challenge = Mock(
         status_code=401,
-        headers={"WWW-Authenticate": 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'},
+        headers={
+            "WWW-Authenticate": 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'
+        },
     )
 
     class Requests:
