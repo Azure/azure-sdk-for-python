@@ -8,6 +8,9 @@
 - `QAEvaluator` accepts a Decision model configuration and passes `credential` and the Decision execution controls to its model-based evaluators, which run on separate threads, so the credential must be synchronous. With a chat model they are not passed, as before.
 - The binary evaluators (task adherence, task completion, tool call success, tool input accuracy, tool output utilization and tool selection) accept a `probability_threshold` keyword. For Decision models it sets the probability at or above which the score is 1 (default 0.75) and overrides the value in `model_config`; chat models ignore it with a warning.
 - Conversation inputs are handled as before with a Decision model: evaluators that accept them score each user and assistant turn separately and aggregate the results. The catalog's whole-conversation rubrics are not included.
+- Added explicit `decision_protocol="openai"` selection for Decision evaluators using Azure OpenAI's `/openai/v1/decisions` operation. The existing Microsoft/PiLabs Decision route remains the default.
+- Translated existing Boolean and ordinal rubrics centrally, retaining argmax ordinal scoring, applicability and probability cutoffs. OpenAI refusals produce evaluation errors with known usage; original answers, protocol identity, and cache/reasoning counters are retained in provenance.
+- Reused the shared asynchronous HTTP transport, authentication, retries, deadlines and cancellation; no OpenAI client dependency upgrade is required.
 
 ## 1.18.10 (2026-10-22)
 

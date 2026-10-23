@@ -16,6 +16,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ._base_model_eval import not_applicable_result
 from ._model_runners import DecisionModelRunner, validate_noul_answer, validate_score_answer, validated_execution
+from ._openai_decisions import usage_details
 
 STATUS_CUTOFF = 0.5
 T = TypeVar("T")
@@ -81,7 +82,9 @@ def _digest(question: Dict[str, Any]) -> str:
     return hashlib.sha256(json.dumps(question, sort_keys=True).encode("utf-8")).hexdigest()
 
 
-def _native_answer_provenance(answer: Dict[str, Any]) -> Dict[str, Any]:
+def _native_answer_provenance(answer: Dict[str, Any], protocol: str = "microsoft") -> Dict[str, Any]:
+    if protocol == "openai":
+        answer = answer["_native_answer"]
     try:
         json.dumps(answer, allow_nan=False)
     except (TypeError, ValueError, OverflowError, RecursionError):
@@ -203,6 +206,11 @@ class DecisionEvaluationStrategy:
             "reason_type": "templated",
         }
         execution = validated_execution(response.get("_decision_execution"))
+        if getattr(self.runner, "decision_protocol", "microsoft") == "openai":
+            properties["decision_model"]["protocol"] = "openai"
+            details = usage_details(response.get("usage"))
+            if details:
+                properties["decision_model"]["usage_details"] = details
         if execution is not None:
             properties["decision_model"]["execution"] = execution
         tokens = decision_token_counts(response)
@@ -218,7 +226,10 @@ class DecisionEvaluationStrategy:
                 response, "status", self.error_target
             )
             properties["decision_model"]["native_status_answer"] = _checked_value(
-                _native_answer_provenance, self.error_target, response["answers"]["status"]
+                _native_answer_provenance,
+                self.error_target,
+                response["answers"]["status"],
+                getattr(self.runner, "decision_protocol", "microsoft"),
             )
             if skip_reason:
                 result = not_applicable_result(key, skip_reason, self.threshold)
@@ -229,6 +240,7 @@ class DecisionEvaluationStrategy:
                 _native_answer_provenance,
                 self.error_target,
                 {name: value for name, value in response["answers"][key].items() if name != "legend"},
+                getattr(self.runner, "decision_protocol", "microsoft"),
             )
         except EvaluationException as exc:
             exc.properties = properties
