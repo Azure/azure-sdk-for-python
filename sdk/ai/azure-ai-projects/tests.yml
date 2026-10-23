@@ -162,10 +162,19 @@ extends:
                     artifactName: sample-plan
                     targetPath: $(Pipeline.Workspace)/sample-plan
                   displayName: 'Use this run''s collected sample selection and deployment plan'
-                - pwsh: |
-                    python '$(packageRoot)/tests/samples/ci/run_samples.py' --check-validation-config
-                    if ($LASTEXITCODE -ne 0) { throw 'The existing validation-project secret is missing or invalid; no resources were provisioned.' }
-                  displayName: 'Validate external validation-project secret before provisioning'
+                - task: AzureCLI@2
+                  displayName: 'Identify pipeline application and validate external secret before provisioning'
+                  inputs:
+                    azureSubscription: ${{ parameters.azureServiceConnection }}
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      . '$(packageRoot)/tests/samples/ci/SampleCiHelpers.ps1'
+                      $runnerIdentity = Get-SampleRunnerIdentity
+                      $runnerIdentity | ConvertTo-Json | Set-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/pipeline-identity.json' -Encoding utf8
+                      Write-Host ('Pipeline application: principalId={0}; clientId={1}; tenantId={2}' -f $runnerIdentity.principalId, $runnerIdentity.clientId, $runnerIdentity.tenantId)
+                      python '$(packageRoot)/tests/samples/ci/run_samples.py' --check-validation-config
+                      if ($LASTEXITCODE -ne 0) { throw 'The existing validation-project secret is missing or invalid; no resources were provisioned.' }
                   env:
                     LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
                 - task: AzureCLI@2

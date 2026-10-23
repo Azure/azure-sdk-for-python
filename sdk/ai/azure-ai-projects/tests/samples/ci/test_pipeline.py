@@ -69,7 +69,7 @@ def test_pat_stays_scoped_to_provisioning_task(pipeline):
 def test_failed_runner_captures_safe_diagnostics_before_cleanup(pipeline):
     run_stage = next(stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples")
     steps = run_stage["jobs"][0]["steps"]
-    runner = next(step for step in steps if step.get("task") == "AzureCLI@2" and "run_samples.py" in str(step))
+    runner = next(step for step in steps if step.get("task") == "AzureCLI@2" and "--junit" in str(step))
     script = runner["inputs"]["inlineScript"]
     assert "$sampleExitCode = $LASTEXITCODE" in script
     assert "if ($sampleExitCode -ne 0)" in script
@@ -94,6 +94,11 @@ def test_external_validator_is_secret_env_only_and_checked_before_provisioning(p
         assert step["env"]["LLM_VALIDATION_PROJECT_ENDPOINT"] == "$(LLM_VALIDATION_PROJECT_ENDPOINT)"
     assert "LLM_VALIDATION_PROJECT_ENDPOINT" not in provisioning.get("env", {})
     assert steps.index(preflight) < steps.index(provisioning) < steps.index(runner)
+    assert preflight["task"] == "AzureCLI@2"
+    assert preflight["inputs"]["azureSubscription"] == provisioning["inputs"]["azureSubscription"]
+    assert "Get-SampleRunnerIdentity" in preflight["inputs"]["inlineScript"]
+    assert "pipeline-identity.json" in preflight["inputs"]["inlineScript"]
+    assert "MCP_GITHUB_PAT" not in preflight.get("env", {})
 
 
 def test_validator_model_is_absent_from_plan_and_provisioning_sources():

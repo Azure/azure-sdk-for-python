@@ -177,21 +177,32 @@ function Assert-SampleAccountQuota {
 }
 
 function Get-SampleRunnerPrincipalId {
+    return (Get-SampleRunnerIdentity).principalId
+}
+
+function Get-SampleRunnerIdentity {
     $runnerTokenResponse = $null
     $runnerAccessToken = $null
+    $claims = $null
     try {
         $runnerTokenResponse = Invoke-SampleAzure -Arguments @('account', 'get-access-token', '--resource', 'https://management.azure.com/') -Sensitive
         $runnerAccessToken = [string] $runnerTokenResponse.accessToken
         $payload = $runnerAccessToken.Split('.')[1].Replace('-', '+').Replace('_', '/')
         $payload = $payload.PadRight($payload.Length + ((4 - $payload.Length % 4) % 4), '=')
         $claims = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($payload)) | ConvertFrom-Json -AsHashtable
-        if ($claims['oid'] -notmatch '^[a-fA-F0-9-]{36}$' -or ($claims['idtyp'] -ne 'app' -and -not $claims.ContainsKey('appid'))) {
+        $clientId = if ($claims['appid']) { [string] $claims['appid'] } else { [string] $claims['azp'] }
+        if ($claims['oid'] -notmatch '^[a-fA-F0-9-]{36}$' -or $claims['tid'] -notmatch '^[a-fA-F0-9-]{36}$' -or
+            $clientId -notmatch '^[a-fA-F0-9-]{36}$' -or $claims['idtyp'] -notin @($null, 'app') -or $claims.ContainsKey('scp')) {
             throw 'An Azure service connection application identity is required.'
         }
-        return [string] $claims.oid
+        # Metadata only: never return or persist the token, authorization headers, or other claims.
+        return @{ principalId = [string] $claims.oid; clientId = $clientId; tenantId = [string] $claims.tid }
+    } catch {
+        throw 'Could not identify the Azure service-connection application; token and raw response were suppressed.'
     } finally {
         $runnerAccessToken = $null
         $runnerTokenResponse = $null
+        $claims = $null
     }
 }
 

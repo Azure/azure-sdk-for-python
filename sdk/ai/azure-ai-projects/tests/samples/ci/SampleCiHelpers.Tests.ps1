@@ -328,6 +328,58 @@ Describe 'Secret-safe ARM error diagnostics' {
     }
 }
 
+Describe 'Service connection identity metadata' {
+    BeforeEach {
+        $script:identityClaims = @{
+            oid = '11111111-1111-1111-1111-111111111111'
+            appid = '22222222-2222-2222-2222-222222222222'
+            tid = '33333333-3333-3333-3333-333333333333'
+            idtyp = 'app'
+            unrelated = 'must-not-be-returned'
+        }
+        Mock Invoke-SampleAzure {
+            param($Arguments, $Sensitive)
+            if (-not $Sensitive) { throw 'Tokens must use protected capture.' }
+            $json = $script:identityClaims | ConvertTo-Json -Compress
+            $payload = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json)).TrimEnd('=').Replace('+', '-').Replace('/', '_')
+            return @{ accessToken = 'header.' + $payload + '.signature'; unrelated = 'must-not-be-returned' }
+        }
+    }
+
+    It 'returns only public application identity identifiers' {
+        $identity = Get-SampleRunnerIdentity
+        $identity.Count | Should Be 3
+        $identity.principalId | Should Be $script:identityClaims.oid
+        $identity.clientId | Should Be $script:identityClaims.appid
+        $identity.tenantId | Should Be $script:identityClaims.tid
+        ($identity | ConvertTo-Json).Contains('must-not-be-returned') | Should Be $false
+        ($identity | ConvertTo-Json).Contains('accessToken') | Should Be $false
+    }
+
+    It 'preserves the provisioning principal ID helper' {
+        Get-SampleRunnerPrincipalId | Should Be $script:identityClaims.oid
+    }
+
+    It 'accepts a v2 application client claim' {
+        $script:identityClaims.azp = $script:identityClaims.appid
+        $script:identityClaims.Remove('appid')
+        (Get-SampleRunnerIdentity).clientId | Should Be '22222222-2222-2222-2222-222222222222'
+    }
+
+    It 'rejects delegated user tokens rather than proposing a grant to a user' {
+        $script:identityClaims.scp = 'user_impersonation'
+        { Get-SampleRunnerIdentity } | Should Throw 'raw response were suppressed'
+    }
+
+    It 'rejects malformed metadata without echoing its contents' {
+        $script:identityClaims.oid = 'github_pat_unit_test_placeholder'
+        $failure = $null
+        try { $null = Get-SampleRunnerIdentity } catch { $failure = $_.Exception.Message }
+        $failure.Contains('github_pat_') | Should Be $false
+        $failure | Should Be 'Could not identify the Azure service-connection application; token and raw response were suppressed.'
+    }
+}
+
 Describe 'Run-owned readiness diagnostics' {
     BeforeEach {
         $plan = @{
