@@ -15,6 +15,7 @@ from ._api_versions import DEFAULT_VERSION
 from ._call_connection_client import CallConnectionClient
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._shared.auth_policy_utils import get_authentication_policy
+from .recording_url_validator import RecordingURLValidationPolicy
 from ._shared.utils import parse_connection_str
 from ._shared.models import CommunicationIdentifier
 from ._generated.models import (
@@ -106,6 +107,11 @@ class CallAutomationClient:
         parsed_url = urlparse(endpoint.rstrip("/"))
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {format(endpoint)}")
+
+        per_retry_policies = kwargs.pop("per_retry_policies", None) or []
+        if not isinstance(per_retry_policies, Iterable):
+            per_retry_policies = [per_retry_policies]
+        kwargs["per_retry_policies"] = [*per_retry_policies, RecordingURLValidationPolicy()]
 
         self._client = AzureCommunicationCallAutomationService(
             endpoint,
