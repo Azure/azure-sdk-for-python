@@ -25,7 +25,6 @@ class TestNetworkManagementFirewallPolicyIdpsSignaturesOverridesOperationsAsync(
         response = await self.client.firewall_policy_idps_signatures_overrides.get(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +37,6 @@ class TestNetworkManagementFirewallPolicyIdpsSignaturesOverridesOperationsAsync(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
             parameters={"id": "str", "name": "str", "properties": {"signatures": {"str": "str"}}, "type": "str"},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +49,6 @@ class TestNetworkManagementFirewallPolicyIdpsSignaturesOverridesOperationsAsync(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
             parameters={"id": "str", "name": "str", "properties": {"signatures": {"str": "str"}}, "type": "str"},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +60,6 @@ class TestNetworkManagementFirewallPolicyIdpsSignaturesOverridesOperationsAsync(
         response = await self.client.firewall_policy_idps_signatures_overrides.list(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself

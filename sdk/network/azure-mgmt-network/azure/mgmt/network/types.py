@@ -11624,29 +11624,6 @@ class MoveIpConfigurationsRequest(TypedDict, total=False):
     """A list of IP configuration move items. Required."""
 
 
-class ProxyResourceVirtualNetworkApplianceCapabilityProperties(ArmProxyResource):  # pylint: disable=name-too-long
-    """Concrete proxy resource types can be created by aliasing this type using a specific property
-    type.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "VirtualNetworkApplianceCapabilityProperties"
-    """
-
-    properties: "VirtualNetworkApplianceCapabilityProperties"
-    """The resource-specific properties for this resource."""
-
-
 class Nat64Capability(TypedDict, total=False):
     """The NAT64 capability. Enables stateful NAT64 translation (IPv6-only workloads reaching IPv4
     destinations) on the appliance's floating NIC; supported on a dual-stack appliance. This kind

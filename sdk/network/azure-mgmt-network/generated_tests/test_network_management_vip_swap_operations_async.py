@@ -25,7 +25,6 @@ class TestNetworkManagementVipSwapOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.vip_swap.get(
             group_name="str",
             resource_name="str",
-            api_version="2026-03-01",
             singleton_resource="swap",
         )
 
@@ -40,7 +39,6 @@ class TestNetworkManagementVipSwapOperationsAsync(AzureMgmtRecordedTestCase):
                 group_name="str",
                 resource_name="str",
                 parameters={"id": "str", "name": "str", "properties": {"slotType": "str"}, "type": "str"},
-                api_version="2026-03-01",
                 singleton_resource="swap",
             )
         ).result()  # call '.result()' to poll until service return final result
@@ -54,7 +52,6 @@ class TestNetworkManagementVipSwapOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.vip_swap.list(
             group_name="str",
             resource_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself

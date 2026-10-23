@@ -27,7 +27,6 @@ class TestNetworkManagementRouteFilterRulesOperationsAsync(AzureMgmtRecordedTest
                 resource_group_name=resource_group.name,
                 route_filter_name="str",
                 rule_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -41,7 +40,6 @@ class TestNetworkManagementRouteFilterRulesOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             route_filter_name="str",
             rule_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +65,6 @@ class TestNetworkManagementRouteFilterRulesOperationsAsync(AzureMgmtRecordedTest
                         "provisioningState": "str",
                     },
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -80,7 +77,6 @@ class TestNetworkManagementRouteFilterRulesOperationsAsync(AzureMgmtRecordedTest
         response = self.client.route_filter_rules.list_by_route_filter(
             resource_group_name=resource_group.name,
             route_filter_name="str",
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

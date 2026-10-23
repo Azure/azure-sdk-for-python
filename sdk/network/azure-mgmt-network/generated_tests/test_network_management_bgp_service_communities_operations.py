@@ -21,9 +21,7 @@ class TestNetworkManagementBgpServiceCommunitiesOperations(AzureMgmtRecordedTest
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_bgp_service_communities_list(self, resource_group):
-        response = self.client.bgp_service_communities.list(
-            api_version="2026-03-01",
-        )
+        response = self.client.bgp_service_communities.list()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

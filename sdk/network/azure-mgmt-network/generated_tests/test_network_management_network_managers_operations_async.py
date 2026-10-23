@@ -25,7 +25,6 @@ class TestNetworkManagementNetworkManagersOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.network_managers.get(
             resource_group_name=resource_group.name,
             network_manager_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +65,6 @@ class TestNetworkManagementNetworkManagersOperationsAsync(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +77,6 @@ class TestNetworkManagementNetworkManagersOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             network_manager_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +89,6 @@ class TestNetworkManagementNetworkManagersOperationsAsync(AzureMgmtRecordedTestC
             await self.client.network_managers.begin_delete(
                 resource_group_name=resource_group.name,
                 network_manager_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +100,6 @@ class TestNetworkManagementNetworkManagersOperationsAsync(AzureMgmtRecordedTestC
     async def test_network_managers_list(self, resource_group):
         response = self.client.network_managers.list(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -113,9 +108,7 @@ class TestNetworkManagementNetworkManagersOperationsAsync(AzureMgmtRecordedTestC
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_network_managers_list_by_subscription(self, resource_group):
-        response = self.client.network_managers.list_by_subscription(
-            api_version="2026-03-01",
-        )
+        response = self.client.network_managers.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

@@ -1,5 +1,15 @@
 # Release History
 
+## 34.0.0 (2026-10-22)
+
+### Features Added
+
+  - Client `NetworkManagementClient` added parameter `api_version` in method `__init__`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ProxyResourceVirtualNetworkApplianceCapabilityProperties`
+
 ## 33.1.0 (2026-10-09)
 
 ### Features Added
