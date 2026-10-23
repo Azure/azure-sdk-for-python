@@ -1,5 +1,12 @@
 # Release History
 
+## 4.12.0 (2026-10-23)
+
+### Other Changes
+
+- Regenerated the package with stable Key Vault API version `2026-04-01`.
+- The default service version is now `2026-04-01`.
+
 ## 4.11.3 (Unreleased)
 
 ### Features Added
