@@ -2,8 +2,13 @@
 namespace azure.mgmt.dataprotection
 
     class azure.mgmt.dataprotection.DataProtectionMgmtClient: implements ContextManager 
+        backup_instance_from_dpp_cross_tenant_vault: BackupInstanceFromDppCrossTenantVaultOperations
+        backup_instance_operation_result_from_dpp_cross_tenant_vault: BackupInstanceOperationResultFromDppCrossTenantVaultOperations
+        backup_instance_operation_status_from_dpp_cross_tenant_vault: BackupInstanceOperationStatusFromDppCrossTenantVaultOperations
         backup_instances: BackupInstancesOperations
         backup_instances_extension_routing: BackupInstancesExtensionRoutingOperations
+        backup_instances_from_dpp_cross_tenant_vault: BackupInstancesFromDppCrossTenantVaultOperations
+        backup_jobs_from_dpp_cross_tenant_vault: BackupJobsFromDppCrossTenantVaultOperations
         backup_policies: BackupPoliciesOperations
         backup_vault_operation_results: BackupVaultOperationResultsOperations
         backup_vaults: BackupVaultsOperations
@@ -11,20 +16,28 @@ namespace azure.mgmt.dataprotection
         data_protection_operations: DataProtectionOperationsOperations
         deleted_backup_instances: DeletedBackupInstancesOperations
         deleted_backup_vaults: DeletedBackupVaultsOperations
+        dpp_cross_tenant_vault_mapping_status: DppCrossTenantVaultMappingStatusOperations
+        dpp_cross_tenant_vault_mappings: DppCrossTenantVaultMappingsOperations
         dpp_resource_guard_proxy: DppResourceGuardProxyOperations
         export_jobs: ExportJobsOperations
         export_jobs_operation_result: ExportJobsOperationResultOperations
         fetch_cross_region_restore_job: FetchCrossRegionRestoreJobOperations
         fetch_cross_region_restore_jobs: FetchCrossRegionRestoreJobsOperations
         fetch_secondary_recovery_points: FetchSecondaryRecoveryPointsOperations
+        job_from_dpp_cross_tenant_vault: JobFromDppCrossTenantVaultOperations
         jobs: JobsOperations
         operation_result: OperationResultOperations
         operation_status: OperationStatusOperations
         operation_status_backup_vault_context: OperationStatusBackupVaultContextOperations
         operation_status_resource_group_context: OperationStatusResourceGroupContextOperations
+        recovery_point_from_dpp_cross_tenant_vault: RecoveryPointFromDppCrossTenantVaultOperations
         recovery_points: RecoveryPointsOperations
+        recovery_points_from_dpp_cross_tenant_vault: RecoveryPointsFromDppCrossTenantVaultOperations
         resource_guards: ResourceGuardsOperations
         restorable_time_ranges: RestorableTimeRangesOperations
+        restorable_time_ranges_from_dpp_cross_tenant_vault: RestorableTimeRangesFromDppCrossTenantVaultOperations
+        restores_from_dpp_cross_tenant_vault: RestoresFromDppCrossTenantVaultOperations
+        validate_restore_from_dpp_cross_tenant_vault: ValidateRestoreFromDppCrossTenantVaultOperations
 
         def __init__(
                 self, 
@@ -52,8 +65,13 @@ namespace azure.mgmt.dataprotection
 namespace azure.mgmt.dataprotection.aio
 
     class azure.mgmt.dataprotection.aio.DataProtectionMgmtClient: implements AsyncContextManager 
+        backup_instance_from_dpp_cross_tenant_vault: BackupInstanceFromDppCrossTenantVaultOperations
+        backup_instance_operation_result_from_dpp_cross_tenant_vault: BackupInstanceOperationResultFromDppCrossTenantVaultOperations
+        backup_instance_operation_status_from_dpp_cross_tenant_vault: BackupInstanceOperationStatusFromDppCrossTenantVaultOperations
         backup_instances: BackupInstancesOperations
         backup_instances_extension_routing: BackupInstancesExtensionRoutingOperations
+        backup_instances_from_dpp_cross_tenant_vault: BackupInstancesFromDppCrossTenantVaultOperations
+        backup_jobs_from_dpp_cross_tenant_vault: BackupJobsFromDppCrossTenantVaultOperations
         backup_policies: BackupPoliciesOperations
         backup_vault_operation_results: BackupVaultOperationResultsOperations
         backup_vaults: BackupVaultsOperations
@@ -61,20 +79,28 @@ namespace azure.mgmt.dataprotection.aio
         data_protection_operations: DataProtectionOperationsOperations
         deleted_backup_instances: DeletedBackupInstancesOperations
         deleted_backup_vaults: DeletedBackupVaultsOperations
+        dpp_cross_tenant_vault_mapping_status: DppCrossTenantVaultMappingStatusOperations
+        dpp_cross_tenant_vault_mappings: DppCrossTenantVaultMappingsOperations
         dpp_resource_guard_proxy: DppResourceGuardProxyOperations
         export_jobs: ExportJobsOperations
         export_jobs_operation_result: ExportJobsOperationResultOperations
         fetch_cross_region_restore_job: FetchCrossRegionRestoreJobOperations
         fetch_cross_region_restore_jobs: FetchCrossRegionRestoreJobsOperations
         fetch_secondary_recovery_points: FetchSecondaryRecoveryPointsOperations
+        job_from_dpp_cross_tenant_vault: JobFromDppCrossTenantVaultOperations
         jobs: JobsOperations
         operation_result: OperationResultOperations
         operation_status: OperationStatusOperations
         operation_status_backup_vault_context: OperationStatusBackupVaultContextOperations
         operation_status_resource_group_context: OperationStatusResourceGroupContextOperations
+        recovery_point_from_dpp_cross_tenant_vault: RecoveryPointFromDppCrossTenantVaultOperations
         recovery_points: RecoveryPointsOperations
+        recovery_points_from_dpp_cross_tenant_vault: RecoveryPointsFromDppCrossTenantVaultOperations
         resource_guards: ResourceGuardsOperations
         restorable_time_ranges: RestorableTimeRangesOperations
+        restorable_time_ranges_from_dpp_cross_tenant_vault: RestorableTimeRangesFromDppCrossTenantVaultOperations
+        restores_from_dpp_cross_tenant_vault: RestoresFromDppCrossTenantVaultOperations
+        validate_restore_from_dpp_cross_tenant_vault: ValidateRestoreFromDppCrossTenantVaultOperations
 
         def __init__(
                 self, 
@@ -101,6 +127,68 @@ namespace azure.mgmt.dataprotection.aio
 
 namespace azure.mgmt.dataprotection.aio.operations
 
+    class azure.mgmt.dataprotection.aio.operations.BackupInstanceFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'backup_instance_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                **kwargs: Any
+            ) -> CrossTenantBackupInstanceResource: ...
+
+
+    class azure.mgmt.dataprotection.aio.operations.BackupInstanceOperationResultFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'backup_instance_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> Optional[OperationJobExtendedInfo]: ...
+
+
+    class azure.mgmt.dataprotection.aio.operations.BackupInstanceOperationStatusFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'backup_instance_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> OperationResource: ...
+
+
     class azure.mgmt.dataprotection.aio.operations.BackupInstancesExtensionRoutingOperations:
 
         def __init__(
@@ -115,6 +203,25 @@ namespace azure.mgmt.dataprotection.aio.operations
                 resource_id: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[BackupInstanceResource]: ...
+
+
+    class azure.mgmt.dataprotection.aio.operations.BackupInstancesFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[CrossTenantBackupInstanceResource]: ...
 
 
     class azure.mgmt.dataprotection.aio.operations.BackupInstancesOperations:
@@ -221,7 +328,7 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'backup_instance_name']}, api_versions_list=['2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'backup_instance_name']}, api_versions_list=['2026-06-01', '2026-07-01', '2026-08-31-preview'])
         async def begin_resume_protection(
                 self, 
                 resource_group_name: str, 
@@ -618,6 +725,25 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> AsyncItemPaged[BackupInstanceResource]: ...
 
 
+    class azure.mgmt.dataprotection.aio.operations.BackupJobsFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AzureBackupJobResource]: ...
+
+
     class azure.mgmt.dataprotection.aio.operations.BackupPoliciesOperations:
 
         def __init__(
@@ -945,7 +1071,7 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01', '2026-08-31-preview'])
         async def get(
                 self, 
                 location: str, 
@@ -954,12 +1080,130 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> DeletedBackupVaultResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01', '2026-08-31-preview'])
         def list_by_location(
                 self, 
                 location: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[DeletedBackupVaultResource]: ...
+
+
+    class azure.mgmt.dataprotection.aio.operations.DppCrossTenantVaultMappingStatusOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        async def check(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                **kwargs: Any
+            ) -> CrossTenantVaultMappingStatusResponse: ...
+
+
+    class azure.mgmt.dataprotection.aio.operations.DppCrossTenantVaultMappingsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                resource: CrossTenantVaultMapping, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CrossTenantVaultMapping: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                resource: CrossTenantVaultMapping, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CrossTenantVaultMapping: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CrossTenantVaultMapping: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                **kwargs: Any
+            ) -> CrossTenantVaultMapping: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[CrossTenantVaultMapping]: ...
+
+        @overload
+        async def remove(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                body: Optional[CrossTenantVaultMappingRemoveRequest] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> None: ...
+
+        @overload
+        async def remove(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                body: Optional[CrossTenantVaultMappingRemoveRequest] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> None: ...
+
+        @overload
+        async def remove(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> None: ...
 
 
     class azure.mgmt.dataprotection.aio.operations.DppResourceGuardProxyOperations:
@@ -1242,6 +1486,26 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> AsyncItemPaged[AzureBackupRecoveryPointResource]: ...
 
 
+    class azure.mgmt.dataprotection.aio.operations.JobFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'job_id', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> AzureBackupJobResource: ...
+
+
     class azure.mgmt.dataprotection.aio.operations.JobsOperations:
 
         def __init__(
@@ -1335,6 +1599,49 @@ namespace azure.mgmt.dataprotection.aio.operations
                 operation_id: str, 
                 **kwargs: Any
             ) -> OperationResource: ...
+
+
+    class azure.mgmt.dataprotection.aio.operations.RecoveryPointFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'backup_instance_name', 'recovery_point_id', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                recovery_point_id: str, 
+                **kwargs: Any
+            ) -> AzureBackupRecoveryPointResource: ...
+
+
+    class azure.mgmt.dataprotection.aio.operations.RecoveryPointsFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'backup_instance_name', 'filter', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AzureBackupRecoveryPointResource]: ...
 
 
     class azure.mgmt.dataprotection.aio.operations.RecoveryPointsOperations:
@@ -1571,6 +1878,54 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> ResourceGuardResource: ...
 
 
+    class azure.mgmt.dataprotection.aio.operations.RestorableTimeRangesFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def find(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: AzureBackupFindRestorableTimeRangesRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AzureBackupFindRestorableTimeRangesResponseResource: ...
+
+        @overload
+        async def find(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: AzureBackupFindRestorableTimeRangesRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AzureBackupFindRestorableTimeRangesResponseResource: ...
+
+        @overload
+        async def find(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AzureBackupFindRestorableTimeRangesResponseResource: ...
+
+
     class azure.mgmt.dataprotection.aio.operations.RestorableTimeRangesOperations:
 
         def __init__(
@@ -1614,6 +1969,102 @@ namespace azure.mgmt.dataprotection.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AzureBackupFindRestorableTimeRangesResponseResource: ...
+
+
+    class azure.mgmt.dataprotection.aio.operations.RestoresFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: AzureBackupRestoreRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationJobExtendedInfo]: ...
+
+        @overload
+        async def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: AzureBackupRestoreRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationJobExtendedInfo]: ...
+
+        @overload
+        async def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationJobExtendedInfo]: ...
+
+
+    class azure.mgmt.dataprotection.aio.operations.ValidateRestoreFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: ValidateRestoreRequestObject, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationJobExtendedInfo]: ...
+
+        @overload
+        async def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: ValidateRestoreRequestObject, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationJobExtendedInfo]: ...
+
+        @overload
+        async def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationJobExtendedInfo]: ...
 
 
 namespace azure.mgmt.dataprotection.models
@@ -2748,6 +3199,185 @@ namespace azure.mgmt.dataprotection.models
         DISABLED = "Disabled"
         ENABLED = "Enabled"
         PERMANENTLY_DISABLED = "PermanentlyDisabled"
+
+
+    class azure.mgmt.dataprotection.models.CrossTenantAuthCredentials(_Model):
+        object_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                object_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.CrossTenantBackupInstance(_Model):
+        current_protection_state: Optional[Union[str, CurrentProtectionState]]
+        data_source_info: Datasource
+        data_source_set_info: Optional[DatasourceSet]
+        datasource_auth_credentials: Optional[CrossTenantAuthCredentials]
+        friendly_name: Optional[str]
+        identity_details: Optional[IdentityDetails]
+        object_type: str
+        policy_info: PolicyInfo
+        protection_error_details: Optional[UserFacingError]
+        protection_status: Optional[ProtectionStatusDetails]
+        provisioning_state: Optional[str]
+        resource_guard_operation_requests: Optional[list[str]]
+        validation_type: Optional[Union[str, ValidationType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data_source_info: Datasource, 
+                data_source_set_info: Optional[DatasourceSet] = ..., 
+                datasource_auth_credentials: Optional[CrossTenantAuthCredentials] = ..., 
+                friendly_name: Optional[str] = ..., 
+                identity_details: Optional[IdentityDetails] = ..., 
+                object_type: str, 
+                policy_info: PolicyInfo, 
+                resource_guard_operation_requests: Optional[list[str]] = ..., 
+                validation_type: Optional[Union[str, ValidationType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.CrossTenantBackupInstanceResource(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[CrossTenantBackupInstance]
+        system_data: SystemData
+        tags: Optional[dict[str, str]]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[CrossTenantBackupInstance] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.CrossTenantSecretStoreBasedAuthCredentials(CrossTenantAuthCredentials, discriminator='SecretStoreBasedAuthCredentials'):
+        object_type: Literal["SecretStoreBasedAuthCredentials"]
+        secret_store_resource: Optional[CrossTenantSecretStoreResource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                secret_store_resource: Optional[CrossTenantSecretStoreResource] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.CrossTenantSecretStoreResource(_Model):
+        secret_store_type: Union[str, SecretStoreType]
+        uri: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                secret_store_type: Union[str, SecretStoreType], 
+                uri: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.CrossTenantVaultMapping(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[CrossTenantVaultMappingProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[CrossTenantVaultMappingProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.CrossTenantVaultMappingProperties(_Model):
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        resource_guard_operation_requests: Optional[list[str]]
+        source_tenant_id: Optional[str]
+        source_vault_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource_guard_operation_requests: Optional[list[str]] = ..., 
+                source_vault_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.CrossTenantVaultMappingRemoveRequest(_Model):
+        properties: Optional[CrossTenantVaultMappingRemoveRequestProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[CrossTenantVaultMappingRemoveRequestProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.CrossTenantVaultMappingRemoveRequestProperties(_Model):
+        resource_guard_operation_requests: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource_guard_operation_requests: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.CrossTenantVaultMappingStatusResponse(_Model):
+        mapping_name: Optional[str]
+        mapping_state: Optional[Union[str, VaultMappingState]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                mapping_name: Optional[str] = ..., 
+                mapping_state: Optional[Union[str, VaultMappingState]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.dataprotection.models.CurrentProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4828,6 +5458,11 @@ namespace azure.mgmt.dataprotection.models
         SHALLOW_VALIDATION = "ShallowValidation"
 
 
+    class azure.mgmt.dataprotection.models.VaultMappingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE = "Active"
+        INACTIVE = "Inactive"
+
+
     class azure.mgmt.dataprotection.models.WeekNumber(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FIRST = "First"
         FOURTH = "Fourth"
@@ -4837,6 +5472,68 @@ namespace azure.mgmt.dataprotection.models
 
 
 namespace azure.mgmt.dataprotection.operations
+
+    class azure.mgmt.dataprotection.operations.BackupInstanceFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'backup_instance_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                **kwargs: Any
+            ) -> CrossTenantBackupInstanceResource: ...
+
+
+    class azure.mgmt.dataprotection.operations.BackupInstanceOperationResultFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'backup_instance_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> Optional[OperationJobExtendedInfo]: ...
+
+
+    class azure.mgmt.dataprotection.operations.BackupInstanceOperationStatusFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'backup_instance_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> OperationResource: ...
+
 
     class azure.mgmt.dataprotection.operations.BackupInstancesExtensionRoutingOperations:
 
@@ -4852,6 +5549,25 @@ namespace azure.mgmt.dataprotection.operations
                 resource_id: str, 
                 **kwargs: Any
             ) -> ItemPaged[BackupInstanceResource]: ...
+
+
+    class azure.mgmt.dataprotection.operations.BackupInstancesFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[CrossTenantBackupInstanceResource]: ...
 
 
     class azure.mgmt.dataprotection.operations.BackupInstancesOperations:
@@ -4958,7 +5674,7 @@ namespace azure.mgmt.dataprotection.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'backup_instance_name']}, api_versions_list=['2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'backup_instance_name']}, api_versions_list=['2026-06-01', '2026-07-01', '2026-08-31-preview'])
         def begin_resume_protection(
                 self, 
                 resource_group_name: str, 
@@ -5355,6 +6071,25 @@ namespace azure.mgmt.dataprotection.operations
             ) -> ItemPaged[BackupInstanceResource]: ...
 
 
+    class azure.mgmt.dataprotection.operations.BackupJobsFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[AzureBackupJobResource]: ...
+
+
     class azure.mgmt.dataprotection.operations.BackupPoliciesOperations:
 
         def __init__(
@@ -5682,7 +6417,7 @@ namespace azure.mgmt.dataprotection.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01', '2026-08-31-preview'])
         def get(
                 self, 
                 location: str, 
@@ -5691,12 +6426,130 @@ namespace azure.mgmt.dataprotection.operations
             ) -> DeletedBackupVaultResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01', '2026-08-31-preview'])
         def list_by_location(
                 self, 
                 location: str, 
                 **kwargs: Any
             ) -> ItemPaged[DeletedBackupVaultResource]: ...
+
+
+    class azure.mgmt.dataprotection.operations.DppCrossTenantVaultMappingStatusOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def check(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                **kwargs: Any
+            ) -> CrossTenantVaultMappingStatusResponse: ...
+
+
+    class azure.mgmt.dataprotection.operations.DppCrossTenantVaultMappingsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                resource: CrossTenantVaultMapping, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CrossTenantVaultMapping: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                resource: CrossTenantVaultMapping, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CrossTenantVaultMapping: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CrossTenantVaultMapping: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                **kwargs: Any
+            ) -> CrossTenantVaultMapping: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[CrossTenantVaultMapping]: ...
+
+        @overload
+        def remove(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                body: Optional[CrossTenantVaultMappingRemoveRequest] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> None: ...
+
+        @overload
+        def remove(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                body: Optional[CrossTenantVaultMappingRemoveRequest] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> None: ...
+
+        @overload
+        def remove(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> None: ...
 
 
     class azure.mgmt.dataprotection.operations.DppResourceGuardProxyOperations:
@@ -5979,6 +6832,26 @@ namespace azure.mgmt.dataprotection.operations
             ) -> ItemPaged[AzureBackupRecoveryPointResource]: ...
 
 
+    class azure.mgmt.dataprotection.operations.JobFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'job_id', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> AzureBackupJobResource: ...
+
+
     class azure.mgmt.dataprotection.operations.JobsOperations:
 
         def __init__(
@@ -6072,6 +6945,49 @@ namespace azure.mgmt.dataprotection.operations
                 operation_id: str, 
                 **kwargs: Any
             ) -> OperationResource: ...
+
+
+    class azure.mgmt.dataprotection.operations.RecoveryPointFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'backup_instance_name', 'recovery_point_id', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                recovery_point_id: str, 
+                **kwargs: Any
+            ) -> AzureBackupRecoveryPointResource: ...
+
+
+    class azure.mgmt.dataprotection.operations.RecoveryPointsFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'mapping_name', 'backup_instance_name', 'filter', 'accept']}, api_versions_list=['2026-08-31-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[AzureBackupRecoveryPointResource]: ...
 
 
     class azure.mgmt.dataprotection.operations.RecoveryPointsOperations:
@@ -6308,6 +7224,54 @@ namespace azure.mgmt.dataprotection.operations
             ) -> ResourceGuardResource: ...
 
 
+    class azure.mgmt.dataprotection.operations.RestorableTimeRangesFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def find(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: AzureBackupFindRestorableTimeRangesRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AzureBackupFindRestorableTimeRangesResponseResource: ...
+
+        @overload
+        def find(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: AzureBackupFindRestorableTimeRangesRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AzureBackupFindRestorableTimeRangesResponseResource: ...
+
+        @overload
+        def find(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AzureBackupFindRestorableTimeRangesResponseResource: ...
+
+
     class azure.mgmt.dataprotection.operations.RestorableTimeRangesOperations:
 
         def __init__(
@@ -6351,6 +7315,102 @@ namespace azure.mgmt.dataprotection.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AzureBackupFindRestorableTimeRangesResponseResource: ...
+
+
+    class azure.mgmt.dataprotection.operations.RestoresFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: AzureBackupRestoreRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationJobExtendedInfo]: ...
+
+        @overload
+        def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: AzureBackupRestoreRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationJobExtendedInfo]: ...
+
+        @overload
+        def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationJobExtendedInfo]: ...
+
+
+    class azure.mgmt.dataprotection.operations.ValidateRestoreFromDppCrossTenantVaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: ValidateRestoreRequestObject, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationJobExtendedInfo]: ...
+
+        @overload
+        def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: ValidateRestoreRequestObject, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationJobExtendedInfo]: ...
+
+        @overload
+        def begin_trigger(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                mapping_name: str, 
+                backup_instance_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationJobExtendedInfo]: ...
 
 
 namespace azure.mgmt.dataprotection.types
@@ -6783,6 +7843,38 @@ namespace azure.mgmt.dataprotection.types
     class azure.mgmt.dataprotection.types.CrossSubscriptionRestoreSettings(TypedDict, total=False):
         key "state": Union[str, CrossSubscriptionRestoreState]
         state: Union[str, CrossSubscriptionRestoreState]
+
+
+    class azure.mgmt.dataprotection.types.CrossTenantVaultMapping(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('CrossTenantVaultMappingProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: CrossTenantVaultMappingProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.dataprotection.types.CrossTenantVaultMappingProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "sourceTenantId": str
+        key "sourceVaultId": Required[str]
+        provisioningState: Union[str, ProvisioningState]
+        resourceGuardOperationRequests: list[str]
+        sourceTenantId: str
+        sourceVaultId: str
+
+
+    class azure.mgmt.dataprotection.types.CrossTenantVaultMappingRemoveRequest(TypedDict, total=False):
+        key "properties": ForwardRef('CrossTenantVaultMappingRemoveRequestProperties', module='types')
+        properties: CrossTenantVaultMappingRemoveRequestProperties
+
+
+    class azure.mgmt.dataprotection.types.CrossTenantVaultMappingRemoveRequestProperties(TypedDict, total=False):
+        resourceGuardOperationRequests: list[str]
 
 
     class azure.mgmt.dataprotection.types.CustomCopyOption(TypedDict, total=False):
