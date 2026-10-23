@@ -19,6 +19,7 @@ from ._enums import (
     DeliveryRuleActionParametersType,
     DeliveryRuleConditionParametersType,
     MatchVariable,
+    MtlsScenarioType,
     SecretType,
     SecurityPolicyType,
 )
@@ -27,7 +28,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ActivatedResourceReference(_Model):
+class ActivatedResourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reference to another resource along with its state.
 
     :ivar id: Resource ID.
@@ -104,7 +105,7 @@ class ProxyResource(Resource):
     """
 
 
-class AFDDomain(ProxyResource):
+class AFDDomain(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Friendly domain name mapping to the endpoint hostname that the customer provides for branding
     purposes, e.g. `www.contoso.com <http://www.contoso.com>`_.
 
@@ -131,6 +132,7 @@ class AFDDomain(ProxyResource):
     __flattened_items = [
         "profile_name",
         "tls_settings",
+        "mtls_settings",
         "azure_dns_zone",
         "pre_validated_custom_domain_resource_id",
         "provisioning_state",
@@ -177,7 +179,7 @@ class AFDDomain(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AFDDomainHttpsCustomizedCipherSuiteSet(_Model):
+class AFDDomainHttpsCustomizedCipherSuiteSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customized cipher suite set object that will be used for Https when cipherSuiteSetType is
     Customized.
 
@@ -219,7 +221,7 @@ class AFDDomainHttpsCustomizedCipherSuiteSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AFDDomainHttpsParameters(_Model):
+class AFDDomainHttpsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties to secure a domain.
 
     :ivar certificate_type: Defines the source of the SSL certificate. Required. Known values are:
@@ -235,6 +237,12 @@ class AFDDomainHttpsParameters(_Model):
      when cipherSuiteSetType is Customized.
     :vartype customized_cipher_suite_set:
      ~azure.mgmt.cdn.models.AFDDomainHttpsCustomizedCipherSuiteSet
+    :ivar server_tls_group_policy: Server TLS group policy that will be used for Https. Known
+     values are: "Standard", "Enhanced", and "Custom".
+    :vartype server_tls_group_policy: str or ~azure.mgmt.cdn.models.AfdServerTlsGroupPolicy
+    :ivar server_tls_groups: Server TLS groups that will be used for Https when
+     serverTlsGroupPolicy is Custom.
+    :vartype server_tls_groups: list[str or ~azure.mgmt.cdn.models.AfdServerTlsGroup]
     :ivar secret: Resource reference to the secret. ie. subs/rg/profile/secret.
     :vartype secret: ~azure.mgmt.cdn.models.ResourceReference
     """
@@ -259,6 +267,15 @@ class AFDDomainHttpsParameters(_Model):
     )
     """Customized cipher suites object that will be used for Https when cipherSuiteSetType is
      Customized."""
+    server_tls_group_policy: Optional[Union[str, "_models.AfdServerTlsGroupPolicy"]] = rest_field(
+        name="serverTlsGroupPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Server TLS group policy that will be used for Https. Known values are: \"Standard\",
+     \"Enhanced\", and \"Custom\"."""
+    server_tls_groups: Optional[list[Union[str, "_models.AfdServerTlsGroup"]]] = rest_field(
+        name="serverTlsGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Server TLS groups that will be used for Https when serverTlsGroupPolicy is Custom."""
     secret: Optional["_models.ResourceReference"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -272,6 +289,8 @@ class AFDDomainHttpsParameters(_Model):
         cipher_suite_set_type: Optional[Union[str, "_models.AfdCipherSuiteSetType"]] = None,
         minimum_tls_version: Optional[Union[str, "_models.AfdMinimumTlsVersion"]] = None,
         customized_cipher_suite_set: Optional["_models.AFDDomainHttpsCustomizedCipherSuiteSet"] = None,
+        server_tls_group_policy: Optional[Union[str, "_models.AfdServerTlsGroupPolicy"]] = None,
+        server_tls_groups: Optional[list[Union[str, "_models.AfdServerTlsGroup"]]] = None,
         secret: Optional["_models.ResourceReference"] = None,
     ) -> None: ...
 
@@ -286,7 +305,47 @@ class AFDDomainHttpsParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AFDDomainProperties(_Model):
+class AFDDomainMtlsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Contains the properties to configure mutual TLS for a custom domain with FQDN. Mutual TLS
+    cannot be configured for custom domains with wildcard host names.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClientCertificateRequiredAndOriginValidatesAdvancedSettings,
+    ClientCertificateRequiredAndValidatedAdvancedSettings,
+    ClientCertificateValidatedIfPresentedAdvancedSettings,
+    CompleteMtlsPassthroughToOriginAdvancedSettings
+
+    :ivar scenario: Supported scenarios for establishing mTLS connection. Required. Known values
+     are: "ClientCertificateRequiredAndValidated", "ClientCertificateRequiredAndOriginValidates",
+     "ClientCertificateValidatedIfPresented", and "CompleteMtlsPassthroughToOrigin".
+    :vartype scenario: str or ~azure.mgmt.cdn.models.MtlsScenarioType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    scenario: str = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])
+    """Supported scenarios for establishing mTLS connection. Required. Known values are:
+     \"ClientCertificateRequiredAndValidated\", \"ClientCertificateRequiredAndOriginValidates\",
+     \"ClientCertificateValidatedIfPresented\", and \"CompleteMtlsPassthroughToOrigin\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        scenario: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AFDDomainProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the domain to create.
 
     :ivar profile_name: The name of the profile which holds the domain.
@@ -295,6 +354,9 @@ class AFDDomainProperties(_Model):
      AzureFrontDoor managed certificate or user's own certificate. If not specified, enabling ssl
      uses AzureFrontDoor managed certificate by default.
     :vartype tls_settings: ~azure.mgmt.cdn.models.AFDDomainHttpsParameters
+    :ivar mtls_settings: The configuration specifying how to enable mutual TLS for the domain,
+     including specifying allowed FQDNs and which server certificate(s) to use.
+    :vartype mtls_settings: ~azure.mgmt.cdn.models.AFDDomainMtlsParameters
     :ivar azure_dns_zone: Resource reference to the Azure DNS zone.
     :vartype azure_dns_zone: ~azure.mgmt.cdn.models.ResourceReference
     :ivar pre_validated_custom_domain_resource_id: Resource reference to the Azure resource where
@@ -327,6 +389,11 @@ class AFDDomainProperties(_Model):
     """The configuration specifying how to enable HTTPS for the domain - using AzureFrontDoor managed
      certificate or user's own certificate. If not specified, enabling ssl uses AzureFrontDoor
      managed certificate by default."""
+    mtls_settings: Optional["_models.AFDDomainMtlsParameters"] = rest_field(
+        name="mtlsSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration specifying how to enable mutual TLS for the domain, including specifying
+     allowed FQDNs and which server certificate(s) to use."""
     azure_dns_zone: Optional["_models.ResourceReference"] = rest_field(
         name="azureDnsZone", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -368,6 +435,7 @@ class AFDDomainProperties(_Model):
         *,
         host_name: str,
         tls_settings: Optional["_models.AFDDomainHttpsParameters"] = None,
+        mtls_settings: Optional["_models.AFDDomainMtlsParameters"] = None,
         azure_dns_zone: Optional["_models.ResourceReference"] = None,
         pre_validated_custom_domain_resource_id: Optional["_models.ResourceReference"] = None,
         extended_properties: Optional[dict[str, str]] = None,
@@ -384,7 +452,7 @@ class AFDDomainProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AFDDomainUpdateParameters(_Model):
+class AFDDomainUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The domain JSON object required for domain creation or update.
 
     :ivar properties: The JSON object that contains the properties of the domain to create.
@@ -396,7 +464,13 @@ class AFDDomainUpdateParameters(_Model):
     )
     """The JSON object that contains the properties of the domain to create."""
 
-    __flattened_items = ["profile_name", "tls_settings", "azure_dns_zone", "pre_validated_custom_domain_resource_id"]
+    __flattened_items = [
+        "profile_name",
+        "tls_settings",
+        "mtls_settings",
+        "azure_dns_zone",
+        "pre_validated_custom_domain_resource_id",
+    ]
 
     @overload
     def __init__(
@@ -434,7 +508,7 @@ class AFDDomainUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class AFDDomainUpdatePropertiesParameters(_Model):
+class AFDDomainUpdatePropertiesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the domain to create.
 
     :ivar profile_name: The name of the profile which holds the domain.
@@ -443,6 +517,9 @@ class AFDDomainUpdatePropertiesParameters(_Model):
      AzureFrontDoor managed certificate or user's own certificate. If not specified, enabling ssl
      uses AzureFrontDoor managed certificate by default.
     :vartype tls_settings: ~azure.mgmt.cdn.models.AFDDomainHttpsParameters
+    :ivar mtls_settings: The configuration specifying how to enable mutual TLS for the domain,
+     including specifying allowed FQDNs and which server certificate(s) to use.
+    :vartype mtls_settings: ~azure.mgmt.cdn.models.AFDDomainMtlsParameters
     :ivar azure_dns_zone: Resource reference to the Azure DNS zone.
     :vartype azure_dns_zone: ~azure.mgmt.cdn.models.ResourceReference
     :ivar pre_validated_custom_domain_resource_id: Resource reference to the Azure resource where
@@ -458,6 +535,11 @@ class AFDDomainUpdatePropertiesParameters(_Model):
     """The configuration specifying how to enable HTTPS for the domain - using AzureFrontDoor managed
      certificate or user's own certificate. If not specified, enabling ssl uses AzureFrontDoor
      managed certificate by default."""
+    mtls_settings: Optional["_models.AFDDomainMtlsParameters"] = rest_field(
+        name="mtlsSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration specifying how to enable mutual TLS for the domain, including specifying
+     allowed FQDNs and which server certificate(s) to use."""
     azure_dns_zone: Optional["_models.ResourceReference"] = rest_field(
         name="azureDnsZone", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -472,6 +554,7 @@ class AFDDomainUpdatePropertiesParameters(_Model):
         self,
         *,
         tls_settings: Optional["_models.AFDDomainHttpsParameters"] = None,
+        mtls_settings: Optional["_models.AFDDomainMtlsParameters"] = None,
         azure_dns_zone: Optional["_models.ResourceReference"] = None,
         pre_validated_custom_domain_resource_id: Optional["_models.ResourceReference"] = None,
     ) -> None: ...
@@ -487,7 +570,7 @@ class AFDDomainUpdatePropertiesParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -531,7 +614,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AFDEndpoint(TrackedResource):
+class AFDEndpoint(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Front Door endpoint is the entity within a Azure Front Door profile containing
     configuration information such as origin, protocol, content caching and delivery behavior. The
     AzureFrontDoor endpoint uses the URL format <endpointname>.azureedge.net.
@@ -563,6 +646,7 @@ class AFDEndpoint(TrackedResource):
     __flattened_items = [
         "profile_name",
         "enabled_state",
+        "enforce_mtls",
         "provisioning_state",
         "deployment_status",
         "host_name",
@@ -607,7 +691,7 @@ class AFDEndpoint(TrackedResource):
             super().__setattr__(key, value)
 
 
-class AFDEndpointProperties(_Model):
+class AFDEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties required to create an endpoint.
 
     :ivar profile_name: The name of the profile which holds the endpoint.
@@ -615,6 +699,9 @@ class AFDEndpointProperties(_Model):
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
      'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar enforce_mtls: Set to Disabled by default. If set to Enabled, only custom domains with
+     mTLS enabled can be added to child Route resources. Known values are: "Enabled" and "Disabled".
+    :vartype enforce_mtls: str or ~azure.mgmt.cdn.models.EnforceMtlsEnabledState
     :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
      "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
@@ -638,6 +725,11 @@ class AFDEndpointProperties(_Model):
     )
     """Whether to enable use of this rule. Permitted values are 'Enabled' or 'Disabled'. Known values
      are: \"Enabled\" and \"Disabled\"."""
+    enforce_mtls: Optional[Union[str, "_models.EnforceMtlsEnabledState"]] = rest_field(
+        name="enforceMtls", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set to Disabled by default. If set to Enabled, only custom domains with mTLS enabled can be
+     added to child Route resources. Known values are: \"Enabled\" and \"Disabled\"."""
     provisioning_state: Optional[Union[str, "_models.AfdProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -661,6 +753,7 @@ class AFDEndpointProperties(_Model):
         self,
         *,
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
+        enforce_mtls: Optional[Union[str, "_models.EnforceMtlsEnabledState"]] = None,
         auto_generated_domain_name_label_scope: Optional[
             Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
         ] = None,
@@ -677,7 +770,7 @@ class AFDEndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AFDEndpointPropertiesUpdateParameters(_Model):
+class AFDEndpointPropertiesUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object containing endpoint update parameters.
 
     :ivar profile_name: The name of the profile which holds the endpoint.
@@ -685,6 +778,9 @@ class AFDEndpointPropertiesUpdateParameters(_Model):
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
      'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar enforce_mtls: Set to Disabled by default. If set to Enabled, only custom domains with
+     mTLS enabled can be added to child Route resources. Known values are: "Enabled" and "Disabled".
+    :vartype enforce_mtls: str or ~azure.mgmt.cdn.models.EnforceMtlsEnabledState
     """
 
     profile_name: Optional[str] = rest_field(name="profileName", visibility=["read"])
@@ -694,12 +790,18 @@ class AFDEndpointPropertiesUpdateParameters(_Model):
     )
     """Whether to enable use of this rule. Permitted values are 'Enabled' or 'Disabled'. Known values
      are: \"Enabled\" and \"Disabled\"."""
+    enforce_mtls: Optional[Union[str, "_models.EnforceMtlsEnabledState"]] = rest_field(
+        name="enforceMtls", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set to Disabled by default. If set to Enabled, only custom domains with mTLS enabled can be
+     added to child Route resources. Known values are: \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(
         self,
         *,
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
+        enforce_mtls: Optional[Union[str, "_models.EnforceMtlsEnabledState"]] = None,
     ) -> None: ...
 
     @overload
@@ -713,7 +815,7 @@ class AFDEndpointPropertiesUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AFDEndpointUpdateParameters(_Model):
+class AFDEndpointUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties required to create or update an endpoint.
 
     :ivar tags: Endpoint tags.
@@ -729,7 +831,7 @@ class AFDEndpointUpdateParameters(_Model):
     )
     """The JSON object containing endpoint update parameters."""
 
-    __flattened_items = ["profile_name", "enabled_state"]
+    __flattened_items = ["profile_name", "enabled_state", "enforce_mtls"]
 
     @overload
     def __init__(
@@ -768,7 +870,7 @@ class AFDEndpointUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class AFDOrigin(ProxyResource):
+class AFDOrigin(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Front Door origin is the source of the content being delivered via Azure Front Door. When
     the edge nodes represented by an endpoint do not have the requested content cached, they
     attempt to fetch it from one or more of the configured origins.
@@ -805,6 +907,8 @@ class AFDOrigin(ProxyResource):
         "shared_private_link_resource",
         "enabled_state",
         "enforce_certificate_name_check",
+        "certificate_name_check_validation_mode",
+        "custom_certificate_subjects",
         "provisioning_state",
         "deployment_status",
     ]
@@ -845,7 +949,7 @@ class AFDOrigin(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AFDOriginGroup(ProxyResource):
+class AFDOriginGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AFDOrigin group comprising of origins is used for load balancing to origins when the content
     cannot be served from Azure Front Door.
 
@@ -916,7 +1020,7 @@ class AFDOriginGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AFDOriginGroupProperties(_Model):
+class AFDOriginGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the origin group.
 
     :ivar profile_name: The name of the profile which holds the origin group.
@@ -1001,7 +1105,7 @@ class AFDOriginGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AFDOriginGroupUpdateParameters(_Model):
+class AFDOriginGroupUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AFDOrigin group properties needed for origin group creation or update.
 
     :ivar properties: The JSON object that contains the properties of the origin group.
@@ -1058,7 +1162,7 @@ class AFDOriginGroupUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class AFDOriginGroupUpdatePropertiesParameters(_Model):
+class AFDOriginGroupUpdatePropertiesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the origin group.
 
     :ivar profile_name: The name of the profile which holds the origin group.
@@ -1128,7 +1232,7 @@ class AFDOriginGroupUpdatePropertiesParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AFDOriginProperties(_Model):
+class AFDOriginProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the origin.
 
     :ivar origin_group_name: The name of the origin group which contains this origin.
@@ -1164,6 +1268,15 @@ class AFDOriginProperties(_Model):
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
     :ivar enforce_certificate_name_check: Whether to enable certificate name check at origin level.
     :vartype enforce_certificate_name_check: bool
+    :ivar certificate_name_check_validation_mode: The validation mode for certificate name check.
+     Only applicable when enforceCertificateNameCheck is true. Known values are: "OriginHostname",
+     "CustomCertificateSubject", and "IncomingHostHeader".
+    :vartype certificate_name_check_validation_mode: str or
+     ~azure.mgmt.cdn.models.CertificateNameCheckValidationMode
+    :ivar custom_certificate_subjects: The list of custom certificate subjects to validate against.
+     Only applicable when certificateNameCheckValidationMode is 'CustomCertificateSubject'. Must
+     contain 1 or 2 entries.
+    :vartype custom_certificate_subjects: list[str]
     :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
      "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
@@ -1211,6 +1324,19 @@ class AFDOriginProperties(_Model):
         name="enforceCertificateNameCheck", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether to enable certificate name check at origin level."""
+    certificate_name_check_validation_mode: Optional[Union[str, "_models.CertificateNameCheckValidationMode"]] = (
+        rest_field(
+            name="certificateNameCheckValidationMode", visibility=["read", "create", "update", "delete", "query"]
+        )
+    )
+    """The validation mode for certificate name check. Only applicable when
+     enforceCertificateNameCheck is true. Known values are: \"OriginHostname\",
+     \"CustomCertificateSubject\", and \"IncomingHostHeader\"."""
+    custom_certificate_subjects: Optional[list[str]] = rest_field(
+        name="customCertificateSubjects", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of custom certificate subjects to validate against. Only applicable when
+     certificateNameCheckValidationMode is 'CustomCertificateSubject'. Must contain 1 or 2 entries."""
     provisioning_state: Optional[Union[str, "_models.AfdProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -1235,6 +1361,10 @@ class AFDOriginProperties(_Model):
         shared_private_link_resource: Optional["_models.SharedPrivateLinkResourceProperties"] = None,
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
         enforce_certificate_name_check: Optional[bool] = None,
+        certificate_name_check_validation_mode: Optional[
+            Union[str, "_models.CertificateNameCheckValidationMode"]
+        ] = None,
+        custom_certificate_subjects: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1248,7 +1378,7 @@ class AFDOriginProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AFDOriginUpdateParameters(_Model):
+class AFDOriginUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AFDOrigin properties needed for origin update.
 
     :ivar properties: The JSON object that contains the properties of the origin.
@@ -1272,6 +1402,8 @@ class AFDOriginUpdateParameters(_Model):
         "shared_private_link_resource",
         "enabled_state",
         "enforce_certificate_name_check",
+        "certificate_name_check_validation_mode",
+        "custom_certificate_subjects",
     ]
 
     @overload
@@ -1310,7 +1442,7 @@ class AFDOriginUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class AFDOriginUpdatePropertiesParameters(_Model):
+class AFDOriginUpdatePropertiesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the origin.
 
     :ivar origin_group_name: The name of the origin group which contains this origin.
@@ -1346,6 +1478,15 @@ class AFDOriginUpdatePropertiesParameters(_Model):
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
     :ivar enforce_certificate_name_check: Whether to enable certificate name check at origin level.
     :vartype enforce_certificate_name_check: bool
+    :ivar certificate_name_check_validation_mode: The validation mode for certificate name check.
+     Only applicable when enforceCertificateNameCheck is true. Known values are: "OriginHostname",
+     "CustomCertificateSubject", and "IncomingHostHeader".
+    :vartype certificate_name_check_validation_mode: str or
+     ~azure.mgmt.cdn.models.CertificateNameCheckValidationMode
+    :ivar custom_certificate_subjects: The list of custom certificate subjects to validate against.
+     Only applicable when certificateNameCheckValidationMode is 'CustomCertificateSubject'. Must
+     contain 1 or 2 entries.
+    :vartype custom_certificate_subjects: list[str]
     """
 
     origin_group_name: Optional[str] = rest_field(name="originGroupName", visibility=["read"])
@@ -1387,6 +1528,19 @@ class AFDOriginUpdatePropertiesParameters(_Model):
         name="enforceCertificateNameCheck", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether to enable certificate name check at origin level."""
+    certificate_name_check_validation_mode: Optional[Union[str, "_models.CertificateNameCheckValidationMode"]] = (
+        rest_field(
+            name="certificateNameCheckValidationMode", visibility=["read", "create", "update", "delete", "query"]
+        )
+    )
+    """The validation mode for certificate name check. Only applicable when
+     enforceCertificateNameCheck is true. Known values are: \"OriginHostname\",
+     \"CustomCertificateSubject\", and \"IncomingHostHeader\"."""
+    custom_certificate_subjects: Optional[list[str]] = rest_field(
+        name="customCertificateSubjects", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of custom certificate subjects to validate against. Only applicable when
+     certificateNameCheckValidationMode is 'CustomCertificateSubject'. Must contain 1 or 2 entries."""
 
     @overload
     def __init__(
@@ -1402,6 +1556,10 @@ class AFDOriginUpdatePropertiesParameters(_Model):
         shared_private_link_resource: Optional["_models.SharedPrivateLinkResourceProperties"] = None,
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
         enforce_certificate_name_check: Optional[bool] = None,
+        certificate_name_check_validation_mode: Optional[
+            Union[str, "_models.CertificateNameCheckValidationMode"]
+        ] = None,
+        custom_certificate_subjects: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1415,7 +1573,7 @@ class AFDOriginUpdatePropertiesParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AfdPurgeParameters(_Model):
+class AfdPurgeParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters required for content purge.
 
     :ivar content_paths: The path to the content to be purged. Can describe a file path or a wild
@@ -1452,7 +1610,7 @@ class AfdPurgeParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AfdRouteCacheConfiguration(_Model):
+class AfdRouteCacheConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Caching settings for a caching-type route. To disable caching, do not provide a
     cacheConfiguration object.
 
@@ -1505,6 +1663,98 @@ class AfdRouteCacheConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SecretParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The json object containing secret parameters.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureFirstPartyManagedCertificateParameters, CustomerCertificateParameters,
+    ManagedCertificateParameters, AfdSecretMtlsCertificateChain, UrlSigningKeyParameters
+
+    :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
+     "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate", and
+     "MtlsCertificateChain".
+    :vartype type: str or ~azure.mgmt.cdn.models.SecretType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the secret resource. Required. Known values are: \"UrlSigningKey\",
+     \"CustomerCertificate\", \"ManagedCertificate\", \"AzureFirstPartyManagedCertificate\", and
+     \"MtlsCertificateChain\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AfdSecretMtlsCertificateChain(
+    SecretParameters, discriminator="MtlsCertificateChain"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Server-side certificate used for mTLS validation.
+
+    :ivar secret_source: Resource reference to the Azure Key Vault secret. Expected to be in format
+     of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/secrets/{secretName}.
+     Required.
+    :vartype secret_source: ~azure.mgmt.cdn.models.ResourceReference
+    :ivar secret_version: Version of the secret to be used. Required.
+    :vartype secret_version: str
+    :ivar expiration_date: Soonest expiration date among certificates in customer's certificate
+     chain in ISO 8601 compliant format yyyy-MM-ddTHH:mm:ss.fffffffK in UTC.
+    :vartype expiration_date: ~datetime.datetime
+    :ivar type: The type of the secret resource. Required. MTLS_CERTIFICATE_CHAIN.
+    :vartype type: str or ~azure.mgmt.cdn.models.MTLS_CERTIFICATE_CHAIN
+    """
+
+    secret_source: "_models.ResourceReference" = rest_field(
+        name="secretSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource reference to the Azure Key Vault secret. Expected to be in format of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/secrets/{secretName}.
+     Required."""
+    secret_version: str = rest_field(name="secretVersion", visibility=["read", "create", "update", "delete", "query"])
+    """Version of the secret to be used. Required."""
+    expiration_date: Optional[datetime.datetime] = rest_field(
+        name="expirationDate", visibility=["read"], format="rfc3339"
+    )
+    """Soonest expiration date among certificates in customer's certificate chain in ISO 8601
+     compliant format yyyy-MM-ddTHH:mm:ss.fffffffK in UTC."""
+    type: Literal[SecretType.MTLS_CERTIFICATE_CHAIN] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the secret resource. Required. MTLS_CERTIFICATE_CHAIN."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        secret_source: "_models.ResourceReference",
+        secret_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = SecretType.MTLS_CERTIFICATE_CHAIN  # type: ignore
+
+
 class AFDStateProperties(_Model):
     """The tracking states for afd resources.
 
@@ -1527,28 +1777,128 @@ class AFDStateProperties(_Model):
     """Known values are: \"NotStarted\", \"InProgress\", \"Succeeded\", and \"Failed\"."""
 
 
-class SecretParameters(_Model):
-    """The json object containing secret parameters.
+class DeliveryRuleAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An action for the delivery rule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureFirstPartyManagedCertificateParameters, CustomerCertificateParameters,
-    ManagedCertificateParameters, UrlSigningKeyParameters
+    AfdUrlSigningAction, DeliveryRuleCacheExpirationAction, DeliveryRuleCacheKeyQueryStringAction,
+    EdgeAction, DeliveryRuleRequestHeaderAction, DeliveryRuleResponseHeaderAction,
+    OriginGroupOverrideAction, DeliveryRuleRouteConfigurationOverrideAction, UrlRedirectAction,
+    UrlRewriteAction, UrlSigningAction
 
-    :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
-     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
-    :vartype type: str or ~azure.mgmt.cdn.models.SecretType
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", "RouteConfigurationOverride",
+     "EdgeAction", and "AfdUrlSigning".
+    :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
     """
 
     __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The type of the secret resource. Required. Known values are: \"UrlSigningKey\",
-     \"CustomerCertificate\", \"ManagedCertificate\", and \"AzureFirstPartyManagedCertificate\"."""
+    name: str = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the action for the delivery rule. Required. Known values are: \"CacheExpiration\",
+     \"CacheKeyQueryString\", \"ModifyRequestHeader\", \"ModifyResponseHeader\", \"UrlRedirect\",
+     \"UrlRewrite\", \"UrlSigning\", \"OriginGroupOverride\", \"RouteConfigurationOverride\",
+     \"EdgeAction\", and \"AfdUrlSigning\"."""
 
     @overload
     def __init__(
         self,
         *,
-        type: str,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AfdUrlSigningAction(
+    DeliveryRuleAction, discriminator="AfdUrlSigning"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the url signing action for the delivery rule.
+
+    :ivar parameters: Defines the parameters for the action. Required.
+    :vartype parameters: ~azure.mgmt.cdn.models.AfdUrlSigningActionParameters
+    :ivar name: The name of the action for the delivery rule. Required. AFD_URL_SIGNING.
+    :vartype name: str or ~azure.mgmt.cdn.models.AFD_URL_SIGNING
+    """
+
+    parameters: "_models.AfdUrlSigningActionParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the parameters for the action. Required."""
+    name: Literal[DeliveryRuleActionEnum.AFD_URL_SIGNING] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The name of the action for the delivery rule. Required. AFD_URL_SIGNING."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: "_models.AfdUrlSigningActionParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = DeliveryRuleActionEnum.AFD_URL_SIGNING  # type: ignore
+
+
+class AfdUrlSigningActionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the parameters for the Url Signing action.
+
+    :ivar type_name: Required. "DeliveryRuleAfdUrlSigningActionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.TypeName
+    :ivar key_group_reference: Resource reference to the Azure Key Vault secret. Expected to be in
+     format of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/keyGroups/{keyGroupName}.
+     Required.
+    :vartype key_group_reference: ~azure.mgmt.cdn.models.ResourceReference
+    :ivar algorithm: Algorithm to use for URL signing. "SHA256"
+    :vartype algorithm: str or ~azure.mgmt.cdn.models.Algorithm
+    :ivar parameter_name_override: Defines which query string parameters in the url to be
+     considered for expires, key id etc.
+    :vartype parameter_name_override: list[~azure.mgmt.cdn.models.UrlSigningParamIdentifier]
+    """
+
+    type_name: Union[str, "_models.TypeName"] = rest_field(
+        name="typeName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. \"DeliveryRuleAfdUrlSigningActionParameters\""""
+    key_group_reference: "_models.ResourceReference" = rest_field(
+        name="keyGroupReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource reference to the Azure Key Vault secret. Expected to be in format of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/keyGroups/{keyGroupName}.
+     Required."""
+    algorithm: Optional[Union[str, "_models.Algorithm"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Algorithm to use for URL signing. \"SHA256\""""
+    parameter_name_override: Optional[list["_models.UrlSigningParamIdentifier"]] = rest_field(
+        name="parameterNameOverride", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines which query string parameters in the url to be considered for expires, key id etc."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type_name: Union[str, "_models.TypeName"],
+        key_group_reference: "_models.ResourceReference",
+        algorithm: Optional[Union[str, "_models.Algorithm"]] = None,
+        parameter_name_override: Optional[list["_models.UrlSigningParamIdentifier"]] = None,
     ) -> None: ...
 
     @overload
@@ -1564,7 +1914,7 @@ class SecretParameters(_Model):
 
 class AzureFirstPartyManagedCertificateParameters(
     SecretParameters, discriminator="AzureFirstPartyManagedCertificate"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure FirstParty Managed Certificate provided by other first party resource providers to enable
     HTTPS.
 
@@ -1623,7 +1973,7 @@ class AzureFirstPartyManagedCertificateParameters(
         self.type = SecretType.AZURE_FIRST_PARTY_MANAGED_CERTIFICATE  # type: ignore
 
 
-class BatchRuleProperties(_Model):
+class BatchRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains a rule with its name for batch mode operations.
 
     :ivar rule_name: Name of the rule. Required.
@@ -1691,7 +2041,7 @@ class BatchRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CacheConfiguration(_Model):
+class CacheConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Caching settings for a caching-type route. To disable caching, do not provide a
     cacheConfiguration object.
 
@@ -1767,20 +2117,22 @@ class CacheConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeliveryRuleActionParameters(_Model):
+class DeliveryRuleActionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for delivery rule actions.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CacheExpirationActionParameters, CacheKeyQueryStringActionParameters, HeaderActionParameters,
-    OriginGroupOverrideActionParameters, RouteConfigurationOverrideActionParameters,
-    UrlRedirectActionParameters, UrlRewriteActionParameters, UrlSigningActionParameters
+    CacheExpirationActionParameters, CacheKeyQueryStringActionParameters,
+    DeliveryRuleEdgeActionParameters, HeaderActionParameters, OriginGroupOverrideActionParameters,
+    RouteConfigurationOverrideActionParameters, UrlRedirectActionParameters,
+    UrlRewriteActionParameters, UrlSigningActionParameters
 
     :ivar type_name: Required. Known values are: "DeliveryRuleUrlRedirectActionParameters",
      "DeliveryRuleUrlSigningActionParameters", "DeliveryRuleOriginGroupOverrideActionParameters",
      "DeliveryRuleUrlRewriteActionParameters", "DeliveryRuleHeaderActionParameters",
      "DeliveryRuleCacheExpirationActionParameters",
-     "DeliveryRuleCacheKeyQueryStringBehaviorActionParameters", and
-     "DeliveryRuleRouteConfigurationOverrideActionParameters".
+     "DeliveryRuleCacheKeyQueryStringBehaviorActionParameters",
+     "DeliveryRuleRouteConfigurationOverrideActionParameters", and
+     "DeliveryRuleEdgeActionParameters".
     :vartype type_name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionParametersType
     """
 
@@ -1791,8 +2143,9 @@ class DeliveryRuleActionParameters(_Model):
      \"DeliveryRuleOriginGroupOverrideActionParameters\",
      \"DeliveryRuleUrlRewriteActionParameters\", \"DeliveryRuleHeaderActionParameters\",
      \"DeliveryRuleCacheExpirationActionParameters\",
-     \"DeliveryRuleCacheKeyQueryStringBehaviorActionParameters\", and
-     \"DeliveryRuleRouteConfigurationOverrideActionParameters\"."""
+     \"DeliveryRuleCacheKeyQueryStringBehaviorActionParameters\",
+     \"DeliveryRuleRouteConfigurationOverrideActionParameters\", and
+     \"DeliveryRuleEdgeActionParameters\"."""
 
     @overload
     def __init__(
@@ -1814,7 +2167,7 @@ class DeliveryRuleActionParameters(_Model):
 
 class CacheExpirationActionParameters(
     DeliveryRuleActionParameters, discriminator="DeliveryRuleCacheExpirationActionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for the cache expiration action.
 
     :ivar cache_behavior: Caching behavior for the requests. Required. Known values are:
@@ -1869,7 +2222,7 @@ class CacheExpirationActionParameters(
 
 class CacheKeyQueryStringActionParameters(
     DeliveryRuleActionParameters, discriminator="DeliveryRuleCacheKeyQueryStringBehaviorActionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for the cache-key query string action.
 
     :ivar query_string_behavior: Caching behavior for the requests. Required. Known values are:
@@ -1914,7 +2267,7 @@ class CacheKeyQueryStringActionParameters(
         self.type_name = DeliveryRuleActionParametersType.DELIVERY_RULE_CACHE_KEY_QUERY_STRING_BEHAVIOR_ACTION_PARAMETERS  # type: ignore
 
 
-class CanMigrateParameters(_Model):
+class CanMigrateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for CanMigrate operation.
 
     :ivar classic_resource_reference: Resource reference of the classic cdn profile or classic
@@ -1946,7 +2299,7 @@ class CanMigrateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CanMigrateProperties(_Model):
+class CanMigrateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CanMigrateProperties.
 
     :ivar can_migrate: Flag that says if the profile can be migrated.
@@ -1987,7 +2340,7 @@ class CanMigrateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CanMigrateResult(_Model):
+class CanMigrateResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result for canMigrate operation.
 
     :ivar id: Resource ID.
@@ -2044,7 +2397,7 @@ class CanMigrateResult(_Model):
             super().__setattr__(key, value)
 
 
-class CertificateSourceParameters(_Model):
+class CertificateSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for certificate source.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2078,7 +2431,9 @@ class CertificateSourceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CdnCertificateSourceParameters(CertificateSourceParameters, discriminator="CdnCertificateSourceParameters"):
+class CdnCertificateSourceParameters(
+    CertificateSourceParameters, discriminator="CdnCertificateSourceParameters"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for using CDN managed certificate for securing custom domain.
 
     :ivar certificate_type: Type of certificate used. Required. Known values are: "Shared" and
@@ -2114,7 +2469,7 @@ class CdnCertificateSourceParameters(CertificateSourceParameters, discriminator=
         self.type_name = CertificateSourceParametersType.CDN_CERTIFICATE_SOURCE_PARAMETERS  # type: ignore
 
 
-class CdnEndpoint(_Model):
+class CdnEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the ARM Resource ID for the linked endpoints.
 
     :ivar id: ARM Resource ID string.
@@ -2142,7 +2497,7 @@ class CdnEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomDomainHttpsParameters(_Model):
+class CustomDomainHttpsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties to secure a custom domain.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2196,7 +2551,9 @@ class CustomDomainHttpsParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CdnManagedHttpsParameters(CustomDomainHttpsParameters, discriminator="Cdn"):
+class CdnManagedHttpsParameters(
+    CustomDomainHttpsParameters, discriminator="Cdn"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the certificate source parameters using CDN managed certificate for enabling SSL.
 
     :ivar protocol_type: Defines the TLS extension protocol that is used for secure delivery.
@@ -2241,7 +2598,7 @@ class CdnManagedHttpsParameters(CustomDomainHttpsParameters, discriminator="Cdn"
         self.certificate_source = CertificateSource.CDN  # type: ignore
 
 
-class CdnMigrationToAfdParameters(_Model):
+class CdnMigrationToAfdParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for Migrate operation.
 
     :ivar sku: Sku for the migration. Required.
@@ -2277,7 +2634,7 @@ class CdnMigrationToAfdParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CdnWebApplicationFirewallPolicy(TrackedResource):
+class CdnWebApplicationFirewallPolicy(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines web application firewall policy for Azure CDN.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2365,7 +2722,9 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
             super().__setattr__(key, value)
 
 
-class CdnWebApplicationFirewallPolicyPatchParameters(_Model):  # pylint: disable=name-too-long
+class CdnWebApplicationFirewallPolicyPatchParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties required to update a CdnWebApplicationFirewallPolicy.
 
     :ivar tags: CdnWebApplicationFirewallPolicy tags.
@@ -2393,7 +2752,9 @@ class CdnWebApplicationFirewallPolicyPatchParameters(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class CdnWebApplicationFirewallPolicyProperties(_Model):  # pylint: disable=name-too-long
+class CdnWebApplicationFirewallPolicyProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Defines CDN web application firewall policy properties.
 
     :ivar policy_settings: Describes  policySettings for policy.
@@ -2473,7 +2834,7 @@ class CdnWebApplicationFirewallPolicyProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class CheckEndpointNameAvailabilityInput(_Model):
+class CheckEndpointNameAvailabilityInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input of CheckNameAvailability API.
 
     :ivar name: The resource name to validate. Required.
@@ -2547,7 +2908,7 @@ class CheckEndpointNameAvailabilityOutput(_Model):
     """The detailed error message describing why the name is not available."""
 
 
-class CheckHostNameAvailabilityInput(_Model):
+class CheckHostNameAvailabilityInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input of CheckHostNameAvailability API.
 
     :ivar host_name: The host name to validate. Required.
@@ -2575,7 +2936,7 @@ class CheckHostNameAvailabilityInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityInput(_Model):
+class CheckNameAvailabilityInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input of CheckNameAvailability API.
 
     :ivar name: The resource name to validate. Required.
@@ -2629,7 +2990,7 @@ class CheckNameAvailabilityOutput(_Model):
     """The detailed error message describing why the name is not available."""
 
 
-class CidrIpAddress(_Model):
+class CidrIpAddress(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CIDR Ip address.
 
     :ivar base_ip_address: Ip address itself.
@@ -2666,7 +3027,159 @@ class CidrIpAddress(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeliveryRuleConditionParameters(_Model):
+class ClientCertificateRequiredAndOriginValidatesAdvancedSettings(
+    AFDDomainMtlsParameters, discriminator="ClientCertificateRequiredAndOriginValidates"
+):  # pylint: disable=name-too-long
+    """Advanced settings for MtlsScenarioType enum value: ClientCertificateRequiredAndOriginValidates.
+
+    :ivar scenario: Supported scenarios for establishing mTLS connection. Required.
+     CLIENT_CERTIFICATE_REQUIRED_AND_ORIGIN_VALIDATES.
+    :vartype scenario: str or
+     ~azure.mgmt.cdn.models.CLIENT_CERTIFICATE_REQUIRED_AND_ORIGIN_VALIDATES
+    """
+
+    scenario: Literal[MtlsScenarioType.CLIENT_CERTIFICATE_REQUIRED_AND_ORIGIN_VALIDATES] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Supported scenarios for establishing mTLS connection. Required.
+     CLIENT_CERTIFICATE_REQUIRED_AND_ORIGIN_VALIDATES."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.scenario = MtlsScenarioType.CLIENT_CERTIFICATE_REQUIRED_AND_ORIGIN_VALIDATES  # type: ignore
+
+
+class ClientCertificateRequiredAndValidatedAdvancedSettings(
+    AFDDomainMtlsParameters, discriminator="ClientCertificateRequiredAndValidated"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Advanced settings for MtlsScenarioType enum value: ClientCertificateRequiredAndValidated.
+
+    :ivar secrets: List of one or two of Resource References (ie. subs/rg/profile/secret) to
+     Secrets of type MtlsCertificateChain to use in mutual TLS handshake as the trusted issuer
+     certificate chain. Required.
+    :vartype secrets: list[~azure.mgmt.cdn.models.ResourceReference]
+    :ivar allowed_fqdns: List of FQDNs that will be accepted for mutual TLS validation.
+    :vartype allowed_fqdns: list[str]
+    :ivar certificate_revocation_check: Set to Enabled by default. If set to Disabled, revocation
+     status of client certificate chain will be checked before establishing mutual TLS connection.
+     Known values are: "Enabled" and "Disabled".
+    :vartype certificate_revocation_check: str or
+     ~azure.mgmt.cdn.models.CertificateRevocationCheckEnabledState
+    :ivar scenario: Supported scenarios for establishing mTLS connection. Required.
+     CLIENT_CERTIFICATE_REQUIRED_AND_VALIDATED.
+    :vartype scenario: str or ~azure.mgmt.cdn.models.CLIENT_CERTIFICATE_REQUIRED_AND_VALIDATED
+    """
+
+    secrets: list["_models.ResourceReference"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of one or two of Resource References (ie. subs/rg/profile/secret) to Secrets of type
+     MtlsCertificateChain to use in mutual TLS handshake as the trusted issuer certificate chain.
+     Required."""
+    allowed_fqdns: Optional[list[str]] = rest_field(
+        name="allowedFqdns", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of FQDNs that will be accepted for mutual TLS validation."""
+    certificate_revocation_check: Optional[Union[str, "_models.CertificateRevocationCheckEnabledState"]] = rest_field(
+        name="certificateRevocationCheck", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set to Enabled by default. If set to Disabled, revocation status of client certificate chain
+     will be checked before establishing mutual TLS connection. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    scenario: Literal[MtlsScenarioType.CLIENT_CERTIFICATE_REQUIRED_AND_VALIDATED] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Supported scenarios for establishing mTLS connection. Required.
+     CLIENT_CERTIFICATE_REQUIRED_AND_VALIDATED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        secrets: list["_models.ResourceReference"],
+        allowed_fqdns: Optional[list[str]] = None,
+        certificate_revocation_check: Optional[Union[str, "_models.CertificateRevocationCheckEnabledState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.scenario = MtlsScenarioType.CLIENT_CERTIFICATE_REQUIRED_AND_VALIDATED  # type: ignore
+
+
+class ClientCertificateValidatedIfPresentedAdvancedSettings(
+    AFDDomainMtlsParameters, discriminator="ClientCertificateValidatedIfPresented"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Advanced settings for MtlsScenarioType enum value: ClientCertificateValidatedIfPresented.
+
+    :ivar secrets: List of one or two of Resource References (ie. subs/rg/profile/secret) to
+     Secrets of type MtlsCertificateChain to use in mutual TLS handshake as the trusted issuer
+     certificate chain. Required.
+    :vartype secrets: list[~azure.mgmt.cdn.models.ResourceReference]
+    :ivar allowed_fqdns: List of FQDNs that will be accepted for mutual TLS validation.
+    :vartype allowed_fqdns: list[str]
+    :ivar certificate_revocation_check: Set to Enabled by default. If set to Disabled, revocation
+     status of client certificate chain will be checked before establishing mutual TLS connection.
+     Known values are: "Enabled" and "Disabled".
+    :vartype certificate_revocation_check: str or
+     ~azure.mgmt.cdn.models.CertificateRevocationCheckEnabledState
+    :ivar scenario: Supported scenarios for establishing mTLS connection. Required.
+     CLIENT_CERTIFICATE_VALIDATED_IF_PRESENTED.
+    :vartype scenario: str or ~azure.mgmt.cdn.models.CLIENT_CERTIFICATE_VALIDATED_IF_PRESENTED
+    """
+
+    secrets: list["_models.ResourceReference"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of one or two of Resource References (ie. subs/rg/profile/secret) to Secrets of type
+     MtlsCertificateChain to use in mutual TLS handshake as the trusted issuer certificate chain.
+     Required."""
+    allowed_fqdns: Optional[list[str]] = rest_field(
+        name="allowedFqdns", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of FQDNs that will be accepted for mutual TLS validation."""
+    certificate_revocation_check: Optional[Union[str, "_models.CertificateRevocationCheckEnabledState"]] = rest_field(
+        name="certificateRevocationCheck", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set to Enabled by default. If set to Disabled, revocation status of client certificate chain
+     will be checked before establishing mutual TLS connection. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    scenario: Literal[MtlsScenarioType.CLIENT_CERTIFICATE_VALIDATED_IF_PRESENTED] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Supported scenarios for establishing mTLS connection. Required.
+     CLIENT_CERTIFICATE_VALIDATED_IF_PRESENTED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        secrets: list["_models.ResourceReference"],
+        allowed_fqdns: Optional[list[str]] = None,
+        certificate_revocation_check: Optional[Union[str, "_models.CertificateRevocationCheckEnabledState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.scenario = MtlsScenarioType.CLIENT_CERTIFICATE_VALIDATED_IF_PRESENTED  # type: ignore
+
+
+class DeliveryRuleConditionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for delivery rule match conditions.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2732,7 +3245,7 @@ class DeliveryRuleConditionParameters(_Model):
 
 class ClientPortMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleClientPortConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for ClientPort match conditions.
 
     :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
@@ -2793,9 +3306,40 @@ class ClientPortMatchConditionParameters(
         self.type_name = DeliveryRuleConditionParametersType.DELIVERY_RULE_CLIENT_PORT_CONDITION_PARAMETERS  # type: ignore
 
 
+class CompleteMtlsPassthroughToOriginAdvancedSettings(
+    AFDDomainMtlsParameters, discriminator="CompleteMtlsPassthroughToOrigin"
+):  # pylint: disable=name-too-long
+    """Advanced settings for MtlsScenarioType enum value: CompleteMtlsPassthroughToOrigin.
+
+    :ivar scenario: Supported scenarios for establishing mTLS connection. Required.
+     COMPLETE_MTLS_PASSTHROUGH_TO_ORIGIN.
+    :vartype scenario: str or ~azure.mgmt.cdn.models.COMPLETE_MTLS_PASSTHROUGH_TO_ORIGIN
+    """
+
+    scenario: Literal[MtlsScenarioType.COMPLETE_MTLS_PASSTHROUGH_TO_ORIGIN] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Supported scenarios for establishing mTLS connection. Required.
+     COMPLETE_MTLS_PASSTHROUGH_TO_ORIGIN."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.scenario = MtlsScenarioType.COMPLETE_MTLS_PASSTHROUGH_TO_ORIGIN  # type: ignore
+
+
 class Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems(
     _Model
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems.
 
     :ivar date_time:
@@ -2830,7 +3374,7 @@ class Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesD
 
 class Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems(
     _Model
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems.
 
     :ivar date_time:
@@ -2865,7 +3409,7 @@ class Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesData
 
 class ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems(
     _Model
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems.
 
     :ivar metric:
@@ -2900,7 +3444,7 @@ class ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMet
         super().__init__(*args, **kwargs)
 
 
-class CompressionSettings(_Model):
+class CompressionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """settings for compression.
 
     :ivar content_types_to_compress: List of content types on which compression applies. The value
@@ -2944,7 +3488,7 @@ class CompressionSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContinentsResponse(_Model):
+class ContinentsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Continents Response.
 
     :ivar continents:
@@ -2980,7 +3524,7 @@ class ContinentsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContinentsResponseContinentsItem(_Model):
+class ContinentsResponseContinentsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContinentsResponseContinentsItem.
 
     :ivar id:
@@ -3007,7 +3551,7 @@ class ContinentsResponseContinentsItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContinentsResponseCountryOrRegionsItem(_Model):
+class ContinentsResponseCountryOrRegionsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContinentsResponseCountryOrRegionsItem.
 
     :ivar id:
@@ -3042,7 +3586,7 @@ class ContinentsResponseCountryOrRegionsItem(_Model):
 
 class CookiesMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleCookiesConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for Cookies match conditions.
 
     :ivar selector: Name of Cookies to be matched.
@@ -3107,7 +3651,7 @@ class CookiesMatchConditionParameters(
         self.type_name = DeliveryRuleConditionParametersType.DELIVERY_RULE_COOKIES_CONDITION_PARAMETERS  # type: ignore
 
 
-class CustomDomain(ProxyResource):
+class CustomDomain(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Friendly domain name mapping to the endpoint hostname that the customer provides for branding
     purposes, e.g. `www.contoso.com <http://www.contoso.com>`_.
 
@@ -3177,7 +3721,7 @@ class CustomDomain(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CustomDomainParameters(_Model):
+class CustomDomainParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The customDomain JSON object required for custom domain creation or update.
 
     :ivar properties: The JSON object that contains the properties of the custom domain to create.
@@ -3227,7 +3771,7 @@ class CustomDomainParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CustomDomainProperties(_Model):
+class CustomDomainProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the custom domain to create.
 
     :ivar host_name: The host name of the custom domain. Must be a domain name. Required.
@@ -3315,7 +3859,7 @@ class CustomDomainProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomDomainPropertiesParameters(_Model):
+class CustomDomainPropertiesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the custom domain to create.
 
     :ivar host_name: The host name of the custom domain. Must be a domain name. Required.
@@ -3343,7 +3887,9 @@ class CustomDomainPropertiesParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomerCertificateParameters(SecretParameters, discriminator="CustomerCertificate"):
+class CustomerCertificateParameters(
+    SecretParameters, discriminator="CustomerCertificate"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customer Certificate used for https.
 
     :ivar secret_source: Resource reference to the Azure Key Vault certificate. Expected to be in
@@ -3417,7 +3963,7 @@ class CustomerCertificateParameters(SecretParameters, discriminator="CustomerCer
         self.type = SecretType.CUSTOMER_CERTIFICATE  # type: ignore
 
 
-class CustomRule(_Model):
+class CustomRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the common attributes for a custom rule that can be included in a waf policy.
 
     :ivar name: Defines the name of the custom rule. Required.
@@ -3474,7 +4020,7 @@ class CustomRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomRuleList(_Model):
+class CustomRuleList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines contents of custom rules.
 
     :ivar rules: List of rules.
@@ -3502,7 +4048,7 @@ class CustomRuleList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeepCreatedCustomDomain(_Model):
+class DeepCreatedCustomDomain(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom domains created on the CDN endpoint.
 
     :ivar name: Custom domain name. Required.
@@ -3557,7 +4103,7 @@ class DeepCreatedCustomDomain(_Model):
             super().__setattr__(key, value)
 
 
-class DeepCreatedCustomDomainProperties(_Model):
+class DeepCreatedCustomDomainProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the custom domain created on the CDN endpoint.
 
     :ivar host_name: The host name of the custom domain. Must be a domain name. Required.
@@ -3596,7 +4142,7 @@ class DeepCreatedCustomDomainProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeepCreatedOrigin(_Model):
+class DeepCreatedOrigin(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The main origin of CDN content which is added when creating a CDN endpoint.
 
     :ivar name: Origin name which must be unique within the endpoint. Required.
@@ -3664,7 +4210,7 @@ class DeepCreatedOrigin(_Model):
             super().__setattr__(key, value)
 
 
-class DeepCreatedOriginGroup(_Model):
+class DeepCreatedOriginGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The origin group for CDN content which is added when creating a CDN endpoint. Traffic is sent
     to the origins within the origin group based on origin health.
 
@@ -3725,7 +4271,7 @@ class DeepCreatedOriginGroup(_Model):
             super().__setattr__(key, value)
 
 
-class DeepCreatedOriginGroupProperties(_Model):
+class DeepCreatedOriginGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the origin group created on the CDN endpoint.
 
     :ivar health_probe_settings: Health probe settings to the origin that is used to determine the
@@ -3789,7 +4335,7 @@ class DeepCreatedOriginGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeepCreatedOriginProperties(_Model):
+class DeepCreatedOriginProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the origin created on the CDN endpoint.
 
     :ivar host_name: The address of the origin. It can be a domain name, IPv4 address, or IPv6
@@ -3904,7 +4450,7 @@ class DeepCreatedOriginProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeliveryRule(_Model):
+class DeliveryRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule that specifies a set of actions and conditions.
 
     :ivar name: Name of the rule.
@@ -3956,47 +4502,9 @@ class DeliveryRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeliveryRuleAction(_Model):
-    """An action for the delivery rule.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DeliveryRuleCacheExpirationAction, DeliveryRuleCacheKeyQueryStringAction,
-    DeliveryRuleRequestHeaderAction, DeliveryRuleResponseHeaderAction, OriginGroupOverrideAction,
-    DeliveryRuleRouteConfigurationOverrideAction, UrlRedirectAction, UrlRewriteAction,
-    UrlSigningAction
-
-    :ivar name: The name of the action for the delivery rule. Required. Known values are:
-     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
-     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
-     "RouteConfigurationOverride".
-    :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    name: str = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the action for the delivery rule. Required. Known values are: \"CacheExpiration\",
-     \"CacheKeyQueryString\", \"ModifyRequestHeader\", \"ModifyResponseHeader\", \"UrlRedirect\",
-     \"UrlRewrite\", \"UrlSigning\", \"OriginGroupOverride\", and \"RouteConfigurationOverride\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeliveryRuleCacheExpirationAction(DeliveryRuleAction, discriminator="CacheExpiration"):
+class DeliveryRuleCacheExpirationAction(
+    DeliveryRuleAction, discriminator="CacheExpiration"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the cache expiration action for the delivery rule.
 
     :ivar parameters: Defines the parameters for the action. Required.
@@ -4031,7 +4539,9 @@ class DeliveryRuleCacheExpirationAction(DeliveryRuleAction, discriminator="Cache
         self.name = DeliveryRuleActionEnum.CACHE_EXPIRATION  # type: ignore
 
 
-class DeliveryRuleCacheKeyQueryStringAction(DeliveryRuleAction, discriminator="CacheKeyQueryString"):
+class DeliveryRuleCacheKeyQueryStringAction(
+    DeliveryRuleAction, discriminator="CacheKeyQueryString"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the cache-key query string action for the delivery rule.
 
     :ivar parameters: Defines the parameters for the action. Required.
@@ -4066,7 +4576,7 @@ class DeliveryRuleCacheKeyQueryStringAction(DeliveryRuleAction, discriminator="C
         self.name = DeliveryRuleActionEnum.CACHE_KEY_QUERY_STRING  # type: ignore
 
 
-class DeliveryRuleCondition(_Model):
+class DeliveryRuleCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A condition for the delivery rule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4113,7 +4623,9 @@ class DeliveryRuleCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeliveryRuleClientPortCondition(DeliveryRuleCondition, discriminator="ClientPort"):
+class DeliveryRuleClientPortCondition(
+    DeliveryRuleCondition, discriminator="ClientPort"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the ClientPort condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4148,7 +4660,9 @@ class DeliveryRuleClientPortCondition(DeliveryRuleCondition, discriminator="Clie
         self.name = MatchVariable.CLIENT_PORT  # type: ignore
 
 
-class DeliveryRuleCookiesCondition(DeliveryRuleCondition, discriminator="Cookies"):
+class DeliveryRuleCookiesCondition(
+    DeliveryRuleCondition, discriminator="Cookies"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the Cookies condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4183,7 +4697,55 @@ class DeliveryRuleCookiesCondition(DeliveryRuleCondition, discriminator="Cookies
         self.name = MatchVariable.COOKIES  # type: ignore
 
 
-class DeliveryRuleHostNameCondition(DeliveryRuleCondition, discriminator="HostName"):
+class DeliveryRuleEdgeActionParameters(
+    DeliveryRuleActionParameters, discriminator="DeliveryRuleEdgeActionParameters"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the parameters for the edge action.
+
+    :ivar edge_action_reference: defines the edge action that will be invoked. Required.
+    :vartype edge_action_reference: ~azure.mgmt.cdn.models.ResourceReference
+    :ivar invocation_point: Defines at which point in the request processing pipeline the edge
+     action will be invoked. Required. Known values are: "ClientRequest" and "OriginRequest".
+    :vartype invocation_point: str or ~azure.mgmt.cdn.models.InvocationPoint
+    :ivar type_name: Required. DELIVERY_RULE_EDGE_ACTION_PARAMETERS.
+    :vartype type_name: str or ~azure.mgmt.cdn.models.DELIVERY_RULE_EDGE_ACTION_PARAMETERS
+    """
+
+    edge_action_reference: "_models.ResourceReference" = rest_field(
+        name="edgeActionReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """defines the edge action that will be invoked. Required."""
+    invocation_point: Union[str, "_models.InvocationPoint"] = rest_field(
+        name="invocationPoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines at which point in the request processing pipeline the edge action will be invoked.
+     Required. Known values are: \"ClientRequest\" and \"OriginRequest\"."""
+    type_name: Literal[DeliveryRuleActionParametersType.DELIVERY_RULE_EDGE_ACTION_PARAMETERS] = rest_discriminator(name="typeName", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. DELIVERY_RULE_EDGE_ACTION_PARAMETERS."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        edge_action_reference: "_models.ResourceReference",
+        invocation_point: Union[str, "_models.InvocationPoint"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type_name = DeliveryRuleActionParametersType.DELIVERY_RULE_EDGE_ACTION_PARAMETERS  # type: ignore
+
+
+class DeliveryRuleHostNameCondition(
+    DeliveryRuleCondition, discriminator="HostName"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the HostName condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4218,7 +4780,9 @@ class DeliveryRuleHostNameCondition(DeliveryRuleCondition, discriminator="HostNa
         self.name = MatchVariable.HOST_NAME  # type: ignore
 
 
-class DeliveryRuleHttpVersionCondition(DeliveryRuleCondition, discriminator="HttpVersion"):
+class DeliveryRuleHttpVersionCondition(
+    DeliveryRuleCondition, discriminator="HttpVersion"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the HttpVersion condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4253,7 +4817,9 @@ class DeliveryRuleHttpVersionCondition(DeliveryRuleCondition, discriminator="Htt
         self.name = MatchVariable.HTTP_VERSION  # type: ignore
 
 
-class DeliveryRuleIsDeviceCondition(DeliveryRuleCondition, discriminator="IsDevice"):
+class DeliveryRuleIsDeviceCondition(
+    DeliveryRuleCondition, discriminator="IsDevice"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the IsDevice condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4288,7 +4854,9 @@ class DeliveryRuleIsDeviceCondition(DeliveryRuleCondition, discriminator="IsDevi
         self.name = MatchVariable.IS_DEVICE  # type: ignore
 
 
-class DeliveryRulePostArgsCondition(DeliveryRuleCondition, discriminator="PostArgs"):
+class DeliveryRulePostArgsCondition(
+    DeliveryRuleCondition, discriminator="PostArgs"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the PostArgs condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4323,7 +4891,9 @@ class DeliveryRulePostArgsCondition(DeliveryRuleCondition, discriminator="PostAr
         self.name = MatchVariable.POST_ARGS  # type: ignore
 
 
-class DeliveryRuleQueryStringCondition(DeliveryRuleCondition, discriminator="QueryString"):
+class DeliveryRuleQueryStringCondition(
+    DeliveryRuleCondition, discriminator="QueryString"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the QueryString condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4358,7 +4928,9 @@ class DeliveryRuleQueryStringCondition(DeliveryRuleCondition, discriminator="Que
         self.name = MatchVariable.QUERY_STRING  # type: ignore
 
 
-class DeliveryRuleRemoteAddressCondition(DeliveryRuleCondition, discriminator="RemoteAddress"):
+class DeliveryRuleRemoteAddressCondition(
+    DeliveryRuleCondition, discriminator="RemoteAddress"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the RemoteAddress condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4393,7 +4965,9 @@ class DeliveryRuleRemoteAddressCondition(DeliveryRuleCondition, discriminator="R
         self.name = MatchVariable.REMOTE_ADDRESS  # type: ignore
 
 
-class DeliveryRuleRequestBodyCondition(DeliveryRuleCondition, discriminator="RequestBody"):
+class DeliveryRuleRequestBodyCondition(
+    DeliveryRuleCondition, discriminator="RequestBody"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the RequestBody condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4428,7 +5002,9 @@ class DeliveryRuleRequestBodyCondition(DeliveryRuleCondition, discriminator="Req
         self.name = MatchVariable.REQUEST_BODY  # type: ignore
 
 
-class DeliveryRuleRequestHeaderAction(DeliveryRuleAction, discriminator="ModifyRequestHeader"):
+class DeliveryRuleRequestHeaderAction(
+    DeliveryRuleAction, discriminator="ModifyRequestHeader"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the request header action for the delivery rule.
 
     :ivar parameters: Defines the parameters for the action. Required.
@@ -4463,7 +5039,9 @@ class DeliveryRuleRequestHeaderAction(DeliveryRuleAction, discriminator="ModifyR
         self.name = DeliveryRuleActionEnum.MODIFY_REQUEST_HEADER  # type: ignore
 
 
-class DeliveryRuleRequestHeaderCondition(DeliveryRuleCondition, discriminator="RequestHeader"):
+class DeliveryRuleRequestHeaderCondition(
+    DeliveryRuleCondition, discriminator="RequestHeader"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the RequestHeader condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4498,7 +5076,9 @@ class DeliveryRuleRequestHeaderCondition(DeliveryRuleCondition, discriminator="R
         self.name = MatchVariable.REQUEST_HEADER  # type: ignore
 
 
-class DeliveryRuleRequestMethodCondition(DeliveryRuleCondition, discriminator="RequestMethod"):
+class DeliveryRuleRequestMethodCondition(
+    DeliveryRuleCondition, discriminator="RequestMethod"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the RequestMethod condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4533,7 +5113,9 @@ class DeliveryRuleRequestMethodCondition(DeliveryRuleCondition, discriminator="R
         self.name = MatchVariable.REQUEST_METHOD  # type: ignore
 
 
-class DeliveryRuleRequestSchemeCondition(DeliveryRuleCondition, discriminator="RequestScheme"):
+class DeliveryRuleRequestSchemeCondition(
+    DeliveryRuleCondition, discriminator="RequestScheme"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the RequestScheme condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4568,7 +5150,9 @@ class DeliveryRuleRequestSchemeCondition(DeliveryRuleCondition, discriminator="R
         self.name = MatchVariable.REQUEST_SCHEME  # type: ignore
 
 
-class DeliveryRuleRequestUriCondition(DeliveryRuleCondition, discriminator="RequestUri"):
+class DeliveryRuleRequestUriCondition(
+    DeliveryRuleCondition, discriminator="RequestUri"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the RequestUri condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4603,7 +5187,9 @@ class DeliveryRuleRequestUriCondition(DeliveryRuleCondition, discriminator="Requ
         self.name = MatchVariable.REQUEST_URI  # type: ignore
 
 
-class DeliveryRuleResponseHeaderAction(DeliveryRuleAction, discriminator="ModifyResponseHeader"):
+class DeliveryRuleResponseHeaderAction(
+    DeliveryRuleAction, discriminator="ModifyResponseHeader"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the response header action for the delivery rule.
 
     :ivar parameters: Defines the parameters for the action. Required.
@@ -4640,7 +5226,7 @@ class DeliveryRuleResponseHeaderAction(DeliveryRuleAction, discriminator="Modify
 
 class DeliveryRuleRouteConfigurationOverrideAction(
     DeliveryRuleAction, discriminator="RouteConfigurationOverride"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Defines the route configuration override action for the delivery rule. Only applicable to
     Frontdoor Standard/Premium Profiles.
 
@@ -4677,7 +5263,9 @@ class DeliveryRuleRouteConfigurationOverrideAction(
         self.name = DeliveryRuleActionEnum.ROUTE_CONFIGURATION_OVERRIDE  # type: ignore
 
 
-class DeliveryRuleServerPortCondition(DeliveryRuleCondition, discriminator="ServerPort"):
+class DeliveryRuleServerPortCondition(
+    DeliveryRuleCondition, discriminator="ServerPort"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the ServerPort condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4712,7 +5300,9 @@ class DeliveryRuleServerPortCondition(DeliveryRuleCondition, discriminator="Serv
         self.name = MatchVariable.SERVER_PORT  # type: ignore
 
 
-class DeliveryRuleSocketAddrCondition(DeliveryRuleCondition, discriminator="SocketAddr"):
+class DeliveryRuleSocketAddrCondition(
+    DeliveryRuleCondition, discriminator="SocketAddr"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the SocketAddress condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4747,7 +5337,9 @@ class DeliveryRuleSocketAddrCondition(DeliveryRuleCondition, discriminator="Sock
         self.name = MatchVariable.SOCKET_ADDR  # type: ignore
 
 
-class DeliveryRuleSslProtocolCondition(DeliveryRuleCondition, discriminator="SslProtocol"):
+class DeliveryRuleSslProtocolCondition(
+    DeliveryRuleCondition, discriminator="SslProtocol"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the SslProtocol condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4782,7 +5374,9 @@ class DeliveryRuleSslProtocolCondition(DeliveryRuleCondition, discriminator="Ssl
         self.name = MatchVariable.SSL_PROTOCOL  # type: ignore
 
 
-class DeliveryRuleUrlFileExtensionCondition(DeliveryRuleCondition, discriminator="UrlFileExtension"):
+class DeliveryRuleUrlFileExtensionCondition(
+    DeliveryRuleCondition, discriminator="UrlFileExtension"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the UrlFileExtension condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4817,7 +5411,9 @@ class DeliveryRuleUrlFileExtensionCondition(DeliveryRuleCondition, discriminator
         self.name = MatchVariable.URL_FILE_EXTENSION  # type: ignore
 
 
-class DeliveryRuleUrlFileNameCondition(DeliveryRuleCondition, discriminator="UrlFileName"):
+class DeliveryRuleUrlFileNameCondition(
+    DeliveryRuleCondition, discriminator="UrlFileName"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the UrlFileName condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4852,7 +5448,9 @@ class DeliveryRuleUrlFileNameCondition(DeliveryRuleCondition, discriminator="Url
         self.name = MatchVariable.URL_FILE_NAME  # type: ignore
 
 
-class DeliveryRuleUrlPathCondition(DeliveryRuleCondition, discriminator="UrlPath"):
+class DeliveryRuleUrlPathCondition(
+    DeliveryRuleCondition, discriminator="UrlPath"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the UrlPath condition for the delivery rule.
 
     :ivar parameters: Defines the parameters for the condition. Required.
@@ -4887,7 +5485,7 @@ class DeliveryRuleUrlPathCondition(DeliveryRuleCondition, discriminator="UrlPath
         self.name = MatchVariable.URL_PATH  # type: ignore
 
 
-class DimensionProperties(_Model):
+class DimensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Type of operation: get, read, delete, etc.
 
     :ivar name: Name of dimension.
@@ -4944,7 +5542,44 @@ class DomainValidationProperties(_Model):
     """The date time that the token expires."""
 
 
-class EdgeNode(ProxyResource):
+class EdgeAction(
+    DeliveryRuleAction, discriminator="EdgeAction"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the edge action for the delivery rule.
+
+    :ivar parameters: Defines the parameters for the action. Required.
+    :vartype parameters: ~azure.mgmt.cdn.models.DeliveryRuleEdgeActionParameters
+    :ivar name: The name of the action for the delivery rule. Required. EDGE_ACTION.
+    :vartype name: str or ~azure.mgmt.cdn.models.EDGE_ACTION
+    """
+
+    parameters: "_models.DeliveryRuleEdgeActionParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the parameters for the action. Required."""
+    name: Literal[DeliveryRuleActionEnum.EDGE_ACTION] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The name of the action for the delivery rule. Required. EDGE_ACTION."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: "_models.DeliveryRuleEdgeActionParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = DeliveryRuleActionEnum.EDGE_ACTION  # type: ignore
+
+
+class EdgeNode(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Edgenode is a global Point of Presence (POP) location used to deliver CDN content to end users.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5005,7 +5640,7 @@ class EdgeNode(ProxyResource):
             super().__setattr__(key, value)
 
 
-class EdgeNodeProperties(_Model):
+class EdgeNodeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties required to create an edgenode.
 
     :ivar ip_address_groups: List of ip address groups. Required.
@@ -5035,7 +5670,7 @@ class EdgeNodeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Endpoint(TrackedResource):
+class Endpoint(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CDN endpoint is the entity within a CDN profile containing configuration information such as
     origin, protocol, content caching and delivery behavior. The CDN endpoint uses the URL format
     <endpointname>.azureedge.net.
@@ -5125,7 +5760,7 @@ class Endpoint(TrackedResource):
             super().__setattr__(key, value)
 
 
-class EndpointPropertiesUpdateParameters(_Model):
+class EndpointPropertiesUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object containing endpoint update parameters.
 
     :ivar origin_path: A directory path on the origin that CDN can use to retrieve content from,
@@ -5290,7 +5925,9 @@ class EndpointPropertiesUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointProperties(EndpointPropertiesUpdateParameters):
+class EndpointProperties(
+    EndpointPropertiesUpdateParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties required to create an endpoint.
 
     :ivar origin_path: A directory path on the origin that CDN can use to retrieve content from,
@@ -5424,7 +6061,9 @@ class EndpointProperties(EndpointPropertiesUpdateParameters):
         super().__init__(*args, **kwargs)
 
 
-class EndpointPropertiesUpdateParametersDeliveryPolicy(_Model):  # pylint: disable=name-too-long
+class EndpointPropertiesUpdateParametersDeliveryPolicy(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A policy that specifies the delivery rules to be used for an endpoint.
 
     :ivar description: User-friendly description of the policy.
@@ -5457,7 +6096,9 @@ class EndpointPropertiesUpdateParametersDeliveryPolicy(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink(_Model):  # pylint: disable=name-too-long
+class EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Defines the Web Application Firewall policy for the endpoint (if applicable).
 
     :ivar id: Resource ID.
@@ -5485,7 +6126,7 @@ class EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink(_Model)
         super().__init__(*args, **kwargs)
 
 
-class EndpointUpdateParameters(_Model):
+class EndpointUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties required to create or update an endpoint.
 
     :ivar tags: Endpoint tags.
@@ -5599,7 +6240,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -5627,7 +6268,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GeoFilter(_Model):
+class GeoFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rules defining user's geo access within a CDN endpoint.
 
     :ivar relative_path: Relative path applicable to geo filter. (e.g. '/mypictures',
@@ -5675,7 +6316,9 @@ class GeoFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HeaderActionParameters(DeliveryRuleActionParameters, discriminator="DeliveryRuleHeaderActionParameters"):
+class HeaderActionParameters(
+    DeliveryRuleActionParameters, discriminator="DeliveryRuleHeaderActionParameters"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for the request header action.
 
     :ivar header_action: Action to perform. Required. Known values are: "Append", "Overwrite", and
@@ -5721,7 +6364,7 @@ class HeaderActionParameters(DeliveryRuleActionParameters, discriminator="Delive
         self.type_name = DeliveryRuleActionParametersType.DELIVERY_RULE_HEADER_ACTION_PARAMETERS  # type: ignore
 
 
-class HealthProbeParameters(_Model):
+class HealthProbeParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties to send health probes to origin.
 
     :ivar probe_path: The path relative to the origin that is used to determine the health of the
@@ -5776,7 +6419,7 @@ class HealthProbeParameters(_Model):
 
 class HostNameMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleHostNameConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for HostName match conditions.
 
     :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
@@ -5836,7 +6479,7 @@ class HostNameMatchConditionParameters(
         self.type_name = DeliveryRuleConditionParametersType.DELIVERY_RULE_HOST_NAME_CONDITION_PARAMETERS  # type: ignore
 
 
-class HttpErrorRangeParameters(_Model):
+class HttpErrorRangeParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that represents the range for http status codes.
 
     :ivar begin: The inclusive start of the http status code range.
@@ -5871,7 +6514,7 @@ class HttpErrorRangeParameters(_Model):
 
 class HttpVersionMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleHttpVersionConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for HttpVersion match conditions.
 
     :ivar operator: Describes operator to be matched. Required. "Equal"
@@ -5928,7 +6571,7 @@ class HttpVersionMatchConditionParameters(
         self.type_name = DeliveryRuleConditionParametersType.DELIVERY_RULE_HTTP_VERSION_CONDITION_PARAMETERS  # type: ignore
 
 
-class IpAddressGroup(_Model):
+class IpAddressGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CDN Ip address group.
 
     :ivar delivery_region: The delivery region of the ip address group.
@@ -5974,7 +6617,7 @@ class IpAddressGroup(_Model):
 
 class IsDeviceMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleIsDeviceConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for IsDevice match conditions.
 
     :ivar operator: Describes operator to be matched. Required. "Equal"
@@ -6033,7 +6676,7 @@ class IsDeviceMatchConditionParameters(
 
 class KeyVaultCertificateSourceParameters(
     CertificateSourceParameters, discriminator="KeyVaultCertificateSourceParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the parameters for using a user's KeyVault certificate for securing custom domain.
 
     :ivar subscription_id: Subscription Id of the user's Key Vault containing the SSL certificate.
@@ -6111,7 +6754,7 @@ class KeyVaultCertificateSourceParameters(
         self.type_name = CertificateSourceParametersType.KEY_VAULT_CERTIFICATE_SOURCE_PARAMETERS  # type: ignore
 
 
-class KeyVaultSigningKeyParameters(_Model):
+class KeyVaultSigningKeyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the parameters for using a user's KeyVault for URL Signing Key.
 
     :ivar type_name: Required. "KeyVaultSigningKeyParameters"
@@ -6169,7 +6812,7 @@ class KeyVaultSigningKeyParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoadBalancingSettingsParameters(_Model):
+class LoadBalancingSettingsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Round-Robin load balancing settings for a backend pool.
 
     :ivar sample_size: The number of samples to consider for load balancing decisions.
@@ -6215,7 +6858,7 @@ class LoadBalancingSettingsParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoadParameters(_Model):
+class LoadParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters required for content load.
 
     :ivar content_paths: The path to the content to be loaded. Path should be a relative file URL
@@ -6247,7 +6890,7 @@ class LoadParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogSpecification(_Model):
+class LogSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Log specification of operation.
 
     :ivar name: Name of log specification.
@@ -6365,7 +7008,7 @@ class ManagedRuleGroupDefinition(_Model):
     """List of rules within the managed rule group."""
 
 
-class ManagedRuleGroupOverride(_Model):
+class ManagedRuleGroupOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a managed rule group override setting.
 
     :ivar rule_group_name: Describes the managed rule group within the rule set to override.
@@ -6402,7 +7045,7 @@ class ManagedRuleGroupOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedRuleOverride(_Model):
+class ManagedRuleOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a managed rule group override setting.
 
     :ivar rule_id: Identifier for the managed rule. Required.
@@ -6448,7 +7091,7 @@ class ManagedRuleOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedRuleSet(_Model):
+class ManagedRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a managed rule set.
 
     :ivar rule_set_type: Defines the rule set type to use. Required.
@@ -6499,7 +7142,7 @@ class ManagedRuleSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedRuleSetDefinition(Resource):
+class ManagedRuleSetDefinition(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a managed rule set definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6592,7 +7235,7 @@ class ManagedRuleSetDefinitionProperties(_Model):
     """Rule groups of the managed rule set."""
 
 
-class ManagedRuleSetList(_Model):
+class ManagedRuleSetList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the list of managed rule sets for the policy.
 
     :ivar managed_rule_sets: List of rule sets.
@@ -6622,7 +7265,7 @@ class ManagedRuleSetList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -6673,7 +7316,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MatchCondition(_Model):
+class MatchCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Define match conditions.
 
     :ivar match_variable: Match variable to compare against. Required. Known values are:
@@ -6741,7 +7384,7 @@ class MatchCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricAvailability(_Model):
+class MetricAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Retention policy of a resource metric.
 
     :ivar time_grain:
@@ -6774,7 +7417,7 @@ class MetricAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricSpecification(_Model):
+class MetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metric specification of operation.
 
     :ivar name: Name of metric specification.
@@ -6871,7 +7514,7 @@ class MetricSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricsResponse(_Model):
+class MetricsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metrics Response.
 
     :ivar date_time_begin:
@@ -6919,7 +7562,7 @@ class MetricsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricsResponseSeriesItem(_Model):
+class MetricsResponseSeriesItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MetricsResponseSeriesItem.
 
     :ivar metric:
@@ -6968,7 +7611,7 @@ class MetricsResponseSeriesItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricsResponseSeriesPropertiesItemsItem(_Model):
+class MetricsResponseSeriesPropertiesItemsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MetricsResponseSeriesPropertiesItemsItem.
 
     :ivar name:
@@ -6999,7 +7642,7 @@ class MetricsResponseSeriesPropertiesItemsItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrateResult(_Model):
+class MigrateResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result for migrate operation.
 
     :ivar id: Resource ID.
@@ -7069,7 +7712,7 @@ class MigrateResultProperties(_Model):
     """Arm resource id of the migrated profile."""
 
 
-class MigrationEndpointMapping(_Model):
+class MigrationEndpointMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CDN Endpoint Mapping.
 
     :ivar migrated_from: Name of the classic CDN profile endpoint.
@@ -7132,7 +7775,7 @@ class MigrationErrorType(_Model):
     """Describes what needs to be done to fix the problem."""
 
 
-class MigrationParameters(_Model):
+class MigrationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for Migrate operation.
 
     :ivar sku: Sku for the migration. Required.
@@ -7186,7 +7829,7 @@ class MigrationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrationWebApplicationFirewallMapping(_Model):
+class MigrationWebApplicationFirewallMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Web Application Firewall Mapping.
 
     :ivar migrated_from: Migration From Waf policy.
@@ -7223,7 +7866,7 @@ class MigrationWebApplicationFirewallMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CDN REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -7318,7 +7961,7 @@ class OperationDisplay(_Model):
     """Description of operation."""
 
 
-class OperationProperties(_Model):
+class OperationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of operation, include metric specifications.
 
     :ivar service_specification: One property of operation, include metric specifications.
@@ -7348,7 +7991,7 @@ class OperationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Origin(ProxyResource):
+class Origin(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CDN origin is the source of the content being delivered via CDN. When the edge nodes
     represented by an endpoint do not have the requested content cached, they attempt to fetch it
     from one or more of the configured origins.
@@ -7426,7 +8069,7 @@ class Origin(ProxyResource):
             super().__setattr__(key, value)
 
 
-class OriginAuthenticationProperties(_Model):
+class OriginAuthenticationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the origin authentication settings.
 
     :ivar type: The type of the authentication for the origin. Known values are:
@@ -7439,6 +8082,12 @@ class OriginAuthenticationProperties(_Model):
      Blob Storage, scope could be "`https://storage.azure.com/.default
      <https://storage.azure.com/.default>`_".
     :vartype scope: str
+    :ivar token_destination_header: The HTTP request header where the origin authentication token
+     will be placed when forwarding the request to the origin. If not specified, the service will
+     use the ``Authorization`` header for backward compatibility. Known values are: "Authorization"
+     and "X-Azure-Authorization".
+    :vartype token_destination_header: str or
+     ~azure.mgmt.cdn.models.OriginAuthenticationTokenDestinationHeader
     """
 
     type: Optional[Union[str, "_models.OriginAuthenticationType"]] = rest_field(
@@ -7454,6 +8103,12 @@ class OriginAuthenticationProperties(_Model):
     scope: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The scope used when requesting token from Microsoft Entra. For example, for Azure Blob Storage,
      scope could be \"`https://storage.azure.com/.default <https://storage.azure.com/.default>`_\"."""
+    token_destination_header: Optional[Union[str, "_models.OriginAuthenticationTokenDestinationHeader"]] = rest_field(
+        name="tokenDestinationHeader", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The HTTP request header where the origin authentication token will be placed when forwarding
+     the request to the origin. If not specified, the service will use the ``Authorization`` header
+     for backward compatibility. Known values are: \"Authorization\" and \"X-Azure-Authorization\"."""
 
     @overload
     def __init__(
@@ -7462,6 +8117,7 @@ class OriginAuthenticationProperties(_Model):
         type: Optional[Union[str, "_models.OriginAuthenticationType"]] = None,
         user_assigned_identity: Optional["_models.ResourceReference"] = None,
         scope: Optional[str] = None,
+        token_destination_header: Optional[Union[str, "_models.OriginAuthenticationTokenDestinationHeader"]] = None,
     ) -> None: ...
 
     @overload
@@ -7475,7 +8131,7 @@ class OriginAuthenticationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OriginGroup(ProxyResource):
+class OriginGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Origin group comprising of origins is used for load balancing to origins when the content
     cannot be served from CDN.
 
@@ -7544,7 +8200,7 @@ class OriginGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class OriginGroupOverride(_Model):
+class OriginGroupOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for the origin group override configuration.
 
     :ivar origin_group: defines the OriginGroup that would override the DefaultOriginGroup on
@@ -7584,7 +8240,9 @@ class OriginGroupOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OriginGroupOverrideAction(DeliveryRuleAction, discriminator="OriginGroupOverride"):
+class OriginGroupOverrideAction(
+    DeliveryRuleAction, discriminator="OriginGroupOverride"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the origin group override action for the delivery rule.
 
     :ivar parameters: Defines the parameters for the action. Required.
@@ -7621,7 +8279,7 @@ class OriginGroupOverrideAction(DeliveryRuleAction, discriminator="OriginGroupOv
 
 class OriginGroupOverrideActionParameters(
     DeliveryRuleActionParameters, discriminator="DeliveryRuleOriginGroupOverrideActionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for the origin group override action.
 
     :ivar origin_group: defines the OriginGroup that would override the DefaultOriginGroup.
@@ -7658,7 +8316,7 @@ class OriginGroupOverrideActionParameters(
         self.type_name = DeliveryRuleActionParametersType.DELIVERY_RULE_ORIGIN_GROUP_OVERRIDE_ACTION_PARAMETERS  # type: ignore
 
 
-class OriginGroupUpdatePropertiesParameters(_Model):
+class OriginGroupUpdatePropertiesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the origin group.
 
     :ivar health_probe_settings: Health probe settings to the origin that is used to determine the
@@ -7723,7 +8381,9 @@ class OriginGroupUpdatePropertiesParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OriginGroupProperties(OriginGroupUpdatePropertiesParameters):
+class OriginGroupProperties(
+    OriginGroupUpdatePropertiesParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the origin group.
 
     :ivar health_probe_settings: Health probe settings to the origin that is used to determine the
@@ -7782,7 +8442,7 @@ class OriginGroupProperties(OriginGroupUpdatePropertiesParameters):
         super().__init__(*args, **kwargs)
 
 
-class OriginGroupUpdateParameters(_Model):
+class OriginGroupUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Origin group properties needed for origin group creation or update.
 
     :ivar properties: The JSON object that contains the properties of the origin group.
@@ -7837,7 +8497,7 @@ class OriginGroupUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class OriginUpdatePropertiesParameters(_Model):
+class OriginUpdatePropertiesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the origin.
 
     :ivar host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
@@ -7944,7 +8604,7 @@ class OriginUpdatePropertiesParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OriginProperties(OriginUpdatePropertiesParameters):
+class OriginProperties(OriginUpdatePropertiesParameters):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the origin.
 
     :ivar http_port: The value of the HTTP port. Must be between 1 and 65535.
@@ -8037,7 +8697,7 @@ class OriginProperties(OriginUpdatePropertiesParameters):
         super().__init__(*args, **kwargs)
 
 
-class OriginUpdateParameters(_Model):
+class OriginUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Origin properties needed for origin update.
 
     :ivar properties: The JSON object that contains the properties of the origin.
@@ -8099,7 +8759,7 @@ class OriginUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class PolicySettings(_Model):
+class PolicySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines contents of a web application firewall global configuration.
 
     :ivar enabled_state: describes if the policy is in enabled state or disabled state. Known
@@ -8174,7 +8834,7 @@ class PolicySettings(_Model):
 
 class PostArgsMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRulePostArgsConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for PostArgs match conditions.
 
     :ivar selector: Name of PostArg to be matched.
@@ -8239,7 +8899,7 @@ class PostArgsMatchConditionParameters(
         self.type_name = DeliveryRuleConditionParametersType.DELIVERY_RULE_POST_ARGS_CONDITION_PARAMETERS  # type: ignore
 
 
-class Profile(TrackedResource):
+class Profile(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A profile is a logical grouping of endpoints that share the same settings.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8333,7 +8993,7 @@ class Profile(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ProfileChangeSkuWafMapping(_Model):
+class ProfileChangeSkuWafMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters required for profile upgrade.
 
     :ivar security_policy_name: The security policy name. Required.
@@ -8370,7 +9030,7 @@ class ProfileChangeSkuWafMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProfileLogScrubbing(_Model):
+class ProfileLogScrubbing(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines rules that scrub sensitive fields in the Azure Front Door profile logs.
 
     :ivar state: State of the log scrubbing config. Default value is Enabled. Known values are:
@@ -8410,7 +9070,7 @@ class ProfileLogScrubbing(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProfileProperties(_Model):
+class ProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties required to create a profile.
 
     :ivar resource_state: Resource status of the profile. Known values are: "Creating", "Active",
@@ -8476,7 +9136,7 @@ class ProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProfilePropertiesUpdateParameters(_Model):
+class ProfilePropertiesUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object containing profile update parameters.
 
     :ivar origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
@@ -8515,7 +9175,7 @@ class ProfilePropertiesUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProfileScrubbingRules(_Model):
+class ProfileScrubbingRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the contents of the log scrubbing rules.
 
     :ivar match_variable: The variable to be scrubbed from the logs. Required. Known values are:
@@ -8572,7 +9232,7 @@ class ProfileScrubbingRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProfileUpdateParameters(_Model):
+class ProfileUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties required to update a profile.
 
     :ivar tags: Profile tags.
@@ -8634,7 +9294,7 @@ class ProfileUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ProfileUpgradeParameters(_Model):
+class ProfileUpgradeParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters required for profile upgrade.
 
     :ivar waf_mapping_list: Web Application Firewall (WAF) and security policy mapping for the
@@ -8665,7 +9325,7 @@ class ProfileUpgradeParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PurgeParameters(_Model):
+class PurgeParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters required for content purge.
 
     :ivar content_paths: The path to the content to be purged. Can describe a file path or a wild
@@ -8699,7 +9359,7 @@ class PurgeParameters(_Model):
 
 class QueryStringMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleQueryStringConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for QueryString match conditions.
 
     :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
@@ -8760,7 +9420,7 @@ class QueryStringMatchConditionParameters(
         self.type_name = DeliveryRuleConditionParametersType.DELIVERY_RULE_QUERY_STRING_CONDITION_PARAMETERS  # type: ignore
 
 
-class RankingsResponse(_Model):
+class RankingsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rankings Response.
 
     :ivar date_time_begin:
@@ -8801,7 +9461,7 @@ class RankingsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RankingsResponseTablesItem(_Model):
+class RankingsResponseTablesItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RankingsResponseTablesItem.
 
     :ivar ranking:
@@ -8834,7 +9494,9 @@ class RankingsResponseTablesItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RankingsResponseTablesPropertiesItemsItem(_Model):  # pylint: disable=name-too-long
+class RankingsResponseTablesPropertiesItemsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RankingsResponseTablesPropertiesItemsItem.
 
     :ivar name:
@@ -8867,7 +9529,9 @@ class RankingsResponseTablesPropertiesItemsItem(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class RankingsResponseTablesPropertiesItemsMetricsItem(_Model):  # pylint: disable=name-too-long
+class RankingsResponseTablesPropertiesItemsMetricsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RankingsResponseTablesPropertiesItemsMetricsItem.
 
     :ivar metric:
@@ -8902,7 +9566,7 @@ class RankingsResponseTablesPropertiesItemsMetricsItem(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class RateLimitRule(CustomRule):
+class RateLimitRule(CustomRule):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a rate limiting rule that can be included in a waf policy.
 
     :ivar name: Defines the name of the custom rule. Required.
@@ -8958,7 +9622,7 @@ class RateLimitRule(CustomRule):
         super().__init__(*args, **kwargs)
 
 
-class RateLimitRuleList(_Model):
+class RateLimitRuleList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines contents of rate limit rules.
 
     :ivar rules: List of rules.
@@ -8990,7 +9654,7 @@ class RateLimitRuleList(_Model):
 
 class RemoteAddressMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleRemoteAddressConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for RemoteAddress match conditions.
 
     :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "IPMatch",
@@ -9055,7 +9719,7 @@ class RemoteAddressMatchConditionParameters(
 
 class RequestBodyMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleRequestBodyConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for RequestBody match conditions.
 
     :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
@@ -9118,7 +9782,7 @@ class RequestBodyMatchConditionParameters(
 
 class RequestHeaderMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleRequestHeaderConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for RequestHeader match conditions.
 
     :ivar selector: Name of Header to be matched.
@@ -9186,7 +9850,7 @@ class RequestHeaderMatchConditionParameters(
 
 class RequestMethodMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleRequestMethodConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for RequestMethod match conditions.
 
     :ivar operator: Describes operator to be matched. Required. "Equal"
@@ -9246,7 +9910,7 @@ class RequestMethodMatchConditionParameters(
 
 class RequestSchemeMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleRequestSchemeConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for RequestScheme match conditions.
 
     :ivar operator: Describes operator to be matched. Required. "Equal"
@@ -9306,7 +9970,7 @@ class RequestSchemeMatchConditionParameters(
 
 class RequestUriMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleRequestUriConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for RequestUri match conditions.
 
     :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
@@ -9367,7 +10031,7 @@ class RequestUriMatchConditionParameters(
         self.type_name = DeliveryRuleConditionParametersType.DELIVERY_RULE_REQUEST_URI_CONDITION_PARAMETERS  # type: ignore
 
 
-class ResourceReference(_Model):
+class ResourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reference to another resource.
 
     :ivar id: Resource ID.
@@ -9395,7 +10059,7 @@ class ResourceReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourcesResponse(_Model):
+class ResourcesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resources Response.
 
     :ivar endpoints:
@@ -9430,7 +10094,7 @@ class ResourcesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourcesResponseCustomDomainsItem(_Model):
+class ResourcesResponseCustomDomainsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourcesResponseCustomDomainsItem.
 
     :ivar id:
@@ -9471,7 +10135,7 @@ class ResourcesResponseCustomDomainsItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourcesResponseEndpointsItem(_Model):
+class ResourcesResponseEndpointsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourcesResponseEndpointsItem.
 
     :ivar id:
@@ -9513,7 +10177,9 @@ class ResourcesResponseEndpointsItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourcesResponseEndpointsPropertiesItemsItem(_Model):  # pylint: disable=name-too-long
+class ResourcesResponseEndpointsPropertiesItemsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ResourcesResponseEndpointsPropertiesItemsItem.
 
     :ivar id:
@@ -9577,7 +10243,9 @@ class ResourceUsage(_Model):
     """Quota of the specified resource type."""
 
 
-class ResponseBasedOriginErrorDetectionParameters(_Model):  # pylint: disable=name-too-long
+class ResponseBasedOriginErrorDetectionParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties to determine origin health using real
     requests/responses.
 
@@ -9629,7 +10297,7 @@ class ResponseBasedOriginErrorDetectionParameters(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class Route(ProxyResource):
+class Route(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Friendly Routes name mapping to the any Routes or secret related information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9707,7 +10375,7 @@ class Route(ProxyResource):
 
 class RouteConfigurationOverrideActionParameters(
     DeliveryRuleActionParameters, discriminator="DeliveryRuleRouteConfigurationOverrideActionParameters"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Defines the parameters for the route configuration override action.
 
     :ivar origin_group_override: A reference to the origin group override configuration. Leave
@@ -9754,7 +10422,7 @@ class RouteConfigurationOverrideActionParameters(
         self.type_name = DeliveryRuleActionParametersType.DELIVERY_RULE_ROUTE_CONFIGURATION_OVERRIDE_ACTION_PARAMETERS  # type: ignore
 
 
-class RouteProperties(_Model):
+class RouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the Routes to create.
 
     :ivar endpoint_name: The name of the endpoint which holds the route.
@@ -9887,7 +10555,7 @@ class RouteProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RouteUpdateParameters(_Model):
+class RouteUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The domain JSON object required for domain creation or update.
 
     :ivar properties: The JSON object that contains the properties of the domain to create.
@@ -9950,7 +10618,7 @@ class RouteUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class RouteUpdatePropertiesParameters(_Model):
+class RouteUpdatePropertiesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the domain to create.
 
     :ivar endpoint_name: The name of the endpoint which holds the route.
@@ -10068,7 +10736,7 @@ class RouteUpdatePropertiesParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Rule(ProxyResource):
+class Rule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Friendly Rules name mapping to the any Rules or secret related information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10137,7 +10805,7 @@ class Rule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RuleProperties(_Model):
+class RuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the Rules to create.
 
     :ivar rule_set_name: The name of the rule set containing the rule.
@@ -10215,7 +10883,7 @@ class RuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuleSet(ProxyResource):
+class RuleSet(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Friendly RuleSet name mapping to the any RuleSet or secret related information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10276,7 +10944,7 @@ class RuleSet(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RuleSetProperties(AFDStateProperties):
+class RuleSetProperties(AFDStateProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the Rule Set to create.
 
     :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
@@ -10331,7 +10999,7 @@ class RuleSetProperties(AFDStateProperties):
         super().__init__(*args, **kwargs)
 
 
-class RuleUpdateParameters(_Model):
+class RuleUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The domain JSON object required for domain creation or update.
 
     :ivar properties: The JSON object that contains the properties of the rule to update.
@@ -10381,7 +11049,7 @@ class RuleUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class RuleUpdatePropertiesParameters(_Model):
+class RuleUpdatePropertiesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the rule to update.
 
     :ivar rule_set_name: The name of the rule set containing the rule.
@@ -10444,7 +11112,7 @@ class RuleUpdatePropertiesParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Secret(ProxyResource):
+class Secret(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Friendly Secret name mapping to the any Secret or secret related information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10505,7 +11173,7 @@ class Secret(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SecretProperties(AFDStateProperties):
+class SecretProperties(AFDStateProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties of the Secret to create.
 
     :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
@@ -10545,7 +11213,7 @@ class SecretProperties(AFDStateProperties):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPolicy(ProxyResource):
+class SecurityPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecurityPolicy association for AzureFrontDoor profile.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10607,7 +11275,7 @@ class SecurityPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SecurityPolicyProperties(AFDStateProperties):
+class SecurityPolicyProperties(AFDStateProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The json object that contains properties required to create a security policy.
 
     :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
@@ -10647,7 +11315,7 @@ class SecurityPolicyProperties(AFDStateProperties):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPolicyPropertiesParameters(_Model):
+class SecurityPolicyPropertiesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The json object containing security policy parameters.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -10679,7 +11347,7 @@ class SecurityPolicyPropertiesParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPolicyUpdateParameters(_Model):
+class SecurityPolicyUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object containing security policy update parameters.
 
     :ivar properties: The json object that contains properties required to update a security
@@ -10730,7 +11398,7 @@ class SecurityPolicyUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class SecurityPolicyUpdateProperties(_Model):
+class SecurityPolicyUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The json object that contains properties required to update a security policy.
 
     :ivar parameters: object which contains security policy parameters.
@@ -10760,13 +11428,17 @@ class SecurityPolicyUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPolicyWebApplicationFirewallAssociation(_Model):  # pylint: disable=name-too-long
+class SecurityPolicyWebApplicationFirewallAssociation(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """settings for security policy patterns to match.
 
     :ivar domains: List of domains.
     :vartype domains: list[~azure.mgmt.cdn.models.ActivatedResourceReference]
     :ivar patterns_to_match: List of paths.
     :vartype patterns_to_match: list[str]
+    :ivar routes: List of routes.
+    :vartype routes: list[~azure.mgmt.cdn.models.ResourceReference]
     """
 
     domains: Optional[list["_models.ActivatedResourceReference"]] = rest_field(
@@ -10777,6 +11449,10 @@ class SecurityPolicyWebApplicationFirewallAssociation(_Model):  # pylint: disabl
         name="patternsToMatch", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of paths."""
+    routes: Optional[list["_models.ResourceReference"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of routes."""
 
     @overload
     def __init__(
@@ -10784,6 +11460,7 @@ class SecurityPolicyWebApplicationFirewallAssociation(_Model):  # pylint: disabl
         *,
         domains: Optional[list["_models.ActivatedResourceReference"]] = None,
         patterns_to_match: Optional[list[str]] = None,
+        routes: Optional[list["_models.ResourceReference"]] = None,
     ) -> None: ...
 
     @overload
@@ -10799,7 +11476,7 @@ class SecurityPolicyWebApplicationFirewallAssociation(_Model):  # pylint: disabl
 
 class SecurityPolicyWebApplicationFirewallParameters(
     SecurityPolicyPropertiesParameters, discriminator="WebApplicationFirewall"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The json object containing security policy waf parameters.
 
     :ivar waf_policy: Resource ID.
@@ -10807,6 +11484,8 @@ class SecurityPolicyWebApplicationFirewallParameters(
     :ivar associations: Waf associations.
     :vartype associations:
      list[~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallAssociation]
+    :ivar is_profile_level: Indicates if this is a profile-level WAF policy.
+    :vartype is_profile_level: bool
     :ivar type: The type of the Security policy to create. Required. WEB_APPLICATION_FIREWALL.
     :vartype type: str or ~azure.mgmt.cdn.models.WEB_APPLICATION_FIREWALL
     """
@@ -10819,6 +11498,10 @@ class SecurityPolicyWebApplicationFirewallParameters(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Waf associations."""
+    is_profile_level: Optional[bool] = rest_field(
+        name="isProfileLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates if this is a profile-level WAF policy."""
     type: Literal[SecurityPolicyType.WEB_APPLICATION_FIREWALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the Security policy to create. Required. WEB_APPLICATION_FIREWALL."""
 
@@ -10828,6 +11511,7 @@ class SecurityPolicyWebApplicationFirewallParameters(
         *,
         waf_policy: Optional["_models.ResourceReference"] = None,
         associations: Optional[list["_models.SecurityPolicyWebApplicationFirewallAssociation"]] = None,
+        is_profile_level: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -10844,7 +11528,7 @@ class SecurityPolicyWebApplicationFirewallParameters(
 
 class ServerPortMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleServerPortConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for ServerPort match conditions.
 
     :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
@@ -10905,7 +11589,7 @@ class ServerPortMatchConditionParameters(
         self.type_name = DeliveryRuleConditionParametersType.DELIVERY_RULE_SERVER_PORT_CONDITION_PARAMETERS  # type: ignore
 
 
-class ServiceSpecification(_Model):
+class ServiceSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """One property of operation, include log specifications.
 
     :ivar log_specifications: Log specifications of operation.
@@ -10942,7 +11626,7 @@ class ServiceSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharedPrivateLinkResourceProperties(_Model):
+class SharedPrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of an existing Shared Private Link Resource to use when connecting to
     a private origin.
 
@@ -11005,7 +11689,7 @@ class SharedPrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Standard_Verizon = The SKU name for a Standard Verizon CDN profile. Premium_Verizon = The SKU
     name for a Premium Verizon CDN profile. Custom_Verizon = The SKU name for a Custom Verizon CDN
     profile. Standard_Akamai = The SKU name for an Akamai CDN profile. Standard_ChinaCdn = The SKU
@@ -11058,7 +11742,7 @@ class Sku(_Model):
 
 class SocketAddrMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleSocketAddrConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for SocketAddress match conditions.
 
     :ivar operator: Describes operator to be matched. Required. Known values are: "Any" and
@@ -11118,7 +11802,7 @@ class SocketAddrMatchConditionParameters(
 
 class SslProtocolMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleSslProtocolConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for SslProtocol match conditions.
 
     :ivar operator: Describes operator to be matched. Required. "Equal"
@@ -11199,7 +11883,7 @@ class SupportedOptimizationTypesListResult(_Model):
     """Supported optimization types for a profile."""
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -11268,7 +11952,7 @@ class SystemData(_Model):
 
 class UrlFileExtensionMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleUrlFileExtensionMatchConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for UrlFileExtension match conditions.
 
     :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
@@ -11331,7 +12015,7 @@ class UrlFileExtensionMatchConditionParameters(
 
 class UrlFileNameMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleUrlFilenameConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for UrlFilename match conditions.
 
     :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
@@ -11394,7 +12078,7 @@ class UrlFileNameMatchConditionParameters(
 
 class UrlPathMatchConditionParameters(
     DeliveryRuleConditionParameters, discriminator="DeliveryRuleUrlPathMatchConditionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for UrlPath match conditions.
 
     :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
@@ -11455,7 +12139,9 @@ class UrlPathMatchConditionParameters(
         self.type_name = DeliveryRuleConditionParametersType.DELIVERY_RULE_URL_PATH_MATCH_CONDITION_PARAMETERS  # type: ignore
 
 
-class UrlRedirectAction(DeliveryRuleAction, discriminator="UrlRedirect"):
+class UrlRedirectAction(
+    DeliveryRuleAction, discriminator="UrlRedirect"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the url redirect action for the delivery rule.
 
     :ivar parameters: Defines the parameters for the action. Required.
@@ -11492,7 +12178,7 @@ class UrlRedirectAction(DeliveryRuleAction, discriminator="UrlRedirect"):
 
 class UrlRedirectActionParameters(
     DeliveryRuleActionParameters, discriminator="DeliveryRuleUrlRedirectActionParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for the url redirect action.
 
     :ivar redirect_type: The redirect type the rule will use when redirecting traffic. Required.
@@ -11576,7 +12262,9 @@ class UrlRedirectActionParameters(
         self.type_name = DeliveryRuleActionParametersType.DELIVERY_RULE_URL_REDIRECT_ACTION_PARAMETERS  # type: ignore
 
 
-class UrlRewriteAction(DeliveryRuleAction, discriminator="UrlRewrite"):
+class UrlRewriteAction(
+    DeliveryRuleAction, discriminator="UrlRewrite"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the url rewrite action for the delivery rule.
 
     :ivar parameters: Defines the parameters for the action. Required.
@@ -11611,7 +12299,9 @@ class UrlRewriteAction(DeliveryRuleAction, discriminator="UrlRewrite"):
         self.name = DeliveryRuleActionEnum.URL_REWRITE  # type: ignore
 
 
-class UrlRewriteActionParameters(DeliveryRuleActionParameters, discriminator="DeliveryRuleUrlRewriteActionParameters"):
+class UrlRewriteActionParameters(
+    DeliveryRuleActionParameters, discriminator="DeliveryRuleUrlRewriteActionParameters"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for the url rewrite action.
 
     :ivar source_pattern: define a request URI pattern that identifies the type of requests that
@@ -11659,7 +12349,9 @@ class UrlRewriteActionParameters(DeliveryRuleActionParameters, discriminator="De
         self.type_name = DeliveryRuleActionParametersType.DELIVERY_RULE_URL_REWRITE_ACTION_PARAMETERS  # type: ignore
 
 
-class UrlSigningAction(DeliveryRuleAction, discriminator="UrlSigning"):
+class UrlSigningAction(
+    DeliveryRuleAction, discriminator="UrlSigning"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the url signing action for the delivery rule.
 
     :ivar parameters: Defines the parameters for the action. Required.
@@ -11694,7 +12386,9 @@ class UrlSigningAction(DeliveryRuleAction, discriminator="UrlSigning"):
         self.name = DeliveryRuleActionEnum.URL_SIGNING  # type: ignore
 
 
-class UrlSigningActionParameters(DeliveryRuleActionParameters, discriminator="DeliveryRuleUrlSigningActionParameters"):
+class UrlSigningActionParameters(
+    DeliveryRuleActionParameters, discriminator="DeliveryRuleUrlSigningActionParameters"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the parameters for the Url Signing action.
 
     :ivar algorithm: Algorithm to use for URL signing. "SHA256"
@@ -11737,7 +12431,7 @@ class UrlSigningActionParameters(DeliveryRuleActionParameters, discriminator="De
         self.type_name = DeliveryRuleActionParametersType.DELIVERY_RULE_URL_SIGNING_ACTION_PARAMETERS  # type: ignore
 
 
-class UrlSigningKey(_Model):
+class UrlSigningKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Url signing key.
 
     :ivar key_id: Defines the customer defined key Id. This id will exist in the incoming request
@@ -11775,7 +12469,9 @@ class UrlSigningKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UrlSigningKeyParameters(SecretParameters, discriminator="UrlSigningKey"):
+class UrlSigningKeyParameters(
+    SecretParameters, discriminator="UrlSigningKey"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Url signing key parameters.
 
     :ivar key_id: Defines the customer defined key Id. This id will exist in the incoming request
@@ -11827,7 +12523,7 @@ class UrlSigningKeyParameters(SecretParameters, discriminator="UrlSigningKey"):
         self.type = SecretType.URL_SIGNING_KEY  # type: ignore
 
 
-class UrlSigningParamIdentifier(_Model):
+class UrlSigningParamIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines how to identify a parameter for a specific purpose e.g. expires.
 
     :ivar param_indicator: Indicates the purpose of the parameter. Required. Known values are:
@@ -11864,7 +12560,7 @@ class UrlSigningParamIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Usage(_Model):
+class Usage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes resource usage.
 
     :ivar id: Resource identifier.
@@ -11911,7 +12607,7 @@ class Usage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UsageName(_Model):
+class UsageName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The usage names.
 
     :ivar value: A string describing the resource name.
@@ -11961,7 +12657,9 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserManagedHttpsParameters(CustomDomainHttpsParameters, discriminator="AzureKeyVault"):
+class UserManagedHttpsParameters(
+    CustomDomainHttpsParameters, discriminator="AzureKeyVault"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the certificate source parameters using user's keyvault certificate for enabling SSL.
 
     :ivar protocol_type: Defines the TLS extension protocol that is used for secure delivery.
@@ -12007,7 +12705,7 @@ class UserManagedHttpsParameters(CustomDomainHttpsParameters, discriminator="Azu
         self.certificate_source = CertificateSource.AZURE_KEY_VAULT  # type: ignore
 
 
-class ValidateCustomDomainInput(_Model):
+class ValidateCustomDomainInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input of the custom domain to be validated for DNS mapping.
 
     :ivar host_name: The host name of the custom domain. Must be a domain name. Required.
@@ -12054,7 +12752,7 @@ class ValidateCustomDomainOutput(_Model):
     """Error message describing why the custom domain is not valid."""
 
 
-class ValidateProbeInput(_Model):
+class ValidateProbeInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input of the validate probe API.
 
     :ivar probe_url: The probe URL to validate. Required.
@@ -12101,11 +12799,12 @@ class ValidateProbeOutput(_Model):
     """The detailed error message describing why the probe URL is not accepted."""
 
 
-class ValidateSecretInput(_Model):
+class ValidateSecretInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input of the secret to be validated.
 
     :ivar secret_type: The secret type. Required. Known values are: "UrlSigningKey",
-     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
+     "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate", and
+     "MtlsCertificateChain".
     :vartype secret_type: str or ~azure.mgmt.cdn.models.SecretType
     :ivar secret_source: Resource reference to the Azure Key Vault secret. Expected to be in format
      of
@@ -12120,7 +12819,7 @@ class ValidateSecretInput(_Model):
         name="secretType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The secret type. Required. Known values are: \"UrlSigningKey\", \"CustomerCertificate\",
-     \"ManagedCertificate\", and \"AzureFirstPartyManagedCertificate\"."""
+     \"ManagedCertificate\", \"AzureFirstPartyManagedCertificate\", and \"MtlsCertificateChain\"."""
     secret_source: "_models.ResourceReference" = rest_field(
         name="secretSource", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12152,7 +12851,7 @@ class ValidateSecretInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateSecretOutput(_Model):
+class ValidateSecretOutput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Output of the validated secret.
 
     :ivar status: The validation status. Known values are: "Valid", "Invalid", "AccessDenied", and
@@ -12189,7 +12888,7 @@ class ValidateSecretOutput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WafMetricsResponse(_Model):
+class WafMetricsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Waf Metrics Response.
 
     :ivar date_time_begin:
@@ -12237,7 +12936,7 @@ class WafMetricsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WafMetricsResponseSeriesItem(_Model):
+class WafMetricsResponseSeriesItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WafMetricsResponseSeriesItem.
 
     :ivar metric:
@@ -12286,7 +12985,9 @@ class WafMetricsResponseSeriesItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WafMetricsResponseSeriesPropertiesItemsItem(_Model):  # pylint: disable=name-too-long
+class WafMetricsResponseSeriesPropertiesItemsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """WafMetricsResponseSeriesPropertiesItemsItem.
 
     :ivar name:
@@ -12317,7 +13018,7 @@ class WafMetricsResponseSeriesPropertiesItemsItem(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class WafRankingsResponse(_Model):
+class WafRankingsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Waf Rankings Response.
 
     :ivar date_time_begin:
@@ -12362,7 +13063,7 @@ class WafRankingsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WafRankingsResponseDataItem(_Model):
+class WafRankingsResponseDataItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WafRankingsResponseDataItem.
 
     :ivar group_values:

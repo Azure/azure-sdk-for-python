@@ -163,7 +163,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -273,7 +273,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ProfilesOperations:  # pylint: disable=too-many-public-methods
+class ProfilesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2475,7 +2475,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class AFDEndpointsOperations:
+class AFDEndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3917,7 +3917,7 @@ class AFDEndpointsOperations:
         return deserialized  # type: ignore
 
 
-class AFDOriginGroupsOperations:
+class AFDOriginGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4878,7 +4878,7 @@ class AFDOriginGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AFDOriginsOperations:
+class AFDOriginsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5764,7 +5764,7 @@ class AFDOriginsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RoutesOperations:
+class RoutesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6664,7 +6664,7 @@ class RoutesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RuleSetsOperations:
+class RuleSetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6772,7 +6772,7 @@ class RuleSetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01"],
+        api_versions_list=["2025-12-01", "2026-04-01-preview", "2026-07-01"],
     )
     async def _create_initial(
         self,
@@ -6974,7 +6974,7 @@ class RuleSetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01"],
+        api_versions_list=["2025-12-01", "2026-04-01-preview", "2026-07-01"],
     )
     async def begin_create(
         self,
@@ -7399,7 +7399,7 @@ class RuleSetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RulesOperations:
+class RulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8288,7 +8288,7 @@ class RulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SecurityPoliciesOperations:
+class SecurityPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9132,7 +9132,7 @@ class SecurityPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SecretsOperations:
+class SecretsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9712,7 +9712,7 @@ class SecretsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class EndpointsOperations:
+class EndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11649,7 +11649,7 @@ class EndpointsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class OriginsOperations:
+class OriginsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12529,7 +12529,7 @@ class OriginsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class OriginGroupsOperations:
+class OriginGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13425,7 +13425,7 @@ class OriginGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CustomDomainsOperations:
+class CustomDomainsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14465,7 +14465,7 @@ class CustomDomainsOperations:
         )
 
 
-class AFDCustomDomainsOperations:
+class AFDCustomDomainsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15451,7 +15451,7 @@ class AFDCustomDomainsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class AFDProfilesOperations:
+class AFDProfilesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16358,7 +16358,7 @@ class AFDProfilesOperations:
         )
 
 
-class LogAnalyticsOperations:
+class LogAnalyticsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16946,7 +16946,7 @@ class LogAnalyticsOperations:
         return deserialized  # type: ignore
 
 
-class PoliciesOperations:
+class PoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17699,7 +17699,7 @@ class PoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ResourceUsageOperations:
+class ResourceUsageOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17810,7 +17810,7 @@ class ResourceUsageOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class EdgeNodesOperations:
+class EdgeNodesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17921,7 +17921,7 @@ class EdgeNodesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedRuleSetsOperations:
+class ManagedRuleSetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
