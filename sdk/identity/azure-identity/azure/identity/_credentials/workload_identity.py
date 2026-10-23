@@ -21,6 +21,12 @@ CA_DATA_FILE_ERROR = "Both AZURE_KUBERNETES_CA_FILE and AZURE_KUBERNETES_CA_DATA
 CUSTOM_PROXY_ENV_ERROR = (
     "AZURE_KUBERNETES_TOKEN_PROXY is not set but other custom endpoint-related environment variables are present."
 )
+_TOKEN_PROXY_TRANSPORT_OPTIONS = (
+    "connection_timeout",
+    "read_timeout",
+    "connection_data_block_size",
+    "use_env_settings",
+)
 
 
 class TokenFileMixin:
@@ -122,6 +128,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
                     token_proxy_endpoint=token_proxy_endpoint,
                     ca_file=ca_file,
                     ca_data=ca_data,
+                    **{name: kwargs[name] for name in _TOKEN_PROXY_TRANSPORT_OPTIONS if name in kwargs},
                 )
 
                 if transport:
@@ -143,7 +150,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         )
 
 
-def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
+def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data, **kwargs):
     try:
         from .._internal.token_binding_transport_requests import CustomRequestsTransport
 
@@ -152,6 +159,7 @@ def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
             proxy_endpoint=token_proxy_endpoint,
             ca_file=ca_file,
             ca_data=ca_data,
+            **kwargs,
         )
 
     except ImportError:

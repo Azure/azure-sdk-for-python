@@ -23,6 +23,126 @@ from proxy_server import TokenProxyHandler, TokenProxyTestServer
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("transport_mode", ["sync", "aiohttp", "asyncio-requests"])
+@pytest.mark.parametrize(
+    "options",
+    [
+        {},
+        {
+            "connection_timeout": 7,
+            "read_timeout": 9,
+            "connection_data_block_size": 8192,
+            "use_env_settings": False,
+        },
+        {
+            "connection_timeout": 11,
+            "read_timeout": 13,
+            "connection_data_block_size": 16384,
+            "use_env_settings": True,
+        },
+    ],
+    ids=["defaults", "custom-without-env", "custom-with-env"],
+)
+async def test_credential_forwards_proxy_transport_options(transport_mode, options, tmp_path):
+    token_file = tmp_path / "token"
+    token_file.write_text("test-assertion", encoding="utf-8")
+    credential_type = WorkloadIdentityCredential if transport_mode == "sync" else AsyncWorkloadIdentityCredential
+    expected_type = {
+        "sync": CustomRequestsTransport,
+        "aiohttp": CustomAioHttpTransport,
+        "asyncio-requests": CustomAsyncioRequestsTransport,
+    }[transport_mode]
+    unavailable_modules = (
+        {"azure.identity.aio._internal.token_binding_transport_aiohttp": None}
+        if transport_mode == "asyncio-requests"
+        else {}
+    )
+    with TokenProxyTestServer() as server:
+        env = {
+            "AZURE_KUBERNETES_TOKEN_PROXY": server.base_url,
+            "AZURE_KUBERNETES_SNI_NAME": "1234.ests.aks",
+            "AZURE_KUBERNETES_CA_FILE": server.ca_file,
+        }
+        if options.get("use_env_settings") is False:
+            env["HTTPS_PROXY"] = "http://unreachable.invalid:1"
+            env["REQUESTS_CA_BUNDLE"] = "unused-ca.pem"
+        with patch.dict(os.environ, env, clear=True), patch.dict("sys.modules", unavailable_modules):
+            credential = credential_type(
+                tenant_id="tenant",
+                client_id="client",
+                token_file_path=str(token_file),
+                enable_azure_proxy=True,
+                connection_verify=False,
+                connection_cert="unused-cert.pem",
+                session=object(),
+                session_owner=False,
+                transport=object(),
+                sni="unused.example",
+                token_proxy_endpoint="https://unused.example",
+                ca_file="unused-ca.pem",
+                ca_data="unused CA data",
+                **options,
+            )
+            transport = credential._client._pipeline._transport
+            assert type(transport) is expected_type
+            config = transport.connection_config
+            assert config.timeout == options.get("connection_timeout", 300)
+            assert config.read_timeout == options.get("read_timeout", 300)
+            assert config.data_block_size == options.get("connection_data_block_size", 4096)
+            assert config.verify is True
+            assert config.cert is None
+            assert transport._session_owner is True
+            assert transport._sni == env["AZURE_KUBERNETES_SNI_NAME"]
+            assert transport._proxy_endpoint == server.base_url
+            assert transport._ca_file == server.ca_file
+
+            if isinstance(credential, AsyncWorkloadIdentityCredential):
+                async with credential:
+                    with patch.object(transport.session, "request", wraps=transport.session.request) as send:
+                        token = await credential.get_token("https://graph.microsoft.com/.default")
+                    assert transport.session.trust_env == options.get("use_env_settings", True)
+            else:
+                with credential:
+                    with patch.object(transport.session, "request", wraps=transport.session.request) as send:
+                        token = credential.get_token("https://graph.microsoft.com/.default")
+                    assert transport.session.trust_env == options.get("use_env_settings", True)
+
+            assert token.token
+            timeout = send.call_args.kwargs["timeout"]
+            if transport_mode == "aiohttp":
+                assert timeout.sock_connect == config.timeout
+                assert timeout.sock_read == config.read_timeout
+            else:
+                assert timeout == (config.timeout, config.read_timeout)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "options,expected_timeout",
+    [
+        ({}, (7, 9)),
+        ({"connection_timeout": 11}, (11, 9)),
+        ({"read_timeout": 13}, (7, 13)),
+        ({"connection_timeout": 11, "read_timeout": 13}, (11, 13)),
+        ({"connection_timeout": (17, 19)}, (17, 19)),
+    ],
+)
+async def test_asyncio_requests_timeout_overrides(options, expected_timeout):
+    with TokenProxyTestServer() as server:
+        async with CustomAsyncioRequestsTransport(
+            ca_file=server.ca_file, connection_timeout=7, read_timeout=9, use_env_settings=False
+        ) as transport:
+            with patch.object(transport.session, "request", wraps=transport.session.request) as send:
+                response = await transport.send(HttpRequest("GET", server.base_url + "/health"), **options)
+            assert response.status_code == 200
+            assert send.call_args.kwargs["timeout"] == expected_timeout
+            with pytest.raises(ValueError, match="Cannot set tuple connection_timeout and read_timeout together"):
+                await transport.send(
+                    HttpRequest("GET", server.base_url + "/health"), connection_timeout=(17, 19), read_timeout=13
+                )
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("credential_type", [WorkloadIdentityCredential, AsyncWorkloadIdentityCredential])
 @pytest.mark.parametrize("in_dac", [False, True])
 @pytest.mark.parametrize("in_chain", [False, True])

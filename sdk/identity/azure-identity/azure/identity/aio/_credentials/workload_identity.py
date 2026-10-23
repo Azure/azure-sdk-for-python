@@ -13,6 +13,7 @@ from ..._credentials.workload_identity import (
     WORKLOAD_CONFIG_ERROR,
     CA_DATA_FILE_ERROR,
     CUSTOM_PROXY_ENV_ERROR,
+    _TOKEN_PROXY_TRANSPORT_OPTIONS,
 )
 from ..._constants import EnvironmentVariables
 from ..._internal import within_credential_chain, within_dac
@@ -99,6 +100,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
                     token_proxy_endpoint=token_proxy_endpoint,
                     ca_file=ca_file,
                     ca_data=ca_data,
+                    **{name: kwargs[name] for name in _TOKEN_PROXY_TRANSPORT_OPTIONS if name in kwargs},
                 )
 
                 if transport:
@@ -120,7 +122,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         )
 
 
-def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
+def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data, **kwargs):
     try:
         from aiohttp import ClientSession
 
@@ -133,6 +135,7 @@ def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
             proxy_endpoint=token_proxy_endpoint,
             ca_file=ca_file,
             ca_data=ca_data,
+            **kwargs,
         )
     except ImportError:
         # Fallback to async-wrapped requests transport
@@ -144,6 +147,7 @@ def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
                 proxy_endpoint=token_proxy_endpoint,
                 ca_file=ca_file,
                 ca_data=ca_data,
+                **kwargs,
             )
         except ImportError:
             return None

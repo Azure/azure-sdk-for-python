@@ -32,7 +32,7 @@ class TokenBindingTransportMixin:
         if self._ca_file:
             self._load_ca_file_to_data()
 
-        super().__init__()
+        super().__init__(**kwargs)
 
     def _validate_url(self, url: str) -> None:
         """Validate that a URL meets security requirements for HTTPS connections.
