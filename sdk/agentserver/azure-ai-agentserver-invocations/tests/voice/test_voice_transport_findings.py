@@ -609,6 +609,65 @@ async def test_voice_stalled_close_releases_endpoint_session_and_context(monkeyp
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+@pytest.mark.parametrize("accept_failure", [None, "before_commit", "after_commit"])
+async def test_voice_malformed_metadata_upgrades_before_close(path, accept_failure, monkeypatch):
+    app = VoiceAgentServerHost(configure_observability=None)
+    observed = []
+    sent_messages = []
+    close_events = []
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.receive", "text": json.dumps(_session_start_frame())},
+        {"type": "websocket.disconnect", "code": 1000},
+    ]
+    websocket = _websocket_with_headers([(b"x-ms-original-subject", b"malformed")])
+    scope = dict(websocket.scope, path=path, raw_path=path.encode("ascii"))
+
+    @app.on_session_start
+    async def on_session_start(_session, _event):
+        observed.append("session_start")
+
+    @app.on_disconnect
+    async def on_disconnect(_session, _event):
+        observed.append("disconnect")
+
+    def create_session(*_args, **_kwargs):
+        pytest.fail("Malformed metadata must not create a Voice Session.")
+
+    monkeypatch.setattr(Session, "_create", create_session)
+
+    async def receive():
+        if accept_failure == "before_commit":
+            raise OSError("accept failed before commit")
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+        if message["type"] == "websocket.accept" and accept_failure == "after_commit":
+            raise OSError("accept failed after commit")
+
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    await asyncio.wait_for(app(scope, receive, send), timeout=1)
+
+    if accept_failure == "before_commit":
+        assert sent_messages == []
+    else:
+        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+        assert sent_messages[-1] == {
+            "type": "websocket.close",
+            "code": 1011,
+            "reason": "Internal server error",
+        }
+    assert close_events == [(1011, "accept_failed" if accept_failure else "invalid_original_subject")]
+    assert not observed
+    assert get_request_context().original_subject is None
+
+
+@pytest.mark.asyncio
 async def test_voice_accept_unknown_commit_fails_closed():
     app = VoiceAgentServerHost(configure_observability=None)
     sent_messages = []

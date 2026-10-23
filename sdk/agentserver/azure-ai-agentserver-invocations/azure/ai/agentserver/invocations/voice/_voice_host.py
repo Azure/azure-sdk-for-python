@@ -662,13 +662,22 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                 original_subject = FoundryOriginalSubject.from_headers(websocket.headers)
             except ValueError:
                 logger.warning("Voice WebSocket rejected: invalid original-subject platform header.")
+                # Accept before closing so the peer receives 1011, not an HTTP handshake rejection.
+                accept_error = await self._accept_voice_websocket(websocket)
                 await self._finalize_session(
-                    websocket=websocket,
+                    websocket=websocket if websocket.application_state == WebSocketState.CONNECTED else None,
                     session_id=session_id,
                     start_ns=start_ns,
                     close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
-                    error_code="invalid_original_subject",
+                    error_code="accept_failed" if accept_error is not None else "invalid_original_subject",
                 )
+                if accept_error is not None:
+                    self._report_voice_accept_failure(
+                        session_id,
+                        start_ns,
+                        emit_event=False,
+                        connection_trace=connection_trace,
+                    )
                 return
             extracted_context = _extract_voice_websocket_context(websocket)
             parent_attachment = _attach_context(extracted_context)

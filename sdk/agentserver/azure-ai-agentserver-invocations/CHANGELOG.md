@@ -14,6 +14,8 @@
 
 - Reject malformed platform attribution before binding HTTP context, and
   finalize WebSocket connections with a classified error on invalid metadata.
+- Upgrade both typed Voice WebSocket endpoints before closing with code `1011`
+  on malformed platform attribution, instead of rejecting the HTTP handshake.
 - Apply the Invocations task-runtime switch to both typed Voice WebSocket
   endpoints, including composed Voice/Responses hosts where Responses
   independently enables the task manager.

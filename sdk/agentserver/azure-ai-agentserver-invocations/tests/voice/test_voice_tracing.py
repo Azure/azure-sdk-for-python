@@ -162,7 +162,8 @@ def test_voice_original_subject_is_invocation_local():
     assert get_request_context().original_subject is None
 
 
-def test_voice_malformed_original_subject_closes_without_callback(caplog):
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+def test_voice_malformed_original_subject_closes_without_callback(path, caplog):
     app = VoiceAgentServerHost(configure_observability=None)
     observed = []
 
@@ -171,11 +172,9 @@ def test_voice_malformed_original_subject_closes_without_callback(caplog):
         observed.append(True)
 
     with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
-        with pytest.raises(WebSocketDisconnect) as error:
-            with TestClient(app).websocket_connect(
-                "/invocations_ws", headers={"x-ms-original-subject": "malformed"}
-            ):
-                pytest.fail("Malformed attribution must not accept a Voice connection.")
+        with TestClient(app).websocket_connect(path, headers={"x-ms-original-subject": "malformed"}) as websocket:
+            with pytest.raises(WebSocketDisconnect) as error:
+                websocket.receive_json()
     assert error.value.code == 1011
     assert not observed
     assert any(
