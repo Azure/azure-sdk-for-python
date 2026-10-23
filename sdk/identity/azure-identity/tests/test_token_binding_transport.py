@@ -2,11 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cspell:ignore ests
 from contextlib import contextmanager
 import os
 from unittest.mock import patch
 
 import pytest
+from msal import TokenCache
 from azure.core.pipeline import AsyncPipeline, Pipeline
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
@@ -20,6 +22,68 @@ from azure.identity.aio._internal.token_binding_transport_aiohttp import CustomA
 from azure.identity.aio._internal.token_binding_transport_asyncio import CustomAsyncioRequestsTransport
 
 from proxy_server import TokenProxyHandler, TokenProxyTestServer
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("transport_mode", ["sync", "aiohttp", "asyncio-requests"])
+@pytest.mark.parametrize("proxy_path", ["", "/binding", "/api/binding/"])
+@pytest.mark.parametrize("retry", [False, True])
+@pytest.mark.parametrize("enable_cae", [False, True])
+async def test_proxy_token_cache_uses_original_endpoint(transport_mode, proxy_path, retry, enable_cae, tmp_path):
+    paths = []
+    expected_path = proxy_path.rstrip("/") + "/tenant/oauth2/v2.0/token"
+
+    def handle_request(handler):
+        paths.append(handler.path)
+        handler.rfile.read(int(handler.headers["Content-Length"]))
+        if handler.path != expected_path:
+            handler._send_json_response({"error": "wrong path"}, status_code=404)
+        elif retry and len(paths) == 1:
+            handler._send_json_response({"error": "temporarily unavailable"}, status_code=503)
+        else:
+            handler._send_json_response({"access_token": "cached-token", "token_type": "Bearer", "expires_in": 3600})
+
+    token_file = tmp_path / "token"
+    token_file.write_text("test-assertion", encoding="utf-8")
+    credential_type = WorkloadIdentityCredential if transport_mode == "sync" else AsyncWorkloadIdentityCredential
+    unavailable_modules = (
+        {"azure.identity.aio._internal.token_binding_transport_aiohttp": None}
+        if transport_mode == "asyncio-requests"
+        else {}
+    )
+    with patch.object(TokenProxyHandler, "_handle_request", handle_request):
+        with TokenProxyTestServer() as server:
+            env = {
+                "AZURE_KUBERNETES_TOKEN_PROXY": server.base_url + proxy_path,
+                "AZURE_KUBERNETES_CA_FILE": server.ca_file,
+            }
+            with patch.dict(os.environ, env, clear=True), patch.dict("sys.modules", unavailable_modules):
+                credential = credential_type(
+                    tenant_id="tenant",
+                    client_id="client",
+                    token_file_path=str(token_file),
+                    enable_azure_proxy=True,
+                    use_env_settings=False,
+                    retry_total=1,
+                    retry_backoff_factor=0,
+                )
+                scope = "https://graph.microsoft.com/.default"
+                if isinstance(credential, AsyncWorkloadIdentityCredential):
+                    async with credential:
+                        first = await credential.get_token(scope, enable_cae=enable_cae)
+                        cached = await credential.get_token(scope, enable_cae=enable_cae)
+                else:
+                    with credential:
+                        first = credential.get_token(scope, enable_cae=enable_cae)
+                        cached = credential.get_token(scope, enable_cae=enable_cae)
+
+                assert first.token == cached.token == "cached-token"
+                cache = credential._client._get_cache(enable_cae=enable_cae)
+                entries = list(cache.search(TokenCache.CredentialType.ACCESS_TOKEN))
+                assert len(entries) == 1
+                assert entries[0]["realm"] == "tenant"
+                assert entries[0]["environment"] == "login.microsoftonline.com"
+    assert paths == [expected_path] * (2 if retry else 1)
 
 
 @pytest.mark.asyncio

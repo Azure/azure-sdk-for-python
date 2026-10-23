@@ -128,7 +128,7 @@ def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data, **kwargs):
 
         from .._internal.token_binding_transport_aiohttp import CustomAioHttpTransport
 
-        if "server_hostname" not in signature(ClientSession._request).parameters:
+        if "server_hostname" not in signature(ClientSession._request).parameters:  # pylint: disable=protected-access
             raise ImportError("aiohttp transport requires server_hostname support")
         return CustomAioHttpTransport(
             sni=sni,

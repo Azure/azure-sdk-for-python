@@ -297,6 +297,8 @@ For asynchronous identity binding requests, the credential uses aiohttp when it 
 
 Identity binding mode forwards `connection_timeout`, `read_timeout`, `connection_data_block_size`, and `use_env_settings` to its transport. It continues to select its own transport and session and uses the AKS-provided SNI and CA configuration; credential constructor options for custom transports, sessions, and TLS settings do not override that configuration.
 
+Token caching uses the original Microsoft Entra endpoint, not the proxy URL. A path prefix in `AZURE_KUBERNETES_TOKEN_PROXY` therefore doesn't change the tenant used for cache entries or prevent token reuse.
+
 ## Troubleshoot `AzurePipelinesCredential` authentication issues
 
 [comment]: # ( cspell:ignore oidcrequesturi )
