@@ -12,7 +12,7 @@ from azure.core.rest import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 
-from .http_constants import HttpHeaders
+from .http_constants import HttpHeaders, SubStatusCodes
 from ._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
@@ -66,6 +66,39 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
                     tried_fallback = True
                     continue
                 raise
+
+    def send(self, request: PipelineRequest[HTTPRequestType]):  # type: ignore[override]
+        """Authorize request with a bearer token and send it to the next policy.
+
+        If Cosmos DB returns HTTP 403 with sub-status AAD_REQUEST_NOT_AUTHORIZED (5300), the cached
+        token is cleared and a single retry is performed with a fresh token. This handles the case
+        where an AAD token has expired and Cosmos DB returns 403 instead of 401.
+
+        :param request: The pipeline request object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The pipeline response object
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        retry_key = "_cosmos_aad_403_retried"
+        already_retried = bool(request.context.get(retry_key)) if request.context is not None else False
+
+        response = super().send(request)
+
+        substatus_header = response.http_response.headers.get(HttpHeaders.SubStatus)
+        try:
+            substatus = int(substatus_header)
+        except (TypeError, ValueError):
+            substatus = 0
+
+        if (
+            response.http_response.status_code == 403
+            and substatus == SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED
+            and not already_retried
+        ):
+            request.context[retry_key] = True
+            self._token = None  # cached token is invalid
+            response = super().send(request)
+        return response
 
     def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
