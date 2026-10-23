@@ -531,9 +531,12 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
     if _SAMPLE_RATE_KEY in span.attributes:
         envelope.sample_rate = span.attributes[_SAMPLE_RATE_KEY]
 
-    data.properties = _utils._filter_custom_properties(
-        span.attributes, lambda key, val: not _is_standard_attribute(key)
-    )
+    properties = dict(span.attributes)
+    for key in (gen_ai_attributes.GEN_AI_REQUEST_STOP_SEQUENCES, gen_ai_attributes.GEN_AI_RESPONSE_FINISH_REASONS):
+        value = properties.get(key)
+        if isinstance(value, (list, tuple)) and all(isinstance(item, str) for item in value):
+            properties[key] = json.dumps(value, ensure_ascii=False)
+    data.properties = _utils._filter_custom_properties(properties, lambda key, val: not _is_standard_attribute(key))
 
     # Standard metrics special properties
     # Only add the property if span was generated from instrumentation that supports metrics collection
