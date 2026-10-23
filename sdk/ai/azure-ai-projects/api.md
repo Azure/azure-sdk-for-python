@@ -9116,25 +9116,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.LiveDelegationItem(_Model):
-        id: str
-        response_id: Optional[str]
-        target: Literal["client", "responses"]
-        type: Literal["delegation"]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                id: str, 
-                response_id: Optional[str] = ..., 
-                target: Literal["client", "responses"]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.LiveDelegationReasoningInputParam(_Model):
         effort: Optional[Union[str, LiveReasoningEffort]]
         summary: Optional[Union[str, LiveReasoningSummary]]
@@ -9590,7 +9571,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.LiveServerEventLiveDelegationCreated(LiveServerEvent, discriminator='session.delegation.created'):
         client_event_id: Optional[str]
-        delegation: LiveDelegationItem
+        delegation: VoiceAgentLiveDelegationItem
         event_id: str
         offset_ms: int
         type: Literal[LiveServerEventType.SESSION_DELEGATION_CREATED]
@@ -9600,7 +9581,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 client_event_id: Optional[str] = ..., 
-                delegation: LiveDelegationItem, 
+                delegation: VoiceAgentLiveDelegationItem, 
                 event_id: str, 
                 offset_ms: int
             ) -> None: ...
@@ -9775,7 +9756,7 @@ namespace azure.ai.projects.models
         client_event_id: Optional[str]
         event_id: str
         reason: Literal["close_requested", "expired", "content", "remote_hangup", "connection_lost"]
-        session: LiveSessionResourceParam
+        session: VoiceAgentLiveSessionResource
         type: Literal[LiveServerEventType.SESSION_CLOSED]
         usage: LiveSessionUsage
 
@@ -9786,7 +9767,7 @@ namespace azure.ai.projects.models
                 client_event_id: Optional[str] = ..., 
                 event_id: str, 
                 reason: Literal["close_requested", "expired", "content", "remote_hangup", "connection_lost"], 
-                session: LiveSessionResourceParam, 
+                session: VoiceAgentLiveSessionResource, 
                 usage: LiveSessionUsage
             ) -> None: ...
 
@@ -9798,7 +9779,7 @@ namespace azure.ai.projects.models
         client_event_id: Optional[str]
         conversation_id: Optional[str]
         event_id: str
-        session: LiveSessionResourceParam
+        session: VoiceAgentLiveSessionResource
         type: Literal[LiveServerEventType.SESSION_STARTED]
 
         @overload
@@ -9808,7 +9789,7 @@ namespace azure.ai.projects.models
                 client_event_id: Optional[str] = ..., 
                 conversation_id: Optional[str] = ..., 
                 event_id: str, 
-                session: LiveSessionResourceParam
+                session: VoiceAgentLiveSessionResource
             ) -> None: ...
 
         @overload
@@ -9818,7 +9799,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.LiveServerEventLiveSessionUpdated(LiveServerEvent, discriminator='session.updated'):
         client_event_id: Optional[str]
         event_id: str
-        session: LiveSessionResourceParam
+        session: VoiceAgentLiveSessionResource
         type: Literal[LiveServerEventType.SESSION_UPDATED]
 
         @overload
@@ -9827,7 +9808,7 @@ namespace azure.ai.projects.models
                 *, 
                 client_event_id: Optional[str] = ..., 
                 event_id: str, 
-                session: LiveSessionResourceParam
+                session: VoiceAgentLiveSessionResource
             ) -> None: ...
 
         @overload
@@ -9962,37 +9943,6 @@ namespace azure.ai.projects.models
                 audio: Optional[LiveInitialSessionAudioParam] = ..., 
                 client: Optional[LiveClientConfigParam] = ..., 
                 delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam]] = ..., 
-                input: Optional[list[LiveInitialItem]] = ..., 
-                instructions: Optional[str] = ..., 
-                model: Union[str, ModelIdsLive], 
-                store: Optional[bool] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.LiveSessionResourceParam(_Model):
-        audio: Optional[LiveInitialSessionAudioParam]
-        client: Optional[LiveClientConfigParam]
-        delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam]]
-        expires_at: int
-        id: str
-        input: Optional[list[LiveInitialItem]]
-        instructions: Optional[str]
-        model: Union[str, ModelIdsLive]
-        status: Literal["active"]
-        store: Optional[bool]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                audio: Optional[LiveInitialSessionAudioParam] = ..., 
-                client: Optional[LiveClientConfigParam] = ..., 
-                delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam]] = ..., 
-                expires_at: int, 
-                id: str, 
                 input: Optional[list[LiveInitialItem]] = ..., 
                 instructions: Optional[str] = ..., 
                 model: Union[str, ModelIdsLive], 
@@ -17450,6 +17400,25 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentLiveDelegationItem(_Model):
+        id: str
+        response_id: Optional[str]
+        target: Union[str, VoiceAgentLiveDelegationTarget]
+        type: Literal["delegation"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: str, 
+                response_id: Optional[str] = ..., 
+                target: Union[str, VoiceAgentLiveDelegationTarget]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentLiveDelegationResultItem1(_Model):
         commentary: Optional[str]
         thinking: str
@@ -17601,6 +17570,37 @@ namespace azure.ai.projects.models
                 id: str, 
                 output: Optional[str] = ..., 
                 response_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentLiveSessionResource(_Model):
+        audio: Optional[LiveInitialSessionAudioParam]
+        client: Optional[LiveClientConfigParam]
+        delegation: Optional[VoiceAgentLiveDelegation]
+        expires_at: int
+        id: str
+        input: Optional[list[LiveInitialItem]]
+        instructions: Optional[str]
+        model: Union[str, ModelIdsLive]
+        status: Literal["active"]
+        store: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: Optional[LiveInitialSessionAudioParam] = ..., 
+                client: Optional[LiveClientConfigParam] = ..., 
+                delegation: Optional[VoiceAgentLiveDelegation] = ..., 
+                expires_at: int, 
+                id: str, 
+                input: Optional[list[LiveInitialItem]] = ..., 
+                instructions: Optional[str] = ..., 
+                model: Union[str, ModelIdsLive], 
+                store: Optional[bool] = ...
             ) -> None: ...
 
         @overload

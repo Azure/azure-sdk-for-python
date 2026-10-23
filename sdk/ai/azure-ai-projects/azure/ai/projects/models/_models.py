@@ -6942,6 +6942,7 @@ class ComparisonFilter(_Model):  # pylint: disable=docstring-keyword-should-matc
      * `in`: in
      * `nin`: not in. Required. Is one of the following types: Literal["eq"], Literal["ne"],
        Literal["gt"], Literal["gte"], Literal["lt"], Literal["lte"], Literal["in"], Literal["nin"]
+
     :vartype type: str or str or str or str or str or str or str or str
     :ivar key: The key to compare against the value. Required.
     :vartype key: str
@@ -17019,6 +17020,7 @@ class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-s
        Literal["connector_googledrive"], Literal["connector_microsoftteams"],
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
+
     :vartype connector_id: str or str or str or str or str or str or str or str
     :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
@@ -17198,6 +17200,7 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docst
        Literal["connector_googledrive"], Literal["connector_microsoftteams"],
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
+
     :vartype connector_id: str or str or str or str or str or str or str or str
     :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
@@ -22468,14 +22471,12 @@ class RealtimeServerEventConversationItemAdded(
     several cases:
 
     * When the client sends a `conversation.item.create` event.
-    * When the input audio buffer is committed. In this case the item will be a user message
-    containing the audio from the buffer.
-    * When the model is generating a Response. In this case the `conversation.item.added` event
-    will be sent when the model starts generating a specific Item, and thus it will not yet have
-    any content (and `status` will be `in_progress`).
-    The event will include the full content of the Item (except when model is generating a
-    Response) except for audio data, which can be retrieved separately with a
-    `conversation.item.retrieve` event if necessary.
+    * When the input audio buffer is committed. In this case the item will be a user message containing the audio from
+      the buffer.
+    * When the model is generating a Response. In this case the `conversation.item.added` event will be sent when the
+      model starts generating a specific Item, and thus it will not yet have any content (and `status` will be
+      `in_progress`). The event will include the full content of the Item (except when model is generating a Response)
+      except for audio data, which can be retrieved separately with a `conversation.item.retrieve` event if necessary.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -22523,14 +22524,11 @@ class RealtimeServerEventConversationItemCreated(
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:
 
-    * The server is generating a Response, which if successful will produce
-    either one or two Items, which will be of type `message`
-    (role `assistant`) or type `function_call`.
-    * The input audio buffer has been committed, either by the client or the
-    server (in `server_vad` mode). The server will take the content of the
-    input audio buffer and add it to a new user message Item.
-    * The client has sent a `conversation.item.create` event to add a new Item
-    to the Conversation.
+    * The server is generating a Response, which if successful will produce either one or two Items, which will be of
+      type `message` (role `assistant`) or type `function_call`.
+    * The input audio buffer has been committed, either by the client or the server (in `server_vad` mode). The server
+      will take the content of the input audio buffer and add it to a new user message Item.
+    * The client has sent a `conversation.item.create` event to add a new Item to the Conversation.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -26183,12 +26181,10 @@ class SessionLogEvent(_Model):  # pylint: disable=docstring-keyword-should-match
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
-    on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
-    connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -31120,15 +31116,14 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
     Provider-specific fields are selected by ``voice_type``:
 
     * `openai`: `voice` and `speed`.
-    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
-    `custom_lexicon_url`,
-    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`, `custom_lexicon_url`,
+      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
-    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
-    `personal_voice_model`; the voice name is derived from the avatar.
-    * `azure-realtime-native`: `voice` and `speed`.
-    `format` and `output_audio_timestamp_types` apply to every voice type.
+    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus `personal_voice_model`; the
+      voice name is derived from the avatar.
+    * `azure-realtime-native`: `voice` and `speed`. `format` and `output_audio_timestamp_types` apply to every voice
+      type.
 
     :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
      PCM.
@@ -32181,7 +32176,9 @@ class VoiceAgentDefinition(VoiceAgentBaseDefinition):  # pylint: disable=docstri
     :vartype subagent_config: ~azure.ai.projects.models.VoiceAgentSubagentConfig
     """
 
-    sub_protocol: Optional[Literal["realtime"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    sub_protocol: Optional[Literal["realtime"]] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Selects Realtime. May be omitted for legacy agents. Default value is \"realtime\"."""
     model_type: Optional[Union[str, "_models.VoiceModelType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -33059,7 +33056,7 @@ class VoiceAgentLiveDefinition(VoiceAgentBaseDefinition):  # pylint: disable=doc
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.sub_protocol: Literal["live"] = "live"
+        self.sub_protocol: Literal["live"] = "live"  # pyright: ignore[reportIncompatibleVariableOverride]
         self.model_type: Literal["self_deployed"] = "self_deployed"
 
 
