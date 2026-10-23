@@ -152,4 +152,13 @@ Use the package's configured virtual environment and repository Black configurat
 - Collect [../test_samples.py](../test_samples.py) and [../test_samples_async.py](../test_samples_async.py) with [select_samples.py](select_samples.py), then generate an offline plan.
 - Request ADO YAML expansion with `previewRun=true` only if authorized. **Modified-YAML previews require pipeline edit permission**; queue permission alone is insufficient. Do not queue a live run as a workaround for a denied preview.
 
-Live sample execution and resource deployment remain unverified until an authorized live pipeline run succeeds.
+## Verified live execution
+
+[Run 6991675](https://dev.azure.com/azure-sdk/internal/_build/results?buildId=6991675) completed successfully on **2026-10-23 UTC**, using commit `71d7fec682e98a8cd51de91c552c835c061e1b23`, `location=westus3`, and the authorized `azure-sdk-tests-public` service connection.
+
+- Bicep provisioned Standard Foundry, including Storage, Cosmos DB, AI Search, both model deployments and the project-scoped GitHub MCP connection.
+- The selected synchronous [MCP project-connection sample](../../../samples/agents/tools/sample_agent_mcp_with_project_connection.py) executed through the existing pytest harness: **1 passed, 0 failures, 0 errors, 0 skipped**. JUnit results were published to the ADO **Tests** tab.
+- The read-only readiness check received one agent-index timeout, then succeeded within the bounded retry window. The sample itself was not retried.
+- Ownership-checked cleanup succeeded, and the final deployment-state artifact recorded `status=CleanedUp` and `provisioningStep=Complete`.
+
+This run verifies the selected synchronous MCP sample and this live configuration, not every wildcard-selected sample, the asynchronous counterpart, or other regions/subscriptions. Choose `westus3` to reproduce this verified run; the pipeline's region remains configurable.
