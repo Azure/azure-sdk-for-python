@@ -1,5 +1,10 @@
 # Management Package Release
 
+For weekly cross-language DRI coverage, use the
+[management SDK release rotation runbook](mgmt-release-rotation-runbook.md).
+This page covers package preparation; the runbook covers PR triage through
+release follow-up, including the post-merge automatic release path.
+
 ## General Release Process Overview
 
 Once Swagger PR is merged and a release plan/request is submitted, here are steps that you need to do in order to release a new package:
