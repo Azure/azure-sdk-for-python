@@ -36,19 +36,6 @@ Publish the image to your registry and set `FOUNDRY_AGENT_CONTAINER_IMAGE` befor
 running either image-deployment sample. Keep the startup setting for Python
 images; it has no effect on non-Python interpreters.
 
-For local agent development, activate a virtual environment and set the
-variable in the launching shell before starting any agent entry point:
-
-```bash
-export PYTHONNOUSERSITE=1
-python main.py
-```
-
-In PowerShell, use `$env:PYTHONNOUSERSITE = "1"` before `python main.py`.
-In Windows Command Prompt, use `set PYTHONNOUSERSITE=1`.
-These local settings do not replace `HostedAgentDefinition.environment_variables`
-for the remote interpreter.
-
 The [synchronous file sample](sample_sessions_files_upload_download.py) and
 [asynchronous file sample](sample_sessions_files_upload_download_async.py)
 include the same remote startup setting when creating their Python agent.

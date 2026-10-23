@@ -13,17 +13,12 @@ description: Samples for the azure-ai-agentserver-responses client library.
 ## Quick start
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-export PYTHONNOUSERSITE=1
 pip install -r requirements.txt
 python sample_01_getting_started.py
 ```
 
-Set `PYTHONNOUSERSITE=1` in the launching shell before running any sample
-entry point, not inside Python or a `.env` file loaded by the application.
-In PowerShell use `$env:PYTHONNOUSERSITE = "1"` before launching Python.
-For hosted deployments, also configure the remote agent definition as described
+For hosted deployments, configure `PYTHONNOUSERSITE` as `"1"` in the
+remote agent definition's environment or Python Dockerfile, as described
 in the [Python startup guide](../../../ai/azure-ai-projects/samples/hosted_agents/README.md#python-startup-configuration).
 Install dependencies in the virtual environment or image, not with `pip install --user`.
 
