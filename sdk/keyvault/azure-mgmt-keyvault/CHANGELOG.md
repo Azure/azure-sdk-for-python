@@ -10,10 +10,6 @@
   - Added model `TokenBindingParameters`
   - Added enum `TokenBindingStrength`
 
-## 14.2.0 (2026-10-20)
-
-tool can't generate changelog for this release, please update manually.
-
 ## 14.1.0 (2026-10-08)
 
 ### Features Added
