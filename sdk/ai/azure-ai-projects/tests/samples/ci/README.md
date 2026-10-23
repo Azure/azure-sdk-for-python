@@ -176,3 +176,11 @@ Use the package's configured virtual environment and repository Black configurat
 - Ownership-checked cleanup succeeded, and the final deployment-state artifact recorded `status=CleanedUp` and `provisioningStep=Complete`.
 
 This run verifies the selected synchronous MCP sample and this live configuration, not every wildcard-selected sample, the asynchronous counterpart, or other regions/subscriptions. Choose `westus3` to reproduce this verified run; the pipeline's region remains configurable.
+
+### Shared-log attachment validation
+
+[Run 6992778](https://dev.azure.com/azure-sdk/internal/_build/results?buildId=6992778) verified commit `b529172b9ea6ace7335c97a63f7a6cee9ee860f1` in `westus3` with the same service connection. The synchronous MCP sample passed: **1 test, 0 failures, 0 errors, 0 skipped**.
+
+[Test result 65459553 / 100000](https://dev.azure.com/azure-sdk/internal/_testManagement/runs?runId=65459553&resultId=100000&_a=resultSummary) contains the shared executor's original success/API log (**125,951 bytes**) and print-output log (**550 bytes**), retaining their sample names and timestamps. Downloaded attachments were checked in memory: request/response and print content were present, and the raw Bearer/PAT/JWT pattern checks found no matches. The CI plugin attached these files directly without copying or reformatting them.
+
+Provisioning, sample execution, test-result publication and ownership-checked cleanup all succeeded. The final state was `CleanedUp` with `provisioningStep=Complete`. The external monitor lost its connection during cleanup; direct ADO timeline, artifact and test-result checks confirmed success. No additional retry was needed.
