@@ -12,10 +12,11 @@
 - Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
 
 ### Other Changes
+- Added `nanoarrow>=0.7.0` as a required dependency.
 - Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
   and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
   models instead of generated internal types.
-- `ContainerClient`'s `list_blobs`, `list_blob_names`, and `walk_blobs` now use Arrow by default and `nanoarrow>=0.7.0` was added as a required dependency. Pass `response_format="xml"` to use the previous behavior.
+- `ContainerClient`'s `list_blobs`, `list_blob_names`, and `walk_blobs` now use Arrow by default. Pass `response_format="xml"` to use the previous behavior.
 
 ## 12.31.0 (2026-09-30)
 
