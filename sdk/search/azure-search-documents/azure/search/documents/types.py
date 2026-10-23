@@ -55,7 +55,7 @@ class BalancedVectorQueryTopicGraph(TypedDict, total=False):
      diversity-aware retrieval. Recommended default to balance diversity with relevance.
     :vartype kind: Literal[VectorSearchTopicGraphKind.BALANCED]
     :ivar minDiversityPoolSize: The minimum number of vector candidates to retrieve before topic
-     graph sampling. The default is 1,000 for classic services and 500 for serverless services.
+     graph sampling. The default is 1,000.
     :vartype minDiversityPoolSize: int
     """
 
@@ -64,7 +64,7 @@ class BalancedVectorQueryTopicGraph(TypedDict, total=False):
      retrieval. Recommended default to balance diversity with relevance."""
     minDiversityPoolSize: int
     """The minimum number of vector candidates to retrieve before topic graph sampling. The default is
-     1,000 for classic services and 500 for serverless services."""
+     1,000."""
 
 
 class DiverseVectorQueryTopicGraph(TypedDict, total=False):
@@ -76,7 +76,7 @@ class DiverseVectorQueryTopicGraph(TypedDict, total=False):
      the default configured on the topic graph profile is used.
     :vartype diversityFactor: float
     :ivar minDiversityPoolSize: The minimum number of vector candidates to retrieve before topic
-     graph sampling. The default is 1,000 for classic services and 500 for serverless services.
+     graph sampling. The default is 1,000.
     :vartype minDiversityPoolSize: int
     """
 
@@ -87,7 +87,7 @@ class DiverseVectorQueryTopicGraph(TypedDict, total=False):
      on the topic graph profile is used."""
     minDiversityPoolSize: int
     """The minimum number of vector candidates to retrieve before topic graph sampling. The default is
-     1,000 for classic services and 500 for serverless services."""
+     1,000."""
 
 
 class GraphQueryProvenanceHydrateDocumentsParameters(TypedDict, total=False):  # pylint: disable=name-too-long

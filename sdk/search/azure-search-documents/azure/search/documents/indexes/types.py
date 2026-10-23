@@ -7263,7 +7263,7 @@ class VectorSearchTopicGraphProfile(TypedDict, total=False):
     :vartype defaultDiversityFactor: float
     :ivar defaultMinDiversityPoolSize: Default minimum number of vector candidates to retrieve
      before topic graph sampling. This property can only be used when ``defaultKind`` is ``diverse``
-     or ``balanced``. The default is 1,000 for classic services and 500 for serverless services.
+     or ``balanced``. The default is 1,000.
     :vartype defaultMinDiversityPoolSize: int
     """
 
@@ -7280,7 +7280,7 @@ class VectorSearchTopicGraphProfile(TypedDict, total=False):
     defaultMinDiversityPoolSize: int
     """Default minimum number of vector candidates to retrieve before topic graph sampling. This
      property can only be used when ``defaultKind`` is ``diverse`` or ``balanced``. The default is
-     1,000 for classic services and 500 for serverless services."""
+     1,000."""
 
 
 VisionVectorizeSkill = TypedDict(

@@ -1,7 +1,7 @@
 # 2026-11-01-preview generation
 
 Generation inputs are `Azure/azure-rest-api-specs` commit
-`2c0ca3a8b788bc866d2312b72bc05b49b048973d`,
+`b41ba04c0219f6622b7f5214fc020f90bad339ae`,
 `specification/search/data-plane/Search/client.tsp` and `tspconfig.yaml`.
 The repository-pinned `tsp-client` 0.33.1 resolves
 `@azure-tools/typespec-python` 0.63.10. Run from the package directory:
@@ -59,3 +59,62 @@ expanded `SearchField` overload and generated SSE methods; handwritten complexit
 limits remain unchanged.
 Generated defaults follow the new preview; explicit older `api_version` values
 and all previously advertised enum members remain available.
+
+The spec revision above advances the original pin
+`2c0ca3a8b788bc866d2312b72bc05b49b048973d` only for topic-graph descriptions and
+an example correction; it does not change the wire contract or SDK version.
+
+## Documentation diagnostics
+
+Public CI build 6992015 fails Sphinx on `QueryDebugMode.AGENTIC` with
+`Inline substitution_reference start-string without end-string`. The
+`models-index.tsp` description contains the language-neutral text
+`supported modes using |;`. The pinned Python emitter delegates enum member
+descriptions to `enum.py.jinja2`, which wraps the text without escaping this
+reStructuredText delimiter. Sphinx obtains member documentation from the source
+literal, not the enum member's runtime `__doc__`; a runtime customization cannot
+repair that source. The package-owned exact-match post-generation rewriter
+formats the separator as an inline literal, preserving its documentation and
+runtime value. This avoids changing the signed-off shared spec or hand-editing
+generated files. The regression test checks the member's source documentation;
+the package Sphinx build checks the actual rendered result. Report the unescaped
+enum delimiter to `@typespec/http-client-python`, and remove the replacement once
+unmodified generated documentation passes both checks.
+
+## Recording prerequisites
+
+Public CI build 6992015 has 160 failing recorded tests and 206 passing offline
+tests on each sampled platform. All 160 distinct failures in the Windows,
+Ubuntu, and macOS task logs request `2026-11-01-preview` while their matching
+recordings use `2026-08-01-preview`. These recordings must be refreshed against
+an authorized service, not edited to impersonate new service responses.
+
+Follow the repository [testing guide](../../../../doc/dev/tests.md) and the
+package's [environment template](../.github/skills/azure-search-documents/scripts/Set-LiveTestEnvironment.sample.ps1).
+Before recording, confirm:
+
+- A dedicated disposable Search service supports the November preview, semantic
+  ranking, knowledge bases/sources, and File ingestion. The live-test preparer
+  deletes existing indexes, knowledge resources, synonym maps, aliases, indexers,
+  data sources, and skillsets; do not point it at a shared or production service.
+- `SEARCH_SERVICE_ENDPOINT` and `SEARCH_SERVICE_NAME` identify that service.
+  The signed-in principal needs Search Service Contributor and Search Index Data
+  Contributor, as in the [test-resource template](../../test-resources.bicep).
+- `SEARCH_STORAGE_CONNECTION_STRING` and `SEARCH_STORAGE_CONTAINER_NAME` identify
+  existing Blob fixtures for indexer tests. Keep the connection string in an
+  approved local secret store/environment, never in chat or committed files.
+- `SEARCH_AZURE_OPENAI_ENDPOINT`, `SEARCH_AZURE_OPENAI_EMBEDDING_DEPLOYMENT`, and
+  `SEARCH_AZURE_OPENAI_EMBEDDING_MODEL` identify an existing embedding deployment.
+  File tests pass no OpenAI API key, so the Search service needs a managed
+  identity authorized to use that deployment.
+
+An existing Azure CLI login is supported by `get_credential()` when
+`AZURE_TEST_USE_CLI_AUTH=true`; no client secret or Search admin key is required
+by the current recorded suite. CLI login does not provide the storage connection
+string or configure service-side OpenAI access. Separate performance scenarios
+using `AzureKeyCredential` additionally require their documented API key.
+
+Only after the environment is approved, set `AZURE_TEST_RUN_LIVE=true` and leave
+`AZURE_SKIP_LIVE_RECORDING` unset/false, run the live tests, and inspect sanitized
+recordings before updating the package's asset tag. No live run or resource
+provisioning was performed for this CI repair.

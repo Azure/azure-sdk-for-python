@@ -15054,7 +15054,7 @@ class VectorSearchTopicGraphProfile(_Model):  # pylint: disable=docstring-keywor
     :vartype default_diversity_factor: float
     :ivar default_min_diversity_pool_size: Default minimum number of vector candidates to retrieve
      before topic graph sampling. This property can only be used when ``defaultKind`` is ``diverse``
-     or ``balanced``. The default is 1,000 for classic services and 500 for serverless services.
+     or ``balanced``. The default is 1,000.
     :vartype default_min_diversity_pool_size: int
     """
 
@@ -15077,7 +15077,7 @@ class VectorSearchTopicGraphProfile(_Model):  # pylint: disable=docstring-keywor
     )
     """Default minimum number of vector candidates to retrieve before topic graph sampling. This
      property can only be used when ``defaultKind`` is ``diverse`` or ``balanced``. The default is
-     1,000 for classic services and 500 for serverless services."""
+     1,000."""
 
     @overload
     def __init__(

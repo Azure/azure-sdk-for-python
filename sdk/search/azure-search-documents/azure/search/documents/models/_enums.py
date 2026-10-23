@@ -217,7 +217,7 @@ class QueryDebugMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allows the user to explore the list of query rewrites generated for their search request."""
     AGENTIC = "agentic"
     """Returns bounded diagnostics for agentic search under @search.debug.agentic. Combine with other
-    supported modes using |; this selector does not enable agentic retrieval or query rewriting."""
+    supported modes using ``|``; this selector does not enable agentic retrieval or query rewriting."""
     INNER_HITS = "innerHits"
     """Allows the user to retrieve scoring information regarding vectors matched within a collection
     of complex types."""

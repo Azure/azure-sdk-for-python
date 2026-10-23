@@ -23,6 +23,12 @@ class Replacement:
 
 REPLACEMENTS = (
     Replacement(
+        "azure/search/documents/models/_enums.py",
+        "render the agentic debug mode separator as a reStructuredText literal",
+        "supported modes using |; this selector",
+        "supported modes using ``|``; this selector",
+    ),
+    Replacement(
         "azure/search/documents/indexes/models/_models.py",
         "suppress generated SearchField constructor complexity",
         "    @overload\n    def __init__(\n        self,\n        *,\n        name: str,\n"

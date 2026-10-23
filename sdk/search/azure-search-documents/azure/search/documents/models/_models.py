@@ -193,7 +193,7 @@ class BalancedVectorQueryTopicGraph(
      diversity-aware retrieval. Recommended default to balance diversity with relevance.
     :vartype kind: str or ~azure.search.documents.models.BALANCED
     :ivar min_diversity_pool_size: The minimum number of vector candidates to retrieve before topic
-     graph sampling. The default is 1,000 for classic services and 500 for serverless services.
+     graph sampling. The default is 1,000.
     :vartype min_diversity_pool_size: int
     """
 
@@ -204,7 +204,7 @@ class BalancedVectorQueryTopicGraph(
         name="minDiversityPoolSize", visibility=["read", "create", "update", "delete", "query"]
     )
     """The minimum number of vector candidates to retrieve before topic graph sampling. The default is
-     1,000 for classic services and 500 for serverless services."""
+     1,000."""
 
     @overload
     def __init__(
@@ -253,7 +253,7 @@ class DiverseVectorQueryTopicGraph(
      omitted, the default configured on the topic graph profile is used.
     :vartype diversity_factor: float
     :ivar min_diversity_pool_size: The minimum number of vector candidates to retrieve before topic
-     graph sampling. The default is 1,000 for classic services and 500 for serverless services.
+     graph sampling. The default is 1,000.
     :vartype min_diversity_pool_size: int
     """
 
@@ -268,7 +268,7 @@ class DiverseVectorQueryTopicGraph(
         name="minDiversityPoolSize", visibility=["read", "create", "update", "delete", "query"]
     )
     """The minimum number of vector candidates to retrieve before topic graph sampling. The default is
-     1,000 for classic services and 500 for serverless services."""
+     1,000."""
 
     @overload
     def __init__(
