@@ -1,8 +1,11 @@
 include *.md
 include LICENSE
+include azure_cosmos_build_metadata.py
+include api.metadata.yml
 include azure/__init__.py
 recursive-include samples *.py *.md
 recursive-include tests *.py
 include azure/cosmos/py.typed
+include azure/cosmos/_rust.pyi
 recursive-include azure/cosmos/_query_advisor *.json
 recursive-include doc *.rst

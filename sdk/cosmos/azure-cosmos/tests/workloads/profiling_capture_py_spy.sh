@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+# Capture Python-visible stacks while preserving the workload for the next
+# all-thread profiling step. Source this file so WORKLOAD_PID, PROFILING_CAPTURE_ID,
+# cleanup_workload, and the cleanup traps remain available in the current shell.
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  echo "ERROR: source this file so the next profiling step can reuse the workload:" >&2
+  echo "    source ./profiling_capture_py_spy.sh" >&2
+  exit 2
+fi
+
+_py_spy_here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${_py_spy_here}" || return 1
+
+# shellcheck disable=SC1091
+source ./profiling_common.sh || return 2
+if [[ -n "${PROFILING_SESSION_DIR:-}" ]]; then
+  profiling_load_env || return 2
+  profiling_load_session "${PROFILING_SESSION_DIR}" || return 2
+else
+  echo "ERROR: load the intended profiling session with profiling_load_session.sh <directory-name> first." >&2
+  return 2
+fi
+
+if [[ -n "${WORKLOAD_PID:-}" ]] && kill -0 "${WORKLOAD_PID}" 2>/dev/null; then
+  echo "ERROR: workload PID ${WORKLOAD_PID} is already running." >&2
+  echo "       Stop it before starting another profiling workload." >&2
+  return 2
+fi
+
+for _py_spy_command in python3 py-spy ps grep tee seq; do
+  if ! command -v "${_py_spy_command}" >/dev/null 2>&1; then
+    echo "ERROR: required command '${_py_spy_command}' is not installed." >&2
+    return 2
+  fi
+done
+
+export COSMOS_BACKEND=rust
+profiling_require_read_workload || return 2
+PROFILING_CAPTURE_ID="$(date -u +%Y%m%d-%H%M%S%3N)"
+export PERF_WORKLOAD_ID="profile-read-rust-${PROFILING_CAPTURE_ID}"
+
+PY_SPY_DURATION="${PY_SPY_DURATION:-60}"
+PY_SPY_RATE="${PY_SPY_RATE:-100}"
+PY_SPY_WARMUP="${PY_SPY_WARMUP:-30}"
+perf_require_positive "${PY_SPY_DURATION}" "${PY_SPY_RATE}" "${PY_SPY_WARMUP}" || return 2
+PY_SPY_SVG="${PROFILING_SESSION_DIR}/py-spy-wall.svg"
+PY_SPY_DUMP="${PROFILING_SESSION_DIR}/py-spy-dump.txt"
+PY_SPY_LOG="${PROFILING_SESSION_DIR}/py-spy-record.log"
+PY_SPY_DUMP_LOG="${PROFILING_SESSION_DIR}/py-spy-dump.log"
+if [[ -e "${PROFILING_SESSION_DIR}/profile-workload.log" || -e "${PY_SPY_SVG}" ]]; then
+  echo "ERROR: CPU capture artifacts already exist; start a new profiling session." >&2
+  return 2
+fi
+write_run_manifest "${PROFILING_SESSION_DIR}" "${PROFILING_CAPTURE_ID}" "cpu-capture" || return 2
+
+python3 workload.py >"${PROFILING_SESSION_DIR}/profile-workload.log" 2>&1 &
+WORKLOAD_PID=$!
+printf 'profile_stamp=%s\nworkload_pid=%s\n' "${PROFILING_CAPTURE_ID}" "${WORKLOAD_PID}" \
+  | tee -a "${PROFILING_SESSION_DIR}/run.txt"
+
+WORKLOAD_RC=unknown
+workload_is_running() {
+  # A recycled PID must not be mistaken for our still-running child job.
+  jobs -pr | grep -Fxq "${WORKLOAD_PID}"
+}
+cleanup_workload() {
+  if [[ "${WORKLOAD_RC:-unknown}" != "unknown" ]]; then
+    return 0
+  fi
+  if workload_is_running; then
+    kill -INT "${WORKLOAD_PID}" 2>/dev/null
+    for _ in $(seq 1 30); do
+      workload_is_running || break
+      sleep 1
+    done
+    if workload_is_running; then
+      kill -TERM "${WORKLOAD_PID}" 2>/dev/null
+      sleep 5
+    fi
+    if workload_is_running; then kill -KILL "${WORKLOAD_PID}" 2>/dev/null; fi
+  fi
+  WORKLOAD_RC=0
+  wait "${WORKLOAD_PID}" 2>/dev/null || WORKLOAD_RC=$?
+}
+trap cleanup_workload EXIT
+trap 'exit 130' INT TERM
+
+echo "=== Warming the Rust point-read workload for ${PY_SPY_WARMUP}s ==="
+sleep "${PY_SPY_WARMUP}"
+
+_py_spy_failed=0
+if ! workload_is_running; then
+  echo "ERROR: the workload stopped during warmup; see ${PROFILING_SESSION_DIR}/profile-workload.log." >&2
+  _py_spy_failed=1
+fi
+
+if [[ "${_py_spy_failed}" -eq 0 ]]; then
+  ps -p "${WORKLOAD_PID}" -o pid,ppid,etime,%cpu,rss,vsz,nlwp,cmd \
+    | tee "${PROFILING_SESSION_DIR}/process-before.txt"
+  _py_spy_ps_rc=("${PIPESTATUS[@]}")
+  if [[ "${_py_spy_ps_rc[*]}" != "0 0" ]]; then
+    echo "ERROR: could not inspect workload PID ${WORKLOAD_PID}." >&2
+    _py_spy_failed=1
+  elif ! tr '\0' ' ' <"/proc/${WORKLOAD_PID}/cmdline" | grep -q 'workload.py'; then
+    echo "ERROR: PID ${WORKLOAD_PID} is not the expected workload.py process." >&2
+    _py_spy_failed=1
+  fi
+fi
+
+if [[ "${_py_spy_failed}" -eq 0 ]]; then
+  grep -E 'azure.*cosmos.*_rust|_rust.*\.so' "/proc/${WORKLOAD_PID}/maps" \
+    | tee "${PROFILING_SESSION_DIR}/rust-mapping.txt"
+  _py_spy_mapping_rc=("${PIPESTATUS[@]}")
+  if [[ "${_py_spy_mapping_rc[*]}" != "0 0" ]]; then
+    echo "ERROR: the Cosmos Rust extension is not loaded in PID ${WORKLOAD_PID}." >&2
+    _py_spy_failed=1
+  elif ! cat "/proc/${WORKLOAD_PID}/smaps_rollup" >"${PROFILING_SESSION_DIR}/smaps-before.txt"; then
+    echo "ERROR: could not capture initial process memory totals." >&2
+    _py_spy_failed=1
+  fi
+fi
+
+if [[ "${_py_spy_failed}" -eq 0 ]]; then
+  echo "=== Recording Python-visible stacks for ${PY_SPY_DURATION}s at ${PY_SPY_RATE} Hz ==="
+  RUST_LOG=warn py-spy record \
+    --pid "${WORKLOAD_PID}" \
+    --duration "${PY_SPY_DURATION}" \
+    --rate "${PY_SPY_RATE}" \
+    --native \
+    --idle \
+    --output "${PY_SPY_SVG}" \
+    2>&1 | tee "${PY_SPY_LOG}"
+  _py_spy_record_rc=("${PIPESTATUS[@]}")
+  if [[ "${_py_spy_record_rc[*]}" != "0 0" ]]; then
+    echo "ERROR: py-spy or its log write failed: ${_py_spy_record_rc[*]}." >&2
+    _py_spy_failed=1
+  elif grep -Eqi 'behind in sampling|failed to (sample|read)' "${PY_SPY_LOG}"; then
+    echo "ERROR: py-spy reported that it could not sustain or read the requested samples." >&2
+    _py_spy_failed=1
+  elif ! grep -Eq 'Samples: [1-9][0-9]* Errors: 0[[:space:]]*$' "${PY_SPY_LOG}"; then
+    echo "ERROR: py-spy did not report a positive sample count with zero sampling errors." >&2
+    echo "       Keep the recording and inspect ${PY_SPY_LOG}; the capture is not accepted." >&2
+    _py_spy_failed=1
+  elif [[ ! -s "${PY_SPY_SVG}" ]]; then
+    echo "ERROR: py-spy produced no flame graph at ${PY_SPY_SVG}." >&2
+    _py_spy_failed=1
+  elif ! grep -Eqi 'workload|azure[._/: -]*cosmos|ContainerProxy|AsyncRustBinding' "${PY_SPY_SVG}"; then
+    echo "ERROR: the flame graph contains no recognizable workload or Cosmos SDK frames." >&2
+    _py_spy_failed=1
+  fi
+fi
+
+if [[ "${_py_spy_failed}" -eq 0 ]]; then
+  echo "=== Capturing one searchable text stack snapshot ==="
+  if ! py-spy dump --pid "${WORKLOAD_PID}" --native \
+    >"${PY_SPY_DUMP}" 2>"${PY_SPY_DUMP_LOG}"; then
+    echo "ERROR: py-spy dump failed; see ${PY_SPY_DUMP_LOG}." >&2
+    _py_spy_failed=1
+  elif [[ ! -s "${PY_SPY_DUMP}" ]]; then
+    echo "ERROR: py-spy dump produced no readable stack output." >&2
+    _py_spy_failed=1
+  fi
+fi
+
+if ! workload_is_running; then
+  echo "ERROR: workload stopped before the Python-visible capture completed." >&2
+  _py_spy_failed=1
+fi
+if [[ "${_py_spy_failed}" -ne 0 ]]; then
+  cleanup_workload
+  trap - EXIT INT TERM
+  unset _py_spy_here _py_spy_command _py_spy_failed _py_spy_mapping_rc \
+    _py_spy_ps_rc _py_spy_record_rc
+  return 1
+fi
+
+echo "=== py-spy capture PASSED ==="
+echo "    flame graph : ${PY_SPY_SVG}"
+echo "    text dump   : ${PY_SPY_DUMP}"
+echo "    workload PID: ${WORKLOAD_PID} (left running for the next profiling step)"
+echo "    Stop safely at any time with: cleanup_workload"
+
+unset _py_spy_here _py_spy_command _py_spy_failed _py_spy_mapping_rc \
+  _py_spy_ps_rc _py_spy_record_rc
+return 0

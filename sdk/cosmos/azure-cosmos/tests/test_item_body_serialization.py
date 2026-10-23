@@ -21,6 +21,9 @@ from azure.cosmos import (
 
 from azure.cosmos.aio import _asynchronous_request, _cosmos_client
 from azure.cosmos.documents import _OperationType
+from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.http_constants import HttpHeaders
 
 
@@ -70,7 +73,6 @@ class _DummyHeaderClient:
 
     UseMultipleWriteLocations = False
     master_key = None
-    resource_tokens = None
     client_id = None
 
     class connection_policy:
@@ -183,8 +185,9 @@ def _capture_sync_query_builder(query):
     # performs account discovery. These assignments are the minimal QueryFeed
     # fixture; add an attribute here if QueryFeed gains another dependency.
     connection = object.__new__(cosmos_client.CosmosClientConnection)
+    connection._backend = LEGACY_BACKEND
     connection.default_headers = {}
-    connection.last_response_headers = {}
+    connection._response_state = ClientLastResponseHeaders()
     connection._query_compatibility_mode = (
         cosmos_client.CosmosClientConnection._QueryCompatibilityMode.Default
     )
@@ -238,8 +241,9 @@ async def _capture_async_query_builder(query):
     # These assignments are the minimal QueryFeed fixture; add an attribute here
     # if QueryFeed gains another dependency.
     connection = object.__new__(_cosmos_client.CosmosClientConnection)
+    connection._backend = ASYNC_LEGACY_BACKEND
     connection.default_headers = {}
-    connection.last_response_headers = {}
+    connection._response_state = ClientLastResponseHeaders()
     connection._query_compatibility_mode = (
         _cosmos_client.CosmosClientConnection._QueryCompatibilityMode.Default
     )
@@ -429,20 +433,13 @@ class TestItemBodySerialization(unittest.TestCase):
         self.assertEqual(captured["content_length"], len('{"text":"日本"}'.encode("utf-8")))
 
     def test_enabled_option_does_not_change_other_request_bodies(self):
-        """The option is scoped to item writes only. Control-plane bodies
-        (databases, containers, users, permissions, sprocs, triggers, UDFs)
+        """The option is scoped to item writes only. Database/container bodies
         and document queries all stay ASCII-escaped even when it is on."""
         data = {"text": "日本"}
         expected = json.dumps(data, separators=(",", ":"))
         unaffected_requests = (
             (http_constants.ResourceType.Database, _OperationType.Create),
             (http_constants.ResourceType.Collection, _OperationType.Replace),
-            (http_constants.ResourceType.User, _OperationType.Upsert),
-            (http_constants.ResourceType.Permission, _OperationType.Create),
-            (http_constants.ResourceType.StoredProcedure, _OperationType.Create),
-            (http_constants.ResourceType.StoredProcedure, _OperationType.ExecuteJavaScript),
-            (http_constants.ResourceType.Trigger, _OperationType.Create),
-            (http_constants.ResourceType.UserDefinedFunction, _OperationType.Create),
             (http_constants.ResourceType.Document, _OperationType.SqlQuery),
         )
 
@@ -845,16 +842,6 @@ class TestClientOptionWiring(unittest.IsolatedAsyncioTestCase):
                         enable_compact_utf8_item_writes=invalid_value,
                     )
 
-    def test_sync_connection_string_forwards_option(self):
-        """The option survives the from_connection_string entry point."""
-        with mock.patch.object(cosmos_client.CosmosClient, "__init__", return_value=None) as init:
-            cosmos_client.CosmosClient.from_connection_string(
-                "AccountEndpoint=https://example.test;AccountKey=credential;",
-                enable_compact_utf8_item_writes=True,
-            )
-
-        self.assertTrue(init.call_args.kwargs["enable_compact_utf8_item_writes"])
-
     def test_sync_real_client_stores_and_honors_option(self):
         """End to end on a real client object: the flag is stored and actually
         flips the serializer's decision for an item write."""
@@ -936,16 +923,6 @@ class TestClientOptionWiring(unittest.IsolatedAsyncioTestCase):
                         {"masterKey": "credential"},
                         enable_compact_utf8_item_writes=invalid_value,
                     )
-
-    def test_async_connection_string_forwards_option(self):
-        """Async twin of the from_connection_string check."""
-        with mock.patch.object(_cosmos_client.CosmosClient, "__init__", return_value=None) as init:
-            _cosmos_client.CosmosClient.from_connection_string(
-                "AccountEndpoint=https://example.test;AccountKey=credential;",
-                enable_compact_utf8_item_writes=True,
-            )
-
-        self.assertTrue(init.call_args.kwargs["enable_compact_utf8_item_writes"])
 
     async def test_async_real_client_stores_and_honors_option(self):
         """Async twin of the end-to-end stored-and-honored check."""

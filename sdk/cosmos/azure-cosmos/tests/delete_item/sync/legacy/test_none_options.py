@@ -1,0 +1,97 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+"""Sync ``test_delete_item_none_options`` test against the
+``_backend="rust"`` path.
+
+Source: ``tests/test_none_options.py``. The class name and method name
+match the source (apart from the method's ``_rust`` suffix) so the parity reporter can
+pair the two runs by
+``(file basename, class name, method name)``. The other methods in the
+source ``TestNoneOptions`` class cover ``create_item``, ``read_item``,
+``upsert_item``, ``replace_item``, etc.; they belong to their own
+operations' ``legacy/`` folders.
+
+Self-contained: builds its own database + container in ``setUp`` and
+registers cleanup after acquisition, including on setup failure.
+Reads ``ACCOUNT_HOST`` and ``ACCOUNT_KEY``
+from the environment, defaulting to the local emulator when unset.
+
+Run with::
+
+    pytest --noconftest tests/delete_item/sync/legacy/test_none_options.py -v
+"""
+import os
+import unittest
+import uuid
+
+import pytest
+
+from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos.exceptions import CosmosHttpResponseError
+
+
+HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
+KEY = os.environ.get(
+    "ACCOUNT_KEY",
+    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+)
+
+
+@pytest.mark.cosmosEmulator
+class TestNoneOptions(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        self.addCleanup(self.client.close)
+        self._db_id = "legacy_delete_none_opts_" + uuid.uuid4().hex
+        self._container_id = "c_" + uuid.uuid4().hex[:8]
+        self.database = self.client.create_database(self._db_id)
+        self.addCleanup(self.client.delete_database, self._db_id)
+        self.container = self.database.create_container(
+            id=self._container_id,
+            partition_key=PartitionKey(path="/pk"),
+        )
+
+    def _create_sample_item(self):
+        item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
+        self.container.create_item(
+            item,
+            indexing_directive=None,
+            enable_automatic_id_generation=False,
+            session_token=None,
+            initial_headers=None,
+            priority=None,
+            no_response=None,
+            retry_write=None,
+            throughput_bucket=None,
+        )
+        return item
+
+    def test_delete_item_none_options_rust(self):
+        """Verify delete_item accepts None for every optional kwarg (session_token, initial_headers, etag, match_condition, priority, retry_write, throughput_bucket) and removes the item."""
+        # Source: tests/test_none_options.py::TestNoneOptions.test_delete_item_none_options
+        item = self._create_sample_item()
+        before_delete = self.container.read_item(item["id"], partition_key=item["pk"])
+        self.assertEqual({key: before_delete[key] for key in item}, item)
+        self.container.delete_item(
+            item["id"],
+            partition_key=item["pk"],
+            session_token=None,
+            initial_headers=None,
+            etag=None,
+            match_condition=None,
+            priority=None,
+            retry_write=None,
+            throughput_bucket=None,
+        )
+        with self.assertRaises(CosmosHttpResponseError) as caught:
+            self.container.read_item(
+                item["id"],
+                partition_key=item["pk"],
+                session_token=None,
+                initial_headers=None,
+                max_integrated_cache_staleness_in_ms=None,
+                priority=None,
+                throughput_bucket=None,
+            )
+        self.assertEqual(caught.exception.status_code, 404)

@@ -7,11 +7,9 @@ from aiohttp import TCPConnector, ClientRequest, tracing, ClientTimeout, ClientC
 
 
 class ProxiedTCPConnector(TCPConnector):
-    """
-    A TCP connector that proxies all connections through a specified host and port.
+    """A TCP connector that routes all connections through a proxy host and port.
 
-    This class extends TrackedTCPConnector to override connection behavior,
-    routing all traffic through a specified proxy server using non-encrypted http.
+    Extends aiohttp's TCPConnector to send traffic through the proxy over plain http.
     """
 
     def __init__(

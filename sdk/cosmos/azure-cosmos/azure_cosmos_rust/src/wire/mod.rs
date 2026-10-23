@@ -1,0 +1,282 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+//! Convert prepared inputs to Rust driver calls and convert the results for Python.
+//!
+//! For example, a request for "order-42" carries "dbs/sales/colls/orders",
+//! a typed partition key, and request settings. These binding helpers obtain the
+//! CosmosDriver object named by the driver handle and prepare its operation.
+//! Tokio runs the asynchronous Rust work; the Rust driver contacts the service
+//! backend. Local feed-range comparisons are a separate path without service I/O.
+//!
+//! Response helpers return a binding response tuple:
+//! `(status, sub_status, headers, body_bytes, diagnostics)`. The Python wrapper
+//! constructs BackendResponse from it. Header conversion uses the driver's
+//! `to_raw_headers`, not the original HTTP header collection.
+//!
+//! Metadata has a different result shape. Retained paging also records progress
+//! in a feed cursor; no feed cursor is created by a tuple conversion.
+//! Errors without an attached response do not prove that no service work occurred.
+//! See docs/V5/VOCABULARY.md for the shared terminology.
+
+use std::sync::Arc;
+
+use pyo3::prelude::*;
+
+use azure_data_cosmos_driver::driver::CosmosDriver;
+
+// Extracted sub-modules --------------------------------------------------
+mod container_metadata;
+pub(crate) mod deadline;
+mod diagnostics;
+mod driver_runner;
+pub(crate) mod lifecycle;
+mod errors;
+mod request;
+mod response;
+
+// Public-facing exception re-exports (lib.rs registers these) ------------
+pub use errors::{_DriverResponseError, _DriverTransportError, _UnsupportedQueryFeatureError};
+
+// Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ---
+pub(crate) use container_metadata::{get_container_metadata, get_container_metadata_async};
+pub(crate) use diagnostics::{attempt_count, operation_count, retry_count};
+
+// Request-side re-exports ------------------------------------------------
+// pub(crate): ffi/mod.rs imports these by explicit crate::wire:: path.
+pub(crate) use request::{
+    extract_account_prepared_modifiers, extract_body_bytes, extract_common_prepared_inputs,
+    extract_container_feed_prepared_inputs, extract_container_point_prepared_inputs,
+    extract_create_item_id, extract_database_prepared_inputs,
+    extract_read_feed_ranges_force_refresh, extract_required_item_id, RequestHeadersAndOptions,
+};
+// ---------------------------------------------------------------------------
+// Shared driver lookup and task cancellation
+// ---------------------------------------------------------------------------
+
+/// Request task cancellation when the owning Rust bridge future drops this guard.
+/// Aborting is not proof of immediate completion, connection release, or rollback
+/// of requests already sent to the service backend.
+struct AbortOnDrop(tokio::task::AbortHandle);
+
+impl Drop for AbortOnDrop {
+    fn drop(&mut self) {
+        self.0.abort();
+    }
+}
+
+/// Retain the exact driver owned by the supplied handle, independently of cache eviction.
+/// The Python wrapper rejects new operations on a closed adapter.
+fn lookup_driver(driver_handle: &crate::runtime::DriverHandle) -> PyResult<Arc<CosmosDriver>> {
+    Ok(driver_handle.driver())
+}
+
+#[cfg(test)]
+mod handle_ownership_tests {
+    use super::*;
+    use crate::driver_runtime::RuntimeHandle;
+    use crate::runtime::{acquire_driver_handle, drivers, release_driver_handle, runtime_context};
+    use azure_data_cosmos_driver::in_memory_emulator::{
+        InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion,
+    };
+    use url::Url;
+
+    #[test]
+    fn handle_retains_original_driver_before_lookup_across_close_and_recreation() {
+        pyo3::prepare_freethreaded_python();
+        let endpoint = Url::parse("https://owning-handle.emulator.local").unwrap();
+        let config = VirtualAccountConfig::new(vec![
+            VirtualRegion::new("East US", endpoint.clone()),
+        ]).unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(config));
+        let runtime = runtime_context().tokio_rt
+            .block_on(emulator.runtime_builder().build()).unwrap();
+        Python::with_gil(|py| {
+            let runtime = Py::new(py, RuntimeHandle::new(runtime)).unwrap();
+            let acquire = || acquire_driver_handle(
+                py, endpoint.as_str(), Some("ZW11bGF0b3Ita2V5"), None, None,
+                Some(runtime.borrow(py)),
+            ).unwrap();
+            let first = acquire();
+            let second = acquire();
+            let key = first.cache_key().to_owned();
+            let original = Arc::downgrade(&first.driver());
+            assert!(Arc::ptr_eq(&first.driver(), &second.driver()));
+
+            // Python dispatch already copied the handle, but native lookup has not run.
+            let first = Py::new(py, first).unwrap();
+            let pending_call = first.clone_ref(py);
+            release_driver_handle(&first.borrow(py)).unwrap();
+            release_driver_handle(&first.borrow(py)).unwrap();
+            assert!(drivers().read().contains_key(&key));
+            release_driver_handle(&second).unwrap();
+            drop(second);
+            drop(first);
+            assert!(!drivers().read().contains_key(&key));
+            assert!(original.upgrade().is_some());
+
+            let before_recreation = lookup_driver(&pending_call.borrow(py)).unwrap();
+            let replacement = acquire();
+            assert_eq!(replacement.cache_key(), key);
+            let after_recreation = lookup_driver(&pending_call.borrow(py)).unwrap();
+            assert!(Arc::ptr_eq(&before_recreation, &after_recreation));
+            assert!(!Arc::ptr_eq(&after_recreation, &replacement.driver()));
+
+            // Old cleanup must not consume the replacement's acquisition.
+            release_driver_handle(&pending_call.borrow(py)).unwrap();
+            assert!(drivers().read().contains_key(&key));
+            drop(pending_call);
+            drop(before_recreation);
+            drop(after_recreation);
+            assert!(original.upgrade().is_none());
+            // Dropping an unreleased handle also balances its cache acquisition.
+            drop(replacement);
+            assert!(!drivers().read().contains_key(&key));
+        });
+    }
+}
+
+// Operation modules ------------------------------------------------------
+mod containers;
+mod databases;
+mod feed_range;
+pub(crate) mod item_feed;
+mod items;
+pub(crate) mod batch;
+mod offers;
+mod query;
+pub(crate) mod settings;
+
+pub(crate) use containers::{
+    run_create_container_operation, run_create_container_operation_async,
+    run_delete_container_operation, run_delete_container_operation_async,
+    run_list_containers_operation, run_list_containers_operation_async,
+    run_query_containers_operation, run_query_containers_operation_async,
+    run_read_container_operation, run_read_container_operation_async,
+    run_replace_container_operation, run_replace_container_operation_async,
+};
+pub(crate) use databases::{
+    run_create_database_operation, run_create_database_operation_async,
+    run_delete_database_operation, run_delete_database_operation_async,
+    run_list_databases_operation, run_list_databases_operation_async,
+    run_query_databases_operation, run_query_databases_operation_async,
+    run_read_database_operation, run_read_database_operation_async,
+};
+pub(crate) use feed_range::{
+    run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
+    run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
+    run_read_feed_ranges_operation, run_read_feed_ranges_operation_async,
+};
+pub(crate) use items::{execute_item_operation_async, execute_item_operation_sync, ItemTarget};
+pub(crate) use offers::{
+    run_get_throughput_operation, run_get_throughput_operation_async, run_replace_throughput_operation,
+    run_replace_throughput_operation_async,
+};
+pub(crate) use query::{
+    run_query_operation, run_query_operation_async, run_read_all_items_operation,
+    run_read_all_items_operation_async,
+};
+
+#[cfg(test)]
+mod tests {
+    use super::feed_range::{
+        maybe_handle_feed_range_partition_key_special_case, FeedRangeFromPartitionKeyError,
+        FeedRangePartitionKeySource,
+    };
+    use azure_data_cosmos_driver::models::{
+        PartitionKeyDefinition, PartitionKeyKind, PartitionKeyVersion,
+    };
+
+    // Exercise the sibling feed-range helper from this parent module's tests
+    // without exposing it outside the binding.
+
+    #[test]
+    fn feed_range_special_case_empty_sentinel_matches_legacy_minimum_range() {
+        let definitions = [
+            PartitionKeyDefinition::from("/pk").with_version(PartitionKeyVersion::V1),
+            PartitionKeyDefinition::from("/pk").with_version(PartitionKeyVersion::V2),
+            PartitionKeyDefinition::new(vec!["/a".into(), "/b".into()])
+                .with_kind(PartitionKeyKind::MultiHash)
+                .with_version(PartitionKeyVersion::V2),
+        ];
+        for definition in definitions {
+            let payload = maybe_handle_feed_range_partition_key_special_case(
+                &definition,
+                FeedRangePartitionKeySource::EmptySentinel,
+            )
+            .expect("_Empty should be supported")
+            .expect("_Empty should return the minimum range");
+            assert_eq!(payload.min, "");
+            assert_eq!(payload.max, "00");
+            assert!(!payload.is_max_inclusive);
+        }
+    }
+
+    #[test]
+    fn feed_range_special_case_explicit_empty_sequence_matches_legacy_routing() {
+        let hash_v2 = PartitionKeyDefinition::from("/pk")
+            .with_kind(PartitionKeyKind::Hash)
+            .with_version(PartitionKeyVersion::V2);
+        let hash_err = maybe_handle_feed_range_partition_key_special_case(
+            &hash_v2,
+            FeedRangePartitionKeySource::ExplicitEmptySequence,
+        )
+        .expect_err("hash container should reject explicit empty sequence");
+        match hash_err {
+            FeedRangeFromPartitionKeyError::LegacyAttribute(message) => {
+                assert!(message.contains("'int' object has no attribute 'upper'"));
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
+
+        let multihash_v2 = PartitionKeyDefinition::new(vec!["/a".into(), "/b".into()])
+            .with_kind(PartitionKeyKind::MultiHash)
+            .with_version(PartitionKeyVersion::V2);
+        let passthrough = maybe_handle_feed_range_partition_key_special_case(
+            &multihash_v2,
+            FeedRangePartitionKeySource::ExplicitEmptySequence,
+        )
+        .expect("multihash explicit empty sequence should not error");
+        assert!(passthrough.is_none());
+    }
+
+    // AbortOnDrop cancellation safety ------------------------------------
+    //
+    // For this yielding/sleeping task, dropping the guard produces a cancelled
+    // join result and leaves the completion flag unset. This does not exercise
+    // Python cancellation, blocking callbacks, network cleanup, or service work.
+
+    #[tokio::test]
+    async fn abort_on_drop_aborts_in_flight_task() {
+        use std::sync::{
+            atomic::{AtomicBool, Ordering},
+            Arc,
+        };
+
+        let completed = Arc::new(AtomicBool::new(false));
+        let completed_clone = Arc::clone(&completed);
+
+        let join = tokio::spawn(async move {
+            // Supply a cancellation point if the task is polled before abort.
+            tokio::task::yield_now().await;
+            tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+            completed_clone.store(true, Ordering::SeqCst);
+        });
+
+        let guard = super::AbortOnDrop(join.abort_handle());
+
+        // Give the task a chance to start and reach its first yield point.
+        tokio::task::yield_now().await;
+
+        // Request cancellation, then await the join result below.
+        drop(guard);
+
+        let result = join.await;
+        assert!(result.unwrap_err().is_cancelled());
+        assert!(!completed.load(Ordering::SeqCst));
+    }
+}
+
+#[cfg(test)]
+mod legacy_partition_key;
+pub(crate) mod partition_key_input;

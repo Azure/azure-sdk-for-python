@@ -1,0 +1,1525 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+"""Capture selected SDK methods for cross-backend comparison reports.
+
+COSMOS_PARITY_CAPTURE_OP selects a registered operation. With no selection,
+hooks do not install method patches or emit captures. Registrations cover
+client, database, and container methods on synchronous and asynchronous
+surfaces; lazy results are captured when the caller consumes them.
+
+Each capture includes supplied arguments, observed results or exceptions,
+available headers, a backend label, and process-wide binding/fallback
+counter deltas. The label comes from the connection's concrete backend
+name unless explicitly overridden. Neither labels nor counter deltas
+prove a particular network request or complete service execution.
+
+The original suites and Rust-pinned copies can produce transcripts for
+comparison. Running copies without capture checks only their existing
+assertions; passing them does not establish every legacy contract.
+
+Patches are installed at session start and restored at session finish.
+Captures use tokenized START/END sentinels around single-line JSON.
+Exception headers are preferred over connection state; the latter's
+object identity is only a heuristic for avoiding stale headers.
+"""
+from __future__ import annotations
+
+import json
+import inspect
+import os
+import re
+import secrets
+import sys
+import threading
+from collections.abc import Mapping
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import pytest
+
+
+# ---------------------------------------------------------------------------
+# Plugin protocol version
+# ---------------------------------------------------------------------------
+
+#: Bumped whenever the JSON payload schema changes in a way the reporter
+#: must know about (new required field, renamed field, semantics change
+#: for an existing field). The reporter parses this and warns if the two
+#: transcripts being diffed were produced by different plugin versions.
+#: Schema history:
+#:   v1 -- initial release (read_item op only).
+#:   v2 -- (June 2026) added ``test_doc``; sentinels gained per-session
+#:         random token (see ``SENTINEL_TOKEN`` below); ``response_headers``
+#:         on the raised path is now guarded against the stale-headers
+#:         carry-over described below.
+#:   v3 -- records the Rust binding operation-count delta so backend selection
+#:         cannot be mistaken for actual Rust execution.
+PLUGIN_VERSION = "v4"
+
+
+# ---------------------------------------------------------------------------
+# Env-var gate
+# ---------------------------------------------------------------------------
+
+#: When this env var is set to a known operation name, the plugin
+#: patches that operation's entry point on ``ContainerProxy`` and
+#: emits a capture block per invocation. When unset, the plugin is
+#: inert.
+ENV_CAPTURE_OP = "COSMOS_PARITY_CAPTURE_OP"
+
+#: Optional override for the backend label printed in the capture
+#: block. Normally inferred from the live client; the override exists
+#: so a custom test harness (or a CI runner spinning up a synthetic
+#: client) can force a label without touching the SDK internals.
+ENV_BACKEND_LABEL_OVERRIDE = "COSMOS_PARITY_CAPTURE_BACKEND_LABEL"
+
+#: Optional override for the per-session sentinel token. Set by the
+#: reporter's unit tests so they can predict the sentinel pattern in
+#: synthetic transcripts. In normal use, a fresh 8-hex token is
+#: generated at session start and embedded in the sentinels so any
+#: stray ``===PARITY-CAPTURE-START===`` literal in test stdout cannot
+#: confuse the reporter.
+ENV_SENTINEL_TOKEN_OVERRIDE = "COSMOS_PARITY_CAPTURE_SENTINEL_TOKEN"
+
+#: Per-session sentinel token. Built at first emit (or at
+#: ``pytest_sessionstart`` time) so synthetic test runs can predict
+#: it via the env override above. The reporter matches the sentinel
+#: via the regex pattern in :data:`SENTINEL_REGEX` rather than a
+#: literal string compare, so any well-formed token works.
+SENTINEL_TOKEN: Optional[str] = None
+
+#: Static sentinel prefix and suffix; the actual emitted sentinel is
+#: ``{SENTINEL_PREFIX}{SENTINEL_TOKEN}{SENTINEL_SUFFIX_START}`` /
+#: ``{SENTINEL_PREFIX}{SENTINEL_TOKEN}{SENTINEL_SUFFIX_END}``.
+SENTINEL_PREFIX = "===PARITY-CAPTURE-"
+SENTINEL_SUFFIX_START = "-START==="
+SENTINEL_SUFFIX_END = "-END==="
+
+_HEX_ADDR_RE = re.compile(r" at 0x[0-9a-fA-F]+")
+
+
+def _ensure_sentinel_token() -> str:
+    """Return the per-session sentinel token, building it on first use."""
+    global SENTINEL_TOKEN  # noqa: PLW0603
+    if SENTINEL_TOKEN is None:
+        override = os.environ.get(ENV_SENTINEL_TOKEN_OVERRIDE)
+        SENTINEL_TOKEN = override if override else secrets.token_hex(4)
+    return SENTINEL_TOKEN
+
+
+# ---------------------------------------------------------------------------
+# Operation registry
+# ---------------------------------------------------------------------------
+
+# Each entry knows how to patch one operation's entry point on the
+# sync + aio ``ContainerProxy``. Add a new entry when a new operation
+# joins the parity audit.
+#
+# ``importer`` is a callable returning ``(module, class_name,
+# method_name)`` for each surface. It's a callable (not a constant)
+# so the SDK isn't imported at plugin-collection time -- only when
+# the plugin actually activates.
+_OP_REGISTRY: Dict[str, Dict[str, Callable[[], Tuple[Any, str, str]]]] = {}
+
+
+def _register_op(op: str, *, sync: Callable[[], Tuple[Any, str, str]],
+                 aio: Callable[[], Tuple[Any, str, str]]) -> None:
+    """Register synchronous and asynchronous methods for one operation."""
+    _OP_REGISTRY[op] = {"sync": sync, "aio": aio}
+
+
+# create_item ----------------------------------------------------------------
+
+def _sync_create_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``create_item`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "create_item"
+
+
+def _aio_create_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``create_item`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "create_item"
+
+
+_register_op("create_item", sync=_sync_create_item_target, aio=_aio_create_item_target)
+
+def _sync_execute_item_batch_target() -> Tuple[Any, str, str]:
+    """Return the synchronous transactional batch method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "execute_item_batch"
+
+
+def _aio_execute_item_batch_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous transactional batch method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "execute_item_batch"
+
+
+_register_op(
+    "execute_item_batch", sync=_sync_execute_item_batch_target, aio=_aio_execute_item_batch_target
+)
+
+
+# create_database -------------------------------------------------------------
+
+def _sync_create_database_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``create_database`` method to record."""
+    from azure.cosmos import cosmos_client as _sync_client_mod
+    return _sync_client_mod, "CosmosClient", "create_database"
+
+
+def _aio_create_database_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``create_database`` method to record."""
+    from azure.cosmos.aio import _cosmos_client as _aio_client_mod
+    return _aio_client_mod, "CosmosClient", "create_database"
+
+
+_register_op(
+    "create_database",
+    sync=_sync_create_database_target,
+    aio=_aio_create_database_target,
+)
+
+
+# create_database_if_not_exists -----------------------------------------------
+
+def _sync_create_database_if_not_exists_target() -> Tuple[Any, str, str]:
+    """Return the synchronous get-or-create method to record."""
+    from azure.cosmos import cosmos_client as _sync_client_mod
+    return _sync_client_mod, "CosmosClient", "create_database_if_not_exists"
+
+
+def _aio_create_database_if_not_exists_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous get-or-create method to record."""
+    from azure.cosmos.aio import _cosmos_client as _aio_client_mod
+    return _aio_client_mod, "CosmosClient", "create_database_if_not_exists"
+
+
+_register_op(
+    "create_database_if_not_exists",
+    sync=_sync_create_database_if_not_exists_target,
+    aio=_aio_create_database_if_not_exists_target,
+)
+
+
+# list_databases ---------------------------------------------------------------
+
+def _sync_list_databases_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``list_databases`` method to record."""
+    from azure.cosmos import cosmos_client as _sync_client_mod
+    return _sync_client_mod, "CosmosClient", "list_databases"
+
+
+def _aio_list_databases_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``list_databases`` method to record."""
+    from azure.cosmos.aio import _cosmos_client as _aio_client_mod
+    return _aio_client_mod, "CosmosClient", "list_databases"
+
+
+_register_op(
+    "list_databases",
+    sync=_sync_list_databases_target,
+    aio=_aio_list_databases_target,
+)
+
+
+# query_databases -------------------------------------------------------------
+
+def _sync_query_databases_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``query_databases`` method to record."""
+    from azure.cosmos import cosmos_client as _sync_client_mod
+    return _sync_client_mod, "CosmosClient", "query_databases"
+
+
+def _aio_query_databases_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``query_databases`` method to record."""
+    from azure.cosmos.aio import _cosmos_client as _aio_client_mod
+    return _aio_client_mod, "CosmosClient", "query_databases"
+
+
+_register_op(
+    "query_databases",
+    sync=_sync_query_databases_target,
+    aio=_aio_query_databases_target,
+)
+
+
+# read_database ---------------------------------------------------------------
+
+def _sync_read_database_target() -> Tuple[Any, str, str]:
+    """Return the synchronous database ``read`` method to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "read"
+
+
+def _aio_read_database_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous database ``read`` method to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "read"
+
+
+_register_op(
+    "read_database",
+    sync=_sync_read_database_target,
+    aio=_aio_read_database_target,
+)
+
+
+# delete_item ----------------------------------------------------------------
+
+def _sync_delete_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``delete_item`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "delete_item"
+
+
+def _aio_delete_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``delete_item`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "delete_item"
+
+
+_register_op("delete_item", sync=_sync_delete_item_target, aio=_aio_delete_item_target)
+
+
+# read_item ------------------------------------------------------------------
+
+def _sync_read_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``read_item`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "read_item"
+
+
+def _aio_read_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``read_item`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "read_item"
+
+
+_register_op("read_item", sync=_sync_read_item_target, aio=_aio_read_item_target)
+
+def _sync_latest_session_token_target() -> Tuple[Any, str, str]:
+    import azure.cosmos.container as module
+    return module, "ContainerProxy", "get_latest_session_token"
+
+
+def _aio_latest_session_token_target() -> Tuple[Any, str, str]:
+    import azure.cosmos.aio._container as module
+    return module, "ContainerProxy", "get_latest_session_token"
+
+
+_register_op(
+    "get_latest_session_token",
+    sync=_sync_latest_session_token_target,
+    aio=_aio_latest_session_token_target,
+)
+
+
+# upsert_item ----------------------------------------------------------------
+
+def _sync_upsert_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``upsert_item`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "upsert_item"
+
+
+def _aio_upsert_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``upsert_item`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "upsert_item"
+
+
+_register_op("upsert_item", sync=_sync_upsert_item_target, aio=_aio_upsert_item_target)
+
+
+# replace_item ---------------------------------------------------------------
+
+def _sync_replace_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``replace_item`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "replace_item"
+
+
+def _aio_replace_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``replace_item`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "replace_item"
+
+
+_register_op("replace_item", sync=_sync_replace_item_target, aio=_aio_replace_item_target)
+
+
+# patch_item -----------------------------------------------------------------
+
+def _sync_patch_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``patch_item`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "patch_item"
+
+
+def _aio_patch_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``patch_item`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "patch_item"
+
+
+_register_op("patch_item", sync=_sync_patch_item_target, aio=_aio_patch_item_target)
+
+
+# query_items -----------------------------------------------------------------
+
+def _sync_query_items_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``query_items`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "query_items"
+
+
+def _aio_query_items_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``query_items`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "query_items"
+
+
+_register_op("query_items", sync=_sync_query_items_target, aio=_aio_query_items_target)
+
+
+# read_all_items --------------------------------------------------------------
+
+def _sync_read_all_items_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``read_all_items`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "read_all_items"
+
+
+def _aio_read_all_items_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``read_all_items`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "read_all_items"
+
+
+_register_op("read_all_items", sync=_sync_read_all_items_target, aio=_aio_read_all_items_target)
+
+
+# read_items ------------------------------------------------------------------
+# Points the parity harness at the batched read-many call. read_items is a
+# client-side orchestration built from point reads and per-partition queries, so
+# the capture records the returned CosmosList (the merged result) for one call.
+# Without this registration the harness could not intercept read_items, so the
+# two-column read_items audit (core-python vs rust) could not be generated.
+
+def _sync_read_items_target() -> Tuple[Any, str, str]:
+    """Return the synchronous batch ``read_items`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "read_items"
+
+
+def _aio_read_items_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous batch ``read_items`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "read_items"
+
+
+_register_op("read_items", sync=_sync_read_items_target, aio=_aio_read_items_target)
+
+
+# read_feed_ranges -------------------------------------------------------------
+
+def _sync_read_feed_ranges_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``read_feed_ranges`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "read_feed_ranges"
+
+
+def _aio_read_feed_ranges_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``read_feed_ranges`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "read_feed_ranges"
+
+
+_register_op("read_feed_ranges", sync=_sync_read_feed_ranges_target, aio=_aio_read_feed_ranges_target)
+
+
+# feed_range_from_partition_key ------------------------------------------------
+
+def _sync_feed_range_from_partition_key_target() -> Tuple[Any, str, str]:
+    """Return the synchronous feed-range lookup method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "feed_range_from_partition_key"
+
+
+def _aio_feed_range_from_partition_key_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous feed-range lookup method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "feed_range_from_partition_key"
+
+
+_register_op(
+    "feed_range_from_partition_key",
+    sync=_sync_feed_range_from_partition_key_target,
+    aio=_aio_feed_range_from_partition_key_target,
+)
+
+
+# is_feed_range_subset ---------------------------------------------------------
+# Points the parity harness at the customer call that checks whether one feed
+# range sits entirely inside another. This is a pure client-side check (no
+# network), so the capture records the returned yes/no rather than any wire
+# response. Without this registration the harness would not know how to intercept
+# the subset check, so the two-column is_feed_range_subset audit (core-python vs
+# rust) could not be generated at all.
+
+def _sync_is_feed_range_subset_target() -> Tuple[Any, str, str]:
+    """Return the synchronous feed-range subset method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "is_feed_range_subset"
+
+
+def _aio_is_feed_range_subset_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous feed-range subset method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "is_feed_range_subset"
+
+
+_register_op(
+    "is_feed_range_subset",
+    sync=_sync_is_feed_range_subset_target,
+    aio=_aio_is_feed_range_subset_target,
+)
+
+
+# get_throughput -------------------------------------------------------------
+# Points the parity harness at the customer call that reports provisioned RU/s
+# and the autoscale ceiling. Without this registration the harness would not
+# know how to intercept the throughput read, so the two-column get_throughput audit
+# (core-python vs rust) could not be generated at all.
+
+def _sync_get_throughput_target() -> Tuple[Any, str, str]:
+    """Return the synchronous container throughput read to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "get_throughput"
+
+
+def _aio_get_throughput_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous container throughput read to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "get_throughput"
+
+
+_register_op("get_throughput", sync=_sync_get_throughput_target, aio=_aio_get_throughput_target)
+
+
+# replace_throughput --------------------------------------------------------
+# Points the parity harness at the customer call that *changes* provisioned RU/s
+# (the read-modify-write on the container's offer). Without this registration the
+# harness would not know how to intercept the throughput change, so the two-column
+# replace_throughput audit (core-python vs rust) could not be generated at all.
+
+def _sync_replace_throughput_target() -> Tuple[Any, str, str]:
+    """Return the synchronous container throughput update to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "replace_throughput"
+
+
+def _aio_replace_throughput_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous container throughput update to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "replace_throughput"
+
+
+_register_op(
+    "replace_throughput",
+    sync=_sync_replace_throughput_target,
+    aio=_aio_replace_throughput_target,
+)
+
+
+# get_database_throughput -----------------------------------------------------
+# The two registrations above patch ContainerProxy, so they see only container
+# offers. A database can own throughput too (shared throughput across all its
+# containers), and that is a different method on a different class. Patching
+# ContainerProxy would never intercept it, so the database throughput read needs
+# its own registration or its audit could not be generated at all.
+#
+# Record the retained database throughput API; v5 has no read_offer alias.
+
+def _sync_get_database_throughput_target() -> Tuple[Any, str, str]:
+    """Return the synchronous database throughput read to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "get_throughput"
+
+
+def _aio_get_database_throughput_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous database throughput read to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "get_throughput"
+
+
+_register_op(
+    "get_database_throughput",
+    sync=_sync_get_database_throughput_target,
+    aio=_aio_get_database_throughput_target,
+)
+
+
+# replace_database_throughput -------------------------------------------------
+# The database counterpart of replace_throughput above: the read-modify-write
+# that changes a database's shared RU/s. Same reason for a separate entry -- it
+# lives on DatabaseProxy, so the ContainerProxy patch never sees it.
+
+def _sync_replace_database_throughput_target() -> Tuple[Any, str, str]:
+    """Return the synchronous database throughput update to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "replace_throughput"
+
+
+def _aio_replace_database_throughput_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous database throughput update to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "replace_throughput"
+
+
+_register_op(
+    "replace_database_throughput",
+    sync=_sync_replace_database_throughput_target,
+    aio=_aio_replace_database_throughput_target,
+)
+
+
+# create_container ------------------------------------------------------------
+# The customer call that makes a new container. Lives on DatabaseProxy, so none
+# of the ContainerProxy registrations above would ever intercept it.
+
+def _sync_create_container_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``create_container`` method to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "create_container"
+
+
+def _aio_create_container_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``create_container`` method to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "create_container"
+
+
+_register_op(
+    "create_container",
+    sync=_sync_create_container_target,
+    aio=_aio_create_container_target,
+)
+
+
+# create_container_if_not_exists ----------------------------------------------
+# Reads the container first and creates it only on a 404, so one customer call
+# can include a read and a create. These are logical calls, not HTTP attempt counts.
+# Patching create_container alone would
+# record the create leg without recording which path the call actually took.
+
+def _sync_create_container_if_not_exists_target() -> Tuple[Any, str, str]:
+    """Return the synchronous conditional container create to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "create_container_if_not_exists"
+
+
+def _aio_create_container_if_not_exists_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous conditional container create to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "create_container_if_not_exists"
+
+
+_register_op(
+    "create_container_if_not_exists",
+    sync=_sync_create_container_if_not_exists_target,
+    aio=_aio_create_container_if_not_exists_target,
+)
+
+
+# replace_container -----------------------------------------------------------
+
+def _sync_replace_container_target() -> Tuple[Any, str, str]:
+    """Return the synchronous container replacement method."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "replace_container"
+
+
+def _aio_replace_container_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous container replacement method."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "replace_container"
+
+
+_register_op(
+    "replace_container",
+    sync=_sync_replace_container_target,
+    aio=_aio_replace_container_target,
+)
+
+
+# read_container --------------------------------------------------------------
+# ContainerProxy.read returns the container's own definition -- partition key,
+# indexing policy, and the optional quota and statistics blocks. Named
+# read_container rather than read so the op name says which resource it reads.
+
+def _sync_read_container_target() -> Tuple[Any, str, str]:
+    """Return the synchronous container ``read`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "read"
+
+
+def _aio_read_container_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous container ``read`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "read"
+
+
+_register_op(
+    "read_container",
+    sync=_sync_read_container_target,
+    aio=_aio_read_container_target,
+)
+
+
+# list_containers -------------------------------------------------------------
+# These methods return lazy pagers, so captures are deferred to consumption.
+# The patched public method is an observation point, not the routing decision.
+
+def _sync_list_containers_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``list_containers`` method to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "list_containers"
+
+
+def _aio_list_containers_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``list_containers`` method to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "list_containers"
+
+
+_register_op(
+    "list_containers",
+    sync=_sync_list_containers_target,
+    aio=_aio_list_containers_target,
+)
+
+
+# query_containers ------------------------------------------------------------
+# Capture the public query call; normalization and backend eligibility belong
+# to the SDK, not this registry.
+
+def _sync_query_containers_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``query_containers`` method to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "query_containers"
+
+
+def _aio_query_containers_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``query_containers`` method to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "query_containers"
+
+
+_register_op(
+    "query_containers",
+    sync=_sync_query_containers_target,
+    aio=_aio_query_containers_target,
+)
+
+
+
+# ---------------------------------------------------------------------------
+# Capture state (per pytest session)
+# ---------------------------------------------------------------------------
+
+class _CaptureState:
+    """Mutable session-scoped state shared between hooks and patches."""
+
+    def __init__(self) -> None:
+        self.active_op: Optional[str] = None
+        self.current_nodeid: Optional[str] = None
+        # The first non-empty line of the currently-running test's
+        # docstring, captured at ``pytest_runtest_protocol`` time and
+        # re-attached to every emitted block. The reporter renders it
+        # in the scoreboard's Description column. ``None`` when the
+        # test method has no docstring (the reporter then falls back
+        # to a humanised version of the method name).
+        self.current_test_doc: Optional[str] = None
+        self.ordinal_by_nodeid: Dict[str, int] = {}
+        self._lock = threading.Lock()
+        # ``patches`` is a list of (class, method_name,
+        # original_callable, surface) tuples we use to revert at
+        # session end.
+        self.patches: List[Tuple[Any, str, Callable[..., Any], str]] = []
+
+    def next_ordinal(self, nodeid: str) -> int:
+        with self._lock:
+            n = self.ordinal_by_nodeid.get(nodeid, 0)
+            self.ordinal_by_nodeid[nodeid] = n + 1
+            return n
+
+
+_STATE = _CaptureState()
+
+
+# ---------------------------------------------------------------------------
+# Backend label inference
+# ---------------------------------------------------------------------------
+
+def _infer_backend_label(container_self: Any) -> str:
+    """Read ``_backend`` off the live client_connection.
+
+    The concrete backend's ``name`` identifies ``"core-python"`` or ``"rust"``. If the
+    env-var override is set, it wins (used by integration tests of the
+    plugin itself where there is no real SDK client involved)."""
+    override = os.environ.get(ENV_BACKEND_LABEL_OVERRIDE)
+    if override:
+        return override
+    try:
+        cc = getattr(container_self, "client_connection", None)
+        if cc is None:
+            return "unknown"
+        backend = cc._backend
+        return backend.name
+    except Exception:  # pylint: disable=broad-except
+        return "unknown"
+
+
+# ---------------------------------------------------------------------------
+# Serialisation helpers
+# ---------------------------------------------------------------------------
+
+def _coerce_json_safe(value: Any) -> Any:
+    """Convert supported captured values recursively to JSON-friendly forms.
+
+    Unknown objects use a scrubbed repr. This does not guarantee successful
+    serialization for arbitrary objects, recursive structures, or failing reprs.
+    """
+    from azure.cosmos.offer import ThroughputProperties
+
+    if isinstance(value, ThroughputProperties):
+        return {
+            "offer_throughput": value.offer_throughput,
+            "auto_scale_max_throughput": value.auto_scale_max_throughput,
+            "auto_scale_increment_percent": value.auto_scale_increment_percent,
+            "properties": _coerce_json_safe(value.properties),
+        }
+    if value is None or isinstance(value, (bool, int, float, str)):
+        return value
+    if isinstance(value, dict):
+        return {str(k): _coerce_json_safe(v) for k, v in value.items()}
+    # CaseInsensitiveDict + CosmosDict subclass dict but also implement
+    # ``items()``; the dict branch above already handles them. Anything
+    # ``Mapping``-like that does NOT subclass dict falls through to
+    # the ``items``-or-iter walk below.
+    if hasattr(value, "items") and callable(value.items):
+        try:
+            return {str(k): _coerce_json_safe(v) for k, v in value.items()}  # type: ignore[union-attr]
+        except Exception:  # pylint: disable=broad-except
+            pass
+    if isinstance(value, (list, tuple, set, frozenset)):
+        return [_coerce_json_safe(v) for v in value]
+    if isinstance(value, bytes):
+        try:
+            return value.decode("utf-8")
+        except UnicodeDecodeError:
+            return value.decode("utf-8", errors="replace")
+    # Object reprs often include memory addresses (``... at 0x...``), which
+    # are process-local noise and create false parity diffs for iterator/pager
+    # return values. Drop only the hex-address suffix, keep the type context.
+    return _HEX_ADDR_RE.sub("", repr(value))
+
+
+def _serialise_exception(exc: BaseException) -> Dict[str, Any]:
+    """Return public exception details in JSON-safe form."""
+    return {
+        "type": type(exc).__name__,
+        "message": str(exc),
+        "status_code": getattr(exc, "status_code", None),
+        "sub_status": getattr(exc, "sub_status", None),
+    }
+
+
+def _snapshot_headers(container_self: Any) -> Dict[str, str]:
+    """Return the latest response headers from a client connection."""
+    try:
+        cc = container_self.client_connection
+        h = getattr(cc, "last_response_headers", None) or {}
+        # Force into a plain dict of str→str so JSON serialisation is
+        # deterministic and the reporter can rely on .lower() keys
+        # later when bucketing into the three header populations.
+        return {str(k): str(v) for k, v in h.items()}
+    except Exception:  # pylint: disable=broad-except
+        return {}
+
+
+def _snapshot_result_headers(result: Any, container_self: Any) -> Dict[str, str]:
+    """Prefer aggregate result headers, then use connection headers."""
+    getter = getattr(result, "get_response_headers", None)
+    if callable(getter):
+        try:
+            return {str(k): str(v) for k, v in getter().items()}
+        except Exception:  # pylint: disable=broad-except
+            pass
+    return _snapshot_headers(container_self)
+
+
+def _snapshot_exception_headers(exc: BaseException, owner: Any, before: int) -> Dict[str, str]:
+    """Use the failed response, not stale headers from an earlier successful call."""
+    headers = getattr(exc, "headers", None)
+    if isinstance(headers, Mapping):
+        return {str(key): str(value) for key, value in headers.items()}
+    after = _snapshot_headers_identity(owner)
+    if after and after != before:
+        return _snapshot_headers(owner)
+    return {}
+
+
+def _rust_operation_count() -> Optional[int]:
+    """Return the Rust operation count when the extension exposes it."""
+    try:
+        from azure.cosmos import _rust
+        counter = getattr(_rust, "_debug_operation_count", None)
+        if callable(counter):
+            return int(counter())
+    except (ImportError, TypeError, ValueError):
+        pass
+    return None
+
+
+def _rust_fallback_count() -> int:
+    """Return the number of Rust calls that continued through Python."""
+    from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
+    return rust_compatibility_fallback_count()
+
+
+def _execution_evidence(
+    before: Optional[int], fallback_before: int, *, selected_backend: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Classify observed counter deltas using the plugin's reporting rule.
+
+    The counters are process-wide and can include unrelated concurrent work.
+    A zero delta can also mean early rejection or an uninstrumented path;
+    it does not by itself prove core-Python execution. Exception wrappers pass
+    the selected backend so zero Rust activity is reported without that inference.
+    """
+    after = _rust_operation_count()
+    fallback_delta = max(0, _rust_fallback_count() - fallback_before)
+    if before is None or after is None:
+        return {
+            "executed_engine": "unknown",
+            "rust_operation_delta": None,
+            "rust_fallback_delta": fallback_delta,
+        }
+    delta = max(0, after - before)
+    if selected_backend == "rust" and delta == 0 and fallback_delta == 0:
+        return {
+            "executed_engine": "no-rust-operation",
+            "rust_operation_delta": 0,
+            "rust_fallback_delta": 0,
+        }
+    return {
+        "executed_engine": (
+            "rust"
+            if delta > 0 and fallback_delta == 0
+            else "core-python"
+        ),
+        "rust_operation_delta": delta,
+        "rust_fallback_delta": fallback_delta,
+    }
+
+
+def _snapshot_headers_identity(container_self: Any) -> int:
+    """Return the current headers object's id, or zero if unavailable.
+
+    Identity changes are a freshness heuristic, not HTTP evidence: mappings
+    can be mutated in place or replaced without a request, and ids can be reused.
+    """
+    try:
+        cc = container_self.client_connection
+        h = getattr(cc, "last_response_headers", None)
+        return id(h) if h is not None else 0
+    except Exception:  # pylint: disable=broad-except
+        return 0
+
+
+def _emit_block(payload: Dict[str, Any]) -> None:
+    """Attempt to emit a JSON capture, then a minimal error block on failure.
+
+    The fallback write is not protected by another catch, so stdout failures
+    can still propagate.
+    """
+    if payload.get("op") == "get_latest_session_token":
+        # This string-returning utility has no response; connection headers belong
+        # to an earlier request, not to this operation.
+        payload = dict(payload, response_headers={})
+        if payload.get("rust_operation_delta") == 0 and payload.get("rust_fallback_delta") == 0:
+            payload["executed_engine"] = "local-python"
+    token = _ensure_sentinel_token()
+    sentinel_start = f"{SENTINEL_PREFIX}{token}{SENTINEL_SUFFIX_START}"
+    sentinel_end = f"{SENTINEL_PREFIX}{token}{SENTINEL_SUFFIX_END}"
+    try:
+        line = json.dumps(payload, default=repr, ensure_ascii=False)
+    except Exception as serialise_err:  # pylint: disable=broad-except
+        # Fall back to a minimal block so the reporter still sees
+        # *something* for this call -- better than silently dropping.
+        line = json.dumps({
+            "nodeid": payload.get("nodeid"),
+            "backend": payload.get("backend"),
+            "surface": payload.get("surface"),
+            "op": payload.get("op"),
+            "ordinal": payload.get("ordinal"),
+            "plugin_version": PLUGIN_VERSION,
+            "status": "capture-error",
+            "exception": {
+                "type": type(serialise_err).__name__,
+                "message": str(serialise_err),
+            },
+        })
+    sys.stdout.write("\n" + sentinel_start + "\n" + line + "\n" + sentinel_end + "\n")
+    sys.stdout.flush()
+
+
+# ---------------------------------------------------------------------------
+# Wrapper builders
+# ---------------------------------------------------------------------------
+#
+# Each wrapper monkey-patches **one** entry point per op (sync +
+# aio). If a test ever routes through a *different* SDK callable
+# that ultimately ends up doing the same work (e.g. an internal
+# helper bypass, a different proxy method, or pagination internals
+# that don't go back through the patched proxy), the capture will
+# not fire. For ``read_item`` today every test goes through
+# ``ContainerProxy.read_item`` directly so this is not a current
+# issue; flag it as a known limitation for future ops with multiple
+# entry points.
+#
+# Thread-safety note: ``_STATE`` is accessed without locking inside
+# the wrappers. pytest-xdist multi-process is fine (each worker has
+# its own process and its own ``_STATE``). Multi-threaded test runs
+# inside a single pytest worker would race on
+# ``_STATE.current_nodeid`` and the ordinal counter. The current
+# state is not protected by locks; concurrent calls within a worker can
+# therefore misattribute captures.
+
+_LAZY_CAPTURE_OPS = frozenset((
+    "query_items",
+    "read_feed_ranges",
+    "list_databases",
+    "query_databases",
+    "list_containers",
+    "query_containers",
+))
+
+
+class _CapturedPageIterator:
+    """Delegate paging attributes and record only pages the caller requests."""
+
+    def __init__(self, pages, emit, client):
+        self._pages = pages
+        self._emit = emit
+        self._client = client
+
+    def __getattr__(self, name):
+        return getattr(self._pages, name)
+
+    def _before(self):
+        try:
+            continuation = self._pages.continuation_token
+        except NotImplementedError as error:
+            # Some queries can keep fetching without supporting saved tokens.
+            continuation = {"unavailable": _serialise_exception(error)}
+        return (
+            _rust_operation_count(),
+            _rust_fallback_count(),
+            _snapshot_headers_identity(self._client),
+            continuation,
+        )
+
+    def _record(self, before, rows, error=None, exhausted=False):
+        evidence = _execution_evidence(
+            before[0], before[1], selected_backend=_infer_backend_label(self._client)
+        )
+        fresh_headers = _snapshot_headers_identity(self._client) != before[2]
+        if exhausted and not evidence["rust_fallback_delta"]:
+            # A retained query can enter the binding just to drain its local
+            # cursor. Its page state counts responses, unlike the entry counter.
+            responses = getattr(getattr(self._pages, "state", None), "responses", None)
+            if responses == 0 or (
+                responses is None and not fresh_headers and not evidence["rust_operation_delta"]
+            ):
+                return
+        headers = (
+            _snapshot_headers(self._client)
+            if error is None
+            else _snapshot_exception_headers(error, self._client, before[2])
+        )
+        self._emit(rows, headers, evidence, before[3], error)
+
+
+class _CapturedSyncPageIterator(_CapturedPageIterator):
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        before = self._before()
+        try:
+            rows = list(next(self._pages))
+        except StopIteration:
+            self._record(before, [], exhausted=True)
+            raise
+        except BaseException as error:  # pylint: disable=broad-except
+            self._record(before, None, error)
+            raise
+        self._record(before, rows)
+        return iter(rows)
+
+    next = __next__
+
+
+class _CapturedAsyncPageIterator(_CapturedPageIterator):
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        before = self._before()
+        try:
+            page = await self._pages.__anext__()
+            rows = [row async for row in page]
+        except StopAsyncIteration:
+            self._record(before, [], exhausted=True)
+            raise
+        except BaseException as error:  # pylint: disable=broad-except
+            self._record(before, None, error)
+            raise
+        self._record(before, rows)
+
+        async def items():
+            for row in rows:
+                yield row
+
+        return items()
+
+
+class _CapturedPagedResult:
+    def __init__(self, result, emit, client):
+        self._result = result
+        self._emit = emit
+        self._client = client
+        self._items = None
+
+    @property
+    def __class__(self):
+        # Preserve isinstance checks against the actual wrapped paging type.
+        return self._result.__class__
+
+    def __getattr__(self, name):
+        return getattr(self._result, name)
+
+    def by_page(self, *args, **kwargs):
+        pages = self._result.by_page(*args, **kwargs)
+        wrapper = _CapturedAsyncPageIterator if hasattr(pages, "__aiter__") else _CapturedSyncPageIterator
+        return wrapper(pages, self._emit, self._client)
+
+
+class _CapturedSyncPagedResult(_CapturedPagedResult):
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._items is None:
+            self._items = self._iterate()
+        return next(self._items)
+
+    next = __next__
+
+    def _iterate(self):
+        for page in self.by_page():
+            yield from page
+
+
+class _CapturedAsyncPagedResult(_CapturedPagedResult):
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self._items is None:
+            self._items = self._iterate()
+        return await self._items.__anext__()
+
+    async def _iterate(self):
+        async for page in self.by_page():
+            async for row in page:
+                yield row
+
+
+def _build_sync_wrapper(op_name: str, surface: str,
+                        original: Callable[..., Any]) -> Callable[..., Any]:
+    """Wrap a synchronous method to record its request and response."""
+    def _wrapper(self_container, *args, **kwargs):
+        nodeid = _STATE.current_nodeid
+        if nodeid is None:
+            return original(self_container, *args, **kwargs)
+        backend = _infer_backend_label(self_container)
+        rust_count_before = _rust_operation_count()
+        fallback_count_before = _rust_fallback_count()
+        test_doc = _STATE.current_test_doc
+        request_view = {
+            "args": [_coerce_json_safe(a) for a in args],
+            "kwargs": {k: _coerce_json_safe(v) for k, v in kwargs.items()},
+        }
+        # Snapshot the headers-dict identity BEFORE the call so the
+        # raised-path branch can tell whether this call actually
+        # produced a fresh ``last_response_headers``. Without this
+        # guard, a client-side validation error (e.g. negative
+        # ``max_integrated_cache_staleness_in_ms``) leaves the
+        # PREVIOUS call's headers in ``last_response_headers`` and
+        # the audit doc misleadingly displays them as if they were
+        # this test's.
+        headers_id_before = _snapshot_headers_identity(self_container)
+        try:
+            result = original(self_container, *args, **kwargs)
+            if op_name in _LAZY_CAPTURE_OPS and callable(getattr(result, "by_page", None)):
+                def _emit_page(rows, headers, evidence, continuation, error):
+                    payload = {
+                        "nodeid": nodeid,
+                        "backend": backend,
+                        "surface": surface,
+                        "op": op_name,
+                        "ordinal": _STATE.next_ordinal(nodeid),
+                        "plugin_version": PLUGIN_VERSION,
+                        "status": "raised" if error is not None else "ok",
+                        "test_doc": test_doc,
+                        "request": {**request_view, "continuation": continuation},
+                        "return_value": _coerce_json_safe(rows),
+                        "response_headers": headers,
+                        "exception": _serialise_exception(error) if error is not None else None,
+                        **evidence,
+                    }
+                    _emit_block(payload)
+
+                wrapper = _CapturedAsyncPagedResult if hasattr(result, "__aiter__") else _CapturedSyncPagedResult
+                return wrapper(result, _emit_page, self_container)
+            # These operations are lazy on both sync and aio surfaces: the
+            # method returns a pager, and the HTTP call happens when the pager
+            # is drained. Capture at drain-time so the evidence covers the
+            # actual operation rather than only pager construction.
+            if op_name in _LAZY_CAPTURE_OPS and hasattr(result, "__aiter__"):
+                async def _captured_async_iterable():
+                    try:
+                        materialized = [item async for item in result]
+                    except BaseException as iter_exc:  # pylint: disable=broad-except
+                        response_headers = _snapshot_exception_headers(
+                            iter_exc, self_container, headers_id_before
+                        )
+                        payload = {
+                            "nodeid": nodeid,
+                            "backend": backend,
+                            "surface": surface,
+                            "op": op_name,
+                            "ordinal": _STATE.next_ordinal(nodeid),
+                            "plugin_version": PLUGIN_VERSION,
+                            "status": "raised",
+                            "test_doc": test_doc,
+                            "request": request_view,
+                            "return_value": None,
+                            "response_headers": response_headers,
+                            "exception": _serialise_exception(iter_exc),
+                        }
+                        payload.update(_execution_evidence(rust_count_before, fallback_count_before))
+                        _emit_block(payload)
+                        raise
+                    payload = {
+                        "nodeid": nodeid,
+                        "backend": backend,
+                        "surface": surface,
+                        "op": op_name,
+                        "ordinal": _STATE.next_ordinal(nodeid),
+                        "plugin_version": PLUGIN_VERSION,
+                        "status": "ok",
+                        "test_doc": test_doc,
+                        "request": request_view,
+                        "return_value": _coerce_json_safe(materialized),
+                        "response_headers": _snapshot_headers(self_container),
+                        "exception": None,
+                    }
+                    payload.update(_execution_evidence(rust_count_before, fallback_count_before))
+                    _emit_block(payload)
+                    for item in materialized:
+                        yield item
+
+                return _captured_async_iterable()
+
+            if op_name in _LAZY_CAPTURE_OPS and hasattr(result, "__iter__"):
+                def _captured_sync_iterable():
+                    try:
+                        materialized = list(result)
+                    except BaseException as iter_exc:  # pylint: disable=broad-except
+                        response_headers = _snapshot_exception_headers(
+                            iter_exc, self_container, headers_id_before
+                        )
+                        payload = {
+                            "nodeid": nodeid,
+                            "backend": backend,
+                            "surface": surface,
+                            "op": op_name,
+                            "ordinal": _STATE.next_ordinal(nodeid),
+                            "plugin_version": PLUGIN_VERSION,
+                            "status": "raised",
+                            "test_doc": test_doc,
+                            "request": request_view,
+                            "return_value": None,
+                            "response_headers": response_headers,
+                            "exception": _serialise_exception(iter_exc),
+                        }
+                        payload.update(_execution_evidence(rust_count_before, fallback_count_before))
+                        _emit_block(payload)
+                        raise
+                    payload = {
+                        "nodeid": nodeid,
+                        "backend": backend,
+                        "surface": surface,
+                        "op": op_name,
+                        "ordinal": _STATE.next_ordinal(nodeid),
+                        "plugin_version": PLUGIN_VERSION,
+                        "status": "ok",
+                        "test_doc": test_doc,
+                        "request": request_view,
+                        "return_value": _coerce_json_safe(materialized),
+                        "response_headers": _snapshot_headers(self_container),
+                        "exception": None,
+                    }
+                    payload.update(_execution_evidence(rust_count_before, fallback_count_before))
+                    _emit_block(payload)
+                    yield from materialized
+
+                return _captured_sync_iterable()
+
+            payload = {
+                "nodeid": nodeid,
+                "backend": backend,
+                "surface": surface,
+                "op": op_name,
+                "ordinal": _STATE.next_ordinal(nodeid),
+                "plugin_version": PLUGIN_VERSION,
+                "status": "ok",
+                "test_doc": test_doc,
+                "request": request_view,
+                "return_value": _coerce_json_safe(result),
+                "response_headers": _snapshot_result_headers(result, self_container),
+                "exception": None,
+            }
+            payload.update(_execution_evidence(rust_count_before, fallback_count_before))
+            _emit_block(payload)
+            return result
+        except BaseException as exc:  # pylint: disable=broad-except
+            response_headers = _snapshot_exception_headers(exc, self_container, headers_id_before)
+            payload = {
+                "nodeid": nodeid,
+                "backend": backend,
+                "surface": surface,
+                "op": op_name,
+                "ordinal": _STATE.next_ordinal(nodeid),
+                "plugin_version": PLUGIN_VERSION,
+                "status": "raised",
+                "test_doc": test_doc,
+                "request": request_view,
+                "return_value": None,
+                "response_headers": response_headers,
+                "exception": _serialise_exception(exc),
+            }
+            payload.update(_execution_evidence(
+                rust_count_before, fallback_count_before, selected_backend=backend,
+            ))
+            _emit_block(payload)
+            raise
+
+    _wrapper.__wrapped__ = original  # type: ignore[attr-defined]
+    _wrapper.__name__ = getattr(original, "__name__", op_name)
+    return _wrapper
+
+
+def _build_aio_wrapper(op_name: str, surface: str,
+                       original: Callable[..., Any]) -> Callable[..., Any]:
+    """Wrap an asynchronous method to record its request and response."""
+    async def _wrapper(self_container, *args, **kwargs):
+        nodeid = _STATE.current_nodeid
+        if nodeid is None:
+            return await original(self_container, *args, **kwargs)
+        ordinal = _STATE.next_ordinal(nodeid)
+        backend = _infer_backend_label(self_container)
+        rust_count_before = _rust_operation_count()
+        fallback_count_before = _rust_fallback_count()
+        test_doc = _STATE.current_test_doc
+        request_view = {
+            "args": [_coerce_json_safe(a) for a in args],
+            "kwargs": {k: _coerce_json_safe(v) for k, v in kwargs.items()},
+        }
+        headers_id_before = _snapshot_headers_identity(self_container)
+        try:
+            result = await original(self_container, *args, **kwargs)
+            payload = {
+                "nodeid": nodeid,
+                "backend": backend,
+                "surface": surface,
+                "op": op_name,
+                "ordinal": ordinal,
+                "plugin_version": PLUGIN_VERSION,
+                "status": "ok",
+                "test_doc": test_doc,
+                "request": request_view,
+                "return_value": _coerce_json_safe(result),
+                "response_headers": _snapshot_result_headers(result, self_container),
+                "exception": None,
+            }
+            payload.update(_execution_evidence(rust_count_before, fallback_count_before))
+            _emit_block(payload)
+            return result
+        except BaseException as exc:  # pylint: disable=broad-except
+            response_headers = _snapshot_exception_headers(exc, self_container, headers_id_before)
+            payload = {
+                "nodeid": nodeid,
+                "backend": backend,
+                "surface": surface,
+                "op": op_name,
+                "ordinal": ordinal,
+                "plugin_version": PLUGIN_VERSION,
+                "status": "raised",
+                "test_doc": test_doc,
+                "request": request_view,
+                "return_value": None,
+                "response_headers": response_headers,
+                "exception": _serialise_exception(exc),
+            }
+            payload.update(_execution_evidence(
+                rust_count_before, fallback_count_before, selected_backend=backend,
+            ))
+            _emit_block(payload)
+            raise
+
+    _wrapper.__wrapped__ = original  # type: ignore[attr-defined]
+    _wrapper.__name__ = getattr(original, "__name__", op_name)
+    return _wrapper
+
+
+# ---------------------------------------------------------------------------
+# Patch install / revert
+# ---------------------------------------------------------------------------
+
+def _install_patches(op_name: str) -> None:
+    """Patch sync + aio entry points for ``op_name``."""
+    spec = _OP_REGISTRY.get(op_name)
+    if spec is None:
+        sys.stderr.write(
+            "[parity_capture_plugin] unknown op {!r}; known ops: {}\n".format(
+                op_name, sorted(_OP_REGISTRY.keys()),
+            )
+        )
+        return
+    for surface, importer in spec.items():
+        try:
+            module, class_name, method_name = importer()
+            cls = getattr(module, class_name)
+            original = getattr(cls, method_name)
+        except Exception as import_err:  # pylint: disable=broad-except
+            sys.stderr.write(
+                "[parity_capture_plugin] failed to import {} target for op={}: {}\n"
+                .format(surface, op_name, import_err)
+            )
+            continue
+        if surface == "aio" and inspect.iscoroutinefunction(original):
+            wrapper = _build_aio_wrapper(op_name, surface, original)
+        else:
+            wrapper = _build_sync_wrapper(op_name, surface, original)
+        setattr(cls, method_name, wrapper)
+        _STATE.patches.append((cls, method_name, original, surface))  # type: ignore[arg-type]
+
+
+def _revert_patches() -> None:
+    """Restore every method replaced by this plugin."""
+    while _STATE.patches:
+        cls, method_name, original, _surface = _STATE.patches.pop()
+        try:
+            setattr(cls, method_name, original)
+        except Exception:  # pylint: disable=broad-except
+            pass
+
+
+# ---------------------------------------------------------------------------
+# Pytest hooks
+# ---------------------------------------------------------------------------
+
+def pytest_sessionstart(session):  # pylint: disable=unused-argument
+    """Enable recording when the requested operation is configured."""
+    op = os.environ.get(ENV_CAPTURE_OP, "").strip()
+    if not op:
+        return
+    _STATE.active_op = op
+    _install_patches(op)
+    # NOTE: deliberately do not embed the literal SENTINEL strings
+    # in this message -- the reporter's capture parser scans the
+    # transcript for the sentinels, and a message containing them
+    # would trip a spurious START + END match with non-JSON in
+    # between. Describing them by name (rather than printing them
+    # verbatim) keeps the transcript safe to feed to the reporter.
+    sys.stdout.write(
+        "\n[parity-capture-plugin] active for op={!r}; emitting one "
+        "fenced JSON block per intercepted call (see "
+        "tests/common/parity_capture_plugin.py for the block format).\n"
+        .format(op)
+    )
+
+
+def pytest_sessionfinish(session, exitstatus):  # pylint: disable=unused-argument
+    """Restore wrapped methods after a recording session."""
+    if _STATE.active_op is None:
+        return
+    _revert_patches()
+    _STATE.active_op = None
+    sys.stdout.write("\n[parity-capture-plugin] patches reverted.\n")
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_protocol(item, nextitem):  # pylint: disable=unused-argument
+    """Track which nodeid is currently running so emitted blocks
+    carry the right ``nodeid``.
+
+    Using ``pytest_runtest_protocol`` rather than ``runtest_setup``
+    keeps the nodeid live across the setup → call → teardown phases,
+    which matters for tests whose ``setUp`` itself triggers a capture
+    (rare, but possible).
+
+    Also stashes the first non-empty line of the test method's
+    docstring (if any) so each emitted capture block can carry a
+    human-readable description for the reporter's scoreboard. We do
+    this once per test (not once per capture) so the description is
+    stable across multi-call tests."""
+    if _STATE.active_op is not None:
+        _STATE.current_nodeid = item.nodeid
+        _STATE.current_test_doc = _extract_test_doc(item)
+    yield
+    if _STATE.active_op is not None:
+        _STATE.current_nodeid = None
+        _STATE.current_test_doc = None
+
+
+def _extract_test_doc(item: Any) -> Optional[str]:
+    """Pull a one-line description from the test method's docstring.
+
+    Strategy: take ``item.obj.__doc__`` (works for both function- and
+    unittest-class-style tests under pytest), split on newline, and
+    return the first stripped non-empty line. Returns ``None`` when
+    the test has no docstring -- the reporter then falls back to a
+    humanised version of the method name."""
+    try:
+        obj = getattr(item, "obj", None)
+        doc = getattr(obj, "__doc__", None)
+        if not doc:
+            return None
+        for line in doc.splitlines():
+            stripped = line.strip()
+            if stripped:
+                return stripped
+        return None
+    except Exception:  # pylint: disable=broad-except
+        return None

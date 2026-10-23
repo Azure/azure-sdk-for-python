@@ -1740,7 +1740,185 @@
         "iscontinuationexpected",
         "aalapatirvbd",
         "unconfigure",
-        "undoc"
+        "undoc",
+        "archs",
+        "cdylib",
+        "cfgs",
+        "clippy",
+        "EDEADLK",
+        "finalizer",
+        "finalizers",
+        "GLSN",
+        "mpsc",
+        "msrust",
+        "msrustup",
+        "msvc",
+        "MSYS",
+        "musllinux",
+        "NBLCK",
+        "nocapture",
+        "offerenableruperminutethroughput",
+        "powi",
+        "PPAF",
+        "pyclass",
+        "pyfn",
+        "pyfunction",
+        "pymodule",
+        "rntbd",
+        "rustc",
+        "sdists",
+        "serde",
+        "toxiproxy",
+        "UNLCK",
+        "unraisable",
+        "unraisablehook",
+        "unstarted"
+      ]
+    },
+    {
+      "filename": "sdk/cosmos/azure-cosmos/**/*.sh",
+      "words": [
+        "esac"
+      ]
+    },
+    {
+      "filename": "sdk/cosmos/azure-cosmos/azure_cosmos_rust/src/**/*.rs",
+      "words": [
+        "reencodes",
+        "reencoding",
+        "reextract"
+      ]
+    },
+    {
+      "filename": [
+        "sdk/cosmos/azure-cosmos/tests/**",
+        "sdk/cosmos/azure-cosmos/scripts/v5/**"
+      ],
+      "words": [
+        "athrow",
+        "capfd",
+        "capsys",
+        "corepy",
+        "falsey",
+        "hdrs",
+        "inprocess",
+        "localns",
+        "makepyfile",
+        "mypkg",
+        "noresponse",
+        "pytester",
+        "redef",
+        "reprs",
+        "uncoalesced",
+        "Uncopyable",
+        "undecoded",
+        "unencodable",
+        "unjudgeable",
+        "unmaterialized",
+        "vnext",
+        "xfailed",
+        "xfails",
+        "xpassed",
+        "XPASS"
+      ]
+    },
+    {
+      "filename": "sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py",
+      "words": [
+        "xfails",
+        "xpass"
+      ]
+    },
+    {
+      "filename": "sdk/cosmos/templates/rust-tests.yml",
+      "words": [
+        "msrust",
+        "noexplorer",
+        "noui"
+      ]
+    },
+    {
+      "filename": [
+        "sdk/cosmos/azure-cosmos/tests/**/*.py",
+        "sdk/cosmos/azure-cosmos/azure_cosmos_rust/src/**/*.rs"
+      ],
+      "ignoreRegExpList": [
+        "/\\\\u[0-9a-fA-F]{4}/g",
+        "/\\\\u\\{[0-9a-fA-F]+\\}/g",
+        "/\\bAQAAAIABAAA=/g",
+        "/\\bAQAAAIABAAABAAAAAAAAAA==/g"
+      ]
+    },
+    {
+      "filename": [
+        "sdk/cosmos/azure-cosmos/tests/workloads/**",
+        "sdk/cosmos/azure-cosmos/tests/common/test_profiling_measurements_unit.py"
+      ],
+      "words": [
+        "bcell",
+        "cidx",
+        "concs",
+        "crepro",
+        "crss",
+        "dikshi",
+        "dmean",
+        "etime",
+        "filt",
+        "FUNCS",
+        "mmm",
+        "nlwp",
+        "noprofile",
+        "norc",
+        "nprocs",
+        "nseen",
+        "pcpu",
+        "pctile",
+        "phasec",
+        "pidx",
+        "PPID",
+        "procs",
+        "rrss",
+        "rudw",
+        "rups",
+        "smaps",
+        "syscpu",
+        "theil",
+        "thrs",
+        "topn",
+        "uncollectable",
+        "unlaunched",
+        "unpaced",
+        "unparseable",
+        "wids",
+        "wsec"
+      ]
+    },
+    {
+      "filename": [
+        "sdk/cosmos/azure-cosmos/tests/create_container_if_not_exists/aio/test_create_container_if_not_exists_parity_async.py",
+        "sdk/cosmos/azure-cosmos/tests/create_container_if_not_exists/sync/test_create_container_if_not_exists_parity.py",
+        "sdk/cosmos/azure-cosmos/tests/get_database_throughput/sync/test_get_database_throughput_parity.py",
+        "sdk/cosmos/azure-cosmos/tests/replace_database_throughput/sync/test_replace_database_throughput_parity.py",
+        "sdk/cosmos/azure-cosmos/tests/read_items/test_read_items_contract_unit.py",
+        "sdk/cosmos/azure-cosmos/tests/test_change_feed_contract_unit.py"
+      ],
+      "ignoreWords": [
+        "avad",
+        "ccine",
+        "efve",
+        "notp"
+      ]
+    },
+    {
+      "filename": "sdk/cosmos/azure-cosmos/docs/api-review.md",
+      "ignoreWords": [
+        "containerproxyis"
+      ]
+    },
+    {
+      "filename": "sdk/cosmos/azure-cosmos/docs/build_and_release.md",
+      "ignoreWords": [
+        "setuppy"
       ]
     },
     {

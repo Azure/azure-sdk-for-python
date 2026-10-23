@@ -9,6 +9,11 @@ import random
 import time
 import unittest
 import uuid
+from contextlib import contextmanager
+from copy import copy
+from inspect import iscoroutinefunction
+from unittest.mock import patch
+from urllib.parse import urlsplit
 
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError, ClientAuthenticationError
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
@@ -16,6 +21,7 @@ from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._retry_utility import _has_database_account_header, _has_read_retryable_headers, _configure_timeout
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.cosmos_client import CosmosClient
+from _client_transport import create_client_with_transport
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import StatusCodes, HttpHeaders
 from azure.cosmos.partition_key import (PartitionKey, _PartitionKeyKind, _PartitionKeyVersion, _Undefined,
@@ -162,7 +168,6 @@ class TestConfig(object):
     connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
 
     connectionPolicy = documents.ConnectionPolicy()
-    connectionPolicy.DisableSSLVerification = True
     is_emulator = host == local_host
     is_live._cache = True if not is_emulator else False
     credential = masterKey if is_emulator else get_credential()
@@ -182,8 +187,8 @@ class TestConfig(object):
         can opt in without bypassing the AAD/key selector.
         """
         if cls.data_auth_mode == 'aad':
-            return CosmosClient(cls.host, cls.credential, **kwargs)
-        return CosmosClient(cls.host, cls.masterKey, **kwargs)
+            return create_client_with_transport(CosmosClient, cls.host, cls.credential, **kwargs)
+        return create_client_with_transport(CosmosClient, cls.host, cls.masterKey, **kwargs)
 
     @classmethod
     def create_data_client_for_endpoint(cls, endpoint, **kwargs):
@@ -195,8 +200,8 @@ class TestConfig(object):
         """
         resolved_endpoint = endpoint or cls.host
         if cls.data_auth_mode == 'aad':
-            return CosmosClient(resolved_endpoint, cls.credential, **kwargs)
-        return CosmosClient(resolved_endpoint, cls.masterKey, **kwargs)
+            return create_client_with_transport(CosmosClient, resolved_endpoint, cls.credential, **kwargs)
+        return create_client_with_transport(CosmosClient, resolved_endpoint, cls.masterKey, **kwargs)
 
     @classmethod
     def create_data_client_async(cls, **kwargs):
@@ -222,8 +227,8 @@ class TestConfig(object):
         from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 
         if cls.data_auth_mode == 'aad':
-            return AsyncCosmosClient(cls.host, cls.credential_async, **kwargs)
-        return AsyncCosmosClient(cls.host, cls.masterKey, **kwargs)
+            return create_client_with_transport(AsyncCosmosClient, cls.host, cls.credential_async, **kwargs)
+        return create_client_with_transport(AsyncCosmosClient, cls.host, cls.masterKey, **kwargs)
 
     @classmethod
     def create_data_client_async_for_endpoint(cls, endpoint, **kwargs):
@@ -237,8 +242,8 @@ class TestConfig(object):
 
         resolved_endpoint = endpoint or cls.host
         if cls.data_auth_mode == 'aad':
-            return AsyncCosmosClient(resolved_endpoint, cls.credential_async, **kwargs)
-        return AsyncCosmosClient(resolved_endpoint, cls.masterKey, **kwargs)
+            return create_client_with_transport(AsyncCosmosClient, resolved_endpoint, cls.credential_async, **kwargs)
+        return create_client_with_transport(AsyncCosmosClient, resolved_endpoint, cls.masterKey, **kwargs)
 
     @classmethod
     def create_test_clients(cls, database_id, **kwargs):
@@ -252,8 +257,8 @@ class TestConfig(object):
 
         Extra ``**kwargs`` are forwarded to BOTH client constructors (use-cases:
         ``multiple_write_locations=True`` for circuit-breaker tests). For per-client
-        construction options (e.g. custom ``transport`` for fault injection), construct
-        the clients manually instead of using this factory.
+        fault-injection senders, use ``create_client_with_transport`` instead of
+        sharing one sender between these clients.
         """
         key_client = CosmosClient(cls.host, cls.masterKey, **kwargs)
         key_db = key_client.get_database_client(database_id)
@@ -597,12 +602,44 @@ class FakeHttpResponse:
     def body(self):
         return None
 
-def no_token_response_hook(raw_response):
-    request_headers = raw_response.http_request.headers
+@contextmanager
+def capture_requests(client, resource_type="docs"):
+    """Snapshot outgoing requests without exposing instrumentation as SDK options."""
+    transport = client.client_connection.pipeline_client._pipeline._transport
+    original_send = transport.send
+    requests = []
+
+    def capture(request):
+        if request.headers.get(HttpHeaders.IsQueryPlanRequest):
+            return
+        segments = urlsplit(request.url).path.strip("/").split("/")
+        # Container metadata reads must not count as container operations when
+        # the operation under test targets a different resource.
+        if segments[::2][-1] != resource_type:
+            return
+        snapshot = copy(request)
+        snapshot.headers = request.headers.copy()
+        requests.append(snapshot)
+
+    def send(request, **kwargs):
+        capture(request)
+        return original_send(request, **kwargs)
+
+    async def send_async(request, **kwargs):
+        capture(request)
+        return await original_send(request, **kwargs)
+
+    with patch.object(transport, "send", side_effect=send_async if iscoroutinefunction(original_send) else send):
+        yield requests
+    assert requests, "The operation did not send a matching request"
+
+
+def assert_no_session_token(request):
+    request_headers = request.headers
     assert request_headers.get(HttpHeaders.SessionToken) is None
 
-def token_response_hook(raw_response):
-    request_headers = raw_response.http_request.headers
+def assert_session_token(request):
+    request_headers = request.headers
     assert request_headers.get(HttpHeaders.SessionToken) is not None
 
 

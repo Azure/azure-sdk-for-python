@@ -1,0 +1,101 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+"""The existing legacy ``test_offer_methods`` check, re-run on the Rust engine.
+
+Why this file exists: ``get_throughput`` hands the customer an object whose
+type name changed over time. The class was renamed from ``Offer`` to
+``ThroughputProperties``, but the old ``Offer`` name was kept as an alias so
+customer code written years ago (``isinstance(result, Offer)``) still works.
+Old code depending on that alias must not break when a resource is read
+through the new Rust engine.
+
+What it does: it is the real legacy test copied verbatim from
+``tests/test_backwards_compatibility.py``, changed in exactly one place --
+the client is built with ``_backend="rust"`` -- so the same assertions now
+run against the Rust path. It checks that ``get_throughput`` still returns an
+object that is BOTH named ``ThroughputProperties`` AND an instance of
+``Offer``. Without this copy, a Rust return-type regression (a customer
+unpacking the wrong object) would slip through.
+
+This is NOT the side-by-side parity comparison. The parity tests
+(``get_throughput/sync/test_get_throughput_parity.py``) run the same call on both
+engines and diff the numbers. This file runs on Rust only; the core-python
+side of the contract is already guaranteed by the original test in
+``tests/``. Together: parity catches value drift (wrong RU/s), this catches
+contract drift (wrong return type) by reusing a check the team already
+trusts.
+
+Self-contained: builds its own database + container in ``setUp`` and deletes
+them in ``tearDown``. The class name and method name match the source (apart from the
+method's ``_rust`` suffix) so the
+two test IDs differ by path and method suffix. The database is created with shared
+throughput and the container with dedicated throughput, because
+``get_throughput`` only returns an offer when the resource owns one.
+
+Run with::
+
+    pytest --noconftest tests/get_container_throughput/sync/legacy/test_backwards_compatibility.py -v
+"""
+import os
+import unittest
+import uuid
+
+import pytest
+
+from azure.cosmos import CosmosClient, Offer, PartitionKey
+
+
+HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
+KEY = os.environ.get(
+    "ACCOUNT_KEY",
+    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+)
+
+
+@pytest.mark.cosmosEmulator
+class TestBackwardsCompatibility(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        self._db_id = "legacy_get_throughput_bwc_" + uuid.uuid4().hex[:8]
+        self._container_id = "c_" + uuid.uuid4().hex[:8]
+        self.databaseForTest = self.client.create_database(self._db_id, offer_throughput=400)
+        self.containerForTest = self.databaseForTest.create_container(
+            id=self._container_id,
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400,
+        )
+
+    def tearDown(self) -> None:
+        try:
+            self.client.delete_database(self._db_id)
+        finally:
+            self.client.close()
+
+    def test_offer_methods_rust(self):
+        """``get_throughput`` returns an object that answers to both its old and new type names.
+
+        The class was renamed from ``Offer`` to ``ThroughputProperties``, and
+        the old name was kept as an alias so existing code does not break.
+
+        Checked for a database and a container: the result must report as
+        ``ThroughputProperties`` and still pass an ``isinstance`` check against
+        ``Offer``.
+
+        Customer code written years ago may still test for ``Offer``. Returning
+        a plain new type would compile and run, then silently take the wrong
+        branch in that code.
+        """
+        # Source: tests/test_backwards_compatibility.py::TestBackwardsCompatibility.test_offer_methods
+        database_offer = self.databaseForTest.get_throughput()
+        container_offer = self.containerForTest.get_throughput()
+
+        self.assertTrue("ThroughputProperties" in str(type(database_offer)))
+        self.assertTrue("ThroughputProperties" in str(type(container_offer)))
+
+        self.assertTrue(isinstance(database_offer, Offer))
+        self.assertTrue(isinstance(container_offer, Offer))
+
+
+if __name__ == "__main__":
+    unittest.main()

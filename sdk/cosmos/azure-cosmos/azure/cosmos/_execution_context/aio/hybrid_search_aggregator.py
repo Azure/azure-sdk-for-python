@@ -45,7 +45,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
     """
 
     def __init__(self, client, resource_link, options, partitioned_query_execution_info,
-                 hybrid_search_query_info, response_hook, raw_response_hook):
+                 hybrid_search_query_info, response_hook):
         super(_HybridSearchContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -67,7 +67,6 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
         self._response_hook = response_hook
-        self._raw_response_hook = raw_response_hook
 
     async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
@@ -91,8 +90,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                         global_statistics_query,
                         self._document_producer_comparator,
                         self._options,
-                        self._response_hook,
-                        self._raw_response_hook
+                        self._response_hook
                     )
                 )
 
@@ -140,8 +138,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                         rewritten_query['rewrittenQuery'],
                         self._document_producer_comparator,
                         self._options,
-                        self._response_hook,
-                        self._raw_response_hook
+                        self._response_hook
                     )
                 )
         # verify all document producers have items/ no splits
@@ -278,8 +275,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                     query,
                     self._document_producer_comparator,
                     self._options,
-                    self._response_hook,
-                    self._raw_response_hook
+                    self._response_hook
                 )
             )
 

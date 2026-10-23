@@ -1,0 +1,350 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+//! Binding calls for container operations and metadata.
+//!
+//! Prepared requests name the database and, when needed, the container:
+//! for example, "sales" and "orders". Metadata takes explicit arguments instead.
+//! The helpers under wire/ run the Rust driver operation and convert its result.
+
+use pyo3::prelude::*;
+use pyo3::types::PyTuple;
+
+use crate::wire::{
+    extract_body_bytes, extract_container_feed_prepared_inputs,
+    extract_container_point_prepared_inputs, extract_database_prepared_inputs,
+    get_container_metadata as run_get_container_metadata,
+    get_container_metadata_async as run_get_container_metadata_async,
+    run_create_container_operation, run_create_container_operation_async,
+    run_delete_container_operation, run_delete_container_operation_async,
+    run_list_containers_operation, run_list_containers_operation_async,
+    run_query_containers_operation, run_query_containers_operation_async,
+    run_read_container_operation, run_read_container_operation_async,
+    run_replace_container_operation, run_replace_container_operation_async,
+};
+
+const CREATE_CONTAINER_DATABASE_REQUIRED: &str =
+    "create_container: PreparedRequest.item_id is required (the id of the database to create the container in)";
+
+/// Resolve a container name to its resource id and partition key definition.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, container_link, *, timeout_seconds=None))]
+pub(crate) fn get_container_metadata<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    container_link: &str,
+    timeout_seconds: Option<f64>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    run_get_container_metadata(py, &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?, container_link, timeout_seconds)
+}
+
+/// Return an awaitable that resolves a container's metadata.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, container_link, *, timeout_seconds=None))]
+pub(crate) fn get_container_metadata_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    container_link: &str,
+    timeout_seconds: Option<f64>,
+) -> PyResult<Bound<'py, PyAny>> {
+    run_get_container_metadata_async(py, &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?, container_link, timeout_seconds)
+}
+
+/// Create a container from the definition prepared by Python.
+/// The returned tuple contains the service response used by `DatabaseProxy.create_container`.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn create_container<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "create_container")?;
+    let (database_id, modifiers) =
+        extract_database_prepared_inputs(prepared, CREATE_CONTAINER_DATABASE_REQUIRED)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_create_container_operation(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        body_bytes,
+        "create_container",
+        timeout_seconds,
+        include_attempts,
+    )
+}
+
+/// Return an awaitable that creates a container.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn create_container_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "create_container")?;
+    let (database_id, modifiers) =
+        extract_database_prepared_inputs(prepared, CREATE_CONTAINER_DATABASE_REQUIRED)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_create_container_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        body_bytes,
+        "create_container_async",
+        timeout_seconds,
+        include_attempts,
+    )
+}
+
+/// Read a container's properties by database and container name.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn read_container<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "read_container")?;
+    let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
+    run_read_container_operation(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        container_id,
+        "read_container",
+        timeout_seconds,
+        include_attempts,
+    )
+}
+
+/// Return an awaitable that reads a container's properties.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn read_container_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "read_container")?;
+    let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
+    run_read_container_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        container_id,
+        "read_container_async",
+        timeout_seconds,
+        include_attempts,
+    )
+}
+
+/// Delete a container identified by database and container name.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn delete_container<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "delete_container")?;
+    let (database_id, container_id, mut modifiers) =
+        extract_container_point_prepared_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    run_delete_container_operation(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        container_id,
+        "delete_container",
+        include_attempts,
+    )
+}
+
+/// Return an awaitable that deletes a container.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn delete_container_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "delete_container")?;
+    let (database_id, container_id, mut modifiers) =
+        extract_container_point_prepared_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    run_delete_container_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        container_id,
+        "delete_container_async",
+        include_attempts,
+    )
+}
+
+/// Replace a container's properties using its database and container names.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn replace_container<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "replace_container")?;
+    let (database_id, container_id, mut modifiers) = extract_container_point_prepared_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_replace_container_operation(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        container_id,
+        body_bytes,
+        "replace_container",
+        include_attempts,
+    )
+}
+
+/// Return an awaitable that replaces a container's properties.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn replace_container_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "replace_container")?;
+    let (database_id, container_id, mut modifiers) = extract_container_point_prepared_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_replace_container_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        container_id,
+        body_bytes,
+        "replace_container_async",
+        include_attempts,
+    )
+}
+
+/// Read one page of containers in a database.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn list_containers<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "list_containers")?;
+    let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
+    run_list_containers_operation(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        "list_containers",
+        timeout_seconds,
+        include_attempts,
+    )
+}
+
+/// Return an awaitable that reads one page of containers.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn list_containers_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "list_containers")?;
+    let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
+    run_list_containers_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        "list_containers_async",
+        timeout_seconds,
+        include_attempts,
+    )
+}
+
+/// Run a container query and return one page of matching containers.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn query_containers<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "query_containers")?;
+    let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_query_containers_operation(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        body_bytes,
+        "query_containers",
+        timeout_seconds,
+        include_attempts,
+    )
+}
+
+/// Return an awaitable that runs one page of a container query.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn query_containers_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "query_containers")?;
+    let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_query_containers_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        modifiers,
+        database_id,
+        body_bytes,
+        "query_containers_async",
+        timeout_seconds,
+        include_attempts,
+    )
+}

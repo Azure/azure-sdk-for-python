@@ -1,0 +1,4042 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+"""Tests of backend selection, Python-to-binding dispatch, and lifecycle rules.
+
+Most cases replace the native extension or connection with test doubles.
+Their calls and counters establish Python wiring, not real HTTP activity,
+native resource cleanup, or complete service behavior. Selected native
+signature checks require the compiled extension and skip when unavailable.
+"""
+from __future__ import annotations
+import ast
+from azure.cosmos._backend.capabilities import OperationRouting
+from common.request_preparation import call_create_item_helper
+from common.typed_requests import key_from_legacy_header, legacy_partition_key_from_request
+
+import asyncio
+import concurrent.futures
+import importlib
+import inspect
+import logging
+import os
+import re
+import subprocess
+import sys
+import textwrap
+import threading
+import time
+from dataclasses import FrozenInstanceError
+from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock
+
+import pytest
+
+import azure.cosmos.aio._cosmos_client as async_cosmos_client_module
+import azure.cosmos.cosmos_client as sync_cosmos_client_module
+from azure.cosmos import CosmosRuntime, ConnectionPoolOptions
+from azure.cosmos._backend.cosmos_backend import CosmosBackend
+from azure.cosmos._backend.contracts import ContainerMetadata
+from azure.cosmos._backend.contracts import (
+    BackendResponse,
+    PreparedClientConfig,
+    PreparedFaultInjectionRule,
+    PreparedPageRequest,
+    PreparedRequest,
+)
+from azure.cosmos._backend.operations import (
+    OP_FEED_RANGE_FROM_PARTITION_KEY,
+    OP_LIST_CONTAINERS,
+    OP_LIST_DATABASES,
+    OP_QUERY_CONTAINERS,
+    OP_QUERY_DATABASES,
+    OP_QUERY_ITEMS,
+    OP_READ_ALL_ITEMS,
+    OP_READ_FEED_RANGES,
+    OP_GET_THROUGHPUT,
+    OP_TO_BINDING_FUNCTION_NAME,
+    STATELESS_PAGE_BINDING_FUNCTION_NAMES,
+)
+from azure.cosmos._backend.errors import UnsupportedQueryError
+from azure.cosmos._backend.errors import raise_account_read_unsupported
+from azure.cosmos._backend._binding_adapter_shared import (
+    configure_packaged_query_plan_interop,
+    driver_transport_error_type,
+    driver_unsupported_query_error_type,
+)
+from azure.cosmos._backend.constants import BACKEND_ENV_VAR, BACKEND_NAME_CORE_PYTHON, BACKEND_NAME_RUST
+from azure.cosmos._backend.client_config import build_client_config
+from azure.cosmos._backend.credentials import resolve_credential
+from azure.cosmos._backend.factory import make_backend, resolve_backend_name
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
+from azure.cosmos._backend.transport_settings import (
+    resolve_client_connection_timeout,
+)
+from azure.cosmos._backend._async_credential_bridge import (
+    AsyncCredentialBridgeReentrantError,
+    AsyncTokenCredentialBridge,
+)
+from azure.cosmos._backend.binding_adapter import BindingAdapter
+from azure.cosmos._helpers._item_arguments import get_selected_backend
+from azure.cosmos._helpers._item_operations import ItemHelper
+from azure.cosmos.aio._backend.factory import make_async_backend
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
+from azure.cosmos.aio._backend.binding_adapter import AsyncBindingAdapter
+from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
+from azure.cosmos.container import ContainerProxy
+from azure.cosmos.documents import ConnectionPolicy
+from azure.cosmos.partition_key import NonePartitionKeyValue
+
+
+@pytest.mark.parametrize("factory", [make_backend, make_async_backend])
+def test_client_headers_are_snapshotted_and_overridden_per_call_rust(factory):
+    from azure.core.utils import CaseInsensitiveDict
+
+    supplied = {"X-Application": "client", "x-default-only": "retained"}
+    adapter = factory("rust", url="https://headers.example", credential="key", headers=supplied)
+    try:
+        supplied["X-Application"] = "later-mutation"
+        prepared = PreparedRequest(
+            "read_item", "dbs/db/colls/c", b"", key_from_legacy_header('["pk"]'),
+            item_id="item", headers={"x-application": "call", "X-Call-Only": "once"},
+        )
+        result = adapter._with_client_headers(prepared)
+        assert dict(CaseInsensitiveDict(result.headers)) == {
+            "x-application": "call", "x-default-only": "retained", "X-Call-Only": "once",
+        }
+        assert prepared.headers == {"x-application": "call", "X-Call-Only": "once"}
+        assert CaseInsensitiveDict(adapter._client_config.headers)["x-application"] == "client"
+        later = adapter._with_client_headers(PreparedRequest(
+            "read_item", "dbs/db/colls/c", b"", key_from_legacy_header('["pk"]'), item_id="item",
+        ))
+        assert CaseInsensitiveDict(later.headers)["x-application"] == "client"
+        assert "X-Call-Only" not in later.headers
+        with pytest.raises(TypeError):
+            adapter._client_config.headers["x-application"] = "mutated"
+    finally:
+        closed = adapter.close()
+        if inspect.isawaitable(closed):
+            asyncio.run(closed)
+
+
+@pytest.mark.parametrize("headers", [[], "", {"x-app": 1}, {1: "value"}])
+def test_client_headers_reject_invalid_mappings_rust(headers):
+    with pytest.raises(TypeError):
+        build_client_config(headers=headers)
+
+
+def test_client_header_configuration_does_not_expose_values_in_repr_rust():
+    config = build_client_config(headers={"x-application": "private-value"})
+    assert config is not None and "private-value" not in repr(config)
+    assert build_client_config(headers={}) is None
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("paged", [False, True], ids=["point", "page"])
+def test_client_headers_reach_point_and_page_binding_calls_rust(monkeypatch, asynchronous, paged):
+    from azure.core.utils import CaseInsensitiveDict
+
+    factory = make_async_backend if asynchronous else make_backend
+    adapter = factory(
+        "rust", url="https://headers.example", credential="key",
+        headers={"X-Application": "client", "x-default-only": "retained"},
+    )
+    module = importlib.import_module(type(adapter).__module__)
+    binding_name = ("list_databases" if paged else "read_item") + ("_async" if asynchronous else "")
+    captured = []
+
+    def execute(handle, prepared, **kwargs):
+        assert handle == "test-handle"
+        captured.append(CaseInsensitiveDict(prepared.headers))
+        return (200, 0, {}, b"{}", None)
+
+    async def async_execute(*args, **kwargs):
+        return execute(*args, **kwargs)
+
+    monkeypatch.setattr(module._rust_module, binding_name, async_execute if asynchronous else execute)
+    monkeypatch.setattr(
+        adapter, "_ensure_driver_handle",
+        AsyncMock(return_value="test-handle") if asynchronous else MagicMock(return_value="test-handle"),
+    )
+
+    def request(headers):
+        if paged:
+            return PreparedPageRequest(op=OP_LIST_DATABASES, container_link="", headers=headers)
+        return PreparedRequest(
+            "read_item", "dbs/db/colls/c", b"", key_from_legacy_header('["pk"]'),
+            item_id="item", headers=headers,
+        )
+
+    calls = (request({"x-application": "call", "x-call-only": "once"}), request({}))
+
+    async def run_async():
+        try:
+            for prepared in calls:
+                if paged:
+                    assert len([page async for page in adapter.execute_pages(prepared)]) == 1
+                else:
+                    assert (await adapter.execute(prepared)).status_code == 200
+        finally:
+            await adapter.close()
+
+    if asynchronous:
+        asyncio.run(run_async())
+    else:
+        try:
+            for prepared in calls:
+                if paged:
+                    assert len(list(adapter.execute_pages(prepared))) == 1
+                else:
+                    assert adapter.execute(prepared).status_code == 200
+        finally:
+            adapter.close()
+    assert captured == [
+        CaseInsensitiveDict({"x-application": "call", "x-default-only": "retained", "x-call-only": "once"}),
+        CaseInsensitiveDict({"x-application": "client", "x-default-only": "retained"}),
+    ]
+
+
+@pytest.mark.parametrize(
+    "method",
+    sorted(
+        {
+            "release_driver_handle",
+            "_debug_fault_injection_rule_hit_count",
+            "get_container_metadata",
+            "get_container_metadata_async",
+        }
+        | {
+            name + suffix
+            for name in set(OP_TO_BINDING_FUNCTION_NAME.values()) | set(STATELESS_PAGE_BINDING_FUNCTION_NAMES.values())
+            for suffix in ("", "_async")
+        }
+    ),
+)
+def test_native_registry_binding_uses_driver_handle_parameter_rust(method):
+    """Every native entry point takes its driver as a first argument with one agreed name.
+
+    Each of these is called from Python by name, and the names live in two places that
+    are edited separately. If one side were renamed alone, the call would fail only when
+    that operation was actually used -- which for the less common ones could be long
+    after the change.
+
+    The argument must also be positional as well as named, since callers use both forms.
+    The two older names are checked to be gone: leaving one behind would let old code
+    keep working while new code uses the new name, and the disagreement would go
+    unnoticed until the old name was finally removed.
+
+    The list is built from the same mapping the real code uses, so an operation added
+    later is covered without anyone remembering to add it here. The whole test is skipped
+    where the native part is not built.
+    """
+    binding = pytest.importorskip("azure.cosmos._rust")
+    signature = inspect.signature(getattr(binding, method))
+    parameter = next(iter(signature.parameters.values()))
+    assert parameter.name == "driver_handle"
+    assert parameter.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
+    assert "handle" not in signature.parameters
+    assert "_handle" not in signature.parameters
+
+
+def test_native_close_accepts_driver_handle_keyword_rust():
+    """The current keyword requires an owning handle, not a cache-key string."""
+    binding = pytest.importorskip("azure.cosmos._rust")
+    with pytest.raises(TypeError, match="_DriverHandle"):
+        binding.release_driver_handle(driver_handle="unregistered-test-driver")
+    with pytest.raises(TypeError):
+        binding.release_driver_handle(handle="unregistered-test-driver")
+
+
+def test_configure_packaged_query_plan_interop_uses_package_libs_rust(tmp_path, monkeypatch):
+    """An existing package .libs directory is selected for native-library lookup.
+
+    This checks environment configuration, not loading the library or the
+    number of query-plan requests made by the driver.
+    """
+    package_directory = tmp_path / "azure" / "cosmos"
+    sidecar_directory = package_directory / ".libs"
+    sidecar_directory.mkdir(parents=True)
+    rust_module = MagicMock()
+    rust_module.__file__ = str(package_directory / "_rust.pyd")
+    monkeypatch.delenv("AZURE_COSMOS_QUERYPLANINTEROP_DIR", raising=False)
+
+    configure_packaged_query_plan_interop(rust_module)
+
+    assert os.environ["AZURE_COSMOS_QUERYPLANINTEROP_DIR"] == str(
+        sidecar_directory.resolve()
+    )
+
+
+def test_configure_packaged_query_plan_interop_skips_missing_directory_rust(tmp_path, monkeypatch):
+    """A missing package .libs directory leaves the lookup override unset."""
+    rust_module = MagicMock()
+    rust_module.__file__ = str(tmp_path / "azure" / "cosmos" / "_rust.pyd")
+    monkeypatch.delenv("AZURE_COSMOS_QUERYPLANINTEROP_DIR", raising=False)
+
+    configure_packaged_query_plan_interop(rust_module)
+
+    assert "AZURE_COSMOS_QUERYPLANINTEROP_DIR" not in os.environ
+
+
+def test_configure_packaged_query_plan_interop_preserves_explicit_directory_rust(
+    tmp_path, monkeypatch
+):
+    """A caller-provided native-library directory has priority over the wheel."""
+    package_directory = tmp_path / "azure" / "cosmos"
+    (package_directory / ".libs").mkdir(parents=True)
+    rust_module = MagicMock()
+    rust_module.__file__ = str(package_directory / "_rust.pyd")
+    explicit_directory = tmp_path / "explicit"
+    monkeypatch.setenv(
+        "AZURE_COSMOS_QUERYPLANINTEROP_DIR", str(explicit_directory)
+    )
+
+    configure_packaged_query_plan_interop(rust_module)
+
+    assert os.environ["AZURE_COSMOS_QUERYPLANINTEROP_DIR"] == str(
+        explicit_directory
+    )
+
+
+@pytest.mark.parametrize(
+    "resolver",
+    [driver_transport_error_type, driver_unsupported_query_error_type],
+)
+def test_binding_error_type_matches_nothing_without_extension_rust(resolver):
+    """Prove a missing Rust error type cannot match unrelated exceptions."""
+    assert resolver(None) == ()
+
+
+@pytest.mark.parametrize(
+    ("resolver", "error_name"),
+    [
+        (driver_transport_error_type, "_DriverTransportError"),
+        (driver_unsupported_query_error_type, "_UnsupportedQueryFeatureError"),
+    ],
+)
+def test_binding_error_type_rejects_stale_extension_rust(resolver, error_name):
+    """Prove stale Rust error types are not reused after a module change."""
+    with pytest.raises(RuntimeError, match=error_name):
+        resolver(object())
+
+
+@pytest.mark.parametrize(
+    "module_name",
+    [
+        "azure.cosmos._backend.binding_adapter",
+        "azure.cosmos.aio._backend.binding_adapter",
+    ],
+)
+def test_backend_import_does_not_configure_process_query_plan_path_rust(module_name, tmp_path):
+    """Native-library discovery is configured at driver startup, not import."""
+    script = textwrap.dedent(
+        f"""
+        import importlib
+        import os
+        import sys
+        import types
+        from pathlib import Path
+
+        import azure.cosmos
+
+        package_directory = Path({str(tmp_path)!r}) / "azure" / "cosmos"
+        sidecar_directory = package_directory / ".libs"
+        sidecar_directory.mkdir(parents=True)
+        os.environ.pop("AZURE_COSMOS_QUERYPLANINTEROP_DIR", None)
+        fake_rust = types.ModuleType("azure.cosmos._rust")
+        fake_rust.__file__ = str(package_directory / "_rust.pyd")
+        fake_rust._DriverTransportError = type("_DriverTransportError", (RuntimeError,), {{}})
+        fake_rust._DriverResponseError = type("_DriverResponseError", (RuntimeError,), {{}})
+        fake_rust._UnsupportedQueryFeatureError = type(
+            "_UnsupportedQueryFeatureError", (RuntimeError,), {{}}
+        )
+        azure.cosmos._rust = fake_rust
+        sys.modules["azure.cosmos._rust"] = fake_rust
+        sys.modules.pop({module_name!r}, None)
+
+        importlib.import_module({module_name!r})
+
+        assert "AZURE_COSMOS_QUERYPLANINTEROP_DIR" not in os.environ
+        """
+    )
+
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=Path(__file__).resolve().parents[2],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+
+
+@pytest.mark.parametrize("backend_type", [BindingAdapter, AsyncBindingAdapter])
+def test_driver_initialization_configures_query_plan_path_before_acquisition_rust(
+    backend_type, tmp_path, monkeypatch
+):
+    package = tmp_path / "azure" / "cosmos"
+    sidecar = package / ".libs"
+    sidecar.mkdir(parents=True)
+    monkeypatch.delenv("AZURE_COSMOS_QUERYPLANINTEROP_DIR", raising=False)
+    binding = MagicMock()
+    binding.__file__ = str(package / "_rust.pyd")
+
+    def acquire(*args):
+        assert os.environ["AZURE_COSMOS_QUERYPLANINTEROP_DIR"] == str(sidecar.resolve())
+        return "test-handle"
+
+    binding.acquire_driver_handle.side_effect = acquire
+    backend = backend_type(endpoint="https://qpi.documents.azure.com", master_key="k")
+    try:
+        assert "AZURE_COSMOS_QUERYPLANINTEROP_DIR" not in os.environ
+        assert backend._initialize_driver(binding) == "test-handle"
+    finally:
+        backend.abort_construction()
+
+
+def test_query_plan_configuration_preserves_override_added_during_discovery_rust(tmp_path, monkeypatch):
+    sidecar = tmp_path / ".libs"
+    sidecar.mkdir()
+    binding = MagicMock()
+    binding.__file__ = str(tmp_path / "_rust.pyd")
+    monkeypatch.delenv("AZURE_COSMOS_QUERYPLANINTEROP_DIR", raising=False)
+    original = Path.is_dir
+
+    def is_dir(path):
+        monkeypatch.setenv("AZURE_COSMOS_QUERYPLANINTEROP_DIR", "explicit-after-discovery")
+        return original(path)
+
+    monkeypatch.setattr(Path, "is_dir", is_dir)
+    configure_packaged_query_plan_interop(binding)
+    assert os.environ["AZURE_COSMOS_QUERYPLANINTEROP_DIR"] == "explicit-after-discovery"
+
+
+# ---------------------------------------------------------------------------
+# Import guard
+# ---------------------------------------------------------------------------
+
+# This file lives at tests/common/, so go up two folders to the repo root and
+# then into azure/cosmos/.
+_PKG_ROOT = Path(__file__).resolve().parents[2] / "azure" / "cosmos"
+
+# Each name may only be imported by the files listed here. Anything else fails.
+_ALLOWED = {
+    # Dispatch imports belong to the backends; shared lifecycle setup
+    # checks initialized runtime settings without creating or reserving them.
+    "_rust": {
+        Path("runtime.py"),
+        Path("_backend") / "binding_adapter.py",
+        Path("aio") / "_backend" / "binding_adapter.py",
+        Path("_backend") / "_binding_adapter_shared.py",
+    },
+    # The Rust backend class may only be imported by the factory that builds
+    # it and the client that holds it.
+    "BindingAdapter": {
+        Path("_backend") / "factory.py",
+        Path("cosmos_client.py"),
+    },
+    "AsyncBindingAdapter": {
+        Path("aio") / "_backend" / "factory.py",
+        Path("aio") / "_cosmos_client.py",
+    },
+}
+
+# Matches both ``import X`` and ``from X import Y`` lines.
+_IMPORT_RE = re.compile(
+    r"^\s*(?:from\s+\S+\s+import\s+|import\s+).*",
+    re.MULTILINE,
+)
+
+
+def _iter_py_files():
+    """Yield Python source files included in the import-boundary check."""
+    for path in _PKG_ROOT.rglob("*.py"):
+        if "__pycache__" in path.parts:
+            continue
+        yield path
+
+
+# Read each source file once and keep its import lines, so the test below can
+# scan that list instead of re-reading every file for each guarded name.
+def _collect_import_lines():
+    """Return backend imports found outside their approved files."""
+    cached = []
+    for py in _iter_py_files():
+        rel = py.relative_to(_PKG_ROOT)
+        text = py.read_text(encoding="utf-8", errors="ignore")
+        # Stub-only imports must not expand the runtime native-boundary allow-list.
+        lines = text.splitlines(keepends=True)
+        for node in ast.walk(ast.parse(text.lstrip("\ufeff"))):
+            if isinstance(node, ast.If) and isinstance(node.test, ast.Name) and node.test.id == "TYPE_CHECKING":
+                for child in node.body:
+                    for index in range(child.lineno - 1, child.end_lineno):
+                        lines[index] = "\n"
+        text = "".join(lines)
+        import_lines = _IMPORT_RE.findall(text)
+        if import_lines:
+            cached.append((rel, import_lines))
+    return cached
+
+
+_IMPORT_LINE_CACHE = _collect_import_lines()
+
+
+@pytest.mark.parametrize(
+    "proxy_type,method_name",
+    [
+        (ContainerProxy, "get_throughput"),
+        (ContainerProxy, "replace_throughput"),
+        (ContainerProxy, "read_feed_ranges"),
+        (ContainerProxy, "feed_range_from_partition_key"),
+        (ContainerProxy, "is_feed_range_subset"),
+        (AsyncContainerProxy, "get_throughput"),
+        (AsyncContainerProxy, "replace_throughput"),
+        (AsyncContainerProxy, "read_feed_ranges"),
+        (AsyncContainerProxy, "feed_range_from_partition_key"),
+        (AsyncContainerProxy, "is_feed_range_subset"),
+    ],
+)
+def test_public_throughput_and_feed_range_methods_do_not_select_backends_rust(
+    proxy_type, method_name
+):
+    """Public methods delegate to family helpers instead of selecting an engine."""
+    source = inspect.getsource(getattr(proxy_type, method_name))
+    forbidden = (
+        "_backend",
+        "can_use_rust",
+        "try_get_throughput_with_rust",
+        "try_replace_throughput_with_rust",
+        "try_read_feed_ranges_with_rust",
+        "try_feed_range_from_partition_key_with_rust",
+        "try_is_feed_range_subset_with_rust",
+    )
+    assert not [name for name in forbidden if name in source]
+
+
+@pytest.mark.parametrize("guarded_name,allowed_files", list(_ALLOWED.items()))
+def test_import_guard_rust(guarded_name, allowed_files):
+    """Only the listed files may import the guarded name."""
+    offenders = []
+    name_re = re.compile(r"\b" + re.escape(guarded_name) + r"\b")
+    for rel, import_lines in _IMPORT_LINE_CACHE:
+        if rel in allowed_files:
+            continue
+        for line in import_lines:
+            if name_re.search(line):
+                offenders.append("{}: {}".format(rel, line.strip()))
+    assert not offenders, (
+        "{} is imported outside its allow-list:\n  ".format(guarded_name)
+        + "\n  ".join(offenders)
+    )
+
+
+# ---------------------------------------------------------------------------
+# Choosing a backend, and how bad input is rejected
+# ---------------------------------------------------------------------------
+#
+# The factory picks the backend in this order: the constructor argument, then
+# the COSMOS_BACKEND environment variable, then the default. The value must be
+# "core-python" or "rust"; anything else fails at construction so a typo does
+# not quietly fall back to the default.
+
+def test_factory_default_returns_legacy_backend_rust(monkeypatch):
+    """With nothing set, the factory returns the concrete default backend."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    backend = make_backend(None)
+    assert backend is LEGACY_BACKEND
+
+
+def test_factory_env_var_picks_rust(monkeypatch):
+    """Setting the environment variable to "rust" builds a Rust backend.
+
+    It needs an endpoint and key, passed the same way the client passes them.
+    """
+    monkeypatch.setenv(BACKEND_ENV_VAR, BACKEND_NAME_RUST)
+    backend = make_backend(None, url="https://x.documents.azure.com", credential="k")
+    assert isinstance(backend, BindingAdapter)
+    assert backend.name == BACKEND_NAME_RUST
+
+
+def test_factory_kwarg_overrides_env_rust(monkeypatch):
+    """The constructor argument wins over the environment variable."""
+    monkeypatch.setenv(BACKEND_ENV_VAR, BACKEND_NAME_RUST)
+    backend = make_backend(BACKEND_NAME_CORE_PYTHON)
+    assert backend is LEGACY_BACKEND
+
+
+def test_factory_invalid_value_fails_loud_rust(monkeypatch):
+    """An unknown constructor value fails at construction."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    with pytest.raises(ValueError, match="Invalid backend"):
+        make_backend("turbo")
+
+
+def test_factory_invalid_env_var_fails_loud_rust(monkeypatch):
+    """An unknown environment-variable value fails at construction."""
+    monkeypatch.setenv(BACKEND_ENV_VAR, "turbo")
+    with pytest.raises(ValueError, match="Invalid backend"):
+        make_backend(None)
+
+
+def test_factory_rust_without_master_key_fails_loud_rust(monkeypatch):
+    """A missing credential raises; this case does not reject token credentials."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    with pytest.raises(ValueError, match="master-key credential"):
+        make_backend(BACKEND_NAME_RUST, url="https://x.documents.azure.com", credential=None)
+
+
+def test_async_factory_returns_async_backends_rust(monkeypatch):
+    """The async factory returns concrete legacy and Rust backends."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    assert make_async_backend(None) is ASYNC_LEGACY_BACKEND
+    assert isinstance(
+        make_async_backend(
+            BACKEND_NAME_RUST,
+            url="https://x.documents.azure.com",
+            credential="k",
+        ),
+        AsyncBindingAdapter,
+    )
+
+
+def test_async_factory_invalid_value_fails_loud_rust(monkeypatch):
+    """The async factory rejects bad input the same way the sync one does."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    with pytest.raises(ValueError, match="Invalid backend"):
+        make_async_backend("turbo")
+
+
+# ---------------------------------------------------------------------------
+# What the Rust backend does with a request
+# ---------------------------------------------------------------------------
+#
+# A missing prepared request is rejected rather than used as a fallback signal.
+# With a request, dispatch calls the binding and converts the result.
+# When the compiled module is missing, it raises an error. The
+# tests fake the compiled module so they run without a real account. The async
+# backend behaves the same way.
+
+def test_rust_backend_rejects_no_prepared_request_rust():
+    """Missing requests are caller errors, not fallback signals."""
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    with pytest.raises(TypeError, match="PreparedRequest"):
+        backend.execute(prepared=None)
+
+
+def test_rust_backend_dispatches_to_binding_rust(monkeypatch):
+    """With a request and the compiled module loaded, the backend calls into
+    the module and wraps what it returns."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.create_item.return_value = (201, 0, {"etag": "v1"}, b'{"id":"x"}')
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    fake_module.acquire_driver_handle.assert_called_once_with(
+        "https://x.documents.azure.com", "k", None
+    )
+    fake_module.create_item.assert_called_once_with("handle-1", prepared)
+    assert resp.status_code == 201
+    assert resp.body == b'{"id":"x"}'
+
+
+def test_rust_backend_resolves_container_metadata_through_binding_rust(monkeypatch):
+    """Prove sync Rust requests resolve container metadata through Rust."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.get_container_metadata.return_value = (
+        "rid-1", ("/pk",), "Hash", None,
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    response = backend.get_container_metadata("dbs/d/colls/c")
+
+    fake_module.get_container_metadata.assert_called_once_with(
+        "handle-1", "dbs/d/colls/c"
+    )
+    assert response.rid == "rid-1"
+    assert response.partition_key_paths == ("/pk",)
+    assert response.partition_key_kind == "Hash"
+
+
+def test_rust_backend_metadata_resolution_rejects_older_binding_rust(monkeypatch):
+    """Missing metadata capability must fail instead of consulting Python."""
+    class OlderBinding:
+        """Provide only the entry point available in an older extension."""
+
+        @staticmethod
+        def acquire_driver_handle(*_args):
+            return "handle-1"
+
+    monkeypatch.setattr(
+        "azure.cosmos._backend.binding_adapter._rust_module", OlderBinding()
+    )
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+
+    with pytest.raises(NotImplementedError, match="get_container_metadata"):
+        backend.get_container_metadata("dbs/d/colls/c")
+
+
+# The next two tests cover the newly-migrated query_items and read_feed_ranges on
+# the sync Rust backend: each proves a prepared request is handed to the matching
+# binding entry point and the binding's reply is returned unchanged. Without them a
+# wiring mistake -- a wrong op-to-binding name, or a dropped reply -- could send
+# these operations nowhere and no test would catch it.
+def test_rust_backend_dispatches_query_items_to_binding_rust(monkeypatch):
+    """A prepared query routes through execute_pages to query_items."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.query_items.return_value = (
+        200,
+        0,
+        {"x-ms-continuation": "ct-1"},
+        b'{"Documents":[{"id":"x"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedPageRequest(
+        op=OP_QUERY_ITEMS,
+        container_link="dbs/d/colls/c",
+        query="SELECT * FROM c",
+        partition_key=key_from_legacy_header('["a"]', extract=False),
+        headers={},
+    )
+    pages = list(backend.execute_pages(prepared))
+
+    binding_request = fake_module.query_items.call_args.args[1]
+    assert binding_request.op == OP_QUERY_ITEMS
+    assert binding_request.body_bytes == b'{"query":"SELECT * FROM c"}'
+    assert pages[0].status_code == 200
+    assert pages[0].continuation == "ct-1"
+    assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
+
+
+def test_paged_operations_are_not_single_response_operations_rust():
+    """Feed operations live only in the paged dispatch map.
+
+    This keeps query, read-all, and database-list pages out of the single-reply
+    ``execute`` path.
+    """
+    assert OP_QUERY_ITEMS not in OP_TO_BINDING_FUNCTION_NAME
+    assert OP_READ_ALL_ITEMS not in OP_TO_BINDING_FUNCTION_NAME
+    assert OP_LIST_DATABASES not in OP_TO_BINDING_FUNCTION_NAME
+    assert OP_QUERY_DATABASES not in OP_TO_BINDING_FUNCTION_NAME
+    assert OP_LIST_CONTAINERS not in OP_TO_BINDING_FUNCTION_NAME
+    assert OP_QUERY_CONTAINERS not in OP_TO_BINDING_FUNCTION_NAME
+    assert "query_items_change_feed" not in OP_TO_BINDING_FUNCTION_NAME
+    assert STATELESS_PAGE_BINDING_FUNCTION_NAMES == {
+        OP_QUERY_ITEMS: "query_items",
+        OP_READ_ALL_ITEMS: "read_all_items",
+        OP_LIST_DATABASES: "list_databases",
+        OP_QUERY_DATABASES: "query_databases",
+        OP_LIST_CONTAINERS: "list_containers",
+        OP_QUERY_CONTAINERS: "query_containers",
+    }
+    from azure.cosmos._backend.operations import RETAINED_PAGE_BINDING_FUNCTION_NAMES
+    assert RETAINED_PAGE_BINDING_FUNCTION_NAMES == {
+        OP_QUERY_ITEMS: "fetch_page_with_cursor",
+        OP_READ_ALL_ITEMS: "fetch_page_with_cursor",
+        "query_items_change_feed": "fetch_page_with_cursor",
+    }
+
+
+def test_rust_backend_surfaces_driver_query_capability_rejection_rust(monkeypatch):
+    """Translate the fake binding's query rejection to UnsupportedQueryError.
+
+    The test checks error translation, not automatic replay through legacy.
+    """
+    class _UnsupportedQueryFeatureError(RuntimeError):
+        """Represent a query feature rejected by the Rust driver."""
+
+        pass
+
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.query_items.side_effect = _UnsupportedQueryFeatureError(
+        "unsupported query feature"
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+    monkeypatch.setattr(
+        "azure.cosmos._backend.binding_adapter._UNSUPPORTED_QUERY_ERROR",
+        _UnsupportedQueryFeatureError,
+    )
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedPageRequest(
+        op=OP_QUERY_ITEMS,
+        container_link="dbs/d/colls/c",
+        query="SELECT VALUE COUNT(1) FROM c",
+    )
+
+    with pytest.raises(UnsupportedQueryError):
+        list(backend.execute_pages(prepared))
+
+
+def test_rust_backend_dispatches_read_all_items_to_binding_rust(monkeypatch):
+    """A read_all_items prepared request routes to the binding's read_all_items entry point."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.read_all_items.return_value = (
+        200,
+        0,
+        {"x-ms-continuation": "ct-read-all"},
+        b'{"Documents":[{"id":"x"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedPageRequest(
+        op=OP_READ_ALL_ITEMS,
+        container_link="dbs/d/colls/c",
+        partition_key=key_from_legacy_header("[]", extract=False),
+        headers={},
+    )
+    pages = list(backend.execute_pages(prepared))
+
+    binding_request = fake_module.read_all_items.call_args.args[1]
+    assert binding_request.op == OP_READ_ALL_ITEMS
+    assert binding_request.body_bytes == b""
+    assert pages[0].status_code == 200
+    assert pages[0].continuation == "ct-read-all"
+    assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
+
+
+def test_rust_backend_dispatches_get_throughput_to_binding_rust(monkeypatch):
+    """A get_throughput prepared request routes to the binding's get_throughput entry point."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.get_throughput.return_value = (
+        200,
+        0,
+        {"x-ms-continuation": "ct-read-offer"},
+        b'{"Offers":[{"id":"offer-1","resource":"dbs/d/colls/c"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op=OP_GET_THROUGHPUT,
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"query":"SELECT * FROM root r WHERE r.resource=@link","parameters":[]}',
+        partition_key=key_from_legacy_header("[]"),
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    fake_module.get_throughput.assert_called_once_with("handle-1", prepared)
+    assert resp.status_code == 200
+    assert b'"Offers"' in resp.body
+
+
+def test_rust_backend_dispatches_read_feed_ranges_to_binding_rust(monkeypatch):
+    """A read_feed_ranges prepared request routes to binding read_feed_ranges."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.read_feed_ranges.return_value = (
+        200,
+        0,
+        {},
+        b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op=OP_READ_FEED_RANGES,
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"forceRefresh":true}',
+        partition_key=key_from_legacy_header("[]"),
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    fake_module.read_feed_ranges.assert_called_once_with("handle-1", prepared)
+    assert resp.status_code == 200
+    assert b"PartitionKeyRanges" in resp.body
+
+
+def test_rust_backend_dispatches_feed_range_from_partition_key_to_binding_rust(monkeypatch):
+    """A feed_range_from_partition_key prepared request routes to the matching binding entry point."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.feed_range_from_partition_key.return_value = (
+        200,
+        0,
+        {},
+        b'{"Range":{"min":"3C","max":"3C","isMinInclusive":true,"isMaxInclusive":true}}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op=OP_FEED_RANGE_FROM_PARTITION_KEY,
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key=key_from_legacy_header('["a"]', feed_range=True),
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    fake_module.feed_range_from_partition_key.assert_called_once_with("handle-1", prepared)
+    assert resp.status_code == 200
+    assert b'"Range"' in resp.body
+
+
+def test_rust_backend_accepts_optional_diagnostics_from_binding_rust(monkeypatch):
+    """The backend accepts diagnostics returned by the binding."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.create_item.return_value = (
+        201,
+        0,
+        {"etag": "v1"},
+        b'{"id":"x"}',
+        "activity=abc duration=8ms requests=1 charge=1RU status=201",
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    assert resp.status_code == 201
+    assert resp.diagnostics == "activity=abc duration=8ms requests=1 charge=1RU status=201"
+
+
+def test_rust_backend_returns_structured_http_failure_tuple_rust(monkeypatch):
+    """A failed request (like a 409) comes back as a normal response with its
+    status, sub-status, headers, and body -- not as an error."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.create_item.return_value = (
+        409,
+        1002,
+        {
+            "x-ms-activity-id": "act-409",
+            "x-ms-retry-after-ms": "250",
+            "x-ms-substatus": "1002",
+        },
+        b'{"code":"Conflict","message":"already exists"}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+    )
+
+    resp = backend.execute(prepared)
+
+    assert resp.status_code == 409
+    assert resp.sub_status == 1002
+    assert resp.headers["x-ms-activity-id"] == "act-409"
+    assert resp.headers["x-ms-retry-after-ms"] == "250"
+    assert resp.body == b'{"code":"Conflict","message":"already exists"}'
+
+
+def test_rust_backend_logs_per_op_backend_telemetry_rust(monkeypatch, caplog):
+    """Dispatch logs name the backend and operation without exposing the handle.
+
+    A fake binding serves the call. The log is a selection/dispatch record,
+    not proof of native or service execution.
+    """
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-secret-fp"
+    fake_module.create_item.return_value = (201, 0, {"etag": "v1"}, b'{"id":"x"}')
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+    )
+    with caplog.at_level(logging.DEBUG, logger="azure.cosmos._backend.binding_adapter"):
+        backend.execute(prepared)
+    # Close so the built handle is released here, under this test's fake module,
+    # rather than leaking to a finalizer that would run during a later test.
+    backend.close()
+
+    messages = [r.getMessage() for r in caplog.records]
+    assert any("backend=rust" in m and "op=create_item" in m for m in messages)
+    # The handle is intentionally omitted -- it carries a credential fingerprint.
+    assert all("handle-secret-fp" not in m for m in messages)
+
+
+def test_async_rust_backend_logs_per_op_backend_telemetry_rust(monkeypatch, caplog):
+    """Async version: the async backend emits the same per-op backend telemetry."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-secret-fp"
+    fake_module.create_item_async = AsyncMock(return_value=(201, 0, {"etag": "v1"}, b'{"id":"x"}'))
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key=key_from_legacy_header('["a"]'),
+            headers={},
+        )
+        await backend.execute(prepared)
+        # Close so the built handle is released here, not leaked to a finalizer that
+        # would run during a later test (and call that test's fake release_driver_handle).
+        await backend.close()
+
+    with caplog.at_level(logging.DEBUG, logger="azure.cosmos.aio._backend.binding_adapter"):
+        asyncio.run(_run())
+
+    messages = [r.getMessage() for r in caplog.records]
+    assert any("backend=rust" in m and "op=create_item" in m for m in messages)
+    assert all("handle-secret-fp" not in m for m in messages)
+
+
+def test_rust_backend_propagates_transport_runtime_error_rust(monkeypatch):
+    """A real driver failure (not an HTTP response) is raised as an error."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.create_item.side_effect = RuntimeError("driver execute_operation failed: DNS lookup failed")
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+    )
+
+    with pytest.raises(RuntimeError, match="DNS lookup failed"):
+        backend.execute(prepared)
+
+
+def test_rust_backend_raises_when_binding_not_built_rust(monkeypatch):
+    """When the compiled module is missing, the backend raises a clear error
+    pointing at the build step instead of failing in a confusing way later."""
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", None)
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+    )
+    with pytest.raises(NotImplementedError, match="not present"):
+        backend.execute(prepared)
+
+
+def test_async_rust_backend_rejects_no_prepared_request_rust():
+    """Async execution has the same non-optional request contract."""
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        with pytest.raises(TypeError, match="PreparedRequest"):
+            await backend.execute(prepared=None)
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_dispatches_to_binding_rust(monkeypatch):
+    """Await the fake async create entry point and convert its response tuple.
+
+    This checks dispatch, not thread counts or native executor behavior.
+    """
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.create_item_async = AsyncMock(return_value=(201, 0, {"etag": "v1"}, b'{"id":"x"}'))
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key=key_from_legacy_header('["a"]'),
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        fake_module.acquire_driver_handle.assert_called_once()
+        fake_module.create_item_async.assert_awaited_once_with("handle-1", prepared)
+        assert resp.status_code == 201
+        assert resp.body == b'{"id":"x"}'
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_resolves_container_metadata_through_binding_rust(monkeypatch):
+    """Prove async Rust requests resolve container metadata through Rust."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.get_container_metadata_async = AsyncMock(
+        return_value=(
+            "rid-1", ("/pk",), "Hash", None,
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(
+            endpoint="https://x.documents.azure.com", master_key="k"
+        )
+        response = await backend.get_container_metadata("dbs/d/colls/c")
+        assert response.rid == "rid-1"
+        assert response.partition_key_paths == ("/pk",)
+        assert response.partition_key_kind == "Hash"
+
+    asyncio.run(_run())
+    fake_module.get_container_metadata_async.assert_awaited_once_with(
+        "handle-1", "dbs/d/colls/c"
+    )
+
+
+def test_async_rust_backend_metadata_resolution_rejects_older_binding_rust(monkeypatch):
+    """An extension missing the typed metadata entry point fails explicitly."""
+    class OlderBinding:
+        """Provide only the entry point available in an older extension."""
+
+        @staticmethod
+        def acquire_driver_handle(*_args):
+            return "handle-1"
+
+    monkeypatch.setattr(
+        "azure.cosmos.aio._backend.binding_adapter._rust_module", OlderBinding()
+    )
+
+    async def _run():
+        backend = AsyncBindingAdapter(
+            endpoint="https://x.documents.azure.com", master_key="k"
+        )
+        with pytest.raises(NotImplementedError, match="get_container_metadata_async"):
+            await backend.get_container_metadata("dbs/d/colls/c")
+
+    asyncio.run(_run())
+
+
+# Async twins of the two dispatch tests above: the same check for query_items_async
+# and read_feed_ranges_async, so the async path can't silently diverge from the sync one.
+def test_async_rust_backend_dispatches_query_items_to_binding_rust(monkeypatch):
+    """Async prepared queries route through execute_pages to query_items_async."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.query_items_async = AsyncMock(
+        return_value=(200, 0, {"x-ms-continuation": "ct-1"}, b'{"Documents":[{"id":"x"}]}')
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedPageRequest(
+            op=OP_QUERY_ITEMS,
+            container_link="dbs/d/colls/c",
+            query="SELECT * FROM c",
+            partition_key=key_from_legacy_header('["a"]', extract=False),
+            headers={},
+        )
+        pages = [page async for page in backend.execute_pages(prepared)]
+        binding_request = fake_module.query_items_async.await_args.args[1]
+        assert binding_request.op == OP_QUERY_ITEMS
+        assert binding_request.body_bytes == b'{"query":"SELECT * FROM c"}'
+        assert pages[0].status_code == 200
+        assert pages[0].continuation == "ct-1"
+        assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_dispatches_read_all_items_to_binding_rust(monkeypatch):
+    """Async read_all_items prepared requests route to read_all_items_async."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.read_all_items_async = AsyncMock(
+        return_value=(200, 0, {"x-ms-continuation": "ct-read-all-async"}, b'{"Documents":[{"id":"x"}]}')
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedPageRequest(
+            op=OP_READ_ALL_ITEMS,
+            container_link="dbs/d/colls/c",
+            partition_key=key_from_legacy_header("[]", extract=False),
+            headers={},
+        )
+        pages = [page async for page in backend.execute_pages(prepared)]
+        binding_request = fake_module.read_all_items_async.await_args.args[1]
+        assert binding_request.op == OP_READ_ALL_ITEMS
+        assert binding_request.body_bytes == b""
+        assert pages[0].status_code == 200
+        assert pages[0].continuation == "ct-read-all-async"
+        assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_surfaces_driver_query_capability_rejection_rust(monkeypatch):
+    """Translate an async fake-binding query rejection without testing legacy replay."""
+    class _UnsupportedQueryFeatureError(RuntimeError):
+        """Represent an async query feature rejected by the Rust driver."""
+
+        pass
+
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.query_items_async = AsyncMock(
+        side_effect=_UnsupportedQueryFeatureError("unsupported query feature")
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+    monkeypatch.setattr(
+        "azure.cosmos.aio._backend.binding_adapter._UNSUPPORTED_QUERY_ERROR",
+        _UnsupportedQueryFeatureError,
+    )
+
+    async def _run():
+        backend = AsyncBindingAdapter(
+            endpoint="https://x.documents.azure.com", master_key="k"
+        )
+        prepared = PreparedPageRequest(
+            op=OP_QUERY_ITEMS,
+            container_link="dbs/d/colls/c",
+            query="SELECT * FROM c ORDER BY c.ts",
+        )
+        with pytest.raises(UnsupportedQueryError):
+            [page async for page in backend.execute_pages(prepared)]
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_dispatches_get_throughput_to_binding_rust(monkeypatch):
+    """Async get_throughput prepared requests route to get_throughput_async."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.get_throughput_async = AsyncMock(
+        return_value=(200, 0, {"x-ms-continuation": "ct-read-offer-async"}, b'{"Offers":[{"id":"offer-1"}]}')
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op=OP_GET_THROUGHPUT,
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"query":"SELECT * FROM root r WHERE r.resource=@link","parameters":[]}',
+            partition_key=key_from_legacy_header("[]"),
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        fake_module.get_throughput_async.assert_awaited_once_with("handle-1", prepared)
+        assert resp.status_code == 200
+        assert b'"Offers"' in resp.body
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_dispatches_read_feed_ranges_to_binding_rust(monkeypatch):
+    """Async read_feed_ranges prepared requests route to read_feed_ranges_async."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.read_feed_ranges_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op=OP_READ_FEED_RANGES,
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"forceRefresh":false}',
+            partition_key=key_from_legacy_header("[]"),
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        fake_module.read_feed_ranges_async.assert_awaited_once_with("handle-1", prepared)
+        assert resp.status_code == 200
+        assert b"PartitionKeyRanges" in resp.body
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_dispatches_feed_range_from_partition_key_to_binding_rust(monkeypatch):
+    """Async feed_range_from_partition_key prepared requests route to the async binding entry point."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.feed_range_from_partition_key_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"Range":{"min":"3C","max":"3C","isMinInclusive":true,"isMaxInclusive":true}}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op=OP_FEED_RANGE_FROM_PARTITION_KEY,
+            container_link="dbs/d/colls/c",
+            body_bytes=b"",
+            partition_key=key_from_legacy_header('["a"]', feed_range=True),
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        fake_module.feed_range_from_partition_key_async.assert_awaited_once_with("handle-1", prepared)
+        assert resp.status_code == 200
+        assert b'"Range"' in resp.body
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_accepts_optional_diagnostics_from_binding_rust(monkeypatch):
+    """Async version: diagnostics returned by the binding are preserved."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.create_item_async = AsyncMock(
+        return_value=(
+            201,
+            0,
+            {"etag": "v1"},
+            b'{"id":"x"}',
+            "activity=abc duration=7ms requests=1 charge=1RU status=201",
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key=key_from_legacy_header('["a"]'),
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        assert resp.status_code == 201
+        assert resp.diagnostics == "activity=abc duration=7ms requests=1 charge=1RU status=201"
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_returns_structured_http_failure_tuple_rust(monkeypatch):
+    """Async version: a failed request comes back as a normal response, not an
+    error."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.create_item_async = AsyncMock(
+        return_value=(
+            404,
+            0,
+            {"x-ms-activity-id": "act-404"},
+            b'{"code":"NotFound","message":"missing"}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key=key_from_legacy_header('["a"]'),
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        assert resp.status_code == 404
+        assert resp.headers["x-ms-activity-id"] == "act-404"
+        assert resp.body == b'{"code":"NotFound","message":"missing"}'
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_propagates_transport_runtime_error_rust(monkeypatch):
+    """Async version: a real driver failure is raised as an error."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    fake_module.create_item_async = AsyncMock(side_effect=RuntimeError("driver execute_operation failed: TLS handshake failed"))
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key=key_from_legacy_header('["a"]'),
+            headers={},
+        )
+        with pytest.raises(RuntimeError, match="TLS handshake failed"):
+            await backend.execute(prepared)
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_raises_when_binding_not_built_rust(monkeypatch):
+    """Async version: a missing compiled module raises a clear error."""
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", None)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key=key_from_legacy_header('["a"]'),
+            headers={},
+        )
+        with pytest.raises(NotImplementedError, match="not present"):
+            await backend.execute(prepared)
+    asyncio.run(_run())
+
+
+def test_async_backend_coalesces_concurrent_first_init_to_one_call_rust(monkeypatch):
+    """A burst of concurrent first-operations builds the client handle exactly
+    once: every first-caller awaits one shared init future instead of each
+    scheduling its own ``acquire_driver_handle`` build on a background thread."""
+    init_calls = []
+    fake_module = MagicMock()
+
+    def _slow_init(*args):
+        # Block briefly so the whole burst reaches _ensure_driver_handle while the first
+        # init is still in flight on the executor thread -- the window in which
+        # uncoalesced callers would each schedule their own offload.
+        init_calls.append(args)
+        time.sleep(0.05)
+        return "handle-1"
+
+    fake_module.acquire_driver_handle.side_effect = _slow_init
+    fake_module.read_item_async = AsyncMock(return_value=(200, 0, {}, b"{}"))
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    prepared = PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+        item_id="x",
+    )
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        await asyncio.gather(*(backend.execute(prepared) for _ in range(50)))
+
+    asyncio.run(_run())
+    assert len(init_calls) == 1, f"acquire_driver_handle should run once, ran {len(init_calls)} times"
+    assert fake_module.read_item_async.await_count == 50
+
+
+def test_async_backend_retries_init_after_failure_rust(monkeypatch):
+    """A failed init is not cached on the shared future: the next operation retries
+    ``acquire_driver_handle`` rather than handing back the first failure forever."""
+    attempts = []
+    fake_module = MagicMock()
+
+    def _flaky_init(*args):
+        attempts.append(args)
+        if len(attempts) == 1:
+            raise RuntimeError("init boom")
+        return "handle-1"
+
+    fake_module.acquire_driver_handle.side_effect = _flaky_init
+    fake_module.read_item_async = AsyncMock(return_value=(200, 0, {}, b"{}"))
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    prepared = PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+        item_id="x",
+    )
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        # First op: init fails and surfaces to the caller.
+        with pytest.raises(RuntimeError, match="init boom"):
+            await backend.execute(prepared)
+        # Second op: init is retried (not a cached failure) and succeeds.
+        resp = await backend.execute(prepared)
+        assert resp.status_code == 200
+        await backend.close()
+
+    asyncio.run(_run())
+    assert len(attempts) == 2, f"init should be retried after failure, attempts={len(attempts)}"
+
+
+def test_async_backend_close_during_init_closes_built_driver_handle_rust(monkeypatch):
+    """If close() runs while the first acquire_driver_handle is still building, the handle the
+    build produces is closed (not left open), close() does not wait for the build to
+    finish, and the operation that triggered the build fails with a closed-client
+    error."""
+    init_in_flight = threading.Event()
+    allow_init_finish = threading.Event()
+    closed = []
+    fake_module = MagicMock()
+
+    def _slow_init(*args):
+        init_in_flight.set()
+        allow_init_finish.wait(5)  # hold the build open until the test lets it finish
+        return "handle-1"
+
+    fake_module.acquire_driver_handle.side_effect = _slow_init
+    fake_module.release_driver_handle.side_effect = closed.append
+    fake_module.read_item_async = AsyncMock(return_value=(200, 0, {}, b"{}"))
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    prepared = PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+        item_id="x",
+    )
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        op = asyncio.ensure_future(backend.execute(prepared))
+        # Wait until acquire_driver_handle is running on the build thread.
+        await asyncio.get_running_loop().run_in_executor(None, init_in_flight.wait, 5)
+        # close() returns without waiting for the build to finish: the build does not
+        # hold _driver_handle_lock during acquire_driver_handle, so close() takes that lock right away.
+        await asyncio.wait_for(backend.close(), timeout=2)
+        # Let the build finish; it sees the client is closing and closes the handle it
+        # built instead of leaving it open.
+        allow_init_finish.set()
+        with pytest.raises(Exception):
+            await op
+
+    asyncio.run(_run())
+    assert closed == ["handle-1"], f"handle built during close should be closed, got {closed}"
+    fake_module.acquire_driver_handle.assert_called_once()
+
+
+def test_async_backend_propagates_cancellation_into_binding_rust(monkeypatch):
+    """Cancelling execute propagates into the fake binding coroutine.
+
+    The coroutine records CancelledError and the caller receives cancellation.
+    No Tokio task, connection cleanup, or service-side cancellation is tested.
+    """
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    dispatch_cancelled = []
+
+    async def _slow_read(_driver_handle, _prepared):
+        try:
+            await asyncio.sleep(10)
+        except asyncio.CancelledError:
+            dispatch_cancelled.append(True)
+            raise
+        return (200, 0, {}, b"{}")  # pragma: no cover - cancelled before here
+
+    fake_module.read_item_async = _slow_read
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    prepared = PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+        item_id="x",
+    )
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        op = asyncio.ensure_future(backend.execute(prepared))
+        # Let the op build the handle and reach the dispatch await, then cancel it.
+        await asyncio.sleep(0.05)
+        op.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await op
+
+    asyncio.run(_run())
+    assert dispatch_cancelled == [True], (
+        "execute() must let cancellation reach the binding awaitable, so the Rust "
+        "layer can abort the spawned driver task"
+    )
+
+
+def test_async_backend_finalizer_does_not_block_event_loop_rust(monkeypatch):
+    """If the finalizer fires while an event loop is running on this thread (GC
+    collecting the client mid-run), the blocking driver close must be offloaded to
+    a daemon thread, not run inline on the loop thread -- otherwise release_driver_handle
+    would stall the loop."""
+    close_started = threading.Event()
+    close_may_finish = threading.Event()
+    close_thread_names = []
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-finalizer"
+    fake_module.read_item_async = AsyncMock(return_value=(200, 0, {}, b"{}"))
+
+    def _blocking_close(driver_handle):
+        # Only this backend's close is measured. Other tests' async backends can be
+        # garbage-collected during this test (their finalizers call this same
+        # monkeypatched release_driver_handle); ignoring foreign handles keeps their thread
+        # from polluting the measurement -- and keeps them from blocking on
+        # close_may_finish, which could stall an inline GC finalizer.
+        if driver_handle != "handle-finalizer":
+            return
+        close_thread_names.append(threading.current_thread().name)
+        close_started.set()
+        close_may_finish.wait(5)  # hold the close open to expose any inline block
+
+    fake_module.release_driver_handle.side_effect = _blocking_close
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    prepared = PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+        item_id="x",
+    )
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        await backend.execute(prepared)  # build the handle so the finalizer has work
+        main_thread = threading.current_thread().name
+        # Fire the finalizer while this loop is running.
+        backend.__del__()
+        # The offloaded close should start on another thread; meanwhile the loop
+        # must keep turning even though release_driver_handle is still blocked.
+        assert close_started.wait(2), "offloaded close did not start"
+        for _ in range(5):
+            await asyncio.sleep(0)  # would hang here if the close blocked the loop
+        close_may_finish.set()
+        return main_thread
+
+    main_thread = asyncio.run(_run())
+    assert close_thread_names, "release_driver_handle was never called"
+    assert close_thread_names[0] != main_thread, (
+        f"close ran on the loop thread {close_thread_names[0]!r}; must be offloaded"
+    )
+    assert close_thread_names[0] == "cosmos-rust-finalizer"
+
+
+def test_helper_parses_backend_response_into_cosmos_dict_rust(monkeypatch):
+    """A successful backend response is turned into a dict the caller can read
+    by key (like ``result["_etag"]``), the same shape the existing path
+    returns.
+
+    Uses a real ``CosmosBackend`` subclass (not a bare mock) so the helper runs
+    the genuine ``run_operation`` template: build the prepared request, call
+    ``execute``, then parse the reply into a ``CosmosDict``.
+    """
+
+    class _RustDispatchBackend(CosmosBackend):
+        """Return a fixed response while recording the prepared request."""
+
+        name = BACKEND_NAME_RUST
+
+        def __init__(self, response):
+            self._response = response
+            self.captured = None
+
+        def execute(self, prepared, *, deadline=None):
+            self.captured = prepared
+            return self._response
+
+        def get_container_metadata(self, link):
+            return ContainerMetadata("rid")
+
+    backend = _RustDispatchBackend(
+        BackendResponse(
+            status_code=201,
+            sub_status=0,
+            headers=None,
+            body=(
+                b'{"id":"order-42","pk":"customerA","_etag":"\\"00000000-0000-0000-1234-567890abcdef\\"",'
+                b'"_rid":"abc==","_self":"dbs/x/colls/y/docs/order-42","_ts":1746700000}'
+            ),
+            diagnostics=None,
+        )
+    )
+
+    helper = ItemHelper(backend)
+    result = call_create_item_helper(helper,
+        container_link="dbs/x/colls/y",
+        body={"id": "order-42", "pk": "customerA"},
+    )
+
+    # The result is a dict, so the caller reads fields by key.
+    assert result["_etag"] == '"00000000-0000-0000-1234-567890abcdef"'
+    assert result["id"] == "order-42"
+    # The helper actually built and dispatched the prepared request to the backend.
+    assert backend.captured is not None
+    assert backend.captured.op == "create_item"
+
+
+# NOTE: An older test for a "core-python backend" was removed when the core-python
+# choice was represented purely by ``None``. The explicit
+# ``LegacyBackend`` now exists again (see ``azure.cosmos._backend.legacy``): the
+# item helper coerces a ``None`` selection to it so "use the existing client" runs
+# through the same ``run_operation`` interface as Rust. Its own behavior is
+# covered in test_legacy_backend_unit.py; the item-helper legacy path is covered
+# by the fall-through tests in test_item_helper_unit.py.
+
+
+def test_dataclasses_are_frozen_rust():
+    """Assignments to the tested request/response dataclass fields raise."""
+    p = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"{}",
+        partition_key=key_from_legacy_header('["customerA"]'),
+        headers={"x-ms-version": "2020-07-15"},
+    )
+    with pytest.raises(FrozenInstanceError):
+        setattr(p, "body_bytes", b"different")
+
+    r = BackendResponse(status_code=201)
+    with pytest.raises(FrozenInstanceError):
+        setattr(r, "status_code", 200)
+
+
+# ---------------------------------------------------------------------------
+# Carrying client-construction settings (preferred_locations) to the driver
+# ---------------------------------------------------------------------------
+#
+# The factory folds the settings the Rust driver can honor into a
+# PreparedClientConfig, and the backend hands it to acquire_driver_handle as the third
+# argument. With nothing to carry, that third argument is None.
+
+@pytest.mark.parametrize("async_mode", [False, True])
+def test_unsupported_operation_does_not_acquire_driver_rust(monkeypatch, async_mode):
+    module = "azure.cosmos.aio._backend.binding_adapter" if async_mode else "azure.cosmos._backend.binding_adapter"
+    native = MagicMock()
+    monkeypatch.setattr(module + "._rust_module", native)
+    backend = (AsyncBindingAdapter if async_mode else BindingAdapter)(
+        "https://unsupported.invalid", master_key="key"
+    )
+    prepared = PreparedRequest(
+        op="not-a-supported-operation", container_link="", body_bytes=b"",
+        partition_key=key_from_legacy_header('["key"]'),
+    )
+    try:
+        with pytest.raises(NotImplementedError, match="does not yet support"):
+            if async_mode:
+                asyncio.run(backend.execute(prepared))
+            else:
+                backend.execute(prepared)
+        native.acquire_driver_handle.assert_not_called()
+        assert backend._driver_handle is None
+    finally:
+        backend.abort_construction()
+
+
+@pytest.mark.parametrize("backend_type", [BindingAdapter, AsyncBindingAdapter])
+@pytest.mark.parametrize("reverse", [False, True])
+def test_different_client_settings_are_allowed_in_either_construction_order_rust(backend_type, reverse):
+    configs = [
+        PreparedClientConfig(preferred_locations=("West US",)),
+        PreparedClientConfig(preferred_locations=("East US",)),
+    ]
+    if reverse:
+        configs.reverse()
+    clients = []
+    try:
+        for config in configs:
+            clients.append(backend_type("https://same-account.invalid", master_key="key", client_config=config))
+        assert all(client._driver_handle is None for client in clients)
+        assert [client._client_config for client in clients] == configs
+    finally:
+        for client in clients:
+            client.abort_construction()
+
+
+def test_build_client_config_returns_none_when_nothing_to_carry_rust():
+    """Absent or empty preferred locations alone produce no client config."""
+    assert build_client_config(None) is None
+    assert build_client_config([]) is None
+    assert build_client_config(()) is None
+
+
+def test_build_client_config_carries_preferred_locations_rust():
+    """A non-empty preferred_locations is captured, in order, as an immutable
+    tuple on the config."""
+    config = build_client_config(["West US", "East US"])
+    assert isinstance(config, PreparedClientConfig)
+    assert config.preferred_locations == ("West US", "East US")
+
+
+def test_prepared_client_config_is_frozen_rust():
+    """Assigning a prepared configuration field raises FrozenInstanceError."""
+    config = PreparedClientConfig(preferred_locations=("West US",))
+    with pytest.raises(Exception):  # FrozenInstanceError
+        setattr(config, "preferred_locations", ("East US",))
+
+
+def test_factory_carries_preferred_locations_into_rust_backend_rust(monkeypatch):
+    """make_backend folds preferred_locations into the backend's client config;
+    with none passed, the config is None (unchanged behavior)."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    with_locations = make_backend(
+        BACKEND_NAME_RUST,
+        url="https://x.documents.azure.com",
+        credential="k",
+        preferred_locations=["West US", "East US"],
+    )
+    assert isinstance(with_locations, BindingAdapter)
+    assert with_locations._client_config == PreparedClientConfig(
+        preferred_locations=("West US", "East US")
+    )
+
+    without = make_backend(
+        BACKEND_NAME_RUST, url="https://y.documents.azure.com", credential="k"
+    )
+    assert isinstance(without, BindingAdapter)
+    assert without._client_config is None
+
+
+def test_async_factory_carries_preferred_locations_into_rust_backend_rust(monkeypatch):
+    """The async factory carries preferred_locations the same way."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    backend = make_async_backend(
+        BACKEND_NAME_RUST,
+        url="https://x.documents.azure.com",
+        credential="k",
+        preferred_locations=["West US"],
+    )
+    assert isinstance(backend, AsyncBindingAdapter)
+    assert backend._client_config == PreparedClientConfig(
+        preferred_locations=("West US",)
+    )
+
+
+def test_sync_factory_carries_explicit_runtime_into_rust_backend_rust(monkeypatch):
+    """Connection settings belong to the selected runtime."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
+        connection_timeout=2.5, data_http_request_timeout=45))
+    backend = make_backend(
+        BACKEND_NAME_RUST,
+        url="https://timeouts-sync.documents.azure.com",
+        credential="k",
+        runtime=runtime,
+    )
+    assert isinstance(backend, BindingAdapter)
+    assert backend._runtime is runtime
+    assert backend._client_config is None
+    backend.close()
+
+
+def test_async_factory_carries_explicit_runtime_into_rust_backend_rust(monkeypatch):
+    """The async adapter retains an initialized runtime."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
+        connection_timeout=1.5, data_http_request_timeout=30))
+    backend = make_async_backend(
+        BACKEND_NAME_RUST,
+        url="https://timeouts-async.documents.azure.com",
+        credential="k",
+        runtime=runtime,
+    )
+    assert isinstance(backend, AsyncBindingAdapter)
+    assert backend._runtime is runtime
+    assert backend._client_config is None
+    asyncio.run(backend.close())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("log_level", [logging.INFO, logging.DEBUG])
+async def test_client_construction_logs_only_at_debug_rust(monkeypatch, caplog, asynchronous, log_level):
+    module = async_cosmos_client_module if asynchronous else sync_cosmos_client_module
+    monkeypatch.setattr(module, "CosmosClientConnection", MagicMock())
+    with caplog.at_level(log_level, logger=module.__name__):
+        client = module.CosmosClient(
+            "https://client-logging.documents.azure.com",
+            "key",
+            _backend=BACKEND_NAME_RUST,
+        )
+    try:
+        records = [
+            record for record in caplog.records
+            if record.name == module.__name__
+            and record.msg == "Cosmos client constructed with default backend=%s"
+        ]
+        if log_level == logging.DEBUG:
+            assert len(records) == 1
+            assert records[0].levelno == logging.DEBUG
+            assert records[0].getMessage() == (
+                f"Cosmos client constructed with default backend={client._adapter.name}"
+            )
+        else:
+            assert records == []
+    finally:
+        if asynchronous:
+            await client._adapter.close()
+        else:
+            client._adapter.close()
+
+
+def test_untuned_sync_client_carries_no_transport_timeouts_rust(monkeypatch):
+    """The untuned Python client carries no explicit native configuration.
+
+    This does not initialize the native runtime. An untuned client that later
+    initializes it can still freeze native defaults.
+    """
+    monkeypatch.setattr(
+        sync_cosmos_client_module, "CosmosClientConnection", MagicMock()
+    )
+    client = sync_cosmos_client_module.CosmosClient(
+        "https://client-sync.documents.azure.com",
+        "key",
+        _backend=BACKEND_NAME_RUST,
+    )
+    assert client._adapter._client_config is None
+    client._adapter.close()
+
+
+@pytest.mark.asyncio
+async def test_async_client_carries_explicit_transport_timeouts_rust(monkeypatch):
+    """Async clients select an explicitly configured runtime."""
+    monkeypatch.setattr(
+        async_cosmos_client_module, "CosmosClientConnection", MagicMock()
+    )
+    runtime = await CosmosRuntime.create_async(connection_pool=ConnectionPoolOptions(
+        connection_timeout=2, data_http_request_timeout=30))
+    client = async_cosmos_client_module.CosmosClient(
+        "https://client-async.documents.azure.com",
+        "key",
+        _backend=BACKEND_NAME_RUST,
+        runtime=runtime,
+    )
+    assert client._adapter._runtime is runtime
+    assert client._adapter._client_config is None
+    await client._adapter.close()
+
+
+def test_rust_backend_passes_client_config_to_acquire_driver_handle_rust(monkeypatch):
+    """The backend hands the client config to acquire_driver_handle as the third argument
+    so the binding can apply it when it builds the driver."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    config = PreparedClientConfig(preferred_locations=("West US", "East US"))
+    backend = BindingAdapter(
+        endpoint="https://x.documents.azure.com",
+        master_key="k",
+        client_config=config,
+    )
+    backend._ensure_driver_handle()
+
+    fake_module.acquire_driver_handle.assert_called_once_with(
+        "https://x.documents.azure.com", "k", config
+    )
+
+
+def test_async_rust_backend_passes_client_config_to_acquire_driver_handle_rust(monkeypatch):
+    """Async version: the config rides on the acquire_driver_handle call the same way."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    config = PreparedClientConfig(preferred_locations=("West US",))
+
+    async def _run():
+        backend = AsyncBindingAdapter(
+            endpoint="https://x.documents.azure.com",
+            master_key="k",
+            client_config=config,
+        )
+        await backend._ensure_driver_handle()
+
+    asyncio.run(_run())
+
+    fake_module.acquire_driver_handle.assert_called_once_with(
+        "https://x.documents.azure.com", "k", config
+    )
+
+
+@pytest.mark.parametrize("first_proxy,initialize_second", [(None, False), (True, False), (True, True)])
+def test_rust_backend_selection_is_independent_of_acquisition_order_rust(monkeypatch, first_proxy, initialize_second):
+    """Forward the selected runtime, not another client's previously selected settings."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.side_effect = ["first", "second"]
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+    first_runtime = (
+        CosmosRuntime.create(connection_pool=ConnectionPoolOptions(proxy_allowed=first_proxy))
+        if first_proxy is not None else None
+    )
+    first = BindingAdapter(
+        endpoint="https://x.documents.azure.com",
+        master_key="k",
+        runtime=first_runtime,
+    )
+    second = BindingAdapter(
+        endpoint="https://x.documents.azure.com", master_key="k",
+        runtime=CosmosRuntime.create(connection_pool=ConnectionPoolOptions(proxy_allowed=False)),
+    )
+    try:
+        fake_module.acquire_driver_handle.assert_not_called()
+        for adapter in ((second, first) if initialize_second else (first, second)):
+            adapter._ensure_driver_handle()
+            expected = adapter._runtime._handle if adapter._runtime is not None else None
+            assert fake_module.acquire_driver_handle.call_args.kwargs.get("runtime") is expected
+    finally:
+        first.close()
+        second.close()
+
+
+def test_rust_backend_client_proxy_override_is_rejected_rust(monkeypatch):
+    """A direct adapter cannot bypass the runtime-only settings contract."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "driver"
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    with pytest.raises(ValueError, match="CosmosRuntime"):
+        BindingAdapter(
+            endpoint="https://x.documents.azure.com",
+            master_key="k",
+            client_config=PreparedClientConfig(proxy_allowed=True),
+        )
+    second = BindingAdapter(
+        endpoint="https://x.documents.azure.com",
+        master_key="k",
+        client_config=None,
+    )
+
+    second._ensure_driver_handle()
+    second.close()
+
+
+@pytest.mark.parametrize("first_proxy,initialize_second", [(None, False), (True, False), (True, True)])
+def test_async_rust_backend_selection_is_independent_of_acquisition_order_rust(monkeypatch, first_proxy, initialize_second):
+    """The async worker forwards its client's runtime regardless of acquisition order."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.side_effect = ["first", "second"]
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        first_runtime = (
+            await CosmosRuntime.create_async(connection_pool=ConnectionPoolOptions(proxy_allowed=first_proxy))
+            if first_proxy is not None else None
+        )
+        first = AsyncBindingAdapter(
+            endpoint="https://x.documents.azure.com",
+            master_key="k",
+            runtime=first_runtime,
+        )
+        second = AsyncBindingAdapter(
+            endpoint="https://x.documents.azure.com", master_key="k",
+            runtime=await CosmosRuntime.create_async(connection_pool=ConnectionPoolOptions(proxy_allowed=False)),
+        )
+        try:
+            fake_module.acquire_driver_handle.assert_not_called()
+            for adapter in ((second, first) if initialize_second else (first, second)):
+                await adapter._ensure_driver_handle()
+                expected = adapter._runtime._handle if adapter._runtime is not None else None
+                assert fake_module.acquire_driver_handle.call_args.kwargs.get("runtime") is expected
+        finally:
+            await first.close()
+            await second.close()
+
+    asyncio.run(_run())
+
+
+# ---------------------------------------------------------------------------
+# Carrying the other driver-understood startup settings (excluded_locations,
+# throttling retry, hedging threshold) into the client config
+# ---------------------------------------------------------------------------
+#
+# These ride the same PreparedClientConfig the binding reads at acquire_driver_handle time.
+# Each is carried only when the customer actually expressed it, so an untuned
+# client still produces no config; the binding receives None as its third argument.
+
+
+def test_build_client_config_carries_excluded_locations_rust():
+    """excluded_locations is captured as an immutable tuple, like preferred."""
+    config = build_client_config(None, excluded_locations=["Central US"])
+    assert isinstance(config, PreparedClientConfig)
+    assert config.excluded_locations == ("Central US",)
+    assert config.preferred_locations == ()
+
+
+def test_build_client_config_empty_excluded_locations_is_none_rust():
+    """Empty excluded_locations alone carries nothing."""
+    assert build_client_config(None, excluded_locations=[]) is None
+
+
+def test_build_client_config_carries_throttling_retry_rust():
+    """Both throttle dials are captured when tuned."""
+    config = build_client_config(
+        None,
+        throttling_max_retry_count=9,
+        throttling_max_retry_wait_time_seconds=30,
+    )
+    assert config.throttling_max_retry_count == 9
+    assert config.throttling_max_retry_wait_time_seconds == 30
+
+
+def test_build_client_config_partial_throttling_retry_leaves_other_none_rust():
+    """Tuning only the count leaves the wait at None (driver keeps its default)."""
+    config = build_client_config(None, throttling_max_retry_count=3)
+    assert config.throttling_max_retry_count == 3
+    assert config.throttling_max_retry_wait_time_seconds is None
+
+
+def test_build_client_config_hedging_true_uses_default_threshold_rust():
+    """availability_strategy=True carries the default threshold (500 ms)."""
+    config = build_client_config(None, availability_strategy=True)
+    assert config.hedging_threshold_ms == 500
+
+
+def test_build_client_config_hedging_dict_uses_threshold_ms_and_rejects_steps_rust():
+    config = build_client_config(None, availability_strategy={"threshold_ms": 20})
+    assert config.hedging_threshold_ms == 20
+    with pytest.raises(TypeError, match="threshold_steps_ms"):
+        build_client_config(
+            None, availability_strategy={"threshold_ms": 20, "threshold_steps_ms": 10}
+        )
+
+
+def test_build_client_config_hedging_false_carries_nothing_rust():
+    """No threshold/config tells the binding to explicitly disable hedging."""
+    assert build_client_config(None, availability_strategy=False) is None
+
+
+def test_build_client_config_hedging_none_carries_nothing_rust():
+    """An absent strategy uses the binding's disabled Python-client default."""
+    assert build_client_config(None, availability_strategy=None) is None
+
+
+@pytest.mark.parametrize("module", [sync_cosmos_client_module, async_cosmos_client_module],
+                         ids=["sync", "async"])
+@pytest.mark.parametrize("extra_options", [{}, {"preferred_locations": ["West US"]}])
+@pytest.mark.parametrize("options,threshold", [
+    ({}, None),
+    ({"availability_strategy": False}, None),
+    ({"availability_strategy": None}, None),
+    ({"availability_strategy": True}, 500),
+    ({"availability_strategy": {"threshold_ms": 25}}, 25),
+])
+def test_public_constructor_preserves_hedging_choice_rust(module, extra_options, options, threshold, monkeypatch):
+    """The hedging choice survives the trip through the real client constructor, on both
+    clients and alongside other settings.
+
+    The tests just above check the setting is built correctly in isolation. This one
+    checks it actually arrives, because the constructor is where a setting gets dropped
+    by being read under the wrong name or overwritten by a later step.
+
+    Sending a second copy of a request early is a cost-for-latency trade, so both
+    directions matter: losing the choice makes requests slower than the customer asked
+    for, and inventing one makes them pay for requests they never asked to send. Asking
+    for nothing, asking for it off, and asking for it off by name must all end with
+    nothing pinned rather than an explicit off.
+
+    The second set of settings is there to check the two do not interfere -- a
+    constructor that builds the configuration afresh for one of them would drop the
+    other. No driver is acquired, so this never reaches the network.
+    """
+    monkeypatch.setattr(module, "CosmosClientConnection", MagicMock())
+    client = module.CosmosClient(
+        "https://hedging.invalid", "ZmFrZQ==", _backend="rust", **extra_options, **options
+    )
+    try:
+        config = client._adapter._client_config
+        assert (config.hedging_threshold_ms if config is not None else None) == threshold
+        assert client._adapter._driver_handle is None
+        if extra_options:
+            assert config.preferred_locations == ("West US",)
+    finally:
+        result = client._adapter.close()
+        if inspect.isawaitable(result):
+            asyncio.run(result)
+
+
+def test_build_client_config_hedging_invalid_threshold_raises_rust():
+    """A non-positive threshold_ms raises the same ValueError as the legacy path
+    (validation reused from CrossRegionHedgingStrategy)."""
+    with pytest.raises(ValueError, match="threshold_ms must be positive"):
+        build_client_config(None, availability_strategy={"threshold_ms": 0})
+
+
+def test_build_client_config_combines_all_settings_rust():
+    """All settings fold into one config object together."""
+    config = build_client_config(
+        ["West US"],
+        excluded_locations=["Central US"],
+        throttling_max_retry_count=5,
+        throttling_max_retry_wait_time_seconds=12,
+        availability_strategy={"threshold_ms": 25},
+        user_agent_suffix="checkout-westus2",
+        consistency_level="Eventual",
+        connection_timeout_seconds=2.5,
+    )
+    assert config == PreparedClientConfig(
+        preferred_locations=("West US",),
+        excluded_locations=("Central US",),
+        throttling_max_retry_count=5,
+        throttling_max_retry_wait_time_seconds=12,
+        hedging_threshold_ms=25,
+        user_agent_suffix="checkout-westus2",
+        consistency_level="Eventual",
+        connection_timeout_seconds=2.5,
+    )
+
+
+def test_resolve_client_connection_timeout_reports_only_explicit_values_rust():
+    """A customer who named no timeout gets None, not the legacy defaults.
+
+    The legacy resolver reports only the requested connection setting; it does
+    not configure a Rust runtime.
+    """
+    assert resolve_client_connection_timeout({}) is None
+    assert resolve_client_connection_timeout({"connection_timeout": 2}) == 2
+
+
+def test_resolve_client_connection_timeout_ignores_a_stock_connection_policy_rust():
+    """The public clients build a default ConnectionPolicy for every client, so a
+    policy that still holds the stock values is not a customer choice."""
+    assert resolve_client_connection_timeout(
+        {"connection_policy": ConnectionPolicy()}
+    ) is None
+
+
+def test_resolve_client_connection_timeout_honors_alias_and_custom_policy_rust():
+    """The legacy millisecond alias keeps precedence and policy defaults still apply."""
+    policy = ConnectionPolicy()
+    policy.RequestTimeout = 3
+    assert resolve_client_connection_timeout(
+        {
+            "connection_policy": policy,
+            "connection_timeout": 2,
+            "request_timeout": 750,
+        }
+    ) == 0.75
+
+
+def test_build_client_config_carries_transport_timeouts_rust():
+    """Prove Rust client configuration includes transport timeouts."""
+    config = build_client_config(
+        None,
+        connection_timeout_seconds=1.25,
+    )
+    assert config == PreparedClientConfig(connection_timeout_seconds=1.25)
+
+
+@pytest.mark.parametrize(
+    "kwargs, message",
+    [
+        ({"connection_timeout_seconds": 0.05}, "at least 0.1"),
+        ({"connection_timeout_seconds": 7}, "at most 6.0"),
+    ],
+)
+def test_build_client_config_rejects_driver_unsupported_transport_timeouts_rust(
+    kwargs, message
+):
+    """Prove unsupported timeout values fail instead of changing silently."""
+    with pytest.raises(ValueError, match=message):
+        build_client_config(None, **kwargs)
+
+
+def test_build_client_config_carries_user_agent_suffix_rust():
+    """The prepared config retains the supplied suffix; no HTTP header is inspected."""
+    config = build_client_config(None, user_agent_suffix="checkout-westus2")
+    assert isinstance(config, PreparedClientConfig)
+    assert config.user_agent_suffix == "checkout-westus2"
+
+
+def test_build_client_config_only_user_agent_suffix_still_builds_config_rust():
+    """A suffix alone produces a config rather than None."""
+    config = build_client_config(None, user_agent_suffix="order-service")
+    assert config == PreparedClientConfig(user_agent_suffix="order-service")
+
+
+def test_build_client_config_empty_user_agent_suffix_is_none_rust():
+    """An empty string (or absent) suffix carries nothing, like an empty location
+    list, so an untuned client still produces no config."""
+    assert build_client_config(None, user_agent_suffix="") is None
+    assert build_client_config(None, user_agent_suffix=None) is None
+
+
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
+def test_build_client_config_carries_supported_consistency_level_rust(level):
+    """Each listed consistency name is retained in the prepared config."""
+    config = build_client_config(None, consistency_level=level)
+    assert config == PreparedClientConfig(consistency_level=level)
+
+
+def test_build_client_config_only_consistency_still_builds_config_rust():
+    """A consistency setting alone produces a config rather than None."""
+    config = build_client_config(None, consistency_level="Session")
+    assert isinstance(config, PreparedClientConfig)
+    assert config.consistency_level == "Session"
+
+
+def test_build_client_config_no_consistency_carries_nothing_rust():
+    """An absent or empty consistency value leaves the config field unset."""
+    assert build_client_config(None, consistency_level=None) is None
+    assert build_client_config(None, consistency_level="") is None
+
+
+@pytest.mark.parametrize("proxy_allowed", [True, False])
+def test_build_client_config_only_proxy_allowed_still_builds_config_rust(proxy_allowed):
+    """Proxy allowance is a runtime-level Rust switch; an explicit value must
+    still produce a config even when no other startup setting is tuned."""
+    config = build_client_config(None, proxy_allowed=proxy_allowed)
+    assert isinstance(config, PreparedClientConfig)
+    assert config.proxy_allowed is proxy_allowed
+
+
+def test_build_client_config_rejects_non_bool_proxy_allowed_rust():
+    """proxy_allowed is a boolean contract; reject non-bool values at client
+    construction instead of failing later at first operation."""
+    with pytest.raises(ValueError, match="proxy_allowed must be a bool"):
+        build_client_config(None, proxy_allowed="true")
+
+
+@pytest.mark.parametrize(
+    "first, second",
+    [
+        (None, PreparedClientConfig(proxy_allowed=True)),
+        (PreparedClientConfig(proxy_allowed=True), PreparedClientConfig(proxy_allowed=False)),
+        (PreparedClientConfig(proxy_allowed=False), PreparedClientConfig(proxy_allowed=True)),
+        (PreparedClientConfig(proxy_allowed=True), PreparedClientConfig(proxy_allowed=True)),
+        (PreparedClientConfig(connection_timeout_seconds=2), PreparedClientConfig(connection_timeout_seconds=5)),
+    ],
+)
+def test_retired_client_settings_are_rejected_even_before_first_use_rust(first, second):
+    """Direct adapters cannot select runtime settings through client configuration."""
+    endpoint = "https://unused-clients.documents.azure.com"
+    for config in (first, second):
+        if config is None:
+            adapter = BindingAdapter(endpoint, master_key="key")
+            assert adapter._driver_handle is None
+            adapter.close()
+        else:
+            with pytest.raises(ValueError, match="CosmosRuntime"):
+                BindingAdapter(endpoint, master_key="key", client_config=config)
+
+
+def test_construction_requires_native_runtime_validation_rust(monkeypatch):
+    monkeypatch.delattr("azure.cosmos._rust._validate_runtime_configuration")
+    endpoint = "https://outdated-extension.documents.azure.com"
+    with pytest.raises(RuntimeError, match="_validate_runtime_configuration; rebuild"):
+        BindingAdapter(endpoint, master_key="key")
+
+
+def test_native_validation_failure_does_not_record_a_client_rust(monkeypatch):
+    error = RuntimeError("cached runtime initialization failure")
+    validator = MagicMock(side_effect=error)
+    monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
+    endpoint = "https://failed-preflight.documents.azure.com"
+    config = PreparedClientConfig(connection_timeout_seconds=2)
+    with pytest.raises(RuntimeError) as caught:
+        BindingAdapter(endpoint, master_key="key", client_config=config)
+    assert caught.value is error
+    validator.assert_called_once_with(config)
+
+
+@pytest.mark.parametrize("level", ["Nonsense", "LatestCommitted", "GlobalStrong", "Default", "eventual"])
+def test_build_client_config_rejects_unknown_consistency_level_rust(level):
+    """An unrecognized consistency-level string is rejected, not dropped."""
+    with pytest.raises(ValueError, match="not a recognized Cosmos consistency level"):
+        build_client_config(None, consistency_level=level)
+
+
+@pytest.mark.parametrize("factory", [make_backend, make_async_backend])
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
+def test_factories_preserve_consistency_names_rust(factory, level):
+    backend = factory(
+        BACKEND_NAME_RUST,
+        url="https://consistency.documents.azure.com",
+        credential="key",
+        consistency_level=level,
+    )
+    assert backend._client_config.consistency_level == level
+    assert backend._driver_handle is None
+
+
+def test_factory_carries_all_startup_settings_into_rust_backend_rust(monkeypatch):
+    """make_backend folds every supported startup setting into the backend's
+    client config."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    backend = make_backend(
+        BACKEND_NAME_RUST,
+        url="https://x.documents.azure.com",
+        credential="k",
+        excluded_locations=["Central US"],
+        throttling_max_retry_count=7,
+        throttling_max_retry_wait_time_seconds=20,
+        availability_strategy=True,
+        user_agent_suffix="checkout-westus2",
+        consistency_level="Eventual",
+    )
+    assert isinstance(backend, BindingAdapter)
+    assert backend._client_config == PreparedClientConfig(
+        excluded_locations=("Central US",),
+        throttling_max_retry_count=7,
+        throttling_max_retry_wait_time_seconds=20,
+        hedging_threshold_ms=500,
+        user_agent_suffix="checkout-westus2",
+        consistency_level="Eventual",
+    )
+
+
+def test_async_factory_carries_all_startup_settings_into_rust_backend_rust(monkeypatch):
+    """The async factory carries the same settings the same way."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    backend = make_async_backend(
+        BACKEND_NAME_RUST,
+        url="https://x.documents.azure.com",
+        credential="k",
+        excluded_locations=["Central US", "East US"],
+        availability_strategy={"threshold_ms": 15},
+        user_agent_suffix="reporting-eastus",
+        consistency_level="Session",
+    )
+    assert isinstance(backend, AsyncBindingAdapter)
+    assert backend._client_config == PreparedClientConfig(
+        excluded_locations=("Central US", "East US"),
+        hedging_threshold_ms=15,
+        user_agent_suffix="reporting-eastus",
+        consistency_level="Session",
+    )
+
+
+# ---------------------------------------------------------------------------
+# get_database_account fails loudly on the Rust path (no core-python fallback)
+# ---------------------------------------------------------------------------
+#
+# get_database_account is a client-level read that isn't routed through the
+# backend dispatch; on a Rust-backed client it must raise a clear gap error
+# instead of silently borrowing the legacy core-python connection.
+
+
+def test_account_read_guard_is_noop_for_core_python_rust():
+    """The explicit legacy backend leaves the core-python path unchanged."""
+    assert raise_account_read_unsupported(LEGACY_BACKEND) is None
+
+
+def test_account_read_guard_raises_for_rust_backend_rust():
+    """The Rust backend gets a clear not-yet-available error."""
+    backend = MagicMock(name=BACKEND_NAME_RUST)
+    backend.name = BACKEND_NAME_RUST
+    with pytest.raises(NotImplementedError, match="not yet available through the Rust binding"):
+        raise_account_read_unsupported(backend)
+
+
+# ---------------------------------------------------------------------------
+# Credential classification for the Rust backend (resolve_credential)
+# ---------------------------------------------------------------------------
+#
+# Keys and Entra credentials are supported, including async credentials through
+# the credential bridge. Resource-token authentication is intentionally excluded;
+# reject it during construction rather than imply that support is pending.
+
+
+class _SyncTokenCredential:
+    """A minimal stand-in for a synchronous azure-identity credential."""
+
+    def get_token(self, *scopes, **kwargs):  # noqa: D401
+        """Return a fixed token with an expiry far in the future.
+
+        Not awaited, which is what makes this the synchronous shape. The expiry is set
+        far out so nothing here ever decides the token needs renewing.
+        """
+        return ("token-value", 9999999999)
+
+
+class _AsyncTokenCredential:
+    """A stand-in for an async credential, which the Rust backend wraps in a
+    synchronous bridge."""
+
+    async def get_token(self, *scopes, **kwargs):  # noqa: D401
+        """The same fixed token, but awaited.
+
+        Being awaited is the whole difference from the class above, and it is what the
+        code under test looks for when deciding this one needs a bridge.
+        """
+        return ("token-value", 9999999999)
+
+
+class _AsyncTokenInfoCredential:
+    """An async credential that authenticates only through the newer
+    ``get_token_info`` (azure-core ``SupportsTokenInfo``), with no ``get_token``.
+    The Rust backend detects it as async and wraps it; the bridge drives
+    ``get_token_info``."""
+
+    async def get_token_info(self, *scopes, **kwargs):  # noqa: D401
+        """The newer way to ask for a token, and the only one this credential offers.
+
+        Deliberately without the older method, so code that only knows to look for that
+        one would find nothing here and treat this as not a credential at all.
+        """
+        return ("token-value", 9999999999)
+
+
+class _AsyncContextManagerCredential:
+    """An ``azure.identity.aio``-shaped credential: an async context manager whose
+    token method is async. Detected as async via the context-manager check."""
+
+    async def __aenter__(self):
+        """Enter as a context manager, which is the mark the code reads to tell this is
+        asynchronous."""
+        return self
+
+    async def __aexit__(self, *exc):
+        """Leave without doing anything; there is nothing real to shut down here."""
+        return None
+
+    async def get_token(self, *scopes, **kwargs):  # noqa: D401
+        """The same fixed token, awaited like the real one from the identity library."""
+        return ("token-value", 9999999999)
+
+
+def test_resolve_credential_master_key_string_rust():
+    """A plain string credential is read as a master key, with no token credential."""
+    assert resolve_credential("the-key") == ("the-key", None)
+
+
+def test_resolve_credential_master_key_dict_rust():
+    """A ``{"masterKey": ...}`` dict is read as a master key, with no token credential."""
+    assert resolve_credential({"masterKey": "the-key"}) == ("the-key", None)
+
+
+def test_resolve_credential_sync_token_credential_rust():
+    """A sync token credential passes through as the token credential (no master key)."""
+    cred = _SyncTokenCredential()
+    master_key, token_credential = resolve_credential(cred)
+    assert master_key is None
+    assert token_credential is cred
+
+
+def test_resolve_credential_async_token_credential_requires_async_client_rust():
+    """Only async clients retain async credentials; binding is deferred to first use."""
+    cred = _AsyncTokenCredential()
+    with pytest.raises(TypeError, match="Synchronous CosmosClient"):
+        resolve_credential(cred)
+    master_key, token_credential = resolve_credential(cred, allow_async=True)
+    assert master_key is None
+    assert token_credential is cred
+
+
+def test_resolve_credential_async_get_token_info_only_wrapped_rust(credential_owner_loop):
+    """The owner-loop bridge also supports credentials exposing only get_token_info."""
+    cred = _AsyncTokenInfoCredential()
+    master_key, credential = resolve_credential(cred, allow_async=True)
+    assert master_key is None
+    token_credential = AsyncTokenCredentialBridge.acquire(credential, loop=credential_owner_loop)
+    assert isinstance(token_credential, AsyncTokenCredentialBridge)
+    try:
+        assert token_credential.get_token("https://cosmos.azure.com/.default") == (
+            "token-value",
+            9999999999,
+        )
+    finally:
+        token_credential._close_cosmos_async_bridge()
+
+
+def test_resolve_credential_async_context_manager_credential_retained_rust():
+    """Async context-manager credentials are retained without relocating their work."""
+    cred = _AsyncContextManagerCredential()
+    master_key, token_credential = resolve_credential(cred, allow_async=True)
+    assert master_key is None
+    assert token_credential is cred
+
+
+def test_async_credential_bridge_close_is_idempotent_rust(credential_owner_loop):
+    """A directly constructed, unshared bridge tolerates repeated close calls.
+
+    Close before first use is also exercised. This does not test duplicate
+    releases of an acquired bridge that still has other holders.
+    """
+    bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential(), loop=credential_owner_loop)
+    # Closing before first use leaves the application's loop running.
+    bridge._close_cosmos_async_bridge()
+    bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential(), loop=credential_owner_loop)
+    assert bridge.get_token("scope") == ("token-value", 9999999999)
+    bridge._close_cosmos_async_bridge()
+    bridge._close_cosmos_async_bridge()  # second close is a no-op
+
+
+class _HangingAsyncCredential:
+    """An async credential whose get_token never returns until it is cancelled."""
+
+    def __init__(self):
+        """Set up the signal a test waits on to know the token request has really begun."""
+        self.started = threading.Event()
+
+    async def get_token(self, *scopes, **kwargs):  # noqa: D401
+        """Announce that the request started, then wait forever.
+
+        This stands for a credential that has stopped responding -- an identity service
+        that is unreachable, say. Waiting forever rather than failing is the awkward
+        case, because there is nothing to notice unless something else puts a limit on
+        the wait.
+
+        The signal matters: without it a test could close the bridge before the request
+        had begun and pass without exercising anything.
+        """
+        self.started.set()
+        # Wait until this request is cancelled, without stopping the owner loop.
+        await asyncio.Event().wait()
+        return ("never", 0)  # pragma: no cover - unreachable
+
+
+def test_async_credential_bridge_close_unblocks_in_flight_get_token_rust(credential_owner_loop):
+    """Closing the bridge while a get_token is waiting must release the caller,
+    not hang it forever."""
+    cred = _HangingAsyncCredential()
+    bridge = AsyncTokenCredentialBridge(cred, loop=credential_owner_loop)
+    result: list = []
+
+    def _call():
+        try:
+            bridge.get_token("scope")
+            result.append(("returned",))
+        except Exception as exc:  # noqa: BLE001
+            result.append(("error", type(exc).__name__, str(exc)))
+
+    caller = threading.Thread(target=_call, name="fake-driver-worker")
+    caller.start()
+    # Wait until the credential coroutine is running on the loop.
+    assert cred.started.wait(timeout=5), "credential coroutine never started"
+    bridge._close_cosmos_async_bridge()
+    caller.join(timeout=5)
+    assert not caller.is_alive(), "get_token did not return after close (permanent hang)"
+    assert result and result[0][0] == "error", f"expected an error, got {result}"
+    # The error is a clear RuntimeError, not a bare cancellation.
+    assert "closed" in result[0][2].lower()
+
+
+def test_async_credential_bridge_token_timeout_bounds_the_wait_rust(credential_owner_loop):
+    """A finite token_timeout caps the wait and raises TimeoutError instead of
+    blocking forever on a hung credential."""
+
+    cred = _HangingAsyncCredential()
+    bridge = AsyncTokenCredentialBridge(cred, token_timeout=0.5, loop=credential_owner_loop)
+    try:
+        start = time.monotonic()
+        with pytest.raises(concurrent.futures.TimeoutError):
+            bridge.get_token("scope")
+        assert time.monotonic() - start < 4, "token_timeout did not bound the wait"
+    finally:
+        bridge._close_cosmos_async_bridge()
+
+
+def test_async_credential_bridge_rejects_call_from_loop_thread_rust(credential_owner_loop):
+    """Calling get_token from the application's loop thread must raise instead of
+    deadlocking."""
+    cred = _AsyncTokenCredential()
+    bridge = AsyncTokenCredentialBridge(cred, loop=credential_owner_loop)
+    try:
+        # A worker-thread wait can obtain a token from the owner loop.
+        assert bridge.get_token("scope") == ("token-value", 9999999999)
+        outcome: list = []
+
+        def _reenter():
+            try:
+                bridge.get_token("scope")
+                outcome.append(("returned", None))
+            except Exception as exc:  # noqa: BLE001
+                outcome.append(("error", exc))
+
+        # Schedule the re-entrant call on the application's loop thread.
+        bridge._loop.call_soon_threadsafe(_reenter)
+        # Give the background thread a moment to run the callback.
+        for _ in range(50):
+            if outcome:
+                break
+            time.sleep(0.05)
+        assert outcome, "re-entrant call never ran"
+        assert outcome[0][0] == "error"
+        assert isinstance(outcome[0][1], AsyncCredentialBridgeReentrantError)
+    finally:
+        bridge._close_cosmos_async_bridge()
+
+
+class _SlowAsyncCredential:
+    """An async credential whose get_token takes a little time, so concurrent
+    calls overlap with a close."""
+
+    async def get_token(self, *scopes, **kwargs):  # noqa: D401
+        """Wait a moment, then return the fixed token.
+
+        The pause is what makes overlap possible: it leaves a window in which several
+        callers are waiting at once and a close can arrive in the middle of them.
+        """
+        await asyncio.sleep(0.01)
+        return ("token-value", 9999999999)
+
+
+def test_async_credential_bridge_dedups_same_credential_with_refcount_rust(credential_owner_loop):
+    """The same async credential reused across clients yields one shared bridge,
+    refcounted so only the last close releases the bridge, not the loop."""
+    cred = _AsyncTokenCredential()
+    b1 = AsyncTokenCredentialBridge.acquire(cred, loop=credential_owner_loop)
+    b2 = AsyncTokenCredentialBridge.acquire(cred, loop=credential_owner_loop)
+    assert b1 is b2, "same credential should map to the same bridge"
+    assert b1._refcount == 2
+    try:
+        assert b1.get_token("scope") == ("token-value", 9999999999)
+        # First close: one holder remains, so the loop stays up and usable.
+        b1._close_cosmos_async_bridge()
+        assert b1._refcount == 1
+        assert b1._loop is not None
+        assert b1.get_token("scope") == ("token-value", 9999999999)
+        # Last close releases the bridge, not the application's loop.
+        b2._close_cosmos_async_bridge()
+        assert b2._closed
+        assert credential_owner_loop.is_running()
+        # A fresh acquire after teardown builds a new bridge, not the closed one.
+        b3 = AsyncTokenCredentialBridge.acquire(cred, loop=credential_owner_loop)
+        assert b3 is not b1
+        b3._close_cosmos_async_bridge()
+    finally:
+        # Defensive: ensure nothing is left registered if an assert fired early.
+        b1._close_cosmos_async_bridge()
+
+
+def test_async_credential_bridge_distinct_credentials_get_distinct_bridges_rust(credential_owner_loop):
+    """Two credential objects produce distinct Python bridges; no drivers are built."""
+    c1 = _AsyncTokenCredential()
+    c2 = _AsyncTokenCredential()
+    b1 = AsyncTokenCredentialBridge.acquire(c1, loop=credential_owner_loop)
+    b2 = AsyncTokenCredentialBridge.acquire(c2, loop=credential_owner_loop)
+    try:
+        assert b1 is not b2
+    finally:
+        b1._close_cosmos_async_bridge()
+        b2._close_cosmos_async_bridge()
+
+
+def test_async_credential_bridge_concurrent_get_token_and_close_race_rust(credential_owner_loop):
+    """Many threads calling get_token while another closes must all finish; calls
+    after the close fail cleanly instead of hanging."""
+    cred = _SlowAsyncCredential()
+    bridge = AsyncTokenCredentialBridge(cred, loop=credential_owner_loop)
+    stop = threading.Event()
+    successes: list = []
+    outcomes: list = []
+
+    def worker():
+        while not stop.is_set():
+            try:
+                bridge.get_token("scope")
+                successes.append(1)
+            except Exception as exc:  # noqa: BLE001
+                outcomes.append(type(exc).__name__)
+                return
+        outcomes.append("stopped")
+
+    threads = [threading.Thread(target=worker, name=f"driver-worker-{i}") for i in range(8)]
+    for t in threads:
+        t.start()
+    # Let some calls succeed and several overlap before the close.
+    time.sleep(0.2)
+    bridge._close_cosmos_async_bridge()
+    stop.set()
+    for t in threads:
+        t.join(timeout=5)
+        assert not t.is_alive(), "a worker did not return after close (permanent hang)"
+    assert successes, "no get_token completed before close"
+    # Every worker recorded a clean outcome (a stop or a caught error), none hung.
+    assert len(outcomes) == len(threads)
+
+
+def test_async_credential_bridge_close_does_not_own_the_loop_rust(credential_owner_loop):
+    bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential(), loop=credential_owner_loop)
+    bridge._close_cosmos_async_bridge()
+    assert credential_owner_loop.is_running()
+    assert not credential_owner_loop.is_closed()
+
+
+def test_resolve_credential_sync_credential_not_misclassified_rust():
+    """A plain synchronous credential must NOT be misread as async by the broader
+    detector -- it is accepted as a token credential."""
+    cred = _SyncTokenCredential()
+    master_key, token_credential = resolve_credential(cred)
+    assert master_key is None
+    assert token_credential is cred
+
+
+def test_resolve_credential_resource_token_map_rejected_with_specific_message_rust():
+    """A {resource-link: token} map (per-user scoped tokens) is rejected with the
+    resource-token message, not the generic one."""
+    with pytest.raises(ValueError, match="resource-token") as error:
+        resolve_credential({"dbs/x/colls/y": "resource-token"})
+    assert "intentionally excluded" in str(error.value)
+    assert "Microsoft Entra" in str(error.value)
+
+
+def test_resolve_credential_permission_feed_rejected_with_specific_message_rust():
+    """A permission feed (iterable of permission mappings) is rejected as a
+    resource-token credential."""
+    with pytest.raises(ValueError, match="resource-token") as error:
+        resolve_credential([{"id": "perm", "_token": "t", "resource": "dbs/x"}])
+    assert "intentionally excluded" in str(error.value)
+
+
+def test_resolve_credential_none_rejected_rust():
+    """No credential is rejected: the Rust backend requires a master key or a token
+    credential."""
+    with pytest.raises(ValueError, match="master-key credential"):
+        resolve_credential(None)
+
+
+def test_make_backend_carries_sync_token_credential_rust(monkeypatch):
+    """A sync token credential lands on the backend as token_credential, with no
+    master key."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    cred = _SyncTokenCredential()
+    backend = make_backend(
+        BACKEND_NAME_RUST,
+        url="https://x.documents.azure.com",
+        credential=cred,
+    )
+    assert isinstance(backend, BindingAdapter)
+    assert backend._master_key is None
+    assert backend._token_credential is cred
+
+
+def test_async_make_backend_carries_sync_token_credential_rust(monkeypatch):
+    """The async factory carries a sync token credential the same way."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    cred = _SyncTokenCredential()
+    backend = make_async_backend(
+        BACKEND_NAME_RUST,
+        url="https://x.documents.azure.com",
+        credential=cred,
+    )
+    assert isinstance(backend, AsyncBindingAdapter)
+    assert backend._master_key is None
+    assert backend._token_credential is cred
+
+
+def test_make_backend_rejects_async_token_credential_rust(monkeypatch):
+    """The synchronous factory cannot relocate async credentials to another loop."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    cred = _AsyncTokenCredential()
+    with pytest.raises(TypeError, match="Synchronous CosmosClient"):
+        make_backend(
+            BACKEND_NAME_RUST,
+            url="https://x.documents.azure.com",
+            credential=cred,
+        )
+
+
+def test_async_make_backend_retains_async_credential_until_first_use_rust(monkeypatch):
+    """Construction outside a running loop retains the credential without binding it."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    cred = _AsyncTokenCredential()
+    backend = make_async_backend(
+        BACKEND_NAME_RUST,
+        url="https://x.documents.azure.com",
+        credential=cred,
+    )
+    assert isinstance(backend, AsyncBindingAdapter)
+    assert backend._master_key is None
+    assert backend._token_credential is cred
+
+
+def test_rust_backend_passes_token_credential_to_acquire_driver_handle_rust(monkeypatch):
+    """With a token credential, acquire_driver_handle is called as (endpoint, None, config,
+    credential) -- master key None, credential as the 4th argument."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    cred = _SyncTokenCredential()
+    backend = BindingAdapter(
+        endpoint="https://x.documents.azure.com",
+        token_credential=cred,
+    )
+    backend._ensure_driver_handle()
+
+    fake_module.acquire_driver_handle.assert_called_once_with(
+        "https://x.documents.azure.com", None, None, cred
+    )
+
+
+def test_async_rust_backend_passes_token_credential_to_acquire_driver_handle_rust(monkeypatch):
+    """Async version: the token credential rides as the 4th acquire_driver_handle arg."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    cred = _SyncTokenCredential()
+
+    async def _run():
+        backend = AsyncBindingAdapter(
+            endpoint="https://x.documents.azure.com",
+            token_credential=cred,
+        )
+        await backend._ensure_driver_handle()
+
+    asyncio.run(_run())
+
+    fake_module.acquire_driver_handle.assert_called_once_with(
+        "https://x.documents.azure.com", None, None, cred
+    )
+
+
+# ---------------------------------------------------------------------------
+# How a container call picks its backend
+# ---------------------------------------------------------------------------
+#
+# The client always puts a concrete backend on the connection. A container call
+# uses that backend, and the choice is made once per client.
+
+def _make_sync_container_with_backend(backend):
+    """Construct the real, connection-free proxy around a selected test backend."""
+    mock_cc = MagicMock()
+    mock_cc._backend = backend
+    from azure.cosmos._helpers._item_context import ItemClientContext
+    return ContainerProxy(mock_cc, "dbs/test", "test", _item_context=ItemClientContext(backend))
+
+
+def _new_rust_backend():
+    """Build a Rust backend with a throwaway endpoint and key. The tests fake
+    the compiled module so nothing real runs."""
+    return BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+
+
+def _new_async_rust_backend():
+    """Build an async Rust backend with standard fake dependencies."""
+    return AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+
+
+def test_container_dispatch_routes_to_rust_backend_rust(monkeypatch):
+    """A call on a Rust client reaches the Rust backend, shown by the faked
+    module being called."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.create_item.return_value = (201, 0, {}, b"{}")
+    fake_module.get_container_metadata.return_value = ("rid", (), None, None)
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    container = _make_sync_container_with_backend(_new_rust_backend())
+    try:
+        container.create_item(body={"id": "x", "pk": "a"})
+        assert fake_module.create_item.called, "Rust path should have been taken"
+    finally:
+        container._item_context.adapter.close()
+
+
+def test_container_dispatch_rejects_missing_backend_rust():
+    """A connection without the required concrete backend fails explicitly."""
+    bare_cc = MagicMock(spec=[])  # a connection with no backend set at all
+    container = ContainerProxy(bare_cc, "dbs/test", "test")
+    with pytest.raises(RuntimeError, match="context supplied by CosmosClient"):
+        container.create_item(body={"id": "x", "pk": "a"})
+
+
+def test_async_container_dispatch_routes_to_async_rust_backend_rust(monkeypatch):
+    """Async version: a call on a Rust client reaches the Rust backend."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.create_item_async = AsyncMock(return_value=(201, 0, {}, b"{}"))
+    fake_module.get_container_metadata_async = AsyncMock(return_value=("rid", (), None, None))
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    try:
+        from azure.cosmos._helpers._item_context import ItemClientContext
+        container = AsyncContainerProxy(
+            mock_cc, "dbs/test", "test", _item_context=ItemClientContext(mock_cc._backend)
+        )
+
+        async def _run():
+            await container.create_item(body={"id": "x", "pk": "a"})
+            assert fake_module.create_item_async.called, "async Rust path should have been taken"
+
+        asyncio.run(_run())
+    finally:
+        asyncio.run(mock_cc._backend.close())
+
+
+# Exercise read_feed_ranges through the public methods with fake bindings,
+# including force_refresh and malformed payloads. Backend eligibility depends
+# on the particular option, not merely whether any keyword was supplied.
+def test_container_read_feed_ranges_routes_to_rust_backend_rust(monkeypatch):
+    """The force_refresh call reaches the fake Rust binding, not the legacy map."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.read_feed_ranges.return_value = (
+        200,
+        0,
+        {},
+        b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    container = _make_sync_container_with_backend(_new_rust_backend())
+    try:
+        container.client_connection._routing_map_provider = MagicMock()
+
+        feed_ranges = list(container.read_feed_ranges(force_refresh=True))
+        assert len(feed_ranges) == 1
+        assert fake_module.read_feed_ranges.called
+        assert not container.client_connection.refresh_routing_map_provider.called
+        assert not container.client_connection._routing_map_provider.get_overlapping_ranges.called
+
+        prepared = fake_module.read_feed_ranges.call_args.args[1]
+        assert prepared.op == OP_READ_FEED_RANGES
+        assert prepared.container_link == "dbs/test/colls/test"
+        assert prepared.body_bytes == b'{"forceRefresh":true}'
+    finally:
+        container._item_context.adapter.close()
+
+
+def test_container_read_feed_ranges_with_kwargs_rejects_legacy_fallback_rust(monkeypatch):
+    """Unsupported options fail without executing the legacy routing-map lookup."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.read_feed_ranges.return_value = (
+        200,
+        0,
+        {},
+        b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    container = _make_sync_container_with_backend(_new_rust_backend())
+    try:
+        container.client_connection._routing_map_provider = MagicMock()
+        container.client_connection._routing_map_provider.get_overlapping_ranges.return_value = [
+            {"id": "0", "minInclusive": "", "maxExclusive": "FF"}
+        ]
+        container._get_properties_with_options = MagicMock(return_value={})
+        setattr(
+            container,
+            "_ContainerProxy__get_client_container_caches",
+            lambda: {container.container_link: {"_rid": "rid-1"}},
+        )
+
+        with pytest.raises(NotImplementedError, match="read_feed_ranges"):
+            list(container.read_feed_ranges(force_refresh=True, excluded_locations=["West US"]))
+        assert not fake_module.read_feed_ranges.called
+        container._get_properties_with_options.assert_not_called()
+        container.client_connection.refresh_routing_map_provider.assert_not_called()
+        container.client_connection._routing_map_provider.get_overlapping_ranges.assert_not_called()
+    finally:
+        container._item_context.adapter.close()
+
+
+def test_container_read_feed_ranges_rust_payload_must_include_partition_key_ranges_rust(monkeypatch):
+    """Malformed Rust payload is rejected loudly instead of returning silent empty data."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.read_feed_ranges.return_value = (200, 0, {}, b'{"unexpected":[]}')
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    container = _make_sync_container_with_backend(_new_rust_backend())
+    try:
+        with pytest.raises(ValueError, match="PartitionKeyRanges"):
+            list(container.read_feed_ranges())
+    finally:
+        container._item_context.adapter.close()
+
+
+def test_async_container_read_feed_ranges_routes_to_rust_backend_rust(monkeypatch):
+    """Async read_feed_ranges uses Rust backend when available and kwargs are empty."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.read_feed_ranges_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    try:
+        mock_cc._routing_map_provider = MagicMock()
+        mock_cc.refresh_routing_map_provider = AsyncMock()
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
+
+        async def _run():
+            return [feed_range async for feed_range in container.read_feed_ranges(force_refresh=True)]
+
+        feed_ranges = asyncio.run(_run())
+        assert len(feed_ranges) == 1
+        assert fake_module.read_feed_ranges_async.await_count == 1
+        mock_cc.refresh_routing_map_provider.assert_not_awaited()
+        assert not mock_cc._routing_map_provider.get_overlapping_ranges.called
+
+        prepared = fake_module.read_feed_ranges_async.await_args.args[1]
+        assert prepared.op == OP_READ_FEED_RANGES
+        assert prepared.container_link == "dbs/test/colls/test"
+        assert prepared.body_bytes == b'{"forceRefresh":true}'
+    finally:
+        asyncio.run(mock_cc._backend.close())
+
+
+def test_async_container_read_feed_ranges_with_kwargs_rejects_legacy_fallback_rust(monkeypatch):
+    """Async unsupported options fail without executing legacy metadata work."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.read_feed_ranges_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    try:
+        mock_cc._routing_map_provider = MagicMock()
+        mock_cc._routing_map_provider.get_overlapping_ranges = AsyncMock(
+            return_value=[{"id": "0", "minInclusive": "", "maxExclusive": "FF"}]
+        )
+        mock_cc.refresh_routing_map_provider = AsyncMock()
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
+        container._get_properties_with_options = AsyncMock(return_value={})
+        setattr(
+            container,
+            "_ContainerProxy__get_client_container_caches",
+            lambda: {container.container_link: {"_rid": "rid-1"}},
+        )
+
+        async def _run():
+            return [
+                feed_range
+                async for feed_range in container.read_feed_ranges(
+                    force_refresh=True, excluded_locations=["West US"]
+                )
+            ]
+
+        with pytest.raises(NotImplementedError, match="read_feed_ranges"):
+            asyncio.run(_run())
+        assert fake_module.read_feed_ranges_async.await_count == 0
+        container._get_properties_with_options.assert_not_called()
+        mock_cc.refresh_routing_map_provider.assert_not_awaited()
+        mock_cc._routing_map_provider.get_overlapping_ranges.assert_not_awaited()
+    finally:
+        asyncio.run(mock_cc._backend.close())
+
+
+def test_async_container_read_feed_ranges_rust_payload_must_include_partition_key_ranges_rust(monkeypatch):
+    """Async malformed Rust payload is rejected loudly."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.read_feed_ranges_async = AsyncMock(return_value=(200, 0, {}, b'{"unexpected":[]}'))
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    try:
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
+
+        async def _run():
+            return [feed_range async for feed_range in container.read_feed_ranges()]
+
+        with pytest.raises(ValueError, match="PartitionKeyRanges"):
+            asyncio.run(_run())
+    finally:
+        asyncio.run(mock_cc._backend.close())
+
+
+def test_container_feed_range_from_partition_key_routes_to_rust_backend_rust(monkeypatch):
+    """feed_range_from_partition_key uses Rust backend when available."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.feed_range_from_partition_key.return_value = (
+        200,
+        0,
+        {},
+        b'{"Range":{"min":"3C","max":"3C","isMinInclusive":true,"isMaxInclusive":true}}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    container = _make_sync_container_with_backend(_new_rust_backend())
+    try:
+        container._get_properties = MagicMock(side_effect=AssertionError("legacy fallback should not run"))
+
+        feed_range = container.feed_range_from_partition_key("pk-a")
+        assert feed_range["Range"]["min"] == "3C"
+        assert feed_range["Range"]["isMaxInclusive"] is True
+        assert fake_module.feed_range_from_partition_key.called
+
+        prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
+        assert prepared.op == OP_FEED_RANGE_FROM_PARTITION_KEY
+        assert prepared.container_link == "dbs/test/colls/test"
+        assert legacy_partition_key_from_request(prepared) == '["pk-a"]'
+        assert prepared.body_bytes == b""
+    finally:
+        container._item_context.adapter.close()
+
+
+def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload_rust(monkeypatch):
+    """A malformed Rust feed-range payload (missing the ``Range`` envelope) raises
+    rather than handing back a broken feed range."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.feed_range_from_partition_key.return_value = (200, 0, {}, b'{"unexpected":{}}')
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    container = _make_sync_container_with_backend(_new_rust_backend())
+    try:
+        with pytest.raises(ValueError, match="Range"):
+            container.feed_range_from_partition_key("pk-a")
+    finally:
+        container._item_context.adapter.close()
+
+
+def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend_rust(monkeypatch):
+    """The empty-partition-key sentinel (``NonePartitionKeyValue``) routes to the Rust
+    backend with a cross-partition header (``"[]"``) and returns the full-range feed
+    range the driver reports."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.feed_range_from_partition_key.return_value = (
+        200,
+        0,
+        {},
+        b'{"Range":{"min":"00000000000000000000000000000000","max":"00000000000000000000000000000000","isMinInclusive":true,"isMaxInclusive":true}}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    container = _make_sync_container_with_backend(_new_rust_backend())
+    try:
+        container._get_properties = MagicMock(
+            return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2, "systemKey": True}}
+        )
+
+        feed_range = container.feed_range_from_partition_key(NonePartitionKeyValue)
+
+        assert feed_range["Range"]["min"] == "00000000000000000000000000000000"
+        assert feed_range["Range"]["max"] == "00000000000000000000000000000000"
+        assert feed_range["Range"]["isMinInclusive"] is True
+        assert feed_range["Range"]["isMaxInclusive"] is True
+        assert fake_module.feed_range_from_partition_key.call_count == 1
+        prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
+        assert legacy_partition_key_from_request(prepared) == "[]"
+    finally:
+        container._item_context.adapter.close()
+
+
+def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend_rust(monkeypatch):
+    """An explicit empty partition-key sequence (``[]``) also routes to the Rust
+    backend and returns the driver's feed range."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.feed_range_from_partition_key.return_value = (
+        200,
+        0,
+        {},
+        b'{"Range":{"min":"","max":"","isMinInclusive":true,"isMaxInclusive":false}}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    container = _make_sync_container_with_backend(_new_rust_backend())
+    try:
+        container._get_properties = MagicMock(
+            return_value={
+                "partitionKey": {"paths": ["/tenant", "/region"], "kind": "MultiHash", "version": 2}
+            }
+        )
+
+        feed_range = container.feed_range_from_partition_key([])
+
+        assert feed_range["Range"]["min"] == ""
+        assert feed_range["Range"]["max"] == ""
+        assert feed_range["Range"]["isMinInclusive"] is True
+        assert feed_range["Range"]["isMaxInclusive"] is False
+        assert fake_module.feed_range_from_partition_key.call_count == 1
+        prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
+        assert legacy_partition_key_from_request(prepared) == "[[]]"
+    finally:
+        container._item_context.adapter.close()
+
+
+def test_async_container_feed_range_from_partition_key_routes_to_rust_backend_rust(monkeypatch):
+    """Async feed_range_from_partition_key uses Rust backend when available."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.feed_range_from_partition_key_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"Range":{"min":"3C","max":"3C","isMinInclusive":true,"isMaxInclusive":true}}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    try:
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
+
+        async def _run():
+            return await container.feed_range_from_partition_key("pk-a")
+
+        feed_range = asyncio.run(_run())
+        assert feed_range["Range"]["min"] == "3C"
+        assert feed_range["Range"]["isMaxInclusive"] is True
+        assert fake_module.feed_range_from_partition_key_async.await_count == 1
+
+        prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
+        assert prepared.op == OP_FEED_RANGE_FROM_PARTITION_KEY
+        assert prepared.container_link == "dbs/test/colls/test"
+        assert legacy_partition_key_from_request(prepared) == '["pk-a"]'
+        assert prepared.body_bytes == b""
+    finally:
+        asyncio.run(mock_cc._backend.close())
+
+
+def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_payload_rust(monkeypatch):
+    """Async twin: a malformed async Rust feed-range payload raises."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.feed_range_from_partition_key_async = AsyncMock(
+        return_value=(200, 0, {}, b'{"unexpected":{}}')
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    try:
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
+
+        async def _run():
+            return await container.feed_range_from_partition_key("pk-a")
+
+        with pytest.raises(ValueError, match="Range"):
+            asyncio.run(_run())
+    finally:
+        asyncio.run(mock_cc._backend.close())
+
+
+def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend_rust(monkeypatch):
+    """Async twin: the empty-partition-key sentinel routes to the async Rust backend
+    with a cross-partition header."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.feed_range_from_partition_key_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"Range":{"min":"00000000000000000000000000000000","max":"00000000000000000000000000000000","isMinInclusive":true,"isMaxInclusive":true}}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    try:
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
+        container._get_properties = AsyncMock(
+            return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2, "systemKey": True}}
+        )
+
+        async def _run():
+            return await container.feed_range_from_partition_key(NonePartitionKeyValue)
+
+        feed_range = asyncio.run(_run())
+        assert feed_range["Range"]["min"] == "00000000000000000000000000000000"
+        assert feed_range["Range"]["max"] == "00000000000000000000000000000000"
+        assert feed_range["Range"]["isMinInclusive"] is True
+        assert feed_range["Range"]["isMaxInclusive"] is True
+        assert fake_module.feed_range_from_partition_key_async.await_count == 1
+        prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
+        assert legacy_partition_key_from_request(prepared) == "[]"
+    finally:
+        asyncio.run(mock_cc._backend.close())
+
+
+def test_async_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend_rust(monkeypatch):
+    """Async twin: an explicit empty partition-key sequence routes to the async Rust
+    backend."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "h"
+    fake_module.feed_range_from_partition_key_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"Range":{"min":"","max":"","isMinInclusive":true,"isMaxInclusive":false}}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    try:
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
+        container._get_properties_with_options = AsyncMock(
+            return_value={
+                "partitionKey": {"paths": ["/tenant", "/region"], "kind": "MultiHash", "version": 2}
+            }
+        )
+
+        async def _run():
+            return await container.feed_range_from_partition_key([])
+
+        feed_range = asyncio.run(_run())
+        assert feed_range["Range"]["min"] == ""
+        assert feed_range["Range"]["max"] == ""
+        assert feed_range["Range"]["isMinInclusive"] is True
+        assert feed_range["Range"]["isMaxInclusive"] is False
+        assert fake_module.feed_range_from_partition_key_async.await_count == 1
+        prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
+        assert legacy_partition_key_from_request(prepared) == "[[]]"
+    finally:
+        asyncio.run(mock_cc._backend.close())
+
+
+# ---------------------------------------------------------------------------
+# How get_selected_backend selects the backend off a client_connection
+# ---------------------------------------------------------------------------
+#
+# get_selected_backend reads the ``_backend`` attribute off the connection. It reads
+# the instance ``__dict__`` directly rather than creating a mock attribute.
+# An unset backend violates the concrete-backend invariant and raises.
+# A connection without ``__dict__`` (``__slots__``) is read via getattr.
+
+
+class _PlainConnection:
+    """A stand-in for client_connection with a real instance ``__dict__``."""
+
+
+class _SlotsConnection:
+    """A connection whose attributes live in ``__slots__`` (no ``__dict__``),
+    exercising get_selected_backend's getattr fallback branch."""
+
+    __slots__ = ("_backend",)
+
+
+def test_pick_backend_returns_backend_when_set_rust():
+    """With ``_backend`` set, it is returned."""
+    conn = _PlainConnection()
+    backend = object()
+    conn._backend = backend
+    assert get_selected_backend(conn) is backend
+
+
+def test_pick_backend_rejects_unset_backend_rust():
+    """A connection without ``_backend`` violates the invariant."""
+    with pytest.raises(RuntimeError, match="concrete Cosmos backend"):
+        get_selected_backend(_PlainConnection())
+
+
+def test_pick_backend_uses_getattr_fallback_for_slots_connection_rust():
+    """A connection without ``__dict__`` (``__slots__``) is read via getattr."""
+    conn = _SlotsConnection()
+    backend = object()
+    conn._backend = backend
+    assert get_selected_backend(conn) is backend
+
+
+# ---------------------------------------------------------------------------
+# The client handle is built only once, even under concurrency
+# ---------------------------------------------------------------------------
+#
+# The first call builds the handle; a lock makes sure that a burst of first
+# calls builds it only once, instead of each building and discarding one.
+# The measured acquisition count checks this run, not every possible schedule.
+
+
+@pytest.mark.parametrize("first_attempt_fails", [False, True], ids=["reuse", "retry-after-failure"])
+def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads_rust(monkeypatch, first_attempt_fails):
+    """Concurrent waiters share one outcome; a later call can retry a failed attempt."""
+    first_started = threading.Event()
+    finish_first = threading.Event()
+    second_waiting = threading.Event()
+    first_error = RuntimeError("first acquisition failed")
+    fake_module = MagicMock()
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    wait_lock = threading.Lock()
+    waiters = []
+
+    def observed_wait(futures, timeout=None):
+        with wait_lock:
+            waiters.append(tuple(futures))
+            if len(waiters) == 2:
+                second_waiting.set()
+        return concurrent.futures.wait(futures, timeout=timeout)
+
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter.wait", observed_wait)
+
+    def acquire(_endpoint, _key, _config):
+        assert backend._driver_handle is None
+        if fake_module.acquire_driver_handle.call_count == 1:
+            first_started.set()
+            assert finish_first.wait(5), "first acquisition was not released"
+            if first_attempt_fails:
+                raise first_error
+        return "handle-1"
+
+    fake_module.acquire_driver_handle.side_effect = acquire
+    results = [concurrent.futures.Future(), concurrent.futures.Future()]
+
+    def worker(result):
+        try:
+            result.set_result(backend._ensure_driver_handle())
+        except BaseException as error:
+            result.set_exception(error)
+
+    threads = [threading.Thread(target=worker, args=(result,), daemon=True) for result in results]
+    started_threads = []
+    try:
+        threads[0].start()
+        started_threads.append(threads[0])
+        assert first_started.wait(5), "first caller did not begin acquisition"
+        threads[1].start()
+        started_threads.append(threads[1])
+        assert second_waiting.wait(5), "second caller did not wait for the shared acquisition"
+        assert waiters[0] == waiters[1]
+        assert backend._driver_handle is None
+        assert not results[0].done()
+        assert not results[1].done()
+        fake_module.acquire_driver_handle.assert_called_once()
+
+        finish_first.set()
+        if first_attempt_fails:
+            for result in results:
+                with pytest.raises(RuntimeError) as caught:
+                    result.result(timeout=5)
+                assert caught.value is first_error
+            assert backend._driver_handle is None
+            assert backend._ensure_driver_handle() == "handle-1"
+        else:
+            assert results[0].result(timeout=5) == "handle-1"
+            assert results[1].result(timeout=5) == "handle-1"
+        assert backend._driver_handle == "handle-1"
+        assert backend._ensure_driver_handle() == "handle-1"
+        assert fake_module.acquire_driver_handle.call_count == (2 if first_attempt_fails else 1)
+    finally:
+        finish_first.set()
+        for thread in started_threads:
+            thread.join(timeout=5)
+        assert all(not thread.is_alive() for thread in started_threads), "acquisition worker did not finish"
+        backend.close()
+    fake_module.release_driver_handle.assert_called_once_with("handle-1")
+
+
+def test_async_rust_backend_init_driver_handle_serialised_under_concurrent_tasks_rust(monkeypatch):
+    """Eight coroutines starting at once build the handle only once."""
+    count_lock = threading.Lock()
+    calls = {"n": 0}
+
+    def slow_init(_endpoint, _key, _config):
+        with count_lock:
+            calls["n"] += 1
+        time.sleep(0.02)
+        return "handle-1"
+
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.side_effect = slow_init
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(
+            endpoint="https://x.documents.azure.com", master_key="k"
+        )
+        return await asyncio.gather(*[backend._ensure_driver_handle() for _ in range(8)])
+
+    results = asyncio.run(_run())
+
+    assert calls["n"] == 1
+    assert results == ["handle-1"] * 8
+
+
+def test_async_rust_backend_init_driver_handle_serialised_across_event_loops_rust(monkeypatch):
+    """Two loops on different threads still build the handle only once."""
+    count_lock = threading.Lock()
+    calls = {"n": 0}
+
+    def slow_init(_endpoint, _key, _config):
+        with count_lock:
+            calls["n"] += 1
+        time.sleep(0.02)
+        return "handle-1"
+
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.side_effect = slow_init
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    ready = threading.Barrier(2)
+    results = []
+
+    def worker():
+        ready.wait()
+
+        async def _run():
+            return await backend._ensure_driver_handle()
+
+        results.append(asyncio.run(_run()))
+
+    threads = [threading.Thread(target=worker) for _ in range(2)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    assert calls["n"] == 1
+    assert results == ["handle-1", "handle-1"]
+
+
+def test_rust_backend_close_releases_driver_handle_once_rust(monkeypatch):
+    """close() removes a built handle once and is idempotent."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    backend._ensure_driver_handle()
+    backend.close()
+    backend.close()
+
+    fake_module.release_driver_handle.assert_called_once_with("handle-1")
+
+
+def test_async_rust_backend_close_releases_driver_handle_once_rust(monkeypatch):
+    """Async close() removes a built handle once and is idempotent."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+        await backend._ensure_driver_handle()
+        await backend.close()
+        await backend.close()
+
+    asyncio.run(_run())
+
+    fake_module.release_driver_handle.assert_called_once_with("handle-1")
+
+
+# ---------------------------------------------------------------------------
+# Input-validation robustness: bad-typed inputs fail early and clearly at
+# construction, rather than throwing the wrong exception, failing later in a
+# murkier place, or (worst) silently producing wrong behavior.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("bad", [123, 1.5, True, ["rust"], {"name": "rust"}, object()])
+def test_resolve_backend_name_non_string_raises_valueerror_rust(monkeypatch, bad):
+    """A non-string _backend= must raise a clear ValueError, not an opaque
+    AttributeError from calling .strip() on a non-string."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    with pytest.raises(ValueError, match="Invalid backend"):
+        resolve_backend_name(bad)
+
+
+@pytest.mark.parametrize("arg_name", ["preferred_locations", "excluded_locations"])
+def test_build_client_config_rejects_bare_string_locations_rust(arg_name):
+    """A bare string region is rejected: tuple('West US') would silently become
+    seven one-character 'regions', which is never what the customer meant."""
+    with pytest.raises(ValueError, match="sequence of region-name strings"):
+        build_client_config(**{arg_name: "West US"})
+
+
+@pytest.mark.parametrize("arg_name", ["preferred_locations", "excluded_locations"])
+def test_build_client_config_rejects_bytes_locations_rust(arg_name):
+    """Bytes are rejected for the same reason a bare string is."""
+    with pytest.raises(ValueError, match="sequence of region-name strings"):
+        build_client_config(**{arg_name: b"West US"})
+
+
+def test_build_client_config_accepts_single_region_in_a_list_rust():
+    """The correct shape -- a one-element list -- carries exactly that one region,
+    proving the guard does not over-reject real sequences."""
+    config = build_client_config(["West US"])
+    assert config == PreparedClientConfig(preferred_locations=("West US",))
+
+
+@pytest.mark.parametrize("bad_master_key", [None, 123, b"key", {"k": "v"}, ""])
+def test_resolve_credential_rejects_non_string_master_key_in_dict_rust(bad_master_key):
+    """A {'masterKey': <non-string or empty>} dict is rejected at construction with
+    a clear message, instead of being accepted and failing later in a murkier
+    place."""
+    with pytest.raises(ValueError, match="'masterKey' entry to be a non-empty string"):
+        resolve_credential({"masterKey": bad_master_key})
+
+
+def test_resolve_credential_rejects_empty_master_key_string_rust():
+    """An empty master-key string is rejected up front rather than accepted and
+    failing later."""
+    with pytest.raises(ValueError, match=r"^The account key must be a non-empty string\.$"):
+        resolve_credential("")
+
+
+def test_resolve_credential_iterable_non_sequence_gets_generic_message_rust():
+    """An unusual custom credential object that merely happens to be iterable (a
+    generator, here) but is not a concrete sequence is NOT mislabeled a
+    resource-token credential; it falls through to the generic message."""
+    def _gen():
+        yield {"id": "perm"}
+
+    with pytest.raises(ValueError, match="requires a master-key credential"):
+        resolve_credential(_gen())
+
+
+def test_resolve_backend_name_normalizes_case_and_whitespace_rust(monkeypatch):
+    """Case and surrounding whitespace are tolerated (env vars and copy-paste
+    routinely add a trailing newline or odd case); the canonical name comes back."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    for variant in ("rust", "RUST", "Rust", " rust", "rust\n", "  rust  "):
+        assert resolve_backend_name(variant) == BACKEND_NAME_RUST
+    for variant in ("core-python", "CORE-PYTHON", " Core-Python "):
+        assert resolve_backend_name(variant) == BACKEND_NAME_CORE_PYTHON
+    # Same normalization on the env-var path.
+    monkeypatch.setenv(BACKEND_ENV_VAR, "  RUST\n")
+    assert resolve_backend_name(None) == BACKEND_NAME_RUST
+
+
+def test_resolve_backend_name_empty_means_default_rust(monkeypatch):
+    """An empty or whitespace-only value counts as 'not specified' and uses the
+    default rather than raising."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    assert resolve_backend_name(None) == BACKEND_NAME_CORE_PYTHON
+    assert resolve_backend_name("") == BACKEND_NAME_CORE_PYTHON
+    assert resolve_backend_name("   ") == BACKEND_NAME_CORE_PYTHON
+    monkeypatch.setenv(BACKEND_ENV_VAR, "")
+    assert resolve_backend_name(None) == BACKEND_NAME_CORE_PYTHON
+    monkeypatch.setenv(BACKEND_ENV_VAR, "   ")
+    assert resolve_backend_name(None) == BACKEND_NAME_CORE_PYTHON
+
+
+def test_resolve_backend_name_still_rejects_genuine_typos_rust(monkeypatch):
+    """Normalization is only case/whitespace -- a real typo (and underscore
+    spelling, which is not an alias) still fails loud."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    for bad in ("turbo", "rustt", "core_python", "python"):  # cspell:disable-line
+        with pytest.raises(ValueError, match="Invalid backend"):
+            resolve_backend_name(bad)
+
+
+# ---------------------------------------------------------------------------
+# Response-less driver errors map to azure-core ServiceResponseError (A2)
+# ---------------------------------------------------------------------------
+#
+# These fake _DriverTransportError failures are translated to ServiceResponseError
+# for customer exception handling. A response-less failure need not precede HTTP
+# or service work. Translation alone does not run legacy transport-retry policies;
+# other response-less binding errors may follow different mappings.
+
+
+def _transport_test_request():
+    """Return a prepared request used by transport-error tests."""
+    return PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key=key_from_legacy_header('["a"]'),
+        headers={},
+    )
+
+
+class _FakeDriverTransportError(RuntimeError):
+    """Represent a transport failure raised by the fake Rust driver."""
+    pass
+
+
+def test_sync_backend_maps_transport_error_to_service_response_error_rust(monkeypatch):
+    """A _DriverTransportError from the sync dispatch surfaces as ServiceResponseError,
+    preserving the driver's status/message in the new exception."""
+    from azure.core.exceptions import ServiceResponseError
+    import azure.cosmos._backend.binding_adapter as rust_mod
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    backend._driver_handle = "handle"  # skip the (blocking) handle build
+    monkeypatch.setattr(rust_mod, "_rust_module", object())  # pretend binding present
+    monkeypatch.setattr(
+        rust_mod, "_DRIVER_TRANSPORT_ERROR", _FakeDriverTransportError
+    )
+
+    transport_exc_type = rust_mod._DRIVER_TRANSPORT_ERROR
+    message = "driver execute_singleton_operation failed: status 503 (ServiceUnavailable): boom"
+
+    def boom(driver_handle, prepared):
+        raise transport_exc_type(message)
+
+    monkeypatch.setattr(rust_mod, "_binding_function_for_op", lambda op: boom)
+
+    try:
+        with pytest.raises(ServiceResponseError) as excinfo:
+            backend.execute(_transport_test_request())
+        assert "ServiceUnavailable" in str(excinfo.value)
+        assert isinstance(excinfo.value.__cause__, transport_exc_type)
+    finally:
+        backend.close()
+
+
+def test_async_backend_maps_transport_error_to_service_response_error_rust(monkeypatch):
+    """The async backend performs the same translation on its await path."""
+    from azure.core.exceptions import ServiceResponseError
+    import azure.cosmos.aio._backend.binding_adapter as async_rust_mod
+
+    backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    backend._driver_handle = "handle"  # skip the (background-thread) handle build
+    monkeypatch.setattr(async_rust_mod, "_rust_module", object())
+    monkeypatch.setattr(
+        async_rust_mod, "_DRIVER_TRANSPORT_ERROR", _FakeDriverTransportError
+    )
+
+    transport_exc_type = async_rust_mod._DRIVER_TRANSPORT_ERROR
+    message = "driver execute_singleton_operation failed: status 503 (ServiceUnavailable): boom"
+
+    async def boom(driver_handle, prepared):
+        raise transport_exc_type(message)
+
+    monkeypatch.setattr(async_rust_mod, "_binding_function_for_op", lambda op: boom)
+
+    async def run():
+        try:
+            with pytest.raises(ServiceResponseError) as excinfo:
+                await backend.execute(_transport_test_request())
+            assert "ServiceUnavailable" in str(excinfo.value)
+            assert isinstance(excinfo.value.__cause__, transport_exc_type)
+        finally:
+            await backend.close()
+
+    asyncio.run(run())
+
+
+def test_sync_list_databases_transport_error_does_not_replay_legacy_rust(monkeypatch):
+    """A response-less list_databases failure is translated, not replayed."""
+    from azure.core.exceptions import ServiceResponseError
+    import azure.cosmos._backend.binding_adapter as rust_mod
+
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    backend._driver_handle = "handle"
+    monkeypatch.setattr(rust_mod, "_rust_module", object())
+    monkeypatch.setattr(
+        rust_mod, "_DRIVER_TRANSPORT_ERROR", _FakeDriverTransportError
+    )
+    transport_exc_type = rust_mod._DRIVER_TRANSPORT_ERROR
+
+    def boom(_driver_handle, _prepared):
+        raise transport_exc_type("driver list_databases failed: transport closed")
+
+    monkeypatch.setattr(rust_mod, "_binding_function_by_name", lambda _op: boom)
+    legacy_calls = []
+
+    try:
+        with pytest.raises(ServiceResponseError):
+            backend.run_page_operation(
+                build_request=lambda: PreparedPageRequest(
+                    op=OP_LIST_DATABASES, container_link="", headers={}
+                ),
+                routing=OperationRouting(OP_LIST_DATABASES, True),
+                legacy_call=lambda: legacy_calls.append("legacy"),
+                process_response=lambda page: page,
+            )
+        assert legacy_calls == []
+    finally:
+        backend.close()
+
+
+def test_async_list_databases_transport_error_does_not_replay_legacy_rust(monkeypatch):
+    """The async list_databases transport mapping also avoids legacy replay."""
+    from azure.core.exceptions import ServiceResponseError
+    import azure.cosmos.aio._backend.binding_adapter as async_rust_mod
+
+    backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    backend._driver_handle = "handle"
+    monkeypatch.setattr(async_rust_mod, "_rust_module", object())
+    monkeypatch.setattr(
+        async_rust_mod, "_DRIVER_TRANSPORT_ERROR", _FakeDriverTransportError
+    )
+    transport_exc_type = async_rust_mod._DRIVER_TRANSPORT_ERROR
+
+    async def boom(_driver_handle, _prepared):
+        raise transport_exc_type("driver list_databases failed: transport closed")
+
+    monkeypatch.setattr(async_rust_mod, "_binding_function_by_name", lambda _op: boom)
+    legacy_calls = []
+
+    async def run():
+        def build_request():
+            return PreparedPageRequest(op=OP_LIST_DATABASES, container_link="", headers={})
+
+        try:
+            with pytest.raises(ServiceResponseError):
+                await backend.run_page_operation(
+                    build_request=build_request,
+                    routing=OperationRouting(OP_LIST_DATABASES, True),
+                    legacy_call=lambda: legacy_calls.append("legacy"),
+                    process_response=lambda page: page,
+                )
+            assert legacy_calls == []
+        finally:
+            await backend.close()
+
+    asyncio.run(run())
+
+
+# --- Regressions for the Rust client lifecycle and process-wide runtime policy ---
+
+
+def test_untuned_and_tuned_rust_clients_can_both_be_constructed_rust(monkeypatch):
+    """Default and explicit runtimes can coexist without reconfiguring each other."""
+    monkeypatch.setattr(
+        sync_cosmos_client_module, "CosmosClientConnection", MagicMock()
+    )
+    untuned = sync_cosmos_client_module.CosmosClient(
+        "https://coexist.documents.azure.com", "key", _backend=BACKEND_NAME_RUST
+    )
+    runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(connection_timeout=2))
+    tuned = sync_cosmos_client_module.CosmosClient(
+        "https://coexist.documents.azure.com",
+        "key",
+        _backend=BACKEND_NAME_RUST,
+        runtime=runtime,
+    )
+    assert untuned._adapter._client_config is None
+    assert tuned._adapter._runtime is runtime
+    assert runtime._handle.timeouts[0] == 2
+    untuned._adapter.close()
+    tuned._adapter.close()
+
+
+def _make_closed_rust_backend(monkeypatch, endpoint):
+    """Build a Rust backend over a stub binding, open its handle, then close it."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+    backend = BindingAdapter(
+        endpoint=endpoint,
+        master_key="key",
+        token_credential=None,
+        client_config=None,
+    )
+    assert backend._ensure_driver_handle() == "handle-1"
+    backend.close()
+    return backend, fake_module
+
+
+def test_sync_backend_refuses_to_reopen_after_close_rust(monkeypatch):
+    """A closed sync client must refuse work, not silently reopen.
+
+    close() clears the handle, so without a closed flag the next operation saw a
+    client that looked brand new and quietly took a second reference on the shared
+    Rust driver -- an operation on a closed client appeared to succeed. The async
+    backend already refused; this is the sync half of that rule.
+    """
+    backend, fake_module = _make_closed_rust_backend(
+        monkeypatch, "https://reopen.documents.azure.com"
+    )
+    with pytest.raises(RuntimeError, match="closed"):
+        backend._ensure_driver_handle()
+    assert fake_module.acquire_driver_handle.call_count == 1
+
+
+def test_sync_backend_close_is_idempotent_rust(monkeypatch):
+    """Closing twice must release the shared driver exactly once.
+
+    release_driver_handle drops one reference per call, so a second close would decrement a
+    driver another client may still be using.
+    """
+    backend, fake_module = _make_closed_rust_backend(
+        monkeypatch, "https://double-close.documents.azure.com"
+    )
+    backend.close()
+    backend.close()
+    assert fake_module.release_driver_handle.call_count == 1
+
+
+class _FakeAsyncCredential:
+    """An async token credential, the shape that gets wrapped in a bridge."""
+
+    async def get_token(self, *scopes, **kwargs):
+        """Never actually called; its being a coroutine is what matters here."""
+        raise AssertionError("the driver should not reach this credential")
+
+
+@pytest.mark.parametrize(
+    "bad_kwargs",
+    [
+        {"consistency_level": "Unknown"},
+        {"connection_timeout_seconds": 99.0},
+        {"preferred_locations": "West US"},
+    ],
+)
+def test_failed_construction_does_not_acquire_an_async_credential_bridge_rust(bad_kwargs):
+    """Invalid async-client options fail before acquiring an owner-loop bridge."""
+    from azure.cosmos._backend import _async_credential_bridge as bridge_module
+
+    credential = _FakeAsyncCredential()
+    with pytest.raises(ValueError):
+        make_async_backend(
+            BACKEND_NAME_RUST,
+            url="https://bridge-leak.documents.azure.com",
+            credential=credential,
+            **bad_kwargs,
+        )
+    assert all(key[0] != id(credential) for key in bridge_module._REGISTRY)

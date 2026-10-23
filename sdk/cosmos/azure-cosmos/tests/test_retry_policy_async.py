@@ -22,6 +22,7 @@ from _fault_injection_transport_async import FaultInjectionTransportAsync
 from azure.cosmos.http_constants import ResourceType
 from azure.cosmos._constants import _Constants
 from azure.cosmos._health_check_retry_policy import HealthCheckRetryPolicy
+from _client_transport import create_client_with_transport
 
 class ConnectionMode:
     """Represents the connection mode to be used by the client."""
@@ -34,24 +35,17 @@ class ConnectionPolicy:
     #Represents the Connection policy associated with a CosmosClientConnection.
     __defaultRequestTimeout: int = 5  # seconds
     __defaultDBAConnectionTimeout: int = 3  # seconds
-    __defaultReadTimeout: int = 65  # seconds
-    __defaultDBAReadTimeout: int = 3 # seconds
     __defaultMaxBackoff: int = 1 # seconds
 
     def __init__(self) -> None:
         self.RequestTimeout: int = self.__defaultRequestTimeout
         self.DBAConnectionTimeout: int = self.__defaultDBAConnectionTimeout
-        self.ReadTimeout: int = self.__defaultReadTimeout
-        self.DBAReadTimeout: int = self.__defaultDBAReadTimeout
         self.MaxBackoff: int = self.__defaultMaxBackoff
         self.ConnectionMode: int = ConnectionMode.Gateway
-        self.SSLConfiguration: Optional[SSLConfiguration] = None
-        self.ProxyConfiguration: Optional[ProxyConfiguration] = None
         self.EnableEndpointDiscovery: bool = True
         self.PreferredLocations: List[str] = []
         self.ExcludedLocations = []
         self.RetryOptions: RetryOptions = RetryOptions()
-        self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False
         self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
         self.ResponsePayloadOnWriteDisabled: bool = False
@@ -62,7 +56,7 @@ async def setup_method_with_custom_transport(
     connection_policy = ConnectionPolicy()
     connection_retry_policy = test_config.MockConnectionRetryPolicyAsync(resource_type="docs")
     connection_policy.ConnectionRetryConfiguration = connection_retry_policy
-    client = CosmosClient(test_config.TestConfig.host, test_config.TestConfig.masterKey,
+    client = create_client_with_transport(CosmosClient, test_config.TestConfig.host, test_config.TestConfig.masterKey,
                           transport=custom_transport, connection_policy=connection_policy, **kwargs)
     db = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
     container = db.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
@@ -417,11 +411,11 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
     async def test_resource_throttle_retry_policy_max_throttle_backoff_async(self):
-        # Tests that kwarg retry_throttle_backoff_max sets the throttle max backoff retry independent of connection max backoff retry
+        # The throttle waiting threshold is independent of connection retry backoff.
         max_throttle_backoff_in_seconds = 10
 
         async with CosmosClient(self.host, self.masterKey,
-                                retry_throttle_backoff_max=max_throttle_backoff_in_seconds) as client:
+                                throttle_retry_wait_threshold_seconds=max_throttle_backoff_in_seconds) as client:
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
             container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
             document_definition = {'id': str(uuid.uuid4()),
@@ -443,12 +437,12 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
     async def test_resource_throttle_retry_policy_max_backoff_precedence_async(self):
-        # Tests to ensure kwargs precedence is being respected between retry_backoff_max and retry_throttle_backoff_max
+        # The throttle-specific setting takes precedence over the generic alias.
         max_backoff_in_seconds = 10
         max_throttle_backoff_in_seconds = 5
 
         async with CosmosClient(self.host, self.masterKey, retry_backoff_max=max_backoff_in_seconds,
-                                retry_throttle_backoff_max=max_throttle_backoff_in_seconds) as client:
+                                throttle_retry_wait_threshold_seconds=max_throttle_backoff_in_seconds) as client:
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
             container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
             document_definition = {'id': str(uuid.uuid4()),
@@ -479,7 +473,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         max_backoff_in_seconds = 20
 
         async with CosmosClient(self.host, self.masterKey, retry_backoff_max=max_backoff_in_seconds,
-                                retry_throttle_backoff_max=max_throttle_backoff_in_seconds,
+                                throttle_retry_wait_threshold_seconds=max_throttle_backoff_in_seconds,
                                 retry_throttle_total=max_retry_throttle_retries,
                                 retry_total=max_total_retries) as client:
 

@@ -1,0 +1,144 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+"""Parity tests for ``Container.read_items``.
+
+Each test runs the same batched read once on core-python and once on rust against
+one shared, pre-seeded container, then compares the returned items. Because
+``read_items`` fans a batch out into point reads and per-partition queries, these
+cover the shapes that exercise both kinds of leaf: a single item (a point read),
+several items in one partition (a query), and items spread across partitions (a
+fan-out), plus the customer-visible rules -- missing ids omitted and an empty
+result -- so rust returns the same set of items core-python does.
+
+The call under test returns a small projection (each item's id and data)
+rather than the raw items, so the comparison ignores the server-set
+fields (``_rid`` / ``_ts`` / ``_etag`` / ...) that legitimately differ per write.
+"""
+from __future__ import annotations
+
+import os
+import uuid
+
+import pytest
+
+from azure.cosmos import CosmosClient, PartitionKey
+from common._parity_helpers import run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
+
+pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
+
+
+@pytest.fixture(scope="module")
+def seeded():
+    """Create one /pk container, seed a known set of items across three partition
+    keys, and hand tests the container id, the seeded (id, pk) pairs, and a couple
+    of ids that were never created."""
+    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
+    db = client.create_database_if_not_exists("parity_db")
+    container_id = "parity_read_items_" + uuid.uuid4().hex[:8]
+    container = db.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+
+    seeded_pairs = []
+    # pk-a: 2 items, pk-b: 2 items, pk-c: 1 item -> spans three logical partitions.
+    layout = [("pk-a", 2), ("pk-b", 2), ("pk-c", 1)]
+    for pk_value, n in layout:
+        for i in range(n):
+            doc_id = f"{pk_value}-item-{i}"
+            container.upsert_item({"id": doc_id, "pk": pk_value, "data": f"{pk_value}:{i}"})
+            seeded_pairs.append((doc_id, pk_value))
+
+    missing = [("ghost-1", "pk-a"), ("ghost-2", "pk-z")]
+    try:
+        yield {"container_id": container_id, "seeded": seeded_pairs, "missing": missing}
+    finally:
+        try:
+            db.delete_container(container_id)
+        except Exception:  # pylint: disable=broad-except
+            pass
+
+
+def _run(container_id, items, description, request_kwargs):
+    """Compare the customer-visible items returned by both backends."""
+    def _do(client):
+        container = client.get_database_client("parity_db").get_container_client(container_id)
+        result = container.read_items(items=items)
+        # Project to (id, data) and sort, so the compare is stable and ignores
+        # server-set fields and any per-backend ordering.
+        return sorted((doc["id"], doc.get("data")) for doc in result)
+
+    comparison = run_on_both_backends(_do, description=description, request_kwargs=request_kwargs)
+    comparison.print_report()
+    comparison.assert_functional_parity()
+
+
+def test_read_items_single_item_rust(seeded):
+    """One item -> read as a point read; same item on both backends."""
+    items = [seeded["seeded"][-1]]  # the lone pk-c item
+    _run(seeded["container_id"], items,
+         description="read_items single item (point-read leaf)",
+         request_kwargs={"count": 1})
+
+
+def test_read_items_same_partition_rust(seeded):
+    """Several items in one partition -> read as one query; same set on both backends."""
+    items = [pair for pair in seeded["seeded"] if pair[1] == "pk-a"]
+    _run(seeded["container_id"], items,
+         description="read_items multiple items in one partition (query leaf)",
+         request_kwargs={"count": len(items)})
+
+
+def test_read_items_across_partitions_rust(seeded):
+    """Items spread across partitions -> fan-out; same merged set on both backends."""
+    items = list(seeded["seeded"])
+    _run(seeded["container_id"], items,
+         description="read_items across partitions (fan-out)",
+         request_kwargs={"count": len(items)})
+
+
+def test_read_items_missing_omitted_rust(seeded):
+    """A mix of real and non-existent ids -> only the real ones come back, on both."""
+    items = list(seeded["seeded"]) + seeded["missing"]
+    _run(seeded["container_id"], items,
+         description="read_items with missing ids omitted",
+         request_kwargs={"requested": len(items), "existing": len(seeded["seeded"])})
+
+
+def test_read_items_all_missing_rust(seeded):
+    """Only non-existent ids -> an empty result on both backends."""
+    _run(seeded["container_id"], list(seeded["missing"]),
+         description="read_items all-missing returns empty",
+         request_kwargs={"requested": len(seeded["missing"]), "existing": 0})
+
+
+def _run_with_options(container_id, items, description, read_items_kwargs):
+    """Same as ``_run`` but forwards extra kwargs to ``read_items`` -- used to
+    check that per-request options (availability strategy, custom headers, read
+    timeout) leave the returned items identical on both backends."""
+    def _do(client):
+        container = client.get_database_client("parity_db").get_container_client(container_id)
+        result = container.read_items(items=items, **read_items_kwargs)
+        return sorted((doc["id"], doc.get("data")) for doc in result)
+
+    comparison = run_on_both_backends(_do, description=description, request_kwargs=read_items_kwargs)
+    comparison.print_report()
+    comparison.assert_functional_parity()
+
+
+def test_read_items_availability_strategy_disabled_rust(seeded):
+    """availability_strategy=False (hedging off) is honored on the rust point
+    leg and returns the same items as legacy."""
+    items = [seeded["seeded"][-1]]  # single item -> point read
+    _run_with_options(seeded["container_id"], items,
+                      description="read_items availability_strategy=False",
+                      read_items_kwargs={"availability_strategy": False})
+
+
+def test_L6_read_items_custom_initial_headers_rust(seeded):
+    """A non-x-ms customer header on read_items is forwarded on both backends and
+    does not change the returned items."""
+    items = [seeded["seeded"][-1]]
+    _run_with_options(seeded["container_id"], items,
+                      description="[L6] read_items initial_headers (custom)",
+                      read_items_kwargs={"initial_headers": {"x-trace-id": "read-items-parity"}})

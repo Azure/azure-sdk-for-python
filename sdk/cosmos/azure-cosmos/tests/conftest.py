@@ -1,10 +1,75 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import pytest
 import test_config
 from azure.cosmos import CosmosClient as CosmosSyncClient
+from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
 
-cosmos_sync_client = CosmosSyncClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
+# Register the in-repo parity-capture pytest plugin. The plugin
+# itself is dormant unless the env var COSMOS_PARITY_CAPTURE_OP is
+# set to a known operation name. Listed here so pytest auto-loads it
+# for every test run without requiring contributors to install
+# anything.
+pytest_plugins = ["common.parity_capture_plugin"]
+
+cosmos_sync_client = None
+_live_resources_initialized = False
+
+
+@pytest.fixture
+def credential_owner_loop():
+    """Provide a caller-owned running loop for blocking bridge unit tests."""
+    import asyncio
+    import threading
+
+    loop = asyncio.new_event_loop()
+    started = threading.Event()
+
+    def run():
+        asyncio.set_event_loop(loop)
+        loop.call_soon(started.set)
+        try:
+            loop.run_forever()
+        finally:
+            pending = asyncio.all_tasks(loop)
+            for task in pending:
+                task.cancel()
+            loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+            loop.run_until_complete(loop.shutdown_asyncgens())
+            asyncio.set_event_loop(None)
+            loop.close()
+
+    thread = threading.Thread(target=run, name="test-credential-owner", daemon=True)
+    thread.start()
+    try:
+        assert started.wait(5), "credential owner loop did not start"
+        yield loop
+    finally:
+        if loop.is_running():
+            loop.call_soon_threadsafe(loop.stop)
+        thread.join(5)
+        assert not thread.is_alive(), "credential owner loop did not stop"
+
+
+def _get_setup_client():
+    """Build the shared setup client the first time something actually needs it.
+
+    Creating a client used to happen when this file was imported, which meant
+    every test run tried to reach a Cosmos account -- including runs of the
+    unit tests, which do not talk to a service at all and would just hang when
+    no account was reachable. Building it on demand keeps those runs offline.
+    """
+    global cosmos_sync_client  # pylint: disable=global-statement
+    if cosmos_sync_client is None:
+        # Shared test-data setup must remain on core Python because it reads
+        # account metadata before Rust-specific tests choose their own backend.
+        cosmos_sync_client = CosmosSyncClient(
+            test_config.TestConfig.host,
+            test_config.TestConfig.masterKey,
+            _backend=BACKEND_NAME_CORE_PYTHON,
+        )
+    return cosmos_sync_client
 
 
 def pytest_configure(config):
@@ -15,26 +80,44 @@ def pytest_configure(config):
     """
 
 
-def pytest_sessionstart(session):
+def pytest_collection_finish(session):
+    """Create the shared databases and containers only if the run needs them.
+
+    Runs after pytest has worked out which tests it is about to run. If every
+    one of them is a unit test (files named ``*_unit.py``), there is nothing to
+    set up and no account to reach, so this returns immediately. That is what
+    lets the routing tests for ``list_databases`` and the other operations run
+    with no Cosmos account and no emulator.
+    Do not provision for collection-only or aborted runs. An explicit request
+    to continue after collection errors still needs setup for runnable tests.
     """
-    Called after the Session object has been created and
-    before performing collection and entering the run test loop.
-    """
+    if (
+        session.config.option.collectonly
+        or (session.testsfailed and not session.config.option.continue_on_collection_errors)
+        or not session.items
+        or all(item.path.name.endswith("_unit.py") for item in session.items)
+    ):
+        return
+
+    global _live_resources_initialized  # pylint: disable=global-statement
+    client = _get_setup_client()
     config = test_config.TestConfig
-    config.get_account_info(cosmos_sync_client)
-    config.create_database_if_not_exist(cosmos_sync_client)
-    config.create_single_partition_container_if_not_exist(cosmos_sync_client)
-    config.create_multi_partition_container_if_not_exist(cosmos_sync_client)
-    config.create_single_partition_prefix_pk_container_if_not_exist(cosmos_sync_client)
-    config.create_multi_partition_prefix_pk_container_if_not_exist(cosmos_sync_client)
+    config.get_account_info(client)
+    config.create_database_if_not_exist(client)
+    config.create_single_partition_container_if_not_exist(client)
+    config.create_multi_partition_container_if_not_exist(client)
+    config.create_single_partition_prefix_pk_container_if_not_exist(client)
+    config.create_multi_partition_prefix_pk_container_if_not_exist(client)
+    _live_resources_initialized = True
+
 
 def pytest_sessionfinish(session, exitstatus):
     """
     Called after whole test run finished, right before
     returning the exit status to the system.
     """
-    config = test_config.TestConfig
-    config.try_delete_database(cosmos_sync_client)
+    if _live_resources_initialized:
+        test_config.TestConfig.try_delete_database(cosmos_sync_client)
 
 
 def pytest_unconfigure(config):
@@ -42,8 +125,6 @@ def pytest_unconfigure(config):
     called before test process is exited.
     """
 
-
-import pytest
 
 
 @pytest.fixture(autouse=True)

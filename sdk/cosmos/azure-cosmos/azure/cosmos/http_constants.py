@@ -123,7 +123,6 @@ class HttpHeaders:
     CollectionServiceInfo = "x-ms-collection-service-info"
     RetryAfterInMilliseconds = "x-ms-retry-after-ms"
     IsFeedUnfiltered = "x-ms-is-feed-unfiltered"
-    ResourceTokenExpiry = "x-ms-documentdb-expiry-seconds"
     EnableScanInQuery = "x-ms-documentdb-query-enable-scan"
     EmitVerboseTracesInQuery = "x-ms-documentdb-query-emit-traces"
     SubStatus = "x-ms-substatus"
@@ -467,9 +466,7 @@ class ResourceType:
 
     Database = "dbs"
     Collection = "colls"
-    User = "users"
     Document = "docs"
-    Permission = "permissions"
     StoredProcedure = "sprocs"
     Trigger = "triggers"
     UserDefinedFunction = "udfs"

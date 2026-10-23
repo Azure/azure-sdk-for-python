@@ -6,12 +6,47 @@
 
 #### Features Added
 
+* Added `CosmosRuntime`, `ConnectionPoolOptions`, and the `CosmosClient(runtime=...)` option for explicitly initialized, shareable Rust runtimes alongside the default process singleton.
+* Added Rust-backed client-level `timeout` defaults with per-operation overrides, independently of runtime connection and HTTP-request timeouts.
+* Added simple-token combination to synchronous and asynchronous `ContainerProxy.get_latest_session_token()`, alongside existing vector-token support.
+
 #### Breaking Changes
+
+* Rust-backed sync/async clients and connection-string factories reject `connection_retry_policy`, including `None`, with `TypeError`; legacy behavior is retained pending the driver team's implementation decision.
+* Rust-backed sync/async clients and connection-string factories now reject `retry_connect` and `retry_read`, including `None` and zero, with `TypeError` pending retry-control parity review; legacy Python behavior is unchanged.
+* Rust-backed sync/async clients and connection-string factories reject `retry_fixed_interval`, including `None` and zero, and non-`None` grouped fixed retry intervals with `TypeError`; legacy Python behavior is unchanged.
+* Renamed `retry_throttle_backoff_max` to `throttle_retry_wait_threshold_seconds` on synchronous and asynchronous clients and connection-string factories; the old name raises `TypeError` with migration guidance on both backends, while retry timing is unchanged.
+* Rust-backed database and container `replace_throughput()` now reject unsupported inputs before metadata requests instead of falling back to legacy Python.
+* Removed `ContainerProxy.is_system_key` from synchronous and asynchronous clients on both backends. Legacy system-key containers are outside the release scope; the public compatibility property is no longer available.
+* Removed `raw_request_hook` and `raw_response_hook` from both legacy and Rust-backed clients, including constructor and per-operation inputs. Supplying either option, including `None`, raises `TypeError`. Use supported results, response headers, tracing, and diagnostics; the ordinary `response_hook` is unchanged.
+* Rust-backed clients reject `enable_endpoint_discovery`, `multiple_write_locations`, and explicit assignments to their `ConnectionPolicy` fields; Rust manages discovery and multi-write routing from account settings. The legacy comparison backend retains these controls.
+* Removed client-level proxy, custom CA, client-certificate, TLS-verification override, and transport options from both backends, including `ProxyConfiguration`, `SSLConfiguration`, and their policy fields; removed inputs raise `TypeError`, while runtime-controlled environment proxy use is unchanged.
+* Rust-backed clients require connection/proxy settings on `CosmosRuntime` and reject overall timeout budgets below one second.
+* Removed `read_timeout` and `ConnectionPolicy.ReadTimeout`, `RecoveryReadTimeout`, and `DBAReadTimeout` from both legacy and Rust execution; supplying the removed options now raises `TypeError`.
+* Removed `ContainerProxy.scripts`, synchronous and asynchronous `ScriptsProxy` classes/modules, `TriggerType`, `TriggerOperation`, and dedicated legacy scripting connection operations on both backends. Stored-procedure execution and stored-procedure/trigger/UDF definition management are intentionally excluded, not pending Rust integration. Rust-backed item operations continue rejecting trigger options and headers; SQL invocation of deployed UDFs remains supported.
+* Removed Cosmos database-user and resource-permission APIs from synchronous and asynchronous clients on both backends, including `UserProxy`, `Permission`, `PermissionMode`, and the `resource_token_expiry_seconds` option.
+* Removed resource-token and permission-feed authentication from both backends. Synchronous and asynchronous clients now reject these credentials during construction; account-key strings, `masterKey` dictionaries, and Microsoft Entra credentials remain supported.
+* Rust-backed client and per-operation hedging configuration now rejects `threshold_steps_ms`; use `threshold_ms` for one alternate attempt.
+* Synchronous `ContainerProxy.query_items()` now enables cross-partition execution by default when no partition key or feed range is supplied, matching async; explicit `enable_cross_partition_query=False` remains honored.
+* For v5, removed `DatabaseProxy.read_offer()` and `ContainerProxy.read_offer()`; use `get_throughput()` to read the same configured throughput.
+* Container `get_throughput()` now rejects unsupported Rust inputs instead of using legacy Python and isolates returned throughput from response-hook mutations.
 
 #### Bugs Fixed
 
+* Restored synchronous and asynchronous Rust-backed `query_items()` service-token pass-through and positive `continuation_token_limit` support for complete partition keys, removing the migration-only Python token envelope.
+* Fixed synchronous and asynchronous database and container `get_throughput()` and `replace_throughput()` to share one overall timeout across uncached metadata, the complete offer query, any container-identity refresh and replacement, inherit the client timeout default, and await asynchronous cancellation cleanup.
+* Fixed database and container throughput replacements to retain autoscale fields and response headers, isolate callback and input data, and report missing offers with `CosmosResourceNotFoundError`. Both replacement steps now receive supported caller options.
+* Added remaining-timeout and optional attempt-diagnostics support to synchronous and asynchronous Rust throughput replacement bindings.
+* Added Rust-backed `ConsistentPrefix` and `BoundedStaleness` read mappings for synchronous and asynchronous client defaults and `read_item()` overrides; write consistency remains governed by account settings.
+* Restored synchronous and asynchronous Rust-backed `patch_item()` filter conditions by forwarding them to service-side PATCH, preserving conditional rejection without legacy replay.
+* Restored legacy resource-ID validation for synchronous and asynchronous Rust-backed `upsert_item()` calls, including `TypeError` for a non-string ID, before backend execution.
+* Fixed container `get_throughput()` response-header retention, input-option ownership and missing-offer errors. Reads and replacements now share bounded recovery after container recreation without replaying a throughput write.
+* Fixed `get_latest_session_token()` discarding a saved parent token when child observations leave an uncovered gap, and restored acceptance of a single simple token.
+* Restored synchronous and asynchronous `read_item()` support for mappings containing only `_self`, without requiring an additional `id` or changing the saved resource address.
+
 #### Other Changes
 
+* Renamed internal Python/Rust throughput operations to `get_throughput` and `replace_throughput`, matching the public APIs. External Rust-driver offer operations are unchanged.
 ### 4.17.1 (2026-09-16)
 
 #### Bugs Fixed

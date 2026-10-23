@@ -16,6 +16,7 @@ from azure.core.exceptions import ServiceRequestError
 from azure.cosmos import exceptions, PartitionKey
 from azure.cosmos import _retry_utility
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.feed_range_continuation import (
@@ -32,6 +33,7 @@ from azure.cosmos._routing.feed_range_continuation import (
     _hash_query_spec,
 )
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
 
 # tracemalloc is not available in PyPy, so we import conditionally
 try:
@@ -121,12 +123,16 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
     @staticmethod
     def _create_minimal_connection() -> CosmosClientConnection:
         client = CosmosClientConnection.__new__(CosmosClientConnection)
+        client._setup_complete = True
+        client._response_state = ClientLastResponseHeaders()
         client.default_headers = {}
         client.last_response_headers = {}
         client._UpdateSessionIfRequired = lambda *args, **kwargs: None
         client.availability_strategy = None
         client.availability_strategy_executor = None
         client.availability_strategy_max_concurrency = None
+        # These tests exercise the explicit core-Python backend.
+        client._backend = LEGACY_BACKEND
         return client
 
     def test_queryfeed_internal_capture_uses_options_dict(self):
@@ -1158,6 +1164,8 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         # Build the connection without running __init__; only the attributes
         # used by the no-query (read-feed) branch of __QueryFeed are needed.
         conn = object.__new__(CosmosClientConnection)
+        conn._setup_complete = True
+        conn._response_state = ClientLastResponseHeaders()
         conn.default_headers = {}
         conn.last_response_headers = {}
         conn.availability_strategy = None
@@ -1166,6 +1174,8 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         conn._routing_map_provider = MockRoutingMapProvider()
         conn.session = None
         conn.connection_policy = MagicMock()
+        # Explicit core-Python backend, which is the path this test exercises.
+        conn._backend = LEGACY_BACKEND
 
         capture_dict = {}
         options = {

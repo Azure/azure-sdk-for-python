@@ -22,27 +22,55 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 import asyncio  # pylint: disable=do-not-import-asyncio
+from .._backend.capabilities import prepare_operation_kwargs
 import warnings
 from datetime import datetime
-from typing import (Any, Mapping, Optional, Sequence, Union, Tuple, cast, overload, AsyncIterable,
+from typing import (TYPE_CHECKING, Any, Mapping, Optional, Sequence, Union, Tuple, cast, overload, AsyncIterable,
                     Callable, Dict)
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
-from azure.core.async_paging import AsyncItemPaged, AsyncList
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
-from azure.cosmos._change_feed.change_feed_utils import validate_kwargs
+from .._telemetry import BindingAlternatives, delegate_operation, trace_operation_async
+from azure.core.utils import CaseInsensitiveDict
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from ._scripts import ScriptsProxy
 from .. import _utils as utils
 from .._availability_strategy_config import _validate_request_hedging_strategy
-from .._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput,
+from .._base import (_build_properties_cache,
                      build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
-from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
+from .._helpers._item_prep import prepare_read_item_kwargs, prepare_create_item_kwargs, prepare_item_target
+from .._helpers._read_items import complete_read_items_response, prepare_read_items
+from ._helpers._read_all_items import read_all_items as _read_all_items
+from ._helpers._query_items import query_items as _query_items
+from .._helpers._query_items import uses_rust, reject_rust_continuation_token
+from .._helpers._batch_operations import execute_batch_async
+from .._helpers._response_parse import complete_item_response
+from .._operation_deadline import async_deadline_lock, legacy_deadline_options, remaining_timeout, run_with_deadline
+from .._helpers._item_arguments import (
+    merge_create_item_explicit_kwargs,
+    merge_delete_item_explicit_kwargs,
+    merge_patch_item_explicit_kwargs,
+    merge_read_item_explicit_kwargs,
+    merge_upsert_item_explicit_kwargs,
+    get_selected_backend,
+)
+from ._helpers._item_operations import AsyncItemHelper
+from ._helpers._container_operations import AsyncContainerHelper
+from .._helpers._request_container import validate_container_create_kwargs
+from .._helpers._feed_range_operations import (
+    feed_range_from_partition_key_async as _feed_range_from_partition_key,
+    is_feed_range_subset_async as _is_feed_range_subset,
+    read_feed_ranges_async as _read_feed_ranges,
+)
+from .._helpers._container_throughput import (
+    get_container_throughput_async as _get_throughput,
+    replace_container_throughput_async as _replace_container_throughput,
+)
 from .._global_secondary_index import _normalize_gsi_container_properties
 from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
@@ -51,6 +79,11 @@ from ..exceptions import CosmosHttpResponseError
 from ..offer import ThroughputProperties
 from ..partition_key import (_get_partition_key_from_partition_key_definition, PartitionKeyType,
                              _return_undefined_or_empty_partition_key, NonePartitionKeyValue, NullPartitionKeyValue)
+
+if TYPE_CHECKING:
+    from .._helpers._item_context import ItemClientContext
+    from ._backend.cosmos_backend import AsyncCosmosBackend
+    from ._helpers._legacy_item_operations import AsyncLegacyItemHelper
 
 __all__ = ("ContainerProxy",)
 
@@ -81,16 +114,18 @@ class ContainerProxy:
         client_connection: CosmosClientConnection,
         database_link: str,
         id: str,
-        properties: Optional[dict[str, Any]] = None
+        properties: Optional[dict[str, Any]] = None,
+        *,
+        _item_context: "Optional[ItemClientContext[AsyncCosmosBackend]]" = None,
     ) -> None:
         self.client_connection = client_connection
+        self._item_context = _item_context
+        self._item_helper_cache: "Optional[tuple[ItemClientContext[AsyncCosmosBackend], AsyncItemHelper]]" = None
         self.container_cache_lock = asyncio.Lock()
         self.id = id
         self.database_link = database_link
         self.container_link = "{}/colls/{}".format(database_link, self.id)
-        self._is_system_key: Optional[bool] = None
-        self._scripts: Optional[ScriptsProxy] = None
-        if properties:
+        if properties and client_connection is not None:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
                                                                                            self.container_link))
@@ -98,49 +133,60 @@ class ContainerProxy:
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
+    def _get_item_helper(self) -> "Union[AsyncItemHelper, AsyncLegacyItemHelper]":
+        """Reuse Rust helpers; keep container-bound legacy adapters short-lived."""
+        context = self._item_context
+        cached = self._item_helper_cache
+        if cached is not None:
+            if cached[0] is context:
+                return cached[1]
+            self._item_helper_cache = None
+        if context is None:
+            from ._helpers._legacy_item_operations import AsyncLegacyItemHelper
+            return AsyncLegacyItemHelper.from_legacy_connection(self.client_connection, self._get_properties_with_options)
+        if context.adapter.name == "core-python":
+            from ._helpers._legacy_item_operations import AsyncLegacyItemHelper
+            return AsyncLegacyItemHelper(self.client_connection, self._get_properties_with_options)
+        helper = AsyncItemHelper(context.adapter, context.defaults, context.response_state)
+        self._item_helper_cache = (context, helper)
+        return helper
+
+    async def _set_item_partition_key(self, partition_key: PartitionKeyType) -> PartitionKeyType:
+        """Rust resolves sentinel values using its backend metadata."""
+        if self._item_context is not None and self._item_context.adapter.name != "core-python":
+            return partition_key
+        if self._item_context is None:
+            from .._helpers._legacy_item_operations import require_legacy_item_connection
+            require_legacy_item_connection(self.client_connection)
+        return await self._set_partition_key(partition_key)
+
     async def _get_properties_with_options(self, options: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         kwargs = {}
         if options:
+            if "_item_operation_deadline" in options:
+                kwargs["_item_operation_deadline"] = options["_item_operation_deadline"]
             if "excludedLocations" in options:
                 kwargs['excluded_locations'] = options['excludedLocations']
             if Constants.OperationStartTime in options:
                 kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
             if Constants.Kwargs.TIMEOUT in options:
                 kwargs[Constants.Kwargs.TIMEOUT] = options[Constants.Kwargs.TIMEOUT]
-            if Constants.Kwargs.READ_TIMEOUT in options:
-                kwargs[Constants.Kwargs.READ_TIMEOUT] = options[Constants.Kwargs.READ_TIMEOUT]
 
         return await self._get_properties(**kwargs)
 
-    async def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
+    async def _get_properties(self, *, deadline: Optional[float] = None, **kwargs: Any) -> dict[str, Any]:
+        deadline = kwargs.pop("_item_operation_deadline", deadline)
         if self.container_link not in self.client_connection._container_properties_cache:
-            async with self.container_cache_lock:
+            async with async_deadline_lock(self.container_cache_lock, deadline):
                 if self.container_link not in self.client_connection._container_properties_cache:
+                    if deadline is not None:
+                        remaining_timeout(deadline)
+                        kwargs["_item_operation_deadline"] = deadline
                     await self.read(**kwargs)
         return self.client_connection._container_properties_cache[self.container_link]
 
-    @property
-    async def is_system_key(self) -> bool:
-        if self._is_system_key is None:
-            properties = await self._get_properties()
-            self._is_system_key = (
-                properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False
-            )
-        return self._is_system_key
-
     def __get_client_container_caches(self) -> dict[str, dict[str, Any]]:
         return self.client_connection._container_properties_cache
-
-    @property
-    def scripts(self) -> ScriptsProxy:
-        if self._scripts is None:
-            self._scripts = ScriptsProxy(self, self.client_connection, self.container_link)
-        return self._scripts
-
-    def _get_document_link(self, item_or_link: Union[str, Mapping[str, Any]]) -> str:
-        if isinstance(item_or_link, str):
-            return "{}/docs/{}".format(self.container_link, item_or_link)
-        return item_or_link["_self"]
 
     def _get_conflict_link(self, conflict_or_link: Union[str, Mapping[str, Any]]) -> str:
         if isinstance(conflict_or_link, str):
@@ -152,7 +198,8 @@ class ContainerProxy:
         partition_key: PartitionKeyType
     ) -> PartitionKeyType:
         if partition_key == NonePartitionKeyValue:
-            return _return_undefined_or_empty_partition_key(await self.is_system_key)
+            properties = await self._get_properties()
+            return _return_undefined_or_empty_partition_key(properties["partitionKey"].get("systemKey", False))
         if partition_key == NullPartitionKeyValue:
             return None
         return cast(Union[str, int, float, bool, list[Union[str, int, float, bool]]], partition_key)
@@ -167,7 +214,7 @@ class ContainerProxy:
 
         return partition_key._get_epk_range_for_partition_key(partition_key_value)
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="read_container")
     async def read(
         self,
         *,
@@ -175,54 +222,67 @@ class ContainerProxy:
         populate_quota_info: Optional[bool] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Read the container properties.
 
-        :keyword bool populate_partition_key_range_statistics: Enable returning partition key
-            range statistics in response headers.
-        :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
+        All optional arguments must be passed by keyword. Session/query-metrics
+        options are rejected.
+        Unsupported Rust settings raise rather than using legacy Python.
+        The response hook receives independent copies of the response headers
+        and container properties, including nested values.
+
+        :keyword bool populate_partition_key_range_statistics: Include partition key range
+            statistics in the returned container properties.
+        :keyword bool populate_quota_info: Include collection storage quota and usage response headers.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A response hook invoked after success with copied headers and properties.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
-        :returns: Dict representing the retrieved container.
-        :rtype: dict[str, Any]
+        :raises TypeError: A positional argument or retired option is supplied.
+        :raises NotImplementedError: Rust cannot honor the requested settings.
+        :returns: Container properties with response headers available through ``get_response_headers()``.
+        :rtype: ~azure.cosmos.CosmosDict
         """
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-
+        deadline = kwargs.pop("_item_operation_deadline", None)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
+        validate_container_create_kwargs(kwargs, method_name="ContainerProxy.read")
         if priority is not None:
             kwargs['priority'] = priority
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         request_options = _build_options(kwargs)
+        kwargs.pop("etag", None)
         if populate_partition_key_range_statistics is not None:
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
-        container = await self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
+        container = await AsyncContainerHelper(
+            self.client_connection,
+            get_selected_backend(self.client_connection),
+        ).read_container(
+            self.container_link,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
+            deadline=deadline,
+        )
         _normalize_gsi_container_properties(container)
         # Only cache Container Properties that will not change in the lifetime of the container
         self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
                                                                _build_properties_cache(container, self.container_link))
         return container
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="create_item")
     async def create_item(
         self,
         body: dict[str, Any],
         *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         indexing_directive: Optional[int] = None,
         enable_automatic_id_generation: bool = False,
         session_token: Optional[str] = None,
@@ -232,6 +292,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Create an item in the container.
@@ -239,9 +300,12 @@ class ContainerProxy:
         To update or replace an existing item, use the
         :func:`ContainerProxy.upsert_item` method.
 
+        Only ``body`` may be positional. The caller's body is not modified.
+        ``populate_query_metrics``, ``etag``, and ``match_condition`` are rejected
+        even when supplied as ``None``. Automatically generated IDs are available
+        in the returned item when a response body is requested.
+
         :param dict[str, str] body: A dict-like object representing the item to create.
-        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword indexing_directive: Enumerates the possible values to indicate whether the document should
             be omitted from indexing. Possible values include: 0 for Default, 1 for Exclude, or 2 for Include.
         :paramtype indexing_directive: Union[int, ~azure.cosmos.documents.IndexingDirective]
@@ -252,7 +316,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: Called once on success with independent header and CosmosDict snapshots.
+            The body is empty with ``no_response=True``; callback exceptions propagate without replay.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
@@ -265,84 +330,80 @@ class ContainerProxy:
             tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
+        :keyword float timeout: One metadata-plus-write budget, finite and at least one second.
+        :raises TypeError: A retired keyword, invalid body type, non-string ID, or non-callable response hook was supplied.
+        :raises ValueError: The ID, JSON body, or timeout is invalid.
+        :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: The ID already exists in the logical partition.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        etag = kwargs.get('etag')
-        if etag is not None:
-            warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
-        if match_condition is not None:
-            warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
-        if indexing_directive is not None:
-            request_options["indexingDirective"] = indexing_directive
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        result = await self.client_connection.CreateItem(
-            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        deadline = prepare_create_item_kwargs(kwargs, response_hook=response_hook)
+        # Fold the named keyword arguments back into kwargs so the helper
+        # receives a single dict.
+        merge_create_item_explicit_kwargs(
+            kwargs,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
         )
-        return result
 
-    @distributed_trace_async
+        result = await self._get_item_helper().create_item(
+            deadline=deadline,
+            container_link=self.container_link,
+            body=body,
+            indexing_directive=indexing_directive,
+            enable_automatic_id_generation=enable_automatic_id_generation,
+            **kwargs,
+        )
+        return complete_item_response(result, response_hook, deadline)
+
+    @trace_operation_async(binding_operation="read_item")
     async def read_item(
         self,
         item: Union[str, Mapping[str, Any]],
         partition_key: PartitionKeyType,
         *,
-        post_trigger_include: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Get the item identified by `item`.
 
-        :param item: The ID (name) or dict representing item to retrieve.
+        :param item: The ID (name) or returned item mapping to retrieve.
+            For a mapping, the SDK uses its ``_self`` resource address; ``id`` is not required.
         :type item: Union[str, dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve. If the partition key is set to None, it will try
             to fetch an item with a partition key of null. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str etag: ETag used with ``IfModified`` or ``IfNotModified``.
+        :keyword match_condition: Service-enforced conditional read. ``IfPresent`` and ``IfMissing``
+            use wildcard conditions. A matching ``IfModified`` returns an empty CosmosDict (HTTP 304).
+            If-Match on GET does not guarantee that the service will return HTTP 412.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword float timeout: One budget in seconds for metadata lookup and the item read;
+            must be finite, at least one second, and less than 2**64.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: Called once on success with independent header and CosmosDict body
+            snapshots, including an empty CosmosDict for HTTP 304. Hook exceptions propagate.
+            A non-callable value is rejected before metadata lookup or reading.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -356,9 +417,9 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :returns: A CosmosDict representing the retrieved item.
@@ -374,29 +435,34 @@ class ContainerProxy:
                 :caption: Get an item from the database and update one of its properties:
                 :name: update_item
         """
-        doc_link = self._get_document_link(item)
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-
-        request_options = _build_options(kwargs)
-        request_options["partitionKey"] = await self._set_partition_key(partition_key)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_item_target(kwargs, item)
+        # Check the cache-staleness value here rather than deeper in, so a bad
+        # value raises where the caller can see it. None means skip the check.
+        # Zero is allowed and simply means no max-age header is sent.
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
-        return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+        merge_read_item_explicit_kwargs(
+            kwargs,
+            etag=etag,
+            match_condition=match_condition,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            max_integrated_cache_staleness_in_ms=max_integrated_cache_staleness_in_ms,
+            priority=priority,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+        )
+        deadline = prepare_read_item_kwargs(kwargs, partition_key, response_hook=response_hook)
+        item_id = item if isinstance(item, str) else None
+
+        result = await self._get_item_helper().read_item(
+            container_link=self.container_link,
+            item_id=item_id,
+            **kwargs,
+        )
+        return complete_item_response(result, response_hook, deadline)
 
     @distributed_trace
     def read_all_items(
@@ -409,14 +475,28 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """List all the items in the container.
 
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        Metadata and pages are fetched lazily. All arguments are keyword-only.
+        Rust uses an internal query and retains cross-partition paging state.
+        Save ``by_page().continuation_token`` after processing a complete page;
+        bookmarks cannot be moved between Rust and core-python. Unsupported
+        Rust settings raise instead of switching backends. Query metrics are
+        not accepted, including an explicit ``populate_query_metrics=None``.
+
+        :keyword float timeout: Per-page fetch budget, including metadata, planning,
+            and internal empty pages. Must be finite and at least one second.
+            Customer processing between pages does not consume the next page's budget.
+        :keyword int max_item_count: Requested page size, not a total result limit.
+            Use a positive integer, -1 for a service-selected size, or None for the default.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: Called once per fetched public page with independent
+            headers and a deep copy of the Documents envelope. Callback failures
+            do not replay the page; resume a new pager from the last delivered bookmark.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -430,13 +510,14 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[dict[str, Any]]
         """
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -448,23 +529,13 @@ class ContainerProxy:
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
 
-        feed_options = _build_options(kwargs)
+        if response_hook is not None:
+            kwargs["response_hook"] = response_hook
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-        if max_integrated_cache_staleness_in_ms:
-            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        response_hook = kwargs.pop("response_hook", None)
-        if response_hook and hasattr(response_hook, "clear"):
-            response_hook.clear()
-        if self.container_link in self.__get_client_container_caches():
-            feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        kwargs["containerProperties"] = self._get_properties_with_options
-
-        items = self.client_connection.ReadItems(
-            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
-        )
-        return items
+            kwargs["max_item_count"] = max_item_count
+        if max_integrated_cache_staleness_in_ms is not None:
+            kwargs["max_integrated_cache_staleness_in_ms"] = max_integrated_cache_staleness_in_ms
+        return _read_all_items(self, kwargs)
 
     @distributed_trace_async
     async def read_items(
@@ -483,14 +554,13 @@ class ContainerProxy:
     ) -> CosmosList:
         """Reads multiple items from the container.
 
-        This method is a batched point-read operation. It is more efficient than
-        issuing multiple individual point reads.
+        Groups known ID/partition-key pairs into concurrent point reads and queries.
+        Request count and RU cost depend on partition placement and chunking.
 
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
         :type items: Sequence[Tuple[str, PartitionKeyType]]
         :keyword int max_concurrency: Specifies the maximum number of concurrent operations for the
-            `read_items` request. If not provided or set to None, defaults to 5 concurrent operations,
-            enforced using `asyncio.Semaphore`.
+            `read_items` request. Must be a positive integer (not bool), or None to use the default of five.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -500,24 +570,36 @@ class ContainerProxy:
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
+        :keyword response_hook: Optional callback receiving independent header and CosmosList snapshots once
+            after success, including empty input. None disables the callback.
+        :keyword float timeout: One operation budget in seconds, including metadata, routing and queued work.
+            Outstanding async work is cancelled and drained on failure or cancellation.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
-            The returned items have no guaranteed ordering.
+            The items that are returned preserve their relative order from the input ``items`` sequence. Because
+            missing items are omitted, the result may contain fewer entries than were requested, so callers should
+            not index the result positionally against the input; match on ID and partition key.
+            Repeated pairs produce one result per occurrence. Empty input performs no network calls.
         :rtype: ~azure.cosmos.CosmosList
         """
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+
+        items, deadline = prepare_read_items(items, max_concurrency, kwargs)
+        if not items:
+            return complete_read_items_response(
+                CosmosList([], response_headers=CaseInsensitiveDict()), kwargs.get("response_hook"), deadline
+            )
 
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        if consistency_level is not None:
-            kwargs['consistencyLevel'] = consistency_level
         if excluded_locations is not None:
-            kwargs['excludedLocations'] = excluded_locations
+            kwargs['excluded_locations'] = excluded_locations
         if priority is not None:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
@@ -527,18 +609,22 @@ class ContainerProxy:
 
         kwargs['max_concurrency'] = max_concurrency
         kwargs["containerProperties"] = self._get_properties_with_options
-        query_options = _build_options(kwargs)
-        await self._get_properties_with_options(query_options)
+        query_options = legacy_deadline_options(_build_options(kwargs), deadline)
+        # consistency_level is not in the shared keyword-to-option map, so set
+        # the option directly. Left in kwargs it would be sent on the wire.
+        if consistency_level is not None:
+            query_options['consistencyLevel'] = consistency_level
+        await run_with_deadline(lambda: self._get_properties_with_options(query_options), deadline)
         query_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         query_options["enableCrossPartitionQuery"] = True
         query_options[Constants.TimeoutScope] = TimeoutScope.OPERATION
 
-        item_tuples = [(item_id, await self._set_partition_key(pk)) for item_id, pk in items]
-        return await self.client_connection.read_items(
+        return await run_with_deadline(lambda: self.client_connection.read_items(
+            _item_context=self._item_context,
             collection_link=self.container_link,
-            items=item_tuples,
+            items=items,
             options= query_options,
-            **kwargs)
+            **kwargs), deadline)
 
     @overload
     def query_items(
@@ -612,9 +698,9 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :returns: An Iterable of items (dicts).
         :rtype: CosmosAsyncItemPaged
@@ -706,9 +792,9 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :returns: An Iterable of items (dicts).
         :rtype: CosmosAsyncItemPaged
@@ -798,9 +884,9 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :returns: An Iterable of items (dicts).
         :rtype: CosmosAsyncItemPaged
@@ -831,6 +917,19 @@ class ContainerProxy:
     ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
+        On the Rust backend, iteration retains its query plan across pages.
+        Save a page's continuation token after consuming that page and resume
+        with the same query, parameters and scope. Complete partition-key
+        queries return service continuation tokens unchanged; broader queries
+        use driver continuation tokens, which cannot resume on legacy Python.
+        A positive ``continuation_token_limit`` requires a complete partition
+        key; for example, ``1`` requests at most 1,024 bytes from the service.
+        The retired Python ``q1.`` token format is not accepted. Supported query
+        shapes without driver snapshot support can still be fully enumerated,
+        but accessing their page iterator's continuation token raises
+        ``NotImplementedError``. Unsupported Rust query shapes and options
+        fail explicitly without replaying on the legacy backend.
+
         You can use any value for the container name in the FROM clause, but
         often the container name is used. In the examples below, the container
         name is "products," and is aliased as "p" for easier referencing in
@@ -840,9 +939,9 @@ class ContainerProxy:
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
-        :keyword bool enable_cross_partition_query: Allows sending of more than one request to
-            execute the query in the Azure Cosmos DB service.
-            More than one request is necessary if the query is not scoped to single partition key value.
+        :keyword bool enable_cross_partition_query: Allows execution across partitions.
+            If omitted or None, queries without a partition key or feed range enable this automatically.
+            Explicit False is preserved. True does not override the supplied partition scope.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
@@ -882,9 +981,9 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :returns: An Iterable of items (dicts).
         :rtype: CosmosAsyncItemPaged
@@ -905,11 +1004,17 @@ class ContainerProxy:
                 :dedent: 0
                 :caption: Parameterized query to get all products that have been discontinued:
         """
+        prepare_operation_kwargs(self, kwargs)
         original_positional_arg_names = ["query"]
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
+        if uses_rust(self):
+            return _query_items(self, kwargs)
+        reject_rust_continuation_token(kwargs)
         feed_options = _build_options(kwargs)
 
         # Update 'feed_options' from 'kwargs'
+        if utils.valid_key_value_exist(kwargs, "enable_cross_partition_query"):
+            feed_options["enableCrossPartitionQuery"] = kwargs.pop("enable_cross_partition_query")
         if utils.valid_key_value_exist(kwargs, "max_item_count"):
             feed_options["maxItemCount"] = kwargs.pop("max_item_count")
         if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
@@ -955,8 +1060,12 @@ class ContainerProxy:
         # If 'partition_key' is provided, set 'partitionKey' in 'feed_options'
         if utils.valid_key_value_exist(kwargs, "partition_key"):
             feed_options["partitionKey"] = self._set_partition_key(kwargs["partition_key"])
-        # If 'partition_key' or 'feed_range' is not provided, set 'enableCrossPartitionQuery' to True
-        elif not utils.valid_key_value_exist(kwargs, "feed_range"):
+        # If 'partition_key' or 'feed_range' is not provided, set
+        # 'enableCrossPartitionQuery' to True unless the caller already set it.
+        elif (
+            not utils.valid_key_value_exist(kwargs, "feed_range")
+            and "enableCrossPartitionQuery" not in feed_options
+        ):
             feed_options["enableCrossPartitionQuery"] = True
         kwargs.pop("partition_key", None)
 
@@ -988,7 +1097,7 @@ class ContainerProxy:
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
-        """Get a sorted list of items that were changed, in the order in which they were modified.
+        """Read item changes, ordered within a logical partition but not globally.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
@@ -1016,9 +1125,9 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
@@ -1040,7 +1149,7 @@ class ContainerProxy:
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
-        """Get a sorted list of items that were changed, in the order in which they were modified.
+        """Read item changes, ordered within a logical partition but not globally.
 
         :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -1064,9 +1173,9 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
@@ -1086,7 +1195,7 @@ class ContainerProxy:
             response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
-        """Get a sorted list of items that were changed, in the order in which they were modified.
+        """Read item changes, ordered within a logical partition but not globally.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
         :type continuation: str
@@ -1100,9 +1209,9 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
@@ -1124,8 +1233,7 @@ class ContainerProxy:
             response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
-        """Get a sorted list of items that were changed in the entire container,
-         in the order in which they were modified.
+        """Read changes across the container without a global modification order.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
@@ -1148,9 +1256,9 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
@@ -1165,7 +1273,17 @@ class ContainerProxy:
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
 
-        """Get a sorted list of items that were changed, in the order in which they were modified.
+        """Read item changes, ordered within a logical partition but not globally.
+
+        All settings are keyword-only. A valid continuation restores mode, start
+        position and scope. ``by_page()`` exposes a caught-up empty page with an
+        updated bookmark before ending; resume a new pager to poll again.
+        Save a bookmark only after processing its complete page. A failed pager
+        must be replaced using the last delivered bookmark.
+
+        Rust currently rejects scopes spanning multiple physical partitions
+        without falling back to Python. Explicit legacy execution retains both
+        modes and cross-partition polling. Bookmarks cannot cross backends.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
         :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
@@ -1193,67 +1311,26 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :returns: An AsyncItemPaged of items (dicts).
+        :keyword float timeout: Budget for one page fetch, including metadata, routing and internal polls.
+        :returns: An AsyncItemPaged of items (dicts), or change records for AllVersionsAndDeletes.
         :rtype: AsyncItemPaged[dict[str, Any]]
         """
-        # pylint: disable=too-many-statements
-        validate_kwargs(kwargs)
-        feed_options = _build_options(kwargs)
+        prepare_operation_kwargs(self, kwargs)
+        from ._helpers._change_feed import query_items_change_feed
 
-        change_feed_state_context = {}
-        if "mode" in kwargs:
-            change_feed_state_context["mode"] = kwargs.pop("mode")
-        if "partition_key_range_id" in kwargs:
-            change_feed_state_context["partitionKeyRangeId"] = kwargs.pop("partition_key_range_id")
-        if "is_start_from_beginning" in kwargs and kwargs.pop('is_start_from_beginning') is True:
-            change_feed_state_context["startTime"] = "Beginning"
-        elif "start_time" in kwargs:
-            change_feed_state_context["startTime"] = kwargs.pop("start_time")
-        if "partition_key" in kwargs:
-            partition_key_value = kwargs.pop("partition_key")
-            change_feed_state_context["partitionKey"] = self._set_partition_key(
-                cast(PartitionKeyType, partition_key_value))
-            change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(
-                partition_key_value, feed_options)
-        if "feed_range" in kwargs:
-            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
-        if "continuation" in feed_options:
-            change_feed_state_context["continuation"] = feed_options.pop("continuation")
+        return query_items_change_feed(self, kwargs)
 
-        feed_options["changeFeedStateContext"] = change_feed_state_context
-        feed_options["containerProperties"] = self._get_properties_with_options(feed_options)
-
-        # populate availability_strategy
-        if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
-                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None):
-            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] =\
-                _validate_request_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
-
-        response_hook = kwargs.pop("response_hook", None)
-        if hasattr(response_hook, "clear"):
-            response_hook.clear()
-
-        if self.container_link in self.__get_client_container_caches():
-            feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        result = self.client_connection.QueryItemsChangeFeed(
-            self.container_link, options=feed_options, response_hook=response_hook, **kwargs
-        )
-        return result
-
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="upsert_item")
     async def upsert_item(
         self,
         body: dict[str, Any],
         *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
@@ -1263,6 +1340,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Insert or update the specified item.
@@ -1271,8 +1349,6 @@ class ContainerProxy:
         does not already exist, it is inserted.
 
         :param dict[str, Any] body: A dict-like object representing the item to update or insert.
-        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -1296,48 +1372,38 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        result = await self.client_connection.UpsertItem(
-            database_or_container_link=self.container_link,
-            document=body,
-            options=request_options,
-            **kwargs
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        # Upsert sends a body, like create, so the partition key is read out
+        # of that body during the send. It also accepts etag and
+        # match_condition, which narrow it to insert-only or to a replace
+        # guarded by version.
+        merge_upsert_item_explicit_kwargs(
+            kwargs,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
         )
-        return result
+
+        return await self._get_item_helper().upsert_item(
+            container_link=self.container_link,
+            body=body,
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def semantic_rerank(
@@ -1384,14 +1450,12 @@ class ContainerProxy:
 
         return result
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="replace_item")
     async def replace_item(
         self,
         item: Union[str, Mapping[str, Any]],
         body: dict[str, Any],
         *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
@@ -1401,6 +1465,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Replaces the specified item if it exists in the container.
@@ -1410,8 +1475,6 @@ class ContainerProxy:
         :param item: The ID (name) or dict representing item to be replaced.
         :type item: Union[str, dict[str, Any]]
         :param dict[str, Any] body: A dict representing the item to replace.
-        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -1435,9 +1498,9 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
@@ -1445,40 +1508,36 @@ class ContainerProxy:
             is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        item_link = self._get_document_link(item)
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        result = await self.client_connection.ReplaceItem(
-            document_link=item_link, new_document=body, options=request_options, **kwargs
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_item_target(kwargs, item)
+        # The id of the item to overwrite comes from ``item`` -- either a
+        # string id, or the ``id`` of a dict -- and not from the body. This
+        # matches read_item and delete_item. That id goes in the URL.
+        item_id = item if isinstance(item, str) else item["id"]
+        # Replace takes the same keywords as upsert, so it reuses upsert's
+        # merge and options build.
+        merge_upsert_item_explicit_kwargs(
+            kwargs,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
         )
-        return result
 
-    @distributed_trace_async
+        return await self._get_item_helper().replace_item(
+            container_link=self.container_link,
+            item_id=item_id,
+            body=body,
+            **kwargs,
+        )
+
+    @trace_operation_async(binding_operation="patch_item")
     async def patch_item(
         self,
         item: Union[str, dict[str, Any]],
@@ -1486,8 +1545,6 @@ class ContainerProxy:
         patch_operations: list[dict[str, Any]],
         *,
         filter_predicate: Optional[str] = None,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1496,10 +1553,18 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """ Patches the specified item with the provided operations if it
          exists in the container.
+
+        With Rust, caller If-Match and filter predicates are supported; If-None-Match
+        raises ``NotImplementedError`` without legacy replay. A filter predicate
+        selects server-side patch; otherwise Rust retains its Auto strategy
+        (server PATCH or client-side Read-Modify-Replace). One explicit
+        timeout covers preparation, metadata, and execution. Success hooks receive
+        isolated body/header snapshots and are never retried.
 
         If the item does not already exist in the container, an exception is raised.
 
@@ -1513,8 +1578,6 @@ class ContainerProxy:
         :param patch_operations: The list of patch operations to apply to the item.
         :type patch_operations: list[dict[str, Any]]
         :keyword str filter_predicate: conditional filter to apply to Patch operations.
-        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
@@ -1536,9 +1599,9 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
@@ -1546,47 +1609,43 @@ class ContainerProxy:
             `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if priority is not None:
-            kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        if filter_predicate is not None:
-            request_options["filterPredicate"] = filter_predicate
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy)
+        # Fold the named keyword arguments into kwargs, then hand off.
+        merge_patch_item_explicit_kwargs(
+            kwargs,
+            session_token=session_token,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
 
-        item_link = self._get_document_link(item)
-        result = await self.client_connection.PatchItem(
-            document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
-        return result
+        # Put the partition key in the options, keeping any options the
+        # caller already passed.
+        request_options = dict(kwargs.get("request_options") or {})
+        kwargs["request_options"] = request_options
+        request_options["partitionKey"] = await self._set_item_partition_key(partition_key)
+        prepare_item_target(kwargs, item)
+        item_id = item if isinstance(item, str) else None
 
-    @distributed_trace_async
+        return await self._get_item_helper().patch_item(
+            container_link=self.container_link,
+            item_id=item_id,
+            patch_operations=patch_operations,
+            filter_predicate=filter_predicate,
+            **kwargs,
+        )
+
+    @trace_operation_async(binding_operation="delete_item")
     async def delete_item(
         self,
         item: Union[str, Mapping[str, Any]],
         partition_key: PartitionKeyType,
         *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
@@ -1595,6 +1654,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], None], None]] = None,
         **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
@@ -1608,8 +1668,6 @@ class ContainerProxy:
             see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -1630,43 +1688,49 @@ class ContainerProxy:
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
         """
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if priority is not None:
-            kwargs['priority'] = priority
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        merge_delete_item_explicit_kwargs(
+            kwargs,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
 
-        document_link = self._get_document_link(item)
-        await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
+        # Put the partition key in the options, keeping any options the
+        # caller already passed.
+        request_options = kwargs.setdefault("request_options", {})
+        request_options["partitionKey"] = await self._set_item_partition_key(partition_key)
+        prepare_item_target(kwargs, item)
+        item_id = item if isinstance(item, str) else None
 
-    @distributed_trace_async
+        return await self._get_item_helper().delete_item(
+            container_link=self.container_link,
+            item_id=item_id,
+            **kwargs,
+        )
+
+    @trace_operation_async(
+        binding_operation=BindingAlternatives(
+            (
+                ("read_container", "get_throughput", "read_container", "get_throughput"),
+                ("get_throughput", "read_container", "get_throughput"),
+            )
+        )
+    )
     async def get_throughput(
             self,
             *,
@@ -1675,42 +1739,65 @@ class ContainerProxy:
     ) -> ThroughputProperties:
         """Get the ThroughputProperties object for this container.
 
-        If no ThroughputProperties already exists for the container, an exception is raised.
+        This reads dedicated container throughput, not shared database throughput.
+        Missing dedicated throughput raises CosmosResourceNotFoundError. A stale
+        container identity can be refreshed once before repeating the Rust query.
+        Unsupported Rust inputs and invalid callbacks fail before metadata requests.
+        The result retains the final offer-response headers; callback changes do
+        not change the returned throughput or the customer app's input options.
 
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[dict[str, str], list[dict[str, Any]]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be retrieved.
+        :raises NotImplementedError: The Rust path cannot honor the supplied settings.
+        :raises TypeError: The response hook or an options dictionary is invalid.
         :returns: ThroughputProperties for the container.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        throughput_properties: list[dict[str, Any]]
-        properties = await self._get_properties()
-        link = properties["_self"]
-        query_spec = {
-            "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": link}],
-        }
-        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
-        throughput_properties = [throughput async for throughput in
-                                 self.client_connection.QueryOffers(query_spec, options, **kwargs)]
+        prepare_operation_kwargs(self, kwargs)
 
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, throughput_properties)
+        async def get_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                return await self._get_properties() if deadline is None else await self._get_properties(deadline=deadline)
 
-        return _deserialize_throughput(throughput=throughput_properties)
+        async def refresh_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                return await self.read() if deadline is None else await self.read(_item_operation_deadline=deadline)
 
-    @distributed_trace_async
+        return await _get_throughput(
+            client_connection=self.client_connection,
+            container_link=self.container_link,
+            get_properties=get_properties,
+            refresh_properties=refresh_properties,
+            response_hook=response_hook,
+            kwargs=kwargs,
+        )
+
+    @trace_operation_async(
+        binding_operation=BindingAlternatives(
+            (
+                ("read_container", "get_throughput", "replace_throughput"),
+                ("read_container", "get_throughput", "read_container", "get_throughput", "replace_throughput"),
+                ("get_throughput", "replace_throughput"),
+                ("get_throughput", "read_container", "get_throughput", "replace_throughput"),
+            )
+        )
+    )
     async def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
         *,
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ThroughputProperties:
         """Replace the container's throughput.
 
-        If no ThroughputProperties already exist for the container, an exception is raised.
+        This changes dedicated container throughput, not shared database capacity.
+        Missing dedicated throughput raises CosmosResourceNotFoundError. A stale
+        container identity can be refreshed once during offer lookup, before the
+        write. Write failures are not replayed. Unsupported inputs fail before
+        requests, and callback mutation cannot change the returned settings.
 
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
@@ -1718,26 +1805,35 @@ class ContainerProxy:
         :paramtype response_hook: Callable[[Mapping[str, Any], CosmosDict], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
+        :raises NotImplementedError: The Rust path cannot honor the supplied settings.
+        :raises TypeError: The response hook or an options dictionary is invalid.
+        :raises KeyError: Manual and autoscale settings were supplied together.
         :returns: ThroughputProperties for the container, updated with new throughput.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        throughput_properties: list[dict[str, Any]]
-        properties = await self._get_properties()
-        link = properties["_self"]
-        query_spec = {
-            "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": link}],
-        }
-        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
-        throughput_properties = [throughput async for throughput in
-                                 self.client_connection.QueryOffers(query_spec, options, **kwargs)]
+        prepare_operation_kwargs(self, kwargs)
 
-        new_offer = throughput_properties[0].copy()
-        _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
-        data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
-                                                         offer=throughput_properties[0], response_hook=response_hook, **kwargs)
+        async def get_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                if deadline is None:
+                    return await self._get_properties()
+                return await self._get_properties(deadline=deadline)
 
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        async def refresh_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                if deadline is None:
+                    return await self.read()
+                return await self.read(_item_operation_deadline=deadline)
+
+        return await _replace_container_throughput(
+            client_connection=self.client_connection,
+            container_link=self.container_link,
+            get_properties=get_properties,
+            refresh_properties=refresh_properties,
+            throughput=throughput,
+            response_hook=response_hook,
+            kwargs=kwargs,
+        )
 
     @distributed_trace
     def list_conflicts(
@@ -1755,6 +1851,7 @@ class ContainerProxy:
         :returns: An AsyncItemPaged of conflicts (dicts).
         :rtype: AsyncItemPaged[dict[str, Any]]
         """
+        prepare_operation_kwargs(self, kwargs)
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -1794,6 +1891,7 @@ class ContainerProxy:
         :returns: An AsyncItemPaged of conflicts (dicts).
         :rtype: AsyncItemPaged[dict[str, Any]]
         """
+        prepare_operation_kwargs(self, kwargs)
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -1836,6 +1934,7 @@ class ContainerProxy:
         :returns: A CosmosDict representing the retrieved conflict.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
+        prepare_operation_kwargs(self, kwargs)
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         await self._get_properties_with_options(request_options)
@@ -1869,6 +1968,7 @@ class ContainerProxy:
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
         :rtype: None
         """
+        prepare_operation_kwargs(self, kwargs)
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         await self._get_properties_with_options(request_options)
@@ -1883,8 +1983,6 @@ class ContainerProxy:
         self,
         partition_key: PartitionKeyType,
         *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
@@ -1899,8 +1997,6 @@ class ContainerProxy:
             try to delete the items with a partition key of null. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1910,6 +2006,7 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :rtype: None
         """
+        prepare_operation_kwargs(self, kwargs)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
@@ -1923,10 +2020,6 @@ class ContainerProxy:
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
         if session_token is not None:
             kwargs['session_token'] = session_token
         if throughput_bucket is not None:
@@ -1940,14 +2033,12 @@ class ContainerProxy:
         await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                                   options=request_options, **kwargs)
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="execute_item_batch")
     async def execute_item_batch(
         self,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]],
         partition_key: PartitionKeyType,
         *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         retry_write: Optional[int] = None,
@@ -1964,8 +2055,6 @@ class ContainerProxy:
             keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
@@ -1981,14 +2070,15 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: A CosmosList representing the items after the batch operations went through.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: ~azure.cosmos.CosmosList[dict[str, Any]]
         """
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
@@ -2002,10 +2092,6 @@ class ContainerProxy:
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
         if session_token is not None:
             kwargs['session_token'] = session_token
         if priority is not None:
@@ -2016,6 +2102,8 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
+        if uses_rust(self):
+            return await execute_batch_async(self, batch_operations, partition_key, kwargs)
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
@@ -2031,55 +2119,48 @@ class ContainerProxy:
             *,
             force_refresh: bool = False,
             **kwargs: Any
-    ) -> AsyncIterable[dict[str, Any]]:
-        """ Obtains a list of feed ranges that can be used to parallelize feed operations.
+    ) -> CosmosAsyncItemPaged:
+        """Return feed ranges for dividing a container's query or change-feed work.
+
+        Use ``async for`` on the result; do not await this method. Range discovery
+        starts when iteration begins. Each dictionary describes part of this
+        container; pass it unchanged to a supported ``feed_range`` argument.
+        It contains neither orders nor a continuation token.
 
         :keyword bool force_refresh:
-            Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
-        :returns: AsyncIterable representing the feed ranges in base64 encoded string
-        :rtype: AsyncIterable[dict[str, Any]]
+            False permits cached routing information. True requests a range-map
+            refresh when iteration starts. Both settings may
+            require network requests; create a new iterable to discover ranges again.
+            A cached map may be returned if refresh fails.
+        :keyword float timeout:
+            Overall discovery budget in seconds, starting when iteration begins.
+            Overrides the client default; None inherits that default. Must be a
+            finite, non-boolean number >= 1 and < 2**64, or None.
+        :returns: A lazy asynchronous iterable of feed-range dictionaries, with
+            available response headers accessible through get_response_headers().
+        :rtype: CosmosAsyncItemPaged
+        :raises TypeError: If force_refresh is not a boolean.
+        :raises NotImplementedError: When iteration encounters additional per-call
+            options unsupported by this range lookup.
+        :raises ValueError: If timeout is invalid or a continuation token is supplied through by_page.
+        :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: If the discovery budget expires.
 
         .. warning::
           The structure of the dict representation of a feed range may vary, including which keys
           are present. It therefore should only be treated as an opaque value.
 
         """
-        feed_options: Dict[str, Any] = {}
-        setup_complete = False
-
-        async def get_next(continuation_token: str) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
-            nonlocal setup_complete
-            if not setup_complete:
-                if force_refresh is True:
-                    await self.client_connection.refresh_routing_map_provider()
-
-                # Ensure container properties cache is populated so we can get the container RID.
-                await self._get_properties_with_options()
-                feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-                setup_complete = True
-
-            partition_key_ranges = \
-                await self.client_connection._routing_map_provider.get_overlapping_ranges(
-                    # pylint: disable=protected-access
-                    self.container_link,
-                    # default to full range
-                    [Range("", "FF", True, False)],
-                    feed_options,
-                    **kwargs)
-
-            feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
-                           for partitionKeyRange in partition_key_ranges]
-
-            return feed_ranges
-
-        async def extract_data(feed_ranges_response: list[dict[str, Any]]):
-            return None, AsyncList(feed_ranges_response)
-
-        return AsyncItemPaged(
-            get_next,
-            extract_data
+        prepare_operation_kwargs(self, kwargs)
+        return _read_feed_ranges(
+            telemetry_owner=self,
+            client_connection=self.client_connection,
+            container_link=self.container_link,
+            get_properties=self._get_properties_with_options,
+            force_refresh=force_refresh,
+            kwargs=kwargs,
         )
 
+    @trace_operation_async(binding_operation=())
     async def get_latest_session_token(
             self,
             feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]],
@@ -2087,20 +2168,41 @@ class ContainerProxy:
     ) -> str:
         """ **provisional** This method is still in preview and may be subject to breaking changes.
 
-        Gets the the most up to date session token from the list of session token and feed
-        range tuples for a specific target feed range. The feed range can be obtained from a partition key
-        or by reading the container feed ranges. This should only be used if maintaining own session token or else
-        the CosmosClient instance will keep track of session token. Session tokens and feed ranges are
-        scoped to a container. Only input session tokens and feed ranges obtained from the same container.
-        :param feed_ranges_to_session_tokens: List of feed range and session token tuples.
+        Combine session tokens when your application maintains observations across clients or processes.
+        A single CosmosClient normally tracks its own session tokens without this method.
+
+        Await this method to run a local calculation using only supplied observations whose feed ranges
+        overlap the target. It does not fetch the service's latest state, check complete target coverage,
+        or update a client's session-token cache. Pass the returned string as ``session_token`` on a later
+        read or query. The result may combine progress from several inputs rather than select one input token.
+
+        Both simple tokens (such as ``0:54``) and vector tokens (such as ``0:1#54``) are supported.
+        For the same partition, simple values combine by taking the larger value; a vector token
+        supersedes a simple token. Tokens for different partitions may remain separate segments.
+
+        Obtain feed ranges with ``feed_range_from_partition_key`` or ``read_feed_ranges`` and pass their
+        dictionaries unchanged. All ranges and tokens must come from the same container; this method
+        cannot verify their origin.
+
+        :param feed_ranges_to_session_tokens: Pairs of feed-range dictionaries and captured session tokens.
         :type feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]]
-        :param target_feed_range: feed range to get most up to date session token.
+        :param target_feed_range: Feed range for which to combine the supplied observations.
         :type target_feed_range: dict[str, Any]
-        :returns: a session token
+        :returns: A session token, possibly containing comma-separated partition token segments.
         :rtype: str
+        :raises TypeError: An argument or pair contains an incorrect value type.
+        :raises ValueError: A range or overlapping token is malformed or unsupported, or no range overlaps.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Supplied vector token values cannot be merged.
+            This failure is local; no service request is made.
         """
         return get_latest_session_token(feed_ranges_to_session_tokens, target_feed_range)
 
+    @trace_operation_async(
+        binding_operation=BindingAlternatives((
+            ("read_container", "feed_range_from_partition_key"),
+            ("feed_range_from_partition_key",),
+        ))
+    )
     async def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> dict[str, Any]:
         """Gets the feed range for a given partition key.
 
@@ -2117,9 +2219,16 @@ class ContainerProxy:
           are present. It therefore should only be treated as an opaque value.
 
         """
-        partition_key_value = await self._set_partition_key(partition_key)
-        return FeedRangeInternalEpk(await self._get_epk_range_for_partition_key(partition_key_value)).to_dict()
+        with delegate_operation(self, "read"):
+            partition_key_value = await self._set_partition_key(partition_key)
+        return await _feed_range_from_partition_key(
+            client_connection=self.client_connection,
+            container_link=self.container_link,
+            partition_key_value=partition_key_value,
+            get_legacy_epk_range=self._get_epk_range_for_partition_key,
+        )
 
+    @trace_operation_async(binding_operation="is_feed_range_subset")
     async def is_feed_range_subset(self, parent_feed_range: dict[str, Any],
                                    child_feed_range: dict[str, Any]) -> bool:
         """Checks if child feed range is a subset of parent feed range.
@@ -2129,13 +2238,15 @@ class ContainerProxy:
         :type child_feed_range: dict[str, Any]
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
+        :raises NotImplementedError: A supplied range has an unsupported shape or invalid bounds on the Rust path.
 
         .. warning::
           The structure of the dict representation of a feed range may vary, including which keys
           are present. It therefore should only be treated as an opaque value.
 
         """
-        parent_feed_range_epk = FeedRangeInternalEpk.from_json(parent_feed_range)
-        child_feed_range_epk = FeedRangeInternalEpk.from_json(child_feed_range)
-        return child_feed_range_epk.get_normalized_range().is_subset(
-            parent_feed_range_epk.get_normalized_range())
+        return await _is_feed_range_subset(
+            client_connection=self.client_connection,
+            parent_feed_range=parent_feed_range,
+            child_feed_range=child_feed_range,
+        )
