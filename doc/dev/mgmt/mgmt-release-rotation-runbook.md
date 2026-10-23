@@ -15,94 +15,54 @@ to the Python Package Index (**PyPI**).
 
 **Contacts:** the **service team** is the submitter/contact in the PR or linked
 release plan. The **Python owner** is a management SDK maintainer listed under
-`/**/*mgmt*/` in [CODEOWNERS](../../../.github/CODEOWNERS)
-(currently @ChenxiJiang333, @msyyc, and @Azure/azure-arm-sdk-reviewers).
+`/**/*mgmt*/` in [CODEOWNERS](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/CODEOWNERS).
 Ask the Python owner to coordinate code-generation, pipeline, or vendor support.
 Rotation assignment does not grant repository, CODEOWNER, or release permissions.
 
 ## 1. Find PRs needing attention
 
-Use these live GitHub queries; open each PR for its current status.
+Start from one [management AutoPR queue](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+draft%3Afalse+%22%5BAutoPR+azure-mgmt-%22+in%3Atitle+sort%3Aupdated-desc).
+It lists open, non-draft PRs, most recently updated first. Open each PR and check
+for these three cases:
 
-| Queue | Purpose |
+| Needs attention | Next action |
 | --- | --- |
-| [All open management AutoPRs](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+%22%5BAutoPR+azure-mgmt-%22+in%3Atitle) | Includes drafts and PRs without release/review labels. Start here. |
-| [PRs with automated review requested](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+label%3Amgmt-review-needed+draft%3Afalse) | Only PRs where a maintainer has added the label. This is not the full queue or proof of readiness. |
-| [Approved release candidates](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+%22%5BAutoPR+azure-mgmt-%22+in%3Atitle+label%3Aauto-release+draft%3Afalse+review%3Aapproved) | Check for merge blockers and hand off to the service team. Do not add duplicate approval. |
-| [Held release PRs](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+%22%5BAutoPR+azure-mgmt-%22+in%3Atitle+label%3AHoldOn) | Wait for the planned window or the owner's decision. |
-| [Recently merged release PRs](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Amerged+%22%5BAutoPR+azure-mgmt-%22+in%3Atitle+label%3Aauto-release+sort%3Aupdated-desc) | Follow up on publishing for this rotation's packages. Merged does not mean released. |
+| No valid approval | Use the bot review and CI in section 2, then approve when ready. |
+| New commits after approval | Inspect the changes and re-approve if required, using section 3. |
+| New PR-author comments after approval | Read the request and respond or route it to the Python owner. A comment alone does not require another approval. |
 
-An SDK maintainer manually adds `mgmt-review-needed` to request automated review.
-Its absence does not mean a PR needs no attention; start from all open AutoPRs.
-`auto-release` opts changed packages into post-merge release.
-Neither label is approval; either can remain on a draft or an already reviewed PR.
-An updated timestamp can reflect bot activity, not a recent service-team response.
-
-| Current state | Next action |
-| --- | --- |
-| Draft | Ask the service team to complete release prerequisites and mark the PR ready when intended. Do not mark it ready on their behalf. |
-| `HoldOn`, `blocking-release`, or an explicit human hold | Keep the hold. Ask the person who owns it what must change before proceeding. |
-| CI queued/running | Wait for the current revision's checks. Ask the Python owner about stuck or missing pipelines. |
-| CI failed | Read the existing failure analysis and route the stated fix to the service team or Python owner. Do not restart review instead of fixing CI. |
-| Ready, no valid approval | Read the bot review using section 2. If no review comment exists, ask an SDK maintainer to add `mgmt-review-needed`. |
-| Approved, not merged | Identify the actual merge blocker or ask the service team to merge through its release plan. |
+GitHub search does not isolate commits or author comments after approval. Check
+the PR timeline; bot activity also updates the sort order. The queue does not
+filter by `mgmt-review-needed` or `auto-release`: neither label proves readiness.
+Drafts are excluded; the service team must mark them ready when intended.
+Keep `HoldOn`, `blocking-release`, and explicit human holds until the owner clears
+them. If approval is current and no request needs a response, do not approve again.
 
 ## 2. Request and read the bot review
 
-Read the PR description, release plan, latest human decisions, and current checks.
-Confirm the service team intends to release the listed package, SDK version, and
-API version. Follow the linked
+Confirm the service team's release intent in the PR or release plan, including the
+package, SDK version, and API version. The service team owns the
 [SDK release prerequisites](https://eng.ms/docs/products/azure-developer-experience/develop/sdk-release/sdk-release-prerequisites).
-A bot-created PR is not itself a release request.
 
-For a ready PR, use this process rather than reviewing all generated code yourself:
+For routine review, focus on the bot comment and current CI:
 
-1. Look in the PR conversation for the latest **Management SDK PR review** bot comment.
-2. If there is no bot review comment, ask an **SDK maintainer** to manually add
-   `mgmt-review-needed` under **Labels** in the PR sidebar. The label triggers the
-   [Python review workflow](../../../.github/workflows/mgmt-sdk-pr-review.md);
-   creating the AutoPR alone does not request this review.
-3. Wait for the workflow to finish and the bot to leave its review comment.
-   The label itself is not a result. If no comment appears after the run finishes,
-   ask the Python owner to investigate.
-4. Read the comment's findings, unverified checks, and suggested actions.
-   Blocking items explain what prevents approval and what needs to happen next.
-   Use the table below to identify who should act.
-5. Check that the comment covers the latest PR changes. If commits were added
-   after the review, ask the SDK maintainer for an updated review.
+1. Read the latest **Management SDK PR review** bot comment. If it is missing or
+   outdated, ask an SDK maintainer to add `mgmt-review-needed`. This label triggers
+   the [review workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/workflows/mgmt-sdk-pr-review.md).
+   If the label is already present, remove and reapply it only when no review is
+   active. Wait for the updated comment; ask the Python owner if none appears.
+2. Follow the comment's findings and next actions. Ask the service team to resolve
+   reported source/configuration issues. Send incomplete or unverified results,
+   unclear breaking changes, and Python-specific decisions to the Python owner.
+   Missing evidence is not a pass; the bot does not authorize breaking changes.
+3. Check CI for the current revision. Wait for running checks. For failures, use
+   the existing failure analysis and route the fix to the service team or Python
+   owner. Do not restart review instead of fixing CI.
+4. Once the findings and outstanding human comments are resolved, use section 3
+   to approve. Do not repeat completed bot checks or inspect every generated file.
 
-| Review result | Reviewer action |
-| --- | --- |
-| Complete, no findings or unverified checks | Use the completed checks and evidence; do not reconstruct them. Continue with human review below. |
-| Blocking findings | Do not approve. Follow the comment's explanation and next action. Ask the service team to make the listed source/configuration fixes and regenerate; send code-generation tool issues to the Python owner. |
-| Warning or suggestion | Read the finding and record its fix or justified disposition. Ask the Python owner when Python-specific judgment is needed. |
-| Unverified checks, incomplete review, partial breaking-change attribution, or missing evidence | Ask the Python owner to complete or resolve the missing review. Missing evidence is not a pass. |
-| Missing or outdated result | Ask the SDK maintainer to add `mgmt-review-needed`. If it is already present, the maintainer can remove and reapply it when no review is active. Wait for the new comment before continuing. |
-
-Adding the label triggers the workflow; leaving it on the PR does not request
-another review after each push. Do not request another run while one is active.
-
-The bot checks package versions, preview/stable settings, client naming and usage,
-and API-version changes. Its
-[management review rules](../../../.github/instructions/reviewer/management.instructions.md)
-define the scope. Do not repeat completed checks or review every generated model,
-operation, sample, and test.
-
-**Human review still covers:**
-
-- Breaking changes and their disposition. The comment's **TypeSpec/API** category
-  means the change comes from the service specification; it does not approve the
-  break. Ask the service team to confirm intended service changes. Send
-  code-generation/migration changes, unclear attribution, and
-  exceptions to the Python owner. A major version bump alone is not permission.
-  Use the [breaking-change guide](sdk-breaking-changes-guide.md) for known patterns.
-- Outstanding Copilot and human review comments. Ask for real defects to be fixed
-  upstream; record a reason when a suggestion does not apply. Do not require
-  output-only edits to satisfy a generated-code suggestion.
-- First-release onboarding not covered by the result: confirm required namespace
-  approval, ownership, and a release pipeline with the Python owner. For a
-  confirmed first release, a client-name finding requires `client.tsp`
-  customization and regeneration, not a hand edit to `_client.py`.
+Leaving `mgmt-review-needed` on the PR does not request another review after a push.
+Do not request another run while one is active.
 
 ## 3. Approve or re-approve
 
@@ -111,17 +71,15 @@ readiness, current required CI passes, review findings have justified
 dispositions, and no unresolved review, evidence gap, or hold remains.
 The automated comment is advisory; it never grants human approval.
 
-After a push or regeneration, inspect what changed since the previous approval.
-Check the current GitHub review decision and branch requirements, not just an old
-**Approved** event in the conversation. A previous approval can remain visible
-while GitHub still requires review.
+After new commits, inspect the changes since approval and request an updated bot
+result when the previous result is outdated. Wait for current CI and resolve any
+new findings. Ask the Python owner about API-version changes or unclear generated
+changes. Re-approve only after reviewing the new changes and only if required by
+the current GitHub review decision and branch requirements. An old **Approved**
+event alone does not prove approval is current.
 
-Recheck changed versions, changelog, API versions, customizations, and any affected
-findings. Ask the SDK maintainer for a new bot review if the previous review is
-outdated, and wait for current CI. Re-approve only after reviewing the new changes; do not blindly
-repeat approval. If the current approval is still valid, do not add another one.
-Route API-version changes after approval or unclear generated changes to the
-Python owner.
+Read new PR-author comments even when approval remains valid. Respond to the
+request or route it to the Python owner; do not add a duplicate approval.
 
 ## 4. Hand off merge and follow the release
 
@@ -132,7 +90,7 @@ Never bypass required reviews, checks, or holds.
 
 **Treat merge of an `auto-release` PR as a publishing action.** Confirm release
 intent and timing before merge. The
-[release template](../../../eng/pipelines/templates/stages/archetype-python-release.yml)
+[release template](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/pipelines/templates/stages/archetype-python-release.yml)
 uses internal post-merge CI on `main` to select changed, declared package artifacts.
 This automatic path does **not** wait for the manual `package-publish` approval
 gate. Do not merge early assuming another approval will stop publication.
@@ -152,7 +110,7 @@ Adding the label after the run is not a reliable recovery. Check for an active r
 or an already published version before any retry.
 
 For an intentional manual release, let the Python owner coordinate the
-[unified release process](../release.md#releasing-through-unified-pipelines).
+[unified release process](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/release.md#releasing-through-unified-pipelines).
 Only authorized release approvers validate and approve the intended package's
 artifacts. Do not queue a second release by default, approve unrelated packages,
 or upload manually with `twine`.
@@ -164,9 +122,9 @@ or upload manually with `twine`.
 | "CI is green. Can you approve?" | Check readiness, the current automated result, breaking changes, and unresolved comments. Green CI alone is insufficient. |
 | "You approved already. Can you approve again?" | Compare the new changes and current review requirements using section 3. Do not add duplicate approval when none is needed. |
 | "Can you mark this draft ready or remove the hold?" | Ask the service team or hold owner to confirm readiness and timing. An approved draft is still a draft. |
-| "Why did TypeSpec migration introduce breaking changes?" | Point to the attribution and breaking-change guide. Ask the Python owner to resolve unintended generator/migration breaks; do not accept them merely because code is generated. |
+| "Why did TypeSpec migration introduce breaking changes?" | Point to the attribution and [breaking-change guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/sdk-breaking-changes-guide.md). Ask the Python owner to resolve unintended generator/migration breaks; do not accept them merely because code is generated. |
 | "The first package has no pipeline / needs a different client name." | Ask the Python owner to coordinate onboarding or pipeline preparation. The service team fixes naming in `client.tsp` and regenerates. |
-| "Playback tests fail after the API version changed." | Route recording updates to the service team with the existing failure analysis and [management test guide](tests.md). Do not hand-edit recordings or disable tests to obtain green CI. |
+| "Playback tests fail after the API version changed." | Route recording updates to the service team with the existing failure analysis and [management test guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md). Do not hand-edit recordings or disable tests to obtain green CI. |
 | "The PR merged. Where is the package?" | Inspect the post-merge release run and PyPI using section 4. Escalate the exact failed stage, not a request for another PR approval. |
 
 Historical examples inspected on 2026-10-23 illustrate these distinctions:
