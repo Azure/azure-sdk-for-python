@@ -280,3 +280,64 @@ function Save-SampleDeploymentDiagnostics {
     ConvertTo-Json -InputObject @{ schemaVersion = 1; deployments = $records } -Depth 10 |
         Set-Content -LiteralPath $OutputPath -Encoding utf8
 }
+
+function Save-SampleReadinessDiagnostics {
+    param([Parameter(Mandatory)] [hashtable] $State, [Parameter(Mandatory)] [string] $OutputPath)
+
+    Assert-SampleRunPlan -Plan $State.plan
+    $group = Invoke-SampleAzure -Arguments @('group', 'show', '--name', $State.plan.resourceGroup,
+        '--subscription', $State.subscriptionId) -Sensitive
+    Assert-SampleResourceGroupOwnership -Plan $State.plan -ResourceGroup $group -SubscriptionId $State.subscriptionId
+    $resources = @(Invoke-SampleAzure -Arguments @('resource', 'list', '--resource-group', $State.plan.resourceGroup,
+        '--subscription', $State.subscriptionId, '--query', '[].{id:id,name:name,type:type}') -Sensitive)
+    $projects = @($resources | Where-Object { $_['type'] -eq 'Microsoft.CognitiveServices/accounts/projects' })
+    $cosmosAccounts = @($resources | Where-Object { $_['type'] -eq 'Microsoft.DocumentDB/databaseAccounts' })
+    if ($projects.Count -ne 1 -or $cosmosAccounts.Count -ne 1) { throw 'Cannot identify the run-owned Standard project and Cosmos DB account.' }
+    foreach ($resource in @($projects[0], $cosmosAccounts[0])) {
+        if (-not $resource.id.StartsWith($group.id + '/providers/', [StringComparison]::OrdinalIgnoreCase)) {
+            throw 'Refusing diagnostics for resources outside the run-owned group.'
+        }
+    }
+    $report = @{ schemaVersion = 1; resourceGroup = $State.plan.resourceGroup }
+    $projectUrl = 'https://management.azure.com' + $projects[0].id
+    try {
+        $project = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--url', ($projectUrl + '?api-version=2025-10-01-preview'),
+            '--query', '{state:properties.provisioningState,principalId:identity.principalId}') -Sensitive
+        $hosts = @(Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--url', ($projectUrl + '/capabilityHosts?api-version=2025-04-01-preview'),
+            '--query', 'value[].{name:name,state:properties.provisioningState,threadStorageConnections:properties.threadStorageConnections}') -Sensitive)
+        $report['project'] = @{ resourceId = $projects[0].id; state = $project['state']; principalId = $project['principalId'] }
+        $report['capabilityHosts'] = @($hosts | ForEach-Object {
+            @{ name = $_['name']; state = $_['state']; threadStorageConnections = $_['threadStorageConnections'] }
+        })
+    } catch { $report['projectStatus'] = 'Unavailable' }
+
+    $cosmosArguments = @('--account-name', $cosmosAccounts[0].name, '--resource-group', $State.plan.resourceGroup,
+        '--subscription', $State.subscriptionId)
+    try {
+        $cosmos = Invoke-SampleAzure -Arguments @('cosmosdb', 'show', '--name', $cosmosAccounts[0].name,
+            '--resource-group', $State.plan.resourceGroup, '--subscription', $State.subscriptionId, '--query',
+            '{state:provisioningState,publicNetworkAccess:publicNetworkAccess,isVirtualNetworkFilterEnabled:isVirtualNetworkFilterEnabled,ipRules:ipRules,virtualNetworkRules:virtualNetworkRules,disableLocalAuth:disableLocalAuth}') -Sensitive
+        $report['cosmos'] = @{ resourceId = $cosmosAccounts[0].id }
+        foreach ($key in @('state', 'publicNetworkAccess', 'isVirtualNetworkFilterEnabled', 'disableLocalAuth')) {
+            $report.cosmos[$key] = $cosmos[$key]
+        }
+        # Counts suffice to detect unexpected restrictions without recording address lists.
+        $report.cosmos['ipRuleCount'] = @($cosmos['ipRules'] | Where-Object { $null -ne $_ }).Count
+        $report.cosmos['virtualNetworkRuleCount'] = @($cosmos['virtualNetworkRules'] | Where-Object { $null -ne $_ }).Count
+    } catch { $report['cosmosStatus'] = 'Unavailable' }
+    try {
+        $containers = @(Invoke-SampleAzure -Arguments (@('cosmosdb', 'sql', 'container', 'list', '--database-name', 'enterprise_memory') +
+            $cosmosArguments + @('--query', '[].{name:name}')) -Sensitive)
+        $report['containers'] = @($containers | ForEach-Object { $_['name'] })
+    } catch { $report['containerStatus'] = 'Unavailable' }
+    try {
+        $roles = @(Invoke-SampleAzure -Arguments (@('cosmosdb', 'sql', 'role', 'assignment', 'list') + $cosmosArguments +
+            @('--query', '[].{principalId:principalId,scope:scope,roleDefinitionId:roleDefinitionId}')) -Sensitive)
+        $report['cosmosDataRoles'] = @($roles | ForEach-Object {
+            @{ principalId = $_['principalId']; scope = $_['scope']; roleDefinitionId = $_['roleDefinitionId'] }
+        })
+    } catch { $report['cosmosDataRoleStatus'] = 'Unavailable' }
+    # No connection credentials, keys, document contents, request bodies or error messages are queried or saved.
+    $report | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $OutputPath -Encoding utf8
+    Write-Host 'Saved run-owned readiness diagnostics (Cosmos networking, container names, role scopes and capability-host state only).'
+}

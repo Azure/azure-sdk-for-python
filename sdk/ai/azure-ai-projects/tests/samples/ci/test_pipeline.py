@@ -62,3 +62,16 @@ def test_pat_stays_scoped_to_provisioning_task(pipeline):
     assert "Invoke-SampleProvisioning.ps1" in provisioning["inputs"]["inlineScript"]
     assert "-ConfirmProvisioning" in provisioning["inputs"]["inlineScript"]
     assert "MCP_GITHUB_PAT" not in {parameter["name"] for parameter in pipeline["parameters"]}
+
+
+def test_failed_runner_captures_safe_diagnostics_before_cleanup(pipeline):
+    run_stage = next(stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples")
+    steps = run_stage["jobs"][0]["steps"]
+    runner = next(step for step in steps if "run_samples.py" in str(step))
+    script = runner["inputs"]["inlineScript"]
+    assert "$sampleExitCode = $LASTEXITCODE" in script
+    assert "if ($sampleExitCode -ne 0)" in script
+    assert "Save-SampleReadinessDiagnostics -State $sampleState" in script
+    assert "readiness-diagnostics.json" in script
+    assert "throw 'Selected sample runner failed" in script
+    assert steps.index(runner) < next(i for i, step in enumerate(steps) if "Remove-SampleResources.ps1" in str(step))

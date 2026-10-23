@@ -327,3 +327,81 @@ Describe 'Secret-safe ARM error diagnostics' {
         $text.Contains('request') | Should Be $false
     }
 }
+
+Describe 'Run-owned readiness diagnostics' {
+    BeforeEach {
+        $plan = @{
+            schemaVersion = 1
+            definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
+            buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
+            jobAttempt = '1'
+            ownerToken = '0123456789abcdef0123456789abcdef'
+        }
+        $plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
+        $script:readinessState = @{ plan = $plan; subscriptionId = '00000000-0000-0000-0000-000000000000' }
+        $script:readinessGroupId = '/subscriptions/{0}/resourceGroups/{1}' -f $script:readinessState.subscriptionId, $plan.resourceGroup
+        Mock Invoke-SampleAzure {
+            param($Arguments, $Sensitive)
+            if (-not $Sensitive) { throw 'Readiness diagnostics must suppress raw CLI responses.' }
+            if ($Arguments[0] -eq 'group') {
+                return @{ id = $script:readinessGroupId; tags = (Get-SampleOwnershipTags -Plan $script:readinessState.plan) }
+            }
+            if ($Arguments[0] -eq 'resource') {
+                return @(
+                    @{ id = $script:readinessGroupId + '/providers/Microsoft.CognitiveServices/accounts/account/projects/project'; name = 'account/project'; type = 'Microsoft.CognitiveServices/accounts/projects' },
+                    @{ id = $script:readinessGroupId + '/providers/Microsoft.DocumentDB/databaseAccounts/cosmos'; name = 'cosmos'; type = 'Microsoft.DocumentDB/databaseAccounts' }
+                )
+            }
+            if ($Arguments[0] -eq 'rest') {
+                if ($Arguments[4] -match '/capabilityHosts\?') {
+                    return @(@{ name = 'caphost'; state = 'Succeeded'; threadStorageConnections = @('cosmos'); credentials = 'github_pat_unit_test_placeholder' })
+                }
+                return @{ state = 'Succeeded'; principalId = 'project-principal'; credentials = 'github_pat_unit_test_placeholder' }
+            }
+            if ($Arguments[1] -eq 'show') {
+                return @{ state = 'Succeeded'; publicNetworkAccess = 'Enabled'; isVirtualNetworkFilterEnabled = $false;
+                    disableLocalAuth = $true; ipRules = @(); virtualNetworkRules = @(); credentials = 'github_pat_unit_test_placeholder' }
+            }
+            if ($Arguments[2] -eq 'container') {
+                return @(@{ name = 'agent-definitions-v1'; credentials = 'github_pat_unit_test_placeholder' })
+            }
+            return @(@{ principalId = 'project-principal'; scope = '/dbs/enterprise_memory'; roleDefinitionId = 'cosmos-data-contributor'; credentials = 'github_pat_unit_test_placeholder' })
+        }
+    }
+
+    It 'saves only allowlisted network state and runtime resource metadata' {
+        $path = Join-Path $TestDrive 'readiness.json'
+        Save-SampleReadinessDiagnostics -State $script:readinessState -OutputPath $path
+        $text = Get-Content -LiteralPath $path -Raw
+        $report = $text | ConvertFrom-Json -AsHashtable
+        $report.project.principalId | Should Be 'project-principal'
+        $report.cosmos.publicNetworkAccess | Should Be 'Enabled'
+        $report.cosmos.ipRuleCount | Should Be 0
+        $report.capabilityHosts[0].state | Should Be 'Succeeded'
+        $report.containers[0] | Should Be 'agent-definitions-v1'
+        $report.cosmosDataRoles[0].scope | Should Be '/dbs/enterprise_memory'
+        $text.Contains('github_pat_') | Should Be $false
+        $text.Contains('credentials') | Should Be $false
+    }
+
+    It 'records unavailable queries without persisting their exception text' {
+        Mock Invoke-SampleAzure { throw 'Bearer secret-placeholder' } -ParameterFilter { $Arguments[0] -eq 'cosmosdb' }
+        $path = Join-Path $TestDrive 'unavailable.json'
+        Save-SampleReadinessDiagnostics -State $script:readinessState -OutputPath $path
+        $text = Get-Content -LiteralPath $path -Raw
+        $report = $text | ConvertFrom-Json -AsHashtable
+        $report.cosmosStatus | Should Be 'Unavailable'
+        $report.containerStatus | Should Be 'Unavailable'
+        $report.cosmosDataRoleStatus | Should Be 'Unavailable'
+        $text.Contains('secret-placeholder') | Should Be $false
+    }
+
+    It 'refuses diagnostics against a group with different ownership' {
+        Mock Invoke-SampleAzure {
+            return @{ id = $script:readinessGroupId; tags = @{ purpose = 'unrelated' } }
+        } -ParameterFilter { $Arguments[0] -eq 'group' }
+        $path = Join-Path $TestDrive 'foreign-group.json'
+        { Save-SampleReadinessDiagnostics -State $script:readinessState -OutputPath $path } | Should Throw 'ownership tags'
+        Test-Path -LiteralPath $path | Should Be $false
+    }
+}

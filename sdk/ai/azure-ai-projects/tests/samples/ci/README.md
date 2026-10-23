@@ -16,7 +16,7 @@ The first-run default is [../../../samples/agents/tools/sample_agent_mcp_with_pr
    - A Storage account, Cosmos DB account, AI Search service, project connections, capability hosts and runtime role assignments: the official **Standard agent setup**.
    - The selected sample model and **gpt-5.2**, which the existing sample harness uses to validate console output. Model deployments are serialized to avoid concurrent writes to the same Foundry account. If the sample model is also gpt-5.2, only one matching deployment is created.
    - A project-scoped GitHub MCP connection when the selected sample requires `MCP_PROJECT_CONNECTION_ID`.
-6. Wait for project/RBAC readiness, then run only the selected pytest node IDs with live mode on and recording off. Publish JUnit results to the ADO **Tests** tab.
+6. Wait up to ten minutes for project/RBAC readiness, then run only the selected pytest node IDs with live mode on and recording off. Publish JUnit results to the ADO **Tests** tab.
 7. Run cleanup even after failure or cancellation, verifying the resource-group ID and every ownership tag before deleting **only this run's temporary resource group**. Capture non-secret resource inventories before/after deployment.
 
 PowerShell orchestrates Bicep and cleanup; Python collects and invokes the existing tests. Neither provisions Azure resources imperatively. Cleanup is necessarily a resource-group deletion rather than a Bicep deployment.
@@ -52,6 +52,8 @@ Only the provisioning task receives `MCP_GITHUB_PAT`. [infra/sample-resources.bi
 This matches the connection contract in the supplied project-pool reference, but **does not blindly prepend `github_pat_`**. Supplying a full token avoids a duplicate token prefix. The test process receives the **connection resource ID**, never the PAT. Deployment-state and plan artifacts contain no PAT; secret-bearing deployment output/errors are not printed.
 
 On provisioning failure, the state records `provisioningStep` and the pipeline attempts to save a non-secret deployment-diagnostics artifact before cleanup. Diagnostics contain only deployment names, ARM error codes, and failed resource IDs/types. The CLI wrapper also extracts error codes from recognized error envelopes, including preflight failures that create no deployment history. Error messages, request bodies, credentials and deployment parameters remain suppressed because Azure errors can echo secure inputs.
+
+Readiness retries are read-only and bounded. In addition to propagation/service status codes, only the specific `invalid_configuration` response that reports an agent-index listing timeout is retried; other configuration errors fail immediately. This does not prove a timeout is transient: persistent failures stop before pytest starts. The pipeline then attempts to capture run-owned Cosmos DB network settings, container names, data-role scopes and capability-host state before cleanup. No keys, connection credentials or document contents are queried. A sample that has already started is never retried automatically.
 
 ## ADO Run pipeline: first sample
 

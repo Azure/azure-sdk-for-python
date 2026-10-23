@@ -61,7 +61,7 @@ def build_command(state: dict, junit_path: Path) -> list[str]:
     return arguments
 
 
-def wait_for_project(endpoint: str, timeout: float = 300) -> None:
+def wait_for_project(endpoint: str, timeout: float = 600) -> None:
     from azure.core.exceptions import HttpResponseError  # pylint: disable=import-outside-toplevel
     from azure.identity import AzureCliCredential  # pylint: disable=import-outside-toplevel
     from azure.ai.projects import AIProjectClient  # pylint: disable=import-outside-toplevel
@@ -70,14 +70,35 @@ def wait_for_project(endpoint: str, timeout: float = 300) -> None:
     with AzureCliCredential() as credential, AIProjectClient(endpoint, credential) as client:
         while True:
             try:
-                next(iter(client.agents.list()), None)
+                next(iter(client.agents.list(limit=1, connection_timeout=10, read_timeout=30, retry_total=0)), None)
+                print("Project/RBAC readiness succeeded; selected sample tests may now start.")
                 return
             except HttpResponseError as error:
                 remaining = deadline - time.monotonic()
-                if error.status_code not in {403, 404, 409, 429, 500, 502, 503, 504} or remaining <= 0:
+                # A freshly provisioned Standard project can return this specific index timeout as
+                # invalid_configuration rather than a 5xx. Do not retry other configuration errors.
+                agent_index_timeout = getattr(error.error, "code", None) == "invalid_configuration" and re.match(
+                    r"^Listing agents timed out after \d+(?:\.\d+)?s while reading the agent index\.",
+                    getattr(error.error, "message", "") or "",
+                )
+                if error.status_code not in {403, 404, 409, 429, 500, 502, 503, 504} and not agent_index_timeout:
                     raise
-                print(f"Waiting for project/RBAC readiness (HTTP {error.status_code}); sample not yet started.")
+                reason = "agent-index-timeout" if agent_index_timeout else "propagation-or-service-error"
+                if remaining <= 0:
+                    raise TimeoutError(
+                        f"Project readiness did not succeed within {timeout:g}s "
+                        f"(HTTP {error.status_code}, {reason}); sample not started."
+                    ) from None
+                print(
+                    f"Waiting for project/RBAC readiness (HTTP {error.status_code}, {reason}); "
+                    "sample not yet started."
+                )
                 time.sleep(min(10, remaining))
+                if time.monotonic() >= deadline:
+                    raise TimeoutError(
+                        f"Project readiness did not succeed within {timeout:g}s "
+                        f"(HTTP {error.status_code}, {reason}); sample not started."
+                    ) from None
 
 
 def main() -> int:
