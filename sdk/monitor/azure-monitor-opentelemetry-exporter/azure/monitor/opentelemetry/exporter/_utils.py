@@ -429,7 +429,9 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 
 # pylint: disable=W0622
-def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
+def _filter_custom_properties(
+    properties: Attributes, filter=None, *, increase_truncation_limit: bool = False  # pylint: disable=unused-argument
+) -> Dict[str, str]:
     max_length = 8 * 1024
     max_length_for_gen_ai_attributes = 256 * 1024
     processed_properties: Dict[str, str] = {}
