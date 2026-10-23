@@ -60,23 +60,6 @@ class AvailabilityZonePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MULTI_ZONED."""
 
 
-class AvailableCheckInManifestEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The environment type."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    """NOT_SPECIFIED."""
-    CANARY = "Canary"
-    """CANARY."""
-    PROD = "Prod"
-    """PROD."""
-    ALL = "All"
-    """ALL."""
-    MOONCAKE = "Mooncake"
-    """MOONCAKE."""
-    FAIRFAX = "Fairfax"
-    """FAIRFAX."""
-
-
 class BlockActionVerb(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action verb that will be blocked when the resource group is locked during move."""
 
@@ -304,6 +287,15 @@ class Intent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RP contract allows certain operations to be unauthorized action."""
 
 
+class IsolationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The isolation type."""
+
+    PRIVATE = "Private"
+    """Private isolation type."""
+    PUBLIC = "Public"
+    """Public isolation type."""
+
+
 class LegacyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of LegacyOperation."""
 
@@ -327,6 +319,21 @@ class LegacyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """EVALUATE_DEPLOYMENT_OUTPUT."""
     DEPLOYMENT_CLEANUP = "DeploymentCleanup"
     """DEPLOYMENT_CLEANUP."""
+
+
+class LifecycleStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle stage."""
+
+    IN_DEVELOPMENT = "InDevelopment"
+    """In Development lifecycle stage."""
+    PRIVATE_PREVIEW = "PrivatePreview"
+    """Private Preview lifecycle stage."""
+    PUBLIC_PREVIEW = "PublicPreview"
+    """Public Preview lifecycle stage."""
+    GA = "GA"
+    """General Availability lifecycle stage."""
+    RETIRED = "Retired"
+    """Retired lifecycle stage."""
 
 
 class LinkedAccessCheckOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -502,6 +509,10 @@ class OptInHeaderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CLIENT_PRINCIPAL_NAME_ENCODED."""
     MSI_RESOURCE_ID_ENCODED = "MSIResourceIdEncoded"
     """MSI_RESOURCE_ID_ENCODED."""
+    USER_CONTEXT = "UserContext"
+    """Includes user context information from the incoming token."""
+    AUXILIARY_USER_CONTEXT = "AuxiliaryUserContext"
+    """Includes user context information from incoming auxiliary tokens."""
 
 
 class OptOutHeaderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -511,6 +522,15 @@ class OptOutHeaderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NOT_SPECIFIED."""
     SYSTEM_DATA_CREATED_BY_LAST_MODIFIED_BY = "SystemDataCreatedByLastModifiedBy"
     """SYSTEM_DATA_CREATED_BY_LAST_MODIFIED_BY."""
+
+
+class PartnerCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The partner category."""
+
+    FIRST_PARTY = "FirstParty"
+    """First party partner category."""
+    THIRD_PARTY = "ThirdParty"
+    """Third party partner category."""
 
 
 class Policy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -601,29 +621,6 @@ class QuotaPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESTRICTED."""
 
 
-class Readiness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The readiness."""
-
-    CLOSING_DOWN = "ClosingDown"
-    """CLOSING_DOWN."""
-    DEPRECATED = "Deprecated"
-    """DEPRECATED."""
-    GA = "GA"
-    """GA."""
-    IN_DEVELOPMENT = "InDevelopment"
-    """IN_DEVELOPMENT."""
-    INTERNAL_ONLY = "InternalOnly"
-    """INTERNAL_ONLY."""
-    PRIVATE_PREVIEW = "PrivatePreview"
-    """PRIVATE_PREVIEW."""
-    PUBLIC_PREVIEW = "PublicPreview"
-    """PUBLIC_PREVIEW."""
-    REMOVED_FROM_ARM = "RemovedFromARM"
-    """REMOVED_FROM_ARM."""
-    RETIRED = "Retired"
-    """RETIRED."""
-
-
 class Regionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The regionality."""
 
@@ -640,10 +637,6 @@ class ResourceAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NOT_SPECIFIED = "NotSpecified"
     """NOT_SPECIFIED."""
-    ACIS_READ_ALLOWED = "AcisReadAllowed"
-    """ACIS_READ_ALLOWED."""
-    ACIS_ACTION_ALLOWED = "AcisActionAllowed"
-    """ACIS_ACTION_ALLOWED."""
 
 
 class ResourceDeletionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -836,15 +829,6 @@ class ServiceClientOptionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NOT_SPECIFIED."""
     DISABLE_AUTOMATIC_DECOMPRESSION = "DisableAutomaticDecompression"
     """DISABLE_AUTOMATIC_DECOMPRESSION."""
-
-
-class ServiceFeatureFlagAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The service feature flag."""
-
-    DO_NOT_CREATE = "DoNotCreate"
-    """DO_NOT_CREATE."""
-    CREATE = "Create"
-    """CREATE."""
 
 
 class ServiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

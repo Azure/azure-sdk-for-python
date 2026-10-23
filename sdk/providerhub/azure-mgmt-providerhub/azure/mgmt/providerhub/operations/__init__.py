@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import CustomRolloutsOperations  # type: ignore
-from ._operations import NewRegionFrontloadReleaseOperations  # type: ignore
 from ._operations import ProviderRegistrationsOperations  # type: ignore
 from ._operations import DefaultRolloutsOperations  # type: ignore
 from ._operations import NotificationRegistrationsOperations  # type: ignore
@@ -23,6 +22,7 @@ from ._operations import SkusOperations  # type: ignore
 from ._operations import AuthorizedApplicationsOperations  # type: ignore
 from ._operations import ProviderMonitorSettingsOperations  # type: ignore
 from ._operations import ManifestsOperations  # type: ignore
+from ._operations import EndpointRegistrationsOperations  # type: ignore
 from ._operations import ResourceActionsOperations  # type: ignore
 from ._operations import _ProviderHubMgmtClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
@@ -33,7 +33,6 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "CustomRolloutsOperations",
-    "NewRegionFrontloadReleaseOperations",
     "ProviderRegistrationsOperations",
     "DefaultRolloutsOperations",
     "NotificationRegistrationsOperations",
@@ -42,6 +41,7 @@ __all__ = [
     "AuthorizedApplicationsOperations",
     "ProviderMonitorSettingsOperations",
     "ManifestsOperations",
+    "EndpointRegistrationsOperations",
     "ResourceActionsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
