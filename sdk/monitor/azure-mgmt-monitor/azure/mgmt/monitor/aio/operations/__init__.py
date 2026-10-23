@@ -38,6 +38,11 @@ from ._operations import MetricAlertsStatusOperations  # type: ignore
 from ._operations import ScheduledQueryRulesOperations  # type: ignore
 from ._operations import BaselinesOperations  # type: ignore
 from ._operations import ActionGroupsOperations  # type: ignore
+from ._operations import TenantActionGroupsOperations  # type: ignore
+from ._operations import VMInsightsOperations  # type: ignore
+from ._operations import DiagnosticSettingsOperations  # type: ignore
+from ._operations import DiagnosticSettingsCategoryOperations  # type: ignore
+from ._operations import _MonitorManagementClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -70,6 +75,10 @@ __all__ = [
     "ScheduledQueryRulesOperations",
     "BaselinesOperations",
     "ActionGroupsOperations",
+    "TenantActionGroupsOperations",
+    "VMInsightsOperations",
+    "DiagnosticSettingsOperations",
+    "DiagnosticSettingsCategoryOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
