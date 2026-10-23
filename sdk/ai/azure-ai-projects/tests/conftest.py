@@ -13,6 +13,7 @@ mimetypes.add_type("text/markdown", ".md")
 
 import os
 import re
+import sys
 import pytest
 from dotenv import find_dotenv, load_dotenv
 from devtools_testutils import (
@@ -24,10 +25,53 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
 )
+from devtools_testutils.proxy_startup import test_proxy
 from agent_insights.sanitizers import add_agent_insights_sanitizers
+from test_base import servicePreparer
 
-if not load_dotenv(find_dotenv(), override=True):
+_SERVICE_PREPARER_DEFAULTS = servicePreparer.keywords or {}
+_CLI_ENV_OPTIONS = {
+    **{option_name: option_name.upper() for option_name in _SERVICE_PREPARER_DEFAULTS},
+    "azure_test_run_live": "AZURE_TEST_RUN_LIVE",
+    "azure_skip_live_recording": "AZURE_SKIP_LIVE_RECORDING",
+}
+
+
+def _has_cli_env_options() -> bool:
+    option_names = {f"--{option_name}" for option_name in _CLI_ENV_OPTIONS} | {
+        f"--{option_name.replace('_', '-')}" for option_name in _CLI_ENV_OPTIONS
+    }
+    return any(argument.split("=", 1)[0] in option_names for argument in sys.argv[1:])
+
+
+_CLI_ENV_MODE = _has_cli_env_options()
+if _CLI_ENV_MODE:
+    os.environ["PYTHON_DOTENV_DISABLED"] = "true"
+elif not load_dotenv(find_dotenv(), override=True):
     print("Did not find a .env file. Using default environment variable values for tests.")
+
+
+def pytest_addoption(parser):
+    group = parser.getgroup("azure-ai-projects environment")
+    for option_name in _CLI_ENV_OPTIONS:
+        group.addoption(
+            f"--{option_name}",
+            f"--{option_name.replace('_', '-')}",
+            dest=option_name,
+            help=f"Set the {option_name.upper()} environment variable.",
+        )
+
+
+def pytest_configure(config):
+    if not _CLI_ENV_MODE:
+        return
+
+    for option_name, environment_variable in _CLI_ENV_OPTIONS.items():
+        value = config.getoption(option_name)
+        if value is None:
+            value = _SERVICE_PREPARER_DEFAULTS.get(option_name)
+        if value is not None:
+            os.environ[environment_variable] = value
 
 
 def pytest_collection_modifyitems(items):
