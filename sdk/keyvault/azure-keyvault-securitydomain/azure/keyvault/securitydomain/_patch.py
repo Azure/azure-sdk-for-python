@@ -187,7 +187,7 @@ class SecurityDomainClient(KeyVaultClient):
             if skip_activation_polling
             else SecurityDomainDownloadPollingMethod(lro_algorithms=[SecurityDomainDownloadPolling()], timeout=delay)
         )
-        return super()._begin_download(  # type: ignore[return-value]
+        return super()._begin_download(  # type: ignore[arg-type,return-value]
             certificate_info,
             content_type=content_type,
             polling=polling_method,
@@ -258,7 +258,7 @@ class SecurityDomainClient(KeyVaultClient):
             if skip_activation_polling
             else SecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
         )
-        return super()._begin_upload(  # type: ignore[return-value]
+        return super()._begin_upload(  # type: ignore[arg-type,return-value]
             security_domain,
             content_type=content_type,
             polling=polling_method,
