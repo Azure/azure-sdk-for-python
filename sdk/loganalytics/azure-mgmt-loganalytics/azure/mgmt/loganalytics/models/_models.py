@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessRule(_Model):
+class AccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access rule in a network security perimeter configuration profile.
 
     :ivar name: Name of the access rule.
@@ -51,7 +51,7 @@ class AccessRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRuleProperties(_Model):
+class AccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Access Rule.
 
     :ivar direction: Known values are: "Inbound" and "Outbound".
@@ -125,7 +125,7 @@ class AccessRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRulePropertiesSubscriptionsItem(_Model):
+class AccessRulePropertiesSubscriptionsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """we add this model  in order to replace subscriptions model in CommonTypes with this model via
     alternateType decorator.
 
@@ -291,7 +291,7 @@ class CapacityReservationProperties(_Model):
     """Minimum CapacityReservation value in Gigabytes."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -335,7 +335,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Cluster(TrackedResource):
+class Cluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The top level Log Analytics cluster resource container.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -426,7 +426,7 @@ class Cluster(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ClusterPatch(_Model):
+class ClusterPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The top level Log Analytics cluster resource container.
 
     :ivar properties: Log Analytics cluster properties.
@@ -493,7 +493,7 @@ class ClusterPatch(_Model):
             super().__setattr__(key, value)
 
 
-class ClusterPatchProperties(_Model):
+class ClusterPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Log Analytics cluster patch properties.
 
     :ivar key_vault_properties: The associated key properties.
@@ -530,7 +530,7 @@ class ClusterPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterProperties(_Model):
+class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cluster properties.
 
     :ivar cluster_id: The ID associated with the cluster.
@@ -632,7 +632,7 @@ class ClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterReplicationProperties(_Model):
+class ClusterReplicationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cluster replication properties.
 
     :ivar location: The secondary location of the replication. If replication is being enabled,
@@ -697,7 +697,7 @@ class ClusterReplicationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterSku(_Model):
+class ClusterSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The cluster sku definition.
 
     :ivar capacity: The capacity reservation level in Gigabytes for this cluster.
@@ -732,7 +732,7 @@ class ClusterSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Column(_Model):
+class Column(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Table column.
 
     :ivar name: Column name.
@@ -741,9 +741,10 @@ class Column(_Model):
      "dateTime", "guid", and "dynamic".
     :vartype type: str or ~azure.mgmt.loganalytics.models.ColumnTypeEnum
     :ivar data_type_hint: Column data type logical hint. Known values are: "uri", "guid",
-     "armPath", and "ip".
+     "armPath", "ip", and "vector16".
     :vartype data_type_hint: str or ~azure.mgmt.loganalytics.models.ColumnDataTypeHintEnum
-    :ivar display_name: Column display name.
+    :ivar display_name: Column display name. Can be set at creation time; after creation, updates
+     must either match column name or set to null/empty. If not provided, defaults to column name.
     :vartype display_name: str
     :ivar description: Column description.
     :vartype description: str
@@ -763,11 +764,13 @@ class Column(_Model):
     data_type_hint: Optional[Union[str, "_models.ColumnDataTypeHintEnum"]] = rest_field(
         name="dataTypeHint", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Column data type logical hint. Known values are: \"uri\", \"guid\", \"armPath\", and \"ip\"."""
+    """Column data type logical hint. Known values are: \"uri\", \"guid\", \"armPath\", \"ip\", and
+     \"vector16\"."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Column display name."""
+    """Column display name. Can be set at creation time; after creation, updates must either match
+     column name or set to null/empty. If not provided, defaults to column name."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Column description."""
     is_default_display: Optional[bool] = rest_field(name="isDefaultDisplay", visibility=["read"])
@@ -797,7 +800,7 @@ class Column(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CoreSummary(_Model):
+class CoreSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The core summary of a search.
 
     :ivar status: The status of a core summary.
@@ -849,7 +852,7 @@ class ProxyResource(Resource):
     """
 
 
-class DataExport(ProxyResource):
+class DataExport(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The top level data export resource container.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -910,7 +913,7 @@ class DataExport(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DataExportProperties(_Model):
+class DataExportProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data Export properties.
 
     :ivar data_export_id: The data export rule ID.
@@ -972,7 +975,7 @@ class DataExportProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataSource(ProxyResource):
+class DataSource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Datasources under OMS Workspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1051,7 +1054,7 @@ class DataSource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class Destination(_Model):
+class Destination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Destination properties.
 
     :ivar resource_id: The destination resource ID. This can be copied from the Properties entry of
@@ -1113,7 +1116,7 @@ class Destination(_Model):
             super().__setattr__(key, value)
 
 
-class DestinationMetaData(_Model):
+class DestinationMetaData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Destination meta data.
 
     :ivar event_hub_name: Optional. Allows to define an Event Hub name. Not applicable when
@@ -1189,7 +1192,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1217,7 +1220,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
+class Identity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.
 
     :ivar principal_id: The principal ID of resource identity.
@@ -1267,7 +1270,7 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IntelligencePack(_Model):
+class IntelligencePack(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Intelligence Pack containing a string name and boolean indicating if it's enabled.
 
     :ivar name: The name of the intelligence pack.
@@ -1307,7 +1310,7 @@ class IntelligencePack(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultProperties(_Model):
+class KeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key vault properties.
 
     :ivar key_vault_uri: The Key Vault uri which holds they key associated with the Log Analytics
@@ -1357,7 +1360,7 @@ class KeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinkedService(ProxyResource):
+class LinkedService(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The top level Linked service resource container.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1423,7 +1426,7 @@ class LinkedService(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LinkedServiceProperties(_Model):
+class LinkedServiceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Linked service properties.
 
     :ivar resource_id: The resource id of the resource that will be linked to the workspace. This
@@ -1473,7 +1476,7 @@ class LinkedServiceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinkedStorageAccountsProperties(_Model):
+class LinkedStorageAccountsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Linked storage accounts properties.
 
     :ivar data_source_type: Linked storage accounts type. Known values are: "CustomLogs",
@@ -1511,7 +1514,7 @@ class LinkedStorageAccountsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinkedStorageAccountsResource(ProxyResource):
+class LinkedStorageAccountsResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Linked storage accounts top level resource container.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1572,7 +1575,7 @@ class LinkedStorageAccountsResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LogAnalyticsQueryPack(TrackedResource):
+class LogAnalyticsQueryPack(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Log Analytics QueryPack definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1666,7 +1669,7 @@ class LogAnalyticsQueryPackProperties(_Model):
      include Succeeded, Deploying, Canceled, and Failed."""
 
 
-class LogAnalyticsQueryPackQuery(ProxyResource):
+class LogAnalyticsQueryPackQuery(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Log Analytics QueryPack-Query definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1738,7 +1741,7 @@ class LogAnalyticsQueryPackQuery(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LogAnalyticsQueryPackQueryProperties(_Model):
+class LogAnalyticsQueryPackQueryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that define an Log Analytics QueryPack-Query resource.
 
     :ivar id: The unique ID of your application. This field cannot be changed.
@@ -1809,7 +1812,9 @@ class LogAnalyticsQueryPackQueryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogAnalyticsQueryPackQueryPropertiesRelated(_Model):  # pylint: disable=name-too-long
+class LogAnalyticsQueryPackQueryPropertiesRelated(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The related metadata items for the function.
 
     :ivar categories: The related categories for the function.
@@ -1849,7 +1854,9 @@ class LogAnalyticsQueryPackQueryPropertiesRelated(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class LogAnalyticsQueryPackQuerySearchProperties(_Model):  # pylint: disable=name-too-long
+class LogAnalyticsQueryPackQuerySearchProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties that define an Log Analytics QueryPack-Query search properties.
 
     :ivar related: The related metadata items for the function.
@@ -1885,7 +1892,9 @@ class LogAnalyticsQueryPackQuerySearchProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class LogAnalyticsQueryPackQuerySearchPropertiesRelated(_Model):  # pylint: disable=name-too-long
+class LogAnalyticsQueryPackQuerySearchPropertiesRelated(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The related metadata items for the function.
 
     :ivar categories: The related categories for the function.
@@ -1925,7 +1934,7 @@ class LogAnalyticsQueryPackQuerySearchPropertiesRelated(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -1977,7 +1986,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagementGroup(_Model):
+class ManagementGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A management group that is connected to a workspace.
 
     :ivar properties: The properties of the management group.
@@ -2027,7 +2036,7 @@ class ManagementGroup(_Model):
             super().__setattr__(key, value)
 
 
-class ManagementGroupProperties(_Model):
+class ManagementGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Management group properties.
 
     :ivar server_count: The number of servers connected to the management group.
@@ -2098,7 +2107,7 @@ class ManagementGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricName(_Model):
+class MetricName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The name of a metric.
 
     :ivar value: The system name of the metric.
@@ -2133,7 +2142,7 @@ class MetricName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeter(_Model):
+class NetworkSecurityPerimeter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a network security perimeter (NSP).
 
     :ivar id: Fully qualified Azure resource ID of the NSP resource.
@@ -2173,7 +2182,9 @@ class NetworkSecurityPerimeter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfiguration(ProxyResource):
+class NetworkSecurityPerimeterConfiguration(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter (NSP) configuration resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2214,7 +2225,9 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network security configuration properties.
 
     :ivar provisioning_state: Known values are: "Succeeded", "Creating", "Updating", "Deleting",
@@ -2270,7 +2283,7 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityProfile(_Model):
+class NetworkSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter configuration profile.
 
     :ivar name: Name of the profile.
@@ -2326,7 +2339,7 @@ class NetworkSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported operation of OperationalInsights resource provider.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -2361,7 +2374,7 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display metadata associated with the operation.
 
     :ivar provider: Service provider: Microsoft OperationsManagement.
@@ -2404,7 +2417,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatus(_Model):
+class OperationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of operation.
 
     :ivar id: The operation Id.
@@ -2457,7 +2470,7 @@ class OperationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkScopedResource(_Model):
+class PrivateLinkScopedResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private link scope resource reference.
 
     :ivar resource_id: The full resource Id of the private link scope resource.
@@ -2544,7 +2557,7 @@ class ProvisioningIssueProperties(_Model):
     """Access rules that can be added to the network security profile (NSP) to remediate the issue."""
 
 
-class ResourceAssociation(_Model):
+class ResourceAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about resource association.
 
     :ivar name: Name of the resource association.
@@ -2579,7 +2592,7 @@ class ResourceAssociation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoredLogs(_Model):
+class RestoredLogs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore parameters.
 
     :ivar start_restore_time: The timestamp to start the restore from (UTC).
@@ -2646,7 +2659,7 @@ class ResultStatistics(_Model):
     """Search job: Amount of scanned data."""
 
 
-class RuleDefinition(_Model):
+class RuleDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rule definition parameters.
 
     :ivar query: Summary rule query.
@@ -2707,7 +2720,7 @@ class RuleDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SavedSearch(ProxyResource):
+class SavedSearch(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Value object for saved search results.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2781,7 +2794,7 @@ class SavedSearch(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SavedSearchesListResult(_Model):
+class SavedSearchesListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The saved search list operation response.
 
     :ivar value: The array of result values.
@@ -2811,7 +2824,7 @@ class SavedSearchesListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SavedSearchProperties(_Model):
+class SavedSearchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Value object for saved search results.
 
     :ivar category: The category of the saved search. This helps the user to find a saved search
@@ -2883,7 +2896,7 @@ class SavedSearchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Schema(_Model):
+class Schema(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Table's schema.
 
     :ivar name: Table name.
@@ -2963,7 +2976,7 @@ class Schema(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchGetSchemaResponse(_Model):
+class SearchGetSchemaResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The get schema operation response.
 
     :ivar metadata: The metadata from search results.
@@ -3000,7 +3013,7 @@ class SearchGetSchemaResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchMetadata(_Model):
+class SearchMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata for search results.
 
     :ivar search_id: The request id of the search.
@@ -3124,7 +3137,7 @@ class SearchMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchMetadataSchema(_Model):
+class SearchMetadataSchema(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schema metadata for search.
 
     :ivar name: The name of the metadata schema.
@@ -3157,7 +3170,7 @@ class SearchMetadataSchema(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchResults(_Model):
+class SearchResults(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters of the search job that initiated this table.
 
     :ivar query: Search job query.
@@ -3217,7 +3230,7 @@ class SearchResults(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchSchemaValue(_Model):
+class SearchSchemaValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Value object for schema results.
 
     :ivar name: The name of the schema.
@@ -3279,7 +3292,7 @@ class SearchSchemaValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchSort(_Model):
+class SearchSort(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The sort parameters for search.
 
     :ivar name: The name of the field the search query is sorted on.
@@ -3314,7 +3327,7 @@ class SearchSort(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharedKeys(_Model):
+class SharedKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The shared keys for a workspace.
 
     :ivar primary_shared_key: The primary shared key of a workspace.
@@ -3351,7 +3364,7 @@ class SharedKeys(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageAccount(_Model):
+class StorageAccount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a storage account connection.
 
     :ivar id: The Azure Resource Manager ID of the storage account resource. Required.
@@ -3384,7 +3397,7 @@ class StorageAccount(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageInsight(ProxyResource):
+class StorageInsight(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The top level storage insight resource container.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3455,7 +3468,7 @@ class StorageInsight(ProxyResource):
             super().__setattr__(key, value)
 
 
-class StorageInsightProperties(_Model):
+class StorageInsightProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage insight properties.
 
     :ivar containers: The names of the blob containers that the workspace should read.
@@ -3499,7 +3512,7 @@ class StorageInsightProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageInsightStatus(_Model):
+class StorageInsightStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of the storage insight.
 
     :ivar state: The state of the storage insight connection to the workspace. Required. Known
@@ -3536,7 +3549,7 @@ class StorageInsightStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SummaryLogs(ProxyResource):
+class SummaryLogs(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workspace data summary rules definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3552,12 +3565,19 @@ class SummaryLogs(ProxyResource):
     :vartype system_data: ~azure.mgmt.loganalytics.models.SystemData
     :ivar properties: Summary rule properties.
     :vartype properties: ~azure.mgmt.loganalytics.models.SummaryLogsProperties
+    :ivar identity: The managed identity of the summary logs resource. Only user-assigned identity
+     is supported.
+    :vartype identity: ~azure.mgmt.loganalytics.models.SummaryLogsIdentity
     """
 
     properties: Optional["_models.SummaryLogsProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Summary rule properties."""
+    identity: Optional["_models.SummaryLogsIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed identity of the summary logs resource. Only user-assigned identity is supported."""
 
     __flattened_items = [
         "rule_type",
@@ -3574,6 +3594,7 @@ class SummaryLogs(ProxyResource):
         self,
         *,
         properties: Optional["_models.SummaryLogsProperties"] = None,
+        identity: Optional["_models.SummaryLogsIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -3605,7 +3626,58 @@ class SummaryLogs(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SummaryLogsProperties(_Model):
+class SummaryLogsIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Identity for the summary logs resource.
+
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity. Required. Known values are: "None" and
+     "UserAssigned".
+    :vartype type: str or ~azure.mgmt.loganalytics.models.SummaryLogsIdentityType
+    :ivar user_assigned_identities: The list of user identities associated with the resource. The
+     user identity dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.loganalytics.models.SummaryLogsUserIdentityProperties]
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of resource identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of resource."""
+    type: Union[str, "_models.SummaryLogsIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of managed service identity. Required. Known values are: \"None\" and \"UserAssigned\"."""
+    user_assigned_identities: Optional[dict[str, "_models.SummaryLogsUserIdentityProperties"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of user identities associated with the resource. The user identity dictionary key
+     references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.SummaryLogsIdentityType"],
+        user_assigned_identities: Optional[dict[str, "_models.SummaryLogsUserIdentityProperties"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SummaryLogsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Summary rule properties.
 
     :ivar rule_type: SummaryRules rule type: User. "User"
@@ -3677,7 +3749,7 @@ class SummaryLogsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SummaryLogsRetryBin(_Model):
+class SummaryLogsRetryBin(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to retry a summary logs bin.
 
     :ivar properties: Retry bin properties.
@@ -3707,7 +3779,7 @@ class SummaryLogsRetryBin(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SummaryLogsRetryBinProperties(_Model):
+class SummaryLogsRetryBinProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for retrying a Summary rule bin.
 
     :ivar retry_bin_start_time: The time (UTC) of the bin to retry. Required.
@@ -3737,7 +3809,22 @@ class SummaryLogsRetryBinProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SummaryLogsUserIdentityProperties(_Model):
+    """User assigned identity properties.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal id of user assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client id of user assigned identity."""
+
+
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3804,7 +3891,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Table(ProxyResource):
+class Table(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workspace data table definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3835,6 +3922,7 @@ class Table(ProxyResource):
         "restored_logs",
         "result_statistics",
         "plan",
+        "protection_level",
         "last_plan_modified_date",
         "schema",
         "provisioning_state",
@@ -3878,7 +3966,7 @@ class Table(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TableProperties(_Model):
+class TableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Table properties.
 
     :ivar retention_in_days: In Analytics table: the tables analytics retention in days, between 4
@@ -3900,6 +3988,9 @@ class TableProperties(_Model):
     :ivar plan: Instruct the system how to handle and charge the logs ingested to this table. Known
      values are: "Basic", "Analytics", and "Auxiliary".
     :vartype plan: str or ~azure.mgmt.loganalytics.models.TablePlanEnum
+    :ivar protection_level: The protection level of the table. Determines the default data access
+     isolation behavior. Known values are: "General" and "Protected".
+    :vartype protection_level: str or ~azure.mgmt.loganalytics.models.TableProtectionLevelEnum
     :ivar last_plan_modified_date: The timestamp that table plan was last modified (UTC).
     :vartype last_plan_modified_date: str
     :ivar schema: Table schema.
@@ -3945,6 +4036,11 @@ class TableProperties(_Model):
     )
     """Instruct the system how to handle and charge the logs ingested to this table. Known values are:
      \"Basic\", \"Analytics\", and \"Auxiliary\"."""
+    protection_level: Optional[Union[str, "_models.TableProtectionLevelEnum"]] = rest_field(
+        name="protectionLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The protection level of the table. Determines the default data access isolation behavior. Known
+     values are: \"General\" and \"Protected\"."""
     last_plan_modified_date: Optional[str] = rest_field(name="lastPlanModifiedDate", visibility=["read"])
     """The timestamp that table plan was last modified (UTC)."""
     schema: Optional["_models.Schema"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3971,6 +4067,7 @@ class TableProperties(_Model):
         search_results: Optional["_models.SearchResults"] = None,
         restored_logs: Optional["_models.RestoredLogs"] = None,
         plan: Optional[Union[str, "_models.TablePlanEnum"]] = None,
+        protection_level: Optional[Union[str, "_models.TableProtectionLevelEnum"]] = None,
         schema: Optional["_models.Schema"] = None,
     ) -> None: ...
 
@@ -3985,7 +4082,7 @@ class TableProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Tag(_Model):
+class Tag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A tag of a saved search.
 
     :ivar name: The tag name. Required.
@@ -4018,7 +4115,7 @@ class Tag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsResource(_Model):
+class TagsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A container holding only the Tags for a resource, allowing the user to update the tags on a
     QueryPack instance.
 
@@ -4047,7 +4144,7 @@ class TagsResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UsageMetric(_Model):
+class UsageMetric(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A metric describing the usage of a resource.
 
     :ivar name: The name of the metric.
@@ -4136,7 +4233,7 @@ class UserIdentityProperties(_Model):
     """The client id of user assigned identity."""
 
 
-class Workspace(TrackedResource):
+class Workspace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The top level Workspace resource container.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4229,7 +4326,7 @@ class Workspace(TrackedResource):
             super().__setattr__(key, value)
 
 
-class WorkspaceCapping(_Model):
+class WorkspaceCapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The daily volume cap for ingestion.
 
     :ivar daily_quota_gb: The workspace daily quota for ingestion.
@@ -4291,7 +4388,7 @@ class WorkspaceFailoverProperties(_Model):
     """The last time when the failover state was updated."""
 
 
-class WorkspaceFeatures(_Model):
+class WorkspaceFeatures(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workspace features.
 
     :ivar enable_data_export: Flag that indicate if data should be exported.
@@ -4312,6 +4409,8 @@ class WorkspaceFeatures(_Model):
     :ivar associations: List of associations for the workspace. Indicates if the workspace is
      associated with any of the following experiences: MDC, Sentinel, SentinelGraph, etc.
     :vartype associations: list[str]
+    :ivar data_authorization_mode: Enable Data authorization mode for the workspace.
+    :vartype data_authorization_mode: bool
     """
 
     enable_data_export: Optional[bool] = rest_field(
@@ -4339,6 +4438,10 @@ class WorkspaceFeatures(_Model):
     associations: Optional[list[str]] = rest_field(visibility=["read"])
     """List of associations for the workspace. Indicates if the workspace is associated with any of
      the following experiences: MDC, Sentinel, SentinelGraph, etc."""
+    data_authorization_mode: Optional[bool] = rest_field(
+        name="dataAuthorizationMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enable Data authorization mode for the workspace."""
 
     @overload
     def __init__(
@@ -4349,6 +4452,7 @@ class WorkspaceFeatures(_Model):
         enable_log_access_using_only_resource_permissions: Optional[bool] = None,
         cluster_resource_id: Optional[str] = None,
         disable_local_auth: Optional[bool] = None,
+        data_authorization_mode: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -4362,7 +4466,7 @@ class WorkspaceFeatures(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspacePatch(AzureEntityResource):
+class WorkspacePatch(AzureEntityResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The top level Workspace resource container.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4451,7 +4555,7 @@ class WorkspacePatch(AzureEntityResource):
             super().__setattr__(key, value)
 
 
-class WorkspaceProperties(_Model):
+class WorkspaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workspace properties.
 
     :ivar provisioning_state: The provisioning state of the workspace. Known values are:
@@ -4584,7 +4688,7 @@ class WorkspaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspacePurgeBody(_Model):
+class WorkspacePurgeBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the body of a purge request for an App Insights Workspace.
 
     :ivar table: Table from which to purge data. Required.
@@ -4621,7 +4725,7 @@ class WorkspacePurgeBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspacePurgeBodyFilters(_Model):
+class WorkspacePurgeBodyFilters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User-defined filters to return data which will be purged from the table.
 
     :ivar column: The column of the table over which the given query should run.
@@ -4671,7 +4775,85 @@ class WorkspacePurgeBodyFilters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspacePurgeResponse(_Model):
+class WorkspacePurgeLakeDataBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Describes the body of a request to purge data lake data in a Log Analytics workspace.
+
+    :ivar table: The name of the table from which to purge data lake data. Must be an Auxiliary
+     table, or an Analytics table that is mirrored to the data lake. Required.
+    :vartype table: str
+    :ivar time_range: The time range over which data lake data is purged. Required.
+    :vartype time_range: ~azure.mgmt.loganalytics.models.WorkspacePurgeLakeDataTimeRange
+    """
+
+    table: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the table from which to purge data lake data. Must be an Auxiliary table, or an
+     Analytics table that is mirrored to the data lake. Required."""
+    time_range: "_models.WorkspacePurgeLakeDataTimeRange" = rest_field(
+        name="timeRange", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The time range over which data lake data is purged. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        table: str,
+        time_range: "_models.WorkspacePurgeLakeDataTimeRange",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WorkspacePurgeLakeDataTimeRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The time range over which a data lake purge request operates.
+
+    :ivar start_time: The inclusive start of the time range, in UTC. Must fall on an hour boundary
+     (minutes and seconds must be zero). Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The exclusive end of the time range, in UTC. Must fall on an hour boundary and
+     be earlier than the start of the current hour. Required.
+    :vartype end_time: ~datetime.datetime
+    """
+
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The inclusive start of the time range, in UTC. Must fall on an hour boundary (minutes and
+     seconds must be zero). Required."""
+    end_time: datetime.datetime = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The exclusive end of the time range, in UTC. Must fall on an hour boundary and be earlier than
+     the start of the current hour. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WorkspacePurgeResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response containing operationId for a specific purge action.
 
     :ivar operation_id: Id to use when querying for status for a particular purge operation.
@@ -4700,7 +4882,7 @@ class WorkspacePurgeResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspacePurgeStatusResponse(_Model):
+class WorkspacePurgeStatusResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response containing status for a specific purge operation.
 
     :ivar status: Status of the operation represented by the requested Id. Required. Known values
@@ -4730,7 +4912,7 @@ class WorkspacePurgeStatusResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceReplicationProperties(_Model):
+class WorkspaceReplicationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workspace replication properties.
 
     :ivar location: The location of the replication.
@@ -4787,7 +4969,7 @@ class WorkspaceReplicationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceSku(_Model):
+class WorkspaceSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SKU (tier) of a workspace.
 
     :ivar name: The name of the SKU. Required. Known values are: "Free", "Standard", "Premium",
