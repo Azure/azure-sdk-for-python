@@ -333,26 +333,36 @@ def bench_upload(blob_client, payload, enabled, iterations, warmups, max_concurr
     return times
 
 
-def bench_download(blob_client, expected_len, enabled, iterations, warmups, max_concurrency):
-    """Time repeated full downloads (download_blob + readinto) on the selected path.
+def _download_once(blob_client, max_concurrency, method):
+    """Download the whole blob once with the given consumption method; return the byte count."""
+    downloader = blob_client.download_blob(max_concurrency=max_concurrency)
+    if method == "readall":
+        return len(downloader.readall())
+    sink = _CountingSink()
+    downloader.readinto(sink)
+    return sink.total
 
-    Reads into a discarding sink via readinto() so timing reflects transfer cost rather than the
-    allocation and ``b"".join`` copy that readall() incurs. Timing spans the whole operation,
-    including the native path's eager first-window fetch, so both paths are compared end-to-end.
+
+def bench_download(blob_client, expected_len, enabled, iterations, warmups, max_concurrency, method="readinto"):
+    """Time repeated full downloads (download_blob + readinto/readall) on the selected path.
+
+    With ``method="readinto"`` (the default) data is written into a discarding sink, so timing
+    reflects transfer cost rather than materializing the blob. ``method="readall"`` measures
+    downloading the whole blob into a single ``bytes`` object, which uses the native ``readall``
+    fast path when the extension is active. Timing spans the whole operation, including the
+    native path's initial request, so both paths are compared end-to-end.
     Returns per-iteration seconds.
     """
     times = []
     with native_path(enabled):
         for _ in range(warmups):
-            sink = _CountingSink()
-            blob_client.download_blob(max_concurrency=max_concurrency).readinto(sink)
-            assert sink.total == expected_len, "Download length mismatch during warmup!"
+            total = _download_once(blob_client, max_concurrency, method)
+            assert total == expected_len, "Download length mismatch during warmup!"
         for _ in range(iterations):
-            sink = _CountingSink()
             start = time.perf_counter()
-            blob_client.download_blob(max_concurrency=max_concurrency).readinto(sink)
+            total = _download_once(blob_client, max_concurrency, method)
             times.append(time.perf_counter() - start)
-            assert sink.total == expected_len, "Download length mismatch during measurement!"
+            assert total == expected_len, "Download length mismatch during measurement!"
     return times
 
 
@@ -380,7 +390,8 @@ def run_benchmarks(auth, args):
         f"sizes={[format_size(s) for s in args.sizes]}  iterations={args.iterations}  "
         f"warmups={args.warmups}  max_concurrency={args.max_concurrency}  "
         f"max_block_size={format_size(args.max_block_size) if args.max_block_size else 'SDK default'}  "
-        f"auth={'user-delegation-SAS' if args.sas else 'AAD'}"
+        f"auth={'user-delegation-SAS' if args.sas else 'AAD'}  "
+        f"download_method={args.download_method}"
     )
     summary = []
     for size_bytes in args.sizes:
@@ -403,11 +414,27 @@ def run_benchmarks(auth, args):
 
             # Download benchmark.
             dl_python = _summarize(
-                bench_download(blob_client, size_bytes, False, args.iterations, args.warmups, args.max_concurrency),
+                bench_download(
+                    blob_client,
+                    size_bytes,
+                    False,
+                    args.iterations,
+                    args.warmups,
+                    args.max_concurrency,
+                    args.download_method,
+                ),
                 size_bytes,
             )
             dl_native = _summarize(
-                bench_download(blob_client, size_bytes, True, args.iterations, args.warmups, args.max_concurrency),
+                bench_download(
+                    blob_client,
+                    size_bytes,
+                    True,
+                    args.iterations,
+                    args.warmups,
+                    args.max_concurrency,
+                    args.download_method,
+                ),
                 size_bytes,
             )
             _print_comparison("download", dl_python, dl_native)
@@ -487,6 +514,13 @@ def parse_args(argv=None):
         default=None,
         help="Blobs at or below this size upload in a single PUT (SDK default 64MiB). Mainly "
         "affects the Python path; the native path one-shots when the blob fits in one block.",
+    )
+    parser.add_argument(
+        "--download-method",
+        choices=("readinto", "readall"),
+        default="readinto",
+        help="How downloads are consumed: 'readinto' streams into a discarding sink; 'readall' "
+        "materializes the whole blob as bytes (exercises the native readall fast path).",
     )
     parser.add_argument(
         "--sas",
