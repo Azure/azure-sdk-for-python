@@ -43,7 +43,10 @@ steps:
     - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
       parameters:
         Paths:
-          - '**'
+          - ${{ if in(parameters.ServiceDirectory, '', 'auto') }}:
+            - '**'
+          - ${{ else }}:
+            - sdk/${{ parameters.ServiceDirectory }}
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
