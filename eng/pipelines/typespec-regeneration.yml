@@ -1,0 +1,111 @@
+# Validate the pinned emitter against existing clients without advancing specs.
+parameters:
+  - name: PackageDirectories
+    displayName: 'SDK directories (comma-separated repository paths; * for all)'
+    type: string
+    default: sdk/advisor/azure-mgmt-advisor,sdk/appconfiguration/azure-appconfiguration,sdk/agentserver/azure-ai-agentserver-responses/type_spec
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - eng/emitter-package.json
+      - eng/emitter-package-lock.json
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - eng/emitter-package.json
+      - eng/emitter-package-lock.json
+      - eng/common/tsp-client/**
+      - eng/pipelines/typespec-regeneration.yml
+      - eng/scripts/regenerate_typespec.py
+
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: Regenerate
+        displayName: Regenerate TypeSpec SDKs
+        jobs:
+          - job: Regenerate
+            timeoutInMinutes: 360
+            variables:
+              ${{ if eq(parameters.PackageDirectories, '*') }}:
+                ShardCount: 8
+              ${{ else }}:
+                ShardCount: 1
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+            strategy:
+              maxParallel: 8
+              matrix:
+                Batch0:
+                  ShardIndex: 0
+                ${{ if eq(parameters.PackageDirectories, '*') }}:
+                  Batch1:
+                    ShardIndex: 1
+                  Batch2:
+                    ShardIndex: 2
+                  Batch3:
+                    ShardIndex: 3
+                  Batch4:
+                    ShardIndex: 4
+                  Batch5:
+                    ShardIndex: 5
+                  Batch6:
+                    ShardIndex: 6
+                  Batch7:
+                    ShardIndex: 7
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)/typespec-regeneration
+                  artifactName: typespec-regeneration-$(ShardIndex)
+                  condition: succeededOrFailed()
+                  sbomEnabled: false
+            steps:
+              - checkout: self
+
+              - task: NodeTool@0
+                displayName: Install Node.js
+                inputs:
+                  versionSpec: 24.x
+
+              - task: UsePythonVersion@0
+                displayName: Install Python
+                inputs:
+                  versionSpec: '3.10'
+
+              - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
+
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  EnableTwineAuth: false
+                  EnableUvAuth: false
+
+              - script: python -m pip install PyYAML==6.0.2
+                displayName: Install YAML parser
+
+              - script: npm ci --prefix eng/common/tsp-client
+                displayName: Install pinned tsp-client
+
+              - script: npm exec --prefix eng/common/tsp-client --no -- tsp-client install-dependencies
+                displayName: Install pinned emitter dependencies
+
+              - script: >-
+                  python eng/scripts/regenerate_typespec.py
+                  --output "$(Build.ArtifactStagingDirectory)/typespec-regeneration"
+                  --shard-index $(ShardIndex)
+                  --shard-count $(ShardCount)
+                  --packages "$TYPESPEC_REGENERATION_PACKAGES"
+                displayName: Regenerate clients and collect changes
+                env:
+                  TYPESPEC_REGENERATION_PACKAGES: ${{ parameters.PackageDirectories }}
