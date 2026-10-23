@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -38,7 +39,6 @@ from _shared.test_case_async import KeyVaultTestCase
 from _async_test_case import AsyncCertificatesClientPreparer
 from _test_case import get_decorator
 from certs import CERT_CONTENT_PASSWORD_ENCODED, CERT_CONTENT_NOT_PASSWORD_ENCODED
-
 
 all_api_versions = get_decorator()
 only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
