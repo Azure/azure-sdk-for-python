@@ -185,13 +185,19 @@ def download_blob(
     max_concurrency: "int | None" = None,
     max_chunk_size: "int | None" = None,
 ) -> "Iterator[bytes]":
-    """Begin a windowed download of a block blob using the native Rust extension.
+    """Begin a download of a block blob using the native Rust extension.
 
-    The returned object is a lazy iterator: each iteration downloads one window of up to
-    ``max_concurrency * max_chunk_size`` bytes via the Rust SDK's parallel ``download_into``.
-    Peak memory is therefore bounded to a single window rather than the whole blob, while each
-    window still benefits from concurrent range requests. This handles blobs of any size,
-    including those larger than a single buffer.
+    The returned object is a lazy iterator. Creating it sends a single ranged request for the
+    first chunk and waits only for its response headers, so ``size`` is known after about one
+    round trip. Every later request is locked to the ETag of that first response, so a blob that
+    is modified mid-download fails with a 412 error instead of returning mixed content.
+
+    Iterating yields one chunk of up to ``max_chunk_size`` bytes at a time. A background task keeps
+    up to ``max_concurrency`` ranged requests in flight and prefetches completed chunks (about
+    ``max_concurrency * max_chunk_size`` bytes) ahead of consumption, so peak memory stays
+    bounded regardless of blob size. Calling ``readall()`` on the returned object instead writes
+    the remaining content directly into a single ``bytes`` object using the Rust SDK's parallel
+    ``download_into``.
 
     :param str url: The fully-qualified blob URL
         (e.g. https://account.blob.core.windows.net/container/blob). Must be correctly
@@ -222,14 +228,15 @@ def download_blob(
     :keyword int max_concurrency: Maximum number of parallel connections for chunked downloads.
         Defaults to the available CPU count when not specified, or 8 if it cannot be determined.
     :keyword int max_chunk_size: Maximum size of each ranged download request.
-        Defaults to 4 MiB when not specified. Each download window is the product of the
-        resolved concurrency and chunk size.
-    :returns: A lazy iterator yielding the blob content one window at a time. The object also
-        exposes ``size`` (total bytes to be delivered).
+        Defaults to 4 MiB when not specified. Each iteration yields one chunk of this size (the
+        final chunk may be smaller).
+    :returns: A lazy iterator yielding the blob content one chunk at a time. The object also
+        exposes ``size`` (total bytes to be delivered) and ``readall()`` (returns all remaining
+        content as a single ``bytes`` object).
     :rtype: Iterator[bytes]
     :raises ValueError: If the native module is not available.
-    :raises NativeTransferError: If starting the download or consuming a later window
-        fails. Contains Rust-normalized service diagnostics and original response
+    :raises NativeTransferError: If starting the download, consuming a later chunk, or
+        ``readall()`` fails. Contains Rust-normalized service diagnostics and original response
         headers/body. Python callback exceptions are propagated unchanged.
     """
     if not _NATIVE_AVAILABLE:
