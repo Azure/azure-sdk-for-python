@@ -126,13 +126,13 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self.fully_qualified_namespace = fully_qualified_namespace
         self._api_version = api_version
         self._credential = credential
-        self._endpoint = "https://" + fully_qualified_namespace
+        self._endpoint = ("https://" if kwargs.pop("use_tls", True) else "http://") + fully_qualified_namespace
         self._config = ServiceBusManagementClientConfiguration(
             self._endpoint, credential=self._credential, api_version=api_version, **kwargs
         )
         self._pipeline = self._build_pipeline(**kwargs)
         self._impl = ServiceBusManagementClientImpl(
-            endpoint=fully_qualified_namespace,
+            endpoint=self._endpoint,
             credential=self._credential,
             pipeline=self._pipeline,
             api_version=api_version,
