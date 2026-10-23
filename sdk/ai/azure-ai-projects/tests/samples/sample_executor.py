@@ -558,9 +558,10 @@ class BaseSampleExecutor:
         """Assert validation result and print reason."""
         sample_filename = os.path.basename(self.sample_path)
         is_allowed_to_fail = sample_filename in self.allowed_llm_validation_failures
+        reason = sanitize_log(test_report["reason"])
 
         if not test_report["correct"]:
-            log_file = self._write_failed_log(test_report["reason"])
+            log_file = self._write_failed_log(reason)
             if log_file:
                 print(f"\nValidation failed! Print statements logged to: {log_file}")
 
@@ -568,14 +569,14 @@ class BaseSampleExecutor:
                 print(
                     f"\nWARNING: '{sample_filename}' is in allowed_llm_validation_failures - test passing despite validation failure"
                 )
-                print(f"Reason: {test_report['reason']}")
+                print(f"Reason: {reason}")
             else:
-                assert False, f"Error is identified: {test_report['reason']}"
+                assert False, f"Error is identified: {reason}"
         else:
-            log_file = self._write_passed_log(test_report["reason"])
+            log_file = self._write_passed_log(reason)
             if log_file:
                 print(f"\nValidation passed! Print statements logged to: {log_file}")
-            print(f"Reason: {test_report['reason']}")
+            print(f"Reason: {reason}")
 
     def _resolve_local_module_file(
         self,
@@ -783,7 +784,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
         else:
             endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
             model = PLAYBACK_LLM_VALIDATION_MODEL
-        print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
+        print("For validating console output, using the configured LLM validation project.")
         assert isinstance(self.tokenCredential, TokenCredential) or isinstance(
             self.tokenCredential, FakeTokenCredential
         )
@@ -986,7 +987,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         else:
             endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
             model = PLAYBACK_LLM_VALIDATION_MODEL
-        print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
+        print("For validating console output, using the configured LLM validation project.")
         assert isinstance(self.tokenCredential, AsyncTokenCredential) or isinstance(
             self.tokenCredential, AsyncFakeCredential
         )

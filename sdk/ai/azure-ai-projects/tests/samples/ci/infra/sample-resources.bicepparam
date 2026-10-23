@@ -11,11 +11,5 @@ param sampleModel = {
   sku: readEnvironmentVariable('SAMPLE_CI_MODEL_SKU', 'GlobalStandard')
   capacity: int(readEnvironmentVariable('SAMPLE_CI_MODEL_CAPACITY', '1'))
 }
-param validationModel = {
-  name: 'gpt-5.2'
-  version: readEnvironmentVariable('SAMPLE_CI_VALIDATION_MODEL_VERSION', 'unconfigured-version')
-  sku: 'GlobalStandard'
-  capacity: int(readEnvironmentVariable('SAMPLE_CI_VALIDATION_MODEL_CAPACITY', '1'))
-}
 param provisionMcp = bool(readEnvironmentVariable('SAMPLE_CI_PROVISION_MCP', 'false'))
 param mcpPat = readEnvironmentVariable('MCP_GITHUB_PAT', '')

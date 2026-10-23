@@ -17,14 +17,15 @@ foreach ($path in @((Join-Path $PSScriptRoot 'infra/resource-group.bicep'),
         }
         # Typed parameters emit ARM languageVersion 2.0 with symbolic resource keys.
         if ($template.resources -isnot [System.Collections.IDictionary] -or
-            $template.resources['sampleDeployment']['type'] -ne 'Microsoft.CognitiveServices/accounts/deployments' -or
-            $template.resources['validationDeployment']['type'] -ne 'Microsoft.CognitiveServices/accounts/deployments') {
-            throw 'Cannot verify the compiled ARM model deployment resources.'
+            $template.resources['sampleDeployment']['type'] -ne 'Microsoft.CognitiveServices/accounts/deployments') {
+            throw 'Cannot verify the compiled ARM sample model resource.'
         }
-        if (@($template.resources.validationDeployment.dependsOn) -notcontains 'sampleDeployment') {
-            throw 'Model deployments must be serialized: validationDeployment must depend on sampleDeployment in compiled ARM.'
+        $models = @($template.resources.Values | Where-Object { $_['type'] -eq 'Microsoft.CognitiveServices/accounts/deployments' })
+        if ($models.Count -ne 1 -or $template.parameters.ContainsKey('validationModel') -or
+            $template.outputs.environment.value.ContainsKey('LLM_VALIDATION_PROJECT_ENDPOINT')) {
+            throw 'Bicep must provision only the sample model and must not emit the external validation endpoint.'
         }
-        Write-Host 'Compiled ARM model dependency verified: sample deployment before validation deployment.'
+        Write-Host 'Compiled ARM verified: one sample model, no validation deployment or secret endpoint output.'
     }
     Write-Host ('Bicep compiled: {0}' -f (Split-Path -Leaf $path))
 }
@@ -39,8 +40,6 @@ $bindings = @{
     SAMPLE_CI_MODEL_VERSION = '2025-04-14'
     SAMPLE_CI_MODEL_SKU = 'GlobalStandard'
     SAMPLE_CI_MODEL_CAPACITY = '10'
-    SAMPLE_CI_VALIDATION_MODEL_VERSION = '2025-12-11'
-    SAMPLE_CI_VALIDATION_MODEL_CAPACITY = '10'
     SAMPLE_CI_PROVISION_MCP = 'false'
     MCP_GITHUB_PAT = ''
 }

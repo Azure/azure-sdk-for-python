@@ -84,6 +84,19 @@ def test_nonsecret_api_details_and_print_content_are_preserved(shared_logs):
     assert shared_logs.sanitize_log(text) == text
 
 
+def test_external_validation_endpoint_is_redacted_from_files(shared_logs, monkeypatch):
+    endpoint = "https://private-validator.services.ai.azure.com/api/projects/private-validation-project"
+    monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", endpoint)
+    text = (
+        endpoint
+        + "/openai/responses\nHost: private-validator.services.ai.azure.com\n/api/projects/private-validation-project"
+    )
+    sanitized = shared_logs.sanitize_log(text)
+    assert endpoint not in sanitized
+    assert "private-validator" not in sanitized
+    assert "private-validation-project" not in sanitized
+
+
 def test_attachment_paths_are_isolated_by_full_node_id(tmp_path, executor_factory):
     first_executor = executor_factory(attachments.sample_log_directory("test_a[same]", tmp_path))
     second_executor = executor_factory(attachments.sample_log_directory("test_b[same]", tmp_path))
@@ -269,12 +282,25 @@ def test_sample_output(sample_path):
 
 def test_junit_hook_only_adds_trusted_attachment_markers():
     item = SimpleNamespace(stash={attachments._ATTACHMENTS: [Path("/safe/log.txt")]})
-    report = SimpleNamespace(when="teardown", sections=[])
+    report = SimpleNamespace(when="teardown", sections=[], failed=False, longrepr=None)
     hook = attachments.pytest_runtest_makereport(item, None)
     next(hook)
     with pytest.raises(StopIteration):
         hook.send(SimpleNamespace(get_result=lambda: report))
     assert report.sections == [("Captured stdout teardown", f"[[ATTACHMENT|{Path('/safe/log.txt')}]]")]
+
+
+def test_junit_failure_and_captured_output_redact_validation_endpoint(monkeypatch, shared_logs):
+    endpoint = "https://private-validator.services.ai.azure.com/api/projects/private-validation-project"
+    monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", endpoint)
+    item = SimpleNamespace(stash={})
+    report = SimpleNamespace(when="call", sections=[("Captured stdout call", endpoint)], failed=True, longrepr=endpoint)
+    hook = attachments.pytest_runtest_makereport(item, None)
+    next(hook)
+    with pytest.raises(StopIteration):
+        hook.send(SimpleNamespace(get_result=lambda: report))
+    assert endpoint not in report.longrepr
+    assert endpoint not in report.sections[0][1]
 
 
 @pytest.mark.parametrize(

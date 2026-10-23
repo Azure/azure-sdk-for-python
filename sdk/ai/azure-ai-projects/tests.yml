@@ -25,7 +25,7 @@ parameters:
     type: string
     default: not-configured
   - name: secretVariableGroup
-    displayName: 'Optional authorized Library group containing secret MCP_GITHUB_PAT; none = pipeline secret variable'
+    displayName: 'Optional authorized Library group containing validation endpoint and MCP secrets; none = pipeline secret variables'
     type: string
     default: none
   - name: location
@@ -33,7 +33,7 @@ parameters:
     type: string
     default: eastus2
   - name: modelName
-    displayName: 'Sample model (gpt-5.2 is also deployed for existing harness output validation)'
+    displayName: 'Sample model (validation uses the existing project from a secret variable)'
     type: string
     default: gpt-4.1
   - name: modelVersion
@@ -49,14 +49,6 @@ parameters:
       - Standard
   - name: modelCapacity
     displayName: 'Sample model capacity units (quota checked before provisioning)'
-    type: number
-    default: 10
-  - name: validationModelVersion
-    displayName: 'gpt-5.2 output-validation version; auto resolves the regional default'
-    type: string
-    default: auto
-  - name: validationModelCapacity
-    displayName: 'gpt-5.2 output-validation capacity units'
     type: number
     default: 10
 
@@ -110,8 +102,7 @@ extends:
                   if ($LASTEXITCODE -ne 0) { throw 'No valid sample selection; no resources were provisioned.' }
                   & ./tests/samples/ci/New-SampleDeploymentPlan.ps1 -SelectionManifest $manifest -OutputDirectory $outputDirectory `
                     -Location $env:SAMPLE_LOCATION -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
-                    -ModelSku $env:SAMPLE_MODEL_SKU -ModelCapacity ([int] $env:SAMPLE_MODEL_CAPACITY) `
-                    -ValidationModelVersion $env:VALIDATION_MODEL_VERSION -ValidationModelCapacity ([int] $env:VALIDATION_MODEL_CAPACITY)
+                    -ModelSku $env:SAMPLE_MODEL_SKU -ModelCapacity ([int] $env:SAMPLE_MODEL_CAPACITY)
                 workingDirectory: $(packageRoot)
                 displayName: 'Show selected sample paths, exact pytest IDs, and a fresh deployment plan'
                 env:
@@ -122,8 +113,6 @@ extends:
                   SAMPLE_MODEL_VERSION: ${{ parameters.modelVersion }}
                   SAMPLE_MODEL_SKU: ${{ parameters.modelSku }}
                   SAMPLE_MODEL_CAPACITY: ${{ parameters.modelCapacity }}
-                  VALIDATION_MODEL_VERSION: ${{ parameters.validationModelVersion }}
-                  VALIDATION_MODEL_CAPACITY: ${{ parameters.validationModelCapacity }}
               - pwsh: |
                   $standardTemplate = & ./tests/samples/ci/Get-StandardSetupTemplate.ps1 -OutputDirectory '$(Agent.TempDirectory)/standard-bicep'
                   & ./tests/samples/ci/Test-BicepTemplates.ps1 -StandardTemplatePath $standardTemplate
@@ -173,8 +162,14 @@ extends:
                     artifactName: sample-plan
                     targetPath: $(Pipeline.Workspace)/sample-plan
                   displayName: 'Use this run''s collected sample selection and deployment plan'
+                - pwsh: |
+                    python '$(packageRoot)/tests/samples/ci/run_samples.py' --check-validation-config
+                    if ($LASTEXITCODE -ne 0) { throw 'The existing validation-project secret is missing or invalid; no resources were provisioned.' }
+                  displayName: 'Validate external validation-project secret before provisioning'
+                  env:
+                    LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
                 - task: AzureCLI@2
-                  displayName: 'Provision Standard Foundry, models and MCP connection using Bicep'
+                  displayName: 'Provision Standard Foundry, sample model and MCP connection using Bicep'
                   inputs:
                     azureSubscription: ${{ parameters.azureServiceConnection }}
                     scriptType: pscore
@@ -209,6 +204,8 @@ extends:
                         }
                         throw 'Selected sample runner failed; inspect readiness diagnostics and pytest results when present.'
                       }
+                  env:
+                    LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
                 - task: AzureCLI@2
                   displayName: 'Always clean up only the run-owned temporary resources'
                   condition: always()

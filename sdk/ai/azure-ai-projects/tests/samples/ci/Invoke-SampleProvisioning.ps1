@@ -38,16 +38,9 @@ foreach ($namespace in @('Microsoft.CognitiveServices', 'Microsoft.Storage', 'Mi
 $catalog = @(Invoke-SampleAzure -Arguments @('cognitiveservices', 'model', 'list', '--location', $plan.location, '--subscription', $subscription))
 $sampleModel = Resolve-SampleModel -Catalog $catalog -Name $plan.sampleModel.name -Version $plan.sampleModel.version `
     -Sku $plan.sampleModel.sku -Capacity $plan.sampleModel.capacity
-$validationModel = Resolve-SampleModel -Catalog $catalog -Name 'gpt-5.2' -Version $plan.validationModel.version `
-    -Sku 'GlobalStandard' -Capacity $plan.validationModel.capacity
-if ($sampleModel.name -eq $validationModel.name -and
-    ($sampleModel.version -ne $validationModel.version -or $sampleModel.sku -ne $validationModel.sku -or $sampleModel.capacity -ne $validationModel.capacity)) {
-    throw 'When gpt-5.2 is also the sample model, its version, SKU and capacity must equal the validation model settings.'
-}
-$modelDeployments = @($sampleModel, $validationModel) | Sort-Object -Property name -Unique
 $usages = @(Invoke-SampleAzure -Arguments @('cognitiveservices', 'usage', 'list', '--location', $plan.location, '--subscription', $subscription))
 Assert-SampleAccountQuota -Usages $usages -Location $plan.location
-foreach ($model in $modelDeployments) {
+foreach ($model in @($sampleModel)) {
     $quota = @($usages | Where-Object { $_.name.value -eq $model.usageName })
     if ($quota.Count -ne 1 -or ($quota[0].limit - $quota[0].currentValue) -lt $model.capacity) {
         throw "Insufficient or unverifiable quota for '$($model.name)' ($($model.usageName)); no resources were created."
@@ -117,8 +110,6 @@ try {
         SAMPLE_CI_MODEL_VERSION = [string] $sampleModel.version
         SAMPLE_CI_MODEL_SKU = [string] $sampleModel.sku
         SAMPLE_CI_MODEL_CAPACITY = [string] $sampleModel.capacity
-        SAMPLE_CI_VALIDATION_MODEL_VERSION = [string] $validationModel.version
-        SAMPLE_CI_VALIDATION_MODEL_CAPACITY = [string] $validationModel.capacity
         SAMPLE_CI_PROVISION_MCP = ([string] $plan.provisionMcp).ToLowerInvariant()
     }
     $originalEnvironment = @{}
@@ -136,7 +127,7 @@ try {
         }
         # readEnvironmentVariable supplies the secret to @secure() without putting it on a command line or in a file.
         $state['provisioningStep'] = 'SampleResources'
-        Write-Host 'Deploying sample models, runner roles and MCP connection; secret-bearing deployment output is suppressed.'
+        Write-Host 'Deploying the sample model, runner roles and MCP connection; secret-bearing deployment output is suppressed.'
         $sampleResources = Invoke-SampleAzure -Arguments @('deployment', 'group', 'create', '--name', 'sample-resources',
             '--resource-group', $plan.resourceGroup, '--subscription', $subscription,
             '--parameters', (Join-Path $PSScriptRoot 'infra/sample-resources.bicepparam')) -Sensitive

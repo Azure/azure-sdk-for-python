@@ -14,9 +14,9 @@ The first-run default is [../../../samples/agents/tools/sample_agent_mcp_with_pr
    - A uniquely named, run-owned resource group.
    - A Foundry account and project with managed identities.
    - A Storage account, Cosmos DB account, AI Search service, project connections, capability hosts and runtime role assignments: the official **Standard agent setup**.
-   - The selected sample model and **gpt-5.2**, which the existing sample harness uses to validate console output. Model deployments are serialized to avoid concurrent writes to the same Foundry account. If the sample model is also gpt-5.2, only one matching deployment is created.
+   - Only the selected sample model. Output validation reuses the already-deployed **gpt-5.2** model in the existing validation project; no validation model is provisioned.
    - A project-scoped GitHub MCP connection when the selected sample requires `MCP_PROJECT_CONNECTION_ID`.
-6. Wait up to ten minutes for project/RBAC readiness, then run only the selected pytest node IDs with live mode on and recording off. Publish JUnit results to the ADO **Tests** tab.
+6. Use the secret `LLM_VALIDATION_PROJECT_ENDPOINT` for output validation. Wait up to ten minutes for the temporary sample project's readiness, then run only the selected pytest node IDs with live mode on and recording off. Publish JUnit results to the ADO **Tests** tab.
 7. Run cleanup even after failure or cancellation, verifying the resource-group ID and every ownership tag before deleting **only this run's temporary resource group**. Capture non-secret resource inventories before/after deployment.
 
 PowerShell orchestrates Bicep and cleanup; Python collects and invokes the existing tests. Neither provisions Azure resources imperatively. Cleanup is necessarily a resource-group deletion rather than a Bicep deployment.
@@ -29,10 +29,20 @@ PowerShell orchestrates Bicep and cleanup; Python collects and invokes the exist
 - An administrator must make an **Azure Resource Manager service connection** available to this pipeline; **workload identity federation** is recommended. Enter its name in `azureServiceConnection`.
 - Provisioning creates a new resource group, so the connection needs subscription-level resource-group/deployment permissions plus management and role-assignment permissions on the new resources. Use an administrator-approved role configuration, for example **Contributor + Role Based Access Control Administrator**, rather than granting the pipeline unrestricted access to unrelated resources. Merely having Foundry User is insufficient to provision Standard setup.
 - Register `Microsoft.CognitiveServices`, `Microsoft.Storage`, `Microsoft.DocumentDB`, and `Microsoft.Search` in advance. Preflight fails rather than registering providers automatically.
-- Ensure the selected region supports Standard Foundry, Cosmos DB, Search, and both requested model deployments with sufficient quota. Default region: `eastus2`. `auto` model versions resolve from the regional catalog; pin explicit versions when reproducibility requires it.
+- Ensure the selected region supports Standard Foundry, Cosmos DB, Search, and the selected sample model with sufficient quota. The external validation project must already have deployment **gpt-5.2**. Default sample region: `eastus2`. `auto` sample model versions resolve from the regional catalog; pin an explicit version when reproducibility requires it.
 - Authorize the pipeline's use of the Azure SDK package feed and the `azsdk-pool` agent pool. The pipeline reuses the repository's 1ES template and feed-authentication steps. The feed supplies the development-only resource detector dependency.
 
 Current access limitations are independent: permission to **queue** pipeline 8392 does not imply permission to **edit** it, preview modified YAML, save pipeline secrets, create Library groups, or authorize a service connection. Ask a pipeline/Library administrator for the necessary setup; do not change identities or bypass those controls.
+
+### Save the existing validation project endpoint as a secret
+
+An administrator opens **Pipelines → pipeline 8392 → Edit → Variables → New variable**, names it `LLM_VALIDATION_PROJECT_ENDPOINT`, enters the existing project's endpoint, selects **Keep this value secret**, and saves. Alternatively, store it as a locked secret in the authorized group selected by `secretVariableGroup`. Do not commit the value, use a Run pipeline parameter, or pass it on a command line.
+
+The pipeline maps the secret explicitly only to a configuration-preflight step and the live test task. The preflight checks its presence and endpoint shape **before resource provisioning**, without echoing the value or calling Azure. A missing value or unresolved ADO variable fails closed. The runner passes it to pytest through the environment; the test configuration preserves it rather than replacing it with a preparer default.
+
+The service-connection identity used by the test task must already have the access required for output validation on that project and its model (including the existing harness's file upload and Code Interpreter calls). A model being deployed does not by itself grant this identity access. The pipeline does not create or update the validation project/model, assign roles on it, or delete it during cleanup. The preflight is not an access or quota check on that shared project.
+
+The secret endpoint is excluded from deployment plans, Bicep parameters/outputs, deployment state and pytest arguments. Shared sample logging and JUnit failure capture redact it; validation status messages do not print it. Existing test-data and attachment-retention precautions still apply.
 
 ### Save the GitHub PAT as a secret
 
@@ -80,9 +90,9 @@ Attachment capture is enabled only by the on-demand runner's explicit pytest plu
 
    `tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_mcp_with_project_connection]`
 
-5. Once secret/service-connection setup is complete, run again with `runMode=run-and-cleanup`, the same selection, and your authorized `azureServiceConnection`. The pipeline automatically provisions, tests and cleans up after its preview succeeds; no **Review → Resume** action is required by this YAML.
+5. Once both secret variables and service-connection setup are complete, run again with `runMode=run-and-cleanup`, the same selection, and your authorized `azureServiceConnection`. The pipeline automatically provisions, tests and cleans up after its preview succeeds; no **Review → Resume** action is required by this YAML.
 
-Do not enter the PAT into **Run pipeline** parameters. Those parameters are not secret fields.
+Do not enter the PAT or validation endpoint into **Run pipeline** parameters. Those parameters are not secret fields.
 
 ### Approval behavior
 
@@ -125,7 +135,7 @@ Rules:
 | [infra/resource-group.bicep](infra/resource-group.bicep) | New resource group with exact CI ownership/expiry tags. |
 | [infra/standard-setup.lock.json](infra/standard-setup.lock.json) | Official Standard setup commit and SHA-256 pin for all 14 Bicep source files. |
 | [Get-StandardSetupTemplate.ps1](Get-StandardSetupTemplate.ps1) | Download those Bicep sources to agent temporary storage and fail on checksum mismatch. |
-| [infra/sample-resources.bicep](infra/sample-resources.bicep) | Model deployments, runner roles and secure GitHub MCP connection. |
+| [infra/sample-resources.bicep](infra/sample-resources.bicep) | Sample model deployment, runner roles and secure GitHub MCP connection; no validator provisioning. |
 | [infra/sample-resources.bicepparam](infra/sample-resources.bicepparam) | Environment-backed Bicep inputs, including the secret PAT. |
 | [New-SampleDeploymentPlan.ps1](New-SampleDeploymentPlan.ps1) | Offline fresh-plan generation and unsupported-input detection. |
 | [Invoke-SampleProvisioning.ps1](Invoke-SampleProvisioning.ps1) | Read-only preflight, Bicep deployment orchestration, non-secret state and inventory. |
@@ -162,11 +172,13 @@ Use the package's configured virtual environment and repository Black configurat
 
 - Run the unit tests under this directory with `--confcutdir=tests/samples/ci` to avoid parent service fixtures.
 - Run [SampleCiHelpers.Tests.ps1](SampleCiHelpers.Tests.ps1) with Pester for ownership, PAT-shape, model/account preflight, and secret-safe error-diagnostic tests.
-- Fetch pinned Bicep sources to temporary storage and run [Test-BicepTemplates.ps1](Test-BicepTemplates.ps1); it verifies the compiled ARM model dependency, and its parameter compilation uses fictional values and an empty PAT.
+- Fetch pinned Bicep sources to temporary storage and run [Test-BicepTemplates.ps1](Test-BicepTemplates.ps1); it verifies that compiled ARM contains exactly one sample model and no validation deployment or endpoint output. Parameter compilation uses fictional values and an empty PAT.
 - Collect [../test_samples.py](../test_samples.py) and [../test_samples_async.py](../test_samples_async.py) with [select_samples.py](select_samples.py), then generate an offline plan.
 - Request ADO YAML expansion with `previewRun=true` only if authorized. **Modified-YAML previews require pipeline edit permission**; queue permission alone is insufficient. Do not queue a live run as a workaround for a denied preview.
 
 ## Verified live execution
+
+The historical runs below used the earlier configuration that provisioned a local validation model. The external-secret validation-project configuration requires administrator secret setup and a new authorized live run before it is considered live-verified.
 
 [Run 6991675](https://dev.azure.com/azure-sdk/internal/_build/results?buildId=6991675) completed successfully on **2026-10-23 UTC**, using commit `71d7fec682e98a8cd51de91c552c835c061e1b23`, `location=westus3`, and the authorized `azure-sdk-tests-public` service connection.
 

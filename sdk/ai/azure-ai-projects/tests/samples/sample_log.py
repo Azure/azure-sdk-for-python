@@ -4,6 +4,7 @@
 
 import os
 import re
+from urllib.parse import urlsplit
 
 MAX_LOG_CHARACTERS = 8 * 1024 * 1024
 _SECRET_NAMES = (
@@ -20,8 +21,18 @@ def sanitize_log(text: str) -> str:
         for name, value in os.environ.items()
         if len(value) >= 8
         and name != "AZURE_TOKEN_CREDENTIALS"
-        and re.search(r"(?i)secret|password|token|(?:^|_)pat(?:_|$)|(?:^|_)key(?:_|$)|connection_string", name)
+        and (
+            name == "LLM_VALIDATION_PROJECT_ENDPOINT"
+            or re.search(r"(?i)secret|password|token|(?:^|_)pat(?:_|$)|(?:^|_)key(?:_|$)|connection_string", name)
+        )
     }
+    validation_endpoint = os.environ.get("LLM_VALIDATION_PROJECT_ENDPOINT", "")
+    if validation_endpoint:
+        try:
+            parsed = urlsplit(validation_endpoint)
+            secrets.update(value for value in (parsed.hostname, parsed.path.rstrip("/")) if value and len(value) >= 8)
+        except ValueError:
+            pass
     for value in sorted(secrets, key=len, reverse=True):
         text = text.replace(value, "<REDACTED>")
     text = re.sub(r"\b(?:github_pat_[A-Za-z0-9_]+|gh[opusr]_[A-Za-z0-9]+)\b", "<REDACTED>", text)

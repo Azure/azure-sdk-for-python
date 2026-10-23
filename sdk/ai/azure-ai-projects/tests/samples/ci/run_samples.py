@@ -17,11 +17,21 @@ ENVIRONMENT_NAMES = {
     "FOUNDRY_PROJECT_ENDPOINT",
     "FOUNDRY_MODEL_NAME",
     "FOUNDRY_AGENT_NAME",
-    "LLM_VALIDATION_PROJECT_ENDPOINT",
     "MCP_PROJECT_CONNECTION_ID",
     "AZURE_SUBSCRIPTION_ID",
     "AZURE_RESOURCE_GROUP",
 }
+
+
+def require_validation_endpoint() -> str:
+    """Read the existing validation project only from the secret task environment."""
+    endpoint = os.environ.get("LLM_VALIDATION_PROJECT_ENDPOINT", "")
+    if not re.fullmatch(r"https://[A-Za-z0-9-]+\.services\.ai\.azure\.com/api/projects/[A-Za-z0-9._-]+/?", endpoint):
+        raise ValueError(
+            "Set LLM_VALIDATION_PROJECT_ENDPOINT as an ADO secret containing an existing Foundry project endpoint. "
+            "The value was suppressed; no validator will be provisioned."
+        )
+    return endpoint
 
 
 def build_command(state: dict, junit_path: Path) -> list[str]:
@@ -110,10 +120,17 @@ def wait_for_project(endpoint: str, timeout: float = 600) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--state", type=Path, required=True)
-    parser.add_argument("--junit", type=Path, required=True)
+    parser.add_argument("--state", type=Path)
+    parser.add_argument("--junit", type=Path)
+    parser.add_argument("--check-validation-config", action="store_true")
     parser.add_argument("--package-root", type=Path, default=Path(__file__).resolve().parents[3])
     arguments = parser.parse_args()
+    require_validation_endpoint()
+    if arguments.check_validation_config:
+        print("External validation project secret is configured; no Azure resources were queried or changed.")
+        return 0
+    if arguments.state is None or arguments.junit is None:
+        parser.error("--state and --junit are required when running samples")
     state = json.loads(arguments.state.read_text(encoding="utf-8-sig"))
     command = build_command(state, arguments.junit)
     environment = os.environ.copy()

@@ -22,7 +22,6 @@ param runnerPrincipalId string
 @minLength(1)
 param agentName string
 param sampleModel ModelDeployment
-param validationModel ModelDeployment
 param provisionMcp bool = false
 
 @secure()
@@ -50,28 +49,6 @@ resource sampleDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025
       format: 'OpenAI'
       name: sampleModel.name
       version: sampleModel.version
-    }
-    versionUpgradeOption: 'NoAutoUpgrade'
-  }
-}
-
-// Console-output validation in the existing harness uses deployment gpt-5.2.
-resource validationDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-10-01-preview' = if (sampleModel.name != validationModel.name) {
-  parent: account
-  name: validationModel.name
-  // Serialize sibling model writes to avoid account-level RequestConflict responses.
-  dependsOn: [
-    sampleDeployment
-  ]
-  sku: {
-    name: validationModel.sku
-    capacity: validationModel.capacity
-  }
-  properties: {
-    model: {
-      format: 'OpenAI'
-      name: validationModel.name
-      version: validationModel.version
     }
     versionUpgradeOption: 'NoAutoUpgrade'
   }
@@ -130,6 +107,5 @@ output environment object = {
   FOUNDRY_PROJECT_ENDPOINT: 'https://${accountName}.services.ai.azure.com/api/projects/${projectName}'
   FOUNDRY_MODEL_NAME: sampleDeployment.name
   FOUNDRY_AGENT_NAME: agentName
-  LLM_VALIDATION_PROJECT_ENDPOINT: 'https://${accountName}.services.ai.azure.com/api/projects/${projectName}'
   MCP_PROJECT_CONNECTION_ID: provisionMcp ? mcpConnection!.id : ''
 }

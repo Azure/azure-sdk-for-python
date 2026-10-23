@@ -69,7 +69,7 @@ def test_pat_stays_scoped_to_provisioning_task(pipeline):
 def test_failed_runner_captures_safe_diagnostics_before_cleanup(pipeline):
     run_stage = next(stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples")
     steps = run_stage["jobs"][0]["steps"]
-    runner = next(step for step in steps if "run_samples.py" in str(step))
+    runner = next(step for step in steps if step.get("task") == "AzureCLI@2" and "run_samples.py" in str(step))
     script = runner["inputs"]["inlineScript"]
     assert "$sampleExitCode = $LASTEXITCODE" in script
     assert "if ($sampleExitCode -ne 0)" in script
@@ -77,3 +77,32 @@ def test_failed_runner_captures_safe_diagnostics_before_cleanup(pipeline):
     assert "readiness-diagnostics.json" in script
     assert "throw 'Selected sample runner failed" in script
     assert steps.index(runner) < next(i for i, step in enumerate(steps) if "Remove-SampleResources.ps1" in str(step))
+
+
+def test_external_validator_is_secret_env_only_and_checked_before_provisioning(pipeline):
+    parameters = {parameter["name"] for parameter in pipeline["parameters"]}
+    assert {"LLM_VALIDATION_PROJECT_ENDPOINT", "validationModelVersion", "validationModelCapacity"}.isdisjoint(
+        parameters
+    )
+    steps = live_stages(pipeline)[0]["jobs"][0]["steps"]
+    validation_steps = [step for step in steps if "LLM_VALIDATION_PROJECT_ENDPOINT" in step.get("env", {})]
+    assert len(validation_steps) == 2
+    preflight = next(step for step in validation_steps if "--check-validation-config" in str(step))
+    runner = next(step for step in validation_steps if "--junit" in str(step))
+    provisioning = next(step for step in steps if "Invoke-SampleProvisioning.ps1" in str(step))
+    for step in validation_steps:
+        assert step["env"]["LLM_VALIDATION_PROJECT_ENDPOINT"] == "$(LLM_VALIDATION_PROJECT_ENDPOINT)"
+    assert "LLM_VALIDATION_PROJECT_ENDPOINT" not in provisioning.get("env", {})
+    assert steps.index(preflight) < steps.index(provisioning) < steps.index(runner)
+
+
+def test_validator_model_is_absent_from_plan_and_provisioning_sources():
+    directory = Path(__file__).resolve().parent
+    for name in ("New-SampleDeploymentPlan.ps1", "Invoke-SampleProvisioning.ps1", "infra/sample-resources.bicepparam"):
+        source = (directory / name).read_text(encoding="utf-8").lower()
+        assert "validationmodel" not in source
+        assert "validation_model" not in source
+    template = (directory / "infra/sample-resources.bicep").read_text(encoding="utf-8")
+    assert "validationDeployment" not in template
+    assert "validationModel" not in template
+    assert "LLM_VALIDATION_PROJECT_ENDPOINT" not in template

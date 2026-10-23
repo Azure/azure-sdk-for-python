@@ -28,7 +28,6 @@ def ready_state():
             "FOUNDRY_PROJECT_ENDPOINT": "https://example.services.ai.azure.com/api/projects/test",
             "FOUNDRY_MODEL_NAME": "gpt-4.1",
             "FOUNDRY_AGENT_NAME": "sample-test",
-            "LLM_VALIDATION_PROJECT_ENDPOINT": "https://example.services.ai.azure.com/api/projects/test",
             "MCP_PROJECT_CONNECTION_ID": "/subscriptions/example/connections/mcp",
             "AZURE_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000000",
             "AZURE_RESOURCE_GROUP": "example-ci-group",
@@ -49,7 +48,7 @@ def test_command_executes_pytest_live_without_recording():
     assert "junit_log_passing_tests=true" in command
     assert f"--sample-attachments-dir={Path('results.xml').resolve().parent / 'attachments'}" in command
     assert "--foundry-model-name=gpt-4.1" in command
-    assert "--llm-validation-project-endpoint=" + state["environment"]["LLM_VALIDATION_PROJECT_ENDPOINT"] in command
+    assert not any("llm-validation-project-endpoint" in argument for argument in command)
     assert "--mcp-project-connection-id=/subscriptions/example/connections/mcp" in command
     assert state == original
 
@@ -84,7 +83,9 @@ def test_async_sample_node_is_preserved():
     assert node in build_command(state, Path("results.xml"))
 
 
-@pytest.mark.parametrize("key", ["MCP_GITHUB_PAT", "PROJ_CONN_MCP_KEY", "UNKNOWN_SETTING"])
+@pytest.mark.parametrize(
+    "key", ["MCP_GITHUB_PAT", "LLM_VALIDATION_PROJECT_ENDPOINT", "PROJ_CONN_MCP_KEY", "UNKNOWN_SETTING"]
+)
 def test_unexpected_or_secret_bindings_cannot_become_cli_options(key):
     state = ready_state()
     state["environment"][key] = "do-not-log-this"
@@ -188,3 +189,58 @@ def test_readiness_probe_limits_the_read_request(readiness_probe):
     client, _ = readiness_probe
     wait_for_project("https://example.services.ai.azure.com/api/projects/test")
     client.agents.list.assert_called_once_with(limit=1, connection_timeout=10, read_timeout=30, retry_total=0)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "",
+        "$(LLM_VALIDATION_PROJECT_ENDPOINT)",
+        "https://example.services.ai.azure.com",
+        "http://example.services.ai.azure.com/api/projects/validator",
+        "https://example.services.ai.azure.com/api/projects/validator?token=do-not-log",
+        " https://example.services.ai.azure.com/api/projects/validator",
+    ],
+)
+def test_external_validation_secret_is_required_without_echoing_invalid_values(monkeypatch, value):
+    monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", value)
+    with pytest.raises(ValueError, match="ADO secret") as failure:
+        run_samples.require_validation_endpoint()
+    assert "do-not-log" not in str(failure.value)
+    assert "example.services" not in str(failure.value)
+
+
+def test_secret_preflight_never_calls_azure_or_starts_samples(monkeypatch, capsys):
+    endpoint = "https://external-validator.services.ai.azure.com/api/projects/validator"
+    monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", endpoint)
+    monkeypatch.setattr(run_samples.sys, "argv", ["run_samples.py", "--check-validation-config"])
+    readiness = Mock(side_effect=AssertionError("Configuration preflight must not call Azure."))
+    sample_process = Mock(side_effect=AssertionError("Configuration preflight must not start pytest."))
+    monkeypatch.setattr(run_samples, "wait_for_project", readiness)
+    monkeypatch.setattr(run_samples.subprocess, "run", sample_process)
+    assert run_samples.main() == 0
+    assert endpoint not in capsys.readouterr().out
+    readiness.assert_not_called()
+    sample_process.assert_not_called()
+
+
+def test_external_validation_secret_is_env_only_in_real_runner_invocation(tmp_path, monkeypatch):
+    endpoint = "https://external-validator.services.ai.azure.com/api/projects/validator"
+    state = ready_state()
+    state_path = tmp_path / "state.json"
+    state_path.write_text(json.dumps(state), encoding="utf-8")
+    junit = tmp_path / "results.xml"
+    monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", endpoint)
+    monkeypatch.setenv("MCP_GITHUB_PAT", "github_pat_unit_test_placeholder")
+    monkeypatch.setattr(run_samples.sys, "argv", ["run_samples.py", "--state", str(state_path), "--junit", str(junit)])
+    monkeypatch.setattr(run_samples, "wait_for_project", Mock())
+    process = Mock(return_value=SimpleNamespace(returncode=0))
+    monkeypatch.setattr(run_samples.subprocess, "run", process)
+    assert run_samples.main() == 0
+    command = process.call_args.args[0]
+    environment = process.call_args.kwargs["env"]
+    assert environment["LLM_VALIDATION_PROJECT_ENDPOINT"] == endpoint
+    assert "MCP_GITHUB_PAT" not in environment
+    assert all(endpoint not in argument and "llm-validation-project-endpoint" not in argument for argument in command)
+    assert endpoint not in state_path.read_text(encoding="utf-8")
+    assert state["environment"] == ready_state()["environment"]
