@@ -36,20 +36,33 @@ def main():
         solution_template_name="testname",
         solution_template_version_name="1.0.0",
         body={
+            "solutionConfiguration": "tkkfcy",
             "solutionDependencies": [
                 {
                     "dependencies": [],
-                    "solutionInstanceName": "test-instance",
+                    "solutionInstanceName": "testname",
                     "solutionTemplateId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Edge/SolutionTemplates/st",
-                    "solutionTemplateVersion": "1.0.0",
+                    "solutionTemplateVersion": "bwji",
                     "solutionVersionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Edge/Targets/target/Solutions/solution/Versions/solution-1.0.0.1",
                     "targetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Edge/Targets/target",
                 }
             ],
-            "solutionInstanceName": "test-instance",
+            "solutionInstanceName": "testname",
             "targets": [
                 {
-                    "solutionInstanceName": "test-instance",
+                    "solutionConfiguration": "mxnhusmdpoxqmbujrudeildj",
+                    "solutionDependencies": [
+                        {
+                            "dependencies": [],
+                            "solutionInstanceName": "testname",
+                            "solutionTemplateId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Edge/SolutionTemplates/st",
+                            "solutionTemplateVersion": "bwji",
+                            "solutionVersionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Edge/Targets/target/Solutions/solution/Versions/solution-1.0.0.1",
+                            "targetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Edge/Targets/target",
+                        }
+                    ],
+                    "solutionInstanceName": "testname",
+                    "solutionVersionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Edge/Targets/target/Solutions/solution/Versions/solution-1.0.0.1",
                     "targetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Edge/Targets/target",
                 }
             ],
@@ -57,6 +70,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-06-01/SolutionTemplateVersions_BulkPublishSolution_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/SolutionTemplateVersions_BulkPublishSolution_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

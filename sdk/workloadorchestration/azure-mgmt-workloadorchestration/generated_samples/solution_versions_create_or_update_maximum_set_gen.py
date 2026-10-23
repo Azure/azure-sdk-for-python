@@ -36,13 +36,19 @@ def main():
         solution_name="testname",
         solution_version_name="testname",
         resource={
-            "extendedLocation": {"name": "szjrwimeqyiue", "type": "EdgeZone"},
-            "properties": {"errorDetails": {}, "specification": {}, "state": "InReview"},
+            "extendedLocation": {"name": "ggfwkwklvvkrmlysvvhcj", "type": "EdgeZone"},
+            "properties": {
+                "actionType": "deploy",
+                "currentStage": {"stage": "Configuration", "status": "Pending"},
+                "errorDetails": {},
+                "specification": {},
+                "state": "InReview",
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/SolutionVersions_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/SolutionVersions_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,12 +32,12 @@ def main():
     )
 
     response = client.schema_references.list_by_resource_group(
-        resource_uri="jdvtghygpz",
+        resource_uri="subscriptions/612CB927-8AC8-42DD-B74E-C676C3960BA5/resourceGroups/rgconfigurationmanager/providers/Microsoft.Edge/targets/testTarget",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-06-01/SchemaReferences_ListByResourceGroup_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/SchemaReferences_ListByResourceGroup_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

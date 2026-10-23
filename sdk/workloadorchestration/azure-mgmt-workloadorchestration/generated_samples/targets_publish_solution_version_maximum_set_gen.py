@@ -35,12 +35,12 @@ def main():
         resource_group_name="rgconfigurationmanager",
         target_name="testname",
         body={
-            "solutionVersionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}"
+            "solutionVersionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Edge/Targets/target/Solutions/solution/Versions/solution-1.0.0.1"
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Targets_PublishSolutionVersion_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Targets_PublishSolutionVersion_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
