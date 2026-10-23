@@ -28,9 +28,9 @@
   - Added model `ResourceTypeLifecycleInfo`
   - Added model `RolloutOrchestrationMetadata`
   - Added model `SwaggerSpecificationLifecycleInfo`
-  - Model `ResourceTypeRegistrationsOperations` added method `begin_create_or_update_nested_resource_type_first`
-  - Model `ResourceTypeRegistrationsOperations` added method `begin_delete_nested_resource_type_first`
-  - Model `ResourceTypeRegistrationsOperations` added method `get_nested_resource_type_first`
+  - Operation group `ResourceTypeRegistrationsOperations` added method `begin_create_or_update_nested_resource_type_first`
+  - Operation group `ResourceTypeRegistrationsOperations` added method `begin_delete_nested_resource_type_first`
+  - Operation group `ResourceTypeRegistrationsOperations` added method `get_nested_resource_type_first`
   - Added operation group `EndpointRegistrationsOperations`
 
 ### Breaking Changes
