@@ -2,7 +2,10 @@
 
 ## 4.12.0 (2026-10-23)
 
-skip changelog generation for data-plane package and please add changelog manually.
+### Other Changes
+
+- Regenerated the package with stable Key Vault API version `2026-04-01`.
+- The default service version is now `2026-04-01`.
 
 ## 4.12.0b3 (Unreleased)
 
