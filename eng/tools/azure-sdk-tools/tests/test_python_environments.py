@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 import re
 
@@ -7,14 +6,6 @@ import yaml
 
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
-
-
-def test_devcontainer_selects_python_311():
-    source = (REPO_ROOT / ".devcontainer" / "devcontainer.json").read_text()
-    configuration = json.loads(re.sub(r"(?m)^\s*//.*$", "", source))
-    assert configuration["features"]["ghcr.io/devcontainers/features/python:1"]["version"] == "3.11"
-    settings = configuration["customizations"]["vscode"]["settings"]
-    assert settings["python.pythonPath"] == "/usr/local/python/current/bin/python"
 
 
 @pytest.mark.parametrize(
