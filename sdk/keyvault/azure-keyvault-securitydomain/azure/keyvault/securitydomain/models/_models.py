@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CertificateInfo(_Model):
+class CertificateInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Security Domain download operation requires customer to provide N certificates (minimum 3
     and maximum 10) containing a public key in JWK format.
 
@@ -83,7 +83,7 @@ class KeyVaultErrorError(_Model):
     """The key vault server error."""
 
 
-class SecurityDomain(_Model):
+class SecurityDomain(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Security Domain.
 
     :ivar value: The Security Domain. Required.
@@ -111,7 +111,7 @@ class SecurityDomain(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityDomainJsonWebKey(_Model):
+class SecurityDomainJsonWebKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A JSON Web Key (JWK) for use in a security domain operation.
 
     :ivar kid: Key identifier. Required.
@@ -190,7 +190,7 @@ class SecurityDomainJsonWebKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityDomainOperationStatus(_Model):
+class SecurityDomainOperationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Security Domain operation status.
 
     :ivar status: Operation status. Known values are: "Success", "InProgress", and "Failed".
@@ -225,7 +225,7 @@ class SecurityDomainOperationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TransferKey(_Model):
+class TransferKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security Domain transfer key.
 
     :ivar key_format: Specifies the format of the transfer key.
