@@ -26,6 +26,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 from ..._http_utils import get_async_http_client
+from . import _openai_decisions
 
 if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
     from promptflow.core._flow import AsyncPrompty
@@ -55,6 +56,7 @@ _DECISION_CONFIG_KEYS = {
     "api_key",
     "credential",
     "probability_threshold",
+    "decision_protocol",
 }
 _DEFAULT_PROBABILITY_THRESHOLD = 0.75
 # The service adds api_version to every resolved model configuration; the decision endpoint does not use it.
@@ -390,7 +392,7 @@ def validate_score_answer(answer: Dict[str, Any], levels: int) -> List[float]:
 
 
 class DecisionModelRunner:
-    """Sends prepared evidence and typed questions to a Microsoft-Decision-1 deployment in Foundry.
+    """Sends prepared evidence and typed questions to a Decision deployment in Foundry.
 
     The model configuration must be tagged ``type="decision"`` and contain the Foundry resource endpoint
     (``azure_endpoint``) and the deployment name (``azure_deployment``). Authentication uses ``api_key`` when
@@ -403,9 +405,16 @@ class DecisionModelRunner:
     only be reused on that loop; cross-loop reuse is not supported.
     ``probability_threshold`` (default 0.75) is only accepted when ``binary=True``.
 
-    ``azure_endpoint`` must be the account resource root, not a project or OpenAI API endpoint.
+    ``decision_protocol="openai"`` explicitly selects Azure OpenAI's ``/openai/v1/decisions`` operation.
+    The default, ``"microsoft"``, retains the Microsoft/PiLabs provider operation. Model names never select
+    a protocol implicitly. OpenAI requires a deployment with the Decision capability in an enabled region.
+    Its text/structured evidence and Boolean/ordinal questions use the existing evaluator scoring policies.
+    Any refused question fails the request with known usage retained; a refusal is not a zero score or skip.
+
+    ``azure_endpoint`` must be the account resource root, not a project endpoint.
     For example, use ``https://account.services.ai.azure.com`` rather than a URL ending in
-    ``/api/projects/project`` or ``/openai``. Any path supplied is retained when appending the provider operation.
+    ``/api/projects/project``. OpenAI additionally accepts the account's ``/openai`` or ``/openai/v1`` base;
+    the default Microsoft protocol retains a supplied path when appending the provider operation.
 
     Execution controls are keyword-only and separate from model configuration. ``timeout_seconds`` bounds
     each connect/read; the call's ``timeout`` limits authentication, retries and response body reading.
@@ -416,6 +425,8 @@ class DecisionModelRunner:
     compact unescaped UTF-8 JSON, with ``max_state_question_bytes`` applying to the largest individual pair.
     ``max_response_bytes`` limits acceptance before parsing, not transport allocation.
     """
+
+    SUPPORTED_PROTOCOLS = frozenset({"microsoft", "openai"})
 
     def __init__(
         self,
@@ -516,7 +527,16 @@ class DecisionModelRunner:
         except ValueError:
             raise _invalid_config("'probability_threshold' must be a number in [0, 1].") from None
 
-        self._url = f"{endpoint.rstrip('/')}{_DECISION_PATH}"
+        protocol = model_config.get("decision_protocol", "microsoft")
+        if not isinstance(protocol, str) or protocol not in self.SUPPORTED_PROTOCOLS:
+            raise _invalid_config("'decision_protocol' must be 'microsoft' or 'openai'.")
+        self.decision_protocol = protocol
+        if protocol == "openai":
+            if parsed.path.rstrip("/") not in ("", "/openai", "/openai/v1"):
+                raise _invalid_config("OpenAI Decisions requires an account endpoint or its /openai/v1 base URL.")
+            self._url = f"{parsed.scheme}://{parsed.netloc}/openai/v1/decisions"
+        else:
+            self._url = f"{endpoint.rstrip('/')}{_DECISION_PATH}"
         self._deployment = deployment
         self._api_key = api_key
         self._user_agent = f"{UserAgentSingleton().value} (type=evaluator subtype={evaluator_name})"
@@ -558,6 +578,11 @@ class DecisionModelRunner:
                 if question.get("type") not in ("noul", "score"):
                     raise _invalid_config(f"Decision question type '{question.get('type')}' is not supported.")
             body = {"model": self._deployment, "state": state, "questions": questions}
+            if self.decision_protocol == "openai":
+                try:
+                    body = _openai_decisions.encode_request(state, questions, self._deployment)
+                except (ValueError, TypeError, OverflowError, UnicodeError) as exc:
+                    raise _invalid_config(f"Invalid OpenAI Decisions request: {exc}") from None
             try:
                 content = json.dumps(body, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
                 state_question_bytes = 0
@@ -566,13 +591,19 @@ class DecisionModelRunner:
                         (
                             len(
                                 json.dumps(
-                                    {"state": state, "question": question},
+                                    (
+                                        {"input": body["input"], "question": question}
+                                        if self.decision_protocol == "openai"
+                                        else {"state": state, "question": question}
+                                    ),
                                     ensure_ascii=False,
                                     separators=(",", ":"),
                                     allow_nan=False,
                                 ).encode("utf-8")
                             )
-                            for question in questions.values()
+                            for question in (
+                                body["questions"] if self.decision_protocol == "openai" else questions.values()
+                            )
                         ),
                         default=0,
                     )
@@ -593,7 +624,11 @@ class DecisionModelRunner:
                 raise _failed("The decision model request timed out.") from None
             properties = self._response_properties(payload)
             try:
+                if self.decision_protocol == "openai":
+                    payload = _openai_decisions.decode_response(payload, questions)
                 result = self._validate_response(payload, questions)
+                if self.decision_protocol == "openai":
+                    result["usage"].update(_openai_decisions.usage_details(payload.get("usage")))
             except ValueError as exc:
                 raise _failed(f"The decision model returned an invalid response: {exc}") from None
             outcome = "completed"
@@ -734,8 +769,14 @@ class DecisionModelRunner:
     def _response_properties(self, payload: Any) -> Dict[str, Any]:
         """Retain only independently known final-response usage, never raw answers or retry totals."""
         properties: Dict[str, Any] = {"decision_model": {"deployment": self._deployment}}
+        if self.decision_protocol == "openai":
+            properties["decision_model"]["protocol"] = "openai"
         usage = payload.get("usage") if isinstance(payload, dict) else None
         usage = usage if isinstance(usage, dict) else {}
+        if self.decision_protocol == "openai":
+            details = _openai_decisions.usage_details(usage)
+            if details:
+                properties["decision_model"]["usage_details"] = details
         for native_key, key in (("input_tokens", "prompt_tokens"), ("output_tokens", "completion_tokens")):
             value = usage.get(native_key)
             if isinstance(value, int) and not isinstance(value, bool) and value >= 0:

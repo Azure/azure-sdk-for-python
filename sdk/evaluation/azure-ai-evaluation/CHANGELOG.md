@@ -1,5 +1,13 @@
 # Release History
 
+## 1.18.11 (Unreleased)
+
+### Features Added
+
+- Added explicit `decision_protocol="openai"` selection for Decision evaluators using Azure OpenAI's `/openai/v1/decisions` operation. The existing Microsoft/PiLabs Decision route remains the default.
+- Translated existing Boolean and ordinal rubrics centrally, retaining argmax ordinal scoring, applicability and probability cutoffs. OpenAI refusals produce evaluation errors with known usage; original answers, protocol identity, and cache/reasoning counters are retained in provenance.
+- Reused the shared asynchronous HTTP transport, authentication, retries, deadlines and cancellation; no OpenAI client dependency upgrade is required.
+
 ## 1.18.10 (2026-10-22)
 
 ### Features Added
