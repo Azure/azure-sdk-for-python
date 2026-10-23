@@ -45,6 +45,13 @@ def build_command(state: dict, junit_path: Path) -> list[str]:
         "-m",
         "pytest",
         *nodes,
+        "-p",
+        "sample_ci_attachments",
+        f"--sample-attachments-dir={junit_path.resolve().parent / 'attachments'}",
+        "-o",
+        "junit_logging=system-out",
+        "-o",
+        "junit_log_passing_tests=true",
         "-v",
         "-s",
         "--tb=short",
@@ -118,9 +125,12 @@ def main() -> int:
         AZURE_TEST_USE_CLI_AUTH="true",
         AZURE_TOKEN_CREDENTIALS="AzureCliCredential",
         PYTEST_ADDOPTS="",
+        PYTHONIOENCODING="utf-8",
     )
     environment.pop("MCP_GITHUB_PAT", None)
-    environment["PYTHONPATH"] = str(arguments.package_root) + os.pathsep + environment.get("PYTHONPATH", "")
+    environment["PYTHONPATH"] = os.pathsep.join(
+        (str(arguments.package_root), str(Path(__file__).resolve().parent), environment.get("PYTHONPATH", ""))
+    )
     # Readiness is read-only; retry propagation errors, never retry a partially executed sample.
     os.environ["PYTHON_DOTENV_DISABLED"] = "true"
     wait_for_project(state["environment"]["FOUNDRY_PROJECT_ENDPOINT"])

@@ -50,6 +50,8 @@ def test_cleanup_and_result_publication_still_run_on_failure(pipeline):
     assert "-ConfirmCleanup" in cleanup["inputs"]["inlineScript"]
     results = next(step for step in job["steps"] if step.get("task") == "PublishTestResults@2")
     assert results["condition"] == "always()"
+    assert results["inputs"]["publishRunAttachments"] is True
+    assert results["inputs"]["failTaskOnFailureToPublishResults"] is True
 
 
 def test_pat_stays_scoped_to_provisioning_task(pipeline):

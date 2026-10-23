@@ -55,6 +55,19 @@ On provisioning failure, the state records `provisioningStep` and the pipeline a
 
 Readiness retries are read-only and bounded. In addition to propagation/service status codes, only the specific `invalid_configuration` response that reports an agent-index listing timeout is retried; other configuration errors fail immediately. This does not prove a timeout is transient: persistent failures stop before pytest starts. The pipeline then attempts to capture run-owned Cosmos DB network settings, container names, data-role scopes and capability-host state before cleanup. No keys, connection credentials or document contents are queried. A sample that has already started is never retried automatically.
 
+## API logs and print-output attachments
+
+Each executed sample result includes two UTF-8 attachments in **Tests → select the test result → Attachments** (also available from its **Test Plans** result page):
+
+- **api-and-print.log**: the existing harness's numbered HTTP API logs, including request/response details and captured sample prints.
+- **print-output.log**: only the sample's captured `print()` calls, without the API log entries.
+
+[sample_ci_attachments.py](sample_ci_attachments.py) reuses the shared synchronous/asynchronous executor capture. It writes sanitized copies into a separate node-ID-hashed directory per test under the run's **sample-results** artifact and adds native JUnit `[[ATTACHMENT|path]]` markers to that result's `system-out`. **PublishTestResults** uploads the files for passing and failing tests; no additional ADO access token is passed to the test process. Attachment-publication errors fail the publication task.
+
+Credential-shaped fields (authorization headers, tokens, API keys, cookies, signed URL parameters and known secret environment values) are redacted before the attachment files are written. The provisioning GitHub PAT remains absent from the test process. Logs larger than the safe size limit are replaced by an omission notice, not truncated across a possible credential. API bodies and print output can still contain sample data: use test data and the appropriate ADO access/retention settings; this is not a general-purpose personal-data filter.
+
+Attachment capture is enabled only by the on-demand runner's explicit pytest plugin/option. Ordinary playback/local test behavior is unchanged. If provisioning or readiness fails before the sample starts, there are no sample API/print attachments; the deployment/readiness diagnostics remain in **sample-results** instead. Historical test results are not modified; attachments appear on newly executed results.
+
 ## ADO Run pipeline: first sample
 
 1. Open [pipeline 8392](https://dev.azure.com/azure-sdk/internal/_build?definitionId=8392) and select **Run pipeline**.
@@ -119,6 +132,7 @@ Rules:
 | [Remove-SampleResources.ps1](Remove-SampleResources.ps1) | Preview and apply cleanup only after exact resource-group ownership checks. |
 | [select_samples.py](select_samples.py) | Wildcard selection against the real pytest collection. |
 | [run_samples.py](run_samples.py) | Existing harness invocation, live/no-recording flags, non-secret environment mapping. |
+| [sample_ci_attachments.py](sample_ci_attachments.py) | Per-test sanitized API/print files and native JUnit attachment markers. |
 
 Standard setup is sourced from [the official Bicep template](https://github.com/microsoft-foundry/foundry-samples/tree/fbbe89b701c758e871922adaceea0ac0e4dae40f/infrastructure/infrastructure-setup-bicep/43-standard-agent-setup-with-customization). No precompiled upstream ARM JSON is used for provisioning. Update the commit and **every source checksum together** when adopting upstream changes. Do not edit downloaded files on an agent to work around a checksum or compilation error.
 

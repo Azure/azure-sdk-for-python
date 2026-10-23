@@ -44,6 +44,10 @@ def test_command_executes_pytest_live_without_recording():
     assert state["plan"]["selectedTests"][0]["node_id"] in command
     assert "--azure-test-run-live=true" in command
     assert "--azure-skip-live-recording=true" in command
+    assert command[command.index("-p") + 1] == "sample_ci_attachments"
+    assert "junit_logging=system-out" in command
+    assert "junit_log_passing_tests=true" in command
+    assert f"--sample-attachments-dir={Path('results.xml').resolve().parent / 'attachments'}" in command
     assert "--foundry-model-name=gpt-4.1" in command
     assert "--llm-validation-project-endpoint=" + state["environment"]["LLM_VALIDATION_PROJECT_ENDPOINT"] in command
     assert "--mcp-project-connection-id=/subscriptions/example/connections/mcp" in command

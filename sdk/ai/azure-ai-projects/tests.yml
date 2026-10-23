@@ -229,4 +229,6 @@ extends:
                     testRunTitle: 'Foundry sample tests - $(Build.BuildNumber)'
                     failTaskOnFailedTests: true
                     failTaskOnMissingResultsFile: false
+                    failTaskOnFailureToPublishResults: true
+                    publishRunAttachments: true
 
