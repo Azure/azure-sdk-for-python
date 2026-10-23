@@ -43,7 +43,18 @@ steps:
     - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
       parameters:
         Paths:
-          - '**'
+          # Daily-dev versioning resolves Azure dependency versions from other service directories.
+          - ${{ if or(in(parameters.ServiceDirectory, '', 'auto'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'], 'internal'))) }}:
+            - '**'
+          - ${{ else }}:
+            - sdk/${{ parameters.ServiceDirectory }}
+
+    # Queue-time SetDevVersion overrides are only available at runtime.
+    - pwsh: |
+        git sparse-checkout disable
+        exit $LASTEXITCODE
+      displayName: Expand checkout for dev versioning
+      condition: and(succeeded(), eq(variables['SetDevVersion'], 'true'))
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
