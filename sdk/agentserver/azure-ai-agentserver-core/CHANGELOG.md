@@ -9,10 +9,24 @@
   `model_attribution_headers()` helper for the proposed `x-ms-original-subject`
   dictionary contract. The assertions do not establish identity proof or change
   model authentication; model integration remains an explicit per-call opt-in.
+- Added protocol-scoped task-runtime startup requests so protocol hosts can
+  obtain scoped `TaskManager` access without mutating the process-wide
+  resilient-task switch. This prevents one protocol's enablement from
+  activating another protocol in a mixed host.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Preserve host-owned recovery callbacks and task options when loading
+  process-wide task descriptors at startup.
+- Exclude protocol-disabled task functions before startup, periodic or inline
+  recovery can reclaim their leases or dispatch their handlers.
+- Require explicit owning-host registration for protocol-internal recovery
+  callbacks instead of importing them into unrelated managers.
+- Treat a persisted task function identity as authoritative before recovery
+  cleanup or reclaim. Legacy callback fallback applies only when that
+  identity is absent.
 
 ### Other Changes
 
