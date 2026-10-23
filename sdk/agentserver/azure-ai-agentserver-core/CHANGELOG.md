@@ -13,6 +13,9 @@
 
 ### Bugs Fixed
 
+- Recover queued steering inputs when a multi-turn handler succeeds but its
+  next-turn handoff is interrupted. Startup and periodic recovery claim the
+  queued input without replaying the completed turn.
 - Preserve host-owned recovery callbacks and task options when loading
   process-wide task descriptors at startup.
 - Exclude protocol-disabled task functions before startup, periodic or inline
