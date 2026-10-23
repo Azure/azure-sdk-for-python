@@ -141,6 +141,8 @@
         "azure.ai.projects.models.ChatCompletionTool": "OpenAI.ChatCompletionTool",
         "azure.ai.projects.models.MemoryItem": "Azure.AI.Projects.MemoryItem",
         "azure.ai.projects.models.ChatSummaryMemoryItem": "Azure.AI.Projects.ChatSummaryMemoryItem",
+        "azure.ai.projects.models.CloudComputerUsePreviewTool": "Azure.AI.Projects.CloudComputerUsePreviewTool",
+        "azure.ai.projects.models.CloudComputerUsePreviewToolboxTool": "Azure.AI.Projects.CloudComputerUsePreviewToolboxTool",
         "azure.ai.projects.models.ClusterInsightResult": "Azure.AI.Projects.ClusterInsightResult",
         "azure.ai.projects.models.ClusterTokenUsage": "Azure.AI.Projects.ClusterTokenUsage",
         "azure.ai.projects.models.EvaluatorDefinition": "Azure.AI.Projects.EvaluatorDefinition",
