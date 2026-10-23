@@ -1,8 +1,9 @@
 # Python management SDK release rotation runbook
 
-This runbook is for Go/JavaScript/Python rotation reviewers who are unfamiliar
-with Python SDK releases. It explains how to find a release PR, use the bot's
-review, decide the next action, and follow the release. You do not need a local
+This runbook is for SDK maintainers covering the Go/JavaScript/Python release
+rotation who are unfamiliar with Python SDK releases. It explains how to find a
+release PR, use the bot's review, decide the next action, and follow the release.
+You do not need a local
 Python environment or detailed knowledge of generated Python code for routine cases.
 The reviewer on duty is the directly responsible individual (**DRI**). Ask the
 Python owner to review handwritten SDK or code-generation tool changes.
@@ -16,7 +17,8 @@ to the Python Package Index (**PyPI**).
 **Contacts:** the **service team** is the submitter/contact in the PR or linked
 release plan. The **Python owner** is a management SDK maintainer listed under
 `/**/*mgmt*/` in [CODEOWNERS](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/CODEOWNERS).
-Ask the Python owner to coordinate code-generation, pipeline, or vendor support.
+Ask the Python owner to coordinate code-generation or vendor support. For release
+pipeline failures, seek engineering team support using section 4.
 Rotation assignment does not grant repository, CODEOWNER, or release permissions.
 
 ## 1. Find PRs needing attention
@@ -47,7 +49,7 @@ package, SDK version, and API version. The service team owns the
 For routine review, focus on the bot comment and current CI:
 
 1. Read the latest **Management SDK PR review** bot comment. If it is missing or
-   outdated, ask an SDK maintainer to add `mgmt-review-needed`. This label triggers
+   outdated, add `mgmt-review-needed`. This label triggers
    the [review workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/workflows/mgmt-sdk-pr-review.md).
    If the label is already present, remove and reapply it only when no review is
    active. Wait for the updated comment; ask the Python owner if none appears.
@@ -103,8 +105,11 @@ package's `Release: <artifact>` stage. Confirm the exact version is available on
 Release-plan completion can fail separately from publication; do not republish
 an existing version to repair tracking.
 
-If publishing is absent, skipped, failed, or unclear, send the PR, package/version,
-merged commit, pipeline link, and failed/skipped stage to the Python owner.
+If publishing is absent, skipped, failed, or unclear, investigate the release run.
+For release pipeline failures, seek engineering team support in the
+[Engineering System Teams channel](https://teams.microsoft.com/l/channel/19%3A59dbfadafb5e41c4890e2cd3d74cc7ba%40thread.skype/Engineering%20System%20%F0%9F%9B%A0%EF%B8%8F?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
+Include the PR, package/version, merged commit, pipeline link, failed/skipped stage,
+and relevant error details. Ask the Python owner about Python-specific issues.
 A missing `auto-release` label or artifact mapping can leave no automatic release.
 Adding the label after the run is not a reliable recovery. Check for an active run
 or an already published version before any retry.
@@ -133,21 +138,3 @@ Historical examples inspected on 2026-10-23 illustrate these distinctions:
 [a corrected first-release naming blocker](https://github.com/Azure/azure-sdk-for-python/pull/49457),
 and [approval followed by a service-team merge/release handoff](https://github.com/Azure/azure-sdk-for-python/pull/48686).
 These examples are not the live queue.
-
-## 6. US-based coverage and rotation handoff
-
-US-based colleagues can triage the queue, relay existing findings, request
-service-team confirmation, and identify the next owner while Python maintainers
-are offline. Authorized rotation reviewers can approve ordinary cases after the
-checks above. Geography does not grant or restrict approval authority.
-
-Do not give courtesy approvals, grant breaking-change exceptions, clear holds,
-or merge early to bridge a time-zone gap. Do not regenerate packages, patch
-generated output, rerun every check, or repeat completed automated analysis merely
-to show progress. Use the Python owner for unresolved Python-specific decisions;
-keep the blocker visible rather than substituting an uninformed approval.
-
-Leave one clear next action in the existing PR thread. At handoff, give the next
-DRI the PR link, package/version, current blocker, responsible owner, required
-action, and release deadline or planned window. Include the release run if merged.
-Never hand off "approved" as a substitute for verified release completion.
