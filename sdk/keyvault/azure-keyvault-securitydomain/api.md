@@ -1,81 +1,16 @@
 ```py
 namespace azure.keyvault.securitydomain
 
-    class azure.keyvault.securitydomain.SecurityDomainClient(KeyVaultClient): implements ContextManager 
-        property vault_url: str    # Read-only
+    class azure.keyvault.securitydomain.SecurityDomainClient(_SecurityDomainClientOperationsMixin): implements ContextManager 
 
         def __init__(
                 self, 
-                vault_url: str, 
+                vault_base_url: str, 
                 credential: TokenCredential, 
                 *, 
-                api_version: Optional[str] = ..., 
-                verify_challenge_resource: Optional[bool] = ..., 
+                api_version: str = ..., 
                 **kwargs: Any
             ) -> None: ...
-
-        @overload
-        def begin_download(
-                self, 
-                certificate_info: CertificateInfo, 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> LROPoller[SecurityDomain]: ...
-
-        @overload
-        def begin_download(
-                self, 
-                certificate_info: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> LROPoller[SecurityDomain]: ...
-
-        @overload
-        def begin_download(
-                self, 
-                certificate_info: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> LROPoller[SecurityDomain]: ...
-
-        @overload
-        @distributed_trace
-        def begin_upload(
-                self, 
-                security_domain: SecurityDomain, 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        @distributed_trace
-        def begin_upload(
-                self, 
-                security_domain: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        @distributed_trace
-        def begin_upload(
-                self, 
-                security_domain: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
 
         def close(self) -> None: ...
 
@@ -88,7 +23,6 @@ namespace azure.keyvault.securitydomain
         @distributed_trace
         def get_upload_status(self, **kwargs: Any) -> SecurityDomainOperationStatus: ...
 
-        @distributed_trace
         def send_request(
                 self, 
                 request: HttpRequest, 
@@ -100,81 +34,16 @@ namespace azure.keyvault.securitydomain
 
 namespace azure.keyvault.securitydomain.aio
 
-    class azure.keyvault.securitydomain.aio.SecurityDomainClient(KeyVaultClient): implements AsyncContextManager 
+    class azure.keyvault.securitydomain.aio.SecurityDomainClient(_SecurityDomainClientOperationsMixin): implements AsyncContextManager 
 
         def __init__(
                 self, 
-                vault_url: str, 
+                vault_base_url: str, 
                 credential: AsyncTokenCredential, 
                 *, 
-                api_version: Optional[str] = ..., 
-                polling_interval: Optional[int] = ..., 
-                verify_challenge_resource: Optional[bool] = ..., 
+                api_version: str = ..., 
                 **kwargs: Any
             ) -> None: ...
-
-        @overload
-        async def begin_download(
-                self, 
-                certificate_info: CertificateInfo, 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[SecurityDomain]: ...
-
-        @overload
-        async def begin_download(
-                self, 
-                certificate_info: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[SecurityDomain]: ...
-
-        @overload
-        async def begin_download(
-                self, 
-                certificate_info: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[SecurityDomain]: ...
-
-        @overload
-        @distributed_trace_async
-        async def begin_upload(
-                self, 
-                security_domain: SecurityDomain, 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        @distributed_trace_async
-        async def begin_upload(
-                self, 
-                security_domain: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        @distributed_trace_async
-        async def begin_upload(
-                self, 
-                security_domain: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                skip_activation_polling: bool = False, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
 
         async def close(self) -> None: ...
 
@@ -187,7 +56,6 @@ namespace azure.keyvault.securitydomain.aio
         @distributed_trace_async
         async def get_upload_status(self, **kwargs: Any) -> SecurityDomainOperationStatus: ...
 
-        @distributed_trace_async
         def send_request(
                 self, 
                 request: HttpRequest, 
@@ -307,6 +175,43 @@ namespace azure.keyvault.securitydomain.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+namespace azure.keyvault.securitydomain.types
+
+    class azure.keyvault.securitydomain.types.CertificateInfo(TypedDict, total=False):
+        key "certificates": Required[list[SecurityDomainJsonWebKey]]
+        key "required": int
+        certificates: list[SecurityDomainJsonWebKey]
+        required: int
+
+
+    class azure.keyvault.securitydomain.types.SecurityDomain(TypedDict, total=False):
+        key "value": Required[str]
+        value: str
+
+
+    class azure.keyvault.securitydomain.types.SecurityDomainJsonWebKey(TypedDict):
+        key "alg": Required[str]
+        key "e": Required[str]
+        key "key_ops": Required[list[str]]
+        key "kid": Required[str]
+        key "kty": Required[str]
+        key "n": Required[str]
+        key "use": str
+        key "x5c": Required[list[str]]
+        key "x5t": str
+        key "x5t#S256": Required[str]
+        alg: str
+        e: str
+        key_ops: list[str]
+        kid: str
+        kty: str
+        n: str
+        use: str
+        x5c: list[str]
+        x5t: str
+        x5t#S256: str
 
 
 ```
