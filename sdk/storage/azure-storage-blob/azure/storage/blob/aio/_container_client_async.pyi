@@ -55,7 +55,7 @@ from .._models import (
 )
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
-from .._shared.session_async import AsyncSessionProvider
+from .._shared.session_async import SessionProvider
 
 class ContainerClient(  # type: ignore[misc]
     AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
@@ -81,7 +81,7 @@ class ContainerClient(  # type: ignore[misc]
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         use_session: bool = False,
-        session_provider: Optional[AsyncSessionProvider] = None,
+        session_provider: Optional[SessionProvider] = None,
         session_account_name: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...

@@ -6,7 +6,7 @@
 
 from ._download_async import StorageStreamDownloader
 from .._shared.policies_async import ExponentialRetry, LinearRetry
-from .._shared.session_async import AsyncSessionProvider, AsyncContainerSessionProvider
+from .._shared.session_async import SessionProvider, ContainerSessionProvider
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._file_system_client_async import FileSystemClient
@@ -22,6 +22,6 @@ __all__ = [
     "ExponentialRetry",
     "LinearRetry",
     "StorageStreamDownloader",
-    "AsyncSessionProvider",
-    "AsyncContainerSessionProvider",
+    "SessionProvider",
+    "ContainerSessionProvider",
 ]

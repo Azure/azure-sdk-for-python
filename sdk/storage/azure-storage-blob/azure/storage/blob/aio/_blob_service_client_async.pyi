@@ -41,7 +41,7 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.models import UserDelegationKey
-from .._shared.session_async import AsyncSessionProvider
+from .._shared.session_async import SessionProvider
 
 class BlobServiceClient(  # type: ignore [misc]
     AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
@@ -64,7 +64,7 @@ class BlobServiceClient(  # type: ignore [misc]
         max_chunk_get_size: int = 4 * 1024 * 1024,
         audience: Optional[str] = None,
         use_session: bool = False,
-        session_provider: Optional[AsyncSessionProvider] = None,
+        session_provider: Optional[SessionProvider] = None,
         session_account_name: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...
