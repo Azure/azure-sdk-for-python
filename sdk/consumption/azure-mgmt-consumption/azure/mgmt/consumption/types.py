@@ -33,9 +33,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -61,9 +61,9 @@ class ExtensionResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -78,14 +78,14 @@ class Budget(ExtensionResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the budget.
     :vartype properties: "BudgetProperties"
-    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-     used to determine whether the user is updating the latest version or not.
-    :vartype e_tag: str
+    :ivar eTag: eTag of the resource. To handle concurrent update scenario, this field will be used
+     to determine whether the user is updating the latest version or not.
+    :vartype eTag: str
     """
 
     properties: "BudgetProperties"
@@ -102,8 +102,8 @@ class BudgetComparisonExpression(TypedDict, total=False):
     :vartype name: str
     :ivar operator: The operator to use for comparison. Required. "In"
     :vartype operator: Union[str, "BudgetOperatorType"]
-    :ivar values_property: Array of values to use for comparison. Required.
-    :vartype values_property: list[str]
+    :ivar values: Array of values to use for comparison. Required.
+    :vartype values: list[str]
     """
 
     name: Required[str]
@@ -125,8 +125,8 @@ BudgetFilter = TypedDict(
 )
 BudgetFilter.__doc__ = """May be used to filter budgets by resource group, resource, or meter.
 
-:ivar and_property: The logical "AND" expression. Must have at least 2 items.
-:vartype and_property: list["BudgetFilterProperties"]
+:ivar and: The logical "AND" expression. Must have at least 2 items.
+:vartype and: list["BudgetFilterProperties"]
 :ivar dimensions: Has comparison expression for a dimension.
 :vartype dimensions: "BudgetComparisonExpression"
 :ivar tags: Has comparison expression for a tag.
@@ -157,25 +157,25 @@ class BudgetProperties(TypedDict, total=False):
     :vartype category: Union[str, "CategoryType"]
     :ivar amount: The total amount of cost to track with the budget. Required.
     :vartype amount: float
-    :ivar time_grain: The time covered by a budget. Tracking of the amount will be reset based on
+    :ivar timeGrain: The time covered by a budget. Tracking of the amount will be reset based on
      the time grain. BillingMonth, BillingQuarter, and BillingAnnual are only supported by WD
      customers. Required. Known values are: "Monthly", "Quarterly", "Annually", "BillingMonth",
      "BillingQuarter", and "BillingAnnual".
-    :vartype time_grain: Union[str, "TimeGrainType"]
-    :ivar time_period: Has start and end date of the budget. The start date must be first of the
+    :vartype timeGrain: Union[str, "TimeGrainType"]
+    :ivar timePeriod: Has start and end date of the budget. The start date must be first of the
      month and should be less than the end date. Budget start date must be on or after June 1, 2017.
      Future start date should not be more than twelve months. Past start date should  be selected
      within the timegrain period. There are no restrictions on the end date. Required.
-    :vartype time_period: "BudgetTimePeriod"
+    :vartype timePeriod: "BudgetTimePeriod"
     :ivar filter: May be used to filter budgets by user-specified dimensions and/or tags.
     :vartype filter: "BudgetFilter"
-    :ivar current_spend: The current amount of cost which is being tracked for a budget.
-    :vartype current_spend: "CurrentSpend"
+    :ivar currentSpend: The current amount of cost which is being tracked for a budget.
+    :vartype currentSpend: "CurrentSpend"
     :ivar notifications: Dictionary of notifications associated with the budget. Budget can have up
      to five notifications.
     :vartype notifications: dict[str, "Notification"]
-    :ivar forecast_spend: The forecasted cost which is being tracked for a budget.
-    :vartype forecast_spend: "ForecastSpend"
+    :ivar forecastSpend: The forecasted cost which is being tracked for a budget.
+    :vartype forecastSpend: "ForecastSpend"
     """
 
     category: Required[Union[str, "CategoryType"]]
@@ -206,11 +206,11 @@ class BudgetProperties(TypedDict, total=False):
 class BudgetTimePeriod(TypedDict, total=False):
     """The start and end date for a budget.
 
-    :ivar start_date: The start date for the budget. Required.
-    :vartype start_date: str
-    :ivar end_date: The end date for the budget. If not provided, we default this to 10 years from
+    :ivar startDate: The start date for the budget. Required.
+    :vartype startDate: str
+    :ivar endDate: The end date for the budget. If not provided, we default this to 10 years from
      the start date.
-    :vartype end_date: str
+    :vartype endDate: str
     """
 
     startDate: Required[str]
@@ -262,20 +262,20 @@ class Notification(TypedDict, total=False):
     :ivar threshold: Threshold value associated with a notification. Notification is sent when the
      cost exceeded the threshold. It is always percent and has to be between 0 and 1000. Required.
     :vartype threshold: float
-    :ivar contact_emails: Email addresses to send the budget notification to when the threshold is
+    :ivar contactEmails: Email addresses to send the budget notification to when the threshold is
      exceeded. Must have at least one contact email or contact group specified at the Subscription
      or Resource Group scopes. All other scopes must have at least one contact email specified.
      Required.
-    :vartype contact_emails: list[str]
-    :ivar contact_roles: Contact roles to send the budget notification to when the threshold is
+    :vartype contactEmails: list[str]
+    :ivar contactRoles: Contact roles to send the budget notification to when the threshold is
      exceeded.
-    :vartype contact_roles: list[str]
-    :ivar contact_groups: Action groups to send the budget notification to when the threshold is
+    :vartype contactRoles: list[str]
+    :ivar contactGroups: Action groups to send the budget notification to when the threshold is
      exceeded. Must be provided as a fully qualified Azure resource id. Only supported at
      Subscription or Resource Group scopes.
-    :vartype contact_groups: list[str]
-    :ivar threshold_type: The type of threshold. Known values are: "Actual" and "Forecasted".
-    :vartype threshold_type: Union[str, "ThresholdType"]
+    :vartype contactGroups: list[str]
+    :ivar thresholdType: The type of threshold. Known values are: "Actual" and "Forecasted".
+    :vartype thresholdType: Union[str, "ThresholdType"]
     :ivar locale: Language in which the recipient will receive the notification. Known values are:
      "en-us", "ja-jp", "zh-cn", "de-de", "es-es", "fr-fr", "it-it", "ko-kr", "pt-br", "ru-ru",
      "zh-tw", "cs-cz", "pl-pl", "tr-tr", "da-dk", "en-gb", "hu-hu", "nb-no", "nl-nl", "pt-pt", and
@@ -313,20 +313,20 @@ class Notification(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str

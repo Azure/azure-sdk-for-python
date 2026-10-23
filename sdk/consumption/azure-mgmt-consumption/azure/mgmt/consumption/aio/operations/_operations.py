@@ -37,6 +37,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_aggregated_cost_get_by_management_group_request,
     build_aggregated_cost_get_for_billing_period_by_management_group_request,
@@ -78,7 +79,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -190,7 +191,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PriceSheetOperations:
+class PriceSheetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -503,7 +504,7 @@ class PriceSheetOperations:
         )
 
 
-class BudgetsOperations:
+class BudgetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -911,7 +912,7 @@ class BudgetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CreditsOperations:
+class CreditsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1003,7 +1004,7 @@ class CreditsOperations:
         return deserialized  # type: ignore
 
 
-class UsageDetailsOperations:
+class UsageDetailsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1163,7 +1164,7 @@ class UsageDetailsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MarketplacesOperations:
+class MarketplacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1303,7 +1304,7 @@ class MarketplacesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TagsOperations:
+class TagsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1390,7 +1391,7 @@ class TagsOperations:
         return deserialized  # type: ignore
 
 
-class ChargesOperations:
+class ChargesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1502,7 +1503,7 @@ class ChargesOperations:
         return deserialized  # type: ignore
 
 
-class BalancesOperations:
+class BalancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1659,7 +1660,7 @@ class BalancesOperations:
         return deserialized  # type: ignore
 
 
-class ReservationsSummariesOperations:
+class ReservationsSummariesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2041,7 +2042,7 @@ class ReservationsSummariesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ReservationsDetailsOperations:
+class ReservationsDetailsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2411,7 +2412,7 @@ class ReservationsDetailsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ReservationRecommendationsOperations:
+class ReservationRecommendationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2539,7 +2540,7 @@ class ReservationRecommendationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-long
+class ReservationRecommendationDetailsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2559,6 +2560,10 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-06-01": ["management_group_id"]},
+        api_versions_list=["2024-08-01", "2026-06-01"],
+    )
     async def get(
         self,
         resource_scope: str,
@@ -2569,6 +2574,7 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
         look_back_period: Union[str, _models.LookBackPeriod],
         product: str,
         filter: Optional[str] = None,
+        management_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.ReservationRecommendationDetailsModel]:
         """Details of a reservation recommendation for what-if analysis of reserved instances.
@@ -2580,7 +2586,8 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
          for billingProfile scope. Required.
         :type resource_scope: str
-        :keyword scope: Scope of the reservation. Known values are: "Single" and "Shared". Required.
+        :keyword scope: Scope of the reservation. Known values are: "Single", "Shared", and
+         "ManagementGroup". Required.
         :paramtype scope: str or ~azure.mgmt.consumption.models.Scope
         :keyword region: Used to select the region the recommendation should be generated for.
          Required.
@@ -2599,6 +2606,9 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
          properties/subscriptionId can be specified for billing account and billing profile paths.
          Default value is None.
         :paramtype filter: str
+        :keyword management_group_id: Specify the management group ID. Required when recommendation
+         scope is 'ManagementGroup'. Default value is None.
+        :paramtype management_group_id: str
         :return: ReservationRecommendationDetailsModel or None. The
          ReservationRecommendationDetailsModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.consumption.models.ReservationRecommendationDetailsModel or None
@@ -2625,6 +2635,7 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
             look_back_period=look_back_period,
             product=product,
             filter=filter,
+            management_group_id=management_group_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2668,7 +2679,7 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
         return deserialized  # type: ignore
 
 
-class ReservationTransactionsOperations:
+class ReservationTransactionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2928,7 +2939,7 @@ class ReservationTransactionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AggregatedCostOperations:
+class AggregatedCostOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3093,7 +3104,7 @@ class AggregatedCostOperations:
         return deserialized  # type: ignore
 
 
-class EventsOperations:
+class EventsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3324,7 +3335,7 @@ class EventsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class LotsOperations:
+class LotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -229,6 +229,8 @@ class Scope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SINGLE."""
     SHARED = "Shared"
     """SHARED."""
+    MANAGEMENT_GROUP = "ManagementGroup"
+    """Management group scoped recommendation."""
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
