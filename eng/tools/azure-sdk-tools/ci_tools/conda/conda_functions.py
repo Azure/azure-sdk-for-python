@@ -36,13 +36,14 @@ from distutils.dir_util import copy_tree
 import urllib.request
 
 CONDA_ENV_NAME = "azure-build-env"
+CONDA_PYTHON_VERSION = "3.11"
 
-CONDA_ENV_FILE = """name: azure-build-env
+CONDA_ENV_FILE = f"""name: azure-build-env
 channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.10
+  - python={CONDA_PYTHON_VERSION}
   - conda-build
   - conda-verify
   - typing-extensions
@@ -711,6 +712,11 @@ def invoke_conda_build(
     channels: List[str] = [],
 ) -> int:
 
+    py_version = str(optional_py_version or CONDA_PYTHON_VERSION)
+    version_match = re.fullmatch(r"(\d)\.?(\d+)(?:\.\d+)?", py_version)
+    if version_match is None or tuple(int(part) for part in version_match.groups()) < (3, 11):
+        raise ValueError(f"Conda build environments require Python 3.11 or newer, not {py_version!r}.")
+
     command = [
         "conda",
         "run",
@@ -727,8 +733,7 @@ def invoke_conda_build(
     for channel in channels:
         command.extend(["-c", channel])
 
-    if optional_py_version:
-        command.extend(["--py", f"{optional_py_version}"])
+    command.extend(["--py", py_version])
 
     print(f"Calling '{command}' in folder {conda_build_folder}.")
     result = subprocess.run(command, cwd=conda_build_folder, check=False)

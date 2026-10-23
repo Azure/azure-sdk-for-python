@@ -29,7 +29,7 @@ sudo apt-get install -y powershell
 
 # Install Python tooling
 # init env
-python -m pip install -U pip > /dev/null
+python eng/tools/azure-sdk-tools/ci_tools/bootstrap.py --uv || exit $?
 python scripts/dev_setup.py -p azure-core > /dev/null
 pip install -r eng/ci_tools.txt > /dev/null
 

@@ -2,6 +2,7 @@ from contextlib import contextmanager
 import tempfile
 import subprocess
 import venv
+from ci_tools.bootstrap import ensure_pip
 
 
 class ExtendedEnvBuilder(venv.EnvBuilder):
@@ -46,13 +47,13 @@ def create_venv_with_package(packages):
     """
     with tempfile.TemporaryDirectory() as tempdir:
         myenv = create(tempdir, with_pip=True)
+        ensure_pip(myenv.env_exe)
         pip_call = [
             myenv.env_exe,
             "-m",
             "pip",
             "install",
         ]
-        subprocess.check_call(pip_call + ["-U", "pip"])
         if packages:
             subprocess.check_call(pip_call + packages)
         yield myenv

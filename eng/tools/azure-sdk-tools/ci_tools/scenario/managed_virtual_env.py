@@ -1,5 +1,6 @@
 import os, logging, glob, subprocess, sys
 from ci_tools.functions import cleanup_directory
+from ci_tools.bootstrap import ensure_pip
 
 
 class ManagedVirtualEnv:
@@ -12,11 +13,13 @@ class ManagedVirtualEnv:
 
     def create(self):
         logging.info("Creating virtual environment [{}]".format(self.path))
-        subprocess.check_call([sys.executable, "-m", "venv", "ENV_DIR", self.path])
+        subprocess.check_call([sys.executable, "-m", "venv", self.path])
         self.python_executable = self._find_python_executable()
+        ensure_pip(self.python_executable)
 
     def clear_venv(self):
-        subprocess.check_call([sys.executable, "-m", "venv", "--clear", "ENV_DIR", self.path])
+        subprocess.check_call([sys.executable, "-m", "venv", "--clear", self.path])
+        ensure_pip(self.python_executable)
 
     def _find_python_executable(self):
         paths = glob.glob(os.path.join(self.path, "*", "python")) + glob.glob(
