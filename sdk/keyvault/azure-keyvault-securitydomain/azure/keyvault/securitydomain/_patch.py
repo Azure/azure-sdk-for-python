@@ -11,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from copy import deepcopy
 from enum import Enum
-from typing import Any, IO, List, MutableMapping, overload, Union
+from typing import Any, cast, IO, List, MutableMapping, overload, Union
 from urllib.parse import urlparse
 
 from azure.core import CaseInsensitiveEnumMeta
@@ -187,11 +187,14 @@ class SecurityDomainClient(KeyVaultClient):
             if skip_activation_polling
             else SecurityDomainDownloadPollingMethod(lro_algorithms=[SecurityDomainDownloadPolling()], timeout=delay)
         )
-        return super()._begin_download(  # type: ignore[arg-type]
-            certificate_info,
-            content_type=content_type,
-            polling=polling_method,
-            **kwargs,
+        return cast(
+            LROPoller[SecurityDomain],
+            super()._begin_download(
+                cast(Any, certificate_info),
+                content_type=content_type,
+                polling=polling_method,
+                **kwargs,
+            ),
         )
 
     @overload
@@ -258,11 +261,14 @@ class SecurityDomainClient(KeyVaultClient):
             if skip_activation_polling
             else SecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
         )
-        return super()._begin_upload(  # type: ignore[arg-type]
-            security_domain,
-            content_type=content_type,
-            polling=polling_method,
-            **kwargs,
+        return cast(
+            LROPoller[None],
+            super()._begin_upload(
+                cast(Any, security_domain),
+                content_type=content_type,
+                polling=polling_method,
+                **kwargs,
+            ),
         )
 
     @property

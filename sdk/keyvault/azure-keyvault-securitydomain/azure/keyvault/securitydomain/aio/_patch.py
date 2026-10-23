@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Awaitable, IO, List, MutableMapping, overload, Union
+from typing import Any, Awaitable, cast, IO, List, MutableMapping, overload, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
@@ -143,11 +143,14 @@ class SecurityDomainClient(KeyVaultClient):
                 lro_algorithms=[SecurityDomainDownloadPolling()], timeout=delay
             )
         )
-        return await super()._begin_download(  # type: ignore[arg-type]
-            certificate_info,
-            content_type=content_type,
-            polling=polling_method,
-            **kwargs,
+        return cast(
+            AsyncLROPoller[SecurityDomain],
+            await super()._begin_download(
+                cast(Any, certificate_info),
+                content_type=content_type,
+                polling=polling_method,
+                **kwargs,
+            ),
         )
 
     @overload
@@ -214,11 +217,14 @@ class SecurityDomainClient(KeyVaultClient):
             if skip_activation_polling
             else AsyncSecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
         )
-        return await super()._begin_upload(  # type: ignore[arg-type]
-            security_domain,
-            content_type=content_type,
-            polling=polling_method,
-            **kwargs,
+        return cast(
+            AsyncLROPoller[None],
+            await super()._begin_upload(
+                cast(Any, security_domain),
+                content_type=content_type,
+                polling=polling_method,
+                **kwargs,
+            ),
         )
 
     @distributed_trace_async
