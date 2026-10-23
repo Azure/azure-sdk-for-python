@@ -3580,6 +3580,52 @@ class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
+class TokenBindingParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for Token Binding for Entra tokens.
+
+    :ivar mode: This specifies whether token binding is disabled, enabled or enforced. Known values
+     are: "Enforced" and "NotEnforced".
+    :vartype mode: str or ~azure.mgmt.keyvault.models.TokenBindingMode
+    :ivar minimum_token_binding_strength: Must be one of the following values "NoValidation",
+     "Unattested", "AttestedTrustedLaunch", "AttestedConfidential". Strength of the token binding
+     increases with each value in that order. Known values are: "NoValidation", "Unattested",
+     "AttestedTrustedLaunch", and "AttestedConfidential".
+    :vartype minimum_token_binding_strength: str or
+     ~azure.mgmt.keyvault.models.TokenBindingStrength
+    """
+
+    mode: Optional[Union[str, "_models.TokenBindingMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This specifies whether token binding is disabled, enabled or enforced. Known values are:
+     \"Enforced\" and \"NotEnforced\"."""
+    minimum_token_binding_strength: Optional[Union[str, "_models.TokenBindingStrength"]] = rest_field(
+        name="minimumTokenBindingStrength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Must be one of the following values \"NoValidation\", \"Unattested\",
+     \"AttestedTrustedLaunch\", \"AttestedConfidential\". Strength of the token binding increases
+     with each value in that order. Known values are: \"NoValidation\", \"Unattested\",
+     \"AttestedTrustedLaunch\", and \"AttestedConfidential\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.TokenBindingMode"]] = None,
+        minimum_token_binding_strength: Optional[Union[str, "_models.TokenBindingStrength"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Trigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Trigger.
 
@@ -3920,6 +3966,8 @@ class VaultPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-
      originates from trusted services will be blocked. This will override the set firewall rules,
      meaning that even if the firewall rules are present we will not honor the rules.
     :vartype public_network_access: str
+    :ivar token_binding_parameters: Configuration for Token Binding for Entra tokens.
+    :vartype token_binding_parameters: ~azure.mgmt.keyvault.models.TokenBindingParameters
     """
 
     tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
@@ -3988,6 +4036,10 @@ class VaultPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-
      'disabled' all traffic except private endpoint traffic and that that originates from trusted
      services will be blocked. This will override the set firewall rules, meaning that even if the
      firewall rules are present we will not honor the rules."""
+    token_binding_parameters: Optional["_models.TokenBindingParameters"] = rest_field(
+        name="tokenBindingParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for Token Binding for Entra tokens."""
 
     @overload
     def __init__(
@@ -4006,6 +4058,7 @@ class VaultPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-
         enable_purge_protection: Optional[bool] = None,
         network_acls: Optional["_models.NetworkRuleSet"] = None,
         public_network_access: Optional[str] = None,
+        token_binding_parameters: Optional["_models.TokenBindingParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -4082,6 +4135,8 @@ class VaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match
      originates from trusted services will be blocked. This will override the set firewall rules,
      meaning that even if the firewall rules are present we will not honor the rules.
     :vartype public_network_access: str
+    :ivar token_binding_parameters: Configuration for Token Binding for Entra tokens.
+    :vartype token_binding_parameters: ~azure.mgmt.keyvault.models.TokenBindingParameters
     """
 
     tenant_id: str = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
@@ -4165,6 +4220,10 @@ class VaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match
      'disabled' all traffic except private endpoint traffic and that that originates from trusted
      services will be blocked. This will override the set firewall rules, meaning that even if the
      firewall rules are present we will not honor the rules."""
+    token_binding_parameters: Optional["_models.TokenBindingParameters"] = rest_field(
+        name="tokenBindingParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for Token Binding for Entra tokens."""
 
     @overload
     def __init__(
@@ -4185,6 +4244,7 @@ class VaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match
         network_acls: Optional["_models.NetworkRuleSet"] = None,
         provisioning_state: Optional[Union[str, "_models.VaultProvisioningState"]] = None,
         public_network_access: Optional[str] = None,
+        token_binding_parameters: Optional["_models.TokenBindingParameters"] = None,
     ) -> None: ...
 
     @overload

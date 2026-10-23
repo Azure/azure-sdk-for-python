@@ -462,6 +462,33 @@ class StoragePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DELETESAS."""
 
 
+class TokenBindingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This specifies whether token binding is disabled, enabled or enforced."""
+
+    ENFORCED = "Enforced"
+    """Token binding is enforced for the vault. Only bounded tokens will be accepted. Bearer tokens
+    will be rejected."""
+    NOT_ENFORCED = "NotEnforced"
+    """Token binding is not enforced for the vault. Bounded tokens will be rejected."""
+
+
+class TokenBindingStrength(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Must be one of the following values \"NoValidation\", \"Unattested\", \"AttestedTrustedLaunch\",
+    \"AttestedConfidential\". Strength of the token binding increases with each value in that order.
+    """
+
+    NO_VALIDATION = "NoValidation"
+    """This is default when token binding is not enabled."""
+    UNATTESTED = "Unattested"
+    """No attestation proof is required for the bounded token."""
+    ATTESTED_TRUSTED_LAUNCH = "AttestedTrustedLaunch"
+    """Bounded Entra token must originate from a trusted launch VM with attestation proof from the
+    attestation authority like Microsoft Azure Attestation."""
+    ATTESTED_CONFIDENTIAL = "AttestedConfidential"
+    """Bounded Entra token must originate from a confidential VM with attestation proof from the
+    attestation authority like Microsoft Azure Attestation."""
+
+
 class VaultProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the vault."""
 

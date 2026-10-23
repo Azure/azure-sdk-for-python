@@ -2519,6 +2519,34 @@ namespace azure.mgmt.keyvault.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.keyvault.models.TokenBindingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENFORCED = "Enforced"
+        NOT_ENFORCED = "NotEnforced"
+
+
+    class azure.mgmt.keyvault.models.TokenBindingParameters(_Model):
+        minimum_token_binding_strength: Optional[Union[str, TokenBindingStrength]]
+        mode: Optional[Union[str, TokenBindingMode]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                minimum_token_binding_strength: Optional[Union[str, TokenBindingStrength]] = ..., 
+                mode: Optional[Union[str, TokenBindingMode]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.keyvault.models.TokenBindingStrength(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ATTESTED_CONFIDENTIAL = "AttestedConfidential"
+        ATTESTED_TRUSTED_LAUNCH = "AttestedTrustedLaunch"
+        NO_VALIDATION = "NoValidation"
+        UNATTESTED = "Unattested"
+
+
     class azure.mgmt.keyvault.models.TrackedResource(Resource):
         id: str
         location: str
@@ -2677,6 +2705,7 @@ namespace azure.mgmt.keyvault.models
         sku: Optional[Sku]
         soft_delete_retention_in_days: Optional[int]
         tenant_id: Optional[str]
+        token_binding_parameters: Optional[TokenBindingParameters]
 
         @overload
         def __init__(
@@ -2694,7 +2723,8 @@ namespace azure.mgmt.keyvault.models
                 public_network_access: Optional[str] = ..., 
                 sku: Optional[Sku] = ..., 
                 soft_delete_retention_in_days: Optional[int] = ..., 
-                tenant_id: Optional[str] = ...
+                tenant_id: Optional[str] = ..., 
+                token_binding_parameters: Optional[TokenBindingParameters] = ...
             ) -> None: ...
 
         @overload
@@ -2718,6 +2748,7 @@ namespace azure.mgmt.keyvault.models
         sku: Sku
         soft_delete_retention_in_days: Optional[int]
         tenant_id: str
+        token_binding_parameters: Optional[TokenBindingParameters]
         vault_uri: Optional[str]
 
         @overload
@@ -2738,6 +2769,7 @@ namespace azure.mgmt.keyvault.models
                 sku: Sku, 
                 soft_delete_retention_in_days: Optional[int] = ..., 
                 tenant_id: str, 
+                token_binding_parameters: Optional[TokenBindingParameters] = ..., 
                 vault_uri: Optional[str] = ...
             ) -> None: ...
 
@@ -4103,6 +4135,13 @@ namespace azure.mgmt.keyvault.types
         lastModifiedByType: Union[str, IdentityType]
 
 
+    class azure.mgmt.keyvault.types.TokenBindingParameters(TypedDict, total=False):
+        key "minimumTokenBindingStrength": Union[str, TokenBindingStrength]
+        key "mode": Union[str, TokenBindingMode]
+        minimumTokenBindingStrength: Union[str, TokenBindingStrength]
+        mode: Union[str, TokenBindingMode]
+
+
     class azure.mgmt.keyvault.types.Trigger(TypedDict, total=False):
         key "timeAfterCreate": str
         key "timeBeforeExpiry": str
@@ -4169,6 +4208,7 @@ namespace azure.mgmt.keyvault.types
         key "sku": ForwardRef('Sku', module='types')
         key "softDeleteRetentionInDays": int
         key "tenantId": str
+        key "tokenBindingParameters": ForwardRef('TokenBindingParameters', module='types')
         accessPolicies: list[AccessPolicyEntry]
         createMode: Union[str, CreateMode]
         enablePurgeProtection: bool
@@ -4182,6 +4222,7 @@ namespace azure.mgmt.keyvault.types
         sku: Sku
         softDeleteRetentionInDays: int
         tenantId: str
+        tokenBindingParameters: TokenBindingParameters
 
 
     class azure.mgmt.keyvault.types.VaultProperties(TypedDict, total=False):
@@ -4199,6 +4240,7 @@ namespace azure.mgmt.keyvault.types
         key "sku": Required[Sku]
         key "softDeleteRetentionInDays": int
         key "tenantId": Required[str]
+        key "tokenBindingParameters": ForwardRef('TokenBindingParameters', module='types')
         key "vaultUri": str
         accessPolicies: list[AccessPolicyEntry]
         createMode: Union[str, CreateMode]
@@ -4216,6 +4258,7 @@ namespace azure.mgmt.keyvault.types
         sku: Sku
         softDeleteRetentionInDays: int
         tenantId: str
+        tokenBindingParameters: TokenBindingParameters
         vaultUri: str
 
 

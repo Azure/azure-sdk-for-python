@@ -92,6 +92,7 @@ from ._models import (  # type: ignore
     ServiceSpecification,
     Sku,
     SystemData,
+    TokenBindingParameters,
     TrackedResource,
     Trigger,
     UserAssignedIdentity,
@@ -134,6 +135,8 @@ from ._enums import (  # type: ignore
     SkuFamily,
     SkuName,
     StoragePermissions,
+    TokenBindingMode,
+    TokenBindingStrength,
     VaultProvisioningState,
 )
 from ._patch import __all__ as _patch_all
@@ -219,6 +222,7 @@ __all__ = [
     "ServiceSpecification",
     "Sku",
     "SystemData",
+    "TokenBindingParameters",
     "TrackedResource",
     "Trigger",
     "UserAssignedIdentity",
@@ -258,6 +262,8 @@ __all__ = [
     "SkuFamily",
     "SkuName",
     "StoragePermissions",
+    "TokenBindingMode",
+    "TokenBindingStrength",
     "VaultProvisioningState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

@@ -58,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-15/createVaultWithNetworkAcls.json
+# x-ms-original-file: 2026-06-01-preview/createVaultWithNetworkAcls.json
 if __name__ == "__main__":
     main()

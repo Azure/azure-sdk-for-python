@@ -37,6 +37,8 @@ if TYPE_CHECKING:
         SkuFamily,
         SkuName,
         StoragePermissions,
+        TokenBindingMode,
+        TokenBindingStrength,
         VaultProvisioningState,
     )
 
@@ -1265,6 +1267,29 @@ class SystemData(TypedDict, total=False):
     """The timestamp of resource last modification (UTC)."""
 
 
+class TokenBindingParameters(TypedDict, total=False):
+    """Configuration for Token Binding for Entra tokens.
+
+    :ivar mode: This specifies whether token binding is disabled, enabled or enforced. Known values
+     are: "Enforced" and "NotEnforced".
+    :vartype mode: Union[str, "TokenBindingMode"]
+    :ivar minimumTokenBindingStrength: Must be one of the following values "NoValidation",
+     "Unattested", "AttestedTrustedLaunch", "AttestedConfidential". Strength of the token binding
+     increases with each value in that order. Known values are: "NoValidation", "Unattested",
+     "AttestedTrustedLaunch", and "AttestedConfidential".
+    :vartype minimumTokenBindingStrength: Union[str, "TokenBindingStrength"]
+    """
+
+    mode: Union[str, "TokenBindingMode"]
+    """This specifies whether token binding is disabled, enabled or enforced. Known values are:
+     \"Enforced\" and \"NotEnforced\"."""
+    minimumTokenBindingStrength: Union[str, "TokenBindingStrength"]
+    """Must be one of the following values \"NoValidation\", \"Unattested\",
+     \"AttestedTrustedLaunch\", \"AttestedConfidential\". Strength of the token binding increases
+     with each value in that order. Known values are: \"NoValidation\", \"Unattested\",
+     \"AttestedTrustedLaunch\", and \"AttestedConfidential\"."""
+
+
 class Trigger(TypedDict, total=False):
     """Trigger.
 
@@ -1439,6 +1464,8 @@ class VaultPatchProperties(TypedDict, total=False):
      originates from trusted services will be blocked. This will override the set firewall rules,
      meaning that even if the firewall rules are present we will not honor the rules.
     :vartype publicNetworkAccess: str
+    :ivar tokenBindingParameters: Configuration for Token Binding for Entra tokens.
+    :vartype tokenBindingParameters: "TokenBindingParameters"
     """
 
     tenantId: str
@@ -1485,6 +1512,8 @@ class VaultPatchProperties(TypedDict, total=False):
      'disabled' all traffic except private endpoint traffic and that that originates from trusted
      services will be blocked. This will override the set firewall rules, meaning that even if the
      firewall rules are present we will not honor the rules."""
+    tokenBindingParameters: "TokenBindingParameters"
+    """Configuration for Token Binding for Entra tokens."""
 
 
 class VaultProperties(TypedDict, total=False):
@@ -1549,6 +1578,8 @@ class VaultProperties(TypedDict, total=False):
      originates from trusted services will be blocked. This will override the set firewall rules,
      meaning that even if the firewall rules are present we will not honor the rules.
     :vartype publicNetworkAccess: str
+    :ivar tokenBindingParameters: Configuration for Token Binding for Entra tokens.
+    :vartype tokenBindingParameters: "TokenBindingParameters"
     """
 
     tenantId: Required[str]
@@ -1606,6 +1637,8 @@ class VaultProperties(TypedDict, total=False):
      'disabled' all traffic except private endpoint traffic and that that originates from trusted
      services will be blocked. This will override the set firewall rules, meaning that even if the
      firewall rules are present we will not honor the rules."""
+    tokenBindingParameters: "TokenBindingParameters"
+    """Configuration for Token Binding for Entra tokens."""
 
 
 class VirtualNetworkRule(TypedDict, total=False):

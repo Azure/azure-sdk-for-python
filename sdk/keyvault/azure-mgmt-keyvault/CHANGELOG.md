@@ -1,5 +1,15 @@
 # Release History
 
+## 14.2.0b1 (2026-10-23)
+
+### Features Added
+
+  - Model `VaultPatchProperties` added property `token_binding_parameters`
+  - Model `VaultProperties` added property `token_binding_parameters`
+  - Added enum `TokenBindingMode`
+  - Added model `TokenBindingParameters`
+  - Added enum `TokenBindingStrength`
+
 ## 14.2.0 (2026-10-20)
 
 tool can't generate changelog for this release, please update manually.
