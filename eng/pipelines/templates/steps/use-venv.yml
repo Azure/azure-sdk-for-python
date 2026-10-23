@@ -32,7 +32,8 @@ steps:
   - pwsh: |
       $(Build.SourcesDirectory)/eng/scripts/create-venv.ps1 `
         -VenvName "${{ parameters.VirtualEnvironmentName }}" `
-        -RepoRoot "$(Build.SourcesDirectory)"
+        -RepoRoot "$(Build.SourcesDirectory)" `
+        -UseUv:([bool]::Parse('${{ parameters.UseUv }}'))
     displayName: Create virtual environment
     condition: ${{ parameters.Condition }}
 

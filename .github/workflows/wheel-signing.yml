@@ -23,7 +23,9 @@ jobs:
         uses: ./.github/actions/configure-package-indexes
 
       - name: Install test dependencies
-        run: python -m pip install pytest packaging
+        run: |
+          python eng/tools/azure-sdk-tools/ci_tools/bootstrap.py
+          python -m pip install pytest packaging
         shell: bash
 
       - name: Run wheel-signing tests

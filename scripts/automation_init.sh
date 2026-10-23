@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # init env
-python -m pip install -U pip > /dev/null
+python eng/tools/azure-sdk-tools/ci_tools/bootstrap.py --uv || exit $?
 python -m pip install eng/tools/azure-sdk-tools[ghtools] > /dev/null
 
 # install tsp-client

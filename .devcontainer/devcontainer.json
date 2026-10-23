@@ -2,6 +2,11 @@
   "name": "GitHub Codespaces (Default)",
   "remoteUser": "codespace",
   "overrideCommand": false,
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/codespace/workspace,type=bind,consistency=cached",
   "workspaceFolder": "/home/codespace/workspace",
   "mounts": [
@@ -34,7 +39,7 @@
         "go.gopath": "/go",
         "go.goroot": "/usr/local/go",
         "go.toolsGopath": "/go/bin",
-        "python.pythonPath": "/opt/python/latest/bin/python",
+        "python.pythonPath": "/usr/local/python/current/bin/python",
         "python.linting.enabled": true,
         "python.linting.pylintEnabled": true,
         "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",

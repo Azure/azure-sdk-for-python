@@ -34,6 +34,7 @@ from git_helper import (
 from ci_tools.functions import discover_targeted_packages, find_whl
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.variables import str_to_bool
+from ci_tools.bootstrap import ensure_pip
 
 AZURE_GLOB_STRING = "azure*"
 
@@ -57,13 +58,15 @@ class CustomVirtualEnv:
 
     def create(self):
         logging.info("Creating virtual environment [{}]".format(self.path))
-        run_check_call([sys.executable, "-m", "venv", "ENV_DIR", self.path], root_dir)
+        run_check_call([sys.executable, "-m", "venv", self.path], root_dir)
         self.python_executable = self._find_python_executable()
+        ensure_pip(self.python_executable)
         self.lib_paths = self._find_lib_paths()
 
     def clear_venv(self):
         # clear any previously installed packages
-        run_check_call([sys.executable, "-m", "venv", "--clear", "ENV_DIR", self.path], root_dir)
+        run_check_call([sys.executable, "-m", "venv", "--clear", self.path], root_dir)
+        ensure_pip(self.python_executable)
 
     def _find_python_executable(self):
         paths = glob.glob(os.path.join(self.path, "*", "python")) + glob.glob(

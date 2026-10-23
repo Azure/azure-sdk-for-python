@@ -36,10 +36,12 @@ jobs:
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.10'
+        versionSpec: '3.11'
         addToPath: true
         architecture: 'x64'
     - bash: |
+        set -e
+        repo_root="$(pwd)"
         script_path=$(pwd)/scripts/issue_helper
         cd ..
         git config --global user.email "IssueHelper"
@@ -56,6 +58,7 @@ jobs:
         # create virtual env
         python -m venv venv-sdk
         source venv-sdk/bin/activate
+        python "$repo_root/eng/tools/azure-sdk-tools/ci_tools/bootstrap.py" --uv
         python -m pip install -r $script_path/requirement.txt
 
         # checkout the target branch

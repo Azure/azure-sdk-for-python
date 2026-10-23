@@ -62,7 +62,7 @@ jobs:
               exit 1
             fi
 
-            python -m pip install --upgrade pip
+            python "$BIN_DIRECTORY/eng/tools/azure-sdk-tools/ci_tools/bootstrap.py" --uv
             python -m pip install virtualenv
             python -m pip install -r "$requirements_file" \
               --index-url="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
