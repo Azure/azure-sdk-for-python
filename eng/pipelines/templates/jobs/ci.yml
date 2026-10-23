@@ -247,6 +247,9 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         RunApiStubGen: false
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
 
   - job: 'Analyze'
     condition: and(succeeded(), ne(variables['Skip.Analyze'], 'true'))

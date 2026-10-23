@@ -91,17 +91,19 @@ foreach($packageInfoFile in $artifacts) {
     }
 
 
-    # From the $packageInfo piece together the path to the javadoc jar file
+    # Namespace extraction only reads the archive, so any platform wheel can be used.
     $WhlDir = Join-Path $ArtifactStagingDirectory $packageInfo.Name
     $WhlName = $packageInfo.Name.Replace("-","_")
-    $WhlFile = Get-ChildItem -Path $WhlDir -File -Filter "$whlName-$version*.whl"
+    $WhlFile = Get-ChildItem -Path $WhlDir -File -Filter "$whlName-$version*.whl" |
+        Sort-Object -Property Name |
+        Select-Object -First 1
 
-    if (!(Test-Path $WhlFile -PathType Leaf)) {
+    if (-not $WhlFile) {
         LogError "Whl file for, $($packageInfo.Name), was not found in $WhlDir. Please ensure that a .whl file is being produced for the library."
         $foundError = $true
         continue
     }
-    $namespaces = Get-NamespacesFromWhlFile $packageInfo.Name $version -PythonWhlFile $WhlFile
+    $namespaces = Get-NamespacesFromWhlFile $packageInfo.Name $version -PythonWhlFile $WhlFile.FullName
     if ($namespaces.Count -gt 0) {
         Write-Host "Adding/Updating Namespaces property with the following namespaces:"
         $namespaces | Write-Host
