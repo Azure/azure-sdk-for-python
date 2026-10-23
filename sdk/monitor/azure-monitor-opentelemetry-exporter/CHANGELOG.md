@@ -3,6 +3,7 @@
 ## 1.0.0b59 (Unreleased)
 
 ### Features Added
+- Add support for experimental features flag
 
 ### Breaking Changes
 
