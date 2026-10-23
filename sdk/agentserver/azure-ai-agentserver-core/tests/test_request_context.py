@@ -114,7 +114,10 @@ class TestOriginalSubject:
 
     def test_order_and_optional_whitespace_do_not_change_the_snapshot(self) -> None:
         subject = FoundryOriginalSubject.from_headers({
-            "X-MS-Original-Subject": ' \tidtype="user" \t,tid="original-tid",\t oid="original-oid"\t ',
+            "X-MS-Original-Subject": (
+                " \t"
+                'idtype="user" \t,tid="original-tid",\t oid="original-oid"\t '
+            ),
         })
         assert subject == FoundryOriginalSubject(oid="original-oid", tid="original-tid", idtype="user")
         assert FoundryAgentRequestContext(original_subject=subject).model_attribution_headers() == SUBJECT_HEADERS

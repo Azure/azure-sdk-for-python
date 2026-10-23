@@ -176,7 +176,13 @@ def _platform_context_from_request(
 
 
 def _invalid_original_subject_response(headers: dict[str, str]) -> Response:
-    """Reject malformed platform attribution without exposing its contents."""
+    """Reject malformed platform attribution without exposing its contents.
+
+    :param headers: Response headers to preserve alongside the platform error classification.
+    :type headers: dict[str, str]
+    :return: A classified bad-request response.
+    :rtype: ~starlette.responses.Response
+    """
     logger.warning("Request rejected: invalid original-subject platform header.")
     return create_error_response(
         "invalid_request",

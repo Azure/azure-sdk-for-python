@@ -796,23 +796,45 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         return available
 
     def _execution_error_response(
-        self, ctx: _ExecutionContext, error: _HandlerError | _ServerShuttingDown, agent_session_id: str | None
+        self,
+        ctx: _ExecutionContext,
+        error: _HandlerError | _ServerShuttingDown | TaskConflictError,
+        agent_session_id: str | None,
     ) -> JSONResponse:
         """Map rejected admission or handler failure to its HTTP response.
 
         :param ctx: The create request's execution context.
         :type ctx: _ExecutionContext
-        :param error: A shutdown rejection or developer-handler failure.
-        :type error: _HandlerError | _ServerShuttingDown
+        :param error: A shutdown rejection, conversation lock conflict, or developer-handler failure.
+        :type error: _HandlerError | _ServerShuttingDown | TaskConflictError
         :param agent_session_id: The response's session identifier.
         :type agent_session_id: str | None
-        :return: The existing shutdown or handler-error response.
+        :return: The existing shutdown, conflict, or handler-error response.
         :rtype: JSONResponse
         """
         headers = self._session_headers(agent_session_id)
         if isinstance(error, _ServerShuttingDown):
             ctx.span.end(None)
             return _service_unavailable("Server is shutting down.", headers)
+        if isinstance(error, TaskConflictError):
+            # Only current_status is public; never expose the internal chain identity.
+            logger.info(
+                "Conversation lock conflict for %s: task is %s",
+                ctx.response_id,
+                error.current_status,
+            )
+            return JSONResponse(
+                {
+                    "error": {
+                        "message": f"Conversation is locked \u2014 task is {error.current_status}",
+                        "type": "conflict",
+                        "code": "conversation_locked",
+                        "param": None,
+                    }
+                },
+                status_code=409,
+                headers=headers,
+            )
         logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=error.original)
         return JSONResponse(
             {
@@ -1156,27 +1178,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 }
             }
             return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
-        except TaskConflictError as exc:
-            # Spec 023 — under the spec-022 narrow surface, TaskConflictError
-            # carries only ``current_status``; the task_id is not part of
-            # the public exception API. The endpoint already knows the
-            # response_id (logged separately); the chain identity is not
-            # exposed to the client error body.
-            logger.info(
-                "Conversation lock conflict for %s: task is %s",
-                ctx.response_id,
-                exc.current_status,
-            )
-            err_body = {
-                "error": {
-                    "message": f"Conversation is locked — task is {exc.current_status}",
-                    "type": "conflict",
-                    "code": "conversation_locked",
-                    "param": None,
-                }
-            }
-            return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
-        except (_HandlerError, _ServerShuttingDown) as exc:
+        except (_HandlerError, _ServerShuttingDown, TaskConflictError) as exc:
             return self._execution_error_response(ctx, exc, agent_session_id)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             if is_platform_error(exc):

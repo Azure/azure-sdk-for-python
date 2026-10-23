@@ -88,6 +88,35 @@ async def _send(message: dict[str, Any]) -> None:
     pass
 
 
+@pytest.mark.parametrize("store", [False, True])
+async def test_sync_conversation_conflict_preserves_error_response_and_releases_reservation(
+    registry, monkeypatch, store
+):
+    host = _host()
+    host._endpoint._response_headers["x-test-response"] = "preserved"
+    monkeypatch.setattr(
+        host._endpoint._orchestrator,
+        "run_sync",
+        AsyncMock(side_effect=TaskConflictError(current_status="in_progress")),
+    )
+
+    response = await host._endpoint.handle_create(_request(background=False, stream=False, store=store))
+
+    assert response.status_code == 409
+    assert response.headers["x-test-response"] == "preserved"
+    assert json.loads(response.body) == {
+        "error": {
+            "message": "Conversation is locked \u2014 task is in_progress",
+            "type": "conflict",
+            "code": "conversation_locked",
+            "param": None,
+        }
+    }
+    state = host._endpoint._runtime_state
+    assert await state.reserve(RESPONSE_ID, "owner")
+    await state.release_reservation(RESPONSE_ID, "owner")
+
+
 @pytest.mark.parametrize(
     "stream,background,store",
     [
