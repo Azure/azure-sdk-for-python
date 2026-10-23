@@ -1085,6 +1085,16 @@ try:
             )
 
         @staticmethod
+        def mgmt_client_setup(mgmt_client, *, node, timeout) -> None:
+            """uAMQP does not expose management-link setup separately from request dispatch.
+
+            :param ~uamqp.AMQPClient mgmt_client: Client used for management requests.
+            :keyword bytes node: Management target.
+            :keyword int timeout: Timeout in seconds.
+            """
+            del mgmt_client, node, timeout
+
+        @staticmethod
         def _handle_amqp_exception_with_condition(
             logger: "Logger",
             condition: Optional["AMQPErrorCodes"],

@@ -467,29 +467,12 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         :rtype: ~pyamqp.message.Message
         """
 
-        # The method also takes "status_code_field" and "status_description_field"
-        # keyword arguments as alternate names for the status code and description
-        # in the response body. Those two keyword arguments are used in Azure services only.
         started = time.monotonic()
-        with self._mgmt_link_lock:
-            try:
-                mgmt_link = self._mgmt_links[node]
-            except KeyError:
-                mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-                self._mgmt_links[node] = mgmt_link
-                mgmt_link.open()
-
-        while True:
-            _get_mgmt_request_remaining_timeout(timeout, started)
-            authenticated = self.auth_complete()
-            remaining = _get_mgmt_request_remaining_timeout(timeout, started)
-            if authenticated:
-                break
-            time.sleep(min(0.05, remaining) if remaining else 0.05)
-
-        while not mgmt_link.ready():
-            _get_mgmt_request_remaining_timeout(timeout, started)
-            self._connection.listen(wait=False)
+        mgmt_link = self.open_mgmt_link(
+            node=node,
+            timeout=_get_mgmt_request_remaining_timeout(timeout, started),
+            **kwargs
+        )
         operation_type = operation_type or b"empty"
         status, description, response = mgmt_link.execute(
             message,
@@ -499,6 +482,49 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         )
         _get_mgmt_request_remaining_timeout(timeout, started)
         return status, description, response
+
+    def open_mgmt_link(self, node: str = "$management", timeout: float = 0, **kwargs):
+        """Open and wait for a management link without dispatching a request.
+
+        :param str node: Management target.
+        :param float timeout: Timeout in seconds.
+        :returns: The opened management link.
+        :rtype: ~pyamqp.management_link.ManagementOperation
+        """
+        start_time = time.monotonic()
+        mgmt_link = None
+        created_link = False
+        try:
+            with self._mgmt_link_lock:
+                try:
+                    mgmt_link = self._mgmt_links[node]
+                except KeyError:
+                    mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                    created_link = True
+                    self._mgmt_links[node] = mgmt_link
+                    mgmt_link.open()
+            while True:
+                _get_mgmt_request_remaining_timeout(timeout, start_time)
+                authenticated = self.auth_complete()
+                remaining = _get_mgmt_request_remaining_timeout(timeout, start_time)
+                if authenticated:
+                    break
+                time.sleep(min(0.05, remaining) if remaining else 0.05)
+
+            while not mgmt_link.ready():
+                _get_mgmt_request_remaining_timeout(timeout, start_time)
+                self._connection.listen(wait=False)
+            return mgmt_link
+        except Exception:
+            if created_link and mgmt_link is not None:
+                with self._mgmt_link_lock:
+                    if self._mgmt_links.get(node) is mgmt_link:
+                        self._mgmt_links.pop(node, None)
+                try:
+                    mgmt_link.close()
+                except Exception:  # pylint: disable=broad-except
+                    _logger.warning("Management link cleanup failed; preserving the original error.", exc_info=True)
+            raise
 
 
 class SendClient(AMQPClient):

@@ -87,6 +87,32 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
     @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="batchdelete")
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_async_queue_batch_delete_and_purge_wire_contract(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        async with ServiceBusClient(
+            fully_qualified_namespace, get_credential(is_async=True), uamqp_transport=uamqp_transport
+        ) as sb_client:
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                await sender.send_messages([ServiceBusMessage(str(i)) for i in range(3)], timeout=30)
+            async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                result = await receiver.delete_messages(1, timeout=30)
+                assert result.deleted_message_count == 1
+                result = await receiver.purge_messages(max_message_count_per_batch=1, timeout=30)
+                assert result.deleted_message_count == 2
+                assert (await receiver.delete_messages(1, timeout=30)).deleted_message_count == 0
+                assert (await receiver.purge_messages(timeout=30)).deleted_message_count == 0
+                assert await receiver.peek_messages(max_message_count=1, timeout=30) == []
+
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
     @ServiceBusQueuePreparer(
         name_prefix="servicebustest", dead_lettering_on_message_expiration=True, lock_duration="PT10S"
     )
