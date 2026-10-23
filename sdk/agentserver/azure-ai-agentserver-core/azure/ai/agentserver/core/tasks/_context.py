@@ -83,12 +83,16 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
     :param shutdown: Container-level shutdown event. Precondition for
         :meth:`exit_for_recovery`.
     :type shutdown: asyncio.Event
+    :param origin_agent_version: Persisted creating agent version. Remains
+        unchanged on recovery and subsequent turns. None for unknown origins.
+    :type origin_agent_version: str | None
     """
 
     __slots__ = (
         "task_id",
         "input_id",  #   /
         "_session_id",
+        "_origin_agent_version",
         "input",
         "retry_attempt",
         "recovery_count",
@@ -122,12 +126,14 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         is_steered_turn: bool = False,
         pending_count_provider: Callable[[], int] | None = None,
         input_id: str | None = None,
+        origin_agent_version: str | None = None,
     ) -> None:
         self.task_id = task_id
         #   /: input_id is part of the public TaskContext
         # surface. Defaults to task_id (one-shot 1:1 invariant).
         self.input_id = input_id if input_id is not None else task_id
         self._session_id = session_id
+        self._origin_agent_version = origin_agent_version
         self.input = input
         self.retry_attempt = retry_attempt
         self.recovery_count = recovery_count
@@ -142,6 +148,20 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         self.cancel_requested: bool = False
         self.is_steered_turn: bool = is_steered_turn
         self._pending_count_provider = pending_count_provider
+
+    @property
+    def origin_agent_version(self) -> str | None:
+        """Version of the agent that created this durable task.
+
+        Read from the persisted task, not the current worker or request.
+        Use it to select compatible application logic. None means the origin
+        was not recorded; it must not be interpreted as the latest version.
+        This metadata does not pin execution to an image or migrate state.
+
+        :return: Immutable creating agent version, or None when unknown.
+        :rtype: str | None
+        """
+        return self._origin_agent_version
 
     @property
     def pending_input_count(self) -> int:
