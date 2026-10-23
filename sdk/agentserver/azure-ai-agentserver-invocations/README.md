@@ -297,8 +297,12 @@ app.run()
 - Calls `await websocket.accept()` before invoking your handler.
 - Runs WebSocket Ping/Pong keep-alive in the background — disabled by default; enable by setting the `WS_KEEPALIVE_INTERVAL` environment variable (auto-injected by AgentService into hosted-agent containers). Set the value to `0` to disable. Frames are sent at the WebSocket protocol layer (RFC 6455 opcode `0x9`/`0xA`) by the underlying Hypercorn server, which keeps the connection alive across upstream proxy / load-balancer idle timeouts without any extra application traffic.
 - Closes the connection cleanly on handler return (close code `1000`) or maps an uncaught handler exception to close code `1011`.
-- Emits a structured close-event log line carrying `azure.ai.agentserver.invocations_ws.session_id`, `azure.ai.agentserver.invocations_ws.close_code`, and `azure.ai.agentserver.invocations_ws.duration_ms`.
+- Emits a structured close-event log line carrying `azure.ai.agentserver.session_id`, the legacy `azure.ai.agentserver.invocations_ws.session_id`, `azure.ai.agentserver.invocations_ws.close_code`, and `azure.ai.agentserver.invocations_ws.duration_ms`.
 - Inherits `/readiness`, OpenTelemetry export, graceful shutdown, and the `x-platform-server` identity header from `azure-ai-agentserver-core`.
+
+### Per-connection telemetry correlation
+
+For each generic `@app.ws_handler` connection, the SDK extracts the caller's W3C trace context (`traceparent`/`tracestate`) and baggage from the WebSocket upgrade request and attaches the per-connection session ID as the `azure.ai.agentserver.session_id` baggage entry for the lifetime of the connection. Any child spans your handler opens are therefore parented to the caller's trace and carry A365 session correlation. Generic handlers do not create a connection span; typed Voice hosts provide their own connection tracing.
 
 ### Handler signature
 

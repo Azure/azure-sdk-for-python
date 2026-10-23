@@ -13,6 +13,7 @@
 
 ### Bugs Fixed
 
+- Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
 - Preserve host-owned recovery callbacks and task options when loading
   process-wide task descriptors at startup.
 - Exclude protocol-disabled task functions before startup, periodic or inline
