@@ -4,21 +4,29 @@
 // license information.
 // --------------------------------------------------------------------------
 
+use std::collections::VecDeque;
 use std::num::NonZero;
 use std::str::FromStr;
+use std::sync::{Arc, Mutex, PoisonError};
 
 use azure_core::error::ErrorKind;
 use azure_core::http::headers::{HeaderName, Headers};
+use azure_core::http::{AsyncResponseBody, Etag};
+use azure_core::Bytes;
 use azure_storage_blob::models::{BlobClientDownloadOptions, EncryptionAlgorithmType, HttpRange};
 use azure_storage_blob::BlobClient;
+use futures::StreamExt;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
+use tokio::sync::mpsc;
+use tokio::task::JoinHandle;
 
-use crate::{build_blob_client, get_runtime, transfer_sizes, AzureError};
+use crate::{build_blob_client, get_runtime, transfer_sizes, AzureError, DEFAULT_PARTITION_SIZE};
 
 /// The `Content-Range` response header (`bytes start-end/total`).
 const CONTENT_RANGE: HeaderName = HeaderName::from_static("content-range");
+const ETAG: HeaderName = HeaderName::from_static("etag");
 
 /// Parse the total resource length from a `Content-Range: bytes start-end/total` header value.
 ///
@@ -72,29 +80,238 @@ fn validate_download_length(offset: u64, expected: u64, actual: u64) -> azure_co
     ))
 }
 
-/// A lazy, windowed blob download exposed to Python as an iterator of `bytes` chunks.
+type Chunk = azure_core::Result<Bytes>;
+
+/// Aborts the wrapped task when dropped, so abandoned downloads stop issuing requests.
+struct AbortOnDrop<T>(JoinHandle<T>);
+
+impl<T> Drop for AbortOnDrop<T> {
+    fn drop(&mut self) {
+        self.0.abort();
+    }
+}
+
+fn task_error(error: tokio::task::JoinError) -> azure_core::Error {
+    azure_core::Error::with_message(ErrorKind::Other, format!("Download task failed: {error}"))
+}
+
+fn to_usize(value: u64) -> azure_core::Result<usize> {
+    usize::try_from(value).map_err(|e| {
+        azure_core::Error::with_message(
+            ErrorKind::DataConversion,
+            format!("Download range does not fit in memory: {e}"),
+        )
+    })
+}
+
+/// Read a response body that must contain exactly `len` bytes into one contiguous chunk.
 ///
-/// Rather than pre-allocating a single arbitrarily large buffer (which fails for blobs larger
-/// than the buffer and holds the whole blob in memory), each iteration downloads one
-/// `window_size`-byte window using the Rust SDK's parallel `download_into`. Throughput within a
-/// window still benefits from concurrent range requests, while peak memory stays bounded to a
-/// single window. The total blob size is learned from the first window's `Content-Range`
-/// response header, so no separate metadata request is required.
+/// A single-frame body is returned without copying; multi-frame bodies are merged into one
+/// buffer sized up front.
+async fn read_body(mut body: AsyncResponseBody, offset: u64, len: u64) -> Chunk {
+    let mut single: Option<Bytes> = None;
+    let mut merged: Vec<u8> = Vec::new();
+    let mut received: u64 = 0;
+    while let Some(frame) = body.next().await {
+        let frame = frame?;
+        received = received.saturating_add(frame.len() as u64);
+        if received > len {
+            validate_download_length(offset, len, received)?;
+        }
+        if merged.is_empty() {
+            match single.take() {
+                None => {
+                    single = Some(frame);
+                    continue;
+                }
+                Some(previous) => {
+                    merged.reserve_exact(to_usize(len)?);
+                    merged.extend_from_slice(&previous);
+                }
+            }
+        }
+        merged.extend_from_slice(&frame);
+    }
+    validate_download_length(offset, len, received)?;
+    Ok(single.unwrap_or_else(|| Bytes::from(merged)))
+}
+
+/// Download exactly one partition-sized (or smaller) range with a single request.
+async fn fetch_range(
+    client: Arc<BlobClient>,
+    mut options: BlobClientDownloadOptions<'static>,
+    offset: u64,
+    len: u64,
+) -> Chunk {
+    options.range = Some(HttpRange::new(offset, len));
+    let response = client.download(Some(options)).await?;
+    read_body(response.body, offset, len).await
+}
+
+enum PumpStop {
+    /// The consumer dropped the receiving end; stop quietly.
+    Closed,
+    Failed(azure_core::Error),
+}
+
+impl From<azure_core::Error> for PumpStop {
+    fn from(error: azure_core::Error) -> Self {
+        Self::Failed(error)
+    }
+}
+
+/// Everything needed to deliver the rest of a download after the first response's headers.
+struct Pump {
+    client: Arc<BlobClient>,
+    /// Options for every request after the first, ETag-locked to the first response.
+    options: BlobClientDownloadOptions<'static>,
+    /// Unread body of the first response, covering `[first_offset, rest_offset)`.
+    first_body: AsyncResponseBody,
+    first_offset: u64,
+    rest_offset: u64,
+    end_offset: u64,
+    partition_size: u64,
+    parallel: usize,
+}
+
+impl Pump {
+    /// Stream the download into `sender` in order, one partition per message.
+    async fn run(self, sender: mpsc::Sender<Chunk>) {
+        if let Err(PumpStop::Failed(error)) = self.forward(&sender).await {
+            let _ = sender.send(Err(error)).await;
+        }
+    }
+
+    async fn forward(self, sender: &mpsc::Sender<Chunk>) -> Result<(), PumpStop> {
+        let Pump {
+            client,
+            options,
+            first_body,
+            first_offset,
+            rest_offset,
+            end_offset,
+            partition_size,
+            parallel,
+        } = self;
+        let send = |chunk: Bytes| async move {
+            sender.send(Ok(chunk)).await.map_err(|_| PumpStop::Closed)
+        };
+        // Ranged requests run as separate tasks so they progress (and copy) in parallel, while
+        // results are delivered strictly in order. Completed-but-undelivered ranges stay in the
+        // queue, so buffered memory is bounded by `parallel` partitions plus the channel.
+        let mut in_flight: VecDeque<AbortOnDrop<Chunk>> = VecDeque::with_capacity(parallel);
+        let mut next_offset = rest_offset;
+        let mut fill = |in_flight: &mut VecDeque<AbortOnDrop<Chunk>>, limit: usize| {
+            while in_flight.len() < limit && next_offset < end_offset {
+                let len = (end_offset - next_offset).min(partition_size);
+                in_flight.push_back(AbortOnDrop(tokio::spawn(fetch_range(
+                    client.clone(),
+                    options.clone(),
+                    next_offset,
+                    len,
+                ))));
+                next_offset += len;
+            }
+        };
+
+        // The first body is still streaming on its own connection; keep the total at `parallel`.
+        fill(&mut in_flight, parallel.saturating_sub(1).max(1));
+        send(read_body(first_body, first_offset, rest_offset - first_offset).await?).await?;
+        while let Some(mut task) = in_flight.pop_front() {
+            fill(&mut in_flight, parallel);
+            let chunk = (&mut task.0).await.map_err(task_error)??;
+            send(chunk).await?;
+        }
+        Ok(())
+    }
+
+    /// Fill `buffer` (exactly the whole remaining download) using the SDK's `download_into`
+    /// for everything after the first response, concurrently with reading the first body.
+    async fn read_into(self, buffer: &mut [u8]) -> azure_core::Result<()> {
+        let Pump {
+            client,
+            mut options,
+            first_body,
+            first_offset,
+            rest_offset,
+            ..
+        } = self;
+        let first_len = rest_offset - first_offset;
+        let (head, tail) = buffer.split_at_mut(to_usize(first_len)?);
+        let first = async move {
+            let read = first_body.collect_into(head).await?;
+            validate_download_length(first_offset, first_len, read as u64)
+        };
+        let rest = async move {
+            if tail.is_empty() {
+                return Ok(());
+            }
+            let len = tail.len() as u64;
+            options.range = Some(HttpRange::new(rest_offset, len));
+            let result = client.download_into(tail, Some(options)).await?;
+            validate_download_length(rest_offset, len, result.len as u64)
+        };
+        futures::future::try_join(first, rest).await.map(|_| ())
+    }
+}
+
+enum StreamState {
+    /// The first response's headers have arrived; nothing has been consumed yet.
+    NotStarted(Box<Pump>),
+    /// A background pump is prefetching partitions into the channel.
+    Streaming(mpsc::Receiver<Chunk>, AbortOnDrop<()>),
+    Done,
+    Failed(PyErr),
+}
+
+/// Copy every remaining pumped chunk into `buffer`, which must be exactly the remaining size.
+fn drain_into(
+    receiver: &mut mpsc::Receiver<Chunk>,
+    buffer: &mut [u8],
+    offset: u64,
+) -> azure_core::Result<()> {
+    let mut written = 0usize;
+    while written < buffer.len() {
+        let Some(chunk) = receiver.blocking_recv() else {
+            break;
+        };
+        let chunk = chunk?;
+        let end = written + chunk.len();
+        if end > buffer.len() {
+            return validate_download_length(offset, buffer.len() as u64, end as u64);
+        }
+        buffer[written..end].copy_from_slice(&chunk);
+        written = end;
+    }
+    validate_download_length(offset, buffer.len() as u64, written as u64)
+}
+
+/// A lazy blob download exposed to Python as an iterator of `bytes` chunks.
+///
+/// Construction sends a single ranged request for the first partition and waits only for its
+/// headers, so the total `size` (from `Content-Range`) and the blob ETag are known after about
+/// one round trip. Every later request is locked to that ETag.
+///
+/// * Iterating starts a background pump that keeps up to `parallel` single-partition range
+///   requests in flight and prefetches completed partitions into a bounded channel (about one
+///   window of `parallel * partition_size` bytes), so the network keeps working while Python
+///   consumes data. Each yielded chunk is one partition.
+/// * `readall()` on a fresh stream writes the whole remaining range directly into a single
+///   preallocated `bytes` object, using the SDK's `download_into` for everything after the first
+///   partition.
 #[pyclass]
 pub(crate) struct NativeDownloadStream {
-    client: BlobClient,
-    download_options: BlobClientDownloadOptions<'static>,
-    window_size: u64,
-    /// Absolute blob offset of the next window to fetch.
+    /// Total number of bytes this stream will deliver.
+    size: u64,
+    /// Absolute blob offset of the next byte to deliver.
     next_offset: u64,
     /// Absolute end offset (exclusive) of the overall requested region.
     end_offset: u64,
-    /// Total number of bytes this stream will deliver.
-    size: u64,
-    /// First window, downloaded eagerly during construction so `size` is known immediately
-    /// and the first chunk is ready without another round trip.
-    pending: Option<Py<PyBytes>>,
-    failure: Option<PyErr>,
+    /// Prefetch channel capacity, in partitions.
+    prefetch: usize,
+    // A Mutex makes the non-`Sync` response body safe to hold in a Python object; access always
+    // goes through `&mut self`, so it is never contended.
+    state: Mutex<StreamState>,
 }
 
 impl NativeDownloadStream {
@@ -102,7 +319,6 @@ impl NativeDownloadStream {
         py: Python<'_>,
         client: BlobClient,
         download_options: BlobClientDownloadOptions<'static>,
-        window_size: u64,
         start: u64,
         length: Option<u64>,
     ) -> PyResult<Self> {
@@ -116,44 +332,35 @@ impl NativeDownloadStream {
             })
             .transpose()?;
         let mut stream = Self {
-            client,
-            download_options,
-            window_size,
+            size: 0,
             next_offset: start,
             end_offset: start,
-            size: 0,
-            pending: None,
-            failure: None,
+            prefetch: 1,
+            state: Mutex::new(StreamState::Done),
         };
         if length == Some(0) {
             return Ok(stream);
         }
 
-        let first_len = length.unwrap_or(window_size).min(window_size);
+        let partition_size = download_options
+            .partition_size
+            .map_or(DEFAULT_PARTITION_SIZE, |size| size.get() as u64);
+        let parallel = download_options.parallel.map_or(1, NonZero::get);
+        let first_len = length.unwrap_or(partition_size).min(partition_size);
         start.checked_add(first_len).ok_or_else(|| {
-            PyValueError::new_err("offset plus window size exceeds the supported download range.")
+            PyValueError::new_err("offset plus chunk size exceeds the supported download range.")
         })?;
-        let buffer_len = usize::try_from(first_len)
-            .map_err(|e| PyValueError::new_err(format!("Invalid download window size: {e}")))?;
-        let mut first_options = stream.download_options.clone();
+        let mut first_options = download_options.clone();
         first_options.range = Some(HttpRange::new(start, first_len));
 
+        let client = Arc::new(client);
         let runtime = get_runtime()?;
-        let (buffer, written, total_size) = py.detach(|| {
-            runtime.block_on(async {
-                let mut buffer = vec![0u8; buffer_len];
-                let result = stream
-                    .client
-                    .download_into(&mut buffer, Some(first_options))
-                    .await
-                    .map_err(AzureError::from)?;
-                buffer.truncate(result.len);
-                let total_size =
-                    total_blob_size(&result.headers, result.properties.content_length, start)
-                        .map_err(AzureError::from)?;
-                Ok::<_, PyErr>((buffer, result.len as u64, total_size))
-            })
-        })?;
+        let response = py
+            .detach(|| runtime.block_on(client.download(Some(first_options))))
+            .map_err(AzureError::from)?;
+        let total_size =
+            total_blob_size(&response.headers, response.properties.content_length, start)
+                .map_err(AzureError::from)?;
 
         stream.end_offset = requested_end.unwrap_or(total_size).min(total_size);
         stream.size = stream.end_offset.checked_sub(start).ok_or_else(|| {
@@ -162,46 +369,36 @@ impl NativeDownloadStream {
                 "The response blob size is smaller than the requested offset.",
             ))
         })?;
-        validate_download_length(start, first_len.min(stream.size), written)
-            .map_err(AzureError::from)?;
-        stream.next_offset = start + written;
-        if written != 0 {
-            stream.pending = Some(PyBytes::new(py, &buffer).unbind());
+        stream.prefetch = parallel;
+        if stream.size == 0 {
+            return Ok(stream);
         }
+
+        let mut options = download_options;
+        if let Some(etag) = response.headers.get_optional_str(&ETAG) {
+            // Lock later ranges to the version served first
+            options.if_match = Some(Etag::from(etag));
+            options.if_none_match = None;
+            options.if_modified_since = None;
+            options.if_unmodified_since = None;
+            options.if_tags = None;
+        }
+        stream.state = Mutex::new(StreamState::NotStarted(Box::new(Pump {
+            client,
+            options,
+            first_body: response.body,
+            first_offset: start,
+            rest_offset: start + first_len.min(stream.size),
+            end_offset: stream.end_offset,
+            partition_size,
+            parallel,
+        })));
         Ok(stream)
     }
 
-    /// Download a single window `[offset, offset + len)` into a fresh buffer and return it as
-    /// Python `bytes` along with the number of bytes actually written. Releases the GIL during
-    /// the network/IO operation.
-    fn fetch_window<'py>(
-        client: &BlobClient,
-        download_options: &BlobClientDownloadOptions<'static>,
-        py: Python<'py>,
-        offset: u64,
-        len: u64,
-    ) -> PyResult<(Bound<'py, PyBytes>, u64)> {
-        let buffer_len = usize::try_from(len)
-            .map_err(|e| PyValueError::new_err(format!("Invalid download window size: {e}")))?;
-        let mut options = download_options.clone();
-        options.range = Some(HttpRange::new(offset, len));
-
-        let runtime = get_runtime()?;
-        let (buffer, written) = py.detach(move || {
-            runtime.block_on(async {
-                let mut buffer = vec![0u8; buffer_len];
-                let result = client
-                    .download_into(&mut buffer, Some(options))
-                    .await
-                    .map_err(AzureError::from)?;
-                validate_download_length(offset, len, result.len as u64)
-                    .map_err(AzureError::from)?;
-                buffer.truncate(result.len);
-                Ok::<(Vec<u8>, u64), PyErr>((buffer, result.len as u64))
-            })
-        })?;
-
-        Ok((PyBytes::new(py, &buffer), written))
+    fn fail(state: &mut StreamState, py: Python<'_>, error: PyErr) -> PyErr {
+        *state = StreamState::Failed(error.clone_ref(py));
+        error
     }
 }
 
@@ -217,34 +414,79 @@ impl NativeDownloadStream {
         slf
     }
 
-    /// Return the next window as `bytes`, or `None` (StopIteration) when the blob is exhausted.
+    /// Return the next partition as `bytes`, or `None` (StopIteration) when the blob is exhausted.
     fn __next__(&mut self, py: Python<'_>) -> PyResult<Option<Py<PyBytes>>> {
-        if let Some(error) = &self.failure {
-            return Err(error.clone_ref(py));
+        let state = self.state.get_mut().unwrap_or_else(PoisonError::into_inner);
+        if matches!(state, StreamState::NotStarted(_)) {
+            let runtime = get_runtime()?;
+            let StreamState::NotStarted(pump) = std::mem::replace(state, StreamState::Done) else {
+                unreachable!();
+            };
+            let (sender, receiver) = mpsc::channel(self.prefetch.max(1));
+            let task = AbortOnDrop(runtime.spawn(pump.run(sender)));
+            *state = StreamState::Streaming(receiver, task);
         }
-        if let Some(chunk) = self.pending.take() {
-            return Ok(Some(chunk));
-        }
-        if self.next_offset >= self.end_offset {
-            return Ok(None);
-        }
+        let message = match state {
+            StreamState::Failed(error) => return Err(error.clone_ref(py)),
+            StreamState::Done | StreamState::NotStarted(_) => return Ok(None),
+            StreamState::Streaming(receiver, _) => py.detach(|| receiver.blocking_recv()),
+        };
         let remaining = self.end_offset - self.next_offset;
-        let len = remaining.min(self.window_size);
-        let (chunk, written) = match NativeDownloadStream::fetch_window(
-            &self.client,
-            &self.download_options,
-            py,
-            self.next_offset,
-            len,
-        ) {
-            Ok(result) => result,
-            Err(error) => {
-                self.failure = Some(error.clone_ref(py));
-                return Err(error);
+        let chunk = match message {
+            Some(Ok(chunk)) if chunk.len() as u64 <= remaining => chunk,
+            Some(Ok(chunk)) => {
+                let error =
+                    validate_download_length(self.next_offset, remaining, chunk.len() as u64)
+                        .unwrap_err();
+                return Err(Self::fail(state, py, AzureError(error).into()));
+            }
+            Some(Err(error)) => return Err(Self::fail(state, py, AzureError(error).into())),
+            None => {
+                let error = validate_download_length(self.next_offset, remaining, 0).unwrap_err();
+                return Err(Self::fail(state, py, AzureError(error).into()));
             }
         };
-        self.next_offset += written;
-        Ok(Some(chunk.unbind()))
+        self.next_offset += chunk.len() as u64;
+        if self.next_offset == self.end_offset {
+            *state = StreamState::Done;
+        }
+        Ok(Some(PyBytes::new(py, &chunk).unbind()))
+    }
+
+    /// Return all remaining content as a single `bytes` object.
+    ///
+    /// On a fresh stream the content is written directly into the result with the GIL released,
+    /// using the SDK's `download_into` for everything after the first partition. After partial
+    /// iteration, the prefetched and remaining partitions are copied into the result instead.
+    fn readall(&mut self, py: Python<'_>) -> PyResult<Py<PyBytes>> {
+        let offset = self.next_offset;
+        let remaining = to_usize(self.end_offset - offset).map_err(AzureError::from)?;
+        let runtime = get_runtime()?;
+        let state = self.state.get_mut().unwrap_or_else(PoisonError::into_inner);
+        let result = match std::mem::replace(state, StreamState::Done) {
+            StreamState::Failed(error) => {
+                *state = StreamState::Failed(error.clone_ref(py));
+                return Err(error);
+            }
+            StreamState::Done => return Ok(PyBytes::new(py, &[]).unbind()),
+            StreamState::NotStarted(pump) => PyBytes::new_with(py, remaining, |buffer| {
+                py.detach(|| runtime.block_on(pump.read_into(buffer)))
+                    .map_err(|error| AzureError(error).into())
+            }),
+            StreamState::Streaming(mut receiver, _pump) => {
+                PyBytes::new_with(py, remaining, |buffer| {
+                    py.detach(|| drain_into(&mut receiver, buffer, offset))
+                        .map_err(|error| AzureError(error).into())
+                })
+            }
+        };
+        match result {
+            Ok(bytes) => {
+                self.next_offset = self.end_offset;
+                Ok(bytes.unbind())
+            }
+            Err(error) => Err(Self::fail(state, py, error)),
+        }
     }
 }
 
@@ -341,7 +583,8 @@ fn download_with_client(
         transfer_sizes(max_concurrency, max_chunk_size).map_err(PyValueError::new_err)?;
     let concurrency_u64 = u64::try_from(concurrency.get())
         .map_err(|e| PyValueError::new_err(format!("Invalid max_concurrency value: {e}")))?;
-    let window_size = concurrency_u64
+    // The prefetch buffer holds about one window of `concurrency * chunk_size` bytes.
+    concurrency_u64
         .checked_mul(chunk_size.get())
         .ok_or_else(|| {
             PyValueError::new_err(
@@ -378,14 +621,7 @@ fn download_with_client(
         );
     }
 
-    NativeDownloadStream::new(
-        py,
-        blob_client,
-        download_options,
-        window_size,
-        start,
-        length,
-    )
+    NativeDownloadStream::new(py, blob_client, download_options, start, length)
 }
 
 #[cfg(test)]
@@ -488,16 +724,12 @@ mod tests {
         Python::initialize();
         Python::attach(|py| {
             let mock = MockHttpClient::new(|_| panic!("Overflow must fail before HTTP"));
-            for (start, length, window) in [(u64::MAX, Some(1), 1), (u64::MAX - 1, None, 2)] {
-                assert!(NativeDownloadStream::new(
-                    py,
-                    mock.client(),
-                    BlobClientDownloadOptions::default(),
-                    window,
-                    start,
-                    length,
-                )
-                .is_err());
+            for (start, length, partition) in [(u64::MAX, Some(1), 1), (u64::MAX - 1, None, 2)] {
+                let mut options = BlobClientDownloadOptions::default();
+                options.partition_size = NonZero::new(partition);
+                assert!(
+                    NativeDownloadStream::new(py, mock.client(), options, start, length).is_err()
+                );
             }
             assert!(download_with_client(
                 py,
