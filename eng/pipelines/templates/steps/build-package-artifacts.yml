@@ -43,7 +43,8 @@ steps:
     - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
       parameters:
         Paths:
-          - ${{ if in(parameters.ServiceDirectory, '', 'auto') }}:
+          # Daily-dev versioning resolves Azure dependency versions from other service directories.
+          - ${{ if or(in(parameters.ServiceDirectory, '', 'auto'), eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'], 'internal'))) }}:
             - '**'
           - ${{ else }}:
             - sdk/${{ parameters.ServiceDirectory }}
