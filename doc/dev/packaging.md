@@ -183,10 +183,13 @@ provides the internal Rust toolchain. No prototype test feed is selected by
 default. The working directory must contain `rust-toolchain.toml`.
 The installer refuses to overwrite an existing Cargo configuration in its
 `CARGO_HOME`; provide a clean build environment.
-Rust installation is disabled by default and applies only to wheel-build jobs
-that target an artifact with `signBinaries: true`, including on Linux.
-Opted-in jobs have a 240-minute timeout and a 210-minute package-build timeout;
-other jobs keep their existing limits.
+Rust installation is disabled by default. When enabled, it applies to wheel-build
+jobs that target an artifact with `signBinaries: true`, including on Linux, and
+to the documentation job when `BuildDocs` is enabled. Documentation continues
+to install the source distribution, using the host Rust toolchain and
+authenticated Cargo feed.
+Opted-in wheel-build jobs have a 240-minute timeout and a 210-minute package-build
+timeout; other jobs keep their existing limits.
 
 Linux wheels build inside manylinux containers. The package's `before-all` hook
 must install the internal toolchain and configure Cargo source replacement
@@ -197,8 +200,8 @@ variables. Credentials stay in the build environment, not checked-in files.
 On Windows, `PYTHON_ARM64_LIB_DIR` points to the pre-provisioned ARM64 Python
 import libraries; a package can use it as `PYO3_CROSS_LIB_DIR` for cross-compilation.
 
-This opt-in does not provision Rust for source-installing test, documentation,
-or analysis jobs. Prepare those jobs separately before enabling a Rust package,
+This opt-in does not provision Rust for source-installing test or analysis jobs.
+Prepare those jobs separately before enabling a Rust package,
 and keep real source-distribution testing. Packages with a static
 `[project].version` also need version synchronization with `_version.py` for
 nightly builds. No package is activated by adding this shared support.

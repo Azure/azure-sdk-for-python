@@ -20,6 +20,15 @@ parameters:
   - name: RunApiStubGen
     type: boolean
     default: true
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
@@ -64,6 +73,12 @@ steps:
 
   - template: set-dev-build.yml
 
+  - ${{ if and(parameters.InstallMsRustToolchain, parameters.BuildDocs) }}:
+    - template: /eng/pipelines/templates/steps/install-msrust-toolchain.yml
+      parameters:
+        ToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        WorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+
   - ${{ if eq(parameters.BuildDocs, 'true') }}:
     - task: PythonScript@0
       displayName: 'Generate Docs'
@@ -75,7 +90,13 @@ steps:
           --service="${{ parameters.ServiceDirectory }}"
           --checks="sphinx"
           --wheel_dir="$(Build.ArtifactStagingDirectory)"
-        
+      env:
+        ${{ if parameters.InstallMsRustToolchain }}:
+          MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+          MSRUSTUP_FEED_URL: $(MSRUSTUP_FEED_URL)
+          CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+          CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
+
   - ${{ if eq(parameters.RunApiStubGen, 'true') }}:
     - template: /eng/pipelines/templates/steps/run_apistub.yml
       parameters:
