@@ -26,6 +26,7 @@
 - Classified oversized numeric execution settings as user configuration errors and safely omitted invalid probability metadata without interrupting batch error and usage summaries.
 - Preserved measured token usage, model metadata, and response properties when the shared Prompty strategy parses a post-inference skipped result. Pre-inference skips still make no model request.
 - Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
+- Fixed `TaskAdherenceEvaluator` silently dropping the `system_message` and `tool_calls` keyword arguments. Both are now accepted as optional inputs and passed to the evaluation prompt, so callers using plain-string `query`/`response` no longer get evaluated without their system instructions or tool calls.
 
 ### Other Changes
 
