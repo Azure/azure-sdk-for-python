@@ -2,6 +2,7 @@ azure.search.documents.knowledgebases package
 =============================================
 
 .. automodule:: azure.search.documents.knowledgebases
+   :inherited-members:
    :members:
    :show-inheritance:
    :undoc-members:
@@ -22,6 +23,7 @@ azure.search.documents.knowledgebases.types module
 --------------------------------------------------
 
 .. automodule:: azure.search.documents.knowledgebases.types
+   :inherited-members:
    :members:
    :show-inheritance:
    :undoc-members:

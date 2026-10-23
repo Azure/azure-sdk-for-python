@@ -167,6 +167,8 @@ class TestIndexDocumentsBatch:
         batch.actions = replacement
 
         assert batch.actions == replacement
+        assert batch.as_dict() == {"value": [{"@search.action": "merge", "id": "new"}]}
+        assert json.loads(json.dumps(batch, cls=SdkJSONEncoder)) == batch.as_dict()
 
     def test_dequeue_actions_returns_copy_and_clears_batch(self):
         batch = IndexDocumentsBatch()
@@ -181,6 +183,7 @@ class TestIndexDocumentsBatch:
         ]
         assert batch.actions == []
         assert batch.dequeue_actions() == []
+        assert batch.as_dict() == {"value": []}
 
     def test_enqueue_actions_accepts_single_action_and_action_list(self):
         upload = IndexAction({"@search.action": "upload", "id": "1"})
@@ -192,6 +195,41 @@ class TestIndexDocumentsBatch:
         batch.enqueue_actions([delete, merge])
 
         assert batch.actions == [upload, delete, merge]
+        assert batch.as_dict() == {"value": [action.as_dict() for action in batch.actions]}
+
+    @pytest.mark.parametrize("method_name", METHOD_NAMES)
+    def test_add_method_serializes_current_actions_after_dequeue_and_enqueue(self, method_name):
+        batch = IndexDocumentsBatch()
+        getattr(batch, method_name)({"id": "old"})
+        batch.dequeue_actions()
+        batch.enqueue_actions(IndexAction({"@search.action": "delete", "id": "queued"}))
+        getattr(batch, method_name)({"id": "new"})
+
+        expected = {
+            "value": [
+                {"@search.action": "delete", "id": "queued"},
+                {"@search.action": METHOD_MAP[method_name], "id": "new"},
+            ]
+        }
+        assert batch.as_dict() == expected
+        assert json.loads(json.dumps(batch, cls=SdkJSONEncoder)) == expected
+        assert [action.as_dict() for action in batch.actions] == expected["value"]
+
+    def test_actions_reflect_updates_to_generated_wire_storage(self):
+        batch = IndexDocumentsBatch()
+        batch.add_upload_actions({"id": "old"})
+        replacement = IndexAction({"@search.action": "merge", "id": "new"})
+
+        batch["value"] = [replacement]
+
+        assert batch.actions == [replacement]
+        batch.enqueue_actions(IndexAction({"@search.action": "delete", "id": "next"}))
+        assert batch.as_dict() == {
+            "value": [
+                {"@search.action": "merge", "id": "new"},
+                {"@search.action": "delete", "id": "next"},
+            ]
+        }
 
     def test_repr_includes_action_count(self):
         batch = IndexDocumentsBatch()

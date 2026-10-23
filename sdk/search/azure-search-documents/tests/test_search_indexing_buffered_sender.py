@@ -50,6 +50,19 @@ def create_indexing_result(document_key=DOCUMENT_KEY, *, succeeded=True, status_
 
 
 class TestSearchIndexingBufferedSenderConstructor:
+    @pytest.mark.parametrize("explicit_scopes", [False, True])
+    def test_constructor_forwards_audience_and_explicit_scope_precedence(self, explicit_scopes):
+        kwargs = {"audience": "https://search.azure.us"}
+        expected = ["https://search.azure.us/.default"]
+        if explicit_scopes:
+            kwargs["credential_scopes"] = ["https://custom.example/.default"]
+            expected = kwargs["credential_scopes"]
+        sender = create_sender(**kwargs)
+        try:
+            assert sender._client._config.credential_scopes == expected
+        finally:
+            sender.close()
+
     def test_constructor_uses_default_buffering_settings(self):
         sender = SearchIndexingBufferedSender(SEARCH_ENDPOINT, INDEX_NAME, CREDENTIAL, window=100)
         try:
@@ -172,6 +185,66 @@ class TestSearchIndexingBufferedSenderQueueing:
 
 
 class TestSearchIndexingBufferedSenderProcessing:
+    @pytest.mark.parametrize("shared_transport", [False, True])
+    def test_process_forwards_schema_client_options_without_closing_shared_transport(self, shared_transport):
+        policy = mock.Mock()
+        transport = mock.MagicMock() if shared_transport else None
+        options = {
+            "api_version": API_VERSION,
+            "audience": "https://search.azure.us",
+            "credential_scopes": ["https://explicit.example/.default"],
+            "per_call_policies": [policy],
+            "transport": transport,
+        }
+        sender = create_sender(**options)
+        sender.upload_documents([create_hotel_document()])
+        field = mock.Mock(key=True)
+        field.name = "HotelId"
+        try:
+            with mock.patch("azure.search.documents._patch.SearchIndexClient") as factory, mock.patch.object(
+                sender, "_index_documents_actions", return_value=[create_indexing_result()]
+            ):
+                factory.return_value.get_index.return_value = mock.Mock(fields=[field])
+                assert sender.flush() is False
+            factory.assert_called_once_with(SEARCH_ENDPOINT, CREDENTIAL, **options)
+            if shared_transport:
+                factory.return_value.close.assert_not_called()
+                transport.close.assert_not_called()
+            else:
+                factory.return_value.close.assert_called_once()
+        finally:
+            sender.close()
+
+    @pytest.mark.parametrize("raise_error", [False, True])
+    def test_process_requeues_every_action_after_request_failure(self, raise_error):
+        on_progress = mock.Mock()
+        sender = create_sender(on_progress=on_progress)
+        sender._index_key = "HotelId"
+        keys = [DOCUMENT_KEY, REPLACEMENT_DOCUMENT_KEY, "3"]
+        sender.upload_documents([create_hotel_document(key) for key in keys])
+
+        try:
+            with mock.patch.object(
+                sender, "_index_documents_actions", side_effect=HttpResponseError("indexing request failed")
+            ):
+                if raise_error:
+                    with pytest.raises(HttpResponseError, match="indexing request failed"):
+                        sender._process(raise_error=True)
+                else:
+                    assert sender._process(raise_error=False) is True
+
+            assert [action["HotelId"] for action in sender.actions] == keys
+            assert sender._retry_counter == {key: 1 for key in keys}
+            assert [action["HotelId"] for action in sender._index_documents_batch.as_dict()["value"]] == keys
+            with mock.patch.object(
+                sender, "_index_documents_actions", return_value=[create_indexing_result(key) for key in keys]
+            ):
+                assert sender.flush() is False
+            assert sender.actions == []
+            assert [call.args[0]["HotelId"] for call in on_progress.call_args_list] == keys
+        finally:
+            sender.close()
+
     def test_flush_detects_key_field_and_reports_success_callbacks(self):
         on_progress = mock.Mock()
         on_remove = mock.Mock()
@@ -262,6 +335,16 @@ class TestSearchIndexingBufferedSenderProcessing:
 
 
 class TestSearchIndexingBufferedSenderIndexing:
+    def test_index_documents_accepts_mapping_actions(self):
+        sender = create_sender()
+        body = {"value": [{"@search.action": "upload", **create_hotel_document()}]}
+        try:
+            with mock.patch.object(sender._client, "index_documents", return_value=[create_indexing_result()]) as send:
+                assert sender.index_documents(body)[0].key == DOCUMENT_KEY
+            assert send.call_args.kwargs["batch"].as_dict() == body
+        finally:
+            sender.close()
+
     def test_context_manager_enters_client_and_closes_on_exit(self):
         sender = create_sender()
 

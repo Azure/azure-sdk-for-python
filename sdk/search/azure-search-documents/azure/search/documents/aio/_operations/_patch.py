@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Union, cast
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator, ReturnType
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -18,10 +18,11 @@ from ..._operations._patch import (
     _build_search_request,
     _convert_search_result,
     _pack_continuation_token,
+    _normalize_index_documents_batch,
     _unpack_continuation_token,
 )
 from ...models._patch import RequestEntityTooLargeError
-from ... import models as _models
+from ... import models as _models, types as _types
 from ...models._models import SearchDocumentsResult, SearchRequest
 
 
@@ -35,9 +36,8 @@ def _ensure_response(f):
 
     async def wrapper(self, *args, **kw):
         # pylint:disable=protected-access
-        if self._current_page is None:
-            self._response = await self._get_next(self.continuation_token)
-            self.continuation_token, self._current_page = await self._extract_data(self._response)
+        if self._first_response is None:
+            self._prefetched_response = await self._get_next(self.continuation_token)
         return await f(self, *args, **kw)
 
     return wrapper
@@ -56,18 +56,27 @@ class AsyncSearchPageIterator(AsyncPageIterator):
         self._initial_request = initial_request
         self._kwargs = kwargs
         self._facets: Optional[Dict[str, List[Dict[str, Any]]]] = None
-        self._api_version = kwargs.get("api_version", "2026-08-01-preview")
+        self._first_response: Optional[SearchDocumentsResult] = None
+        self._prefetched_response: Optional[SearchDocumentsResult] = None
+        self._api_version = kwargs.get("api_version", client._config.api_version)  # pylint:disable=protected-access
 
     async def _get_next_cb(self, continuation_token):
+        if self._prefetched_response is not None:
+            response = self._prefetched_response
+            self._prefetched_response = None
+            return response
         if continuation_token is None:
-            return await self._client._search_post(  # pylint:disable=protected-access
+            response = await self._client._search_post(  # pylint:disable=protected-access
                 body=self._initial_request, **self._kwargs
             )
-
-        _next_link, next_page_request = _unpack_continuation_token(continuation_token)
-        return await self._client._search_post(  # pylint:disable=protected-access
-            body=next_page_request, **self._kwargs
-        )
+        else:
+            _next_link, next_page_request = _unpack_continuation_token(continuation_token)
+            response = await self._client._search_post(  # pylint:disable=protected-access
+                body=next_page_request, **self._kwargs
+            )
+        if self._first_response is None:
+            self._first_response = response
+        return response
 
     async def _extract_data_cb(self, response: SearchDocumentsResult):
         continuation_token = _pack_continuation_token(response, api_version=self._api_version)
@@ -76,8 +85,7 @@ class AsyncSearchPageIterator(AsyncPageIterator):
 
     @_ensure_response
     async def get_facets(self) -> Optional[Dict[str, Any]]:
-        self.continuation_token = None
-        response = cast(SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._first_response)
         if response.facets is not None and self._facets is None:
             self._facets = {
                 k: [x.as_dict() if hasattr(x, "as_dict") else dict(x) for x in v] for k, v in response.facets.items()
@@ -86,27 +94,18 @@ class AsyncSearchPageIterator(AsyncPageIterator):
 
     @_ensure_response
     async def get_coverage(self) -> Optional[float]:
-        self.continuation_token = None
-        response = cast(SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._first_response)
         return response.coverage
 
     @_ensure_response
     async def get_count(self) -> Optional[int]:
-        self.continuation_token = None
-        response = cast(SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._first_response)
         return response.count
 
     @_ensure_response
     async def get_answers(self) -> Optional[List[_models.QueryAnswerResult]]:
-        self.continuation_token = None
-        response = cast(SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._first_response)
         return response.answers
-
-    @_ensure_response
-    async def get_debug_info(self) -> Optional[_models.DebugInfo]:
-        self.continuation_token = None
-        response = cast(SearchDocumentsResult, self._response)
-        return response.debug_info
 
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
@@ -170,36 +169,33 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         """
         return cast(Optional[List[_models.QueryAnswerResult]], await self._first_iterator_instance().get_answers())
 
-    async def get_debug_info(self) -> Optional[_models.DebugInfo]:
-        """Return the debug information for the query.
-
-        :return: the debug information for the query, or None when ``debug``
-            was not requested on the search call.
-        :rtype: ~azure.search.documents.models.DebugInfo or None
-        """
-        return cast(Optional[_models.DebugInfo], await self._first_iterator_instance().get_debug_info())
-
 
 class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
     """Async SearchClient operations mixin customizations."""
 
     @distributed_trace_async
-    async def index_documents(self, batch: _models.IndexDocumentsBatch, **kwargs: Any) -> List[_models.IndexingResult]:
+    async def index_documents(
+        self,
+        batch: Union[_models.IndexDocumentsBatch, _types.IndexDocumentsBatch, Mapping[str, Any]],
+        **kwargs: Any,
+    ) -> List[_models.IndexingResult]:
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
-        :type batch: ~azure.search.documents.models.IndexDocumentsBatch
+        :type batch: ~azure.search.documents.IndexDocumentsBatch or
+         ~azure.search.documents.types.IndexDocumentsBatch or mapping
         :return: List of IndexingResult
         :rtype: list[~azure.search.documents.types.IndexingResult]
 
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """
-        return await self._index_documents_actions(batch=batch, **kwargs)
+        return await self._index_documents_actions(batch=_normalize_index_documents_batch(batch), **kwargs)
 
     async def _index_documents_actions(
         self, batch: _models.IndexDocumentsBatch, **kwargs: Any
     ) -> List[_models.IndexingResult]:
         error_map = {413: RequestEntityTooLargeError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         try:
             batch_response = await self._index(batch=batch, error_map=error_map, **kwargs)
@@ -210,14 +206,14 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 raise
             pos = round(len(batch.actions) / 2)
             batch_response_first_half = await self._index_documents_actions(
-                batch=_models.IndexDocumentsBatch(actions=batch.actions[:pos]), **kwargs
+                batch=_models.IndexDocumentsBatch(actions=batch.actions[:pos]), error_map=error_map, **kwargs
             )
             if batch_response_first_half:
                 result_first_half = batch_response_first_half
             else:
                 result_first_half = []
             batch_response_second_half = await self._index_documents_actions(
-                batch=_models.IndexDocumentsBatch(actions=batch.actions[pos:]), **kwargs
+                batch=_models.IndexDocumentsBatch(actions=batch.actions[pos:]), error_map=error_map, **kwargs
             )
             if batch_response_second_half:
                 result_second_half = batch_response_second_half
@@ -348,6 +344,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
+        more_like_this: Optional[str] = None,
         order_by: Optional[List[str]] = None,
         query_type: Optional[Union[str, _models.QueryType]] = None,
         scoring_parameters: Optional[List[str]] = None,
@@ -366,13 +363,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         top: Optional[int] = None,
         scoring_statistics: Optional[Union[str, _models.ScoringStatistics]] = None,
         session_id: Optional[str] = None,
-        vector_queries: Optional[List[_models.VectorQuery]] = None,
+        vector_queries: Optional[Sequence[Union[_models.VectorQuery, _types.VectorQuery]]] = None,
         vector_filter_mode: Optional[Union[str, _models.VectorFilterMode]] = None,
-        query_language: Optional[Union[str, _models.QueryLanguage]] = None,
-        speller: Optional[Union[str, _models.QuerySpellerType]] = None,
-        query_rewrites: Optional[Union[str, _models.QueryRewritesType]] = None,
-        semantic_fields: Optional[List[str]] = None,
-        hybrid_search: Optional[_models.HybridSearch] = None,
         semantic_error_mode: Optional[Union[str, _models.SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, _models.QueryDebugMode]] = None,
@@ -402,6 +394,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             must be covered by a search query in order for the query to be reported as a success. This
             parameter can be useful for ensuring search availability even for services with only one
             replica. The default is 100.
+        :keyword str more_like_this: The key of the document to use as the basis for finding similar
+            documents. This parameter cannot be used together with search text.
         :keyword order_by: The list of OData $orderby expressions by which to sort the results. Each
             expression can be either a field name or a call to either the geo.distance() or the
             search.score() functions. Each expression can be followed by asc to indicate ascending, and
@@ -482,22 +476,12 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
-        :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
+        :paramtype vector_queries: sequence[~azure.search.documents.models.VectorQuery or
+         ~azure.search.documents.types.VectorQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
             vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
-        :keyword query_language: A value that specifies the language of the search query.
-        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword speller: A value that specifies the type of the speller to use to spell-correct
-            individual search query terms.
-        :paramtype speller: str or ~azure.search.documents.models.QuerySpellerType
-        :keyword query_rewrites: A value that specifies whether query rewrites should be generated to
-            augment the search query.
-        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
-        :keyword semantic_fields: The list of field names used for semantic ranking.
-        :paramtype semantic_fields: list[str]
-        :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
-        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
+
         :keyword query_source_authorization: Token identifying the user for which the query is being executed.
         :paramtype query_source_authorization: str
         :keyword enable_elevated_read: A value that enables elevated read that bypasses document-level
@@ -534,6 +518,9 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :dedent: 4
                 :caption: Get search result facets.
         """
+        for name in ("query_language", "speller", "query_rewrites", "semantic_fields", "hybrid_search"):
+            if name in kwargs:
+                raise TypeError(f"search() got an unsupported GA keyword argument '{name}'")
         # Build the search request using shared helper
         search_request = _build_search_request(
             search_text=search_text,
@@ -544,6 +531,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
+            more_like_this=more_like_this,
             order_by=order_by,
             query_type=query_type,
             scoring_parameters=scoring_parameters,
@@ -564,11 +552,6 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             session_id=session_id,
             vector_queries=vector_queries,
             vector_filter_mode=vector_filter_mode,
-            query_language=query_language,
-            speller=speller,
-            query_rewrites=query_rewrites,
-            semantic_fields=semantic_fields,
-            hybrid_search=hybrid_search,
             semantic_error_mode=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
