@@ -85,6 +85,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
     :type credential: ~azure.core.credentials_async.AsyncTokenProvider
+    :param str scopes: Lets you specify the type of access needed.
     """
 
     def __init__(self, credential: AsyncTokenProvider, *scopes: str, **kwargs: Any) -> None:
