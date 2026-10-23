@@ -10,6 +10,7 @@ DESCRIPTION:
     using the synchronous AIProjectClient.
 
     Sessions only work with Hosted Agents.
+    See README.md for Python startup and dependency configuration.
 
 USAGE:
     python sample_sessions_files_upload_download.py
@@ -81,6 +82,7 @@ with (
                 dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
             ),
             environment_variables={
+                "PYTHONNOUSERSITE": "1",
                 "FOUNDRY_PROJECT_ENDPOINT": endpoint,
                 "FOUNDRY_MODEL_NAME": model_name,
             },

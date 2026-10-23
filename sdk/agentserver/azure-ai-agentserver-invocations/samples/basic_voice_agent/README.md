@@ -41,8 +41,16 @@ alone does not publish the new APIs or make them available in older SDK builds.
 ## Run
 
 ```bash
+export PYTHONNOUSERSITE=1
 python basic_voice_agent.py
 ```
+
+Configure the launching shell before every Python start; in PowerShell use
+`$env:PYTHONNOUSERSITE = "1"`. Install dependencies in the virtual environment
+or image, not with `pip install --user`. For hosted deployments, also set
+`PYTHONNOUSERSITE` to `"1"` in the complete agent definition's environment
+variables, not just in the local shell or the protocol-only manifest fragment.
+See the [Python startup guide](../../../../ai/azure-ai-projects/samples/hosted_agents/README.md#python-startup-configuration).
 
 The server listens on `0.0.0.0` and uses the `PORT` environment variable when
 set; otherwise it listens on port `8088`. Foundry selects the container route

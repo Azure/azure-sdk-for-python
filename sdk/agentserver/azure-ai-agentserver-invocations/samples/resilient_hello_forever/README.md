@@ -41,9 +41,18 @@ watchdog signals for a task meant to run indefinitely.
 ## Run it
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
+export PYTHONNOUSERSITE=1
 pip install -r requirements.txt
 python app.py
 ```
+
+Set the startup variable in the shell before every launch, including recovery
+restarts; in PowerShell use `$env:PYTHONNOUSERSITE = "1"`. Install dependencies
+in the virtual environment or image, not with `pip install --user`. For hosted
+deployments, configure the remote agent definition too; see the
+[Python startup guide](../../../../ai/azure-ai-projects/samples/hosted_agents/README.md#python-startup-configuration).
 
 ```bash
 # start the forever worker (note the invocation_id in the response). Pass the

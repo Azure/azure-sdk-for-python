@@ -18,9 +18,18 @@ instead of starting over.**
 ## Run it
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
+export PYTHONNOUSERSITE=1
 pip install -r requirements.txt
 python app.py            # listens on http://localhost:8088
 ```
+
+Set the startup variable in the shell before every launch, including recovery
+restarts; in PowerShell use `$env:PYTHONNOUSERSITE = "1"`. Install dependencies
+in the virtual environment or image, not with `pip install --user`. For hosted
+deployments, configure the remote agent definition too; see the
+[Python startup guide](../../../../ai/azure-ai-projects/samples/hosted_agents/README.md#python-startup-configuration).
 
 Start a run (returns immediately — the task keeps running in the background).
 Pass `?agent_session_id=` to isolate this run's checkpoints; use the **same**
