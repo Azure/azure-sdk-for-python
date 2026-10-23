@@ -4,23 +4,22 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils import recorded_by_proxy
-
-from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError
-from azure.messaging.webpubsubchatservice.models import (
-    ChatMessage,
-    ChatPermission,
-    ChatRole,
-    ChatRoom,
-    ChatRoomMember,
-    HumanChatUser,
-    MessageContent,
-)
-
 from testcase import (
     WebPubSubChatAccessPreparer,
     WebPubSubChatPreparer,
     WebPubSubChatTest,
+)
+
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError
+from azure.messaging.webpubsubchatservice.models import (
+    ChatMessageUpdate,
+    ChatPermission,
+    ChatRoleCreateOrReplace,
+    ChatRoomCreateOrReplace,
+    ChatRoomMemberCreateOrReplace,
+    HumanChatUserCreateOrReplace,
+    MessageContent,
 )
 
 
@@ -34,7 +33,7 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
             for role_name in role_names:
                 role = client.create_or_replace_role(
                     role_name,
-                    ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                    ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
                 )
                 assert role.name == role_name
                 assert client.get_role(role_name).permissions == [ChatPermission.USER_CREATE_ROOM]
@@ -60,7 +59,6 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
     @recorded_by_proxy
     def test_list_roles_using_connection_string(
         self,
-        wps_chat_endpoint,
         wps_chat_connection_string,
         wps_chat_disable_local_auth,
     ):
@@ -82,7 +80,7 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
         try:
             created = client.create_or_replace_role(
                 role_name,
-                ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
                 match_condition=MatchConditions.IfMissing,
             )
             assert created.name == role_name
@@ -90,7 +88,7 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
             with pytest.raises(HttpResponseError) as error:
                 client.create_or_replace_role(
                     role_name,
-                    ChatRole(permissions=[ChatPermission.USER_FETCH_ALL_ROOMS]),
+                    ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_FETCH_ALL_ROOMS]),
                     match_condition=MatchConditions.IfMissing,
                 )
             assert error.value.status_code == 412
@@ -106,11 +104,11 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
         try:
             created = client.create_or_replace_role(
                 role_name,
-                ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
             )
             replaced = client.create_or_replace_role(
                 role_name,
-                ChatRole(
+                ChatRoleCreateOrReplace(
                     permissions=[
                         ChatPermission.USER_CREATE_ROOM,
                         ChatPermission.USER_FETCH_ALL_ROOMS,
@@ -124,7 +122,7 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
             with pytest.raises(HttpResponseError) as error:
                 client.create_or_replace_role(
                     role_name,
-                    ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                    ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
                     etag=created.etag,
                     match_condition=MatchConditions.IfNotModified,
                 )
@@ -139,7 +137,7 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
         client = self.create_client(wps_chat_endpoint)
         room_id = "python-e2e-empty-room"
         try:
-            room = client.create_or_replace_room(room_id, ChatRoom(title="Python E2E Room"))
+            room = client.create_or_replace_room(room_id, ChatRoomCreateOrReplace(title="Python E2E Room"))
             assert room.id == room_id
             fetched_room = client.get_room(room_id)
             assert fetched_room.id == room_id
@@ -148,8 +146,8 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
             conversation = client.get_conversation(room.default_conversation)
             assert conversation.id == room.default_conversation
             assert conversation.parent_room == room_id
-            assert list(client.list_messages(room.default_conversation)) == []
-            assert list(client.list_room_members(room_id)) == []
+            assert not list(client.list_messages(room.default_conversation))
+            assert not list(client.list_room_members(room_id))
         finally:
             self.cleanup(client.delete_room, room_id)
             client.close()
@@ -163,11 +161,15 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
         user_id = "python-e2e-user"
         room_id = "python-e2e-member-room"
         try:
-            client.create_or_replace_role(user_role, ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]))
-            client.create_or_replace_role(room_role, ChatRole(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE]))
+            client.create_or_replace_role(
+                user_role, ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM])
+            )
+            client.create_or_replace_role(
+                room_role, ChatRoleCreateOrReplace(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE])
+            )
             user = client.create_or_replace_user(
                 user_id,
-                HumanChatUser(nickname="Python User", role_name=user_role),
+                HumanChatUserCreateOrReplace(nickname="Python User", role_name=user_role),
             )
             assert user.id == user_id
             assert user.kind == "Human"
@@ -175,11 +177,11 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
             assert fetched_user.id == user_id
             assert fetched_user.nickname == "Python User"
 
-            client.create_or_replace_room(room_id, ChatRoom(title="Member Room"))
+            client.create_or_replace_room(room_id, ChatRoomCreateOrReplace(title="Member Room"))
             member = client.create_or_replace_room_member(
                 room_id,
                 user_id,
-                ChatRoomMember(role_name=room_role),
+                ChatRoomMemberCreateOrReplace(role_name=room_role),
             )
             assert member.user_id == user_id
             assert member.role_name == room_role
@@ -206,10 +208,12 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
         updated_text = "Python E2E updated message"
         binary_content = bytes([0, 1, 2, 254, 255])
         try:
-            client.create_or_replace_role(user_role, ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]))
+            client.create_or_replace_role(
+                user_role, ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM])
+            )
             client.create_or_replace_role(
                 room_role,
-                ChatRole(
+                ChatRoleCreateOrReplace(
                     permissions=[
                         ChatPermission.ROOM_PUBLISH_MESSAGE,
                         ChatPermission.ROOM_HISTORY,
@@ -218,10 +222,10 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
             )
             client.create_or_replace_user(
                 user_id,
-                HumanChatUser(nickname="Python Message User", role_name=user_role),
+                HumanChatUserCreateOrReplace(nickname="Python Message User", role_name=user_role),
             )
-            room = client.create_or_replace_room(room_id, ChatRoom(title="Python Message Room"))
-            client.create_or_replace_room_member(room_id, user_id, ChatRoomMember(role_name=room_role))
+            room = client.create_or_replace_room(room_id, ChatRoomCreateOrReplace(title="Python Message Room"))
+            client.create_or_replace_room_member(room_id, user_id, ChatRoomMemberCreateOrReplace(role_name=room_role))
 
             self.seed_chat_message(client, user_id, room.default_conversation, message_text)
             message = next(
@@ -232,13 +236,13 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
             updated = client.update_message(
                 room.default_conversation,
                 message.id,
-                ChatMessage(created_by=user_id, content=MessageContent(text=updated_text)),
+                ChatMessageUpdate(created_by=user_id, content=MessageContent(text=updated_text)),
             )
             assert updated.content.text == updated_text
             binary_updated = client.update_message(
                 room.default_conversation,
                 message.id,
-                ChatMessage(
+                ChatMessageUpdate(
                     created_by=user_id,
                     content=MessageContent(binary=binary_content),
                 ),
@@ -263,15 +267,20 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
     ):
         token_client = self.create_client(wps_chat_endpoint)
         key_client = None
+        token_user_id = "python-e2e-token-access-user"
+        key_user_id = "python-e2e-key-access-user"
         try:
-            token_access = token_client.get_client_access_token(user_id="python-e2e-token-access-user")
+            token_access = token_client.get_client_access_token(user_id=token_user_id)
             self.assert_client_access(token_access, wps_chat_endpoint)
 
             if wps_chat_disable_local_auth.lower() != "true":
                 key_client = self.create_key_client(wps_chat_connection_string)
-                key_access = key_client.get_client_access_token(user_id="python-e2e-key-access-user")
+                key_access = key_client.get_client_access_token(user_id=key_user_id)
                 self.assert_client_access(key_access, wps_chat_endpoint)
         finally:
+            self.cleanup(token_client.delete_user, token_user_id)
+            if key_client:
+                self.cleanup(token_client.delete_user, key_user_id)
             token_client.close()
             if key_client:
                 key_client.close()
