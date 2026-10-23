@@ -62,12 +62,20 @@ def test_github_workflows_bootstrap_before_dependency_installs(workflow, job):
     path = REPO_ROOT / ".github" / "workflows" / workflow
     steps = yaml.safe_load(path.read_text())["jobs"][job]["steps"]
     bootstrap_step = next(index for index, step in enumerate(steps) if "ci_tools/bootstrap.py" in step.get("run", ""))
-    feed_step = next(
+    feed_steps = [
         index for index, step in enumerate(steps) if step.get("uses") == "./.github/actions/configure-package-indexes"
-    )
-    assert feed_step < bootstrap_step
+    ]
+    assert all(index < bootstrap_step for index in feed_steps)
     commands = "\n".join(step.get("run", "") for step in steps)
     assert commands.index("ci_tools/bootstrap.py") < commands.index("pip install")
+
+
+def test_dependency_checker_installs_dependencies_once_without_changing_indexes():
+    path = REPO_ROOT / ".github" / "workflows" / "dependency-checker.yml"
+    steps = yaml.safe_load(path.read_text())["jobs"]["check-dependencies"]["steps"]
+    commands = "\n".join(step.get("run", "") for step in steps)
+    assert commands.count("pip install packaging==25.0 requests==2.32.4") == 1
+    assert not any(step.get("uses") == "./.github/actions/configure-package-indexes" for step in steps)
 
 
 def _pipeline_nodes(node):

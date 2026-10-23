@@ -20,9 +20,6 @@ jobs:
         with:
           python-version: 3.11
         
-      - name: Configure package indexes
-        uses: ./.github/actions/configure-package-indexes
-
       - name: Install dependencies
         run: |
           python eng/tools/azure-sdk-tools/ci_tools/bootstrap.py
