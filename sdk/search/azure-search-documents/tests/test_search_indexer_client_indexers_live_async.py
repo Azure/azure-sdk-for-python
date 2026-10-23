@@ -21,7 +21,7 @@ from azure.search.documents.indexes.models import (
 )
 from devtools_testutils import AzureRecordedTestCase
 
-from _search_helpers_async import live_test, make_index_client, make_indexer_client, safe_delete
+from _search_helpers_async import make_index_client, make_indexer_client, safe_delete, storage_live_test as live_test
 
 DATA_SOURCE_TYPE = "azureblob"
 INDEXER_DESCRIPTION = "Indexer description"

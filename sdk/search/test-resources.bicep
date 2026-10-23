@@ -9,7 +9,7 @@ param searchSku string = 'standard'
 param searchServiceName string = 'search-${uniqueString(resourceGroup().id)}'
 param searchApiVersion string = '2021-04-01-Preview'
 param storageAccountName string = 'storage${uniqueString(resourceGroup().id)}'
-param storageContainerName string = 'storage-container-${resourceGroup().name}'
+param storageContainerName string = 'storage-container-${uniqueString(resourceGroup().id)}'
 param storageApiVersion string = '2021-06-01'
 
 
