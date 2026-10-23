@@ -20,6 +20,7 @@ import pytest
 from azure.cosmos.http_constants import HttpHeaders
 
 from _split_test_utils import (
+    assert_change_feed_ids,
     assert_no_stage_failures,
     create_item,
     snapshot_split_routing_map,
@@ -42,6 +43,41 @@ def _container(read_ranges):
 
 @pytest.mark.cosmosEmulator
 class TestSplitTestUtils(unittest.TestCase):
+    def test_change_feed_ids_allow_cross_partition_reordering(self):
+        diagnostics = {}
+        assert_change_feed_ids(["doc4", "doc2", "doc3"], ["doc2", "doc3", "doc4"], diagnostics)
+        self.assertTrue(diagnostics["ids_match"])
+        self.assertFalse(diagnostics["order_matches"])
+        self.assertEqual(diagnostics["duplicate_count"], 0)
+
+    def test_change_feed_ids_detect_missing_unexpected_and_duplicate_items(self):
+        for actual, missing, unexpected, duplicates in (
+            (["doc2", "doc3"], 1, 0, 0),
+            (["doc2", "doc3", "stale-item"], 1, 1, 0),
+            (["doc2", "doc3", "doc3"], 1, 1, 1),
+            (["doc2", "doc3", "doc4", "doc2"], 0, 1, 1),
+        ):
+            with self.subTest(actual=actual):
+                diagnostics = {}
+                with self.assertRaises(AssertionError):
+                    assert_change_feed_ids(actual, ["doc2", "doc3", "doc4"], diagnostics)
+                self.assertEqual(diagnostics["missing_count"], missing)
+                self.assertEqual(diagnostics["unexpected_count"], unexpected)
+                self.assertEqual(diagnostics["duplicate_count"], duplicates)
+                self.assertFalse(diagnostics["ids_match"])
+
+    def test_change_feed_failure_diagnostics_do_not_expose_ids(self):
+        output = io.StringIO()
+        failures = []
+        with redirect_stdout(output):
+            with split_stage("change_feed_after", failures) as diagnostics:
+                assert_change_feed_ids(["private-id", "private-id"], ["expected-id"], diagnostics)
+        self.assertNotIn("private-id", output.getvalue())
+        self.assertNotIn("expected-id", output.getvalue())
+        self.assertEqual(failures[0]["context"]["missing_count"], 1)
+        self.assertEqual(failures[0]["context"]["unexpected_count"], 2)
+        self.assertEqual(failures[0]["context"]["duplicate_count"], 1)
+
     def test_creates_regular_and_hpk_items(self):
         for hpk, fields in (
             (False, {"pk": "A7"}),

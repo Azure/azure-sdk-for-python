@@ -3,16 +3,17 @@
 import unittest
 import uuid
 from types import SimpleNamespace
-from unittest.mock import patch
-from urllib.parse import urlparse
+from unittest.mock import Mock, patch
 
 import pytest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import test_config
+from _retry_test_utils import configure_retry_regions, retry_test_client, send_to_test_host
+from azure.core.pipeline.transport import HttpRequest
 from azure.cosmos import (CosmosClient, _retry_utility, DatabaseAccount, _global_endpoint_manager,
                           _location_cache)
-from azure.cosmos._location_cache import RegionalRoutingContext
+from azure.cosmos.documents import ConnectionPolicy
 from azure.cosmos.documents import _OperationType
 from azure.cosmos.http_constants import HttpHeaders
 
@@ -41,101 +42,22 @@ class TestServiceRetryPolicies(unittest.TestCase):
         cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_container = cls.created_database.get_container_client(cls.TEST_CONTAINER_ID)
 
-    @classmethod
-    def _uses_localhost_endpoint(cls):
-        parsed = urlparse(cls.host)
-        return parsed.hostname in ("localhost", "127.0.0.1")
-
-    @classmethod
-    def _make_regional_endpoint(cls, region):
-        """Return a per-region locational endpoint (e.g. ``acct-westus...``).
-
-        Each region must have its own endpoint URL. If every region shares
-        the default endpoint, ``LocationCache.is_default_endpoint_regional``
-        becomes True and the next ``update_location_cache`` call clears
-        ``effective_preferred_locations`` and shrinks
-        ``read_regional_routing_contexts`` to a single fallback, turning
-        multi-region tests into one-shot tests.
-        """
-        return RegionalRoutingContext(
-            _location_cache.LocationCache.GetLocationalEndpoint(cls.host, region)
-        )
-
     def _setup_read_regions(self, location_cache, regions):
-        """Populate the read side of the location cache with N distinct regions.
-
-        Mirrors the production initialization flow: set the raw inputs
-        (account locations, locational-endpoint map, preferred locations),
-        clear any unavailability state carried over from a previous
-        assertion, then call ``update_location_cache()`` so the derived
-        dicts (``_read_locations_by_normalized``, the reverse endpoint→region
-        map, and ``read_regional_routing_contexts``) are recomputed from a
-        consistent snapshot. Direct attribute assignment alone leaves stale
-        derived state behind, which silently inflates the retry budget the
-        next assertion observes.
-        """
-        if self._uses_localhost_endpoint():
-            shared_context = RegionalRoutingContext(self.host)
-            location_cache.account_read_locations = list(regions)
-            location_cache.account_read_regional_routing_contexts_by_location = {
-                r: shared_context for r in regions
-            }
-            location_cache.account_locations_by_read_endpoints = {self.host: regions[0]}
-            location_cache.effective_preferred_locations = list(regions)
-            location_cache.read_regional_routing_contexts = [shared_context for _ in regions]
-            location_cache.location_unavailability_info_by_endpoint = {}
-            return
-
-        endpoints_by_region = {r: self._make_regional_endpoint(r) for r in regions}
-        location_cache.account_read_locations = list(regions)
-        location_cache.account_read_regional_routing_contexts_by_location = endpoints_by_region
-        # Reverse map (endpoint URL -> region name). The retry policy uses
-        # this to translate ``location_endpoint_to_route`` back to a region
-        # when marking endpoints unavailable; if it is stale the wrong
-        # region gets marked and the retry budget can drift.
-        location_cache.account_locations_by_read_endpoints = {
-            ctx.get_primary(): name for name, ctx in endpoints_by_region.items()
-        }
-        location_cache.effective_preferred_locations = list(regions)
-        # Each assertion in this test reuses the same location cache; reset
-        # unavailability so a region marked unavailable in the previous
-        # 3-region step does not silently shrink (or extend) the next step's
-        # effective routing list.
-        location_cache.location_unavailability_info_by_endpoint = {}
-        # Recompute derived state from the raw inputs above so the helper's
-        # output matches what the production initialization path would
-        # produce for the same topology.
-        location_cache.update_location_cache()
+        configure_retry_regions(location_cache, regions)
+        self.assertEqual(len(location_cache.read_regional_routing_contexts), len(regions))
 
     def _setup_write_regions(self, location_cache, regions):
-        """Populate the write side of the location cache with N distinct regions.
+        configure_retry_regions(location_cache, regions, regions)
+        self.assertEqual(len(location_cache.write_regional_routing_contexts), len(regions))
 
-        Companion to ``_setup_read_regions`` — see that docstring for the
-        rationale on clearing unavailability state and re-running
-        ``update_location_cache()``.
-        """
-        if self._uses_localhost_endpoint():
-            shared_context = RegionalRoutingContext(self.host)
-            location_cache.account_write_locations = list(regions)
-            location_cache.account_write_regional_routing_contexts_by_location = {
-                r: shared_context for r in regions
-            }
-            location_cache.account_locations_by_write_endpoints = {self.host: regions[0]}
-            location_cache.write_regional_routing_contexts = [shared_context for _ in regions]
-            location_cache.location_unavailability_info_by_endpoint = {}
-            return
-
-        endpoints_by_region = {r: self._make_regional_endpoint(r) for r in regions}
-        location_cache.account_write_locations = list(regions)
-        location_cache.account_write_regional_routing_contexts_by_location = endpoints_by_region
-        location_cache.account_locations_by_write_endpoints = {
-            ctx.get_primary(): name for name, ctx in endpoints_by_region.items()
-        }
-        location_cache.location_unavailability_info_by_endpoint = {}
-        location_cache.update_location_cache()
+    def _create_retry_client(self):
+        context = retry_test_client(self.host, self.masterKey)
+        client = context.__enter__()
+        self.addCleanup(context.__exit__, None, None, None)
+        return client
 
     def test_service_request_retry_policy(self):
-        mock_client = CosmosClient(self.host, self.masterKey)
+        mock_client = self._create_retry_client()
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
@@ -183,7 +105,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             assert mf.counter == expected_counter
 
     def test_service_response_retry_policy(self):
-        mock_client = CosmosClient(self.host, self.masterKey)
+        mock_client = self._create_retry_client()
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
@@ -202,9 +124,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
         # Now we change the location cache to have only 1 preferred read region
         self._setup_read_regions(original_location_cache, [self.REGION1])
         expected_counter = len(original_location_cache.read_regional_routing_contexts)
-        mf = self.MockExecuteServiceResponseExceptionIgnoreQuery(
-            Exception, _retry_utility.ExecuteFunction
-        )
+        mf = self.MockExecuteServiceResponseExceptionIgnoreQuery(Exception, _retry_utility.ExecuteFunction)
         with patch.object(_retry_utility, 'ExecuteFunction', mf):
             with pytest.raises(ServiceResponseError):
                 container.read_item(created_item['id'], created_item['pk'])
@@ -392,10 +312,74 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
 @pytest.mark.cosmosEmulator
 class TestServiceRetryPolicyHelpers(unittest.TestCase):
+    def test_synthetic_regions_survive_refresh_and_unavailability(self):
+        cache = _location_cache.LocationCache("https://127.0.0.1:8081/", ConnectionPolicy())
+        regions = ["West US", "East US", "West US 2"]
+        configure_retry_regions(cache, regions, regions[:2])
+        cache.update_location_cache()
+        self.assertFalse(cache.is_default_endpoint_regional())
+        self.assertEqual(len({c.get_primary() for c in cache.read_regional_routing_contexts}), 3)
+        self.assertEqual(len({c.get_primary() for c in cache.write_regional_routing_contexts}), 2)
+        first = cache.read_regional_routing_contexts[0].get_primary()
+        self.assertEqual(cache.get_location_from_endpoint(first), regions[0])
+        cache.mark_endpoint_unavailable_for_read(first, True)
+        self.assertEqual(len(cache.read_regional_routing_contexts), 3)
+        self.assertEqual(cache.read_regional_routing_contexts[-1].get_primary(), first)
+        configure_retry_regions(cache, regions[:1])
+        self.assertEqual(len(cache.read_regional_routing_contexts), 1)
+        self.assertEqual(cache.location_unavailability_info_by_endpoint, {})
+
+    def test_synthetic_transport_uses_real_test_host_and_restores_url(self):
+        url = "https://westus.retry-test.invalid/dbs/test/colls/items?value=1"
+        request = HttpRequest("GET", url)
+        seen = []
+
+        def send(outgoing, **kwargs):
+            seen.append(outgoing.url)
+            raise ServiceRequestError("transport error")
+
+        with self.assertRaises(ServiceRequestError):
+            send_to_test_host(send, "https://127.0.0.1:8081/", request)
+        self.assertEqual(seen, ["https://127.0.0.1:8081/dbs/test/colls/items?value=1"])
+        self.assertEqual(request.url, url)
+        real = HttpRequest("GET", "https://127.0.0.1:8081/dbs")
+        sender = Mock(return_value="response")
+        self.assertEqual(send_to_test_host(sender, "https://127.0.0.1:8081/", real), "response")
+        sender.assert_called_once_with(real)
+
     def test_is_read_retryable_request_uses_operation_type_fallback(self):
         request = SimpleNamespace(headers={})
         request_params = SimpleNamespace(operation_type=_OperationType.Read)
         assert _retry_utility._is_read_retryable_request(request, request_params) is True
+
+    def test_synthetic_transport_preserves_target_tls_behavior(self):
+        for host, supplied, expected in (
+            ("https://localhost:8081/", True, False),
+            ("https://127.0.0.1:8081/", True, False),
+            ("https://account.documents.azure.com/", True, True),
+            ("https://account.documents.azure.com/", "custom-ca.pem", "custom-ca.pem"),
+            ("https://localhost.example.com/", True, True),
+            ("https://127.0.0.10/", True, True),
+        ):
+            with self.subTest(host=host, supplied=supplied):
+                request = HttpRequest("GET", "https://westus.retry-test.invalid/dbs/test")
+                original_url = request.url
+                seen = []
+
+                def send(outgoing, **kwargs):
+                    seen.append((outgoing.url, kwargs["connection_verify"]))
+                    raise ServiceRequestError("transport error")
+
+                with self.assertRaises(ServiceRequestError):
+                    send_to_test_host(send, host, request, connection_verify=supplied)
+                self.assertEqual(seen, [(host + "dbs/test", expected)])
+                self.assertEqual(request.url, original_url)
+
+    def test_non_synthetic_transport_does_not_change_tls_options(self):
+        request = HttpRequest("GET", "https://localhost:8081/dbs/test")
+        sender = Mock(return_value="response")
+        send_to_test_host(sender, "https://localhost:8081/", request, connection_verify=True)
+        sender.assert_called_once_with(request, connection_verify=True)
 
     def test_is_read_retryable_request_write_without_header_is_not_retryable(self):
         request = SimpleNamespace(headers={})
@@ -417,4 +401,3 @@ class TestServiceRetryPolicyHelpers(unittest.TestCase):
         # is available (request is None).
         request_params = SimpleNamespace(operation_type=_OperationType.Read)
         assert _retry_utility._is_read_retryable_request(None, request_params) is True
-
