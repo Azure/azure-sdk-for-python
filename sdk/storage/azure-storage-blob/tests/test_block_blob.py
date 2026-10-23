@@ -2159,7 +2159,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         assert props.blob_tier == StandardBlobTier.SMART
         assert props.smart_access_tier is not None
 
-        for blob in self.bsc.get_container_client(self.container_name).list_blobs():
+        for blob in self.bsc.get_container_client(self.container_name).list_blobs(response_format="xml"):
             assert blob.blob_tier == StandardBlobTier.SMART
             assert blob.smart_access_tier is not None
 
