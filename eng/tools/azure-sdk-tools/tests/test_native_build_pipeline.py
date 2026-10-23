@@ -10,6 +10,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import zipfile
 
 import pytest
 import yaml
@@ -96,6 +97,118 @@ def test_rust_credentials_and_target_setup_are_opt_in():
         step for step in build["steps"] if step.get("displayName") == "Pre-provision CPython for cibuildwheel"
     )
     assert provision["env"]["INSTALL_MS_RUST_TOOLCHAIN"] == "${{ format('{0}', parameters.InstallMsRustToolchain) }}"
+
+
+def test_documentation_forwards_host_rust_configuration():
+    jobs = load_template("jobs/ci.yml")
+    documentation = next(job for job in jobs["jobs"] if job.get("job") == "Build_Documentation")
+    forwarded = documentation["steps"][-1]["parameters"]
+    assert all(forwarded[name] == "${{ parameters." + name + " }}" for name in RUST_PARAMETERS[:3])
+    assert "MsRustAdditionalTargets" not in forwarded
+
+    extended = next(job for job in jobs["jobs"] if job.get("job") == "Build_Extended")
+    assert "InstallMsRustToolchain" not in extended["steps"][-1]["parameters"]
+
+    build = load_template("steps/build-extended-artifacts.yml")
+    defaults = {parameter["name"]: parameter["default"] for parameter in build["parameters"]}
+    assert defaults["InstallMsRustToolchain"] is False
+    assert defaults["MsRustWorkingDirectory"] == ""
+    assert defaults["MsRustToolchainFeed"] == ""
+
+    rust_gate = "${{ if and(parameters.InstallMsRustToolchain, parameters.BuildDocs) }}"
+    install = next(step[rust_gate][0] for step in build["steps"] if rust_gate in step)
+    assert install["template"].endswith("install-msrust-toolchain.yml")
+    assert install["parameters"] == {
+        "ToolchainFeed": "${{ parameters.MsRustToolchainFeed }}",
+        "WorkingDirectory": "${{ parameters.MsRustWorkingDirectory }}",
+    }
+
+    docs_group = next(step for step in build["steps"] if "${{ if eq(parameters.BuildDocs, 'true') }}" in step)
+    docs = docs_group["${{ if eq(parameters.BuildDocs, 'true') }}"][0]
+    assert build["steps"].index(next(step for step in build["steps"] if rust_gate in step)) < build["steps"].index(
+        docs_group
+    )
+    assert docs["displayName"] == "Generate Docs"
+    assert set(docs["env"]) == {RUST_GATE}
+    assert docs["env"][RUST_GATE] == {
+        "MSRUSTUP_ACCESS_TOKEN": "$(System.AccessToken)",
+        "MSRUSTUP_FEED_URL": "$(MSRUSTUP_FEED_URL)",
+        "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN": "$(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)",
+        "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER": (
+            "$(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)"
+        ),
+    }
+
+
+@pytest.mark.parametrize("wheel_count", [0, 1, 5])
+@pytest.mark.parametrize("existing_namespaces", [False, True])
+def test_namespace_properties_accept_platform_wheels(tmp_path, wheel_count, existing_namespaces):
+    package_name = "example-native-package"
+    package_info = {"Name": package_name, "Version": "1.0.0", "ServiceDirectory": "example"}
+    if existing_namespaces:
+        package_info["Namespaces"] = ["outdated.namespace"]
+    info_directory = tmp_path / "PackageInfo"
+    info_directory.mkdir()
+    info_path = info_directory / f"{package_name}.json"
+    info_path.write_text(json.dumps(package_info))
+
+    wheel_directory = tmp_path / package_name
+    wheel_directory.mkdir()
+    tags = (
+        ["py3-none-any"]
+        if wheel_count == 1
+        else [
+            "cp310-abi3-macosx_11_0_arm64",
+            "cp310-abi3-manylinux_2_28_aarch64",
+            "cp310-abi3-manylinux_2_28_x86_64",
+            "cp310-abi3-win_amd64",
+            "cp310-abi3-win_arm64",
+        ][:wheel_count]
+    )
+    for tag in tags:
+        with zipfile.ZipFile(wheel_directory / f"example_native_package-1.0.0-{tag}.whl", "w") as wheel:
+            wheel.writestr("azure/example/__init__.py", "")
+    with zipfile.ZipFile(wheel_directory / "example_native_package-0.9.0-py3-none-any.whl", "w") as wheel:
+        wheel.writestr("azure/wrong_version/__init__.py", "")
+
+    temp_directory = tmp_path / "temp"
+    temp_directory.mkdir()
+    result = run_powershell(
+        """
+        $ErrorActionPreference = 'Stop'
+        . "$env:REPO_ROOT/eng/scripts/docs/Docs-ToC.ps1"
+        function ShouldPublish { return $true }
+        function LogError { param([string] $Message) Write-Host "ERROR: $Message" }
+        $RepoRoot = $env:REPO_ROOT
+        $ArtifactStagingDirectory = $env:ARTIFACT_DIRECTORY
+        $artifacts = Get-ChildItem "$ArtifactStagingDirectory/PackageInfo" -File -Filter '*.json'
+        $foundError = $false
+        $ast = [System.Management.Automation.Language.Parser]::ParseFile(
+            "$RepoRoot/eng/scripts/Save-Package-Namespaces-Property.ps1", [ref]$null, [ref]$null
+        )
+        $loop = $ast.Find({
+            param($node)
+            $node -is [System.Management.Automation.Language.ForEachStatementAst] -and
+                $node.Variable.VariablePath.UserPath -eq 'packageInfoFile'
+        }, $false)
+        . ([scriptblock]::Create($loop.Extent.Text))
+        if ($foundError) { exit 1 }
+        """,
+        REPO_ROOT=str(REPO_ROOT),
+        ARTIFACT_DIRECTORY=str(tmp_path),
+        TMPDIR=str(temp_directory),
+        TMP=str(temp_directory),
+        TEMP=str(temp_directory),
+    )
+
+    if wheel_count:
+        assert result.returncode == 0, result.stderr
+        assert json.loads(info_path.read_text())["Namespaces"] == ["azure.example"]
+        assert "Cannot convert value to type System.String" not in result.stderr
+    else:
+        assert result.returncode == 1
+        assert "Whl file for, example-native-package, was not found" in result.stdout
+        assert json.loads(info_path.read_text()) == package_info
 
 
 @pytest.mark.parametrize("sign_binaries", [False, True])
