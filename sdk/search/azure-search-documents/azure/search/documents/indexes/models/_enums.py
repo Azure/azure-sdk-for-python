@@ -73,11 +73,19 @@ class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gpt56Terra model."""
     GPT56_LUNA = "gpt-5.6-luna"
     """Gpt56Luna model."""
+    GPT6_ASTRA = "gpt-6-astra"
+    """Gpt6Astra model."""
+    GPT6_SOL = "gpt-6-sol"
+    """Gpt6Sol model."""
+    GPT6_LUNA = "gpt-6-luna"
+    """Gpt6Luna model."""
+    GPT61_SOL = "gpt-6.1-sol"
+    """Gpt61Sol model."""
 
 
 class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the data to extract from Azure blob storage and tells the indexer which data to
-    extract from image content when "imageAction" is set to a value other than "none".  This
+    extract from image content when \"imageAction\" is set to a value other than \"none\".  This
     applies to embedded image content in a .PDF or other application, or image files such as .jpg
     and .png, in Azure blobs.
     """
@@ -93,23 +101,23 @@ class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class BlobIndexerImageAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines how to process embedded images and image files in Azure blob storage.  Setting the
-    "imageAction" configuration to any value other than "none" requires that a skillset also be
+    \"imageAction\" configuration to any value other than \"none\" requires that a skillset also be
     attached to that indexer.
     """
 
     NONE = "none"
     """Ignores embedded images or image files in the data set.  This is the default."""
     GENERATE_NORMALIZED_IMAGES = "generateNormalizedImages"
-    """Extracts text from images (for example, the word "STOP" from a traffic stop sign), and embeds
-    it into the content field.  This action requires that "dataToExtract" is set to
-    "contentAndMetadata".  A normalized image refers to additional processing resulting in uniform
+    """Extracts text from images (for example, the word \"STOP\" from a traffic stop sign), and embeds
+    it into the content field.  This action requires that \"dataToExtract\" is set to
+    \"contentAndMetadata\".  A normalized image refers to additional processing resulting in uniform
     image output, sized and rotated to promote consistent rendering when you include images in
     visual search results. This information is generated for each image when you use this option."""
     GENERATE_NORMALIZED_IMAGE_PER_PAGE = "generateNormalizedImagePerPage"
-    """Extracts text from images (for example, the word "STOP" from a traffic stop sign), and embeds
+    """Extracts text from images (for example, the word \"STOP\" from a traffic stop sign), and embeds
     it into the content field, but treats PDF files differently in that each page will be rendered
     as an image and normalized accordingly, instead of extracting embedded images.  Non-PDF file
-    types will be treated the same as if "generateNormalizedImages" was set."""
+    types will be treated the same as if \"generateNormalizedImages\" was set."""
 
 
 class BlobIndexerParsingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -389,6 +397,13 @@ class FileKnowledgeSourceExtractionMode(str, Enum, metaclass=CaseInsensitiveEnum
     """Content Understanding extraction was performed."""
 
 
+class GraphProfileKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported graph storage representations."""
+
+    EDGE_LIST = "edgeList"
+    """Each index document stores one source assertion about a graph fact."""
+
+
 class ImageAnalysisSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The language codes supported for input by ImageAnalysisSkill."""
 
@@ -516,6 +531,12 @@ class IndexedSharePointContainerName(str, Enum, metaclass=CaseInsensitiveEnumMet
     """Index content from every document library in the site."""
     USE_QUERY = "useQuery"
     """Use a query to filter SharePoint content."""
+    ALL_SITE_LISTS = "allSiteLists"
+    """Index content from every list in the site."""
+    ALL_SITE_PAGES = "allSitePages"
+    """Index content from every page in the site."""
+    ALL_SITE_CONTENT = "allSiteContent"
+    """Index content from all supported libraries, lists, and pages in the site."""
 
 
 class IndexerExecutionEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -562,6 +583,17 @@ class IndexerPermissionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indexer to ingest ACL groupIds from data source to index."""
     RBAC_SCOPE = "rbacScope"
     """Indexer to ingest Azure RBAC scope from data source to index."""
+    ONE_LAKE_PARENT_FOLDERS = "oneLakeParentFolders"
+    """For OneLake data sources only, ingest all ancestor folder paths from '/Files' through the
+    immediate parent, excluding the file name, as the string collection
+    'metadata_onelake_parent_folders'. Use indexer fieldMappings to map this source metadata to a
+    filterable Collection(Edm.String) field with permissionFilter 'oneLakeParentFolders'; index
+    projections use source '/document/metadata_onelake_parent_folders'. The index must also specify
+    'oneLakeSecuritySource'."""
+    ONE_LAKE_LAKEHOUSE_ID = "oneLakeLakehouseId"
+    """For OneLake data sources only, ingest the source item's lakehouse ID for mapping to an index
+    field with permissionFilter 'oneLakeLakehouseId'. The index must also specify
+    'oneLakeSecuritySource'."""
 
 
 class IndexerResyncOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -647,6 +679,11 @@ class KnowledgeBaseModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AZURE_OPEN_AI = "azureOpenAI"
     """Use Azure Open AI models for query planning."""
+    OPEN_AI_COMPATIBLE = "openAICompatible"
+    """Use a customer-controlled OpenAI-compatible endpoint for knowledge base retrieval or knowledge
+    source image verbalization."""
+    MICROSOFT_RETRIEVER1 = "microsoftRetriever1"
+    """Use Microsoft Retriever 1 for query planning and retrieval."""
 
 
 class KnowledgeSourceContentExtractionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -658,6 +695,20 @@ class KnowledgeSourceContentExtractionMode(str, Enum, metaclass=CaseInsensitiveE
     """Performs the full default content extraction pipeline."""
 
 
+class KnowledgeSourceGraphGroundingSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The explicit source kind for a grounding reference. Only searchIndex is supported."""
+
+    SEARCH_INDEX = "searchIndex"
+    """A search index in the same search service."""
+
+
+class KnowledgeSourceGraphOntologySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The explicit source kind for an ontology reference. Only \"inline\" is supported."""
+
+    INLINE = "inline"
+    """Ontology content provided inline in the request as a constrained JSON-LD document."""
+
+
 class KnowledgeSourceIngestionPermissionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Permission types to ingest together with document content."""
 
@@ -667,6 +718,12 @@ class KnowledgeSourceIngestionPermissionOption(str, Enum, metaclass=CaseInsensit
     """Ingest group identifiers alongside document content."""
     RBAC_SCOPE = "rbacScope"
     """Ingest RBAC scope information alongside document content."""
+    ONE_LAKE_PARENT_FOLDERS = "oneLakeParentFolders"
+    """Ingest OneLake parent folder paths and enable OneLake permission filtering on the generated
+    index. Only supported for indexed OneLake knowledge sources."""
+    ONE_LAKE_LAKEHOUSE_ID = "oneLakeLakehouseId"
+    """Ingest the source item's OneLake lakehouse ID and enable OneLake permission filtering on the
+    generated index. Only supported for indexed OneLake knowledge sources."""
     SENSITIVITY_LABELS = "sensitivityLabels"
     """Ingest Microsoft Purview sensitivity labels alongside document content."""
 
@@ -931,12 +988,12 @@ class LexicalNormalizerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ASCII_FOLDING = "asciifolding"
     """Converts alphabetic, numeric, and symbolic Unicode characters which are not in the first 127
-    ASCII characters (the "Basic Latin" Unicode block) into their ASCII equivalents, if such
+    ASCII characters (the \"Basic Latin\" Unicode block) into their ASCII equivalents, if such
     equivalents exist. See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html>`_."""
     ELISION = "elision"
-    """Removes elisions. For example, "l'avion" (the plane) will be converted to "avion" (plane). See
+    """Removes elisions. For example, \"l'avion\" (the plane) will be converted to \"avion\" (plane). See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html>`_."""
     LOWERCASE = "lowercase"
@@ -1257,7 +1314,7 @@ class MicrosoftTokenizerLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class OcrLineEnding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the sequence of characters to use between the lines of text recognized by the OCR
-    skill. The default value is "space".
+    skill. The default value is \"space\".
     """
 
     SPACE = "space"
@@ -1624,6 +1681,12 @@ class PermissionFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Field represents group IDs that should be used to filter document access on queries."""
     RBAC_SCOPE = "rbacScope"
     """Field represents an RBAC scope that should be used to filter document access on queries."""
+    ONE_LAKE_PARENT_FOLDERS = "oneLakeParentFolders"
+    """Field represents the OneLake parent folder paths of the source item that should be used to
+    filter document access on queries. The index must also specify 'oneLakeSecuritySource'."""
+    ONE_LAKE_LAKEHOUSE_ID = "oneLakeLakehouseId"
+    """Field represents a OneLake lakehouse ID that should be used to filter document access on
+    queries. The index must also specify 'oneLakeSecuritySource'."""
 
 
 class PhoneticEncoder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2360,7 +2423,7 @@ class TokenFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/tr/ApostropheFilter.html>`_."""
     ASCII_FOLDING = "asciifolding"
     """Converts alphabetic, numeric, and symbolic Unicode characters which are not in the first 127
-    ASCII characters (the "Basic Latin" Unicode block) into their ASCII equivalents, if such
+    ASCII characters (the \"Basic Latin\" Unicode block) into their ASCII equivalents, if such
     equivalents exist. See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html>`_."""
@@ -2388,7 +2451,7 @@ class TokenFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/ngram/EdgeNGramTokenFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/ngram/EdgeNGramTokenFilter.html>`_."""
     ELISION = "elision"
-    """Removes elisions. For example, "l'avion" (the plane) will be converted to "avion" (plane). See
+    """Removes elisions. For example, \"l'avion\" (the plane) will be converted to \"avion\" (plane). See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html>`_."""
     GERMAN_NORMALIZATION = "german_normalization"
@@ -2568,6 +2631,8 @@ class VectorSearchVectorizerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AZURE_OPEN_AI = "azureOpenAI"
     """Generate embeddings using an Azure OpenAI resource at query time."""
+    OPEN_AI_COMPATIBLE = "openAICompatible"
+    """Generate embeddings using a customer-controlled OpenAI-compatible embeddings endpoint."""
     CUSTOM_WEB_API = "customWebApi"
     """Generate embeddings using a custom web endpoint at query time."""
     AI_SERVICES_VISION = "aiServicesVision"

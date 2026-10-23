@@ -52,6 +52,9 @@ def _index_response_stub(name="hotels"):
     response.vector_search = None
     response.permission_filter_option = None
     response.purview_enabled = None
+    response.graph_profile = {"kind": "edgeList"}
+    response.share_point_connector_app_registration = None
+    response.one_lake_security_source = None
     response.e_tag = '"etag"'
     return response
 
@@ -102,6 +105,24 @@ class TestListIndexes:
         converted = kwargs["cls"]([_index_response_stub()])
         assert isinstance(converted[0], SearchIndex)
         assert converted[0].name == "hotels"
+        assert converted[0].graph_profile.kind == "edgeList"
+
+    def test_list_indexes_projection_preserves_graph_configuration(self):
+        from azure.search.documents.indexes._operations._patch import _convert_index_response
+        from azure.search.documents.indexes.models._models import SearchIndexResponse
+
+        require_capability("azure.search.documents.indexes.models.SearchIndex.graph_profile")
+        response = SearchIndexResponse(
+            {
+                "name": "hotels",
+                "fields": [],
+                "graphProfile": {"kind": "edgeList"},
+                "oneLakeSecuritySource": {"fabricWorkspaceId": "workspace", "lakehouseId": "lakehouse"},
+            }
+        )
+        converted = _convert_index_response(response).as_dict()
+        assert converted["graphProfile"] == {"kind": "edgeList"}
+        assert converted["oneLakeSecuritySource"]["lakehouseId"] == "lakehouse"
 
 
 class TestListIndexNames:
@@ -204,10 +225,10 @@ class TestKnowledgeSourceFileOperations:
 @pytest.mark.parametrize(
     ("public_method", "generated_method"),
     [
-        ("get_synonym_maps", "_get_synonym_maps"),
-        ("get_data_source_connections", "_get_data_source_connections"),
-        ("get_indexers", "_get_indexers"),
-        ("get_skillsets", "_get_skillsets"),
+        ("get_synonym_maps", "list_synonym_maps"),
+        ("get_data_source_connections", "list_data_source_connections"),
+        ("get_indexers", "list_indexers"),
+        ("get_skillsets", "list_skillsets"),
     ],
 )
 def test_custom_list_wrappers_forward_search_paging(public_method, generated_method):
@@ -238,3 +259,39 @@ def test_custom_list_wrappers_forward_search_paging(public_method, generated_met
         page_size=2,
         search_type="prefix",
     )
+
+
+class TestSearchIndexClientFileIngestion:
+    @pytest.mark.parametrize("operation", ["multipart", "replacement"])
+    def test_begin_ingest_knowledge_source_file_returns_typed_poller(self, operation):
+        from azure.search.documents.indexes.models import KnowledgeSourceFile
+
+        method = f"begin_ingest_knowledge_source_file_{operation}"
+        require_capability(f"azure.search.documents.indexes.SearchIndexClient.{method}")
+        response = mock.Mock()
+        response.http_response.headers = {}
+        response.http_response.json.return_value = {"result": {"fileId": "file-1"}}
+        initial = f"_ingest_knowledge_source_file_{operation}_initial"
+        kwargs = {"file_id": "file-1"} if operation == "replacement" else {}
+        client = _client()
+        with mock.patch.object(client, initial, return_value=response):
+            poller = getattr(client, method)(name="files", body={}, polling=False, **kwargs)
+            result = poller.result()
+
+        assert isinstance(result, KnowledgeSourceFile)
+        assert result.file_id == "file-1"
+
+
+class TestSearchIndexClientKnowledgeSource:
+    @pytest.mark.parametrize("scenario", ["facet_hint", "graph_cache"])
+    def test_create_or_update_knowledge_source_preserves_preview_configuration(self, scenario):
+        from _preview_helpers import assert_knowledge_source_configuration, knowledge_source_configuration
+
+        source = knowledge_source_configuration(scenario)
+        client = _client()
+        with mock.patch.object(client, "_create_or_update_knowledge_source", return_value=source) as create:
+            result = client.create_or_update_knowledge_source(source)
+
+        assert result is source
+        assert create.call_args.kwargs["prefer"] == "return=representation"
+        assert_knowledge_source_configuration(create.call_args.kwargs["knowledge_source"].as_dict(), scenario)

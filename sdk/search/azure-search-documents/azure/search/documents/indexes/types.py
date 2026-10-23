@@ -23,9 +23,11 @@ from .models._enums import (
 )
 
 if TYPE_CHECKING:
+    from ..knowledgebases.models import KnowledgeRetrievalOutputMode
     from ..knowledgebases.models import KnowledgeSourceIngestionParameters
     from ..knowledgebases.types import KnowledgeRetrievalReasoningEffort
-    from ..knowledgebases.models import KnowledgeRetrievalOutputMode
+    from ..models import VectorSearchTopicGraphKind
+    from ..types import VectorQueryTopicGraph
     from .models import (
         AIFoundryModelCatalogName,
         AzureOpenAIModelName,
@@ -49,6 +51,7 @@ if TYPE_CHECKING:
         EdgeNGramTokenFilterSide,
         EntityCategory,
         EntityRecognitionSkillLanguage,
+        GraphProfileKind,
         ImageAnalysisSkillLanguage,
         ImageDetail,
         IndexProjectionMode,
@@ -57,6 +60,8 @@ if TYPE_CHECKING:
         IndexerPermissionOption,
         IndexerResyncOption,
         KeyPhraseExtractionSkillLanguage,
+        KnowledgeSourceGraphGroundingSourceKind,
+        KnowledgeSourceGraphOntologySourceKind,
         KnowledgeSourceResultsProcessing,
         LexicalAnalyzerName,
         LexicalNormalizerName,
@@ -393,10 +398,13 @@ class AzureBlobKnowledgeSourceParameters(TypedDict, total=False):
     :vartype isADLSGen2: bool
     :ivar ingestionParameters: Consolidates all general ingestion settings.
     :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
-    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
+    :ivar graphExtraction: Graph extraction configuration for Azure Blob knowledge sources.
+     Configure native Blob soft delete on the source before the first indexing run. ADLS Gen2, ACL
+     ingestion, and sensitivity-label ingestion are not supported for this workflow.
+    :vartype graphExtraction: "KnowledgeSourceGraphExtractionParameters"
+    :ivar topicGraph: Default topic graph vector search options for this Azure Blob knowledge
+     source.
+    :vartype topicGraph: "VectorQueryTopicGraph"
     :ivar createdResources: Resources created by the knowledge source.
     :vartype createdResources: "CreatedResources"
     """
@@ -411,9 +419,12 @@ class AzureBlobKnowledgeSourceParameters(TypedDict, total=False):
     """Set to true if connecting to an ADLS Gen2 storage account. Default is false."""
     ingestionParameters: Optional["KnowledgeSourceIngestionParameters"]
     """Consolidates all general ingestion settings."""
-    queryHints: "SearchIndexKnowledgeSourceQueryHints"
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
+    graphExtraction: "KnowledgeSourceGraphExtractionParameters"
+    """Graph extraction configuration for Azure Blob knowledge sources. Configure native Blob soft
+     delete on the source before the first indexing run. ADLS Gen2, ACL ingestion, and
+     sensitivity-label ingestion are not supported for this workflow."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Default topic graph vector search options for this Azure Blob knowledge source."""
     createdResources: "CreatedResources"
     """Resources created by the knowledge source."""
 
@@ -603,7 +614,8 @@ resource.
  path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
  "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
  "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
- "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
+ "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna", "gpt-6-astra",
+ "gpt-6-sol", "gpt-6-luna", and "gpt-6.1-sol".
 :vartype modelName: Union[str, "AzureOpenAIModelName"]
 :ivar dimensions: The number of dimensions the resulting output embeddings should have. Only
  supported in text-embedding-3 and later models.
@@ -673,7 +685,8 @@ class AzureOpenAIVectorizerParameters(TypedDict, total=False):
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
      "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
      "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
-     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
+     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna", "gpt-6-astra",
+     "gpt-6-sol", "gpt-6-luna", and "gpt-6.1-sol".
     :vartype modelName: Union[str, "AzureOpenAIModelName"]
     """
 
@@ -690,7 +703,8 @@ class AzureOpenAIVectorizerParameters(TypedDict, total=False):
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
      \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
      \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\",
-     \"gpt-5.4-nano\", \"gpt-5.5\", \"gpt-5.6-sol\", \"gpt-5.6-terra\", and \"gpt-5.6-luna\"."""
+     \"gpt-5.4-nano\", \"gpt-5.5\", \"gpt-5.6-sol\", \"gpt-5.6-terra\", \"gpt-5.6-luna\",
+     \"gpt-6-astra\", \"gpt-6-sol\", \"gpt-6-luna\", and \"gpt-6.1-sol\"."""
 
 
 class BinaryQuantizationCompression(TypedDict, total=False):
@@ -1129,6 +1143,8 @@ ContentUnderstandingSkill = TypedDict(
         "outputs": Required[list["OutputFieldMappingEntry"]],
         "extractionOptions": Optional[list[Union[str, "ContentUnderstandingSkillExtractionOptions"]]],
         "chunkingProperties": Optional["ContentUnderstandingSkillChunkingProperties"],
+        "modelName": str,
+        "modelDeployment": str,
         "@odata.type": Required[Literal["#Microsoft.Skills.Util.ContentUnderstandingSkill"]],
     },
     total=False,
@@ -1158,6 +1174,12 @@ and retrieval.
 :vartype extractionOptions: list[Union[str, "ContentUnderstandingSkillExtractionOptions"]]
 :ivar chunkingProperties: Controls the cardinality for chunking the content.
 :vartype chunkingProperties: "ContentUnderstandingSkillChunkingProperties"
+:ivar modelName: The name of the chat-completion model used for image description. Must be
+ provided together with modelDeployment.
+:vartype modelName: str
+:ivar modelDeployment: The deployment name of the chat-completion model used for image
+ description. Must be provided together with modelName.
+:vartype modelDeployment: str
 :ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.ContentUnderstandingSkill".
 :vartype ``@odata.type``: Literal["#Microsoft.Skills.Util.ContentUnderstandingSkill"]
@@ -1542,15 +1564,15 @@ using Apache Lucene.
 class DistanceScoringFunction(TypedDict, total=False):
     """Defines a function that boosts scores based on distance from a geographic location.
 
-    :ivar fieldName: The name of the field used as input to the scoring function. Required.
-    :vartype fieldName: str
-    :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
-     Required.
-    :vartype boost: float
     :ivar interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Known values are: "linear", "constant", "quadratic", and
      "logarithmic".
     :vartype interpolation: Union[str, "ScoringFunctionInterpolation"]
+    :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
+     Required.
+    :vartype boost: float
+    :ivar fieldName: The name of the field used as input to the scoring function. Required.
+    :vartype fieldName: str
     :ivar distance: Parameter values for the distance scoring function. Required.
     :vartype distance: "DistanceScoringParameters"
     :ivar type: Indicates the type of function to use. Valid values include magnitude, freshness,
@@ -1558,13 +1580,13 @@ class DistanceScoringFunction(TypedDict, total=False):
     :vartype type: Literal["distance"]
     """
 
-    fieldName: Required[str]
-    """The name of the field used as input to the scoring function. Required."""
-    boost: Required[float]
-    """A multiplier for the raw score. Must be a positive number not equal to 1.0. Required."""
     interpolation: Union[str, "ScoringFunctionInterpolation"]
     """A value indicating how boosting will be interpolated across document scores; defaults to
      \"Linear\". Known values are: \"linear\", \"constant\", \"quadratic\", and \"logarithmic\"."""
+    boost: Required[float]
+    """A multiplier for the raw score. Must be a positive number not equal to 1.0. Required."""
+    fieldName: Required[str]
+    """The name of the field used as input to the scoring function. Required."""
     distance: Required["DistanceScoringParameters"]
     """Parameter values for the distance scoring function. Required."""
     type: Required[Literal["distance"]]
@@ -2228,10 +2250,6 @@ class FileKnowledgeSourceParameters(TypedDict, total=False):
     :ivar ingestionParameters: Consolidates all general ingestion settings for the File knowledge
      source, including the content extraction mode and an optional embeddingModel.
     :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
-    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
     :ivar createdResources: Resources created by the file knowledge source.
     :vartype createdResources: "CreatedResources"
     """
@@ -2239,9 +2257,6 @@ class FileKnowledgeSourceParameters(TypedDict, total=False):
     ingestionParameters: "KnowledgeSourceIngestionParameters"
     """Consolidates all general ingestion settings for the File knowledge source, including the
      content extraction mode and an optional embeddingModel."""
-    queryHints: "SearchIndexKnowledgeSourceQueryHints"
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     createdResources: "CreatedResources"
     """Resources created by the file knowledge source."""
 
@@ -2267,15 +2282,15 @@ class FileUploadMetadata(TypedDict, total=False):
 class FreshnessScoringFunction(TypedDict, total=False):
     """Defines a function that boosts scores based on the value of a date-time field.
 
-    :ivar fieldName: The name of the field used as input to the scoring function. Required.
-    :vartype fieldName: str
-    :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
-     Required.
-    :vartype boost: float
     :ivar interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Known values are: "linear", "constant", "quadratic", and
      "logarithmic".
     :vartype interpolation: Union[str, "ScoringFunctionInterpolation"]
+    :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
+     Required.
+    :vartype boost: float
+    :ivar fieldName: The name of the field used as input to the scoring function. Required.
+    :vartype fieldName: str
     :ivar freshness: Parameter values for the freshness scoring function. Required.
     :vartype freshness: "FreshnessScoringParameters"
     :ivar type: Indicates the type of function to use. Valid values include magnitude, freshness,
@@ -2284,13 +2299,13 @@ class FreshnessScoringFunction(TypedDict, total=False):
     :vartype type: Literal["freshness"]
     """
 
-    fieldName: Required[str]
-    """The name of the field used as input to the scoring function. Required."""
-    boost: Required[float]
-    """A multiplier for the raw score. Must be a positive number not equal to 1.0. Required."""
     interpolation: Union[str, "ScoringFunctionInterpolation"]
     """A value indicating how boosting will be interpolated across document scores; defaults to
      \"Linear\". Known values are: \"linear\", \"constant\", \"quadratic\", and \"logarithmic\"."""
+    boost: Required[float]
+    """A multiplier for the raw score. Must be a positive number not equal to 1.0. Required."""
+    fieldName: Required[str]
+    """The name of the field used as input to the scoring function. Required."""
     freshness: Required["FreshnessScoringParameters"]
     """Parameter values for the freshness scoring function. Required."""
     type: Required[Literal["freshness"]]
@@ -2308,6 +2323,140 @@ class FreshnessScoringParameters(TypedDict, total=False):
 
     boostingDuration: Required[str]
     """The expiration period after which boosting will stop for a particular document. Required."""
+
+
+class GraphFieldMappings(TypedDict, total=False):
+    """Required mappings for graph identities, values, types, and evidence. Only assertionIdField and
+    factIdField may share a field, and only when one assertion represents each fact.
+
+    :ivar assertionIdField: String index key identifying an independently managed assertion; must
+     be filterable and sortable. Required.
+    :vartype assertionIdField: str
+    :ivar factIdField: Filterable string field identifying the semantic fact. Multiple assertions
+     can support the same fact. Required.
+    :vartype factIdField: str
+    :ivar subjectField: Subject display-value string field; must be filterable, facetable, and
+     sortable. Required.
+    :vartype subjectField: str
+    :ivar predicateField: Predicate string field; must be filterable and facetable. Required.
+    :vartype predicateField: str
+    :ivar objectField: Object display-value string field; must be filterable, facetable, and
+     sortable. Required.
+    :vartype objectField: str
+    :ivar objectStringField: Object string-value field; must be filterable and facetable. Required.
+    :vartype objectStringField: str
+    :ivar objectDoubleField: Object numeric-value Edm.Double field; must be filterable, facetable,
+     and sortable. Required.
+    :vartype objectDoubleField: str
+    :ivar objectBoolField: Object Boolean-value Edm.Boolean field; must be filterable. Required.
+    :vartype objectBoolField: str
+    :ivar objectDateTimeField: Object date-value Edm.DateTimeOffset field; must be filterable.
+     Required.
+    :vartype objectDateTimeField: str
+    :ivar subjectTypeField: Subject type string field; must be filterable and facetable. Required.
+    :vartype subjectTypeField: str
+    :ivar subjectIdField: Canonical subject ID string field; must be filterable, facetable, and
+     sortable. Required.
+    :vartype subjectIdField: str
+    :ivar objectTypeField: Object type string field; must be filterable and facetable. Required.
+    :vartype objectTypeField: str
+    :ivar objectIdField: Canonical object ID string field; must be filterable, facetable, and
+     sortable. Required.
+    :vartype objectIdField: str
+    :ivar confidenceField: Overall relationship confidence Edm.Double field. Required.
+    :vartype confidenceField: str
+    :ivar subjectConfidenceField: Subject grounding confidence Edm.Double field. Required.
+    :vartype subjectConfidenceField: str
+    :ivar predicateConfidenceField: Predicate alignment confidence Edm.Double field. Required.
+    :vartype predicateConfidenceField: str
+    :ivar objectConfidenceField: Object grounding confidence Edm.Double field. Required.
+    :vartype objectConfidenceField: str
+    :ivar sourceChunkIdField: Source chunk identifier string field used for provenance joins.
+     Required.
+    :vartype sourceChunkIdField: str
+    :ivar sourceParentIdField: Parent source document identifier string field. Required.
+    :vartype sourceParentIdField: str
+    :ivar graphNameField: Graph-name string field qualifying canonical identities; must be
+     filterable, facetable, and sortable. Required.
+    :vartype graphNameField: str
+    :ivar subjectIdDisplayNameField: Canonical subject display-name string field. Required.
+    :vartype subjectIdDisplayNameField: str
+    :ivar objectIdDisplayNameField: Canonical object display-name string field. Required.
+    :vartype objectIdDisplayNameField: str
+    """
+
+    assertionIdField: Required[str]
+    """String index key identifying an independently managed assertion; must be filterable and
+     sortable. Required."""
+    factIdField: Required[str]
+    """Filterable string field identifying the semantic fact. Multiple assertions can support the same
+     fact. Required."""
+    subjectField: Required[str]
+    """Subject display-value string field; must be filterable, facetable, and sortable. Required."""
+    predicateField: Required[str]
+    """Predicate string field; must be filterable and facetable. Required."""
+    objectField: Required[str]
+    """Object display-value string field; must be filterable, facetable, and sortable. Required."""
+    objectStringField: Required[str]
+    """Object string-value field; must be filterable and facetable. Required."""
+    objectDoubleField: Required[str]
+    """Object numeric-value Edm.Double field; must be filterable, facetable, and sortable. Required."""
+    objectBoolField: Required[str]
+    """Object Boolean-value Edm.Boolean field; must be filterable. Required."""
+    objectDateTimeField: Required[str]
+    """Object date-value Edm.DateTimeOffset field; must be filterable. Required."""
+    subjectTypeField: Required[str]
+    """Subject type string field; must be filterable and facetable. Required."""
+    subjectIdField: Required[str]
+    """Canonical subject ID string field; must be filterable, facetable, and sortable. Required."""
+    objectTypeField: Required[str]
+    """Object type string field; must be filterable and facetable. Required."""
+    objectIdField: Required[str]
+    """Canonical object ID string field; must be filterable, facetable, and sortable. Required."""
+    confidenceField: Required[str]
+    """Overall relationship confidence Edm.Double field. Required."""
+    subjectConfidenceField: Required[str]
+    """Subject grounding confidence Edm.Double field. Required."""
+    predicateConfidenceField: Required[str]
+    """Predicate alignment confidence Edm.Double field. Required."""
+    objectConfidenceField: Required[str]
+    """Object grounding confidence Edm.Double field. Required."""
+    sourceChunkIdField: Required[str]
+    """Source chunk identifier string field used for provenance joins. Required."""
+    sourceParentIdField: Required[str]
+    """Parent source document identifier string field. Required."""
+    graphNameField: Required[str]
+    """Graph-name string field qualifying canonical identities; must be filterable, facetable, and
+     sortable. Required."""
+    subjectIdDisplayNameField: Required[str]
+    """Canonical subject display-name string field. Required."""
+    objectIdDisplayNameField: Required[str]
+    """Canonical object display-name string field. Required."""
+
+
+class GraphProfile(TypedDict, total=False):
+    """Describes the edge-list graph stored in a search index. Required role mappings are validated
+    against field types and capabilities before execution.
+
+    :ivar kind: Storage representation used by the graph index. Required. "edgeList"
+    :vartype kind: Union[str, "GraphProfileKind"]
+    :ivar fields: Logical graph roles mapped to physical, primitive, single-valued fields. All
+     mapped fields must be retrievable, and mapped string fields must not use a normalizer.
+     Required.
+    :vartype fields: "GraphFieldMappings"
+    :ivar provenanceIndexName: Name of the source index from which graph provenance documents may
+     be hydrated. Configured by the index administrator, not by query callers.
+    :vartype provenanceIndexName: str
+    """
+
+    kind: Required[Union[str, "GraphProfileKind"]]
+    """Storage representation used by the graph index. Required. \"edgeList\""""
+    fields: Required["GraphFieldMappings"]
+    """Logical graph roles mapped to physical, primitive, single-valued fields. All mapped fields must
+     be retrievable, and mapped string fields must not use a normalizer. Required."""
+    provenanceIndexName: str
+    """Name of the source index from which graph provenance documents may be hydrated. Configured by
+     the index administrator, not by query callers."""
 
 
 HighWaterMarkChangeDetectionPolicy = TypedDict(
@@ -2495,10 +2644,6 @@ class IndexedOneLakeKnowledgeSourceParameters(TypedDict, total=False):
     :vartype targetPath: str
     :ivar ingestionParameters: Consolidates all general ingestion settings.
     :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
-    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
     :ivar createdResources: Resources created by the knowledge source.
     :vartype createdResources: "CreatedResources"
     """
@@ -2511,9 +2656,6 @@ class IndexedOneLakeKnowledgeSourceParameters(TypedDict, total=False):
     """Optional OneLakehouse folder or shortcut to filter OneLake content."""
     ingestionParameters: "KnowledgeSourceIngestionParameters"
     """Consolidates all general ingestion settings."""
-    queryHints: "SearchIndexKnowledgeSourceQueryHints"
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     createdResources: "CreatedResources"
     """Resources created by the knowledge source."""
 
@@ -2568,16 +2710,13 @@ class IndexedSharePointKnowledgeSourceParameters(TypedDict, total=False):  # pyl
      Required.
     :vartype connectionString: str
     :ivar containerName: Specifies which SharePoint libraries to access. Required. Known values
-     are: "defaultSiteLibrary", "allSiteLibraries", and "useQuery".
+     are: "defaultSiteLibrary", "allSiteLibraries", "useQuery", "allSiteLists", "allSitePages", and
+     "allSiteContent".
     :vartype containerName: Union[str, "IndexedSharePointContainerName"]
     :ivar query: Optional query to filter SharePoint content.
     :vartype query: str
     :ivar ingestionParameters: Consolidates all general ingestion settings.
     :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
-    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
     :ivar createdResources: Resources created by the knowledge source.
     :vartype createdResources: "CreatedResources"
     """
@@ -2588,14 +2727,12 @@ class IndexedSharePointKnowledgeSourceParameters(TypedDict, total=False):  # pyl
      secret];TenantId=[SharePoint site tenant id]. Required."""
     containerName: Required[Union[str, "IndexedSharePointContainerName"]]
     """Specifies which SharePoint libraries to access. Required. Known values are:
-     \"defaultSiteLibrary\", \"allSiteLibraries\", and \"useQuery\"."""
+     \"defaultSiteLibrary\", \"allSiteLibraries\", \"useQuery\", \"allSiteLists\", \"allSitePages\",
+     and \"allSiteContent\"."""
     query: Optional[str]
     """Optional query to filter SharePoint content."""
     ingestionParameters: Optional["KnowledgeSourceIngestionParameters"]
     """Consolidates all general ingestion settings."""
-    queryHints: "SearchIndexKnowledgeSourceQueryHints"
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     createdResources: "CreatedResources"
     """Resources created by the knowledge source."""
 
@@ -2663,10 +2800,6 @@ class IndexedSqlKnowledgeSourceParameters(TypedDict, total=False):
     :ivar ingestionParameters: Consolidates all general ingestion settings including embedding
      model, schedule, and identity.
     :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
-    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
     :ivar createdResources: Resources created by the knowledge source.
     :vartype createdResources: "CreatedResources"
     """
@@ -2685,9 +2818,6 @@ class IndexedSqlKnowledgeSourceParameters(TypedDict, total=False):
     """Optional column mappings for embedding vector fields. If omitted, no vector fields are created."""
     ingestionParameters: "KnowledgeSourceIngestionParameters"
     """Consolidates all general ingestion settings including embedding model, schedule, and identity."""
-    queryHints: "SearchIndexKnowledgeSourceQueryHints"
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     createdResources: "CreatedResources"
     """Resources created by the knowledge source."""
 
@@ -2808,6 +2938,12 @@ class IndexingParametersConfiguration(TypedDict, total=False):
     :ivar queryTimeout: Increases the timeout beyond the 5-minute default for Azure SQL database
      data sources, specified in the format "hh:mm:ss".
     :vartype queryTimeout: str
+    :ivar refreshAllAcls: For ADLS Gen2 data sources that ingest permissions, indicates whether the
+     indexer refreshes the access control lists of documents whose content has not changed. Changing
+     a file's permissions does not change its last-modified time, so without this the index keeps
+     serving stale permissions. The refresh runs at most once every 24 hours, and only updates
+     permission metadata: content and enriched fields are left as they are. Set to false to disable.
+    :vartype refreshAllAcls: bool
     """
 
     parsingMode: Union[str, "BlobIndexerParsingMode"]
@@ -2874,6 +3010,12 @@ class IndexingParametersConfiguration(TypedDict, total=False):
     queryTimeout: str
     """Increases the timeout beyond the 5-minute default for Azure SQL database data sources,
      specified in the format \"hh:mm:ss\"."""
+    refreshAllAcls: bool
+    """For ADLS Gen2 data sources that ingest permissions, indicates whether the indexer refreshes the
+     access control lists of documents whose content has not changed. Changing a file's permissions
+     does not change its last-modified time, so without this the index keeps serving stale
+     permissions. The refresh runs at most once every 24 hours, and only updates permission
+     metadata: content and enriched fields are left as they are. Set to false to disable."""
 
 
 class IndexingSchedule(TypedDict, total=False):
@@ -3071,6 +3213,7 @@ KnowledgeBase = TypedDict(
     {
         "name": Required[str],
         "knowledgeSources": Required[list["KnowledgeSourceReference"]],
+        "tools": list["KnowledgeBaseTool"],
         "models": list["KnowledgeBaseModel"],
         "retrievalReasoningEffort": "KnowledgeRetrievalReasoningEffort",
         "outputMode": Union[str, "KnowledgeRetrievalOutputMode"],
@@ -3091,6 +3234,11 @@ KnowledgeBase.__doc__ = """Represents a knowledge base definition.
 :vartype name: str
 :ivar knowledgeSources: Knowledge sources referenced by this knowledge base. Required.
 :vartype knowledgeSources: list["KnowledgeSourceReference"]
+:ivar tools: Named retrieval tools, each limited to a subset of this knowledge base's sources.
+ When configured, MCP advertises these tools in addition to the built-in knowledge_base_retrieve
+ tool, which retrieves from the full knowledge base. Omitting tools or supplying an empty array
+ in this API version clears existing tools.
+:vartype tools: list["KnowledgeBaseTool"]
 :ivar models: Contains configuration options on how to connect to AI models.
 :vartype models: list["KnowledgeBaseModel"]
 :ivar retrievalReasoningEffort: The retrieval reasoning effort configuration.
@@ -3138,6 +3286,117 @@ class KnowledgeBaseAzureOpenAIModel(TypedDict, total=False):
     """Azure OpenAI parameters. Required."""
 
 
+class KnowledgeBaseMicrosoftRetriever1Model(TypedDict, total=False):
+    """Specifies Microsoft Retriever 1 used for query planning and retrieval.
+
+    :ivar kind: The model kind selecting Microsoft Retriever 1. Required. Use Microsoft Retriever 1
+     for query planning and retrieval.
+    :vartype kind: Literal[KnowledgeBaseModelKind.MICROSOFT_RETRIEVER1]
+    """
+
+    kind: Required[Literal[KnowledgeBaseModelKind.MICROSOFT_RETRIEVER1]]
+    """The model kind selecting Microsoft Retriever 1. Required. Use Microsoft Retriever 1 for query
+     planning and retrieval."""
+
+
+class KnowledgeBaseOpenAICompatibleModel(TypedDict, total=False):
+    """Specifies a customer-controlled OpenAI-compatible model for knowledge base retrieval or
+    Minimal-mode knowledge source image verbalization. For retrieval, the model profile selects
+    Chat Completions or Responses. Not supported for Standard/CU extraction or knowledge bases with
+    Web knowledge sources.
+
+    :ivar kind: The discriminator value for an OpenAI-compatible model. Required. Use a
+     customer-controlled OpenAI-compatible endpoint for knowledge base retrieval or knowledge source
+     image verbalization.
+    :vartype kind: Literal[KnowledgeBaseModelKind.OPEN_AI_COMPATIBLE]
+    :ivar openAICompatibleParameters: Connection and authentication parameters for the
+     OpenAI-compatible endpoint. Required.
+    :vartype openAICompatibleParameters: "KnowledgeBaseOpenAICompatibleParameters"
+    """
+
+    kind: Required[Literal[KnowledgeBaseModelKind.OPEN_AI_COMPATIBLE]]
+    """The discriminator value for an OpenAI-compatible model. Required. Use a customer-controlled
+     OpenAI-compatible endpoint for knowledge base retrieval or knowledge source image
+     verbalization."""
+    openAICompatibleParameters: Required["KnowledgeBaseOpenAICompatibleParameters"]
+    """Connection and authentication parameters for the OpenAI-compatible endpoint. Required."""
+
+
+class KnowledgeBaseOpenAICompatibleParameters(TypedDict, total=False):
+    """Connection parameters for an OpenAI-compatible Chat Completions or Responses endpoint. Creation
+    requires exactly one of nonempty headers or managedIdentityAudience. Updates can omit headers
+    to preserve credentials for an unchanged connection and model profile.
+
+    :ivar uri: The complete HTTPS POST URL, including path and query parameters. Sent unchanged
+     without appending a path or API version; redirects are not followed. For knowledge base
+     retrieval, the endpoint must accept the model profile's Chat Completions or Responses protocol.
+     For knowledge source image verbalization, the URI path must end in /chat/completions or
+     /responses; query parameters do not select the protocol. Required.
+    :vartype uri: str
+    :ivar modelName: A supported chat model name that determines Search's capabilities and limits.
+     For knowledge source image verbalization, this is sent as the model selector in the request
+     body; the URI path selects Chat Completions or Responses independently of this name. For
+     knowledge base retrieval, GPT-6 model profiles use Responses and existing model profiles use
+     Chat Completions; the endpoint must support the selected protocol, including stateless tool
+     continuation for Responses. The retrieval request body omits model; the URI or gateway selects
+     the actual model and supplies any required provider model identifier. Embedding models and
+     arbitrary provider protocols are not supported. Required. Known values are:
+     "text-embedding-ada-002", "text-embedding-3-large", "text-embedding-3-small", "gpt-4o",
+     "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "gpt-5", "gpt-5-mini", "gpt-5-nano",
+     "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini", "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol",
+     "gpt-5.6-terra", "gpt-5.6-luna", "gpt-6-astra", "gpt-6-sol", "gpt-6-luna", and "gpt-6.1-sol".
+    :vartype modelName: Union[str, "AzureOpenAIModelName"]
+    :ivar headers: Nonempty stored HTTP headers for endpoint authentication. Both names and values
+     are secret and are never returned in responses. Empty maps are invalid. Mutually exclusive with
+     managedIdentityAudience and authIdentity. On update, omitted headers are preserved only on the
+     same resource and model binding when the exact endpoint, model profile, and authentication
+     identity are unchanged; otherwise, supply fresh credentials.
+    :vartype headers: dict[str, str]
+    :ivar managedIdentityAudience: The bare canonical application GUID of the customer's
+     third-party Microsoft Entra application for managed identity authentication. Do not include an
+     api:// prefix or /.default suffix. Mutually exclusive with headers.
+    :vartype managedIdentityAudience: str
+    :ivar authIdentity: The user-assigned managed identity used to acquire a token for
+     managedIdentityAudience. Omit to use the search service's system-assigned identity. Allowed
+     only with managedIdentityAudience.
+    :vartype authIdentity: "SearchIndexerDataIdentity"
+    """
+
+    uri: Required[str]
+    """The complete HTTPS POST URL, including path and query parameters. Sent unchanged without
+     appending a path or API version; redirects are not followed. For knowledge base retrieval, the
+     endpoint must accept the model profile's Chat Completions or Responses protocol. For knowledge
+     source image verbalization, the URI path must end in /chat/completions or /responses; query
+     parameters do not select the protocol. Required."""
+    modelName: Required[Union[str, "AzureOpenAIModelName"]]
+    """A supported chat model name that determines Search's capabilities and limits. For knowledge
+     source image verbalization, this is sent as the model selector in the request body; the URI
+     path selects Chat Completions or Responses independently of this name. For knowledge base
+     retrieval, GPT-6 model profiles use Responses and existing model profiles use Chat Completions;
+     the endpoint must support the selected protocol, including stateless tool continuation for
+     Responses. The retrieval request body omits model; the URI or gateway selects the actual model
+     and supplies any required provider model identifier. Embedding models and arbitrary provider
+     protocols are not supported. Required. Known values are: \"text-embedding-ada-002\",
+     \"text-embedding-3-large\", \"text-embedding-3-small\", \"gpt-4o\", \"gpt-4o-mini\",
+     \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\", \"gpt-5-mini\", \"gpt-5-nano\",
+     \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\", \"gpt-5.4-nano\", \"gpt-5.5\",
+     \"gpt-5.6-sol\", \"gpt-5.6-terra\", \"gpt-5.6-luna\", \"gpt-6-astra\", \"gpt-6-sol\",
+     \"gpt-6-luna\", and \"gpt-6.1-sol\"."""
+    headers: dict[str, str]
+    """Nonempty stored HTTP headers for endpoint authentication. Both names and values are secret and
+     are never returned in responses. Empty maps are invalid. Mutually exclusive with
+     managedIdentityAudience and authIdentity. On update, omitted headers are preserved only on the
+     same resource and model binding when the exact endpoint, model profile, and authentication
+     identity are unchanged; otherwise, supply fresh credentials."""
+    managedIdentityAudience: str
+    """The bare canonical application GUID of the customer's third-party Microsoft Entra application
+     for managed identity authentication. Do not include an api:// prefix or /.default suffix.
+     Mutually exclusive with headers."""
+    authIdentity: "SearchIndexerDataIdentity"
+    """The user-assigned managed identity used to acquire a token for managedIdentityAudience. Omit to
+     use the search service's system-assigned identity. Allowed only with managedIdentityAudience."""
+
+
 class KnowledgeBaseRetrieveDefaults(TypedDict, total=False):
     """Persisted request-wide defaults for knowledge base retrieve requests. Each value provides the
     default for the matching retrieve-request field; service defaults apply when unset, and
@@ -3158,6 +3417,174 @@ class KnowledgeBaseRetrieveDefaults(TypedDict, total=False):
     """The default maximum number of documents in the retrieve output."""
     maxOutputSizeInTokens: int
     """The default maximum size, in tokens, of the content in the retrieve output."""
+
+
+class KnowledgeBaseTool(TypedDict, total=False):
+    """A named retrieval tool with a customer-provided description and a subset of its knowledge
+    base's sources.
+
+    :ivar name: The unique, case-sensitive tool name. Contains 2 to 64 lowercase ASCII letters,
+     digits, or hyphens, with no leading or trailing hyphen. Required.
+    :vartype name: str
+    :ivar description: A nonempty description of when to use the tool, at most 1024 characters.
+     Advertised verbatim in the MCP catalog. Required.
+    :vartype description: str
+    :ivar knowledgeSources: A nonempty list of unique source references. Each source must belong to
+     the knowledge base. Different tools may reference the same source. Required.
+    :vartype knowledgeSources: list["KnowledgeBaseToolKnowledgeSourceReference"]
+    :ivar retrievalReasoningEffort: Overrides the knowledge base's reasoning effort for this tool.
+     Explicit retrieve-request values take precedence.
+    :vartype retrievalReasoningEffort: "KnowledgeRetrievalReasoningEffort"
+    :ivar retrieveDefaults: Retrieve defaults that override the knowledge base's defaults for this
+     tool. Explicit retrieve-request values take precedence.
+    :vartype retrieveDefaults: "KnowledgeBaseRetrieveDefaults"
+    """
+
+    name: Required[str]
+    """The unique, case-sensitive tool name. Contains 2 to 64 lowercase ASCII letters, digits, or
+     hyphens, with no leading or trailing hyphen. Required."""
+    description: Required[str]
+    """A nonempty description of when to use the tool, at most 1024 characters. Advertised verbatim in
+     the MCP catalog. Required."""
+    knowledgeSources: Required[list["KnowledgeBaseToolKnowledgeSourceReference"]]
+    """A nonempty list of unique source references. Each source must belong to the knowledge base.
+     Different tools may reference the same source. Required."""
+    retrievalReasoningEffort: "KnowledgeRetrievalReasoningEffort"
+    """Overrides the knowledge base's reasoning effort for this tool. Explicit retrieve-request values
+     take precedence."""
+    retrieveDefaults: "KnowledgeBaseRetrieveDefaults"
+    """Retrieve defaults that override the knowledge base's defaults for this tool. Explicit
+     retrieve-request values take precedence."""
+
+
+class KnowledgeBaseToolKnowledgeSourceReference(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A reference to an existing knowledge source and a selected subset of persisted retrieval
+    defaults, not the complete request-time parameter model. The referenced source determines the
+    kind; incompatible defaults are rejected when the knowledge base is saved. Explicit
+    retrieve-request values take precedence, except filters are combined with AND.
+
+    :ivar name: The name of a knowledge source in the knowledge base. Required.
+    :vartype name: str
+    :ivar alwaysQuerySource: Whether the source must be queried. Not supported for MCP server
+     sources. An explicit request exclusion takes precedence.
+    :vartype alwaysQuerySource: bool
+    :ivar rerankerThreshold: The minimum reranker score for returned documents. Requires reranking
+     to be enabled.
+    :vartype rerankerThreshold: float
+    :ivar filterAddOn: An additional OData filter for search index sources. Rejected for
+     unsupported source kinds when the knowledge base is saved. Combined with source and request
+     filters using AND.
+    :vartype filterAddOn: str
+    :ivar maxOutputDocuments: The maximum number of documents retrieved from this source, between
+     50 and 200.
+    :vartype maxOutputDocuments: int
+    :ivar failOnError: Whether retrieval should fail if this source encounters an error.
+    :vartype failOnError: bool
+    """
+
+    name: Required[str]
+    """The name of a knowledge source in the knowledge base. Required."""
+    alwaysQuerySource: bool
+    """Whether the source must be queried. Not supported for MCP server sources. An explicit request
+     exclusion takes precedence."""
+    rerankerThreshold: float
+    """The minimum reranker score for returned documents. Requires reranking to be enabled."""
+    filterAddOn: str
+    """An additional OData filter for search index sources. Rejected for unsupported source kinds when
+     the knowledge base is saved. Combined with source and request filters using AND."""
+    maxOutputDocuments: int
+    """The maximum number of documents retrieved from this source, between 50 and 200."""
+    failOnError: bool
+    """Whether retrieval should fail if this source encounters an error."""
+
+
+class KnowledgeSourceGraphExtractionParameters(TypedDict, total=False):
+    """Configures graph extraction from an Azure Blob knowledge source with native Blob soft delete
+    enabled before indexing. ADLS Gen2, ACL ingestion, and sensitivity-label ingestion are not
+    supported. Distinct ontology changes must wait until no synchronization is active.
+
+    :ivar graphName: The name of the graph to create. Required.
+    :vartype graphName: str
+    :ivar ontology: The ontology used to extract triples. If absent or null at creation, a
+     configured enrichment cache allows ingestion to produce searchable chunks and cached enrichment
+     without extracting triples. Once an ontology is attached, it cannot be removed. Distinct
+     ontology changes must wait until no synchronization is active.
+    :vartype ontology: "KnowledgeSourceGraphOntology"
+    :ivar grounding: Optional grounding source used to resolve extracted entities.
+    :vartype grounding: "KnowledgeSourceGraphGrounding"
+    :ivar pageDegreeOfParallelism: Maximum number of pages processed in parallel for graph
+     extraction.
+    :vartype pageDegreeOfParallelism: int
+    """
+
+    graphName: Required[str]
+    """The name of the graph to create. Required."""
+    ontology: Optional["KnowledgeSourceGraphOntology"]
+    """The ontology used to extract triples. If absent or null at creation, a configured enrichment
+     cache allows ingestion to produce searchable chunks and cached enrichment without extracting
+     triples. Once an ontology is attached, it cannot be removed. Distinct ontology changes must
+     wait until no synchronization is active."""
+    grounding: "KnowledgeSourceGraphGrounding"
+    """Optional grounding source used to resolve extracted entities."""
+    pageDegreeOfParallelism: int
+    """Maximum number of pages processed in parallel for graph extraction."""
+
+
+class KnowledgeSourceGraphGrounding(TypedDict, total=False):
+    """A grounding source for graph extraction. Only same-service search indexes are supported.
+
+    :ivar kind: The source kind. If omitted, searchIndex is assumed. Other kinds are rejected.
+     "searchIndex"
+    :vartype kind: Union[str, "KnowledgeSourceGraphGroundingSourceKind"]
+    :ivar index: The same-service search index used for grounding. Required for searchIndex
+     sources.
+    :vartype index: "KnowledgeSourceGraphGroundingIndex"
+    """
+
+    kind: Union[str, "KnowledgeSourceGraphGroundingSourceKind"]
+    """The source kind. If omitted, searchIndex is assumed. Other kinds are rejected. \"searchIndex\""""
+    index: "KnowledgeSourceGraphGroundingIndex"
+    """The same-service search index used for grounding. Required for searchIndex sources."""
+
+
+class KnowledgeSourceGraphGroundingIndex(TypedDict, total=False):
+    """Identifies a search index used to ground extracted entities.
+
+    :ivar indexName: The name of the grounding search index. Required.
+    :vartype indexName: str
+    :ivar vectorFieldName: The name of the vector field used for grounding, when vector lookup is
+     configured.
+    :vartype vectorFieldName: str
+    """
+
+    indexName: Required[str]
+    """The name of the grounding search index. Required."""
+    vectorFieldName: str
+    """The name of the vector field used for grounding, when vector lookup is configured."""
+
+
+class KnowledgeSourceGraphOntology(TypedDict, total=False):
+    """An inline ontology for graph extraction. The only supported source is a constrained JSON-LD
+    document supplied directly in the request.
+
+    :ivar kind: The source kind. Only "inline" is supported. Required. "inline"
+    :vartype kind: Union[str, "KnowledgeSourceGraphOntologySourceKind"]
+    :ivar name: An optional customer-supplied name for the ontology, echoed back on
+     ``graphStatistics.ontologyName``.
+    :vartype name: str
+    :ivar value: A constrained JSON-LD 1.1 ontology document (flat classes and object/datatype
+     properties), supplied as a JSON-encoded string. Required.
+    :vartype value: str
+    """
+
+    kind: Required[Union[str, "KnowledgeSourceGraphOntologySourceKind"]]
+    """The source kind. Only \"inline\" is supported. Required. \"inline\""""
+    name: str
+    """An optional customer-supplied name for the ontology, echoed back on
+     ``graphStatistics.ontologyName``."""
+    value: Required[str]
+    """A constrained JSON-LD 1.1 ontology document (flat classes and object/datatype properties),
+     supplied as a JSON-encoded string. Required."""
 
 
 class KnowledgeSourceReference(TypedDict, total=False):
@@ -3370,15 +3797,15 @@ Apache Lucene.
 class MagnitudeScoringFunction(TypedDict, total=False):
     """Defines a function that boosts scores based on the magnitude of a numeric field.
 
-    :ivar fieldName: The name of the field used as input to the scoring function. Required.
-    :vartype fieldName: str
-    :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
-     Required.
-    :vartype boost: float
     :ivar interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Known values are: "linear", "constant", "quadratic", and
      "logarithmic".
     :vartype interpolation: Union[str, "ScoringFunctionInterpolation"]
+    :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
+     Required.
+    :vartype boost: float
+    :ivar fieldName: The name of the field used as input to the scoring function. Required.
+    :vartype fieldName: str
     :ivar magnitude: Parameter values for the magnitude scoring function. Required.
     :vartype magnitude: "MagnitudeScoringParameters"
     :ivar type: Indicates the type of function to use. Valid values include magnitude, freshness,
@@ -3387,13 +3814,13 @@ class MagnitudeScoringFunction(TypedDict, total=False):
     :vartype type: Literal["magnitude"]
     """
 
-    fieldName: Required[str]
-    """The name of the field used as input to the scoring function. Required."""
-    boost: Required[float]
-    """A multiplier for the raw score. Must be a positive number not equal to 1.0. Required."""
     interpolation: Union[str, "ScoringFunctionInterpolation"]
     """A value indicating how boosting will be interpolated across document scores; defaults to
      \"Linear\". Known values are: \"linear\", \"constant\", \"quadratic\", and \"logarithmic\"."""
+    boost: Required[float]
+    """A multiplier for the raw score. Must be a positive number not equal to 1.0. Required."""
+    fieldName: Required[str]
+    """The name of the field used as input to the scoring function. Required."""
     magnitude: Required["MagnitudeScoringParameters"]
     """Parameter values for the magnitude scoring function. Required."""
     type: Required[Literal["magnitude"]]
@@ -3987,6 +4414,126 @@ OcrSkill.__doc__ = """A skill that extracts text from image files.
 """
 
 
+class OneLakeSecuritySource(TypedDict, total=False):
+    """Identifies the Microsoft Fabric OneLake lakehouse that an index's documents originate from,
+    enabling OneLake document-level permissions for the index.
+
+    :ivar fabricWorkspaceId: The ID of the Microsoft Fabric workspace that contains the lakehouse.
+     Required.
+    :vartype fabricWorkspaceId: str
+    :ivar lakehouseId: The ID of the OneLake lakehouse that the index's documents originate from.
+     Required.
+    :vartype lakehouseId: str
+    """
+
+    fabricWorkspaceId: Required[str]
+    """The ID of the Microsoft Fabric workspace that contains the lakehouse. Required."""
+    lakehouseId: Required[str]
+    """The ID of the OneLake lakehouse that the index's documents originate from. Required."""
+
+
+class OpenAICompatibleVectorizer(TypedDict, total=False):
+    """Generates query embeddings directly using an OpenAI-compatible embeddings endpoint, rather than
+    the custom Web API skill envelope.
+
+    :ivar name: The name to associate with this particular vectorization method. Required.
+    :vartype name: str
+    :ivar openAICompatibleParameters: Connection, authentication, and embedding profile parameters.
+     Required.
+    :vartype openAICompatibleParameters: "OpenAICompatibleVectorizerParameters"
+    :ivar kind: The discriminator value for OpenAI-compatible embedding vectorization. Required.
+     Generate embeddings using a customer-controlled OpenAI-compatible embeddings endpoint.
+    :vartype kind: Literal[VectorSearchVectorizerKind.OPEN_AI_COMPATIBLE]
+    """
+
+    name: Required[str]
+    """The name to associate with this particular vectorization method. Required."""
+    openAICompatibleParameters: Required["OpenAICompatibleVectorizerParameters"]
+    """Connection, authentication, and embedding profile parameters. Required."""
+    kind: Required[Literal[VectorSearchVectorizerKind.OPEN_AI_COMPATIBLE]]
+    """The discriminator value for OpenAI-compatible embedding vectorization. Required. Generate
+     embeddings using a customer-controlled OpenAI-compatible embeddings endpoint."""
+
+
+class OpenAICompatibleVectorizerParameters(TypedDict, total=False):
+    """Connection parameters for a direct OpenAI-compatible embeddings endpoint. Creation requires
+    exactly one of nonempty headers or managedIdentityAudience. Updates can omit headers to
+    preserve credentials for an unchanged connection and embedding profile.
+
+    :ivar uri: The complete HTTPS embeddings POST URL, including any path and query parameters.
+     Sent unchanged without appending a path or API version. Redirects are not followed. Required.
+    :vartype uri: str
+    :ivar modelName: The embedding profile, using the same model-name enum as native Azure OpenAI
+     vectorizers. Only text-embedding-ada-002, text-embedding-3-small, and text-embedding-3-large
+     are supported at runtime; chat names in the shared enum are rejected. Controls Search's limits
+     and default dimensions; the outbound body omits model, so the URI or gateway must select the
+     actual model. Arbitrary provider protocols are not supported. Required. Known values are:
+     "text-embedding-ada-002", "text-embedding-3-large", "text-embedding-3-small", "gpt-4o",
+     "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "gpt-5", "gpt-5-mini", "gpt-5-nano",
+     "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini", "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol",
+     "gpt-5.6-terra", "gpt-5.6-luna", "gpt-6-astra", "gpt-6-sol", "gpt-6-luna", and "gpt-6.1-sol".
+    :vartype modelName: Union[str, "AzureOpenAIModelName"]
+    :ivar dimensions: The output dimensions, which must match the target vector field. Defaults to
+     1536 for text-embedding-ada-002 and text-embedding-3-small, or 3072 for text-embedding-3-large.
+     Ada requires 1536; text-embedding-3-small supports 1 through 1536, and text-embedding-3-large
+     supports 1 through 3072. Preserving omitted headers on update requires the configured
+     dimensions to remain unchanged; omitting dimensions is distinct from specifying the default
+     explicitly.
+    :vartype dimensions: int
+    :ivar headers: Nonempty stored HTTP headers for endpoint authentication. Both names and values
+     are secret and are never returned in responses. Empty maps are invalid. Mutually exclusive with
+     managedIdentityAudience and authIdentity. On update, omitted headers are preserved only on the
+     same resource and vectorizer binding when the exact endpoint, embedding profile including
+     configured dimensions, and authentication identity are unchanged; otherwise, supply fresh
+     credentials.
+    :vartype headers: dict[str, str]
+    :ivar managedIdentityAudience: The bare canonical application GUID of the customer's
+     third-party Microsoft Entra application for managed identity authentication. Do not include an
+     api:// prefix or /.default suffix. Mutually exclusive with headers.
+    :vartype managedIdentityAudience: str
+    :ivar authIdentity: The user-assigned managed identity used to acquire a token for
+     managedIdentityAudience. Omit to use the search service's system-assigned identity. Allowed
+     only with managedIdentityAudience.
+    :vartype authIdentity: "SearchIndexerDataIdentity"
+    """
+
+    uri: Required[str]
+    """The complete HTTPS embeddings POST URL, including any path and query parameters. Sent unchanged
+     without appending a path or API version. Redirects are not followed. Required."""
+    modelName: Required[Union[str, "AzureOpenAIModelName"]]
+    """The embedding profile, using the same model-name enum as native Azure OpenAI vectorizers. Only
+     text-embedding-ada-002, text-embedding-3-small, and text-embedding-3-large are supported at
+     runtime; chat names in the shared enum are rejected. Controls Search's limits and default
+     dimensions; the outbound body omits model, so the URI or gateway must select the actual model.
+     Arbitrary provider protocols are not supported. Required. Known values are:
+     \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\", \"gpt-4o\",
+     \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\", \"gpt-5-mini\",
+     \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\", \"gpt-5.4-nano\",
+     \"gpt-5.5\", \"gpt-5.6-sol\", \"gpt-5.6-terra\", \"gpt-5.6-luna\", \"gpt-6-astra\",
+     \"gpt-6-sol\", \"gpt-6-luna\", and \"gpt-6.1-sol\"."""
+    dimensions: int
+    """The output dimensions, which must match the target vector field. Defaults to 1536 for
+     text-embedding-ada-002 and text-embedding-3-small, or 3072 for text-embedding-3-large. Ada
+     requires 1536; text-embedding-3-small supports 1 through 1536, and text-embedding-3-large
+     supports 1 through 3072. Preserving omitted headers on update requires the configured
+     dimensions to remain unchanged; omitting dimensions is distinct from specifying the default
+     explicitly."""
+    headers: dict[str, str]
+    """Nonempty stored HTTP headers for endpoint authentication. Both names and values are secret and
+     are never returned in responses. Empty maps are invalid. Mutually exclusive with
+     managedIdentityAudience and authIdentity. On update, omitted headers are preserved only on the
+     same resource and vectorizer binding when the exact endpoint, embedding profile including
+     configured dimensions, and authentication identity are unchanged; otherwise, supply fresh
+     credentials."""
+    managedIdentityAudience: str
+    """The bare canonical application GUID of the customer's third-party Microsoft Entra application
+     for managed identity authentication. Do not include an api:// prefix or /.default suffix.
+     Mutually exclusive with headers."""
+    authIdentity: "SearchIndexerDataIdentity"
+    """The user-assigned managed identity used to acquire a token for managedIdentityAudience. Omit to
+     use the search service's system-assigned identity. Allowed only with managedIdentityAudience."""
+
+
 class OutputFieldMappingEntry(TypedDict, total=False):
     """Output field mapping for a skill.
 
@@ -4289,6 +4836,46 @@ the option of masking it.
 """
 
 
+class RandomScoringFunction(TypedDict, total=False):
+    """Defines a function that assigns pseudo-random scores to documents for randomized ordering.
+    Random scoring functions do not take a boost. A scoring profile with a random function cannot
+    define text weights or other function types, and can contain only one random function. Random
+    scoring replaces the query and vector similarity scores, including for hybrid queries, so
+    results are returned in random order.
+
+    :ivar interpolation: A value indicating how boosting will be interpolated across document
+     scores; defaults to "Linear". Known values are: "linear", "constant", "quadratic", and
+     "logarithmic".
+    :vartype interpolation: Union[str, "ScoringFunctionInterpolation"]
+    :ivar random: Optional parameters for seeded random scoring. Omit this property for
+     request-scoped random ordering.
+    :vartype random: "RandomScoringParameters"
+    :ivar type: Indicates that pseudo-random scoring is used. Required. Default value is "random".
+    :vartype type: Literal["random"]
+    """
+
+    interpolation: Union[str, "ScoringFunctionInterpolation"]
+    """A value indicating how boosting will be interpolated across document scores; defaults to
+     \"Linear\". Known values are: \"linear\", \"constant\", \"quadratic\", and \"logarithmic\"."""
+    random: "RandomScoringParameters"
+    """Optional parameters for seeded random scoring. Omit this property for request-scoped random
+     ordering."""
+    type: Required[Literal["random"]]
+    """Indicates that pseudo-random scoring is used. Required. Default value is \"random\"."""
+
+
+class RandomScoringParameters(TypedDict, total=False):
+    """Provides parameter values to a random scoring function.
+
+    :ivar seedParameter: The name of the scoring parameter that supplies a signed 64-bit seed at
+     query time. Required.
+    :vartype seedParameter: str
+    """
+
+    seedParameter: Required[str]
+    """The name of the scoring parameter that supplies a signed 64-bit seed at query time. Required."""
+
+
 RemoteSharePointKnowledgeSource = TypedDict(
     "RemoteSharePointKnowledgeSource",
     {
@@ -4563,8 +5150,19 @@ class SearchField(TypedDict, total=False):
      fields.
     :vartype facetable: bool
     :ivar permissionFilter: A value indicating whether the field should be used as a permission
-     filter. Known values are: "userIds", "groupIds", and "rbacScope".
+     filter. Known values are: "userIds", "groupIds", "rbacScope", "oneLakeParentFolders", and
+     "oneLakeLakehouseId".
     :vartype permissionFilter: Union[str, "PermissionFilter"]
+    :ivar organizationAccessExpiration: A value indicating whether the field contains the
+     expiration timestamp for organization-scoped SharePoint sharing links. At most one top-level
+     field of type Edm.DateTimeOffset can have this property set to true. On permission-filtered
+     queries, expiration applies only to orgLink:<tenantId> values in a userIds permission-filter
+     field whose tenant ID matches the validated user's tenant ID. The grant is valid only before
+     the timestamp; an absent expiration field or a null timestamp means no time limit. Expiration
+     does not affect orgGroup:<tenantId> values in groupIds permission-filter fields or ordinary
+     user and group grants. If omitted or false, this field is not used for organization-link
+     expiration.
+    :vartype organizationAccessExpiration: bool
     :ivar sensitivityLabelId: A value indicating whether the field should be used for sensitivity
      label ID filtering. This enables document-level filtering based on Microsoft Purview
      sensitivity label IDs.
@@ -4655,6 +5253,8 @@ class SearchField(TypedDict, total=False):
     :ivar vectorSearchProfile: The name of the vector search profile that specifies the algorithm
      and vectorizer to use when searching the vector field.
     :vartype vectorSearchProfile: str
+    :ivar topicGraphProfile: The name of the topic graph profile linked to this vector field.
+    :vartype topicGraphProfile: str
     :ivar vectorEncoding: The encoding format to interpret the field contents. "packedBit"
     :vartype vectorEncoding: Union[str, "VectorEncodingFormat"]
     :ivar synonymMaps: A list of the names of synonym maps to associate with this field. This
@@ -4734,7 +5334,16 @@ class SearchField(TypedDict, total=False):
      fields."""
     permissionFilter: Optional[Union[str, "PermissionFilter"]]
     """A value indicating whether the field should be used as a permission filter. Known values are:
-     \"userIds\", \"groupIds\", and \"rbacScope\"."""
+     \"userIds\", \"groupIds\", \"rbacScope\", \"oneLakeParentFolders\", and \"oneLakeLakehouseId\"."""
+    organizationAccessExpiration: bool
+    """A value indicating whether the field contains the expiration timestamp for organization-scoped
+     SharePoint sharing links. At most one top-level field of type Edm.DateTimeOffset can have this
+     property set to true. On permission-filtered queries, expiration applies only to
+     orgLink:<tenantId> values in a userIds permission-filter field whose tenant ID matches the
+     validated user's tenant ID. The grant is valid only before the timestamp; an absent expiration
+     field or a null timestamp means no time limit. Expiration does not affect orgGroup:<tenantId>
+     values in groupIds permission-filter fields or ordinary user and group grants. If omitted or
+     false, this field is not used for organization-link expiration."""
     sensitivityLabelId: bool
     """A value indicating whether the field should be used for sensitivity label ID filtering. This
      enables document-level filtering based on Microsoft Purview sensitivity label IDs."""
@@ -4830,6 +5439,8 @@ class SearchField(TypedDict, total=False):
     vectorSearchProfile: Optional[str]
     """The name of the vector search profile that specifies the algorithm and vectorizer to use when
      searching the vector field."""
+    topicGraphProfile: str
+    """The name of the topic graph profile linked to this vector field."""
     vectorEncoding: Optional[Union[str, "VectorEncodingFormat"]]
     """The encoding format to interpret the field contents. \"packedBit\""""
     synonymMaps: list[str]
@@ -4849,6 +5460,7 @@ SearchIndex = TypedDict(
         "name": Required[str],
         "description": str,
         "fields": Required[list["SearchField"]],
+        "graphProfile": "GraphProfile",
         "scoringProfiles": list["ScoringProfile"],
         "defaultScoringProfile": str,
         "corsOptions": Optional["CorsOptions"],
@@ -4865,6 +5477,7 @@ SearchIndex = TypedDict(
         "permissionFilterOption": Optional[Union[str, "SearchIndexPermissionFilterOption"]],
         "purviewEnabled": Optional[bool],
         "sharePointConnectorAppRegistration": "SharePointConnectorAppRegistration",
+        "oneLakeSecuritySource": "OneLakeSecuritySource",
         "@odata.etag": str,
     },
     total=False,
@@ -4878,6 +5491,9 @@ index.
 :vartype description: str
 :ivar fields: The fields of the index. Required.
 :vartype fields: list["SearchField"]
+:ivar graphProfile: Maps edge-list graph roles to this index's fields. Required for
+ search.graph; omitted on ordinary document indexes.
+:vartype graphProfile: "GraphProfile"
 :ivar scoringProfiles: The scoring profiles for the index.
 :vartype scoringProfiles: list["ScoringProfile"]
 :ivar defaultScoringProfile: The name of the scoring profile to use if none is specified in the
@@ -4925,6 +5541,10 @@ index.
  for the index, enabling document-level permissions from SharePoint. If provided, the
  applicationId and federatedCredentialId properties are required.
 :vartype sharePointConnectorAppRegistration: "SharePointConnectorAppRegistration"
+:ivar oneLakeSecuritySource: Identifies the Microsoft Fabric OneLake lakehouse that the index's
+ documents originate from. Required when any field uses the 'oneLakeParentFolders' or
+ 'oneLakeLakehouseId' permission filter.
+:vartype oneLakeSecuritySource: "OneLakeSecuritySource"
 :ivar ``@odata.etag``: The ETag of the index.
 :vartype ``@odata.etag``: str
 """
@@ -5517,13 +6137,23 @@ class SearchIndexKnowledgeSourceFieldValueBoost(TypedDict, total=False):  # pyli
 
 
 class SearchIndexKnowledgeSourceFilterHint(TypedDict, total=False):
-    """A hint that identifies a field and representative values the query planner can use when
+    """A hint that identifies a field and exhaustive grounding values the query planner can use when
     constructing a filter.
 
     :ivar field: The name of the filterable search index field. Required.
     :vartype field: str
-    :ivar fieldValues: Representative values for the field. Required.
+    :ivar fieldValues: The exhaustive set of values for the field. At most 160 values, with a
+     maximum of 128 characters per value and 2048 characters combined. In versions supporting
+     ``autoConfiguration``, required unless ``autoConfiguration`` is specified, and mutually
+     exclusive with it.
     :vartype fieldValues: list[str]
+    :ivar autoConfiguration: Configures the service to resolve grounding values from the field's
+     facets. Its presence enables auto-configuration. The field must be filterable and facetable.
+     Not supported when the target index has document-level permissions or Purview sensitivity
+     labels enabled; this restriction is validated at knowledge source create/update and knowledge
+     base retrieval time. Mutually exclusive with ``fieldValues``. Supported only in a knowledge
+     source's stored ``queryHints``, not in request-time ``queryHintOverrides``.
+    :vartype autoConfiguration: "SearchIndexKnowledgeSourceFilterHintAutoConfiguration"
     :ivar filterInstructions: Natural-language instructions that explain when and how to filter on
      the field.
     :vartype filterInstructions: str
@@ -5531,10 +6161,46 @@ class SearchIndexKnowledgeSourceFilterHint(TypedDict, total=False):
 
     field: Required[str]
     """The name of the filterable search index field. Required."""
-    fieldValues: Required[list[str]]
-    """Representative values for the field. Required."""
+    fieldValues: list[str]
+    """The exhaustive set of values for the field. At most 160 values, with a maximum of 128
+     characters per value and 2048 characters combined. In versions supporting
+     ``autoConfiguration``, required unless ``autoConfiguration`` is specified, and mutually
+     exclusive with it."""
+    autoConfiguration: "SearchIndexKnowledgeSourceFilterHintAutoConfiguration"
+    """Configures the service to resolve grounding values from the field's facets. Its presence
+     enables auto-configuration. The field must be filterable and facetable. Not supported when the
+     target index has document-level permissions or Purview sensitivity labels enabled; this
+     restriction is validated at knowledge source create/update and knowledge base retrieval time.
+     Mutually exclusive with ``fieldValues``. Supported only in a knowledge source's stored
+     ``queryHints``, not in request-time ``queryHintOverrides``."""
     filterInstructions: str
     """Natural-language instructions that explain when and how to filter on the field."""
+
+
+class SearchIndexKnowledgeSourceFilterHintAutoConfiguration(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Configures automatic resolution of a filter hint's grounding values from the target index
+    facets.
+
+    :ivar cacheTtl: The number of seconds resolved facet values are cached. The allowed range is 60
+     through 3600 on dedicated services and 60 through 900 on serverless services. When omitted,
+     defaults to 3600 seconds on dedicated services and 900 seconds on serverless services.
+    :vartype cacheTtl: int
+    :ivar maxFacetValueCount: The maximum number of facet values to use as grounding. Defaults to
+     64; allowed range is 1 through 64. Values are selected in descending facet-count order, subject
+     to the same 2048-character combined-length limit and 128-character per-value limit as manually
+     specified filter values.
+    :vartype maxFacetValueCount: int
+    """
+
+    cacheTtl: int
+    """The number of seconds resolved facet values are cached. The allowed range is 60 through 3600 on
+     dedicated services and 60 through 900 on serverless services. When omitted, defaults to 3600
+     seconds on dedicated services and 900 seconds on serverless services."""
+    maxFacetValueCount: int
+    """The maximum number of facet values to use as grounding. Defaults to 64; allowed range is 1
+     through 64. Values are selected in descending facet-count order, subject to the same
+     2048-character combined-length limit and 128-character per-value limit as manually specified
+     filter values."""
 
 
 class SearchIndexKnowledgeSourceMultiWordExpressionBoost(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -5582,6 +6248,9 @@ class SearchIndexKnowledgeSourceParameters(TypedDict, total=False):
      this search index knowledge source. Request-time query hints replace these defaults as a
      complete object.
     :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
+    :ivar topicGraph: Default topic graph vector search options for this search index knowledge
+     source.
+    :vartype topicGraph: "VectorQueryTopicGraph"
     """
 
     searchIndexName: Required[str]
@@ -5599,6 +6268,8 @@ class SearchIndexKnowledgeSourceParameters(TypedDict, total=False):
     queryHints: "SearchIndexKnowledgeSourceQueryHints"
     """Default hints that guide query planning toward useful filters and boosts for this search index
      knowledge source. Request-time query hints replace these defaults as a complete object."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Default topic graph vector search options for this search index knowledge source."""
 
 
 class SearchIndexKnowledgeSourceQueryHints(TypedDict, total=False):
@@ -6297,15 +6968,15 @@ class TagScoringFunction(TypedDict, total=False):
     """Defines a function that boosts scores of documents with string values matching a given list of
     tags.
 
-    :ivar fieldName: The name of the field used as input to the scoring function. Required.
-    :vartype fieldName: str
-    :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
-     Required.
-    :vartype boost: float
     :ivar interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Known values are: "linear", "constant", "quadratic", and
      "logarithmic".
     :vartype interpolation: Union[str, "ScoringFunctionInterpolation"]
+    :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
+     Required.
+    :vartype boost: float
+    :ivar fieldName: The name of the field used as input to the scoring function. Required.
+    :vartype fieldName: str
     :ivar tag: Parameter values for the tag scoring function. Required.
     :vartype tag: "TagScoringParameters"
     :ivar type: Indicates the type of function to use. Valid values include magnitude, freshness,
@@ -6313,13 +6984,13 @@ class TagScoringFunction(TypedDict, total=False):
     :vartype type: Literal["tag"]
     """
 
-    fieldName: Required[str]
-    """The name of the field used as input to the scoring function. Required."""
-    boost: Required[float]
-    """A multiplier for the raw score. Must be a positive number not equal to 1.0. Required."""
     interpolation: Union[str, "ScoringFunctionInterpolation"]
     """A value indicating how boosting will be interpolated across document scores; defaults to
      \"Linear\". Known values are: \"linear\", \"constant\", \"quadratic\", and \"logarithmic\"."""
+    boost: Required[float]
+    """A multiplier for the raw score. Must be a positive number not equal to 1.0. Required."""
+    fieldName: Required[str]
+    """The name of the field used as input to the scoring function. Required."""
     tag: Required["TagScoringParameters"]
     """Parameter values for the tag scoring function. Required."""
     type: Required[Literal["tag"]]
@@ -6532,6 +7203,8 @@ class VectorSearch(TypedDict, total=False):
     :ivar compressions: Contains configuration options specific to the compression method used
      during indexing or querying.
     :vartype compressions: list["VectorSearchCompression"]
+    :ivar topicGraphProfiles: Contains profiles for topic graph vector search.
+    :vartype topicGraphProfiles: list["VectorSearchTopicGraphProfile"]
     """
 
     profiles: list["VectorSearchProfile"]
@@ -6543,6 +7216,8 @@ class VectorSearch(TypedDict, total=False):
     compressions: list["VectorSearchCompression"]
     """Contains configuration options specific to the compression method used during indexing or
      querying."""
+    topicGraphProfiles: list["VectorSearchTopicGraphProfile"]
+    """Contains profiles for topic graph vector search."""
 
 
 class VectorSearchProfile(TypedDict, total=False):
@@ -6570,6 +7245,42 @@ class VectorSearchProfile(TypedDict, total=False):
     compression: str
     """The name of the compression method configuration that specifies the compression method and
      optional parameters."""
+
+
+class VectorSearchTopicGraphProfile(TypedDict, total=False):
+    """Defines a topic graph profile for a single vector field.
+
+    :ivar name: The name to associate with this topic graph profile. Required.
+    :vartype name: str
+    :ivar indexName: The name of the index that stores the topics for the associated vector field.
+     Required.
+    :vartype indexName: str
+    :ivar defaultKind: Default kind of topic graph vector search to use. Required. Known values
+     are: "none", "diverse", and "balanced".
+    :vartype defaultKind: Union[str, "VectorSearchTopicGraphKind"]
+    :ivar defaultDiversityFactor: Default diversity factor for topic graph vector searches. This
+     property can only be used when ``defaultKind`` is ``diverse``. Default is 0.2.
+    :vartype defaultDiversityFactor: float
+    :ivar defaultMinDiversityPoolSize: Default minimum number of vector candidates to retrieve
+     before topic graph sampling. This property can only be used when ``defaultKind`` is ``diverse``
+     or ``balanced``. The default is 1,000 for classic services and 500 for serverless services.
+    :vartype defaultMinDiversityPoolSize: int
+    """
+
+    name: Required[str]
+    """The name to associate with this topic graph profile. Required."""
+    indexName: Required[str]
+    """The name of the index that stores the topics for the associated vector field. Required."""
+    defaultKind: Required[Union[str, "VectorSearchTopicGraphKind"]]
+    """Default kind of topic graph vector search to use. Required. Known values are: \"none\",
+     \"diverse\", and \"balanced\"."""
+    defaultDiversityFactor: float
+    """Default diversity factor for topic graph vector searches. This property can only be used when
+     ``defaultKind`` is ``diverse``. Default is 0.2."""
+    defaultMinDiversityPoolSize: int
+    """Default minimum number of vector candidates to retrieve before topic graph sampling. This
+     property can only be used when ``defaultKind`` is ``diverse`` or ``balanced``. The default is
+     1,000 for classic services and 500 for serverless services."""
 
 
 VisionVectorizeSkill = TypedDict(
@@ -6988,7 +7699,11 @@ CognitiveServicesAccount = Union[
     AIServicesAccountIdentity, AIServicesAccountKey, CognitiveServicesAccountKey, DefaultCognitiveServicesAccount
 ]
 VectorSearchVectorizer = Union[
-    AIServicesVisionVectorizer, AzureMachineLearningVectorizer, AzureOpenAIVectorizer, WebApiVectorizer
+    AIServicesVisionVectorizer,
+    AzureMachineLearningVectorizer,
+    AzureOpenAIVectorizer,
+    WebApiVectorizer,
+    OpenAICompatibleVectorizer,
 ]
 TokenFilter = Union[
     AsciiFoldingTokenFilter,
@@ -7078,9 +7793,17 @@ DataChangeDetectionPolicy = Union[HighWaterMarkChangeDetectionPolicy, SqlIntegra
 DataDeletionDetectionPolicy = Union[
     NativeBlobSoftDeleteDeletionDetectionPolicy, SoftDeleteColumnDeletionDetectionPolicy
 ]
-ScoringFunction = Union[DistanceScoringFunction, FreshnessScoringFunction, MagnitudeScoringFunction, TagScoringFunction]
+ScoringFunction = Union[
+    DistanceScoringFunction,
+    FreshnessScoringFunction,
+    MagnitudeScoringFunction,
+    RandomScoringFunction,
+    TagScoringFunction,
+]
 VectorSearchAlgorithmConfiguration = Union[ExhaustiveKnnAlgorithmConfiguration, HnswAlgorithmConfiguration]
-KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]
+KnowledgeBaseModel = Union[
+    KnowledgeBaseAzureOpenAIModel, KnowledgeBaseMicrosoftRetriever1Model, KnowledgeBaseOpenAICompatibleModel
+]
 McpServerAuthentication = Union[McpServerFoundryConnectionAuthentication, McpServerStoredHeadersAuthentication]
 McpServerOutputParsing = Union[
     McpServerAutoOutputParsing, McpServerJsonOutputParsing, McpServerNoneOutputParsing, McpServerSplitOutputParsing

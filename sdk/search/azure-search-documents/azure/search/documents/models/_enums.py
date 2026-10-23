@@ -10,6 +10,20 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AgenticSearchTerminationReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Why agentic processing stopped. Non-model failures retain their existing error details and HTTP
+    status.
+    """
+
+    MODEL_STOPPED = "modelStopped"
+    """Processing completed normally after a valid model stop or a service-owned iteration bound. This
+    does not guarantee complete evidence."""
+    MAX_RUNTIME_EXCEEDED = "maxRuntimeExceeded"
+    """The request deadline ended agentic processing before a valid stop."""
+    MODEL_FAILED = "modelFailed"
+    """Agentic model processing failed before a valid model stop."""
+
+
 class AutocompleteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode for Autocomplete. The default is 'oneTerm'. Use 'twoTerms' to get shingles
     and 'oneTermWithContext' to use the current context in producing autocomplete terms.
@@ -26,6 +40,79 @@ class AutocompleteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Completes the last term in a query with two or more terms, where the last two terms are a
     phrase that exists in the index. For example, if the input is 'washington medic', the suggested
     terms could include 'washington medicaid' and 'washington medical'."""
+
+
+class GraphQueryDiagnosticPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The stage that produced a graph query diagnostic."""
+
+    PARSE = "parse"
+    """Query syntax and parsing."""
+    BIND = "bind"
+    """Variable, parameter, function, and semantic binding."""
+    VALIDATION = "validation"
+    """Request-option validation."""
+    PLANNING = "planning"
+    """Query planning, including unsupported query shapes and query-breadth restrictions."""
+    EXECUTION = "execution"
+    """Runtime evaluation, execution-limit warnings, and execution summaries."""
+
+
+class GraphQueryDiagnosticSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The importance of a graph query diagnostic."""
+
+    ERROR = "error"
+    """The query was rejected or could not be evaluated successfully."""
+    WARNING = "warning"
+    """Execution returned a result with a caveat, such as an execution or provenance limit."""
+    INFO = "info"
+    """Informational diagnostics, such as an optional execution summary."""
+
+
+class GraphQueryEvidenceCountRelation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Completeness of an evidence count."""
+
+    EXACT = "exact"
+    """All supporting evidence was counted."""
+    LOWER_BOUND = "lowerBound"
+    """At least this many supporting entries exist; collection was bounded."""
+
+
+class GraphQueryExecutionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether a graph query is executed or only planned."""
+
+    EXECUTE = "execute"
+    """Build and execute the graph plan."""
+    PLAN_ONLY = "planOnly"
+    """Build the graph plan without executing backend searches."""
+
+
+class GraphQueryExplainStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Diagnostic stages available when inspecting a graph query."""
+
+    SYNTAX = "syntax"
+    """Parsed query syntax."""
+    SEMANTIC_IR = "semanticIr"
+    """Bound semantic intermediate representation."""
+    LOGICAL_PLAN = "logicalPlan"
+    """Logical plan before optimization."""
+    OPTIMIZED_LOGICAL_PLAN = "optimizedLogicalPlan"
+    """Logical plan after optimization."""
+    PHYSICAL_PLAN = "physicalPlan"
+    """Physical execution plan."""
+    REQUEST_ATTRIBUTIONS = "requestAttributions"
+    """Attribution of backend requests to execution-plan nodes."""
+    FULL = "full"
+    """All available diagnostic stages."""
+
+
+class GraphQueryProvenanceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of assertion evidence returned with graph rows."""
+
+    IDS = "ids"
+    """Return evidence identifiers without source documents."""
+    HYDRATE = "hydrate"
+    """Return evidence identifiers and selected documents from the profile-configured provenance
+    index."""
 
 
 class HybridCountAndFacetMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -60,6 +147,21 @@ class IndexActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Removes the specified document from the index. Any field you specify in a delete operation
     other than the key field will be ignored. If you want to remove an individual field from a
     document, use merge instead and set the field explicitly to null."""
+
+
+class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum describing allowed operation states."""
+
+    NOT_STARTED = "NotStarted"
+    """The operation has not started."""
+    RUNNING = "Running"
+    """The operation is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The operation has completed successfully."""
+    FAILED = "Failed"
+    """The operation has failed."""
+    CANCELED = "Canceled"
+    """The operation has been canceled by the user."""
 
 
 class QueryAnswerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -113,6 +215,9 @@ class QueryDebugMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allows the user to further explore their hybrid and vector query results."""
     QUERY_REWRITES = "queryRewrites"
     """Allows the user to explore the list of query rewrites generated for their search request."""
+    AGENTIC = "agentic"
+    """Returns bounded diagnostics for agentic search under @search.debug.agentic. Combine with other
+    supported modes using |; this selector does not enable agentic retrieval or query rewriting."""
     INNER_HITS = "innerHits"
     """Allows the user to retrieve scoring information regarding vectors matched within a collection
     of complex types."""
@@ -300,7 +405,7 @@ class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SIMPLE = "simple"
     """Uses the simple query syntax for searches. Search text is interpreted using a simple query
-    language that allows for symbols such as +, * and "". Queries are evaluated across all
+    language that allows for symbols such as +, * and \"\". Queries are evaluated across all
     searchable fields by default, unless the searchFields parameter is specified."""
     FULL = "full"
     """Uses the full Lucene query syntax for searches. Search text is interpreted using the Lucene
@@ -310,6 +415,9 @@ class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Best suited for queries expressed in natural language as opposed to keywords. Improves
     precision of search results by re-ranking the top search results using a ranking model trained
     on the Web corpus."""
+    AGENTIC = "agentic"
+    """Uses an agentic model to generate queries and rerank search results within one index. Requires
+    nonempty natural-language search text."""
 
 
 class ScoringStatistics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -416,6 +524,18 @@ class VectorQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IMAGE_BINARY = "imageBinary"
     """Vector query where a base 64 encoded binary of an image that needs to be vectorized is
     provided."""
+
+
+class VectorSearchTopicGraphKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of topic graph vector search to use."""
+
+    NONE = "none"
+    """Use normal vector search when topic graph diverse retrieval is off."""
+    DIVERSE = "diverse"
+    """Use topic graph diverse retrieval."""
+    BALANCED = "balanced"
+    """Blends pure vector similarity with diversity-aware retrieval. Recommended default to balance
+    diversity with relevance."""
 
 
 class VectorThresholdKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

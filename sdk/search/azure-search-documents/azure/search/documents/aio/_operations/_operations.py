@@ -33,6 +33,7 @@ from ..._operations._operations import (
     build_search_autocomplete_post_request,
     build_search_get_document_count_request,
     build_search_get_document_request,
+    build_search_graph_request,
     build_search_index_request,
     build_search_search_get_request,
     build_search_search_post_request,
@@ -53,6 +54,283 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class _SearchClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], SearchClientConfiguration]
 ):
+
+    @overload
+    async def graph(
+        self,
+        *,
+        gql: str,
+        query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
+        content_type: str = "application/json",
+        search: Optional[str] = None,
+        filter: Optional[str] = None,
+        vector_queries: Optional[list[_models2.VectorQuery]] = None,
+        execution_mode: Optional[Union[str, _models2.GraphQueryExecutionMode]] = None,
+        explain: Optional[list[Union[str, _models2.GraphQueryExplainStage]]] = None,
+        include_statistics: Optional[bool] = None,
+        include_diagnostics: Optional[bool] = None,
+        provenance: Optional[_models2.GraphQueryProvenanceParameters] = None,
+        **kwargs: Any
+    ) -> _models2.GraphQueryResult:
+        """Executes a graph query over an index with an edge-list graph profile.
+
+        :keyword gql: The nonempty GQL query to bind and execute. Required.
+        :paramtype gql: str
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
+        :keyword enable_elevated_read: A value that enables elevated read that bypass document level
+         permission checks for the query operation. Default value is None.
+        :paramtype enable_elevated_read: bool
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword search: Full-text search text used to constrain graph backend requests. Default value
+         is None.
+        :paramtype search: str
+        :keyword filter: An OData filter over graph-index fields applied throughout graph execution.
+         Default value is None.
+        :paramtype filter: str
+        :keyword vector_queries: Vector queries used to constrain the graph's backend searches. Default
+         value is None.
+        :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
+        :keyword execution_mode: Executes the query by default. planOnly builds the plan without
+         backend query execution and requires at least one explain stage. Known values are: "execute"
+         and "planOnly". Default value is None.
+        :paramtype execution_mode: str or ~azure.search.documents.models.GraphQueryExecutionMode
+        :keyword explain: Diagnostic plan stages to include in the response. Plan representations are
+         diagnostic information rather than an executable client contract. Default value is None.
+        :paramtype explain: list[str or ~azure.search.documents.models.GraphQueryExplainStage]
+        :keyword include_statistics: Whether to include graph execution statistics. Defaults to true.
+         Default value is None.
+        :paramtype include_statistics: bool
+        :keyword include_diagnostics: Whether to include informational diagnostics. Errors and warnings
+         are returned regardless of this setting. Default value is None.
+        :paramtype include_diagnostics: bool
+        :keyword provenance: Controls bounded assertion evidence and optional source-document
+         hydration. Default value is None.
+        :paramtype provenance: ~azure.search.documents.models.GraphQueryProvenanceParameters
+        :return: GraphQueryResult. The GraphQueryResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.GraphQueryResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def graph(
+        self,
+        body: _types_models2.GraphRequest,
+        *,
+        query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models2.GraphQueryResult:
+        """Executes a graph query over an index with an edge-list graph profile.
+
+        :param body: Required.
+        :type body: ~azure.search.documents.types.GraphRequest
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
+        :keyword enable_elevated_read: A value that enables elevated read that bypass document level
+         permission checks for the query operation. Default value is None.
+        :paramtype enable_elevated_read: bool
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GraphQueryResult. The GraphQueryResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.GraphQueryResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def graph(
+        self,
+        body: IO[bytes],
+        *,
+        query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models2.GraphQueryResult:
+        """Executes a graph query over an index with an edge-list graph profile.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
+        :keyword enable_elevated_read: A value that enables elevated read that bypass document level
+         permission checks for the query operation. Default value is None.
+        :paramtype enable_elevated_read: bool
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GraphQueryResult. The GraphQueryResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.GraphQueryResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01-preview",
+        params_added_on={
+            "2026-11-01-preview": [
+                "api_version",
+                "client_request_id",
+                "index_name",
+                "accept",
+                "query_source_authorization",
+                "enable_elevated_read",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-11-01-preview"],
+    )
+    async def graph(  # pylint: disable=too-many-locals
+        self,
+        body: Union[JSON, _types_models2.GraphRequest, IO[bytes]] = _Unset,
+        *,
+        gql: str = _Unset,
+        query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
+        search: Optional[str] = None,
+        filter: Optional[str] = None,
+        vector_queries: Optional[list[_models2.VectorQuery]] = None,
+        execution_mode: Optional[Union[str, _models2.GraphQueryExecutionMode]] = None,
+        explain: Optional[list[Union[str, _models2.GraphQueryExplainStage]]] = None,
+        include_statistics: Optional[bool] = None,
+        include_diagnostics: Optional[bool] = None,
+        provenance: Optional[_models2.GraphQueryProvenanceParameters] = None,
+        **kwargs: Any
+    ) -> _models2.GraphQueryResult:
+        """Executes a graph query over an index with an edge-list graph profile.
+
+        :param body: Is one of the following types: JSON, GraphRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.search.documents.types.GraphRequest or IO[bytes]
+        :keyword gql: The nonempty GQL query to bind and execute. Required.
+        :paramtype gql: str
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
+        :keyword enable_elevated_read: A value that enables elevated read that bypass document level
+         permission checks for the query operation. Default value is None.
+        :paramtype enable_elevated_read: bool
+        :keyword search: Full-text search text used to constrain graph backend requests. Default value
+         is None.
+        :paramtype search: str
+        :keyword filter: An OData filter over graph-index fields applied throughout graph execution.
+         Default value is None.
+        :paramtype filter: str
+        :keyword vector_queries: Vector queries used to constrain the graph's backend searches. Default
+         value is None.
+        :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
+        :keyword execution_mode: Executes the query by default. planOnly builds the plan without
+         backend query execution and requires at least one explain stage. Known values are: "execute"
+         and "planOnly". Default value is None.
+        :paramtype execution_mode: str or ~azure.search.documents.models.GraphQueryExecutionMode
+        :keyword explain: Diagnostic plan stages to include in the response. Plan representations are
+         diagnostic information rather than an executable client contract. Default value is None.
+        :paramtype explain: list[str or ~azure.search.documents.models.GraphQueryExplainStage]
+        :keyword include_statistics: Whether to include graph execution statistics. Defaults to true.
+         Default value is None.
+        :paramtype include_statistics: bool
+        :keyword include_diagnostics: Whether to include informational diagnostics. Errors and warnings
+         are returned regardless of this setting. Default value is None.
+        :paramtype include_diagnostics: bool
+        :keyword provenance: Controls bounded assertion evidence and optional source-document
+         hydration. Default value is None.
+        :paramtype provenance: ~azure.search.documents.models.GraphQueryProvenanceParameters
+        :return: GraphQueryResult. The GraphQueryResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.GraphQueryResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models2.GraphQueryResult] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if gql is _Unset:
+                raise TypeError("missing required argument: gql")
+            body = {
+                "executionMode": execution_mode,
+                "explain": explain,
+                "filter": filter,
+                "gql": gql,
+                "includeDiagnostics": include_diagnostics,
+                "includeStatistics": include_statistics,
+                "provenance": provenance,
+                "search": search,
+                "vectorQueries": vector_queries,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_search_graph_request(
+            index_name=self._config.index_name,
+            query_source_authorization=query_source_authorization,
+            enable_elevated_read=enable_elevated_read,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models2.GraphQueryError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models2.GraphQueryResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_document_count(self, **kwargs: Any) -> int:
@@ -130,9 +408,18 @@ class _SearchClientOperationsMixin(
                 "query_language",
                 "speller",
                 "semantic_fields",
-            ]
+            ],
+            "2026-10-01": ["more_like_this"],
+            "2026-11-01-preview": ["agentic_max_runtime_in_seconds"],
         },
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
     async def _search_get(  # pylint: disable=too-many-locals
         self,
@@ -147,6 +434,7 @@ class _SearchClientOperationsMixin(
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
+        more_like_this: Optional[str] = None,
         order_by: Optional[list[str]] = None,
         query_type: Optional[Union[str, _models2.QueryType]] = None,
         scoring_parameters: Optional[list[str]] = None,
@@ -169,6 +457,7 @@ class _SearchClientOperationsMixin(
         query_language: Optional[Union[str, _models2.QueryLanguage]] = None,
         speller: Optional[Union[str, _models2.QuerySpellerType]] = None,
         semantic_fields: Optional[list[str]] = None,
+        agentic_max_runtime_in_seconds: Optional[int] = None,
         **kwargs: Any
     ) -> _models2._models.SearchDocumentsResult:
         """Searches for documents in the index.
@@ -208,6 +497,9 @@ class _SearchClientOperationsMixin(
          parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 100. Default value is None.
         :paramtype minimum_coverage: float
+        :keyword more_like_this: The key of the document to use as the basis for finding similar
+         documents. This parameter cannot be used together with search text. Default value is None.
+        :paramtype more_like_this: str
         :keyword order_by: The list of OData $orderby expressions by which to sort the results. Each
          expression can be either a field name or a call to either the geo.distance() or the
          search.score() functions. Each expression can be followed by asc to indicate ascending, and
@@ -217,7 +509,7 @@ class _SearchClientOperationsMixin(
         :paramtype order_by: list[str]
         :keyword query_type: A value that specifies the syntax of the search query. The default is
          'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
-         "full", and "semantic". Default value is None.
+         "full", "semantic", and "agentic". Default value is None.
         :paramtype query_type: str or ~azure.search.documents.models.QueryType
         :keyword scoring_parameters: The list of parameter values to be used in scoring functions (for
          example, referencePointParameter) using the format name-values. For example, if the scoring
@@ -305,8 +597,8 @@ class _SearchClientOperationsMixin(
          "none" and "generative". Default value is None.
         :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
         :keyword debug: Enables a debugging tool that can be used to further explore your search
-         results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
-         "all". Default value is None.
+         results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "agentic",
+         "innerHits", and "all". Default value is None.
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
         :keyword query_language: The language of the query. Known values are: "none", "en-us", "en-gb",
          "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn", "zh-tw",
@@ -324,6 +616,10 @@ class _SearchClientOperationsMixin(
         :keyword semantic_fields: The list of field names used for semantic ranking. Default value is
          None.
         :paramtype semantic_fields: list[str]
+        :keyword agentic_max_runtime_in_seconds: Maximum duration in seconds for the complete agentic
+         search request, including retrieval, ranking and retries. Not supported with other query modes.
+         Default value is None.
+        :paramtype agentic_max_runtime_in_seconds: int
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models._models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -353,6 +649,7 @@ class _SearchClientOperationsMixin(
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
+            more_like_this=more_like_this,
             order_by=order_by,
             query_type=query_type,
             scoring_parameters=scoring_parameters,
@@ -375,6 +672,7 @@ class _SearchClientOperationsMixin(
             query_language=query_language,
             speller=speller,
             semantic_fields=semantic_fields,
+            agentic_max_runtime_in_seconds=agentic_max_runtime_in_seconds,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -431,8 +729,10 @@ class _SearchClientOperationsMixin(
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
+        more_like_this: Optional[str] = None,
         order_by: Optional[list[str]] = None,
         query_type: Optional[Union[str, _models2.QueryType]] = None,
+        agentic_options: Optional[_models2.AgenticSearchOptions] = None,
         scoring_statistics: Optional[Union[str, _models2.ScoringStatistics]] = None,
         session_id: Optional[str] = None,
         scoring_parameters: Optional[list[str]] = None,
@@ -483,7 +783,14 @@ class _SearchClientOperationsMixin(
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-05-01-preview": ["query_source_authorization", "enable_elevated_read"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
     async def _search_post(  # pylint: disable=too-many-locals
         self,
@@ -498,8 +805,10 @@ class _SearchClientOperationsMixin(
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
+        more_like_this: Optional[str] = None,
         order_by: Optional[list[str]] = None,
         query_type: Optional[Union[str, _models2.QueryType]] = None,
+        agentic_options: Optional[_models2.AgenticSearchOptions] = None,
         scoring_statistics: Optional[Union[str, _models2.ScoringStatistics]] = None,
         session_id: Optional[str] = None,
         scoring_parameters: Optional[list[str]] = None,
@@ -562,6 +871,9 @@ class _SearchClientOperationsMixin(
          parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 100. Default value is None.
         :paramtype minimum_coverage: float
+        :keyword more_like_this: The key of the document to use as the basis for finding similar
+         documents. This parameter cannot be used together with search text. Default value is None.
+        :paramtype more_like_this: str
         :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
          results. Each expression can be either a field name or a call to either the geo.distance() or
          the search.score() functions. Each expression can be followed by asc to indicate ascending, or
@@ -571,8 +883,12 @@ class _SearchClientOperationsMixin(
         :paramtype order_by: list[str]
         :keyword query_type: A value that specifies the syntax of the search query. The default is
          'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
-         "full", and "semantic". Default value is None.
+         "full", "semantic", and "agentic". Default value is None.
         :paramtype query_type: str or ~azure.search.documents.models.QueryType
+        :keyword agentic_options: Request-scoped runtime options when queryType is set to 'agentic'.
+         Not supported with other query modes. Use the existing debug selector for diagnostics. Default
+         value is None.
+        :paramtype agentic_options: ~azure.search.documents.models.AgenticSearchOptions
         :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
          statistics (such as document frequency) globally for more consistent scoring, or locally, for
          lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
@@ -595,8 +911,8 @@ class _SearchClientOperationsMixin(
          documents in order to sort the results. Default value is None.
         :paramtype scoring_profile: str
         :keyword debug: Enables a debugging tool that can be used to further explore your reranked
-         results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
-         "all". Default value is None.
+         results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "agentic",
+         "innerHits", and "all". Default value is None.
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
         :keyword search_text: A full-text search query expression; Use "*" or omit this parameter to
          match all documents. Default value is None.
@@ -694,6 +1010,7 @@ class _SearchClientOperationsMixin(
 
         if body is _Unset:
             body = {
+                "agenticOptions": agentic_options,
                 "answers": answers,
                 "captions": captions,
                 "count": include_total_count,
@@ -705,6 +1022,7 @@ class _SearchClientOperationsMixin(
                 "highlightPreTag": highlight_pre_tag,
                 "hybridSearch": hybrid_search,
                 "minimumCoverage": minimum_coverage,
+                "moreLikeThis": more_like_this,
                 "orderby": order_by,
                 "queryLanguage": query_language,
                 "queryRewrites": query_rewrites,
@@ -787,7 +1105,14 @@ class _SearchClientOperationsMixin(
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-05-01-preview": ["query_source_authorization", "enable_elevated_read"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
     async def get_document(
         self,

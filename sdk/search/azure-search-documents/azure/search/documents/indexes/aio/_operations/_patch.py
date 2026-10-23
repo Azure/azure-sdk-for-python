@@ -541,7 +541,7 @@ class _SearchIndexClientOperationsMixin(
         :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_synonym_maps(
+        result = self.list_synonym_maps(
             select=select,
             search=search,
             page_size=page_size,
@@ -942,7 +942,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_skillsets(
+        result = self.list_skillsets(
             select=select,
             search=search,
             page_size=page_size,
@@ -978,7 +978,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_indexers(
+        result = self.list_indexers(
             select=select,
             search=search,
             page_size=page_size,
@@ -1024,7 +1024,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_data_source_connections(
+        result = self.list_data_source_connections(
             select=select,
             search=search,
             page_size=page_size,
