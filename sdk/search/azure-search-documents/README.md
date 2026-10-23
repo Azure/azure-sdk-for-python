@@ -133,7 +133,7 @@ search_client = SearchClient(service_endpoint, index_name, credential)
 This preview defaults to API version `2026-11-01-preview`. Explicitly set
 `api_version` to an earlier supported `ApiVersion` to retain that service contract.
 Graph queries are available through `SearchClient.graph` in both synchronous and
-asynchronous clients; see the [graph query sample](samples/sample_query_graph_preview.py)
+asynchronous clients; see the [graph query sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_query_graph_preview.py)
 for provenance and diagnostic results. Vector queries accept `topic_graph`
 configuration, and `SearchClient.search` forwards `agentic_options` and `more_like_this`.
 

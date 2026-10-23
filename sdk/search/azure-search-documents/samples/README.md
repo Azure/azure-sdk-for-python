@@ -38,8 +38,8 @@ pip install azure-search-documents
 ### Query Operations
 
 * Graph query, provenance, and diagnostics (2026-11-01-preview):
-  [sample_query_graph_preview.py](sample_query_graph_preview.py)
-  ([async version](sample_query_graph_preview_async.py)). Requires an existing graph index;
+  [sample_query_graph_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_query_graph_preview.py)
+  ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_query_graph_preview_async.py)). Requires an existing graph index;
   the samples do not provision resources.
 * Simple text search: [sample_query_simple.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_query_simple.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_query_simple_async.py))
 * Filter and sort search results: [sample_query_filter.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_query_filter.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_query_filter_async.py))
