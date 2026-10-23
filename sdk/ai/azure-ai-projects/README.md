@@ -240,6 +240,12 @@ do not send another `session.start`. Live uses `session.input_audio`, `session.i
 require Responses delegation. Live has no Realtime `response.cancel`; cancel local receive tasks
 normally or request `session.close` and receive `session.closed`, then close the connection.
 
+Lifecycle snapshots use `VoiceAgentLiveSessionResource`, and delegation-trigger metadata uses
+`VoiceAgentLiveDelegationItem`. For Foundry-managed sessions, `session.delegation` reports the
+target agent name and resolved version, while delegation-created events report
+`target="foundry_managed_agent"`. This is ownership metadata, not the delegated task text;
+Foundry handles GPT Live's native client delegation for these sessions.
+
 Live conversation REST operations use the emitted implementation without handwritten paging overrides.
 The current emitter's REST pagers follow `last_id` without checking `has_more`; this known generation
 limitation does not affect WebSocket sessions.

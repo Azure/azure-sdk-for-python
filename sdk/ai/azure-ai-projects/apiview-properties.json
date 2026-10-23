@@ -306,7 +306,6 @@
         "azure.ai.projects.models.LiveContextWindowUsage": "OpenAI.LiveContextWindowUsage",
         "azure.ai.projects.models.LiveCustomVoiceParam": "OpenAI.LiveCustomVoiceParam",
         "azure.ai.projects.models.LiveDataChannelConfigParam": "OpenAI.LiveDataChannelConfigParam",
-        "azure.ai.projects.models.LiveDelegationItem": "OpenAI.LiveDelegationItem",
         "azure.ai.projects.models.LiveDelegationReasoningInputParam": "OpenAI.LiveDelegationReasoningInputParam",
         "azure.ai.projects.models.LiveDelegationTextInputParam": "OpenAI.LiveDelegationTextInputParam",
         "azure.ai.projects.models.LiveFunctionToolChoiceParam": "OpenAI.LiveFunctionToolChoiceParam",
@@ -348,7 +347,6 @@
         "azure.ai.projects.models.LiveSessionAudioFormatPCMParam": "OpenAI.LiveSessionAudioFormatPCMParam",
         "azure.ai.projects.models.LiveSessionAudioFormatPCMUParam": "OpenAI.LiveSessionAudioFormatPCMUParam",
         "azure.ai.projects.models.LiveSessionCreateParams": "OpenAI.LiveSessionCreateParams",
-        "azure.ai.projects.models.LiveSessionResourceParam": "OpenAI.LiveSessionResourceParam",
         "azure.ai.projects.models.LiveSessionStartEvent": "OpenAI.LiveSessionStartEvent",
         "azure.ai.projects.models.LiveSessionUpdateParams": "OpenAI.LiveSessionUpdateParams",
         "azure.ai.projects.models.LiveSessionUsage": "OpenAI.LiveSessionUsage",
@@ -687,6 +685,7 @@
         "azure.ai.projects.models.VoiceAgentLiveClientDelegationConversationItem": "Azure.AI.Projects.VoiceAgentLiveClientDelegationConversationItem",
         "azure.ai.projects.models.VoiceAgentLiveConversation": "Azure.AI.Projects.VoiceAgentLiveConversation",
         "azure.ai.projects.models.VoiceAgentLiveDefinition": "Azure.AI.Projects.VoiceAgentLiveDefinition",
+        "azure.ai.projects.models.VoiceAgentLiveDelegationItem": "Azure.AI.Projects.VoiceAgentLiveDelegationItem",
         "azure.ai.projects.models.VoiceAgentLiveDelegationResultItem1": "Azure.AI.Projects.VoiceAgentLiveDelegationResultItem.anonymous",
         "azure.ai.projects.models.VoiceAgentLiveDelegationResultItem2": "Azure.AI.Projects.VoiceAgentLiveDelegationResultItem.anonymous",
         "azure.ai.projects.models.VoiceAgentLiveFoundryManagedAgentDelegationItem": "Azure.AI.Projects.VoiceAgentLiveFoundryManagedAgentDelegationItem",
@@ -694,6 +693,7 @@
         "azure.ai.projects.models.VoiceAgentLiveManagedAgentDelegation": "Azure.AI.Projects.VoiceAgentLiveManagedAgentDelegation",
         "azure.ai.projects.models.VoiceAgentLiveOutputConversationItem": "Azure.AI.Projects.VoiceAgentLiveOutputConversationItem",
         "azure.ai.projects.models.VoiceAgentLiveResponsesDelegationConversationItem": "Azure.AI.Projects.VoiceAgentLiveResponsesDelegationConversationItem",
+        "azure.ai.projects.models.VoiceAgentLiveSessionResource": "Azure.AI.Projects.VoiceAgentLiveSessionResource",
         "azure.ai.projects.models.VoiceAgentLlmGeneratedGreetingConfig": "Azure.AI.Projects.VoiceAgentLlmGeneratedGreetingConfig",
         "azure.ai.projects.models.VoiceAgentLlmInterimResponseConfig": "Azure.AI.Projects.VoiceAgentLlmInterimResponseConfig",
         "azure.ai.projects.models.VoiceAgentMcpTool": "Azure.AI.Projects.VoiceAgentMcpTool",
@@ -1100,5 +1100,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "f075953027d8"
+    "CrossLanguageVersion": "3c64f94d6c46"
 }

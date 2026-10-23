@@ -376,7 +376,7 @@ async def test_audio_streams_raw_frames_concurrently_and_collects_transcripts(mo
             models.LiveServerEventLiveDelegationCreated(
                 event_id="delegation",
                 offset_ms=50,
-                delegation=models.LiveDelegationItem(id="delegation-test", target="client"),
+                delegation=models.VoiceAgentLiveDelegationItem(id="delegation-test", target="client"),
             ),
         ]
     )

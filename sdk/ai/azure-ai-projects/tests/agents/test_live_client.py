@@ -15,7 +15,7 @@ import json
 import logging
 import threading
 from collections import UserDict
-from collections.abc import AsyncIterator, Iterator
+from collections.abc import AsyncIterator, Iterator, Mapping
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 from types import MappingProxyType, SimpleNamespace
@@ -802,9 +802,11 @@ async def test_session_close_requests_shutdown_without_closing_transport(live):
     async with live.open() as connection:
         started = await live.call(connection.recv)
         assert isinstance(started, models.LiveServerEventLiveSessionStarted)
-        assert isinstance(started.session, models.LiveSessionResourceParam)
+        assert isinstance(started.session, models.VoiceAgentLiveSessionResource)
         assert started.session.id == "live-session-test"
-        assert isinstance(started.session.delegation, models.LiveClientDelegationParam)
+        assert isinstance(started.session.delegation, Mapping)
+        assert started.session.delegation["type"] == "client"
+        assert started.as_dict() == _STARTED
         await live.call(connection.session.close, event_id="evt-close")
         assert live.transport.sent == [{"type": "session.close", "event_id": "evt-close"}]
         assert connection.closed is False
@@ -910,7 +912,7 @@ async def test_delegation_and_wrapped_responses_events_retain_full_wire_shape(li
         created = await live.call(connection.recv)
         wrapped = await live.call(connection.recv)
         assert isinstance(created, models.LiveServerEventLiveDelegationCreated)
-        assert isinstance(created.delegation, models.LiveDelegationItem)
+        assert isinstance(created.delegation, models.VoiceAgentLiveDelegationItem)
         assert created.delegation.id == "delegation-test"
         assert created.delegation.response_id == "response-test"
         assert isinstance(wrapped, models.LiveServerEventLiveResponseEvent)
@@ -918,6 +920,59 @@ async def test_delegation_and_wrapped_responses_events_retain_full_wire_shape(li
         assert wrapped.event == response["event"]
         assert created.as_dict() == delegation
         assert wrapped.as_dict() == response
+
+
+async def test_foundry_managed_ownership_survives_public_live_event_parsing(live):
+    owner = {
+        "type": "foundry_managed_agent",
+        "agent_name": "prompt-agent-test",
+        "agent_version": "7",
+    }
+    session = dict(_SESSION, delegation=owner)
+    payloads = [
+        dict(_STARTED, session=session, conversation_id="conversation-test"),
+        {"type": "session.updated", "event_id": "evt-updated", "session": session},
+        {
+            "type": "session.delegation.created",
+            "event_id": "evt-delegation",
+            "offset_ms": 20,
+            "delegation": {
+                "type": "delegation",
+                "id": "delegation-test",
+                "target": "foundry_managed_agent",
+            },
+        },
+        dict(_CLOSED, session=session),
+    ]
+    event_models = [
+        models.LiveServerEventLiveSessionStarted,
+        models.LiveServerEventLiveSessionUpdated,
+        models.LiveServerEventLiveDelegationCreated,
+        models.LiveServerEventLiveSessionClosed,
+    ]
+    live.transport.queue(*payloads)
+
+    async with live.open() as connection:
+        for payload, event_model in zip(payloads, event_models):
+            event = await live.call(connection.recv)
+            assert isinstance(event, event_model)
+            if isinstance(event, models.LiveServerEventLiveDelegationCreated):
+                assert isinstance(event.delegation, models.VoiceAgentLiveDelegationItem)
+                assert event.delegation.target == "foundry_managed_agent"
+            else:
+                assert isinstance(
+                    event,
+                    (
+                        models.LiveServerEventLiveSessionStarted,
+                        models.LiveServerEventLiveSessionUpdated,
+                        models.LiveServerEventLiveSessionClosed,
+                    ),
+                )
+                assert isinstance(event.session, models.VoiceAgentLiveSessionResource)
+                assert isinstance(event.session.delegation, Mapping)
+                assert dict(event.session.delegation) == owner
+            assert event.as_dict() == payload
+    live.transport.assert_closed_once()
 
 
 @pytest.mark.parametrize("event_type", ["future.live.event", None, 1, False, [], {}])

@@ -6,6 +6,7 @@
 
 * Added preview GPT Live support through `beta.voice_agents.live`, with synchronous and asynchronous WebSocket clients, typed Live events, session controls, audio streaming, and Responses-delegation tool input/output.
 * Added generated GPT Live voice-agent configuration, delegation, and client/server event models.
+* Added `VoiceAgentLiveSessionResource` and `VoiceAgentLiveDelegationItem` so Live lifecycle and delegation events preserve effective Foundry-managed ownership and resolved agent versions.
 * Added persisted Live conversation, item, and audio REST operations under `beta.voice_agents.live_conversations`.
 * Added image-generation model options and the `xhigh` and `max` quality values from the updated OpenAI TypeSpec dependency.
 
