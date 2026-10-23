@@ -170,17 +170,13 @@ class TestAsyncRealtimeConnectionManagerEnter:
         assert headers["user-agent"] == "custom-user-agent"
 
     async def test_enter_source_retains_client_identification_wiring(self):
-        # Regression guard for the SDK client-identification fix (ported from azure-ai-voicelive
-        # PR #48848) surviving a future TypeSpec regeneration. `aio/_realtime.py` is a hand-written
-        # file that is NOT `_patch.py`-named, so it isn't covered by the code generator's own
-        # "never touch _patch.py" guarantee -- nothing in the TypeSpec emitter is aware this file
-        # exists. The tests above already fail on a *behavioral* regression (wrong header/query
-        # value), but they exercise the code through mocks and could, in principle, still pass
-        # against a rewritten implementation that happens to produce the same observable values by
-        # a different (less safe) path. This inspects the actual source of `enter()` so a partial
-        # revert -- one that drops the case-insensitive guard, say, while keeping the header value
-        # correct for the common case -- is caught directly, independent of the tests above.
-        source = inspect.getsource(AsyncBetaRealtimeConnectionManager.enter)
+        # SDK identification belongs to the authenticated transport shared by Live and Realtime.
+        source = "\n".join(
+            inspect.getsource(cls.__dict__[method])
+            for cls in AsyncBetaRealtimeConnectionManager.__mro__
+            for method in ("enter", "_get_query")
+            if method in cls.__dict__
+        )
         assert "_USER_AGENT" in source
         assert "_has_header_case_insensitive" in source
         assert "x-ms-client-sdk" in source

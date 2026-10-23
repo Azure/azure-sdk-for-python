@@ -31,6 +31,7 @@ imported lazily so importing the SDK never fails when it is absent.
 
 from __future__ import annotations
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 import base64
 import json
 import logging
@@ -40,12 +41,14 @@ from typing import (
     AsyncIterator,
     cast,
     Dict,
+    Generic,
     List,
     Mapping,
     Optional,
     Protocol,
     Tuple,
     Type,
+    TypeVar,
     TYPE_CHECKING,
     Union,
 )
@@ -573,7 +576,162 @@ class _AbnormalWebSocketClosure(Exception):
     from a normal end of stream, which chains no cause."""
 
 
-class AsyncBetaRealtimeConnection:  # pylint: disable=too-many-instance-attributes
+_ServerEventT = TypeVar("_ServerEventT", bound=Union[_Model, Mapping[str, Any]])
+_ClientEventT = TypeVar("_ClientEventT", bound=Union[_Model, str, Mapping[str, Any]])
+
+
+class _BaseWebSocketConnection(Generic[_ServerEventT, _ClientEventT]):
+    """Shared asynchronous WebSocket transport for the two voice protocols.
+
+    :param connection: The open WebSocket.
+    :type connection: ~aiohttp.ClientWebSocketResponse
+    :param session: The HTTP session that owns the WebSocket.
+    :type session: ~aiohttp.ClientSession
+    """
+
+    _logger = _LOGGER
+    _server_event_types = _SERVER_EVENT_TYPES
+    _protocol_name = "realtime"
+
+    def __init__(self, connection: "ClientWebSocketResponse", session: "ClientSession") -> None:
+        self._connection = connection
+        self._session = session
+        self._close_task: Optional[asyncio.Task[None]] = None
+
+    async def __aenter__(self) -> "_BaseWebSocketConnection[_ServerEventT, _ClientEventT]":
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self.close()
+
+    def __repr__(self) -> str:
+        state = "closed" if self.closed else "open"
+        return f"<{type(self).__name__} [{state}]>"
+
+    @property
+    def closed(self) -> bool:
+        """Whether the underlying WebSocket connection has been closed.
+
+        :rtype: bool
+        """
+        return self._connection.closed
+
+    def __aiter__(self) -> AsyncIterator[_ServerEventT]:
+        return self._iter()
+
+    async def _iter(self) -> AsyncIterator[_ServerEventT]:
+        while True:
+            try:
+                yield await self.recv()
+            except ConnectionResetError as exc:
+                if exc.__cause__ is None:
+                    return
+                raise
+
+    async def recv(self) -> _ServerEventT:
+        """Receive a typed event, or a mapping for an unknown event.
+
+        :return: The server event.
+        :rtype: object
+        :raises ConnectionResetError: On graceful or abnormal socket closure.
+        :raises ValueError: If the server event is not a JSON object.
+        """
+        import aiohttp  # pylint: disable=import-outside-toplevel
+
+        msg = await self._connection.receive()
+        while msg.type in (aiohttp.WSMsgType.PING, aiohttp.WSMsgType.PONG):
+            msg = await self._connection.receive()
+        if msg.type in (
+            aiohttp.WSMsgType.CLOSE,
+            aiohttp.WSMsgType.CLOSING,
+            aiohttp.WSMsgType.CLOSED,
+        ):
+            code = self._connection.close_code
+            if code not in (1000, 1001):
+                raise ConnectionResetError(
+                    f"The {self._protocol_name} connection was closed abnormally (code {code!r})."
+                ) from _AbnormalWebSocketClosure(code)
+            raise ConnectionResetError(f"The {self._protocol_name} connection was closed.")
+        if msg.type == aiohttp.WSMsgType.ERROR:
+            error = self._connection.exception()
+            raise ConnectionResetError(f"The {self._protocol_name} connection encountered an error.") from (
+                error if error is not None else _AbnormalWebSocketClosure()
+            )
+        raw = msg.data.decode("utf-8") if msg.type == aiohttp.WSMsgType.BINARY else msg.data
+        payload: Dict[str, Any] = json.loads(raw)
+        if not isinstance(payload, dict):
+            raise ValueError("The WebSocket server event must be a JSON object.")
+        event_type = payload.get("type")
+        self._logger.debug(
+            "WebSocket RECEIVE type=%s bytes=%d",
+            event_type if isinstance(event_type, str) else "unknown",
+            len(raw.encode("utf-8")),
+        )
+        event_cls = self._server_event_types.get(event_type) if isinstance(event_type, str) else None
+        return cast(_ServerEventT, event_cls(payload) if event_cls else payload)
+
+    async def send(self, event: _ClientEventT) -> None:
+        """Send a generated event, mapping, or JSON string.
+
+        :param event: The client event.
+        :type event: object
+        :raises ValueError: If the JSON string is invalid.
+        """
+        payload: str
+        if isinstance(event, str):
+            try:
+                event_payload = json.loads(event)
+            except ValueError as exc:
+                raise ValueError(f"'event' is not valid JSON: {exc}") from exc
+            payload = event
+        else:
+            payload = json.dumps(event, cls=SdkJSONEncoder)
+            event_payload = json.loads(payload)
+        event_type = event_payload.get("type") if isinstance(event_payload, dict) else None
+        self._logger.debug(
+            "WebSocket SEND type=%s bytes=%d",
+            event_type if isinstance(event_type, str) else "unknown",
+            len(payload.encode("utf-8")),
+        )
+        await self._connection.send_str(payload)
+
+    async def close(self, *, code: int = 1000, reason: str = "") -> None:
+        """Close the socket and its HTTP session once.
+
+        Concurrent callers await the same cleanup. Caller cancellation is
+        propagated after both resources have finished closing.
+
+        :keyword int code: WebSocket close code.
+        :keyword str reason: WebSocket close reason.
+        """
+        if self._close_task is not None and self._close_task.done():
+            return
+        if self._close_task is None:
+            self._close_task = asyncio.create_task(self._close_resources(code, reason))
+        cancelled = False
+        while True:
+            try:
+                await asyncio.shield(self._close_task)
+                break
+            except asyncio.CancelledError:
+                if self._close_task.cancelled():
+                    await self._close_task
+                    raise
+                cancelled = True
+        if cancelled:
+            raise asyncio.CancelledError
+
+    async def _close_resources(self, code: int, reason: str) -> None:
+        self._logger.debug("WebSocket CLOSE code=%d", code)
+        try:
+            await self._connection.close(code=code, message=reason.encode("utf-8"))
+        finally:
+            await self._session.close()
+
+
+class AsyncBetaRealtimeConnection(  # pylint: disable=too-many-instance-attributes
+    _BaseWebSocketConnection[ServerEvent, ClientEvent]
+):
     """An open realtime WebSocket connection to a voice agent.
 
     Iterate over the connection to receive strongly-typed server events, and use the
@@ -589,8 +747,7 @@ class AsyncBetaRealtimeConnection:  # pylint: disable=too-many-instance-attribut
     """
 
     def __init__(self, connection: "ClientWebSocketResponse", session: "ClientSession") -> None:
-        self._connection = connection
-        self._session = session
+        super().__init__(connection, session)
         self.session: SessionResource = SessionResource(self)
         self.input_audio_buffer: InputAudioBufferResource = InputAudioBufferResource(self)
         self.output_audio_buffer: OutputAudioBufferResource = OutputAudioBufferResource(self)
@@ -601,11 +758,7 @@ class AsyncBetaRealtimeConnection:  # pylint: disable=too-many-instance-attribut
         return self
 
     async def __aexit__(self, *exc_details: Any) -> None:
-        await self.close()
-
-    def __repr__(self) -> str:
-        state = "closed" if self.closed else "open"
-        return f"<AsyncBetaRealtimeConnection [{state}]>"
+        await super().__aexit__(*exc_details)
 
     @property
     def closed(self) -> bool:
@@ -613,24 +766,10 @@ class AsyncBetaRealtimeConnection:  # pylint: disable=too-many-instance-attribut
 
         :rtype: bool
         """
-        return self._connection.closed
+        return super().closed
 
     def __aiter__(self) -> AsyncIterator[ServerEvent]:
-        return self._iter()
-
-    async def _iter(self) -> AsyncIterator[ServerEvent]:
-        while True:
-            try:
-                yield await self.recv()
-            except ConnectionResetError as exc:
-                # recv() below only chains a cause for a non-graceful closure or transport error
-                # (an abnormal close code, or the real exception behind a WSMsgType.ERROR); a
-                # graceful closure chains none. A `for event in conn:` caller must still see real
-                # failures instead of silently observing end-of-stream, so only the former ends
-                # iteration quietly.
-                if exc.__cause__ is None:
-                    return
-                raise
+        return super().__aiter__()
 
     async def recv(self) -> ServerEvent:
         """Receive and parse the next server event.
@@ -645,41 +784,9 @@ class AsyncBetaRealtimeConnection:  # pylint: disable=too-many-instance-attribut
          otherwise, or if the transport reported an error. Iterating over the connection
          (``async for event in conn:``) treats only a graceful closure as end-of-stream and
          re-raises this for an abnormal one.
+        :raises ValueError: If the server event is not a JSON object.
         """
-        import aiohttp  # pylint: disable=import-outside-toplevel
-
-        msg = await self._connection.receive()
-        while msg.type in (aiohttp.WSMsgType.PING, aiohttp.WSMsgType.PONG):
-            msg = await self._connection.receive()
-        if msg.type in (
-            aiohttp.WSMsgType.CLOSE,
-            aiohttp.WSMsgType.CLOSING,
-            aiohttp.WSMsgType.CLOSED,
-        ):
-            code = self._connection.close_code
-            if code not in (1000, 1001):
-                raise ConnectionResetError(
-                    f"The realtime connection was closed abnormally (code {code!r})."
-                ) from _AbnormalWebSocketClosure(code)
-            raise ConnectionResetError("The realtime connection was closed.")
-        if msg.type == aiohttp.WSMsgType.ERROR:
-            raise ConnectionResetError(
-                "The realtime connection encountered an error."
-            ) from self._connection.exception()
-        raw = msg.data.decode("utf-8") if msg.type == aiohttp.WSMsgType.BINARY else msg.data
-        payload: Dict[str, Any] = json.loads(raw)
-        event_type = payload.get("type")
-        _LOGGER.debug(
-            "WebSocket RECEIVE type=%s bytes=%d",
-            event_type if isinstance(event_type, str) else "unknown",
-            len(raw.encode("utf-8")),
-        )
-        if not isinstance(event_type, str):
-            return payload
-        event_cls = _SERVER_EVENT_TYPES.get(event_type)
-        if event_cls is None:
-            return payload
-        return event_cls(payload)
+        return await super().recv()
 
     async def send(self, event: ClientEvent) -> None:
         """Send a client event over the connection.
@@ -688,22 +795,7 @@ class AsyncBetaRealtimeConnection:  # pylint: disable=too-many-instance-attribut
         :type event: ~azure.ai.projects.aio.ClientEvent or str
         :raises ValueError: If ``event`` is a ``str`` that is not valid JSON.
         """
-        if isinstance(event, str):
-            try:
-                event_payload = json.loads(event)
-            except ValueError as exc:
-                raise ValueError(f"'event' is not valid JSON: {exc}") from exc
-            payload = event
-        else:
-            payload = json.dumps(event, cls=SdkJSONEncoder)
-            event_payload = json.loads(payload)
-        event_type = event_payload.get("type") if isinstance(event_payload, dict) else None
-        _LOGGER.debug(
-            "WebSocket SEND type=%s bytes=%d",
-            event_type if isinstance(event_type, str) else "unknown",
-            len(payload.encode("utf-8")),
-        )
-        await self._connection.send_str(payload)
+        await super().send(event)
 
     async def close(self, *, code: int = 1000, reason: str = "") -> None:
         """Close the connection and release the underlying HTTP session.
@@ -711,18 +803,14 @@ class AsyncBetaRealtimeConnection:  # pylint: disable=too-many-instance-attribut
         :keyword int code: The WebSocket close code.
         :keyword str reason: The close reason.
         """
-        _LOGGER.debug("WebSocket CLOSE code=%d", code)
-        try:
-            await self._connection.close(code=code, message=reason.encode("utf-8"))
-        finally:
-            await self._session.close()
+        await super().close(code=code, reason=reason)
 
 
-class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
-    """Async context manager that opens an :class:`AsyncBetaRealtimeConnection`.
+_ConnectionT = TypeVar("_ConnectionT", bound=_BaseWebSocketConnection[Any, Any])
 
-    Returned by :meth:`AsyncBetaRealtime.connect`; you normally use it as
-    ``async with client.beta.voice_agents.realtime.connect(...) as conn:``.
+
+class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable=too-many-instance-attributes
+    """Shared asynchronous voice protocol handshake and connection lifetime.
 
     :keyword str endpoint: The Foundry project endpoint.
     :keyword credential: The credential used for the WebSocket handshake.
@@ -733,7 +821,7 @@ class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-a
     :keyword str agent_name: The name of the voice agent.
     :keyword agent_session_id: An optional session correlation identifier.
     :paramtype agent_session_id: str or None
-    :keyword transport: The optional connection transport. The SDK encodes its wire value internally.
+    :keyword transport: The optional Realtime connection transport.
     :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport or None
     :keyword structured_inputs: Optional structured prompt inputs.
     :paramtype structured_inputs: Mapping[str, Any] or None
@@ -744,6 +832,10 @@ class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-a
     :keyword extra_headers: Additional handshake headers.
     :paramtype extra_headers: Mapping[str, str] or None
     """
+
+    _logger = _LOGGER
+    _subprotocol: Optional[str] = "realtime"
+    _protocol_name = "realtime"
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
@@ -773,12 +865,12 @@ class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-a
         self._extra_query = dict(extra_query or {})
         self._extra_headers = dict(extra_headers or {})
         self._kwargs = kwargs
-        self._connection: Optional[AsyncBetaRealtimeConnection] = None
+        self._connection: Optional[_ConnectionT] = None
 
-    async def __aenter__(self) -> AsyncBetaRealtimeConnection:
+    async def __aenter__(self) -> _ConnectionT:
         return await self.enter()
 
-    async def enter(self) -> AsyncBetaRealtimeConnection:  # pylint: disable=too-many-locals
+    async def enter(self) -> _ConnectionT:  # pylint: disable=too-many-locals
         """Open the connection.
 
         :return: The live realtime connection.
@@ -792,74 +884,138 @@ class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-a
             import aiohttp  # pylint: disable=import-outside-toplevel
         except ImportError as exc:  # pragma: no cover - dependency guard
             raise RuntimeError(
-                "The realtime client requires `aiohttp`. Install it with `pip install aiohttp`."
+                f"The {self._protocol_name} client requires `aiohttp`. Install it with `pip install aiohttp`."
             ) from exc
 
         # ``connection_url`` fully overrides the computed route (scheme/host/path). This is the
         # escape hatch used to reach a specific data-plane host/path directly.
         if self._connection_url is not None:
             _assert_trusted_connection_url(self._connection_url, self._endpoint)
-        url = self._connection_url or _to_ws_url(self._endpoint, self._agent_name)
+        url = self._connection_url or self._get_url()
         if self._transport is not None:
             url = _without_transport_query(url)
         if not url.startswith("wss://"):
-            raise ValueError("The realtime WebSocket URL must use wss:// to protect credentials in transit.")
+            raise ValueError(
+                f"The {self._protocol_name} WebSocket URL must use wss:// to protect credentials in transit."
+            )
 
+        # Protocol-specific query values include the x-ms-client-sdk identification.
+        params = self._get_query()
+
+        target_url = urlparse(url)._replace(query="", fragment="").geturl()
+        self._logger.debug("WebSocket CONNECT target=%s", target_url)
+
+        session = aiohttp.ClientSession()
+        try:
+            token = await self._credential.get_token(*self._credential_scopes)
+            headers: Dict[str, str] = {
+                "Authorization": "Bearer " + token.token,
+                _FOUNDRY_FEATURES_HEADER_NAME: _VOICE_AGENT_FEATURE_HEADER,
+            }
+            headers.update(self._extra_headers)
+            if not _has_header_case_insensitive(headers, "User-Agent"):
+                # Header names are case-insensitive; preserve caller overrides in any casing.
+                headers["User-Agent"] = _USER_AGENT
+
+            # Each protocol owns its handshake subprotocol, not the caller's kwargs.
+            ws_connect_kwargs = dict(self._kwargs)
+            ws_connect_kwargs.pop("protocols", None)
+            try:
+                connection = await session.ws_connect(
+                    url,
+                    headers=headers,
+                    params=params,
+                    protocols=(self._subprotocol,) if self._subprotocol else (),
+                    **ws_connect_kwargs,
+                )
+            except Exception as exc:
+                if isinstance(exc, (ValueError, RuntimeError)):
+                    raise
+                raise ConnectionError(
+                    f"Failed to open the {self._protocol_name} WebSocket connection to voice agent "
+                    f"'{self._agent_name}' at '{url}': {exc}"
+                ) from exc
+            self._connection = self._create_connection(cast("ClientWebSocketResponse", connection), session)
+            self._logger.debug("WebSocket CONNECTED target=%s", target_url)
+        except BaseException:
+            await session.close()
+            raise
+        return self._connection
+
+    def _get_url(self) -> str:
+        return _to_ws_url(self._endpoint, self._agent_name)
+
+    def _get_query(self) -> Dict[str, str]:
         params: Dict[str, str] = {"api-version": self._api_version, "x-ms-client-sdk": _USER_AGENT}
         if self._agent_session_id is not None:
             params["agent_session_id"] = self._agent_session_id
         if self._structured_inputs is not None:
-            # The service reads this from the `structured_input` query parameter (see the
-            # generated `build_beta_voice_agents_realtime_connect_voice_agent_request`), not a
-            # header -- aiohttp appends `params` to the URL for us below.
+            # Realtime expects structured_input (singular), serialized as JSON.
             params["structured_input"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
         params.update(self._extra_query)
         if self._transport is not None:
             params["transport"] = self._transport
+        return params
 
-        target_url = urlparse(url)._replace(query="", fragment="").geturl()
-        _LOGGER.debug("WebSocket CONNECT target=%s", target_url)
-
-        token = await self._credential.get_token(*self._credential_scopes)
-        headers: Dict[str, str] = {
-            "Authorization": "Bearer " + token.token,
-            _FOUNDRY_FEATURES_HEADER_NAME: _VOICE_AGENT_FEATURE_HEADER,
-        }
-        headers.update(self._extra_headers)
-        if not _has_header_case_insensitive(headers, "User-Agent"):
-            # Only set our default if the caller didn't supply their own (in any casing) --
-            # a plain dict merge would otherwise leave both as separate keys (HTTP header names
-            # are case-insensitive, but Python dict keys are not), sending two User-Agent-like
-            # headers instead of cleanly honoring the caller's override.
-            headers["User-Agent"] = _USER_AGENT
-
-        session = aiohttp.ClientSession()
-        try:
-            # Force the "realtime" WebSocket subprotocol regardless of any caller-supplied
-            # override in ``self._kwargs``: the service requires this exact subprotocol, so
-            # silently accepting a different one here would just move the failure to a less
-            # clear error inside aiohttp's handshake.
-            ws_connect_kwargs = dict(self._kwargs)
-            ws_connect_kwargs.pop("protocols", None)
-            connection = await session.ws_connect(
-                url, headers=headers, params=params, protocols=("realtime",), **ws_connect_kwargs
-            )
-        except BaseException as exc:
-            await session.close()
-            if not isinstance(exc, Exception) or isinstance(exc, (ValueError, RuntimeError)):
-                raise
-            raise ConnectionError(
-                f"Failed to open the realtime WebSocket connection to voice agent "
-                f"'{self._agent_name}' at '{url}': {exc}"
-            ) from exc
-        _LOGGER.debug("WebSocket CONNECTED target=%s", target_url)
-        self._connection = AsyncBetaRealtimeConnection(cast("ClientWebSocketResponse", connection), session)
-        return self._connection
+    def _create_connection(self, connection: "ClientWebSocketResponse", session: "ClientSession") -> _ConnectionT:
+        raise NotImplementedError
 
     async def __aexit__(self, *exc_details: Any) -> None:
-        if self._connection is not None:
-            await self._connection.close()
-            self._connection = None
+        connection = self._connection
+        if connection is not None:
+            try:
+                await connection.close()
+            finally:
+                if self._connection is connection:
+                    self._connection = None
+
+
+class AsyncBetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaRealtimeConnection]):
+    """Async context manager that opens an :class:`AsyncBetaRealtimeConnection`.
+
+    Returned by :meth:`AsyncBetaRealtime.connect`; you normally use it as
+    ``async with client.beta.voice_agents.realtime.connect(...) as conn:``.
+
+    :keyword str endpoint: The Foundry project endpoint.
+    :keyword credential: The credential used for the WebSocket handshake.
+    :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword credential_scopes: The token scopes for the handshake.
+    :paramtype credential_scopes: list[str]
+    :keyword str api_version: The API version for the handshake.
+    :keyword str agent_name: The name of the voice agent.
+    :keyword agent_session_id: An optional session correlation identifier.
+    :paramtype agent_session_id: str or None
+    :keyword transport: The optional connection transport. The SDK encodes its wire value internally.
+    :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport or None
+    :keyword structured_inputs: Optional structured prompt inputs.
+    :paramtype structured_inputs: Mapping[str, Any] or None
+    :keyword connection_url: An optional WebSocket URL overriding the computed route.
+    :paramtype connection_url: str or None
+    :keyword extra_query: Additional handshake query parameters.
+    :paramtype extra_query: Mapping[str, str] or None
+    :keyword extra_headers: Additional handshake headers.
+    :paramtype extra_headers: Mapping[str, str] or None
+    """
+
+    async def __aenter__(self) -> AsyncBetaRealtimeConnection:
+        return await self.enter()
+
+    async def enter(self) -> AsyncBetaRealtimeConnection:
+        """Open the connection.
+
+        :return: The live realtime connection.
+        :rtype: ~azure.ai.projects.aio.AsyncBetaRealtimeConnection
+        :raises RuntimeError: If ``aiohttp`` is not installed.
+        :raises ValueError: If the computed or supplied WebSocket URL does not use ``wss://``.
+        :raises ConnectionError: If the WebSocket upgrade handshake fails (for example, a
+         network error, DNS failure, or a non-101 response from the service).
+        """
+        return await super().enter()
+
+    def _create_connection(
+        self, connection: "ClientWebSocketResponse", session: "ClientSession"
+    ) -> AsyncBetaRealtimeConnection:
+        return AsyncBetaRealtimeConnection(connection, session)
 
 
 class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
