@@ -495,8 +495,6 @@ extends:
                       checkout:
                         - package: azure-schemaregistry
                           version: 1.3.0
-                        - package: azure-schemaregistry-avroencoder
-                          version: 1.0.0
                     - name: azure-search-documents
                       service: search
                       in_batch: ${{ parameters.release_azure_search_documents }}
@@ -627,8 +625,6 @@ extends:
                           version: 2.0.0
                         - package: azure-mgmt-authorization
                           version: 4.0.0
-                        - package: azure-mgmt-automanage
-                          version: 1.0.0
                         - package: azure-mgmt-automation
                           version: 2.0.0
                         - package: azure-mgmt-avs
@@ -759,8 +755,6 @@ extends:
                           version: 2.0.0
                         - package: azure-mgmt-fabric
                           version: 1.0.0
-                        - package: azure-mgmt-fluidrelay
-                          version: 1.0.0
                         - package: azure-mgmt-frontdoor
                           version: 2.0.0
                         - package: azure-mgmt-graphservices
@@ -813,16 +807,12 @@ extends:
                           version: 1.0.0
                         - package: azure-mgmt-kusto
                           version: 4.0.0
-                        - package: azure-mgmt-labservices
-                          version: 2.0.0
                         - package: azure-mgmt-lambdatesthyperexecute
                           version: 1.0.0
                         - package: azure-mgmt-loadtesting
                           version: 1.0.0
                         - package: azure-mgmt-loganalytics
                           version: 14.0.0
-                        - package: azure-mgmt-logic
-                          version: 10.0.0
                         - package: azure-mgmt-logz
                           version: 1.1.1
                         - package: azure-mgmt-machinelearningservices
@@ -998,8 +988,6 @@ extends:
                           version: 1.0.1
                         - package: azure-mgmt-storagemover
                           version: 3.1.0
-                        - package: azure-mgmt-storagepool
-                          version: 1.0.0
                         - package: azure-mgmt-storagesync
                           version: 2.1.0
                         - package: azure-mgmt-streamanalytics
@@ -1010,8 +998,6 @@ extends:
                           version: 7.0.0
                         - package: azure-mgmt-synapse
                           version: 2.0.0
-                        - package: azure-mgmt-timeseriesinsights
-                          version: 1.0.0
                         - package: azure-mgmt-trafficmanager
                           version: 1.1.0
                         - package: azure-mgmt-voiceservices
