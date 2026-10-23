@@ -326,7 +326,9 @@ async fn next_plan_page(
     let progress = state.progress.take();
     // Successful resolution and planning do not return diagnostics through this
     // path, so the first execution cannot describe the complete fetch.
-    let diagnostics_complete = progress.is_some();
+    // Change-feed scope checks also omit diagnostics on later fetches.
+    let diagnostics_complete =
+        progress.is_some() && !matches!(&request, FeedRequest::ChangeFeed(_));
     if state.started && progress.is_none() {
         return Err(PyRuntimeError::new_err(
             "Feed cursor failed; resume using the last delivered continuation token",
@@ -1586,6 +1588,47 @@ mod tests {
                 matches!(error, Err(ref error) if error.to_string().contains("binding does not support multi-partition"))
             );
             assert!(state.lock().await.progress.is_none());
+        }
+    }
+
+    #[tokio::test]
+    async fn change_feed_fetches_keep_scope_diagnostics_incomplete() {
+        let (_emulator, driver) = setup(7).await;
+        for mode in ["LatestVersion", "AllVersionsAndDeletes"] {
+            let mut request = change_request(mode, "Now");
+            request.partition_key = Some(legacy_partition_key_header(r#"["key-5"]"#).unwrap());
+            let state = Arc::new(Mutex::new(CursorState::default()));
+            let mut token = None;
+            for _ in 0..2 {
+                let result = next_plan_page(
+                    driver.clone(),
+                    state.clone(),
+                    ("test".into(), "dbs/db/colls/c".into()),
+                    token,
+                    modifiers(),
+                    FeedRequest::ChangeFeed(request.clone()),
+                    PlanOptions::default().with_query_plan_mode(QueryPlanMode::GatewayOnly),
+                )
+                .await
+                .unwrap();
+                assert!(!result.2);
+                assert!(result.0.as_ref().unwrap().is_some());
+                token = result.1.clone();
+                assert!(token.is_some());
+                assert!(state.lock().await.progress.is_some());
+                Python::with_gil(|py| {
+                    let ordinary = finish_page(py, result.clone(), false).unwrap();
+                    let envelope = finish_page(py, result, true).unwrap();
+                    assert!(envelope.get_item(0).unwrap().eq(&ordinary).unwrap());
+                    assert!(!envelope
+                        .get_item(1)
+                        .unwrap()
+                        .get_item("complete")
+                        .unwrap()
+                        .extract::<bool>()
+                        .unwrap());
+                });
+            }
         }
     }
 

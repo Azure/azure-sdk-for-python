@@ -12,6 +12,7 @@
 
 #### Breaking Changes
 
+* Rust-backed sync/async clients and connection-string factories reject `connection_retry_policy`, including `None`, with `TypeError`; legacy behavior is retained pending the driver team's implementation decision.
 * Rust-backed sync/async clients and connection-string factories now reject `retry_connect` and `retry_read`, including `None` and zero, with `TypeError` pending retry-control parity review; legacy Python behavior is unchanged.
 * Rust-backed sync/async clients and connection-string factories reject `retry_fixed_interval`, including `None` and zero, and non-`None` grouped fixed retry intervals with `TypeError`; legacy Python behavior is unchanged.
 * Renamed `retry_throttle_backoff_max` to `throttle_retry_wait_threshold_seconds` on synchronous and asynchronous clients and connection-string factories; the old name raises `TypeError` with migration guidance on both backends, while retry timing is unchanged.

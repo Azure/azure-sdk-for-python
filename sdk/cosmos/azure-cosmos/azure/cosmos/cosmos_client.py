@@ -195,6 +195,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword float connection_timeout: Legacy-only connection timeout. Rust clients require runtime configuration.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword int retry_total: Maximum retry attempts.
+    :keyword object connection_retry_policy: Deprecated custom connection retry policy for legacy Python.
+        Rust-backed clients reject this keyword with ``TypeError``, including ``None``.
     :keyword int retry_backoff_max: Maximum retry wait time in seconds.
     :keyword float throttle_retry_wait_threshold_seconds: Threshold for ordinary throttle retry waiting,
         in seconds. This is not a fixed delay before each retry or an overall operation timeout.

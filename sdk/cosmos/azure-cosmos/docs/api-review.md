@@ -169,8 +169,9 @@ the supplied policy.
 The legacy Python backend retains the fixed-delay setting and its existing
 behavior. Rust still supports `retry_throttle_total` and
 `throttle_retry_wait_threshold_seconds`; neither is a fixed-delay replacement.
-This closes only the fixed-delay requirement in Gap 25, not its hedged-read
-execution controls.
+This closes only the fixed-delay requirement in the
+[CosmosClient walkthrough](V5/api-review/RUST_PARITY_PUSHBACKS.md#client-bite-7),
+not its hedged-read execution controls.
 
 **Connection/read retry counts are rejected on Rust pending review.** Alpha
 Bank supplies `retry_connect=0` and `retry_read=0` because it does not want
@@ -189,9 +190,16 @@ a legacy retry count and then ignore it for Rust requests.
 Omitting the keywords leaves the driver's retry behavior unchanged; it does
 not disable retries. Legacy Python continues to honor these settings.
 This is an interim safeguard, not a permanent compatibility exclusion:
-Gap 26 remains open until driver support or an explicit exclusion is agreed.
+The connection/read requirements in
+[Gap 33](V5/api-review/RUST_PARITY_PUSHBACKS.md#client-bite-8) remain open
+until driver support or an explicit exclusion is agreed.
 It does not change the treatment of retry-delay settings or customer-supplied
 retry policies, which remain separate review topics.
+
+The [nine-bite constructor walkthrough](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-33)
+introduces these settings from Alpha Bank's customer need, including the
+per-call versus shared execution limits, retry counts, waiting thresholds,
+and the delay settings shared by connection and response-read retries.
 
 **Resource-token authentication is omitted.** The Rust driver supports account
 keys and Entra, not Cosmos resource tokens. Both backends reject resource-token

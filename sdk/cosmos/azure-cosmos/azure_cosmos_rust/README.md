@@ -427,7 +427,7 @@ metadata resolution and planning do not return diagnostics through this
 path; available attempts are recorded without complete `cosmos.poc.*`
 totals. Local cursor exhaustion has no service response or request attempts.
 The adapter enabled this collection for retained read-all calls in Bite 53;
-Bite 54 adds retained item queries. Change-feed calls remain outside it.
+Bite 54 adds retained item queries and Bite 55 adds retained change-feed calls.
 
 The rebuilt extension passed populated legacy/Rust enumeration and replay,
 including all six copied original functional test bodies across recording
@@ -445,6 +445,21 @@ Compiled before/after comparisons preserved existing customer outcomes,
 including aggregate and unbounded DISTINCT limitations and the original
 invalid-SQL header-parity failures. These are recorded differences, not
 claims of full legacy parity. No Rust driver or Rust SDK changes were made.
+
+Bite 55 adds sync/async `ContainerProxy.query_items_change_feed.fetch`
+for each internal Rust poll. HTTP 304 is a successful empty poll; a
+time-start poll can require multiple fetches sharing one public-page
+deadline. The final fetch includes the response hook and completion.
+The binding marks every change-feed diagnostic payload incomplete because
+its scope checks omit diagnostics even on later fetches. Available
+attempts remain recordable without complete operation totals.
+
+The rebuilt extension preserved baseline outcomes across 96 comparison
+cases and 80 copied-original executions. Existing ETag, continuation,
+range-identifier and all-versions test failures remain explicit gaps,
+not proof of full legacy parity. See Bite 55 in
+`../docs/V5/testing/rust-telemetry.md` for the customer example, evidence
+and limitations.
 
 Exports are registered in `src/lib.rs` (`#[pymodule] fn _rust(...)`).
 Current surface:

@@ -1734,10 +1734,11 @@ after the rollback.
 The test-job integration is different. The restored Cosmos template does not
 declare `RunRustTests`. Supplying that input caused Cosmos CI build 6990313
 to fail during YAML validation, before any jobs could run. The SDK entry now
-omits the unsupported input. **Removing it addresses that validation failure;
-it does not connect the additional Rust test jobs or prove that tests pass.**
-The test template and runner remain SDK-owned files. The SDK team must restore
-the opt-in only after Central integrates support for those jobs.
+omits the unsupported input. **Do not restore it to enable the temporary
+parity framework.** The agreed direction is to run the retained original test
+coverage against the Rust-backed SDK through the normal pipeline, as explained
+below. Removing the input addresses that configuration failure; it does not
+prove that the retained tests execute successfully against Rust.
 
 These template inputs are named settings passed from one file to the next.
 A **feed** is a service from which tools download packages or other build
@@ -1782,109 +1783,84 @@ Python-version test configurations.
 
 Contoso Bank needs the installed SDK to behave correctly when its customer app
 creates, reads, or updates an order. A successful wheel build establishes that
-the package could be assembled. It does not establish that the Rust tests ran
-or that the Python and Rust paths produce compatible outcomes.
+the package could be assembled. It does not establish that those operations
+work. For example, an existing test creates an order, reads it back, and checks
+its contents. The migration must preserve that expected result while changing
+the SDK implementation that executes the request.
 
-The tests answer different questions:
+**The intended pipeline retains the original test coverage and runs it against
+the Rust-backed SDK. It does not add a permanent legacy-versus-Rust comparison
+framework.**
 
-| Test kind | What it checks |
+```text
+Before: retained test -> legacy Python SDK implementation -> service backend
+After:  retained test -> Rust-backed SDK implementation    -> service backend
+```
+
+During development, **parity comparisons** run the same operation through both
+implementations to investigate differences. They are temporary local sanity
+checks, not the intended pipeline test suite. The copied original tests have
+a different purpose: they become the maintained tests for the Rust-backed SDK.
+As that migration completes, the SDK team retires the superseded originals,
+the legacy Python implementation and infrastructure, and the temporary parity
+framework. Keeping both implementations and duplicate suites indefinitely is
+not the target.
+
+For emulator tests, the intended execution sequence is:
+
+```text
+Build the Rust-backed wheel
+    -> install that wheel in the test environment
+    -> start the Windows Cosmos DB Emulator
+    -> execute the retained tests against the Rust-backed SDK
+    -> publish the test results
+```
+
+The **Windows Cosmos DB Emulator** provides the local service used by the
+existing emulator tests. It is not the Rust in-memory test substitute
+identified as unfinished migration work in section 5. Tests that require a
+live account, several service regions, or a different authentication setup
+must retain their appropriate environments; emulator results do not replace
+that coverage.
+
+**pytest** is the tool that executes the Python tests. It first **collects**
+tests, finding the cases selected by the command, and then runs their checks.
+The existing emulator job selects the `cosmosEmulator` **marker**, a label on
+a test. The SDK team must preserve the labels and discovery rules needed to
+select the retained tests. Successful collection alone does not prove that
+their test bodies ran or that their SDK calls used Rust.
+
+The test code can come from the repository, but the SDK under test should come
+from the installed package. Otherwise, a test could load an older locally
+compiled extension from the source directory instead of the extension in the
+wheel Contoso Bank will receive. Checking that the intended package is loaded
+is useful independently of any temporary runner.
+
+**Remaining migration files are not a statement of the intended CI design.**
+`sdk\cosmos\templates\rust-tests.yml` and
+`sdk\cosmos\azure-cosmos\scripts\run_rust_ci.py` still describe the earlier
+additional-job approach. The script selects tests and invokes pytest with
+extra execution checks. Their presence does not require Central to integrate
+them, and this documentation change does not remove them or prevent existing
+marker-based discovery from selecting temporary comparison tests. Removing
+the temporary framework and completing test selection are SDK migration work
+still to be performed.
+
+| Owner | Responsibility |
 |---|---|
-| **Offline unit test** | A focused behavior using controlled inputs, without connecting to a database service |
-| **Native test** | Rust code executed by Cargo's test runner, rather than only through Python calls |
-| **Service-parity test** | The same operation and inputs through the legacy Python and Rust-backed paths, comparing the observed results |
+| SDK team | Preserve the original assertions and test coverage, adapt setup and SDK calls to Rust, maintain selection in the existing jobs, and retire temporary comparisons and superseded legacy infrastructure |
+| Central team | Maintain shared package installation and test execution; fix specific shared limitations demonstrated by the normal pipeline, without changing other SDK callers unnecessarily |
 
-Service-parity tests need somewhere to create containers and items. The
-**Windows Cosmos DB Emulator** runs a local service for those requests,
-following the existing Python test approach. It is not the Rust in-memory
-test substitute identified as unfinished migration work in section 5.
+There is no standing request to add parity jobs or restore `RunRustTests`.
+First establish whether the existing pipeline can install the intended
+Rust-built package and execute the retained tests. If a shared step prevents
+that, identify the failing step and request that specific Central change.
 
-The service tests cover both Python calling styles. A **synchronous** call
-waits before returning its result. An **asynchronous** call lets the customer
-app await the result while other scheduled work can proceed.
-
-**pytest** is the Python test runner. It first **collects** tests, finding
-the test cases selected by the command, and then executes them. Finding a
-test is not evidence that its checks ran.
-
-The inherited Cosmos test job selects the `cosmosEmulator` **marker**, a label
-on a Python test. Some service-parity modules have conditional skip checks but
-do not carry that label. A skip check decides whether a selected test can run;
-it does not add the label needed to select that test.
-
-The SDK-owned `sdk\cosmos\templates\rust-tests.yml` therefore defines two
-additional jobs intended to become required checks in the Build stage.
-A **required check**, sometimes called a gate, must succeed before that
-part of the pipeline can succeed. Neither job uses `continueOnError` or the
-inherited emulator-marker filter.
-
-**The following describes the SDK's job definitions, not jobs currently
-connected to the shared pipeline.** Central must accept the opt-in and
-include these jobs before they can enforce this requirement.
-
-| Job | What it executes |
-|---|---|
-| `Cosmos_Rust_Offline` | `cargo test --workspace --locked -- --test-threads=1`, followed by every `test_*_unit.py` module under the package's tests |
-| `Cosmos_Rust_ServiceParity` | Both synchronous and asynchronous service-parity tests, plus the copied tests under operation-specific `legacy` folders, against the job's Windows emulator |
-
-Both jobs install the Windows x64 wheel from `Build_Windows` and require its
-native extension to import before Python test collection. They therefore
-depend on `Build_Windows`; after it succeeds, they can run independently
-when build capacity is available. They use Python
-3.13. This is an additional required coverage baseline, not a replacement for
-the existing Python-version matrix or proof of every supported platform.
-The native job uses the package's selected Microsoft Rust toolchain.
-`core-python` names the legacy Python implementation in these migration
-tests. Offline Python tests retain that default; native-specific tests
-select Rust explicitly. The service job selects Rust for calls that do not
-already specify which implementation to use.
-Cargo's test build includes code marked `#[cfg(test)]`, meaning it belongs
-to test builds rather than ordinary wheel builds. Deliberately ignored Rust
-benchmarks, which measure performance, remain outside the normal test run.
-
-The service job selects `test_*parity*.py` modules and copied `legacy` tests
-directly, excluding offline unit modules and the `auth` and `common` helper
-directories. Token-authentication parity needs its own account/credential
-configuration; the job using the emulator's key does not claim to cover it.
-Tests involving several service regions or a network proxy that introduces
-failures also retain their separate environment requirements.
-
-The runner checks the test names declared in source against the cases pytest
-actually collects. It rejects missing tests, selected tests removed from the
-run, unexpected skips, and unfinished tests. It also rejects `xfail` results:
-tests marked as expected to fail cannot count as required passing evidence.
-Each required test file must have passing test bodies. Existing unconditional
-skip markers with reasons are reported, not counted as passes. For offline
-parameter combinations that do not apply to a particular SDK implementation
-or client type, the runner records exact
-file-scoped skip reasons. Missing dependencies, a missing native extension,
-or an unavailable emulator are not permitted skip reasons.
-
-Each job publishes the pytest results and a `coverage.json` report. Here,
-**coverage** means accounting for which required tests were selected and
-completed; it is not a measurement of which source-code lines executed.
-The native job also retains its Cargo transcript and rejects an empty or filtered native
-run. `--collect-only` is available for local selection checks and is explicitly
-identified in the report; the pipeline does not use it as an execution gate.
-
-| File | Owner and responsibility |
-|---|---|
-| `sdk\cosmos\ci.yml` | SDK team restores `RunRustTests: true` only after Central integrates support; the unsupported input is currently omitted |
-| `sdk\cosmos\templates\rust-tests.yml` | SDK team defines dependencies, emulator setup, commands, and result publication |
-| `sdk\cosmos\azure-cosmos\scripts\run_rust_ci.py` | SDK team owns suite discovery and collection/execution assertions |
-| `eng\pipelines\templates\stages\cosmos-sdk-client.yml` | Pending Central change: accept the Cosmos opt-in and select the SDK job template |
-| `eng\pipelines\templates\stages\archetype-sdk-client.yml` | Pending Central change: accept additional jobs in the existing Build stage without changing other callers |
-
-Central must implement and integrate these shared-template changes. The
-opt-in must default to disabled so other callers keep their existing behavior.
-When enabled, it must include both SDK-owned jobs in the Build stage alongside
-the existing emulator matrix. Accepting the parameter without adding the jobs
-does not deliver the required test coverage.
-
-Local
-validation of the SDK runner and YAML does not replace an Azure Pipelines run
-using the authenticated toolchain feed and the built wheel. Newly selected
-test failures must be investigated rather than excluded to make the gate
-green.
+Completion requires execution results for the retained tests in their intended
+environments, evidence that their SDK calls use Rust, and investigation of
+missing or skipped cases. A successful build, a collected test list, or a
+passing run against the legacy implementation is not a substitute. Newly
+exposed failures must be investigated rather than excluded to make CI pass.
 
 ### Which shared files do the work?
 
@@ -1933,6 +1909,12 @@ The SDK team maintains that information alongside the Python code:
 such as the README, into documentation pages that a developer can read in a
 web browser.
 
+These are customer-facing SDK API reference pages: the kind of documentation
+Contoso Bank's developers consult on Microsoft Learn to understand classes,
+methods, parameters, and return values. They are different from this
+`build_and_release.md` guide, which explains how contributors build and release
+the SDK.
+
 In this pipeline, Sphinx imports the SDK into the documentation process
 so it can inspect the classes and methods.
 It uses their signatures and docstrings to generate the reference pages.
@@ -1943,9 +1925,29 @@ be generated without errors or warnings? For example, a class reference that
 could point to two different classes needs to be corrected, not silently
 linked to whichever one happens to be found first.
 
+**Generating documentation is not the same as publishing it publicly.** The
+pull-request check verifies that the pages can be generated; it does not by
+itself update the public reference pages. Documentation publication is handled
+separately through release processing.
+
 Generating these pages does not build the customer package or prove that
 requests succeed against the service backend. The wheel supplies the code
 that the customer app runs; the documentation explains how to use that code.
+
+The documentation and emulator-test jobs are separate branches of the shared
+pipeline. Both wait for the Linux, Windows, and macOS package builds, but the
+test-matrix generation does not depend on the documentation job:
+
+```text
+Linux, Windows, and macOS package builds
+    -> Build Docs
+    -> Generate test matrix -> emulator test jobs
+```
+
+A documentation failure therefore does not itself prevent the emulator tests
+from running, although it still makes the overall pipeline unsuccessful.
+A test-collection failure, such as two test files being imported under the
+same module name, must be diagnosed separately from a documentation failure.
 
 ### Why documentation generation installs the built wheel
 
@@ -2487,7 +2489,6 @@ this branch's shared implementation:
 | Work | Central-owned files | What must be delivered |
 |---|---|---|
 | Synchronized version updates | `eng\tools\azure-sdk-tools\ci_tools\versioning\*`, `packaging_tools\sdk_update_version.py` under the same tool directory | Honor the SDK setting, update all version copies and stability labels, and restore files if the update fails |
-| Required Rust test jobs | `eng\pipelines\templates\stages\cosmos-sdk-client.yml`, `archetype-sdk-client.yml` | Add `RunRustTests` with a disabled default and connect both SDK-owned jobs to the Build stage without replacing the existing emulator matrix |
 | Documentation installation | `eng\tools\azure-sdk-tools\azpysdk\sphinx.py` | Keep sdist sources for page generation but install a compatible built wheel for compiled packages |
 | Overloaded method documentation | Shared configuration under `doc\sphinx` | Resolve types from the original method without changing SDK tracing or suppressing warnings |
 | Multi-wheel namespace inspection | `eng\scripts\Save-Package-Namespaces-Property.ps1` | Inspect one exact-version wheel instead of passing several files to a single-archive helper |
@@ -2495,10 +2496,11 @@ this branch's shared implementation:
 
 Each change needs Central-owned, tracked regression coverage and integration
 into the source used by the pipeline. A saved patch or an SDK opt-in is not
-evidence that the shared implementation exists. The unsupported `RunRustTests`
-input has been removed from the SDK entry, but the additional Rust jobs remain
-disconnected until Central integrates them. The current publishers still do
-not enforce the source-archive restriction.
+evidence that the shared implementation exists. Integrating the temporary
+parity jobs is not part of this Central work list. The SDK team must complete
+the retained-test migration through the normal pipeline and raise any specific
+shared blockers it demonstrates. The current publishers still do not enforce
+the source-archive restriction.
 
 ### Treat the Rust-backed release as a v5 upgrade
 

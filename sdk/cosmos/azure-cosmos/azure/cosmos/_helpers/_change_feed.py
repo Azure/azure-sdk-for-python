@@ -36,6 +36,7 @@ from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosItemPaged
 from .._operation_deadline import legacy_deadline_options, remaining_timeout
 from .._query_rust_routing import page_to_backend_response
+from .._telemetry import trace_operation
 from ..partition_key import (
     NonePartitionKeyValue,
     NullPartitionKeyValue,
@@ -465,6 +466,28 @@ class ChangeFeedPageState(ReadAllPageState):
             self.fetcher = None
 
 
+@trace_operation(
+    binding_operation="query_items_change_feed",
+    operation_name="query_items_change_feed",
+    name_of_span="ContainerProxy.query_items_change_feed.fetch",
+)
+def _fetch_rust_page(
+    config: ChangeFeedConfig, state: ChangeFeedPageState, deadline: Optional[float]
+) -> Optional[tuple[Optional[str], list[dict[str, Any]]]]:
+    """Record one poll; finish the public page only after its final fetch."""
+    pages = config.backend.execute_pages(
+        state.prepared_page(deadline), deadline=deadline
+    )
+    try:
+        page = next(pages)
+    except StopIteration as error:
+        raise RuntimeError("Rust backend returned no change-feed page.") from error
+    finally:
+        pages.close()
+    rows = state.parse(page)
+    return None if state.poll_again else state.finish(rows, deadline)
+
+
 class ChangeFeedPageIterator(PageIterator):
     def __init__(
         self,
@@ -506,18 +529,9 @@ class ChangeFeedPageIterator(PageIterator):
             state.begin()
             if config.rust:
                 while True:
-                    pages = config.backend.execute_pages(state.prepared_page(deadline), deadline=deadline)
-                    try:
-                        page = next(pages)
-                    except StopIteration as error:
-                        raise RuntimeError(
-                            "Rust backend returned no change-feed page."
-                        ) from error
-                    finally:
-                        pages.close()
-                    rows = state.parse(page)
-                    if not state.poll_again:
-                        break
+                    result = _fetch_rust_page(config, state, deadline)
+                    if result is not None:
+                        return result
             else:
                 state.legacy_options.update(
                     legacy_deadline_options(config.options, deadline)

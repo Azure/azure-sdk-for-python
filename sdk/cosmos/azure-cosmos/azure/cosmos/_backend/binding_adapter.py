@@ -459,7 +459,10 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         operation = (
             get_operation(self, prepared.op)
             if prepared.op in ("list_databases", "query_databases", "list_containers", "query_containers")
-            or (prepared.op in ("read_all_items", "query_items") and prepared.cursor is not None)
+            or (
+                prepared.op in ("read_all_items", "query_items", "query_items_change_feed")
+                and prepared.cursor is not None
+            )
             else None
         )
         contribution = operation.begin_contribution() if operation is not None else None

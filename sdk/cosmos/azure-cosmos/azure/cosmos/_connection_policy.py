@@ -21,6 +21,11 @@ from ._backend.capabilities import reject_removed_options
 
 def reject_rust_connection_policy_options(kwargs: Mapping[str, Any]) -> None:
     """Reject client retry and routing controls that Rust cannot honor."""
+    if "connection_retry_policy" in kwargs:
+        raise TypeError(
+            "connection_retry_policy is not supported by Rust-backed clients; omit this keyword. "
+            "Custom Python retry policies do not execute for Rust requests."
+        )
     for keyword in ("retry_connect", "retry_read"):
         if keyword in kwargs:
             raise TypeError(

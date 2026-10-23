@@ -223,6 +223,17 @@ def test_policy_capability_rust(backend, saved_order, asynchronous, capability, 
             finish(exporter, result, error)
 
     try:
+        if backend == "rust" and capability == "connection_retry_policy" and not asynchronous:
+            with pytest.raises(TypeError, match="connection_retry_policy is not supported by Rust-backed clients"):
+                CosmosClient(
+                    os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend=backend, **settings,
+                )
+            assert not events
+            print("\nPOLICY-CAPTURE " + json.dumps({
+                "capability": capability, "backend": backend, "surface": "sync",
+                "outcome": "rejected_at_construction",
+            }))
+            return
         with tracing() as exporter:
             if asynchronous:
                 asyncio.run(run_async(exporter))

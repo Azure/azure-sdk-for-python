@@ -27,6 +27,33 @@ from ..._operation_deadline import (
     remaining_timeout,
     run_with_deadline,
 )
+from ..._telemetry import trace_operation_async
+
+
+@trace_operation_async(
+    binding_operation="query_items_change_feed",
+    operation_name="query_items_change_feed",
+    name_of_span="ContainerProxy.query_items_change_feed.fetch",
+)
+async def _fetch_rust_page(
+    config: ChangeFeedConfig, state: ChangeFeedPageState, deadline: Optional[float]
+) -> Optional[tuple[Optional[str], list[dict[str, Any]]]]:
+    """Drain one authorized fetch before completing its public page."""
+
+    async def fetch_one() -> list[dict[str, Any]]:
+        pages = config.backend.execute_pages(
+            state.prepared_page(deadline), deadline=deadline
+        )
+        try:
+            page = await pages.__anext__()
+        except StopAsyncIteration as error:
+            raise RuntimeError("Rust backend returned no change-feed page.") from error
+        finally:
+            await pages.aclose()
+        return state.parse(page)
+
+    rows = await run_with_deadline(fetch_one, deadline)
+    return None if state.poll_again else state.finish(rows, deadline)
 
 
 class AsyncChangeFeedPageIterator(AsyncPageIterator):
@@ -73,24 +100,13 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
         try:
             config, deadline = state.config, state.config.deadline()
             state.begin()
+            if config.rust:
+                while True:
+                    result = await _fetch_rust_page(config, state, deadline)
+                    if result is not None:
+                        return result
 
             async def fetch_page() -> list[dict[str, Any]]:
-                if config.rust:
-                    while True:
-                        pages = config.backend.execute_pages(
-                            state.prepared_page(deadline), deadline=deadline
-                        )
-                        try:
-                            page = await pages.__anext__()
-                        except StopAsyncIteration as error:
-                            raise RuntimeError(
-                                "Rust backend returned no change-feed page."
-                            ) from error
-                        finally:
-                            await pages.aclose()
-                        rows = state.parse(page)
-                        if not state.poll_again:
-                            return rows
                 state.legacy_options.update(
                     legacy_deadline_options(config.options, deadline)
                 )

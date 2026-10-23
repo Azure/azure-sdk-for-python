@@ -319,9 +319,9 @@ def test_legacy_fixed_throttle_interval_still_selects_requested_delay_rust(
 
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("selection", ["keyword", "environment"])
-@pytest.mark.parametrize("keyword", ["retry_connect", "retry_read"])
-@pytest.mark.parametrize("value", [None, 0, 2, False, "2"])
-def test_rust_connection_retry_counts_fail_before_policy_or_backend_creation_rust(
+@pytest.mark.parametrize("keyword", ["retry_connect", "retry_read", "connection_retry_policy"])
+@pytest.mark.parametrize("value", [None, 0, 2, False, "2", MagicMock()])
+def test_rust_connection_retry_controls_fail_before_policy_or_backend_creation_rust(
     client_module, monkeypatch, from_connection_string, selection, keyword, value
 ):
     kwargs = {keyword: value}
@@ -365,6 +365,41 @@ def test_legacy_connection_retry_counts_remain_available_rust(
     settings = prepared.ConnectionRetryConfiguration.configure_retries({})
     assert settings["connect"] == (3 if connect is None else connect)
     assert settings["read"] == (3 if read is None else read)
+
+
+@pytest.mark.parametrize("from_connection_string", [False, True])
+def test_legacy_custom_retry_policy_is_preserved_rust(
+    client_module, construct_client, monkeypatch, from_connection_string
+):
+    monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    custom_policy = MagicMock()
+    if client_module is sync_client:
+        with pytest.warns(DeprecationWarning, match="connection_retry_policy"):
+            client, prepared = construct_client(
+                _backend="core-python",
+                from_connection_string=from_connection_string,
+                connection_retry_policy=custom_policy,
+            )
+    else:
+        policy = ConnectionPolicy()
+        policy.ConnectionRetryConfiguration = custom_policy
+        client, prepared = construct_client(
+            _backend="core-python", from_connection_string=from_connection_string, connection_policy=policy
+        )
+        assert policy.ConnectionRetryConfiguration is custom_policy
+    assert client._adapter.name == "core-python"
+    assert prepared.ConnectionRetryConfiguration is custom_policy
+
+
+def test_rust_grouped_retry_policy_is_not_retired_by_keyword_guard_rust(construct_client):
+    policy = ConnectionPolicy()
+    custom_policy = MagicMock()
+    policy.ConnectionRetryConfiguration = custom_policy
+    client, prepared = construct_client(connection_policy=policy)
+    assert client._adapter.name == "rust"
+    assert prepared.ConnectionRetryConfiguration is custom_policy
+    assert policy.ConnectionRetryConfiguration is custom_policy
+    custom_policy.send.assert_not_called()
 
 
 def test_connection_string_factory_preserves_grouped_settings_rust(construct_client):
