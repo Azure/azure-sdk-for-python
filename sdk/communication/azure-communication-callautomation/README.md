@@ -8,6 +8,26 @@ This package contains a Python SDK for Azure Communication Call Automation. Call
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please
 refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
+## Security notice: version 1.6.0 deprecated
+
+Version **1.6.0** of `azure-communication-callautomation` is deprecated as of
+**2026-10-22** because of a recording URL validation security issue. This notice
+applies to version 1.6.0, not to the library as a whole.
+
+In applications that pass attacker-influenced recording URLs to the synchronous
+`download_recording` or `delete_recording` methods using the default Requests
+transport, an ambiguous URL can bypass hostname validation and send an
+authenticated request to an unintended endpoint, potentially exposing a Bearer
+token.
+
+Upgrade to **1.6.1** or a later fixed release to receive the security fix.
+Use only service-generated recording URLs received through trusted,
+integrity-protected events; do not pass untrusted recording URLs to these methods.
+
+Refer to the [release history](CHANGELOG.md) and
+[Azure SDK support policy](https://azure.github.io/azure-sdk/policies_support.html)
+for more information.
+
 ## Getting started
 ### Prerequisites
 - Python 3.8 or later is required to use this package.
@@ -28,6 +48,17 @@ pip install azure-communication-callautomation
 | CallConnectionClient | `CallConnectionClient` represents a ongoing call. Once the call is established with `createCall` or `answerCall`, further actions can be performed for the call, such as `transfer` or `play_media`.                                                                                                                                     |                                                                                                                                                               |
 | Callback Events      | Callback events are events sent back during duration of the call. It gives information and state of the call, such as `CallConnected`. `CallbackUrl` must be provided during `createCall` and `answerCall`, and callback events will be sent to this url. |
 | Incoming Call Event  | When incoming call happens (that can be answered with `answerCall`), incoming call eventgrid event will be sent. This is different from Callback events above, and should be setup on Azure portal. See [Incoming Call][incomingcall] for detail.                                                                                        |
+
+### Recording URL security
+
+`download_recording` and `delete_recording` accept only HTTPS URLs with ASCII DNS
+hostnames under `*.asm.skype.com`, `*.asyncgw.teams.microsoft.com`, or
+`*.ams.gov.teams.microsoft.us`. URLs containing user information, raw backslashes,
+whitespace, control characters, or malformed authorities are rejected with
+`ValueError` before authentication. Redirect destinations are subject to the same
+validation. Valid signed query parameters are preserved.
+
+Use service-generated recording URLs from trusted, integrity-protected events.
 
 ## Examples
 ### Initialize CallAutomationClient
