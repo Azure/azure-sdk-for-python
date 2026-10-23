@@ -27,6 +27,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: 'not-specified'
+  - name: ReleasePlanId
+    type: string
+    default: '0'
   - name: TestPipeline
     type: boolean
     default: false
@@ -242,6 +245,14 @@ stages:
       - job: MarkPackageReleaseCompletion
         displayName: "Mark package release completion"
         dependsOn: PublishPackage
+        variables:
+          # Only the template auto-release pilot consumes the prepare-stage PR output.
+          # Manual releases and other callers always have a defined, empty value.
+          - name: AutoReleaseSdkPullRequestUrl
+            ${{ if and(eq(parameters.ServiceDirectory, 'template'), eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+              value: $[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs['resolve.AutoReleaseSdkPullRequestUrl'] ]
+            ${{ else }}:
+              value: ''
 
         pool:
           image: ubuntu-24.04
@@ -266,6 +277,8 @@ stages:
             parameters:
               ConfigFileDir: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo'
               PackageArtifactName: ${{parameters.Artifact.name}}
+              ReleasePlanId: ${{ parameters.ReleasePlanId }}
+              SdkPullRequest: $(AutoReleaseSdkPullRequestUrl)
 
           # Management-plane-only workaround: skip marking packages that do not generate an APIView revision.
           - pwsh: |
