@@ -13,5 +13,6 @@ pyo3 = { version = "0.29" }
 azure_storage_blob = "1.1.0"
 azure_core = { version = "1", features = ["xml"] }
 async-trait = "0.1"
-tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync"] }
 once_cell = "1"
+futures = "0.3"
