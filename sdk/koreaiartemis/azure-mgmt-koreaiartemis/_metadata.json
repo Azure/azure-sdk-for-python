@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-07-01-preview",
+  "apiVersions": {
+    "Kore.AgentPlatform": "2026-07-01-preview"
+  },
+  "commit": "41f831e9ce23a30c9edad54fffe8d29c7b0a6987",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/azure-native-integrations/resource-manager/Kore.AgentPlatform/AgentPlatform",
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
+}
