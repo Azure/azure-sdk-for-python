@@ -293,6 +293,8 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 |---|---|---|
 |<ul><li>AADSTS700211: No matching federated identity record found for presented assertion issuer ...</li><li>AADSTS700212: No matching federated identity record found for presented assertion audience 'api://AKSIdentityBinding'.</li></ul> |`WorkloadIdentityCredential` isn't configured to use the identity binding proxy|Set the `enable_azure_proxy` keyword argument to `True` when creating `WorkloadIdentityCredential`. Note that identity binding mode isn't supported when `WorkloadIdentityCredential` is used via `DefaultAzureCredential`. `WorkloadIdentityCredential` should be used directly in this scenario.|
 
+For asynchronous identity binding requests, the credential uses aiohttp when it supports the `server_hostname` argument (aiohttp 3.9 and later). If aiohttp is missing or lacks this support, the credential falls back to Requests running in an executor thread.
+
 ## Troubleshoot `AzurePipelinesCredential` authentication issues
 
 [comment]: # ( cspell:ignore oidcrequesturi )

@@ -4,6 +4,7 @@
 # ------------------------------------
 # cspell:ignore cafile
 import os
+from inspect import signature
 from typing import Any, Optional
 
 from .client_assertion import ClientAssertionCredential
@@ -121,8 +122,12 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
 def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
     try:
+        from aiohttp import ClientSession
+
         from .._internal.token_binding_transport_aiohttp import CustomAioHttpTransport
 
+        if "server_hostname" not in signature(ClientSession._request).parameters:
+            raise ImportError("aiohttp transport requires server_hostname support")
         return CustomAioHttpTransport(
             sni=sni,
             proxy_endpoint=token_proxy_endpoint,

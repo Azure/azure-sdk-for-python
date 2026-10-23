@@ -10,6 +10,7 @@ import asyncio
 from time import sleep as real_sleep
 from unittest.mock import mock_open, patch, MagicMock
 
+from aiohttp import ClientSession
 import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
@@ -702,6 +703,45 @@ class TestCustomAioHttpTransportWithLocalServer:
 
 class TestCustomAsyncioRequestsTransportFallback:
     """Test cases for the custom AsyncioRequestsTransport used by WorkloadIdentityCredential."""
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("supports_sni", [False, True])
+    @pytest.mark.parametrize("sni", [None, "test.sni.com"])
+    async def test_transport_selection_checks_server_hostname_support(self, supports_sni, sni, ca_data):
+        async def request_without_sni(self, method, url):
+            raise AssertionError("Transport selection must not send requests")
+
+        async def request_with_sni(self, method, url, *, server_hostname=None):
+            raise AssertionError("Transport selection must not send requests")
+
+        request_method = request_with_sni if supports_sni else request_without_sni
+        with patch.object(ClientSession, "_request", request_method):
+            transport = _get_transport(
+                sni=sni,
+                token_proxy_endpoint="https://proxy.example.com/binding",
+                ca_file=None,
+                ca_data=ca_data,
+            )
+
+        async with transport:
+            expected_type = CustomAioHttpTransport if supports_sni else CustomAsyncioRequestsTransport
+            assert type(transport) is expected_type
+            assert transport._sni == sni
+            assert transport._proxy_endpoint == "https://proxy.example.com/binding"
+            assert transport._ca_data == ca_data
+
+    @pytest.mark.asyncio
+    async def test_transport_selection_without_aiohttp(self):
+        with patch.dict("sys.modules", {"aiohttp": None}):
+            transport = _get_transport(
+                sni=None,
+                token_proxy_endpoint="https://proxy.example.com/binding",
+                ca_file=None,
+                ca_data=None,
+            )
+
+        async with transport:
+            assert type(transport) is CustomAsyncioRequestsTransport
 
     def test_get_transport_creates_workload_identity_asyncio_requests_transport(self, ca_data):
         """Test that _get_transport creates WorkloadIdentityAsyncioRequestsTransport with correct parameters."""
