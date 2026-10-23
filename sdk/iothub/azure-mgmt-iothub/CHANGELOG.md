@@ -1,5 +1,76 @@
 # Release History
 
+## 5.0.0 (2026-10-23)
+
+### Features Added
+
+  - Client `IotHubClient` added parameter `cloud_setting` in method `__init__`
+  - Client `IotHubClient` added method `send_request`
+  - Model `CertificateDescription` added property `system_data`
+  - Model `CertificateProperties` added property `certificate_authority_resource_id`
+  - Model `CertificatePropertiesWithNonce` added property `certificate_authority_resource_id`
+  - Model `EventHubConsumerGroupInfo` added property `system_data`
+  - Model `IotHubProperties` added property `device_host_name`
+  - Model `IotHubProperties` added property `device_registry`
+  - Model `IotHubProperties` added property `iot_hub_details`
+  - Model `IotHubProperties` added property `service_host_name`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `RoutingEndpoints` added property `event_streams`
+  - Added model `DeviceRegistry`
+  - Added model `DeviceRegistryIdentity`
+  - Added enum `DeviceRegistryIdentityType`
+  - Added model `DeviceRegistryLinkingProperties`
+  - Added enum `DeviceRegistryLinkingState`
+  - Added enum `EventStreamAuthenticationType`
+  - Added enum `FallbackRouteSource`
+  - Added enum `GatewayVersion`
+  - Added model `IotHubDetails`
+  - Added model `ProxyResource`
+  - Added model `RoutingEventStreamProperties`
+  - Added model `TrackedResource`
+  - Model `CertificatesOperations` added parameter `etag` in method `create_or_update`
+  - Model `CertificatesOperations` added parameter `match_condition` in method `create_or_update`
+  - Model `CertificatesOperations` added parameter `etag` in method `delete`
+  - Model `CertificatesOperations` added parameter `match_condition` in method `delete`
+  - Model `CertificatesOperations` added parameter `etag` in method `generate_verification_code`
+  - Model `CertificatesOperations` added parameter `match_condition` in method `generate_verification_code`
+  - Model `CertificatesOperations` added parameter `etag` in method `verify`
+  - Model `CertificatesOperations` added parameter `match_condition` in method `verify`
+  - Model `IotHubResourceOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `IotHubResourceOperations` added parameter `match_condition` in method `begin_create_or_update`
+
+### Breaking Changes
+
+  - Model `IotHubProperties` deleted or renamed its instance variable `device_streams`
+  - Model `IotHubProperties` deleted or renamed its instance variable `encryption`
+  - Model `IotHubProperties` deleted or renamed its instance variable `ip_version`
+  - Model `IotHubProperties` deleted or renamed its instance variable `root_certificate`
+  - Deleted or renamed enum value `JobType.IMPORT_ENUM`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed enum value `RoutingSource.DIGITAL_TWIN_CHANGE_EVENTS`
+  - Deleted or renamed enum value `RoutingSource.MQTT_BROKER_MESSAGES`
+  - Deleted or renamed model `CertificateBodyDescription`
+  - Deleted or renamed model `EncryptionPropertiesDescription`
+  - Deleted or renamed model `EndpointHealthDataListResult`
+  - Deleted or renamed model `EventHubConsumerGroupsListResult`
+  - Deleted or renamed model `IotHubDescriptionListResult`
+  - Deleted or renamed model `IotHubPropertiesDeviceStreams`
+  - Deleted or renamed model `IotHubQuotaMetricInfoListResult`
+  - Deleted or renamed model `IotHubSkuDescriptionListResult`
+  - Deleted or renamed model `IpVersion`
+  - Deleted or renamed model `JobResponseListResult`
+  - Deleted or renamed model `KeyVaultKeyProperties`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `RootCertificateProperties`
+  - Deleted or renamed model `SharedAccessSignatureAuthorizationRuleListResult`
+  - Method `CertificatesOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `CertificatesOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `CertificatesOperations.generate_verification_code` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `CertificatesOperations.verify` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `IotHubResourceOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+
 ## 5.0.0b5 (2026-10-09)
 
 ### Features Added
