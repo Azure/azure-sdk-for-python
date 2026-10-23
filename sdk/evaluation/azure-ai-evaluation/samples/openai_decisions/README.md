@@ -3,10 +3,12 @@
 Use a GPT-6 Luna deployment with the `decision` capability in a supported Foundry region.
 An ordinary chat configuration continues to use chat even when that deployment also supports Decisions.
 The Evaluation SDK requires version 1.18.11 or a private build containing this adapter.
+Run this example from the companion `azureml-assets` checkout with its OpenAI-capable evaluator versions.
+The SDK supplies the shared runner; its top-level `azure.ai.evaluation.CoherenceEvaluator` remains a chat evaluator.
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.ai.evaluation import CoherenceEvaluator
+from assets.evaluators.builtin.coherence.evaluator._coherence import CoherenceEvaluator
 
 with DefaultAzureCredential() as credential:
     evaluator = CoherenceEvaluator(
