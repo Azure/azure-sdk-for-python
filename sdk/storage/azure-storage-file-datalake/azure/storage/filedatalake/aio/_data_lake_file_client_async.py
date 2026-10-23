@@ -74,7 +74,7 @@ class DataLakeFileClient(PathClient):
         session-based authentication. Supply a shared instance to reuse the session cache across
         multiple clients; when omitted, one is created and scoped to this client. Only has an
         effect when `use_session` is True.
-    :paramtype session_provider: ~azure.storage.filedatalake.aio.AsyncSessionProvider
+    :paramtype session_provider: ~azure.storage.filedatalake.aio.SessionProvider
     :keyword str session_account_name: The storage account name used to sign session-authenticated
         requests. If omitted, it is derived from the account URL. Required when using a custom
         endpoint, where the account name cannot be determined from the URL.

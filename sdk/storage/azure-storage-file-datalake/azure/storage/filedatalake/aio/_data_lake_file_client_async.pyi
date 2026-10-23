@@ -34,7 +34,7 @@ from .._models import (
 from ._data_lake_lease_async import DataLakeLeaseClient
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
-from azure.storage.filedatalake._shared.session_async import AsyncSessionProvider
+from azure.storage.filedatalake._shared.session_async import SessionProvider
 
 class DataLakeFileClient(PathClient):
     url: str
@@ -52,7 +52,7 @@ class DataLakeFileClient(PathClient):
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         use_session: bool = False,
-        session_provider: Optional[AsyncSessionProvider] = None,
+        session_provider: Optional[SessionProvider] = None,
         session_account_name: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...
