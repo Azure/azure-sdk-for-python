@@ -8,7 +8,7 @@ from unittest.mock import Mock
 
 from corehttp.credentials import AccessTokenInfo, ServiceKeyCredential, ServiceNamedKeyCredential
 from corehttp.exceptions import ServiceRequestError
-from corehttp.runtime.pipeline import Pipeline
+from corehttp.runtime.pipeline import Pipeline, PipelineRequest, PipelineContext
 from corehttp.runtime.policies import (
     BearerTokenCredentialPolicy,
     SansIOHTTPPolicy,
@@ -112,6 +112,28 @@ def test_bearer_policy_optionally_enforces_https():
     pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=False)
     pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=True)
     pipeline.run(HttpRequest("GET", "https://secure"))
+
+
+def test_bearer_policy_rejects_backslash_authority():
+    """A backslash in the URL authority must be rejected before a bearer token is attached"""
+
+    credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(return_value=AccessTokenInfo("***", 42)))
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+
+    policy = BearerTokenCredentialPolicy(credential, "scope")
+    for url in ("https://good-host\\@attacker.example/path", "https://attacker.example\\.good-host/path"):
+        with pytest.raises(ValueError):
+            pipeline.run(HttpRequest("GET", url))
+        # the authority is rejected even when https enforcement is opted out of
+        with pytest.raises(ValueError):
+            pipeline.run(HttpRequest("GET", url), enforce_https=False)
+        # authorize_request attaches a token directly, so it must reject the authority too
+        request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+        with pytest.raises(ValueError):
+            policy.authorize_request(request, "scope")
+        assert "Authorization" not in request.http_request.headers
+
+    credential.get_token_info.assert_not_called()
 
 
 def test_bearer_policy_preserves_enforce_https_opt_out():

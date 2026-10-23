@@ -18,6 +18,7 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
     _enforce_https,
+    _enforce_safe_authority,
     _should_refresh_token,
     MAX_REFRESH_JITTER_SECONDS,
 )
@@ -86,7 +87,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :param ~azure.core.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
-
+        _enforce_safe_authority(request.http_request.url)
         async with self._lock:
             await self._request_token(*scopes, **kwargs)
         bearer_token = cast(Union[AccessToken, AccessTokenInfo], self._token).token

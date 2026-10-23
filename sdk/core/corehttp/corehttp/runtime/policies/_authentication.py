@@ -6,6 +6,7 @@
 from __future__ import annotations
 import time
 from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Union
+from urllib.parse import urlparse
 
 from ...credentials import TokenRequestOptions
 from ...rest import HttpResponse, HttpRequest
@@ -25,6 +26,14 @@ HTTPResponseType = TypeVar("HTTPResponseType", bound=HttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", bound=HttpRequest)
 
 
+def _enforce_safe_authority(url: str) -> None:
+    # URL parsers used by transports can interpret backslashes as authority delimiters, so a URL
+    # such as "https://good-host\\@attacker/..." can send the bearer token to an unintended host
+    # while still looking like "good-host" to urlparse. Reject it before attaching the token.
+    if "\\" in urlparse(url).netloc:
+        raise ValueError("The request URL must not contain backslashes in its authority.")
+
+
 def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
     # move 'enforce_https' from options to context so it persists
     # across retries but isn't passed to a transport implementation
@@ -33,6 +42,8 @@ def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
     # True is the default setting; we needn't preserve an explicit opt in to the default behavior
     if option is False:
         request.context["enforce_https"] = option
+
+    _enforce_safe_authority(request.http_request.url)
 
     enforce_https = request.context.get("enforce_https", True)
     if enforce_https and not request.http_request.url.lower().startswith("https"):
@@ -129,6 +140,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         :param ~corehttp.runtime.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
+        _enforce_safe_authority(request.http_request.url)
         options: TokenRequestOptions = {}
         # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
         for key in list(kwargs.keys()):

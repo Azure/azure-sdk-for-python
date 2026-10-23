@@ -10,7 +10,7 @@ from unittest.mock import Mock
 from corehttp.credentials import AccessTokenInfo
 from corehttp.credentials import AsyncTokenCredential
 from corehttp.exceptions import ServiceRequestError
-from corehttp.runtime.pipeline import AsyncPipeline
+from corehttp.runtime.pipeline import AsyncPipeline, PipelineRequest, PipelineContext
 from corehttp.runtime.policies import (
     AsyncBearerTokenCredentialPolicy,
     SansIOHTTPPolicy,
@@ -153,6 +153,24 @@ async def test_bearer_policy_optionally_enforces_https():
     await pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=False)
     await pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=True)
     await pipeline.run(HttpRequest("GET", "https://secure"))
+
+
+async def test_bearer_policy_rejects_backslash_authority():
+    """A backslash in the URL authority must be rejected before a bearer token is attached"""
+    credential = Mock(
+        spec_set=["get_token_info"], get_token_info=lambda *_, **__: get_completed_future(AccessTokenInfo("***", 42))
+    )
+    policy = AsyncBearerTokenCredentialPolicy(credential, "scope")
+
+    for url in ("https://good-host\\@attacker.example/path", "https://attacker.example\\.good-host/path"):
+        request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+        with pytest.raises(ValueError):
+            await policy.on_request(request)
+        # authorize_request attaches a token directly, so it must reject the authority too
+        request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+        with pytest.raises(ValueError):
+            await policy.authorize_request(request, "scope")
+        assert "Authorization" not in request.http_request.headers
 
 
 async def test_bearer_policy_preserves_enforce_https_opt_out():
