@@ -40,13 +40,12 @@ def main():
                 "administrativeState": "Enabled",
                 "annotation": "annotation",
                 "interfaceType": "Management",
-                "serialNumber": "Vendor;DCS-7280XXX-24;12.05;JPE2111XXXX",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/NetworkBootstrapInterfaces_Create.json
+# x-ms-original-file: 2026-01-15-preview/NetworkBootstrapInterfaces_Create.json
 if __name__ == "__main__":
     main()
