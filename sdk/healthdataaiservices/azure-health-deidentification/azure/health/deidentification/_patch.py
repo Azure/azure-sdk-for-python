@@ -57,8 +57,8 @@ def _preserve_container_identity() -> None:
     mutations through that reference are dropped on serialization. This wrapper copies the
     new contents into the original container and keeps it in ``_data``.
 
-    TODO: remove once https://github.com/microsoft/typespec/pull/12359 fixes the emitter template
-    (packages/http-client-python/generator/pygen/codegen/templates/model_base.py.jinja2, ``_RestField.__get__``).
+    TODO: remove once https://github.com/microsoft/typespec/pull/12359 fixes ``_RestField.__get__`` in the
+    http-client-python emitter's ``model_base.py.jinja2`` template.
     """
     rest_field_cls = _model_base._RestField  # pylint: disable=protected-access
     original_get: Any = rest_field_cls.__get__
