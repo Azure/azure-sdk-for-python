@@ -18,9 +18,53 @@ class Replacement:
     generated: str
     patched: str
     applies_when: str | None = None
+    expected_count: int = 1
 
 
 REPLACEMENTS = (
+    Replacement(
+        "azure/search/documents/models/_enums.py",
+        "render the agentic debug mode separator as a reStructuredText literal",
+        "supported modes using |; this selector",
+        "supported modes using ``|``; this selector",
+    ),
+    Replacement(
+        "azure/search/documents/indexes/models/_models.py",
+        "suppress generated SearchField constructor complexity",
+        "    @overload\n    def __init__(\n        self,\n        *,\n        name: str,\n"
+        '        type: Union[str, "_models.SearchFieldDataType"],\n',
+        "    @overload\n    def __init__(  # pylint: disable=too-many-locals\n"
+        "        self,\n        *,\n        name: str,\n"
+        '        type: Union[str, "_models.SearchFieldDataType"],\n',
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/_operations/_operations.py",
+        "suppress generated sync streaming operation complexity",
+        "    def retrieve_stream(\n",
+        "    def retrieve_stream(  # pylint: disable=too-many-statements\n",
+        expected_count=4,
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/aio/_operations/_operations.py",
+        "suppress generated async streaming operation complexity",
+        "    async def retrieve_stream(\n",
+        "    async def retrieve_stream(  # pylint: disable=too-many-statements\n",
+        expected_count=4,
+    ),
+    Replacement(
+        "azure/search/documents/indexes/_operations/_operations.py",
+        "resolve the File ingestion poller model through the imported sync namespace",
+        "return LROPoller[_indexes_models1.KnowledgeSourceFile]",
+        "return LROPoller[_models1.KnowledgeSourceFile]",
+        expected_count=4,
+    ),
+    Replacement(
+        "azure/search/documents/indexes/aio/_operations/_operations.py",
+        "resolve the File ingestion poller model through the imported async namespace",
+        "return AsyncLROPoller[_indexes_models1.KnowledgeSourceFile]",
+        "return AsyncLROPoller[_models2.KnowledgeSourceFile]",
+        expected_count=4,
+    ),
     Replacement(
         "azure/search/documents/models/__init__.py",
         "export SemanticQueryRewritesResultType",
@@ -163,17 +207,17 @@ def update_sources(*, check: bool) -> int:
         generated_count = source.count(replacement.generated)
         patched_count = source.count(replacement.patched)
 
-        if generated_count == 1 and patched_count == 0:
-            sources[path] = source.replace(replacement.generated, replacement.patched, 1)
+        if generated_count == replacement.expected_count and patched_count == 0:
+            sources[path] = source.replace(replacement.generated, replacement.patched, replacement.expected_count)
             pending.append(replacement.description)
-        elif generated_count == 0 and patched_count == 1:
+        elif generated_count == 0 and patched_count == replacement.expected_count:
             continue
         elif replacement.applies_when is not None and replacement.applies_when not in source:
             continue
         else:
             raise RuntimeError(
                 f"Unexpected emitter output in {replacement.path} while attempting to "
-                f"{replacement.description}; expected exactly one generated or patched snippet"
+                f"{replacement.description}; expected exactly {replacement.expected_count} generated or patched snippets"
             )
 
     if check:
