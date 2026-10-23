@@ -42,19 +42,20 @@ def main():
                 "endpoints": {
                     "outbound": {
                         "assigned": {
-                            "iothubEndpoint": {
-                                "address": "https://iothub-for-dps.azure-devices.net",
-                                "endpointType": "Microsoft.Devices/IotHubs",
+                            "eventGridEndpoint": {
+                                "address": "https://myeventgridtopic.westeurope-1.eventgrid.azure.net/api/events",
+                                "endpointType": "Microsoft.Devices",
                             }
                         }
                     }
                 },
+                "externalDeviceId": "adr-smart-device3-7a848b15-af47-40a7-8c06-a3f43314d44f",
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_NamespaceDevice.json
+# x-ms-original-file: 2026-11-01/CreateOrReplace_NamespaceDevice.json
 if __name__ == "__main__":
     main()
