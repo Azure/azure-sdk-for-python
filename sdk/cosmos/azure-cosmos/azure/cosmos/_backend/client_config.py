@@ -167,7 +167,7 @@ def build_client_config(
         # Converting an integer to the binding's float can round it up to 2**64.
         or float(throttling_max_retry_wait_time_seconds) >= 2**64
     ):
-        raise ValueError("retry_throttle_backoff_max must be finite nonnegative seconds below 2**64.")
+        raise ValueError("throttle_retry_wait_threshold_seconds must be finite nonnegative seconds below 2**64.")
     hedging_threshold_ms = _resolve_hedging(availability_strategy)
     # An empty label should not add anything to the User-Agent header.
     suffix = user_agent_suffix or None

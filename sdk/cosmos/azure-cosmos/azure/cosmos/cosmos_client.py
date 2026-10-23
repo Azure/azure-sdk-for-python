@@ -60,7 +60,10 @@ from ._helpers._list_databases import query_databases as _query_databases
 from ._constants import _Constants as Constants
 from ._client_lifecycle import unwind_client_construction
 from ._connection_policy import (
-    copy_connection_policy, reject_rust_routing_options, resolve_connection_policy_kwargs, resolve_retry_option,
+    copy_connection_policy,
+    reject_rust_connection_policy_options,
+    resolve_connection_policy_kwargs,
+    resolve_retry_option,
 )
 from ._connection_string import parse_connection_string
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
@@ -132,7 +135,7 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
         kwargs, 'retry_throttle_total', 'retry_total', retry_options.MaxRetryAttemptCount
     )
     throttle_wait = resolve_retry_option(
-        kwargs, 'retry_throttle_backoff_max', 'retry_backoff_max', retry_options.MaxWaitTimeInSeconds
+        kwargs, 'throttle_retry_wait_threshold_seconds', 'retry_backoff_max', retry_options.MaxWaitTimeInSeconds
     )
     total_retries = kwargs.pop('retry_total', None)
     kwargs.pop('retry_throttle_total', None)
@@ -140,7 +143,7 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     retry_options._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
         retry_options._fixed_retry_interval_in_milliseconds
     max_backoff = kwargs.pop('retry_backoff_max', None)
-    kwargs.pop('retry_throttle_backoff_max', None)
+    kwargs.pop('throttle_retry_wait_threshold_seconds', None)
     retry_options._max_wait_time_in_seconds = throttle_wait
     policy.RetryOptions = retry_options
     connection_retry = kwargs.pop('connection_retry_policy', None)
@@ -193,9 +196,16 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword int retry_total: Maximum retry attempts.
     :keyword int retry_backoff_max: Maximum retry wait time in seconds.
-    :keyword int retry_fixed_interval: Fixed retry interval in milliseconds.
-    :keyword int retry_read: Maximum number of socket read retry attempts.
-    :keyword int retry_connect: Maximum number of connection error retry attempts.
+    :keyword float throttle_retry_wait_threshold_seconds: Threshold for ordinary throttle retry waiting,
+        in seconds. This is not a fixed delay before each retry or an overall operation timeout.
+        Rust can use remaining operation time for a final retry. Replaces ``retry_throttle_backoff_max``;
+        the old name raises ``TypeError``. A non-None value takes precedence over ``retry_backoff_max``.
+    :keyword int retry_fixed_interval: Fixed retry interval in milliseconds on the legacy Python backend.
+        Rust-backed clients reject this keyword with ``TypeError``, including ``None`` and zero; omit it.
+    :keyword int retry_read: Maximum number of socket read retry attempts on the legacy Python backend.
+        Rust-backed clients currently reject this keyword with ``TypeError``, including ``None`` and zero.
+    :keyword int retry_connect: Maximum number of connection error retry attempts on the legacy Python backend.
+        Rust-backed clients currently reject this keyword with ``TypeError``, including ``None`` and zero.
     :keyword int retry_status: Maximum number of retry attempts on error status codes.
     :keyword list[int] retry_on_status_codes: A list of specific status codes to retry on.
     :keyword float retry_backoff_factor: Factor to calculate wait time between retry attempts.
@@ -275,7 +285,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # otherwise it falls back to core-python.
         backend_choice = resolve_backend_name(kwargs.pop("_backend", None))
         if backend_choice != "core-python":
-            reject_rust_routing_options(kwargs)
+            reject_rust_connection_policy_options(kwargs)
             validate_client_runtime_settings(dict(kwargs, runtime=runtime))
             reject_rust_arguments(kwargs)
         fault_injection_rules = kwargs.pop("_fault_injection_rules", None)
@@ -299,7 +309,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             preferred_locations=kwargs.get("preferred_locations"),
             excluded_locations=kwargs.get("excluded_locations"),
             throttling_max_retry_count=kwargs.get("retry_throttle_total"),
-            throttling_max_retry_wait_time_seconds=kwargs.get("retry_throttle_backoff_max"),
+            throttling_max_retry_wait_time_seconds=kwargs.get("throttle_retry_wait_threshold_seconds"),
             availability_strategy=kwargs.get("availability_strategy"),
             user_agent_suffix=kwargs.get("user_agent_suffix"),
             consistency_level=consistency_level,

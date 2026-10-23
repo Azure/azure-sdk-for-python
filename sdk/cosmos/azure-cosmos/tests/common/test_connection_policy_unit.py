@@ -112,7 +112,7 @@ def test_grouped_settings_match_direct_keywords_rust(construct_client):
     grouped, legacy = construct_client(connection_policy=policy)
     direct, _ = construct_client(
         preferred_locations=["West US", "East US"], excluded_locations=["Central US"],
-        retry_throttle_total=3, retry_throttle_backoff_max=12,
+        retry_throttle_total=3, throttle_retry_wait_threshold_seconds=12,
     )
     assert grouped._adapter._client_config == direct._adapter._client_config == PreparedClientConfig(
         preferred_locations=("West US", "East US"), excluded_locations=("Central US",),
@@ -237,6 +237,136 @@ def test_legacy_routing_switches_remain_available_rust(
     assert prepared.UseMultipleWriteLocations is multi_write
 
 
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("selection", ["keyword", "environment"])
+@pytest.mark.parametrize(
+    "grouped,value",
+    [
+        (False, None),
+        (False, 0),
+        (False, 500),
+        (False, False),
+        (False, "500"),
+        (True, 0),
+        (True, 500),
+        (True, False),
+        (True, "500"),
+    ],
+)
+def test_rust_fixed_throttle_interval_fails_before_startup_rust(
+    client_module, monkeypatch, from_connection_string, selection, grouped, value
+):
+    policy = configured_policy()
+    if grouped:
+        policy.RetryOptions = RetryOptions(fixed_retry_interval_in_milliseconds=value)
+        kwargs = {"connection_policy": policy}
+    else:
+        kwargs = {"retry_fixed_interval": value}
+    original = dict(vars(policy.RetryOptions))
+    if selection == "environment":
+        monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    else:
+        monkeypatch.setenv("COSMOS_BACKEND", "core-python")
+        kwargs["_backend"] = "rust"
+    connection = MagicMock()
+    factory = MagicMock()
+    monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
+    factory_name = "make_async_backend" if client_module is async_client else "make_backend"
+    monkeypatch.setattr(client_module, factory_name, factory)
+    with pytest.raises(TypeError, match="Fixed throttle retry intervals are not supported by Rust-backed clients"):
+        if from_connection_string:
+            client_module.CosmosClient.from_connection_string(
+                "AccountEndpoint=https://policy.invalid;AccountKey=ZmFrZQ==;", **kwargs
+            )
+        else:
+            client_module.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
+    factory.assert_not_called()
+    connection.assert_not_called()
+    assert vars(policy.RetryOptions) == original
+
+
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("grouped", [False, True])
+@pytest.mark.parametrize("milliseconds", [250, 500])
+def test_legacy_fixed_throttle_interval_still_selects_requested_delay_rust(
+    construct_client, monkeypatch, from_connection_string, grouped, milliseconds
+):
+    from azure.cosmos import exceptions
+    from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
+
+    monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    policy = configured_policy()
+    if grouped:
+        policy.RetryOptions = RetryOptions(fixed_retry_interval_in_milliseconds=milliseconds)
+        kwargs = {"connection_policy": policy}
+    else:
+        kwargs = {"retry_fixed_interval": milliseconds}
+    original = dict(vars(policy.RetryOptions))
+    client, prepared = construct_client(_backend="core-python", from_connection_string=from_connection_string, **kwargs)
+    assert client._adapter.name == "core-python"
+    options = prepared.RetryOptions
+    assert options.FixedRetryIntervalInMilliseconds == milliseconds
+    retry = ResourceThrottleRetryPolicy(
+        options.MaxRetryAttemptCount, options.FixedRetryIntervalInMilliseconds, options.MaxWaitTimeInSeconds
+    )
+    error = exceptions.CosmosHttpResponseError(status_code=429)
+    for service_delay in (100, 200):
+        error.headers = {"x-ms-retry-after-ms": str(service_delay)}
+        assert retry.ShouldRetry(error)
+        assert retry.retry_after_in_milliseconds == milliseconds
+    assert vars(policy.RetryOptions) == original
+
+
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("selection", ["keyword", "environment"])
+@pytest.mark.parametrize("keyword", ["retry_connect", "retry_read"])
+@pytest.mark.parametrize("value", [None, 0, 2, False, "2"])
+def test_rust_connection_retry_counts_fail_before_policy_or_backend_creation_rust(
+    client_module, monkeypatch, from_connection_string, selection, keyword, value
+):
+    kwargs = {keyword: value}
+    if selection == "environment":
+        monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    else:
+        monkeypatch.setenv("COSMOS_BACKEND", "core-python")
+        kwargs["_backend"] = "rust"
+    connection = MagicMock()
+    factory = MagicMock()
+    build_policy = MagicMock()
+    monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
+    monkeypatch.setattr(client_module, "_build_connection_policy", build_policy)
+    factory_name = "make_async_backend" if client_module is async_client else "make_backend"
+    monkeypatch.setattr(client_module, factory_name, factory)
+    with pytest.raises(TypeError, match=keyword + " is not supported by Rust-backed clients; omit this keyword"):
+        if from_connection_string:
+            client_module.CosmosClient.from_connection_string(
+                "AccountEndpoint=https://policy.invalid;AccountKey=ZmFrZQ==;", **kwargs
+            )
+        else:
+            client_module.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
+    build_policy.assert_not_called()
+    factory.assert_not_called()
+    connection.assert_not_called()
+
+
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("connect,read", [(0, 0), (2, 4), (None, None)])
+def test_legacy_connection_retry_counts_remain_available_rust(
+    construct_client, monkeypatch, from_connection_string, connect, read
+):
+    monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    client, prepared = construct_client(
+        _backend="core-python",
+        from_connection_string=from_connection_string,
+        retry_connect=connect,
+        retry_read=read,
+    )
+    assert client._adapter.name == "core-python"
+    settings = prepared.ConnectionRetryConfiguration.configure_retries({})
+    assert settings["connect"] == (3 if connect is None else connect)
+    assert settings["read"] == (3 if read is None else read)
+
+
 def test_connection_string_factory_preserves_grouped_settings_rust(construct_client):
     """Building from a connection string keeps the policy just as the direct constructor does.
 
@@ -251,12 +381,73 @@ def test_connection_string_factory_preserves_grouped_settings_rust(construct_cli
     assert legacy.RetryOptions.MaxRetryAttemptCount == 3
 
 
-@pytest.mark.parametrize("seconds", [2.5, 10.0])
-def test_fractional_throttle_wait_budget_reaches_prepared_config_rust(construct_client, seconds):
-    client, legacy = construct_client(retry_throttle_total=5, retry_throttle_backoff_max=seconds)
-    assert client._adapter._client_config.throttling_max_retry_count == 5
-    assert client._adapter._client_config.throttling_max_retry_wait_time_seconds == seconds
-    assert legacy.RetryOptions.MaxWaitTimeInSeconds == seconds
+@pytest.mark.parametrize("backend", ["rust", "core-python"])
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("seconds", [0, 2.5, 10.0, None])
+def test_throttle_wait_threshold_reaches_both_policies_rust(
+    construct_client,
+    backend,
+    from_connection_string,
+    seconds,
+):
+    client, legacy = construct_client(
+        _backend=backend,
+        from_connection_string=from_connection_string,
+        connection_policy=configured_policy(),
+        retry_throttle_total=5,
+        throttle_retry_wait_threshold_seconds=seconds,
+    )
+    expected = 12 if seconds is None else seconds
+    if backend == "rust":
+        assert client._adapter._client_config.throttling_max_retry_count == 5
+        assert client._adapter._client_config.throttling_max_retry_wait_time_seconds == expected
+    assert legacy.RetryOptions.MaxWaitTimeInSeconds == expected
+
+
+@pytest.mark.parametrize("backend", ["rust", "core-python"])
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize(
+    "options",
+    [
+        {"retry_throttle_backoff_max": None},
+        {"retry_throttle_backoff_max": 2.5},
+        {"retry_throttle_backoff_max": 0, "throttle_retry_wait_threshold_seconds": 1},
+        {"request_options": {"retry_throttle_backoff_max": None}},
+        {"feed_options": {"retry_throttle_backoff_max": None}},
+        {"options": {"retry_throttle_backoff_max": None}},
+    ],
+)
+def test_old_throttle_wait_name_fails_before_startup_rust(
+    client_module,
+    monkeypatch,
+    backend,
+    from_connection_string,
+    options,
+):
+    connection = MagicMock()
+    factory = MagicMock()
+    monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
+    factory_name = "make_async_backend" if client_module is async_client else "make_backend"
+    monkeypatch.setattr(client_module, factory_name, factory)
+    with pytest.raises(
+        TypeError,
+        match="retry_throttle_backoff_max has been renamed; use throttle_retry_wait_threshold_seconds",
+    ):
+        if from_connection_string:
+            client_module.CosmosClient.from_connection_string(
+                "AccountEndpoint=https://policy.invalid;AccountKey=ZmFrZQ==;",
+                _backend=backend,
+                **options,
+            )
+        else:
+            client_module.CosmosClient(
+                "https://policy.invalid",
+                "ZmFrZQ==",
+                _backend=backend,
+                **options,
+            )
+    factory.assert_not_called()
+    connection.assert_not_called()
 
 
 def test_policy_zero_retry_limits_are_not_replaced_by_defaults_rust(construct_client):
@@ -283,10 +474,10 @@ def test_policy_zero_retry_limits_are_not_replaced_by_defaults_rust(construct_cl
     ({"retry_total": 7, "retry_backoff_max": 20}, 7, 20),
     ({"retry_total": 0, "retry_backoff_max": 0}, 0, 0),
     ({"retry_total": 7, "retry_backoff_max": 20,
-      "retry_throttle_total": 0, "retry_throttle_backoff_max": 0}, 0, 0),
+      "retry_throttle_total": 0, "throttle_retry_wait_threshold_seconds": 0}, 0, 0),
     ({"retry_total": 7, "retry_throttle_total": None,
-      "retry_backoff_max": 20, "retry_throttle_backoff_max": None}, 7, 20),
-    ({"retry_throttle_total": None, "retry_throttle_backoff_max": None}, 3, 12),
+      "retry_backoff_max": 20, "throttle_retry_wait_threshold_seconds": None}, 7, 20),
+    ({"retry_throttle_total": None, "throttle_retry_wait_threshold_seconds": None}, 3, 12),
 ])
 def test_retry_precedence_includes_zero_rust(construct_client, backend, overrides, count, wait):
     """The specific retry keyword beats the general one, the general one beats the policy,

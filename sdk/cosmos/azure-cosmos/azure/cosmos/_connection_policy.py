@@ -19,9 +19,23 @@ from .documents import ConnectionPolicy
 from ._backend.capabilities import reject_removed_options
 
 
-def reject_rust_routing_options(kwargs: Mapping[str, Any]) -> None:
-    """Reject client routing switches; Rust owns discovery and multi-write routing."""
+def reject_rust_connection_policy_options(kwargs: Mapping[str, Any]) -> None:
+    """Reject client retry and routing controls that Rust cannot honor."""
+    for keyword in ("retry_connect", "retry_read"):
+        if keyword in kwargs:
+            raise TypeError(
+                f"{keyword} is not supported by Rust-backed clients; omit this keyword. "
+                "The Rust driver does not expose an equivalent connection/read retry-count control."
+            )
     policy = kwargs.get("connection_policy")
+    if "retry_fixed_interval" in kwargs or (
+        policy is not None and policy.RetryOptions.FixedRetryIntervalInMilliseconds is not None
+    ):
+        raise TypeError(
+            "Fixed throttle retry intervals are not supported by Rust-backed clients; "
+            "omit retry_fixed_interval and leave "
+            "connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds unset."
+        )
     for keyword, attribute in (
         ("enable_endpoint_discovery", "EnableEndpointDiscovery"),
         ("multiple_write_locations", "UseMultipleWriteLocations"),
@@ -109,7 +123,7 @@ def resolve_connection_policy_kwargs(kwargs: Mapping[str, Any]) -> dict[str, Any
 
     for throttle_keyword, generic_keyword, attribute in (
         ("retry_throttle_total", "retry_total", "MaxRetryAttemptCount"),
-        ("retry_throttle_backoff_max", "retry_backoff_max", "MaxWaitTimeInSeconds"),
+        ("throttle_retry_wait_threshold_seconds", "retry_backoff_max", "MaxWaitTimeInSeconds"),
     ):
         policy_value = getattr(policy.RetryOptions, attribute)
         default = None if policy_value == getattr(stock.RetryOptions, attribute) else policy_value

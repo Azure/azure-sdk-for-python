@@ -283,8 +283,38 @@ RETIRED_QUERY_SOURCES = {
     for method in methods
 }
 
+RETIRED_CONNECTION_STRING_SOURCES = {
+    "tests/test_utils.py::TestsUtils.test_connection_string": (
+        "tests/from_connection_string/sync/legacy/test_from_connection_string.py"
+        "::TestsUtils.test_connection_string_rust"
+    ),
+    "tests/test_item_body_serialization.py::TestClientOptionWiring.test_sync_connection_string_forwards_option": (
+        "tests/from_connection_string/sync/legacy/test_from_connection_string.py"
+        "::TestClientOptionWiring.test_sync_connection_string_forwards_option_rust"
+    ),
+    "tests/test_item_body_serialization.py::TestClientOptionWiring.test_async_connection_string_forwards_option": (
+        "tests/from_connection_string/aio/legacy/test_from_connection_string.py"
+        "::TestClientOptionWiring.test_async_connection_string_forwards_option_rust"
+    ),
+    (
+        "tests/test_user_agent_overwrite_regression.py"
+        "::TestUserAgentOverwriteRegression.test_overwrite_via_from_connection_string"
+    ): (
+        "tests/from_connection_string/sync/legacy/test_from_connection_string.py"
+        "::TestUserAgentOverwriteRegression.test_overwrite_via_from_connection_string_rust"
+    ),
+    (
+        "tests/test_user_agent_overwrite_regression_async.py"
+        "::TestUserAgentOverwriteRegressionAsync.test_overwrite_via_from_connection_string_async"
+    ): (
+        "tests/from_connection_string/aio/legacy/test_from_connection_string.py"
+        "::TestUserAgentOverwriteRegressionAsync.test_overwrite_via_from_connection_string_async_rust"
+    ),
+}
+
 RETIRED_TEST_SOURCES = {
     **RETIRED_THROUGHPUT_SOURCES,
     **RETIRED_SESSION_TOKEN_SOURCES,
     **RETIRED_QUERY_SOURCES,
+    **RETIRED_CONNECTION_STRING_SOURCES,
 }

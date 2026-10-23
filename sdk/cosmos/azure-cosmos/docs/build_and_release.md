@@ -1731,11 +1731,13 @@ installation, and `cosmos-sdk-client.yml` declares and forwards the installer
 inputs to `archetype-sdk-client.yml`. That existing toolchain support remains
 after the rollback.
 
-The test-job integration is different. The SDK entry still supplies
-`RunRustTests: true`, but the restored Cosmos template does not declare that
-input. **The pipeline cannot accept the SDK entry as written until Central
-adds this support.** The test template and runner remain SDK-owned files;
-their presence alone does not connect them to the shared pipeline.
+The test-job integration is different. The restored Cosmos template does not
+declare `RunRustTests`. Supplying that input caused Cosmos CI build 6990313
+to fail during YAML validation, before any jobs could run. The SDK entry now
+omits the unsupported input. **Removing it addresses that validation failure;
+it does not connect the additional Rust test jobs or prove that tests pass.**
+The test template and runner remain SDK-owned files. The SDK team must restore
+the opt-in only after Central integrates support for those jobs.
 
 These template inputs are named settings passed from one file to the next.
 A **feed** is a service from which tools download packages or other build
@@ -1747,7 +1749,6 @@ inputs. Here, one input tells the installer which feed supplies the compiler.
 | `MsRustWorkingDirectory` | Find `rust-toolchain.toml` in this package directory and use its selected compiler version |
 | `MsRustToolchainFeed` | Download the toolchain from this package source, explained below |
 | `MsRustAdditionalTargets` | Also install support for compiling Windows ARM64 on the Windows x64 build machine |
-| `RunRustTests` | Request the required Rust-integration test jobs described below; Central support for this input is pending |
 
 The first three are required to enable the current installer successfully.
 The fourth is needed for our requested Windows ARM64 wheel; it is not a
@@ -1867,13 +1868,19 @@ identified in the report; the pipeline does not use it as an execution gate.
 
 | File | Owner and responsibility |
 |---|---|
-| `sdk\cosmos\ci.yml` | SDK team requests the required jobs with `RunRustTests: true` |
+| `sdk\cosmos\ci.yml` | SDK team restores `RunRustTests: true` only after Central integrates support; the unsupported input is currently omitted |
 | `sdk\cosmos\templates\rust-tests.yml` | SDK team defines dependencies, emulator setup, commands, and result publication |
 | `sdk\cosmos\azure-cosmos\scripts\run_rust_ci.py` | SDK team owns suite discovery and collection/execution assertions |
 | `eng\pipelines\templates\stages\cosmos-sdk-client.yml` | Pending Central change: accept the Cosmos opt-in and select the SDK job template |
 | `eng\pipelines\templates\stages\archetype-sdk-client.yml` | Pending Central change: accept additional jobs in the existing Build stage without changing other callers |
 
-Central must implement and integrate these shared-template changes. Local
+Central must implement and integrate these shared-template changes. The
+opt-in must default to disabled so other callers keep their existing behavior.
+When enabled, it must include both SDK-owned jobs in the Build stage alongside
+the existing emulator matrix. Accepting the parameter without adding the jobs
+does not deliver the required test coverage.
+
+Local
 validation of the SDK runner and YAML does not replace an Azure Pipelines run
 using the authenticated toolchain feed and the built wheel. Newly selected
 test failures must be investigated rather than excluded to make the gate
@@ -2480,7 +2487,7 @@ this branch's shared implementation:
 | Work | Central-owned files | What must be delivered |
 |---|---|---|
 | Synchronized version updates | `eng\tools\azure-sdk-tools\ci_tools\versioning\*`, `packaging_tools\sdk_update_version.py` under the same tool directory | Honor the SDK setting, update all version copies and stability labels, and restore files if the update fails |
-| Required Rust test jobs | `eng\pipelines\templates\stages\cosmos-sdk-client.yml`, `archetype-sdk-client.yml` | Accept `RunRustTests` and connect the SDK's required jobs to the Build stage |
+| Required Rust test jobs | `eng\pipelines\templates\stages\cosmos-sdk-client.yml`, `archetype-sdk-client.yml` | Add `RunRustTests` with a disabled default and connect both SDK-owned jobs to the Build stage without replacing the existing emulator matrix |
 | Documentation installation | `eng\tools\azure-sdk-tools\azpysdk\sphinx.py` | Keep sdist sources for page generation but install a compatible built wheel for compiled packages |
 | Overloaded method documentation | Shared configuration under `doc\sphinx` | Resolve types from the original method without changing SDK tracing or suppressing warnings |
 | Multi-wheel namespace inspection | `eng\scripts\Save-Package-Namespaces-Property.ps1` | Inspect one exact-version wheel instead of passing several files to a single-archive helper |
@@ -2488,9 +2495,10 @@ this branch's shared implementation:
 
 Each change needs Central-owned, tracked regression coverage and integration
 into the source used by the pipeline. A saved patch or an SDK opt-in is not
-evidence that the shared implementation exists. In particular, the current
-`RunRustTests` input blocks template validation, and the current publishers
-do not enforce the source-archive restriction.
+evidence that the shared implementation exists. The unsupported `RunRustTests`
+input has been removed from the SDK entry, but the additional Rust jobs remain
+disconnected until Central integrates them. The current publishers still do
+not enforce the source-archive restriction.
 
 ### Treat the Rust-backed release as a v5 upgrade
 
@@ -2502,9 +2510,7 @@ approval.
 
 For example, a customer app using Cosmos resource tokens, one of the previous
 ways to supply access credentials, cannot move unchanged to this release.
-The release notes and migration guidance must explain that
-removal and link to the
-[resource-token API decision](api-review.md#22---excluding-resource-tokens-and-cosmos-user-and-permission-apis).
+The release notes and migration guidance must explain that removal.
 They must explain the supported authentication choices and the access-model
 changes needed for migration, not present an account key or Microsoft Entra
 credential as a drop-in replacement. Other intentional removals need the same

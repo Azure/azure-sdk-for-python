@@ -1795,14 +1795,18 @@
         "sdk/cosmos/azure-cosmos/scripts/v5/**"
       ],
       "words": [
+        "athrow",
         "capfd",
         "capsys",
         "corepy",
         "falsey",
         "hdrs",
+        "inprocess",
         "localns",
+        "makepyfile",
         "mypkg",
         "noresponse",
+        "pytester",
         "redef",
         "reprs",
         "uncoalesced",
@@ -1813,8 +1817,24 @@
         "unmaterialized",
         "vnext",
         "xfailed",
+        "xfails",
         "xpassed",
         "XPASS"
+      ]
+    },
+    {
+      "filename": "sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py",
+      "words": [
+        "xfails",
+        "xpass"
+      ]
+    },
+    {
+      "filename": "sdk/cosmos/templates/rust-tests.yml",
+      "words": [
+        "msrust",
+        "noexplorer",
+        "noui"
       ]
     },
     {

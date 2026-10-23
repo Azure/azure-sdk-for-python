@@ -368,10 +368,10 @@ class TestRetryPolicy(unittest.TestCase):
                 _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_resource_throttle_retry_policy_max_throttle_backoff(self):
-        # Tests that kwarg retry_throttle_backoff_max sets the throttle max backoff retry independent of connection max backoff retry
+        # The throttle waiting threshold is independent of connection retry backoff.
         max_throttle_backoff_in_seconds = 10
 
-        with cosmos_client.CosmosClient(self.host, self.masterKey, retry_throttle_backoff_max=max_throttle_backoff_in_seconds) as client:
+        with cosmos_client.CosmosClient(self.host, self.masterKey, throttle_retry_wait_threshold_seconds=max_throttle_backoff_in_seconds) as client:
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
             container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
             document_definition = {'id': str(uuid.uuid4()),
@@ -393,12 +393,12 @@ class TestRetryPolicy(unittest.TestCase):
                 _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_resource_throttle_retry_policy_max_backoff_precedence(self):
-        # Tests to ensure kwargs precedence is being respected between retry_backoff_max and retry_throttle_backoff_max
+        # The throttle-specific setting takes precedence over the generic alias.
         max_backoff_in_seconds = 10
         max_throttle_backoff_in_seconds = 5
 
         with cosmos_client.CosmosClient(self.host, self.masterKey, retry_backoff_max=max_backoff_in_seconds,
-                                        retry_throttle_backoff_max=max_throttle_backoff_in_seconds) as client:
+                                        throttle_retry_wait_threshold_seconds=max_throttle_backoff_in_seconds) as client:
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
             container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
             document_definition = {'id': str(uuid.uuid4()),
@@ -429,7 +429,7 @@ class TestRetryPolicy(unittest.TestCase):
         max_backoff_in_seconds = 30
 
         with cosmos_client.CosmosClient(self.host, self.masterKey, retry_backoff_max=max_backoff_in_seconds,
-                                        retry_throttle_backoff_max=max_throttle_backoff_in_seconds,
+                                        throttle_retry_wait_threshold_seconds=max_throttle_backoff_in_seconds,
                                         retry_throttle_total=max_retry_throttle_retries,
                                         retry_total=max_total_retries) as client:
 

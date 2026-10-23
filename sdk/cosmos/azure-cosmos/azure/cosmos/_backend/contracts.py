@@ -180,8 +180,8 @@ class PreparedClientConfig(_ValidatedSettings):
     #: down. Comes from retry_throttle_total or retry_total. None uses the driver default.
     throttling_max_retry_count: Optional[int] = None
 
-    #: Maximum total seconds spent waiting between HTTP 429 retries. Comes from
-    #: retry_throttle_backoff_max or retry_backoff_max. None uses the driver default.
+    #: Threshold in seconds for ordinary HTTP 429 retry waiting, not a cap on final-retry waiting.
+    #: Comes from throttle_retry_wait_threshold_seconds or retry_backoff_max. None uses the driver default.
     throttling_max_retry_wait_time_seconds: Optional[float] = None
 
     #: Delay before the driver may send another request to a different region

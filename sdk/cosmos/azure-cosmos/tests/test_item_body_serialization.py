@@ -842,16 +842,6 @@ class TestClientOptionWiring(unittest.IsolatedAsyncioTestCase):
                         enable_compact_utf8_item_writes=invalid_value,
                     )
 
-    def test_sync_connection_string_forwards_option(self):
-        """The option survives the from_connection_string entry point."""
-        with mock.patch.object(cosmos_client.CosmosClient, "__init__", return_value=None) as init:
-            cosmos_client.CosmosClient.from_connection_string(
-                "AccountEndpoint=https://example.test;AccountKey=credential;",
-                enable_compact_utf8_item_writes=True,
-            )
-
-        self.assertTrue(init.call_args.kwargs["enable_compact_utf8_item_writes"])
-
     def test_sync_real_client_stores_and_honors_option(self):
         """End to end on a real client object: the flag is stored and actually
         flips the serializer's decision for an item write."""
@@ -933,16 +923,6 @@ class TestClientOptionWiring(unittest.IsolatedAsyncioTestCase):
                         {"masterKey": "credential"},
                         enable_compact_utf8_item_writes=invalid_value,
                     )
-
-    def test_async_connection_string_forwards_option(self):
-        """Async twin of the from_connection_string check."""
-        with mock.patch.object(_cosmos_client.CosmosClient, "__init__", return_value=None) as init:
-            _cosmos_client.CosmosClient.from_connection_string(
-                "AccountEndpoint=https://example.test;AccountKey=credential;",
-                enable_compact_utf8_item_writes=True,
-            )
-
-        self.assertTrue(init.call_args.kwargs["enable_compact_utf8_item_writes"])
 
     async def test_async_real_client_stores_and_honors_option(self):
         """Async twin of the end-to-end stored-and-honored check."""

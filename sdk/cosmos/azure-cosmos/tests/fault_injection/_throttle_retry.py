@@ -24,10 +24,10 @@ THROTTLE_RETRY_CASES = [
     pytest.param({"retry_total": 5, "retry_throttle_total": 0}, 0, id="zero-over-alias"),
     pytest.param({"retry_total": 5, "retry_throttle_total": None}, 5, id="none-uses-alias"),
     pytest.param(
-        {"retry_throttle_total": 5, "retry_throttle_backoff_max": 2.5}, 3, id="wait-budget-limits-retries",
+        {"retry_throttle_total": 5, "throttle_retry_wait_threshold_seconds": 2.5}, 3, id="wait-budget-limits-retries",
     ),
     pytest.param(
-        {"retry_throttle_total": 5, "retry_throttle_backoff_max": 10.0}, 5, id="wait-budget-allows-retries",
+        {"retry_throttle_total": 5, "throttle_retry_wait_threshold_seconds": 10.0}, 5, id="wait-budget-allows-retries",
     ),
 ]
 

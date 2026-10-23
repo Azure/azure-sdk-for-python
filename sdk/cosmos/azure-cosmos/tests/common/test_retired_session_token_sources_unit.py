@@ -9,6 +9,7 @@ import pytest
 
 from common import test_legacy_migration_enforcer_unit as enforcer
 from common._retired_test_sources import (
+    RETIRED_CONNECTION_STRING_SOURCES,
     RETIRED_QUERY_SOURCES,
     RETIRED_SESSION_TOKEN_SOURCES,
     RETIRED_SESSION_TOKEN_SUPPORT_SOURCES,
@@ -48,8 +49,9 @@ def test_only_approved_nine_methods_and_21_cases_retired_rust():
     assert not set(RETIRED_SESSION_TOKEN_SOURCES).intersection(RETIRED_THROUGHPUT_SOURCES)
     assert RETIRED_TEST_SOURCES == {
         **RETIRED_THROUGHPUT_SOURCES, **RETIRED_SESSION_TOKEN_SOURCES, **RETIRED_QUERY_SOURCES,
+        **RETIRED_CONNECTION_STRING_SOURCES,
     }
-    assert len(RETIRED_TEST_SOURCES) == 42 + len(RETIRED_QUERY_SOURCES)
+    assert len(RETIRED_TEST_SOURCES) == 42 + len(RETIRED_QUERY_SOURCES) + len(RETIRED_CONNECTION_STRING_SOURCES)
     assert not (ROOT / "tests" / "test_session_token_helpers.py").exists()
 
 

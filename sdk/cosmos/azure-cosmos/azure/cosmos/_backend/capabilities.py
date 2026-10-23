@@ -29,6 +29,11 @@ def reject_removed_options(kwargs: Mapping[str, Any]) -> None:
     for options in (kwargs, kwargs.get("request_options"), kwargs.get("feed_options"), kwargs.get("options")):
         if not isinstance(options, Mapping):
             continue
+        if "retry_throttle_backoff_max" in options:
+            raise TypeError(
+                "retry_throttle_backoff_max has been renamed; "
+                "use throttle_retry_wait_threshold_seconds with the same value in seconds."
+            )
         if "read_timeout" in options:
             raise TypeError("read_timeout has been removed; use timeout for the overall operation budget.")
         for name in ("raw_request_hook", "raw_response_hook"):

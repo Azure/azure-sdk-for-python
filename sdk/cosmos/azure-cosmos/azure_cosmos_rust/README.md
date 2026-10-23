@@ -247,7 +247,7 @@ per Rust runtime under each tracing setting. Their returned bounds matched
 the pre-change evidence. The owned database and both containers were deleted;
 no Azure export was exercised. This establishes telemetry behavior, not full
 migration parity. The approved telemetry-only scope preserves the
-[existing range-calculation difference](../docs/V5/testing/rust-telemetry.md#keep-the-existing-hierarchical-key-difference-visible).
+existing range-calculation difference.
 Later reruns with additional binding-counter and no-fallback assertions could
 not provision the first container: the loopback service returned 503/1007.
 Those additional live assertions remain unverified. Both reruns deleted their
@@ -393,9 +393,7 @@ populated baseline remains blocked by a `503` while creating its first
 container; both owned databases from that attempt were deleted. Controlled
 container tests passed 608 cases with 106 skips, but they do not replace
 the missing populated compiled comparison. The release build and 27 Rust
-response tests passed; Clippy completed with warnings. See the
-[telemetry progress guide](../docs/V5/testing/rust-telemetry.md#record-container-listing-while-pages-arrive)
-for the remaining proof and broader-check limitations. No Azure export is
+response tests passed; Clippy completed with warnings. No Azure export is
 claimed.
 
 Bite 52 adds `DatabaseProxy.query_containers.fetch` using the same pager.
@@ -413,9 +411,7 @@ Two copied original no-match test bodies ran eight times against an empty
 owned database. Populated setup returned `503/1007` on the first container;
 that database and all empty-proof databases were identity-checked and
 deleted, with no containers created. Nonempty query results and replay
-remain unproved against the compiled binding. See the
-[query telemetry progress](../docs/V5/testing/rust-telemetry.md#record-a-query-for-the-orders-container)
-for the controlled coverage and remaining original functional comparisons.
+remain unproved against the compiled binding.
 
 Bite 53 adds `ContainerProxy.read_all_items.fetch` for each internal fetch
 on the retained Rust path. The customer app can enumerate `sales.orders`
@@ -436,8 +432,6 @@ Bite 54 adds retained item queries. Change-feed calls remain outside it.
 The rebuilt extension passed populated legacy/Rust enumeration and replay,
 including all six copied original functional test bodies across recording
 modes. Owned databases and containers were identity-checked and deleted.
-See the [read-all telemetry progress](../docs/V5/testing/rust-telemetry.md#record-orders-as-the-customer-app-reads-the-container)
-for the executed comparisons, diagnostic limits and broader-check findings.
 No Azure export is claimed.
 
 Bite 54 adds sync/async `ContainerProxy.query_items.fetch` using the same
@@ -450,10 +444,7 @@ legacy query path are unchanged.
 Compiled before/after comparisons preserved existing customer outcomes,
 including aggregate and unbounded DISTINCT limitations and the original
 invalid-SQL header-parity failures. These are recorded differences, not
-claims of full legacy parity. See the
-[item-query telemetry progress](../docs/V5/testing/rust-telemetry.md#record-a-query-for-one-customers-orders)
-for the evidence, unchanged first-fetch diagnostic limits and remaining
-migration gaps. No Rust driver or Rust SDK changes were made.
+claims of full legacy parity. No Rust driver or Rust SDK changes were made.
 
 Exports are registered in `src/lib.rs` (`#[pymodule] fn _rust(...)`).
 Current surface:

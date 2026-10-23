@@ -12,6 +12,9 @@
 
 #### Breaking Changes
 
+* Rust-backed sync/async clients and connection-string factories now reject `retry_connect` and `retry_read`, including `None` and zero, with `TypeError` pending retry-control parity review; legacy Python behavior is unchanged.
+* Rust-backed sync/async clients and connection-string factories reject `retry_fixed_interval`, including `None` and zero, and non-`None` grouped fixed retry intervals with `TypeError`; legacy Python behavior is unchanged.
+* Renamed `retry_throttle_backoff_max` to `throttle_retry_wait_threshold_seconds` on synchronous and asynchronous clients and connection-string factories; the old name raises `TypeError` with migration guidance on both backends, while retry timing is unchanged.
 * Rust-backed database and container `replace_throughput()` now reject unsupported inputs before metadata requests instead of falling back to legacy Python.
 * Removed `ContainerProxy.is_system_key` from synchronous and asynchronous clients on both backends. Legacy system-key containers are outside the release scope; the public compatibility property is no longer available.
 * Removed `raw_request_hook` and `raw_response_hook` from both legacy and Rust-backed clients, including constructor and per-operation inputs. Supplying either option, including `None`, raises `TypeError`. Use supported results, response headers, tracing, and diagnostics; the ordinary `response_hook` is unchanged.

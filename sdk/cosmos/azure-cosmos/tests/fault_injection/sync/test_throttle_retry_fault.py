@@ -27,7 +27,7 @@ def test_point_read_throttle_retry_limit_rust(owned_target, retry_settings, retr
     item = {"id": item_id, "pk": item_id, "name": "order-17", "state": "confirmed"}
     observer.create_item(item)
     rule_id = "throttle-read-" + uuid.uuid4().hex
-    wait_budget = "retry_throttle_backoff_max" in retry_settings
+    wait_budget = "throttle_retry_wait_threshold_seconds" in retry_settings
     rule = throttle_rule(rule_id, observer.id, inject, wait_budget=wait_budget)
     with CosmosClient(
         os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"],

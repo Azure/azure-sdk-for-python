@@ -113,6 +113,86 @@ client = CosmosClient(
 Microsoft Entra token credential. Reuse the client for later operations and
 close it when finished. The async client uses `async with` for its lifetime.
 
+**Throttle retry waiting threshold in seconds**
+
+Alpha Bank reads `order-42`. If the service backend returns HTTP 429 asking the
+SDK to slow down, the customer wants to configure the waiting threshold used
+for throttle retry decisions:
+
+```python
+client = CosmosClient(
+    endpoint,
+    credential=key,
+    retry_throttle_total=3,
+    throttle_retry_wait_threshold_seconds=1,
+)
+```
+
+`retry_throttle_total=3` allows up to three throttle retries.
+`throttle_retry_wait_threshold_seconds=1` supplies a one-second threshold
+for ordinary throttle retry waiting. It does not request a one-second delay
+before every retry or a one-second limit on the entire operation.
+
+**Approved rename:** Replace `retry_throttle_backoff_max` with
+`throttle_retry_wait_threshold_seconds`, keeping the same numeric value in
+seconds. The new name identifies the purpose and unit; it does not change retry
+timing. The accepted Rust behavior still permits a final retry using remaining
+overall operation time, so this threshold is not a strict cap on all waiting.
+
+Both synchronous and asynchronous clients, including their
+`from_connection_string` factories, reject the old name with `TypeError` and
+point to the replacement. This applies on both backends, even when the old
+value is `None` or the new name is also supplied. There is no deprecated alias.
+
+Existing precedence is unchanged: a non-`None` throttle-specific value takes
+precedence over `retry_backoff_max`, then the grouped retry-policy setting.
+Zero remains an explicit value; omission or `None` leaves those existing
+fallbacks in effect. This rename does not restore unrelated connection-retry
+controls on Rust.
+
+**Fixed throttle retry delays are excluded on Rust.** Alpha Bank supplies
+`retry_fixed_interval=500` to request a 500-millisecond wait before each
+permitted throttle retry. Rust-backed clients now raise `TypeError` during
+construction rather than accept a value that cannot configure the driver.
+Omit this keyword, including when its value would be `None` or zero; the
+driver owns throttle retry delays.
+
+This decision applies to synchronous and asynchronous clients, their
+`from_connection_string` factories, and selection of Rust through either
+the backend argument or environment. A non-`None`
+`connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds` is
+rejected too, so a grouped policy cannot silently request the excluded
+behavior. An unchanged policy with the default `None` remains usable.
+Rejection happens before backend or connection creation and does not mutate
+the supplied policy.
+
+The legacy Python backend retains the fixed-delay setting and its existing
+behavior. Rust still supports `retry_throttle_total` and
+`throttle_retry_wait_threshold_seconds`; neither is a fixed-delay replacement.
+This closes only the fixed-delay requirement in Gap 25, not its hedged-read
+execution controls.
+
+**Connection/read retry counts are rejected on Rust pending review.** Alpha
+Bank supplies `retry_connect=0` and `retry_read=0` because it does not want
+the connection-retry policy to repeat those failures. The Rust driver has no
+equivalent pair of controls, so accepting the values would imply a guarantee
+the SDK cannot provide.
+
+Rust-backed synchronous and asynchronous constructors, including their
+`from_connection_string` factories, now raise `TypeError` when either keyword
+is present. This includes `None`, zero and positive counts, whether Rust is
+selected by argument or environment. The error identifies the keyword and
+tells the customer to omit it. Rejection happens before constructing the
+legacy connection policy, backend or connection; the SDK does not configure
+a legacy retry count and then ignore it for Rust requests.
+
+Omitting the keywords leaves the driver's retry behavior unchanged; it does
+not disable retries. Legacy Python continues to honor these settings.
+This is an interim safeguard, not a permanent compatibility exclusion:
+Gap 26 remains open until driver support or an explicit exclusion is agreed.
+It does not change the treatment of retry-delay settings or customer-supplied
+retry policies, which remain separate review topics.
+
 **Resource-token authentication is omitted.** The Rust driver supports account
 keys and Entra, not Cosmos resource tokens. Both backends reject resource-token
 maps, permission feeds, and `resourceTokens` or `permissionFeed` fields with
@@ -2618,8 +2698,7 @@ does not fix the pinned driver: Gateway V2 encoding and automatic session-token
 selection still resolve from account settings. The driver needs a supported
 ordinary-level path, and the binding must use it without substituting
 strategies. Writes remain account-governed. No runtime fix is included in this
-review; [Gap 8](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-8) records ownership,
-pinned evidence and required legacy-versus-Rust comparisons.
+review.
 
 **Conditional results:** `IfModified` uses If-None-Match; an unchanged item
 returns an empty `CosmosDict` on 304. If-Match on item GET is service-enforced,
@@ -4298,7 +4377,7 @@ as resolved or generalize one API's behavior to every operation.
 ### Throttle retry waiting follows the driver policy
 
 The Rust-backed contract accepts driver-owned retry timing rather than exact
-legacy Python delays. `retry_throttle_backoff_max` governs ordinary throttle
+legacy Python delays. `throttle_retry_wait_threshold_seconds` governs ordinary throttle
 waiting, not a strict cap on every retry delay: a final retry can use the
 remaining overall operation budget. Retry-count and operation-timeout limits
 still apply.

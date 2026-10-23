@@ -18,8 +18,6 @@ import sphinx_rtd_theme
 import glob
 from shutil import copyfile
 
-sys.path.insert(0, os.path.dirname(__file__))
-
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -58,7 +56,7 @@ for example_file in all_files:
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctest',
               'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon',
-              'myst_parser', 'sphinxcontrib.jquery', '_autodoc']
+              'myst_parser', 'sphinxcontrib.jquery']
 
 intersphinx_mapping = {
     # Dependencies

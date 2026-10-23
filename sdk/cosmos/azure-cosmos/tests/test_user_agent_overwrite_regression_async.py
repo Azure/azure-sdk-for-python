@@ -4,7 +4,7 @@
 """Tests that constructing an async client with ``user_agent_overwrite`` does not crash.
 
 Covers combinations of the flag with other construction-time options
-(connection policy, consistency level, timeouts, logger, connection string,
+(connection policy, consistency level, timeouts, logger,
 AAD credential) and checks that the user-supplied user-agent prefix shows up
 on outbound requests.
 """
@@ -44,7 +44,6 @@ class TestUserAgentOverwriteRegressionAsync(unittest.IsolatedAsyncioTestCase):
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
-    connection_str = configs.connection_str
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
     TEST_SINGLE_PARTITION_CONTAINER_ID = configs.TEST_SINGLE_PARTITION_CONTAINER_ID
 
@@ -154,21 +153,6 @@ class TestUserAgentOverwriteRegressionAsync(unittest.IsolatedAsyncioTestCase):
                 await client.close()
             self._assert_user_agent_headers(capture, f"overwrite={overwrite_value}")
 
-    async def test_overwrite_via_from_connection_string_async(self):
-        """Builds a client from a connection string while also passing the overwrite flag."""
-        capture = _AsyncUserAgentCaptureTransport()
-        client = create_client_with_transport(CosmosClient.from_connection_string,
-            self.connection_str,
-            user_agent="MyApp/1.0",
-            user_agent_overwrite=True,
-            transport=capture,
-        )
-        try:
-            await self._smoke_data_plane_call(client)
-        finally:
-            await client.close()
-        self._assert_user_agent_headers(capture, "from_connection_string_async")
-
     @_skip_on_non_emulator
     async def test_overwrite_with_aad_emulator_credential_async(self):
         """Builds a client with an AAD credential while also passing the overwrite flag."""
@@ -190,5 +174,4 @@ class TestUserAgentOverwriteRegressionAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
 

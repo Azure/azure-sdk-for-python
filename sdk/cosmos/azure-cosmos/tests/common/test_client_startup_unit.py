@@ -296,7 +296,7 @@ def test_invalid_retry_wait_rejected_rust(value):
 
     This setting is a total retry-wait budget, not the longest individual delay.
     """
-    with pytest.raises(ValueError, match="retry_throttle_backoff_max"):
+    with pytest.raises(ValueError, match="throttle_retry_wait_threshold_seconds"):
         build_client_config(None, throttling_max_retry_wait_time_seconds=value)
 
 
