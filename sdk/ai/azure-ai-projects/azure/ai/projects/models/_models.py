@@ -6942,7 +6942,6 @@ class ComparisonFilter(_Model):  # pylint: disable=docstring-keyword-should-matc
      * `in`: in
      * `nin`: not in. Required. Is one of the following types: Literal["eq"], Literal["ne"],
        Literal["gt"], Literal["gte"], Literal["lt"], Literal["lte"], Literal["in"], Literal["nin"]
-
     :vartype type: str or str or str or str or str or str or str or str
     :ivar key: The key to compare against the value. Required.
     :vartype key: str
@@ -14180,58 +14179,6 @@ class LiveDataChannelConfigParam(_Model):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
-class LiveDelegationItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Metadata for work delegated by the Live model. Client delegations are handled by your
-    application; Responses delegations run on the configured backend.
-
-    :ivar id: The unique ID of the delegation. Use this as delegation_id when replying to
-     client-owned work or correlating Responses events. Required.
-    :vartype id: str
-    :ivar type: The object type, always ``delegation``. Required. Default value is "delegation".
-    :vartype type: str
-    :ivar target: Where the Live model delegated the work: ``client`` for your application, or
-     ``responses`` for the configured Responses backend. Required. Is either a Literal["client"]
-     type or a Literal["responses"] type.
-    :vartype target: str or str
-    :ivar response_id: The ID of the Responses API response associated with a Responses delegation.
-     Omitted for client delegations.
-    :vartype response_id: str
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unique ID of the delegation. Use this as delegation_id when replying to client-owned work
-     or correlating Responses events. Required."""
-    type: Literal["delegation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The object type, always ``delegation``. Required. Default value is \"delegation\"."""
-    target: Literal["client", "responses"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Where the Live model delegated the work: ``client`` for your application, or ``responses`` for
-     the configured Responses backend. Required. Is either a Literal[\"client\"] type or a
-     Literal[\"responses\"] type."""
-    response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the Responses API response associated with a Responses delegation. Omitted for client
-     delegations."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        target: Literal["client", "responses"],
-        response_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type: Literal["delegation"] = "delegation"
-
-
 class LiveDelegationReasoningInputParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reasoning options for Responses requests made on behalf of the Live session.
 
@@ -15411,7 +15358,7 @@ class LiveServerEventLiveDelegationCreated(
     :vartype offset_ms: int
     :ivar delegation: The delegated work identifier and destination. This object contains metadata,
      not the task text. Required.
-    :vartype delegation: ~azure.ai.projects.models.LiveDelegationItem
+    :vartype delegation: ~azure.ai.projects.models.VoiceAgentLiveDelegationItem
     """
 
     event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -15423,7 +15370,9 @@ class LiveServerEventLiveDelegationCreated(
     offset_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The position on the Live session timeline where the delegation was created, in milliseconds
      from the beginning of the session. Required."""
-    delegation: "_models.LiveDelegationItem" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    delegation: "_models.VoiceAgentLiveDelegationItem" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The delegated work identifier and destination. This object contains metadata, not the task
      text. Required."""
 
@@ -15433,7 +15382,7 @@ class LiveServerEventLiveDelegationCreated(
         *,
         event_id: str,
         offset_ms: int,
-        delegation: "_models.LiveDelegationItem",
+        delegation: "_models.VoiceAgentLiveDelegationItem",
         client_event_id: Optional[str] = None,
     ) -> None: ...
 
@@ -15901,7 +15850,7 @@ class LiveServerEventLiveSessionClosed(
      Literal["connection_lost"]
     :vartype reason: str or str or str or str or str
     :ivar session: Required.
-    :vartype session: ~azure.ai.projects.models.LiveSessionResourceParam
+    :vartype session: ~azure.ai.projects.models.VoiceAgentLiveSessionResource
     :ivar usage: The final cumulative Live audio usage after session finalization. Required.
     :vartype usage: ~azure.ai.projects.models.LiveSessionUsage
     """
@@ -15921,7 +15870,9 @@ class LiveServerEventLiveSessionClosed(
      disconnection. Required. Is one of the following types: Literal[\"close_requested\"],
      Literal[\"expired\"], Literal[\"content\"], Literal[\"remote_hangup\"],
      Literal[\"connection_lost\"]"""
-    session: "_models.LiveSessionResourceParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    session: "_models.VoiceAgentLiveSessionResource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
     usage: "_models.LiveSessionUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The final cumulative Live audio usage after session finalization. Required."""
@@ -15932,7 +15883,7 @@ class LiveServerEventLiveSessionClosed(
         *,
         event_id: str,
         reason: Literal["close_requested", "expired", "content", "remote_hangup", "connection_lost"],
-        session: "_models.LiveSessionResourceParam",
+        session: "_models.VoiceAgentLiveSessionResource",
         usage: "_models.LiveSessionUsage",
         client_event_id: Optional[str] = None,
     ) -> None: ...
@@ -15963,7 +15914,7 @@ class LiveServerEventLiveSessionStarted(
      when supplied.
     :vartype client_event_id: str
     :ivar session: Required.
-    :vartype session: ~azure.ai.projects.models.LiveSessionResourceParam
+    :vartype session: ~azure.ai.projects.models.VoiceAgentLiveSessionResource
     :ivar conversation_id: Stored conversation ID when effective store is true. Use
      protocols/voice/live/conversations; this ID differs from session.id.
     :vartype conversation_id: str
@@ -15975,7 +15926,9 @@ class LiveServerEventLiveSessionStarted(
     """The unique ID of the Live server event. Required."""
     client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The event_id of the client command associated with this server event, when supplied."""
-    session: "_models.LiveSessionResourceParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    session: "_models.VoiceAgentLiveSessionResource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
     conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Stored conversation ID when effective store is true. Use protocols/voice/live/conversations;
@@ -15986,7 +15939,7 @@ class LiveServerEventLiveSessionStarted(
         self,
         *,
         event_id: str,
-        session: "_models.LiveSessionResourceParam",
+        session: "_models.VoiceAgentLiveSessionResource",
         client_event_id: Optional[str] = None,
         conversation_id: Optional[str] = None,
     ) -> None: ...
@@ -16017,7 +15970,7 @@ class LiveServerEventLiveSessionUpdated(
      when supplied.
     :vartype client_event_id: str
     :ivar session: Required.
-    :vartype session: ~azure.ai.projects.models.LiveSessionResourceParam
+    :vartype session: ~azure.ai.projects.models.VoiceAgentLiveSessionResource
     """
 
     type: Literal[LiveServerEventType.SESSION_UPDATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -16026,7 +15979,9 @@ class LiveServerEventLiveSessionUpdated(
     """The unique ID of the Live server event. Required."""
     client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The event_id of the client command associated with this server event, when supplied."""
-    session: "_models.LiveSessionResourceParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    session: "_models.VoiceAgentLiveSessionResource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
 
     @overload
@@ -16034,7 +15989,7 @@ class LiveServerEventLiveSessionUpdated(
         self,
         *,
         event_id: str,
-        session: "_models.LiveSessionResourceParam",
+        session: "_models.VoiceAgentLiveSessionResource",
         client_event_id: Optional[str] = None,
     ) -> None: ...
 
@@ -16344,103 +16299,6 @@ class LiveSessionCreateParams(_Model):  # pylint: disable=docstring-keyword-shou
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class LiveSessionResourceParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The resolved Live session configuration and server-assigned session metadata.
-
-    :ivar model: Required. "gpt-live-1"
-    :vartype model: str or ~azure.ai.projects.models.ModelIdsLive
-    :ivar instructions:
-    :vartype instructions: str
-    :ivar input: Ordered text-only history supplied before startup. Supports developer, user, and
-     assistant messages with one text part each; at most 128 messages and 8,192 rendered tokens in
-     total.
-    :vartype input: list[~azure.ai.projects.models.LiveInitialItem]
-    :ivar audio: Startup audio configuration. Only primary WebSockets accept audio.format; WebRTC
-     and SIP negotiate their media format. Voice and format are immutable after startup.
-    :vartype audio: ~azure.ai.projects.models.LiveInitialSessionAudioParam
-    :ivar delegation: Is either a LiveClientDelegationParam type or a LiveResponsesDelegationParam
-     type.
-    :vartype delegation: ~azure.ai.projects.models.LiveClientDelegationParam or
-     ~azure.ai.projects.models.LiveResponsesDelegationParam
-    :ivar store: Whether to store the session for later forking and recording download. Defaults to
-     false for new sessions.
-    :vartype store: bool
-    :ivar client: Startup-only capabilities for an untrusted frontend attached to a unified WebRTC
-     session. Trusted sideband connections are unaffected.
-    :vartype client: ~azure.ai.projects.models.LiveClientConfigParam
-    :ivar id: The unique ID of the Live session. Use this ID for sideband connections, forking, and
-     recording download. Required.
-    :vartype id: str
-    :ivar expires_at: The Unix timestamp, in seconds, at which the Live session expires. Required.
-    :vartype expires_at: int
-    :ivar status: The status of the session snapshot. Always ``active``, including the final
-     snapshot in session.closed; use the event type to determine that the session has closed.
-     Required. Default value is "active".
-    :vartype status: str
-    """
-
-    model: Union[str, "_models.ModelIdsLive"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. \"gpt-live-1\""""
-    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    input: Optional[list["_models.LiveInitialItem"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Ordered text-only history supplied before startup. Supports developer, user, and assistant
-     messages with one text part each; at most 128 messages and 8,192 rendered tokens in total."""
-    audio: Optional["_models.LiveInitialSessionAudioParam"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Startup audio configuration. Only primary WebSockets accept audio.format; WebRTC and SIP
-     negotiate their media format. Voice and format are immutable after startup."""
-    delegation: Optional[Union["_models.LiveClientDelegationParam", "_models.LiveResponsesDelegationParam"]] = (
-        rest_field(visibility=["read", "create", "update", "delete", "query"])
-    )
-    """Is either a LiveClientDelegationParam type or a LiveResponsesDelegationParam type."""
-    store: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether to store the session for later forking and recording download. Defaults to false for
-     new sessions."""
-    client: Optional["_models.LiveClientConfigParam"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Startup-only capabilities for an untrusted frontend attached to a unified WebRTC session.
-     Trusted sideband connections are unaffected."""
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unique ID of the Live session. Use this ID for sideband connections, forking, and recording
-     download. Required."""
-    expires_at: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Unix timestamp, in seconds, at which the Live session expires. Required."""
-    status: Literal["active"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The status of the session snapshot. Always ``active``, including the final snapshot in
-     session.closed; use the event type to determine that the session has closed. Required. Default
-     value is \"active\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model: Union[str, "_models.ModelIdsLive"],
-        id: str,  # pylint: disable=redefined-builtin
-        expires_at: int,
-        instructions: Optional[str] = None,
-        input: Optional[list["_models.LiveInitialItem"]] = None,
-        audio: Optional["_models.LiveInitialSessionAudioParam"] = None,
-        delegation: Optional[Union["_models.LiveClientDelegationParam", "_models.LiveResponsesDelegationParam"]] = None,
-        store: Optional[bool] = None,
-        client: Optional["_models.LiveClientConfigParam"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.status: Literal["active"] = "active"
 
 
 class LiveSessionStartEvent(
@@ -17161,7 +17019,6 @@ class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-s
        Literal["connector_googledrive"], Literal["connector_microsoftteams"],
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
-
     :vartype connector_id: str or str or str or str or str or str or str or str
     :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
@@ -17341,7 +17198,6 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docst
        Literal["connector_googledrive"], Literal["connector_microsoftteams"],
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
-
     :vartype connector_id: str or str or str or str or str or str or str or str
     :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
@@ -22612,12 +22468,14 @@ class RealtimeServerEventConversationItemAdded(
     several cases:
 
     * When the client sends a `conversation.item.create` event.
-    * When the input audio buffer is committed. In this case the item will be a user message containing the audio from
-      the buffer.
-    * When the model is generating a Response. In this case the `conversation.item.added` event will be sent when the
-      model starts generating a specific Item, and thus it will not yet have any content (and `status` will be
-      `in_progress`). The event will include the full content of the Item (except when model is generating a Response)
-      except for audio data, which can be retrieved separately with a `conversation.item.retrieve` event if necessary.
+    * When the input audio buffer is committed. In this case the item will be a user message
+    containing the audio from the buffer.
+    * When the model is generating a Response. In this case the `conversation.item.added` event
+    will be sent when the model starts generating a specific Item, and thus it will not yet have
+    any content (and `status` will be `in_progress`).
+    The event will include the full content of the Item (except when model is generating a
+    Response) except for audio data, which can be retrieved separately with a
+    `conversation.item.retrieve` event if necessary.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -22665,11 +22523,14 @@ class RealtimeServerEventConversationItemCreated(
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:
 
-    * The server is generating a Response, which if successful will produce either one or two Items, which will be of
-      type `message` (role `assistant`) or type `function_call`.
-    * The input audio buffer has been committed, either by the client or the server (in `server_vad` mode). The server
-      will take the content of the input audio buffer and add it to a new user message Item.
-    * The client has sent a `conversation.item.create` event to add a new Item to the Conversation.
+    * The server is generating a Response, which if successful will produce
+    either one or two Items, which will be of type `message`
+    (role `assistant`) or type `function_call`.
+    * The input audio buffer has been committed, either by the client or the
+    server (in `server_vad` mode). The server will take the content of the
+    input audio buffer and add it to a new user message Item.
+    * The client has sent a `conversation.item.create` event to add a new Item
+    to the Conversation.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -26322,10 +26183,12 @@ class SessionLogEvent(_Model):  # pylint: disable=docstring-keyword-should-match
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -31257,14 +31120,15 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
     Provider-specific fields are selected by ``voice_type``:
 
     * `openai`: `voice` and `speed`.
-    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`, `custom_lexicon_url`,
-      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
+    `custom_lexicon_url`,
+    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
-    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus `personal_voice_model`; the
-      voice name is derived from the avatar.
-    * `azure-realtime-native`: `voice` and `speed`. `format` and `output_audio_timestamp_types` apply to every voice
-      type.
+    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
+    `personal_voice_model`; the voice name is derived from the avatar.
+    * `azure-realtime-native`: `voice` and `speed`.
+    `format` and `output_audio_timestamp_types` apply to every voice type.
 
     :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
      PCM.
@@ -32317,9 +32181,7 @@ class VoiceAgentDefinition(VoiceAgentBaseDefinition):  # pylint: disable=docstri
     :vartype subagent_config: ~azure.ai.projects.models.VoiceAgentSubagentConfig
     """
 
-    sub_protocol: Optional[Literal["realtime"]] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    sub_protocol: Optional[Literal["realtime"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Selects Realtime. May be omitted for legacy agents. Default value is \"realtime\"."""
     model_type: Optional[Union[str, "_models.VoiceModelType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -33197,8 +33059,62 @@ class VoiceAgentLiveDefinition(VoiceAgentBaseDefinition):  # pylint: disable=doc
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.sub_protocol: Literal["live"] = "live"  # pyright: ignore[reportIncompatibleVariableOverride]
+        self.sub_protocol: Literal["live"] = "live"
         self.model_type: Literal["self_deployed"] = "self_deployed"
+
+
+class VoiceAgentLiveDelegationItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Live delegation trigger metadata reported to Foundry clients. This object contains metadata,
+    not the task text.
+
+    :ivar id: The unique ID of the delegation. Use this as delegation_id when replying to
+     client-owned work or correlating Responses events. Required.
+    :vartype id: str
+    :ivar type: The object type, always ``delegation``. Required. Default value is "delegation".
+    :vartype type: str
+    :ivar response_id: The ID of the Responses API response associated with a Responses delegation.
+     Omitted for client delegations.
+    :vartype response_id: str
+    :ivar target: Where the work is handled. foundry_managed_agent sessions report
+     foundry_managed_agent; GPT Live itself uses client. Required. Known values are: "responses",
+     "client", and "foundry_managed_agent".
+    :vartype target: str or ~azure.ai.projects.models.VoiceAgentLiveDelegationTarget
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the delegation. Use this as delegation_id when replying to client-owned work
+     or correlating Responses events. Required."""
+    type: Literal["delegation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, always ``delegation``. Required. Default value is \"delegation\"."""
+    response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the Responses API response associated with a Responses delegation. Omitted for client
+     delegations."""
+    target: Union[str, "_models.VoiceAgentLiveDelegationTarget"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Where the work is handled. foundry_managed_agent sessions report foundry_managed_agent; GPT
+     Live itself uses client. Required. Known values are: \"responses\", \"client\", and
+     \"foundry_managed_agent\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        target: Union[str, "_models.VoiceAgentLiveDelegationTarget"],
+        response_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["delegation"] = "delegation"
 
 
 class VoiceAgentLiveDelegationResultItem1(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -33535,6 +33451,108 @@ class VoiceAgentLiveResponsesDelegationConversationItem(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.target = VoiceAgentLiveDelegationTarget.RESPONSES  # type: ignore
+
+
+class VoiceAgentLiveSessionResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Live session resource reported to Foundry clients. GPT Live runs native client delegation for
+    foundry_managed_agent sessions; Foundry reports the effective owner.
+
+    :ivar model: Required. "gpt-live-1"
+    :vartype model: str or ~azure.ai.projects.models.ModelIdsLive
+    :ivar instructions:
+    :vartype instructions: str
+    :ivar input: Ordered text-only history supplied before startup. Supports developer, user, and
+     assistant messages with one text part each; at most 128 messages and 8,192 rendered tokens in
+     total.
+    :vartype input: list[~azure.ai.projects.models.LiveInitialItem]
+    :ivar audio: Startup audio configuration. Only primary WebSockets accept audio.format; WebRTC
+     and SIP negotiate their media format. Voice and format are immutable after startup.
+    :vartype audio: ~azure.ai.projects.models.LiveInitialSessionAudioParam
+    :ivar store: Whether to store the session for later forking and recording download. Defaults to
+     false for new sessions.
+    :vartype store: bool
+    :ivar client: Startup-only capabilities for an untrusted frontend attached to a unified WebRTC
+     session. Trusted sideband connections are unaffected.
+    :vartype client: ~azure.ai.projects.models.LiveClientConfigParam
+    :ivar id: The unique ID of the Live session. Use this ID for sideband connections, forking, and
+     recording download. Required.
+    :vartype id: str
+    :ivar expires_at: The Unix timestamp, in seconds, at which the Live session expires. Required.
+    :vartype expires_at: int
+    :ivar status: The status of the session snapshot. Always ``active``, including the final
+     snapshot in session.closed; use the event type to determine that the session has closed.
+     Required. Default value is "active".
+    :vartype status: str
+    :ivar delegation: Delegation owner. foundry_managed_agent sessions report the pinned target,
+     including the resolved agent_version. Is one of the following types: LiveClientDelegationParam,
+     LiveResponsesDelegationParam, VoiceAgentLiveManagedAgentDelegation
+    :vartype delegation: ~azure.ai.projects.models.LiveClientDelegationParam or
+     ~azure.ai.projects.models.LiveResponsesDelegationParam or
+     ~azure.ai.projects.models.VoiceAgentLiveManagedAgentDelegation
+    """
+
+    model: Union[str, "_models.ModelIdsLive"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. \"gpt-live-1\""""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    input: Optional[list["_models.LiveInitialItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered text-only history supplied before startup. Supports developer, user, and assistant
+     messages with one text part each; at most 128 messages and 8,192 rendered tokens in total."""
+    audio: Optional["_models.LiveInitialSessionAudioParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Startup audio configuration. Only primary WebSockets accept audio.format; WebRTC and SIP
+     negotiate their media format. Voice and format are immutable after startup."""
+    store: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to store the session for later forking and recording download. Defaults to false for
+     new sessions."""
+    client: Optional["_models.LiveClientConfigParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Startup-only capabilities for an untrusted frontend attached to a unified WebRTC session.
+     Trusted sideband connections are unaffected."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live session. Use this ID for sideband connections, forking, and recording
+     download. Required."""
+    expires_at: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Unix timestamp, in seconds, at which the Live session expires. Required."""
+    status: Literal["active"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the session snapshot. Always ``active``, including the final snapshot in
+     session.closed; use the event type to determine that the session has closed. Required. Default
+     value is \"active\"."""
+    delegation: Optional["_unions.VoiceAgentLiveDelegation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Delegation owner. foundry_managed_agent sessions report the pinned target, including the
+     resolved agent_version. Is one of the following types: LiveClientDelegationParam,
+     LiveResponsesDelegationParam, VoiceAgentLiveManagedAgentDelegation"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: Union[str, "_models.ModelIdsLive"],
+        id: str,  # pylint: disable=redefined-builtin
+        expires_at: int,
+        instructions: Optional[str] = None,
+        input: Optional[list["_models.LiveInitialItem"]] = None,
+        audio: Optional["_models.LiveInitialSessionAudioParam"] = None,
+        store: Optional[bool] = None,
+        client: Optional["_models.LiveClientConfigParam"] = None,
+        delegation: Optional["_unions.VoiceAgentLiveDelegation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.status: Literal["active"] = "active"
 
 
 class VoiceAgentLlmGeneratedGreetingConfig(
