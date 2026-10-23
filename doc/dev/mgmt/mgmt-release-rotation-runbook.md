@@ -1,15 +1,23 @@
 # Python management SDK release rotation runbook
 
-Use this runbook during the weekly Go/JavaScript/Python directly responsible
-individual (DRI) rotation. It covers generated `azure-mgmt-*` release PRs, from
-triage through release follow-up. Route handwritten SDK or generator changes to
-the Python owner.
+This runbook is for Go/JavaScript/Python rotation reviewers who are unfamiliar
+with Python SDK releases. It explains how to find a release PR, use the bot's
+review, decide the next action, and follow the release. You do not need a local
+Python environment or detailed knowledge of generated Python code for routine cases.
+The reviewer on duty is the directly responsible individual (**DRI**). Ask the
+Python owner to review handwritten SDK or code-generation tool changes.
+
+Python management SDKs manage Azure resources and use package names such as
+`azure-mgmt-network`. An **AutoPR** contains automatically generated SDK changes.
+**CI** is the set of automated PR checks. A **release plan**, linked from the PR,
+tracks the service team's release request. Released Python packages are published
+to the Python Package Index (**PyPI**).
 
 **Contacts:** the **service team** is the submitter/contact in the PR or linked
 release plan. The **Python owner** is a management SDK maintainer listed under
 `/**/*mgmt*/` in [CODEOWNERS](../../../.github/CODEOWNERS)
 (currently @ChenxiJiang333, @msyyc, and @Azure/azure-arm-sdk-reviewers).
-Ask the Python owner to coordinate generator, engineering-system, or vendor support.
+Ask the Python owner to coordinate code-generation, pipeline, or vendor support.
 Rotation assignment does not grant repository, CODEOWNER, or release permissions.
 
 ## 1. Find PRs needing attention
@@ -19,12 +27,13 @@ Use these live GitHub queries; open each PR for its current status.
 | Queue | Purpose |
 | --- | --- |
 | [All open management AutoPRs](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+%22%5BAutoPR+azure-mgmt-%22+in%3Atitle) | Includes drafts and PRs without release/review labels. Start here. |
-| [Review queue](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+label%3Amgmt-review-needed+draft%3Afalse) | Review requested; not proof that checks or human review are complete. |
+| [PRs with automated review requested](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+label%3Amgmt-review-needed+draft%3Afalse) | Only PRs where a maintainer has added the label. This is not the full queue or proof of readiness. |
 | [Approved release candidates](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+%22%5BAutoPR+azure-mgmt-%22+in%3Atitle+label%3Aauto-release+draft%3Afalse+review%3Aapproved) | Check for merge blockers and hand off to the service team. Do not add duplicate approval. |
 | [Held release PRs](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+%22%5BAutoPR+azure-mgmt-%22+in%3Atitle+label%3AHoldOn) | Wait for the planned window or the owner's decision. |
 | [Recently merged release PRs](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Amerged+%22%5BAutoPR+azure-mgmt-%22+in%3Atitle+label%3Aauto-release+sort%3Aupdated-desc) | Follow up on publishing for this rotation's packages. Merged does not mean released. |
 
-`mgmt-review-needed` requests automated review when applied.
+An SDK maintainer manually adds `mgmt-review-needed` to request automated review.
+Its absence does not mean a PR needs no attention; start from all open AutoPRs.
 `auto-release` opts changed packages into post-merge release.
 Neither label is approval; either can remain on a draft or an already reviewed PR.
 An updated timestamp can reflect bot activity, not a recent service-team response.
@@ -35,10 +44,10 @@ An updated timestamp can reflect bot activity, not a recent service-team respons
 | `HoldOn`, `blocking-release`, or an explicit human hold | Keep the hold. Ask the person who owns it what must change before proceeding. |
 | CI queued/running | Wait for the current revision's checks. Ask the Python owner about stuck or missing pipelines. |
 | CI failed | Read the existing failure analysis and route the stated fix to the service team or Python owner. Do not restart review instead of fixing CI. |
-| Ready, no valid approval | Continue with sections 2 and 3. |
+| Ready, no valid approval | Read the bot review using section 2. If no review comment exists, ask an SDK maintainer to add `mgmt-review-needed`. |
 | Approved, not merged | Identify the actual merge blocker or ask the service team to merge through its release plan. |
 
-## 2. Check readiness and the automated review
+## 2. Request and read the bot review
 
 Read the PR description, release plan, latest human decisions, and current checks.
 Confirm the service team intends to release the listed package, SDK version, and
@@ -46,33 +55,45 @@ API version. Follow the linked
 [SDK release prerequisites](https://eng.ms/docs/products/azure-developer-experience/develop/sdk-release/sdk-release-prerequisites).
 A bot-created PR is not itself a release request.
 
-Find the latest **Management SDK PR review** comment from the
-[Python review workflow](../../../.github/workflows/mgmt-sdk-pr-review.md).
-Check that its pinned evidence covers the current changes. An older complete
-comment does not cover a later push.
+For a ready PR, use this process rather than reviewing all generated code yourself:
+
+1. Look in the PR conversation for the latest **Management SDK PR review** bot comment.
+2. If there is no bot review comment, ask an **SDK maintainer** to manually add
+   `mgmt-review-needed` under **Labels** in the PR sidebar. The label triggers the
+   [Python review workflow](../../../.github/workflows/mgmt-sdk-pr-review.md);
+   creating the AutoPR alone does not request this review.
+3. Wait for the workflow to finish and the bot to leave its review comment.
+   The label itself is not a result. If no comment appears after the run finishes,
+   ask the Python owner to investigate.
+4. Read the comment's findings, unverified checks, and suggested actions.
+   Blocking items explain what prevents approval and what needs to happen next.
+   Use the table below to identify who should act.
+5. Check that the comment covers the latest PR changes. If commits were added
+   after the review, ask the SDK maintainer for an updated review.
 
 | Review result | Reviewer action |
 | --- | --- |
 | Complete, no findings or unverified checks | Use the completed checks and evidence; do not reconstruct them. Continue with human review below. |
-| Blocking findings | Ask the service team to make the listed source/configuration fixes and regenerate. Route emitter/generator issues to the Python owner. |
+| Blocking findings | Do not approve. Follow the comment's explanation and next action. Ask the service team to make the listed source/configuration fixes and regenerate; send code-generation tool issues to the Python owner. |
 | Warning or suggestion | Read the finding and record its fix or justified disposition. Ask the Python owner when Python-specific judgment is needed. |
 | Unverified checks, incomplete review, partial breaking-change attribution, or missing evidence | Ask the Python owner to complete or resolve the missing review. Missing evidence is not a pass. |
-| Missing or stale result | If authorized, request a fresh analysis by applying `mgmt-review-needed`. If it is already present, remove and reapply it only when no review is active. Otherwise ask the Python owner. |
+| Missing or outdated result | Ask the SDK maintainer to add `mgmt-review-needed`. If it is already present, the maintainer can remove and reapply it when no review is active. Wait for the new comment before continuing. |
 
-The workflow runs on the label event, not every subsequent push. Manual workflow
-dispatch is disabled by default; it is not the rotation's fallback.
+Adding the label triggers the workflow; leaving it on the PR does not request
+another review after each push. Do not request another run while one is active.
 
-The workflow checks Python package versions, preview/stable metadata, client
-consistency, README usage, and API-version drift. Its
+The bot checks package versions, preview/stable settings, client naming and usage,
+and API-version changes. Its
 [management review rules](../../../.github/instructions/reviewer/management.instructions.md)
 define the scope. Do not repeat completed checks or review every generated model,
 operation, sample, and test.
 
 **Human review still covers:**
 
-- Breaking changes and their disposition. **TypeSpec/API** attribution explains
-  origin; it does not approve the break. Ask the service team to confirm intended
-  service changes. Send generator/migration changes, unclear attribution, and
+- Breaking changes and their disposition. The comment's **TypeSpec/API** category
+  means the change comes from the service specification; it does not approve the
+  break. Ask the service team to confirm intended service changes. Send
+  code-generation/migration changes, unclear attribution, and
   exceptions to the Python owner. A major version bump alone is not permission.
   Use the [breaking-change guide](sdk-breaking-changes-guide.md) for known patterns.
 - Outstanding Copilot and human review comments. Ask for real defects to be fixed
@@ -96,8 +117,8 @@ Check the current GitHub review decision and branch requirements, not just an ol
 while GitHub still requires review.
 
 Recheck changed versions, changelog, API versions, customizations, and any affected
-findings. Request fresh automated analysis when its evidence is stale, and wait
-for current CI. Re-approve only after reviewing the new changes; do not blindly
+findings. Ask the SDK maintainer for a new bot review if the previous review is
+outdated, and wait for current CI. Re-approve only after reviewing the new changes; do not blindly
 repeat approval. If the current approval is still valid, do not add another one.
 Route API-version changes after approval or unclear generated changes to the
 Python owner.
