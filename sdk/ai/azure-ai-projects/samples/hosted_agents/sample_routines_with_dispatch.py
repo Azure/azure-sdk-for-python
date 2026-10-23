@@ -90,7 +90,6 @@ with (
                 dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
             ),
             environment_variables={
-                "PYTHONNOUSERSITE": "1",
                 "FOUNDRY_PROJECT_ENDPOINT": endpoint,
                 "FOUNDRY_MODEL_NAME": model_name,
             },

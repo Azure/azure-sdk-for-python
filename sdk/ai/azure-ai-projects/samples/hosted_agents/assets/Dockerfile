@@ -1,7 +1,5 @@
 FROM mcr.microsoft.com/mirror/docker/library/python:3.12-slim
 
-ENV PYTHONNOUSERSITE=1
-
 WORKDIR /app
 
 COPY . /app

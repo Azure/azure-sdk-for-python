@@ -17,10 +17,12 @@ pip install -r requirements.txt
 python sample_01_getting_started.py
 ```
 
-For hosted deployments, configure `PYTHONNOUSERSITE` as `"1"` in the
-remote agent definition's environment or Python Dockerfile, as described
-in the [Python startup guide](../../../ai/azure-ai-projects/samples/hosted_agents/README.md#python-startup-configuration).
-Install dependencies in the virtual environment or image, not with `pip install --user`.
+For hosted Python deployments, set `PYTHONNOUSERSITE` to `"1"` in the agent
+definition's `environment_variables` map, or add `ENV PYTHONNOUSERSITE=1` to its
+Dockerfile. This disables Python user-site package loading. Install dependencies
+in a virtual environment or image, not with `pip install --user`. See
+[Configure hosted agent environment variables](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/configure-hosted-agent-env-variables)
+for deployment configuration.
 
 ## Samples index
 

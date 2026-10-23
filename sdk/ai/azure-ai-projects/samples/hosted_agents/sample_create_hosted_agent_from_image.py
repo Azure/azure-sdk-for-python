@@ -28,7 +28,7 @@ USAGE:
         `MyHostedAgent`.
     3) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format
        '<registry>/<repository>[:<tag>|@<digest>]'.
-       You can build a Python sample image from `assets/basic-agent` using `assets/Dockerfile`.
+       You can build a sample image from the `samples/hosted_agents/assets/echo-agent` folder.
 """
 
 import os
@@ -68,7 +68,6 @@ with (
             cpu="0.5",
             memory="1Gi",
             container_configuration=ContainerConfiguration(image=image),
-            environment_variables={"PYTHONNOUSERSITE": "1"},
             protocol_versions=[
                 ProtocolVersionRecord(protocol="responses", version="1.0.0"),
             ],

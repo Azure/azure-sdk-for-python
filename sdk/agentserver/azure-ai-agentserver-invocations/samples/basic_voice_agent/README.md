@@ -44,11 +44,13 @@ alone does not publish the new APIs or make them available in older SDK builds.
 python basic_voice_agent.py
 ```
 
-Install dependencies in the virtual environment or image, not with
-`pip install --user`. For hosted deployments, set
-`PYTHONNOUSERSITE` to `"1"` in the complete agent definition's environment
-variables or Python Dockerfile, not the protocol-only manifest fragment.
-See the [Python startup guide](../../../../ai/azure-ai-projects/samples/hosted_agents/README.md#python-startup-configuration).
+For hosted Python deployments, set `PYTHONNOUSERSITE` to `"1"` in the complete
+agent definition's `environment_variables` map, not the protocol-only manifest
+fragment, or add `ENV PYTHONNOUSERSITE=1` to its Dockerfile. This disables Python
+user-site package loading. Install dependencies in a virtual environment or image,
+not with `pip install --user`. See
+[Configure hosted agent environment variables](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/configure-hosted-agent-env-variables)
+for deployment configuration.
 
 The server listens on `0.0.0.0` and uses the `PORT` environment variable when
 set; otherwise it listens on port `8088`. Foundry selects the container route
