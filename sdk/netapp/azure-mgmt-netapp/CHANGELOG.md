@@ -17,7 +17,7 @@
   - Added model `LdapConfiguration`
   - Added model `LdapConfigurationPatch`
   - Added enum `SecureLdapType`
-  - Model `AccountsOperations` added method `begin_refresh_ldap_bind_password`
+  - Operation group `AccountsOperations` added method `begin_refresh_ldap_bind_password`
 
 ### Breaking Changes
 
