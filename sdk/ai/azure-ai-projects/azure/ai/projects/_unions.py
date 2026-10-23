@@ -10,12 +10,20 @@ from typing import Literal, TYPE_CHECKING, TypeAlias, Union
 
 if TYPE_CHECKING:
     from . import models as _models
+VoiceAgentLiveDelegationResultItem: TypeAlias = Union[
+    "_models.VoiceAgentLiveDelegationResultItem2", "_models.VoiceAgentLiveDelegationResultItem1"
+]
 Filters: TypeAlias = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
+RoutineRunStatus: TypeAlias = str
 VoiceAgentToolChoice: TypeAlias = Union[
     Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
 ]
 VoiceAgentMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
-RoutineRunStatus: TypeAlias = str
+VoiceAgentLiveDelegation: TypeAlias = Union[
+    "_models.LiveClientDelegationParam",
+    "_models.LiveResponsesDelegationParam",
+    "_models.VoiceAgentLiveManagedAgentDelegation",
+]
 VoiceAgentSessionUpdate: TypeAlias = "_models.VoiceAgentSessionUpdateConfig"
 VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
 GenerateAgentRequest: TypeAlias = "_models.GenerateVoiceAgentRequest"

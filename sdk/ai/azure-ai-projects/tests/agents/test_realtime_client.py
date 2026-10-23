@@ -15,6 +15,7 @@ can all be verified without a live service or a recorded transport.
 import json
 import inspect
 import logging
+from typing import Literal, Optional
 from unittest.mock import MagicMock, patch
 from urllib.parse import parse_qs, urlparse
 
@@ -22,6 +23,7 @@ import pytest
 from azure.core.credentials import AccessToken
 from websockets.typing import Subprotocol
 
+from azure.ai.projects import models
 from azure.ai.projects._realtime import (
     BetaRealtime,
     BetaRealtimeConnectionManager,
@@ -36,6 +38,68 @@ from azure.ai.projects.models import (
 )
 
 _ENDPOINT = "https://my-account.services.ai.azure.com/api/projects/my-project"
+
+
+@pytest.mark.parametrize(
+    "sub_protocol,expected_type",
+    [
+        (None, models.VoiceAgentDefinition),
+        ("realtime", models.VoiceAgentDefinition),
+        ("live", models.VoiceAgentLiveDefinition),
+        ("future-protocol", models.VoiceAgentBaseDefinition),
+    ],
+)
+def test_voice_agent_readback_preserves_concrete_types_and_wire_omission(sub_protocol, expected_type):
+    definition = {
+        "kind": "voice",
+        "model": "deployment-test",
+        "model_type": "self_deployed" if sub_protocol == "live" else "managed",
+    }
+    if sub_protocol is not None:
+        definition["sub_protocol"] = sub_protocol
+    version = models.AgentVersionDetails({"name": "agent-test", "version": "1", "definition": definition})
+
+    assert type(version.definition) is expected_type
+    assert version.definition.as_dict() == definition
+    assert expected_type(definition).as_dict() == definition
+    if isinstance(version.definition, (models.VoiceAgentDefinition, models.VoiceAgentLiveDefinition)):
+        assert version.definition.model == "deployment-test"
+
+
+@pytest.mark.parametrize(
+    "definition,expected_type",
+    [
+        ({"kind": "prompt", "model": "deployment-test"}, models.PromptAgentDefinition),
+        ({"kind": "future-agent-kind", "custom": {"setting": True}}, models.AgentDefinition),
+    ],
+)
+def test_voice_readback_customization_does_not_change_other_agent_kinds(definition, expected_type):
+    version = models.AgentVersionDetails({"name": "agent-test", "version": "1", "definition": definition})
+
+    assert type(version.definition) is expected_type
+    assert version.definition.as_dict() == definition
+
+
+@pytest.mark.parametrize(
+    "definition_type,expected_annotation,expected_payload",
+    [
+        (
+            models.VoiceAgentDefinition,
+            Optional[Literal["realtime"]],
+            {"model": "deployment-test", "kind": "voice"},
+        ),
+        (
+            models.VoiceAgentLiveDefinition,
+            Literal["live"],
+            {"model": "deployment-test", "kind": "voice", "sub_protocol": "live", "model_type": "self_deployed"},
+        ),
+    ],
+)
+def test_voice_protocol_typing_fix_preserves_annotations_and_constructor_defaults(
+    definition_type, expected_annotation, expected_payload
+):
+    assert definition_type.__annotations__["sub_protocol"] == expected_annotation
+    assert definition_type(model="deployment-test").as_dict() == expected_payload
 
 
 class _FakeCredential:
