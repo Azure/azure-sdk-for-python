@@ -13,7 +13,7 @@
   - Added model `BillingAccountQueryFilter`
   - Added model `BillingAccountTopItemsMonthlySummaryReportQueryFilter`
   - Added model `BillingAccountTopItemsSummaryReportQueryFilter`
-  - Model `CarbonServiceOperations` added method `query_carbon_emission_reports_by_billing_account`
+  - Operation group `CarbonServiceOperations` added method `query_carbon_emission_reports_by_billing_account`
 
 ## 1.0.0 (2025-07-21)
 
