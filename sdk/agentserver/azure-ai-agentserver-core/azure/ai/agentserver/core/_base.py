@@ -13,7 +13,7 @@ from collections.abc import (  # pylint: disable=import-error
     Awaitable,
     Callable,
 )
-from typing import Any, MutableMapping, Optional
+from typing import TYPE_CHECKING, Any, MutableMapping, Optional
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
@@ -25,7 +25,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 from . import _config, _tracing
 from ._errors import create_error_response
 from ._lifecycle import AgentSessionContext, _LifecycleState
-from ._middleware import InboundRequestLoggingMiddleware
+from ._middleware import InboundRequestLoggingMiddleware, _TaskManagerMiddleware
 from ._request_context import (
     FoundryAgentRequestContext,
     get_request_context,
@@ -36,6 +36,9 @@ from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
 from ._server_version import build_server_version
 from ._types import MiddlewareFactory, P
 from ._version import VERSION as _CORE_VERSION
+
+if TYPE_CHECKING:
+    from .tasks._manager import TaskManager
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -273,6 +276,11 @@ class AgentServerHost(Starlette):
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
         self._readiness_fn: Optional[Callable[[Request], Awaitable[Response]]] = None
         self._lifecycle = _LifecycleState()
+        # Protocol mixins contribute independent startup requirements via cooperative init.
+        task_manager_requirements: list[Callable[[], bool]] = kwargs.pop(
+            "_task_manager_requirements", [_resilient_tasks_enabled]
+        )
+        self._task_manager: Any = None
         #  Pre-shutdown callbacks invoked SYNCHRONOUSLY from the
         # SIGTERM signal handler — before Hypercorn's graceful drain
         # begins. Used by responses to set ``_shutdown_requested`` early so
@@ -316,7 +324,7 @@ class AgentServerHost(Starlette):
 
         # Build lifespan context manager
         @contextlib.asynccontextmanager
-        async def _lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
+        async def _run_lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
             logger.info("AgentServerHost started")
 
             # --- Startup configuration logging ---
@@ -345,26 +353,10 @@ class AgentServerHost(Starlette):
                 protocols,
             )
 
-            # --- Resilient task manager initialization ---
-            #
-            # The resilient ``TaskManager`` is CONSTRUCTED ONLY when resilient
-            # tasks were explicitly enabled via
-            # ``set_resilient_tasks_enabled(True)``. Recovery (and the durable
-            # task subsystem as a whole) is strictly opt-in: a host that does
-            # not set the switch pays nothing — no manager, no provider client,
-            # no task-store call, no recovery loop.
-            #
-            # When the switch is OFF the manager is NOT installed, so
-            # ``get_task_manager()`` raises ``TaskManagerNotInitialized``.
-            # Callers that route through the manager (e.g. the responses
-            # protocol's ``store=true`` path) are expected to SWALLOW that
-            # signal and degrade to non-durable, in-process execution — the
-            # response still runs and persists, it simply is not crash-
-            # recoverable. Declaring a durable task (``@task`` /
-            # ``@multi_turn_task``) does NOT implicitly turn the subsystem on;
-            # an app that wants durable tasks / recovery must set the switch.
+            # Invocations uses the core switch; Responses contributes its own
+            # feature flags. Merely registering task callbacks is not an opt-in.
             task_manager: Any = None
-            if _resilient_tasks_enabled():
+            if any(required() for required in task_manager_requirements):
                 # Resilient tasks were explicitly enabled. Construct the manager
                 # and run startup recovery. If EITHER fails, durability was
                 # explicitly requested, so fail the lifespan (fail-fast at boot)
@@ -381,8 +373,10 @@ class AgentServerHost(Starlette):
                     shutdown_event=asyncio.Event(),
                     shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
                 )
+                self._task_manager = task_manager
                 set_task_manager(task_manager)
                 try:
+                    self._register_task_callbacks(task_manager)
                     await task_manager.startup()
                 except BaseException:
                     # ``set_task_manager`` above already installed the manager
@@ -395,14 +389,17 @@ class AgentServerHost(Starlette):
                         await task_manager.shutdown()
                     except Exception:  # pylint: disable=broad-exception-caught
                         logger.warning("Error shutting down TaskManager after startup failure", exc_info=True)
-                    set_task_manager(None)
+                    from .tasks._manager import _clear_task_manager  # pylint: disable=import-outside-toplevel
+
+                    _clear_task_manager(task_manager)
+                    self._task_manager = None
                     task_manager = None
                     raise
                 logger.info("TaskManager initialized with startup recovery")
             else:
                 logger.info(
-                    "TaskManager NOT initialized (resilient tasks disabled; enable via "
-                    "set_resilient_tasks_enabled(True)). Durable tasks and crash recovery "
+                    "TaskManager NOT initialized (no protocol requested task execution). "
+                    "Durable tasks and crash recovery "
                     "are inactive; store=true work degrades to non-durable execution. "
                     "tasks_declared=%s",
                     _has_registered_tasks(),
@@ -445,14 +442,23 @@ class AgentServerHost(Starlette):
             if task_manager is not None:
                 try:
                     await task_manager.shutdown()
-                    from .tasks._manager import (  # pylint: disable=import-outside-toplevel
-                        set_task_manager as _clear_manager,
-                    )
-
-                    _clear_manager(None)
                     logger.info("TaskManager shut down")
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Error shutting down TaskManager", exc_info=True)
+
+        @contextlib.asynccontextmanager
+        async def _lifespan(app: Starlette) -> AsyncGenerator[None, None]:
+            from .tasks._manager import _task_manager_scope  # pylint: disable=import-outside-toplevel
+
+            with _task_manager_scope(lambda: self._task_manager):
+                try:
+                    async with _run_lifespan(app):
+                        yield
+                finally:
+                    from .tasks._manager import _clear_task_manager  # pylint: disable=import-outside-toplevel
+
+                    _clear_task_manager(self._task_manager)
+                    self._task_manager = None
 
         async def _before_snapshot_route(request: Request) -> Response:
             return await AgentServerHost._before_snapshot_endpoint(self, request)
@@ -498,6 +504,7 @@ class AgentServerHost(Starlette):
             routes=all_routes,
             lifespan=_lifespan,
             middleware=[
+                Middleware(_TaskManagerMiddleware, get_manager=lambda: self._task_manager),
                 Middleware(InboundRequestLoggingMiddleware),  # type: ignore[arg-type]
                 Middleware(  # type: ignore[arg-type]
                     _PlatformHeaderMiddleware,
@@ -515,6 +522,13 @@ class AgentServerHost(Starlette):
         from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
 
         self.add_middleware(TraceContextMiddleware)
+
+    def _register_task_callbacks(self, manager: "TaskManager") -> None:
+        """Bind protocol recovery callbacks before the manager's startup scan.
+
+        :param manager: This host's task manager.
+        :type manager: ~azure.ai.agentserver.core.tasks._manager.TaskManager
+        """
 
     def add_middleware(
         self,
@@ -737,14 +751,10 @@ class AgentServerHost(Starlette):
         if not isinstance(restore_id, str) or not restore_id:
             raise ValueError("restore_id must be a non-empty string")
         if not isinstance(raw_overrides, dict) or any(
-            not isinstance(key, str) or not isinstance(value, str)
-            for key, value in raw_overrides.items()
+            not isinstance(key, str) or not isinstance(value, str) for key, value in raw_overrides.items()
         ):
             raise ValueError("session_env_overrides must map strings to strings")
-        if any(
-            not key or "=" in key or "\0" in key or "\0" in value
-            for key, value in raw_overrides.items()
-        ):
+        if any(not key or "=" in key or "\0" in key or "\0" in value for key, value in raw_overrides.items()):
             raise ValueError("session_env_overrides contains an invalid environment entry")
         override_session_id = raw_overrides.get(_SESSION_ID_ENV)
         if override_session_id is not None and override_session_id != session_id:
@@ -780,8 +790,7 @@ class AgentServerHost(Starlette):
                     status_code=500,
                 )
             self._lifecycle.captured_environment_values = {
-                key: os.environ.get(key)
-                for key in self._lifecycle.applied_environment_variables
+                key: os.environ.get(key) for key in self._lifecycle.applied_environment_variables
             }
             self._lifecycle.before_snapshot_completed = True
             return JSONResponse({"status": "ok"})
@@ -815,20 +824,12 @@ class AgentServerHost(Starlette):
 
             effective_environment = dict(context.session_env_overrides)
             effective_environment.setdefault(_SESSION_ID_ENV, context.session_id)
-            environment_variables = (
-                self._lifecycle.applied_environment_variables
-                | effective_environment.keys()
-            )
-            previous_environment = {
-                key: os.environ.get(key, _MISSING_ENV)
-                for key in environment_variables
-            }
+            environment_variables = self._lifecycle.applied_environment_variables | effective_environment.keys()
+            previous_environment = {key: os.environ.get(key, _MISSING_ENV) for key in environment_variables}
             captured_environment = dict(self._lifecycle.captured_environment_values)
             for key, value in previous_environment.items():
                 if key not in captured_environment:
-                    captured_environment[key] = (
-                        None if value is _MISSING_ENV else str(value)
-                    )
+                    captured_environment[key] = None if value is _MISSING_ENV else str(value)
             previous_config = vars(self.config).copy()
             task_manager = _get_active_task_manager()
 
@@ -842,9 +843,7 @@ class AgentServerHost(Starlette):
                 restored_config = _config.AgentConfig.from_env()
                 vars(self.config).update(vars(restored_config))
                 if task_manager is not None:
-                    task_manager._rehydrate_session_state(  # pylint: disable=protected-access
-                        context.restore_id
-                    )
+                    task_manager._rehydrate_session_state(context.restore_id)  # pylint: disable=protected-access
 
                 current_request_context = get_request_context()
                 request_context_token = set_request_context(

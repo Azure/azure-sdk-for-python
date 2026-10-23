@@ -8,7 +8,7 @@ pathlib2==2.3.5
 doc-warden==0.7.2
 beautifulsoup4==4.9.1
 pkginfo==1.5.0.1
-pip==20.3.3
+pip==26.2.2
 typing-extensions<=4.6.3
 
 # locking packages defined as deps from azure-sdk-tools

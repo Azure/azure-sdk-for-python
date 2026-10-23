@@ -3,6 +3,8 @@
 ## 1.0.0b59 (Unreleased)
 
 ### Features Added
+- Add support for experimental features flag
+  ([#49682](https://github.com/Azure/azure-sdk-for-python/pull/49682))
 
 ### Breaking Changes
 
