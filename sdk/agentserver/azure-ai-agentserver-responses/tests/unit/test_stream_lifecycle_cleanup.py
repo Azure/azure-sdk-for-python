@@ -643,7 +643,8 @@ async def test_tagged_platform_start_error_is_http_only_and_preserves_stream_own
             frames.clear()
             retry = await host._endpoint.handle_create(_request())
             assert retry.status_code == 200
-            await asyncio.wait_for(retry.stream_response(send), 2)
+            # File-backed retry flushes both events before returning the stream.
+            await asyncio.wait_for(retry.stream_response(send), 10 if file_backed else 2)
             assert attempts == 2
             assert b"response.completed" in b"".join(frames)
             persisted = await provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
