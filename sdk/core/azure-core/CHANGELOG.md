@@ -7,6 +7,10 @@
 - Added `ODataV4Format.as_dict()` to convert parsed OData V4 errors, including nested details and model-valued inner errors, to JSON-compatible dictionaries for generated model serialization, preserving `None` values and empty collections.
 - Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.
 
+### Other Changes
+
+- Long-running-operation polling now logs a warning when the poll target host (taken from the `Operation-Location` / `Azure-AsyncOperation` / `Location` response header) differs from the client's configured endpoint host, since the poll request carries the client's credentials to that host. Same-host and relative poll targets are unaffected.
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added
