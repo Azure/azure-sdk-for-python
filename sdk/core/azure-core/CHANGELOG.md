@@ -7,6 +7,10 @@
 - Added `ODataV4Format.as_dict()` to convert parsed OData V4 errors, including nested details and model-valued inner errors, to JSON-compatible dictionaries for generated model serialization, preserving `None` values and empty collections.
 - Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.
 
+### Bugs Fixed
+
+- `AioHttpTransport` now explicitly requests only `gzip` and `deflate` as the supported encodings via the `Accept-Encoding` header. #47186
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added
