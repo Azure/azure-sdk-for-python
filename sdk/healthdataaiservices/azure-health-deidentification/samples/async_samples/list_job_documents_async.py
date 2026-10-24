@@ -22,6 +22,8 @@ USAGE:
 
 
 import asyncio
+import os
+import uuid
 from azure.core.polling import AsyncLROPoller
 from azure.health.deidentification.aio import DeidentificationClient
 from azure.health.deidentification.models import (
@@ -30,8 +32,6 @@ from azure.health.deidentification.models import (
     TargetStorageLocation,
 )
 from azure.identity.aio import DefaultAzureCredential
-import os
-import uuid
 
 
 async def list_job_documents_async():

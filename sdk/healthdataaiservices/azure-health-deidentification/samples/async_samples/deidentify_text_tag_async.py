@@ -19,6 +19,7 @@ USAGE:
 
 
 import asyncio
+import os
 from azure.health.deidentification.aio import DeidentificationClient
 from azure.health.deidentification.models import (
     DeidentificationContent,
@@ -26,7 +27,6 @@ from azure.health.deidentification.models import (
     DeidentificationResult,
 )
 from azure.identity.aio import DefaultAzureCredential
-import os
 
 
 async def deidentify_text_tag_async():
@@ -43,7 +43,7 @@ async def deidentify_text_tag_async():
         print(f'\nOriginal Text:    "{body.input_text}"')
 
         if result.tagger_result and result.tagger_result.entities:
-            print(f"Tagged Entities:")
+            print("Tagged Entities:")
             for entity in result.tagger_result.entities:
                 print(
                     f'\tEntity Text: "{entity.text}", Entity Category: "{entity.category}", Offset: "{entity.offset.code_point}", Length: "{entity.length.code_point}"'

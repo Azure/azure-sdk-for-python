@@ -3,7 +3,15 @@ from devtools_testutils import (
     recorded_by_proxy,
 )
 
-from azure.health.deidentification.models import *
+from azure.health.deidentification.models import (
+    DeidentificationContent,
+    DeidentificationOperationType,
+    DeidentificationResult,
+    PhiCategory,
+    SimplePhiEntity,
+    TaggedPhiEntities,
+    TextEncodingType,
+)
 
 
 class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
