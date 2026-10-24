@@ -150,9 +150,17 @@ class TestDatastoreOperations:
                 path="azureml://datastores/random_name",
                 mount_point="/tmp/mount/random-local-path-for-datastore/",
                 persistent=False,
+                client_id="test-client-id",
+                identity_endpoint_type="Imds",
             )
             mock_build_uri.assert_called_once()
             mock_start_subprocess.assert_called_once()
+            assert (
+                mock_start_subprocess.call_args.kwargs["credential"]
+                == mock_datastore_operation._operation._config.credential
+            )
+            assert mock_start_subprocess.call_args.kwargs["client_id"] == "test-client-id"
+            assert mock_start_subprocess.call_args.kwargs["identity_endpoint_type"] == "Imds"
 
     def test_get_default(self, mock_from_rest, mock_datastore_operation: DatastoreOperations):
         mock_datastore_operation.get_default()
