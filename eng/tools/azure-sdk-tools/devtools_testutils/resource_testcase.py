@@ -18,7 +18,6 @@ from . import AzureMgmtPreparer
 from .exceptions import AzureTestError, ReservedResourceNameError
 from .sanitizers import add_general_string_sanitizer
 
-
 logging.getLogger().setLevel(logging.INFO)
 
 
