@@ -31,9 +31,9 @@ sys.path.append("..")
 
 class SendWhatsAppMessageSampleAsync(object):
 
-    connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-    phone_number = os.getenv("RECIPIENT_PHONE_NUMBER")
-    channel_id = os.getenv("WHATSAPP_CHANNEL_ID")
+    connection_string: str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")  # type: ignore
+    phone_number: str = os.getenv("RECIPIENT_PHONE_NUMBER")  # type: ignore
+    channel_id: str = os.getenv("WHATSAPP_CHANNEL_ID")  # type: ignore
 
     async def send_image_send_message_async(self):
         from azure.communication.messages.aio import NotificationMessagesClient
