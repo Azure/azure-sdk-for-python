@@ -816,37 +816,37 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if isinstance(error, _ServerShuttingDown):
             ctx.span.end(None)
             return _service_unavailable("Server is shutting down.", headers)
-        if isinstance(error, TaskConflictError):
-            # Only current_status is public; never expose the internal chain identity.
-            logger.info(
-                "Conversation lock conflict for %s: task is %s",
-                ctx.response_id,
-                error.current_status,
-            )
+        if isinstance(error, _HandlerError):
+            logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=error.original)
             return JSONResponse(
                 {
                     "error": {
-                        "message": f"Conversation is locked \u2014 task is {error.current_status}",
-                        "type": "conflict",
-                        "code": "conversation_locked",
+                        "message": "internal server error",
+                        "type": "server_error",
+                        "code": "server_error",
                         "param": None,
                     }
                 },
-                status_code=409,
-                headers=headers,
+                status_code=500,
+                headers=_apply_error_source_headers(headers, ERROR_SOURCE_UPSTREAM),
             )
-        logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=error.original)
+        # Only current_status is public; never expose the internal chain identity.
+        logger.info(
+            "Conversation lock conflict for %s: task is %s",
+            ctx.response_id,
+            error.current_status,
+        )
         return JSONResponse(
             {
                 "error": {
-                    "message": "internal server error",
-                    "type": "server_error",
-                    "code": "server_error",
+                    "message": f"Conversation is locked \u2014 task is {error.current_status}",
+                    "type": "conflict",
+                    "code": "conversation_locked",
                     "param": None,
                 }
             },
-            status_code=500,
-            headers=_apply_error_source_headers(headers, ERROR_SOURCE_UPSTREAM),
+            status_code=409,
+            headers=headers,
         )
 
     async def _reclaim_empty_replay(self, response_id: str, context: PlatformContext, replay: EventStream) -> bool:
