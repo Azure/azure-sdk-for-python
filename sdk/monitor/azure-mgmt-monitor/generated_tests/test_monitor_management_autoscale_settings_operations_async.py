@@ -25,7 +25,7 @@ class TestMonitorManagementAutoscaleSettingsOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.autoscale_settings.get(
             resource_group_name=resource_group.name,
             autoscale_setting_name="str",
-            api_version="2022-10-01",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -97,6 +97,12 @@ class TestMonitorManagementAutoscaleSettingsOperationsAsync(AzureMgmtRecordedTes
                     "targetResourceUri": "str",
                 },
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -109,7 +115,7 @@ class TestMonitorManagementAutoscaleSettingsOperationsAsync(AzureMgmtRecordedTes
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2022-10-01",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -122,6 +128,12 @@ class TestMonitorManagementAutoscaleSettingsOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             autoscale_setting_name="str",
             autoscale_setting_resource={
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "properties": {
                     "profiles": [
                         {
@@ -181,7 +193,7 @@ class TestMonitorManagementAutoscaleSettingsOperationsAsync(AzureMgmtRecordedTes
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2022-10-01",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -193,7 +205,7 @@ class TestMonitorManagementAutoscaleSettingsOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.autoscale_settings.delete(
             resource_group_name=resource_group.name,
             autoscale_setting_name="str",
-            api_version="2022-10-01",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -204,7 +216,7 @@ class TestMonitorManagementAutoscaleSettingsOperationsAsync(AzureMgmtRecordedTes
     async def test_autoscale_settings_list_by_resource_group(self, resource_group):
         response = self.client.autoscale_settings.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-10-01",
+            api_version="2025-09-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -214,7 +226,7 @@ class TestMonitorManagementAutoscaleSettingsOperationsAsync(AzureMgmtRecordedTes
     @recorded_by_proxy_async
     async def test_autoscale_settings_list_by_subscription(self, resource_group):
         response = self.client.autoscale_settings.list_by_subscription(
-            api_version="2022-10-01",
+            api_version="2025-09-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

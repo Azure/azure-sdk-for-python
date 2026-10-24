@@ -24,7 +24,7 @@ class TestMonitorManagementMetricAlertsOperations(AzureMgmtRecordedTestCase):
         response = self.client.metric_alerts.get(
             resource_group_name=resource_group.name,
             rule_name="str",
-            api_version="2024-03-01-preview",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestMonitorManagementMetricAlertsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-03-01-preview",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -114,7 +114,7 @@ class TestMonitorManagementMetricAlertsOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2024-03-01-preview",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -126,7 +126,7 @@ class TestMonitorManagementMetricAlertsOperations(AzureMgmtRecordedTestCase):
         response = self.client.metric_alerts.delete(
             resource_group_name=resource_group.name,
             rule_name="str",
-            api_version="2024-03-01-preview",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -137,7 +137,7 @@ class TestMonitorManagementMetricAlertsOperations(AzureMgmtRecordedTestCase):
     def test_metric_alerts_list_by_resource_group(self, resource_group):
         response = self.client.metric_alerts.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01-preview",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -147,7 +147,7 @@ class TestMonitorManagementMetricAlertsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_metric_alerts_list_by_subscription(self, resource_group):
         response = self.client.metric_alerts.list_by_subscription(
-            api_version="2024-03-01-preview",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2022-10-01/deleteAutoscaleSetting.json
+# x-ms-original-file: 2025-09-01-preview/deleteAutoscaleSetting.json
 if __name__ == "__main__":
     main()

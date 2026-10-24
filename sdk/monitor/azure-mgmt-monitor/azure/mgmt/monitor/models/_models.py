@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessModeSettings(_Model):
+class AccessModeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that define the scope private link mode settings.
 
     :ivar query_access_mode: Specifies the default access mode of queries through associated
@@ -76,7 +76,7 @@ class AccessModeSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessModeSettingsExclusion(_Model):
+class AccessModeSettingsExclusion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that define the scope private link mode settings exclusion item. This setting
     applies to a specific private endpoint connection and overrides the default settings for that
     private endpoint connection.
@@ -128,12 +128,12 @@ class AccessModeSettingsExclusion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRule(_Model):
+class AccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access rule in a network security perimeter configuration profile.
 
     :ivar name: Name of the access rule.
     :vartype name: str
-    :ivar properties:
+    :ivar properties: Properties of the access rule.
     :vartype properties: ~azure.mgmt.monitor.models.AccessRuleProperties
     """
 
@@ -142,6 +142,7 @@ class AccessRule(_Model):
     properties: Optional["_models.AccessRuleProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Properties of the access rule."""
 
     @overload
     def __init__(
@@ -162,10 +163,10 @@ class AccessRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRuleProperties(_Model):
+class AccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Access Rule.
 
-    :ivar direction: Known values are: "Inbound" and "Outbound".
+    :ivar direction: Direction of the access rule. Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.monitor.models.AccessRuleDirection
     :ivar address_prefixes: Address prefixes in the CIDR format for inbound rules.
     :vartype address_prefixes: list[str]
@@ -184,7 +185,7 @@ class AccessRuleProperties(_Model):
     direction: Optional[Union[str, "_models.AccessRuleDirection"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"Inbound\" and \"Outbound\"."""
+    """Direction of the access rule. Known values are: \"Inbound\" and \"Outbound\"."""
     address_prefixes: Optional[list[str]] = rest_field(
         name="addressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -234,7 +235,7 @@ class AccessRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRulePropertiesSubscription(_Model):
+class AccessRulePropertiesSubscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AccessRulePropertiesSubscription.
 
     :ivar id: The fully qualified Azure resource ID of the subscription e.g.
@@ -264,7 +265,7 @@ class AccessRulePropertiesSubscription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionDetail(_Model):
+class ActionDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The action detail.
 
     :ivar mechanism_type: The mechanism type.
@@ -319,7 +320,7 @@ class ActionDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionGroup(_Model):
+class ActionGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A pointer to an Azure Action Group.
 
     :ivar action_group_id: The resource ID of the Action Group. This cannot be null or empty.
@@ -365,8 +366,8 @@ class ActionGroup(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionGroupPatch(_Model):
-    """An Azure action group for patch operations.
+class ActionGroupPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Action group settings for patch operations.
 
     :ivar enabled: Indicates whether this action group is enabled. If an action group is not
      enabled, then none of its actions will be activated.
@@ -395,7 +396,7 @@ class ActionGroupPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionGroupPatchBody(_Model):
+class ActionGroupPatchBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An action group object for the body of patch operations.
 
     :ivar tags: Resource tags.
@@ -485,7 +486,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -529,7 +530,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ActionGroupResource(TrackedResource):
+class ActionGroupResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An action group resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -618,7 +619,7 @@ class ActionGroupResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ActionGroupResourceProperties(_Model):
+class ActionGroupResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure action group.
 
     :ivar group_short_name: The short name of the action group. This will be used in SMS messages.
@@ -746,7 +747,7 @@ class ActionGroupResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionList(_Model):
+class ActionList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of Activity Log Alert rule actions.
 
     :ivar action_groups: The list of the Action Groups.
@@ -776,7 +777,7 @@ class ActionList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Actions(_Model):
+class Actions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Actions to invoke when the alert fires.
 
     :ivar action_groups: Action Group resource Ids to invoke when the alert fires.
@@ -852,7 +853,7 @@ class ProxyResource(Resource):
     """
 
 
-class ActivityLogAlertResource(ProxyResource):
+class ActivityLogAlertResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Activity Log Alert rule resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -925,7 +926,7 @@ class ActivityLogAlertResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AdxDestination(_Model):
+class AdxDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Data Explorer (Adx) destination.
 
     :ivar resource_id: The ARM resource id of the Adx resource.
@@ -973,7 +974,7 @@ class AdxDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentSetting(_Model):
+class AgentSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A setting used to control an agent behavior on a host machine.
 
     :ivar name: The name of the setting. Must be part of the list of supported settings. Known
@@ -1010,7 +1011,7 @@ class AgentSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentSettingsSpec(_Model):
+class AgentSettingsSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An agent setting.
 
     :ivar logs: All the settings that are applicable to the logs agent (AMA).
@@ -1040,7 +1041,7 @@ class AgentSettingsSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertRuleAllOfCondition(_Model):
+class AlertRuleAllOfCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Activity Log Alert rule condition that is met when all its member conditions are met.
 
     :ivar all_of: The list of Activity Log Alert rule conditions. Required.
@@ -1070,7 +1071,7 @@ class AlertRuleAllOfCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertRuleLeafCondition(_Model):
+class AlertRuleLeafCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Activity Log Alert rule condition that is met by comparing the field and value of an
     Activity Log event. This condition must contain 'field' and either 'equals' or 'containsAny'.
 
@@ -1121,7 +1122,9 @@ class AlertRuleLeafCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertRuleAnyOfOrLeafCondition(AlertRuleLeafCondition):
+class AlertRuleAnyOfOrLeafCondition(
+    AlertRuleLeafCondition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Activity Log Alert rule condition that is met when all its member conditions are met.
     Each condition can be of one of the following types:
     **Important**: Each type has its unique subset of properties. Properties from different types
@@ -1176,7 +1179,7 @@ class AlertRuleAnyOfOrLeafCondition(AlertRuleLeafCondition):
         super().__init__(*args, **kwargs)
 
 
-class AlertRulePatchObject(_Model):
+class AlertRulePatchObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Activity Log Alert rule object for the body of patch operations.
 
     :ivar tags: The resource tags.
@@ -1231,7 +1234,7 @@ class AlertRulePatchObject(_Model):
             super().__setattr__(key, value)
 
 
-class AlertRulePatchProperties(_Model):
+class AlertRulePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Activity Log Alert rule properties for patch operations.
 
     :ivar enabled: Indicates whether this Activity Log Alert rule is enabled. If an Activity Log
@@ -1261,7 +1264,7 @@ class AlertRulePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertRuleProperties(_Model):
+class AlertRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Activity Log Alert rule.
 
     :ivar tenant_scope: The tenant GUID. Must be provided for tenant-level and management group
@@ -1325,7 +1328,7 @@ class AlertRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsights(_Model):
+class ApplicationInsights(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApplicationInsights.
 
     :ivar resource_id: Id of the application insights resource. Required.
@@ -1360,7 +1363,7 @@ class ApplicationInsights(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArmRoleReceiver(_Model):
+class ArmRoleReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An arm role receiver.
 
     :ivar name: The name of the arm role receiver. Names must be unique across all receivers within
@@ -1402,7 +1405,7 @@ class ArmRoleReceiver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationRunbookReceiver(_Model):
+class AutomationRunbookReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Azure Automation Runbook notification receiver.
 
     :ivar automation_account_id: The Azure automation account Id which holds this runbook and
@@ -1480,7 +1483,7 @@ class AutomationRunbookReceiver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoscaleErrorResponse(_Model):
+class AutoscaleErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the format of Error response.
 
     :ivar error: The error object.
@@ -1514,7 +1517,7 @@ class AutoscaleErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoscaleErrorResponseError(_Model):
+class AutoscaleErrorResponseError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The error object.
 
     :ivar code: One of a server-defined set of error codes.
@@ -1557,7 +1560,7 @@ class AutoscaleErrorResponseError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoscaleNotification(_Model):
+class AutoscaleNotification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Autoscale notification.
 
     :ivar operation: the operation associated with the notification and its value must be "scale".
@@ -1603,7 +1606,7 @@ class AutoscaleNotification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoscaleProfile(_Model):
+class AutoscaleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Autoscale profile.
 
     :ivar name: the name of the profile. Required.
@@ -1659,7 +1662,7 @@ class AutoscaleProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoscaleSetting(_Model):
+class AutoscaleSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A setting that contains all of the configuration for the automatic scaling of a resource.
 
     :ivar profiles: the collection of automatic scaling profiles that specify different scaling
@@ -1731,7 +1734,7 @@ class AutoscaleSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoscaleSettingResource(TrackedResource):
+class AutoscaleSettingResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The autoscale setting resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1751,10 +1754,22 @@ class AutoscaleSettingResource(TrackedResource):
     :vartype location: str
     :ivar properties: The autoscale setting of the resource. Required.
     :vartype properties: ~azure.mgmt.monitor.models.AutoscaleSetting
+    :ivar identity: The managed service identities assigned to this resource. Only user-assigned
+     identities are supported; 'SystemAssigned' and 'SystemAssigned,UserAssigned' are rejected. At
+     most one user-assigned managed identity may be assigned to an autoscale setting. To remove the
+     assigned identity, send 'type' as 'None'.
+    :vartype identity: ~azure.mgmt.monitor.models.ManagedServiceIdentity
     """
 
     properties: "_models.AutoscaleSetting" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The autoscale setting of the resource. Required."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource. Only user-assigned identities are
+     supported; 'SystemAssigned' and 'SystemAssigned,UserAssigned' are rejected. At most one
+     user-assigned managed identity may be assigned to an autoscale setting. To remove the assigned
+     identity, send 'type' as 'None'."""
 
     __flattened_items = [
         "profiles",
@@ -1773,6 +1788,7 @@ class AutoscaleSettingResource(TrackedResource):
         location: str,
         properties: "_models.AutoscaleSetting",
         tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -1804,17 +1820,29 @@ class AutoscaleSettingResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class AutoscaleSettingResourcePatch(_Model):
+class AutoscaleSettingResourcePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The autoscale setting object for patch operations.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar identity: The managed service identities assigned to this resource. Only user-assigned
+     identities are supported; 'SystemAssigned' and 'SystemAssigned,UserAssigned' are rejected. At
+     most one user-assigned managed identity may be assigned to an autoscale setting. To remove the
+     assigned identity, send 'type' as 'None'.
+    :vartype identity: ~azure.mgmt.monitor.models.ManagedServiceIdentity
     :ivar properties: The autoscale setting properties of the update operation.
     :vartype properties: ~azure.mgmt.monitor.models.AutoscaleSetting
     """
 
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource. Only user-assigned identities are
+     supported; 'SystemAssigned' and 'SystemAssigned,UserAssigned' are rejected. At most one
+     user-assigned managed identity may be assigned to an autoscale setting. To remove the assigned
+     identity, send 'type' as 'None'."""
     properties: Optional["_models.AutoscaleSetting"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1835,6 +1863,7 @@ class AutoscaleSettingResourcePatch(_Model):
         self,
         *,
         tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         properties: Optional["_models.AutoscaleSetting"] = None,
     ) -> None: ...
 
@@ -1867,7 +1896,7 @@ class AutoscaleSettingResourcePatch(_Model):
             super().__setattr__(key, value)
 
 
-class AzureAppPushReceiver(_Model):
+class AzureAppPushReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Azure mobile App push notification receiver.
 
     :ivar name: The name of the Azure mobile app push receiver. Names must be unique across all
@@ -1902,7 +1931,7 @@ class AzureAppPushReceiver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFunctionReceiver(_Model):
+class AzureFunctionReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An azure function receiver.
 
     :ivar name: The name of the azure function receiver. Names must be unique across all receivers
@@ -1966,7 +1995,7 @@ class AzureFunctionReceiver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureMonitorMetricsDestination(_Model):
+class AzureMonitorMetricsDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Monitor Metrics destination.
 
     :ivar name: A friendly name for the destination. This name should be unique across all
@@ -1996,7 +2025,7 @@ class AzureMonitorMetricsDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureMonitorPrivateLinkScope(TrackedResource):
+class AzureMonitorPrivateLinkScope(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Monitor PrivateLinkScope definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2063,7 +2092,7 @@ class AzureMonitorPrivateLinkScope(TrackedResource):
             super().__setattr__(key, value)
 
 
-class AzureMonitorPrivateLinkScopeProperties(_Model):
+class AzureMonitorPrivateLinkScopeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that define a Azure Monitor PrivateLinkScope resource.
 
     :ivar provisioning_state: Current state of this PrivateLinkScope: whether or not is has been
@@ -2111,7 +2140,7 @@ class AzureMonitorPrivateLinkScopeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BaselineMetadata(_Model):
+class BaselineMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a baseline metadata value.
 
     :ivar name: Name of the baseline metadata. Required.
@@ -2144,7 +2173,7 @@ class BaselineMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ColumnDefinition(_Model):
+class ColumnDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of custom data column.
 
     :ivar name: The name of the column.
@@ -2181,7 +2210,7 @@ class ColumnDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Condition(_Model):
+class Condition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A condition of the scheduled query rule.
 
     :ivar criterion_type: Specifies the type of threshold criteria. Known values are:
@@ -2318,7 +2347,7 @@ class Condition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConditionFailingPeriods(_Model):
+class ConditionFailingPeriods(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The minimum number of violations required within the selected lookback time window required to
     raise an alert. Relevant only for rules of the kind LogAlert.
 
@@ -2373,7 +2402,7 @@ class ConfigurationAccessEndpointSpec(_Model):
     """The endpoint. This property is READ-ONLY."""
 
 
-class Context(_Model):
+class Context(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The context info.
 
     :ivar notification_source: The source of the notification request.
@@ -2410,7 +2439,7 @@ class Context(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionEndpoint(_Model):
+class DataCollectionEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of data collection endpoint.
 
     :ivar description: Description of the data collection endpoint.
@@ -2516,7 +2545,7 @@ class DataCollectionEndpointConfigurationAccess(ConfigurationAccessEndpointSpec)
     """
 
 
-class FailoverConfigurationSpec(_Model):
+class FailoverConfigurationSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FailoverConfigurationSpec.
 
     :ivar active_location: Active location where data flow will occur.
@@ -2553,7 +2582,9 @@ class FailoverConfigurationSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionEndpointFailoverConfiguration(FailoverConfigurationSpec):  # pylint: disable=name-too-long
+class DataCollectionEndpointFailoverConfiguration(
+    FailoverConfigurationSpec
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Metadata for the resource. This property can only be updated by Log Analytics Control Plane for
     Data Collection Endpoint with Log Analytics Destination.
 
@@ -2656,7 +2687,7 @@ class DataCollectionEndpointMetricsIngestion(MetricsIngestionEndpointSpec):
     """
 
 
-class NetworkRuleSet(_Model):
+class NetworkRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the network rules.
 
     :ivar public_network_access: The configuration to set whether network access from public
@@ -2690,7 +2721,7 @@ class NetworkRuleSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionEndpointNetworkAcls(NetworkRuleSet):
+class DataCollectionEndpointNetworkAcls(NetworkRuleSet):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network access control rules for the endpoints.
 
     :ivar public_network_access: The configuration to set whether network access from public
@@ -2718,7 +2749,7 @@ class DataCollectionEndpointNetworkAcls(NetworkRuleSet):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionEndpointResource(TrackedResource):
+class DataCollectionEndpointResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of ARM tracked top level resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2820,7 +2851,7 @@ class DataCollectionEndpointResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -2871,7 +2902,9 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionEndpointResourceIdentity(ManagedServiceIdentity):
+class DataCollectionEndpointResourceIdentity(
+    ManagedServiceIdentity
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity of the resource.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -2906,7 +2939,9 @@ class DataCollectionEndpointResourceIdentity(ManagedServiceIdentity):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionEndpointResourceProperties(DataCollectionEndpoint):
+class DataCollectionEndpointResourceProperties(
+    DataCollectionEndpoint
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataCollectionEndpointResourceProperties.
 
     :ivar description: Description of the data collection endpoint.
@@ -2963,7 +2998,7 @@ class DataCollectionEndpointResourceProperties(DataCollectionEndpoint):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource model definition representing SKU.
 
     :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
@@ -3023,7 +3058,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionEndpointResourceSku(Sku):
+class DataCollectionEndpointResourceSku(Sku):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SKU of the resource.
 
     :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
@@ -3065,7 +3100,7 @@ class DataCollectionEndpointResourceSku(Sku):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionRule(_Model):
+class DataCollectionRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of what monitoring data to collect and where that data should be sent.
 
     :ivar description: Description of the data collection rule.
@@ -3180,7 +3215,7 @@ class DataCollectionRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionRuleAgentSettings(AgentSettingsSpec):
+class DataCollectionRuleAgentSettings(AgentSettingsSpec):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Agent settings used to modify agent behavior on a given host.
 
     :ivar logs: All the settings that are applicable to the logs agent (AMA).
@@ -3205,7 +3240,7 @@ class DataCollectionRuleAgentSettings(AgentSettingsSpec):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionRuleAssociation(_Model):
+class DataCollectionRuleAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of association of a data collection rule with a monitored Azure resource.
 
     :ivar description: Description of the association.
@@ -3293,7 +3328,9 @@ class ExtensionResource(Resource):
     """
 
 
-class DataCollectionRuleAssociationProxyOnlyResource(ExtensionResource):  # pylint: disable=name-too-long
+class DataCollectionRuleAssociationProxyOnlyResource(
+    ExtensionResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Definition of generic ARM proxy resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3366,7 +3403,7 @@ class DataCollectionRuleAssociationProxyOnlyResource(ExtensionResource):  # pyli
 
 class DataCollectionRuleAssociationProxyOnlyResourceProperties(
     DataCollectionRuleAssociation
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """DataCollectionRuleAssociationProxyOnlyResourceProperties.
 
     :ivar description: Description of the association.
@@ -3405,7 +3442,7 @@ class DataCollectionRuleAssociationProxyOnlyResourceProperties(
         super().__init__(*args, **kwargs)
 
 
-class DataSourcesSpec(_Model):
+class DataSourcesSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specification of data sources that will be collected.
 
     :ivar performance_counters: The list of performance counter data source configurations.
@@ -3535,7 +3572,7 @@ class DataSourcesSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionRuleDataSources(DataSourcesSpec):
+class DataCollectionRuleDataSources(DataSourcesSpec):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The specification of data sources. This property is optional and can be omitted if the rule is
     meant to be used via direct calls to the provisioned endpoint.
 
@@ -3605,7 +3642,7 @@ class DataCollectionRuleDataSources(DataSourcesSpec):
         super().__init__(*args, **kwargs)
 
 
-class DestinationsSpec(_Model):
+class DestinationsSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specification of destinations that can be used in data flows.
 
     :ivar log_analytics: List of Log Analytics destinations.
@@ -3700,7 +3737,7 @@ class DestinationsSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionRuleDestinations(DestinationsSpec):
+class DataCollectionRuleDestinations(DestinationsSpec):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The specification of destinations.
 
     :ivar log_analytics: List of Log Analytics destinations.
@@ -3753,7 +3790,7 @@ class DataCollectionRuleDestinations(DestinationsSpec):
         super().__init__(*args, **kwargs)
 
 
-class DirectDataSourcesSpec(_Model):
+class DirectDataSourcesSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specification of direct data sources that will be collected.
 
     :ivar otel_metrics: The list of OTel metrics data source configurations.
@@ -3797,7 +3834,9 @@ class DirectDataSourcesSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionRuleDirectDataSources(DirectDataSourcesSpec):
+class DataCollectionRuleDirectDataSources(
+    DirectDataSourcesSpec
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The specification of direct data sources. This property is optional and can be omitted.
 
     :ivar otel_metrics: The list of OTel metrics data source configurations.
@@ -3853,7 +3892,7 @@ class DataCollectionRuleEndpoints(EndpointsSpec):
     """
 
 
-class IngestionQuotas(_Model):
+class IngestionQuotas(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IngestionQuotas.
 
     :ivar logs:
@@ -3882,7 +3921,7 @@ class IngestionQuotas(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionRuleIngestionQuotas(IngestionQuotas):
+class DataCollectionRuleIngestionQuotas(IngestionQuotas):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The specification for ingestion limits.
 
     :ivar logs:
@@ -3921,7 +3960,7 @@ class DataCollectionRuleMetadata(Metadata):
     """
 
 
-class ReferencesSpec(_Model):
+class ReferencesSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This section defines all the references that may be used in other sections of the DCR.
 
     :ivar enrichment_data: All the enrichment data sources referenced in data flows.
@@ -3959,7 +3998,7 @@ class ReferencesSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionRuleReferences(ReferencesSpec):
+class DataCollectionRuleReferences(ReferencesSpec):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines all the references that may be used in other sections of the DCR.
 
     :ivar enrichment_data: All the enrichment data sources referenced in data flows.
@@ -3988,7 +4027,7 @@ class DataCollectionRuleReferences(ReferencesSpec):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionRuleResource(TrackedResource):
+class DataCollectionRuleResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of ARM tracked top level resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4094,7 +4133,9 @@ class DataCollectionRuleResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class DataCollectionRuleResourceIdentity(ManagedServiceIdentity):
+class DataCollectionRuleResourceIdentity(
+    ManagedServiceIdentity
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity of the resource.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -4129,7 +4170,9 @@ class DataCollectionRuleResourceIdentity(ManagedServiceIdentity):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionRuleResourceProperties(DataCollectionRule):
+class DataCollectionRuleResourceProperties(
+    DataCollectionRule
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataCollectionRuleResourceProperties.
 
     :ivar description: Description of the data collection rule.
@@ -4193,7 +4236,7 @@ class DataCollectionRuleResourceProperties(DataCollectionRule):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionRuleResourceSku(Sku):
+class DataCollectionRuleResourceSku(Sku):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SKU of the resource.
 
     :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
@@ -4235,7 +4278,35 @@ class DataCollectionRuleResourceSku(Sku):
         super().__init__(*args, **kwargs)
 
 
-class DataFlow(_Model):
+class DataContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Information about a container with data for a given resource.
+
+    :ivar workspace: Log Analytics workspace information. Required.
+    :vartype workspace: ~azure.mgmt.monitor.models.WorkspaceInfo
+    """
+
+    workspace: "_models.WorkspaceInfo" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Log Analytics workspace information. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        workspace: "_models.WorkspaceInfo",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataFlow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of which streams are sent to which destinations.
 
     :ivar streams: List of streams for this data flow.
@@ -4300,7 +4371,7 @@ class DataFlow(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataImportSources(_Model):
+class DataImportSources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataImportSources.
 
     :ivar event_hub: Definition of Event Hub configuration.
@@ -4330,7 +4401,7 @@ class DataImportSources(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventHubDataSource(_Model):
+class EventHubDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EventHubDataSource.
 
     :ivar name: A friendly name for the data source. This name should be unique across all data
@@ -4372,7 +4443,7 @@ class EventHubDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataImportSourcesEventHub(EventHubDataSource):
+class DataImportSourcesEventHub(EventHubDataSource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of Event Hub configuration.
 
     :ivar name: A friendly name for the data source. This name should be unique across all data
@@ -4404,7 +4475,7 @@ class DataImportSourcesEventHub(EventHubDataSource):
         super().__init__(*args, **kwargs)
 
 
-class DataSourcesSpecDataImports(DataImportSources):
+class DataSourcesSpecDataImports(DataImportSources):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications of pull based data sources.
 
     :ivar event_hub: Definition of Event Hub configuration.
@@ -4429,7 +4500,9 @@ class DataSourcesSpecDataImports(DataImportSources):
         super().__init__(*args, **kwargs)
 
 
-class DestinationsSpecAzureMonitorMetrics(AzureMonitorMetricsDestination):
+class DestinationsSpecAzureMonitorMetrics(
+    AzureMonitorMetricsDestination
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Monitor Metrics destination.
 
     :ivar name: A friendly name for the destination. This name should be unique across all
@@ -4455,7 +4528,387 @@ class DestinationsSpecAzureMonitorMetrics(AzureMonitorMetricsDestination):
         super().__init__(*args, **kwargs)
 
 
-class Dimension(_Model):
+class DiagnosticSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The diagnostic settings.
+
+    :ivar storage_account_id: The resource ID of the storage account to which you would like to
+     send Diagnostic Logs.
+    :vartype storage_account_id: str
+    :ivar service_bus_rule_id: The service bus rule Id of the diagnostic setting. This is here to
+     maintain backwards compatibility.
+    :vartype service_bus_rule_id: str
+    :ivar event_hub_authorization_rule_id: The resource Id for the event hub authorization rule.
+    :vartype event_hub_authorization_rule_id: str
+    :ivar event_hub_name: The name of the event hub. If none is specified, the default event hub
+     will be selected.
+    :vartype event_hub_name: str
+    :ivar metrics: The list of metric settings.
+    :vartype metrics: list[~azure.mgmt.monitor.models.DiagnosticsMetricSettings]
+    :ivar logs: The list of logs settings.
+    :vartype logs: list[~azure.mgmt.monitor.models.DiagnosticsLogSettings]
+    :ivar workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
+     like to send Diagnostic Logs. Example:
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+    :vartype workspace_id: str
+    :ivar marketplace_partner_id: The full ARM resource ID of the Marketplace resource to which you
+     would like to send Diagnostic Logs.
+    :vartype marketplace_partner_id: str
+    :ivar log_analytics_destination_type: A string indicating whether the export to Log Analytics
+     should use the default destination type, i.e. AzureDiagnostics, or use a destination type
+     constructed as follows: <normalized service identity>_<normalized category name>. Possible
+     values are: Dedicated and null (null is default.).
+    :vartype log_analytics_destination_type: str
+    """
+
+    storage_account_id: Optional[str] = rest_field(
+        name="storageAccountId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the storage account to which you would like to send Diagnostic Logs."""
+    service_bus_rule_id: Optional[str] = rest_field(
+        name="serviceBusRuleId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The service bus rule Id of the diagnostic setting. This is here to maintain backwards
+     compatibility."""
+    event_hub_authorization_rule_id: Optional[str] = rest_field(
+        name="eventHubAuthorizationRuleId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource Id for the event hub authorization rule."""
+    event_hub_name: Optional[str] = rest_field(
+        name="eventHubName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the event hub. If none is specified, the default event hub will be selected."""
+    metrics: Optional[list["_models.DiagnosticsMetricSettings"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of metric settings."""
+    logs: Optional[list["_models.DiagnosticsLogSettings"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of logs settings."""
+    workspace_id: Optional[str] = rest_field(
+        name="workspaceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The full ARM resource ID of the Log Analytics workspace to which you would like to send
+     Diagnostic Logs. Example:
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2."""
+    marketplace_partner_id: Optional[str] = rest_field(
+        name="marketplacePartnerId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic
+     Logs."""
+    log_analytics_destination_type: Optional[str] = rest_field(
+        name="logAnalyticsDestinationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A string indicating whether the export to Log Analytics should use the default destination
+     type, i.e. AzureDiagnostics, or use a destination type constructed as follows: <normalized
+     service identity>_<normalized category name>. Possible values are: Dedicated and null (null is
+     default.)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_account_id: Optional[str] = None,
+        service_bus_rule_id: Optional[str] = None,
+        event_hub_authorization_rule_id: Optional[str] = None,
+        event_hub_name: Optional[str] = None,
+        metrics: Optional[list["_models.DiagnosticsMetricSettings"]] = None,
+        logs: Optional[list["_models.DiagnosticsLogSettings"]] = None,
+        workspace_id: Optional[str] = None,
+        marketplace_partner_id: Optional[str] = None,
+        log_analytics_destination_type: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiagnosticSettingsCategory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The diagnostic settings Category.
+
+    :ivar category_type: The type of the diagnostic settings category. Known values are: "Metrics"
+     and "Logs".
+    :vartype category_type: str or ~azure.mgmt.monitor.models.CategoryType
+    :ivar category_groups: the collection of what category groups are supported.
+    :vartype category_groups: list[str]
+    """
+
+    category_type: Optional[Union[str, "_models.CategoryType"]] = rest_field(
+        name="categoryType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the diagnostic settings category. Known values are: \"Metrics\" and \"Logs\"."""
+    category_groups: Optional[list[str]] = rest_field(
+        name="categoryGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """the collection of what category groups are supported."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category_type: Optional[Union[str, "_models.CategoryType"]] = None,
+        category_groups: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiagnosticSettingsCategoryResource(
+    ExtensionResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The diagnostic settings category resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
+    :ivar properties: The properties of a Diagnostic Settings Category.
+    :vartype properties: ~azure.mgmt.monitor.models.DiagnosticSettingsCategory
+    """
+
+    properties: Optional["_models.DiagnosticSettingsCategory"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of a Diagnostic Settings Category."""
+
+    __flattened_items = ["category_type", "category_groups"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DiagnosticSettingsCategory"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class DiagnosticSettingsResource(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The diagnostic setting resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
+    :ivar properties: Properties of a Diagnostic Settings Resource.
+    :vartype properties: ~azure.mgmt.monitor.models.DiagnosticSettings
+    """
+
+    properties: Optional["_models.DiagnosticSettings"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of a Diagnostic Settings Resource."""
+
+    __flattened_items = [
+        "storage_account_id",
+        "service_bus_rule_id",
+        "event_hub_authorization_rule_id",
+        "event_hub_name",
+        "metrics",
+        "logs",
+        "workspace_id",
+        "marketplace_partner_id",
+        "log_analytics_destination_type",
+    ]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DiagnosticSettings"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class DiagnosticsLogSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Part of MultiTenantDiagnosticSettings. Specifies the settings for a particular log.
+
+    :ivar category: Name of a Diagnostic Log category for a resource type this setting is applied
+     to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
+     diagnostic settings operation.
+    :vartype category: str
+    :ivar category_group: Name of a Diagnostic Log category group for a resource type this setting
+     is applied to. To obtain the list of Diagnostic Log categories for a resource, first perform a
+     GET diagnostic settings operation.
+    :vartype category_group: str
+    :ivar enabled: a value indicating whether this log is enabled. Required.
+    :vartype enabled: bool
+    :ivar retention_policy: the retention policy for this log.
+    :vartype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
+    """
+
+    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of a Diagnostic Log category for a resource type this setting is applied to. To obtain the
+     list of Diagnostic Log categories for a resource, first perform a GET diagnostic settings
+     operation."""
+    category_group: Optional[str] = rest_field(
+        name="categoryGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of a Diagnostic Log category group for a resource type this setting is applied to. To
+     obtain the list of Diagnostic Log categories for a resource, first perform a GET diagnostic
+     settings operation."""
+    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """a value indicating whether this log is enabled. Required."""
+    retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
+        name="retentionPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """the retention policy for this log."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: bool,
+        category: Optional[str] = None,
+        category_group: Optional[str] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiagnosticsMetricSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Part of MultiTenantDiagnosticSettings. Specifies the settings for a particular metric.
+
+    :ivar time_grain: the timegrain of the metric in ISO8601 format.
+    :vartype time_grain: ~datetime.timedelta
+    :ivar category: Name of a Diagnostic Metric category for a resource type this setting is
+     applied to. To obtain the list of Diagnostic metric categories for a resource, first perform a
+     GET diagnostic settings operation.
+    :vartype category: str
+    :ivar enabled: a value indicating whether this category is enabled. Required.
+    :vartype enabled: bool
+    :ivar retention_policy: the retention policy for this category.
+    :vartype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
+    """
+
+    time_grain: Optional[datetime.timedelta] = rest_field(
+        name="timeGrain", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """the timegrain of the metric in ISO8601 format."""
+    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of a Diagnostic Metric category for a resource type this setting is applied to. To obtain
+     the list of Diagnostic metric categories for a resource, first perform a GET diagnostic
+     settings operation."""
+    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """a value indicating whether this category is enabled. Required."""
+    retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
+        name="retentionPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """the retention policy for this category."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: bool,
+        time_grain: Optional[datetime.timedelta] = None,
+        category: Optional[str] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Dimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dimension splitting and filtering definition.
 
     :ivar name: Name of the dimension. Required.
@@ -4498,7 +4951,7 @@ class Dimension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiMetricCriteria(_Model):
+class MultiMetricCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The types of conditions for a multi resource alert.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4578,7 +5031,9 @@ class MultiMetricCriteria(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DynamicMetricCriteria(MultiMetricCriteria, discriminator="DynamicThresholdCriterion"):
+class DynamicMetricCriteria(
+    MultiMetricCriteria, discriminator="DynamicThresholdCriterion"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Criterion for dynamic threshold.
 
     :ivar name: Name of the criteria. Required.
@@ -4669,7 +5124,7 @@ class DynamicMetricCriteria(MultiMetricCriteria, discriminator="DynamicThreshold
         self.criterion_type = CriterionType.DYNAMIC_THRESHOLD_CRITERION  # type: ignore
 
 
-class MultiPromQLCriteria(_Model):
+class MultiPromQLCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The types of conditions for a multi query metric alert.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4716,7 +5171,9 @@ class MultiPromQLCriteria(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DynamicPromQLCriteria(MultiPromQLCriteria, discriminator="DynamicThresholdCriterion"):
+class DynamicPromQLCriteria(
+    MultiPromQLCriteria, discriminator="DynamicThresholdCriterion"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The criterion for dynamic prom query.
 
     :ivar name: Name of the criteria. Required.
@@ -4783,7 +5240,7 @@ class DynamicPromQLCriteria(MultiPromQLCriteria, discriminator="DynamicThreshold
         self.criterion_type = CriterionType.DYNAMIC_THRESHOLD_CRITERION  # type: ignore
 
 
-class DynamicThresholdFailingPeriods(_Model):
+class DynamicThresholdFailingPeriods(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The minimum number of violations required within the selected lookback time window required to
     raise an alert.
 
@@ -4826,7 +5283,7 @@ class DynamicThresholdFailingPeriods(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EmailNotification(_Model):
+class EmailNotification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Email notification of an autoscale event.
 
     :ivar send_to_subscription_administrator: a value indicating whether to send email to
@@ -4874,7 +5331,7 @@ class EmailNotification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EmailReceiver(_Model):
+class EmailReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An email receiver.
 
     :ivar name: The name of the email receiver. Names must be unique across all receivers within an
@@ -4922,7 +5379,7 @@ class EmailReceiver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnableRequest(_Model):
+class EnableRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a receiver that should be resubscribed.
 
     :ivar receiver_name: The name of the receiver to resubscribe. Required.
@@ -4950,7 +5407,7 @@ class EnableRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnrichmentData(_Model):
+class EnrichmentData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """All the enrichment data sources referenced in data flows.
 
     :ivar storage_blobs: All the storage blobs used as enrichment data sources.
@@ -4980,6 +5437,39 @@ class EnrichmentData(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Error(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Error details.
+
+    :ivar code: Error code identifying the specific error. Required.
+    :vartype code: str
+    :ivar message: Error message in the caller's locale.
+    :vartype message: str
+    """
+
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error code identifying the specific error. Required."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error message in the caller's locale."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
@@ -4995,7 +5485,7 @@ class ErrorAdditionalInfo(_Model):
     """The additional info."""
 
 
-class ErrorContract(_Model):
+class ErrorContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common error response for all Azure Resource Manager APIs to return error details for failed
     operations. (This also follows the OData error response format.).
 
@@ -5026,7 +5516,7 @@ class ErrorContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorDetail(_Model):
+class ErrorDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes details of an error response.
 
     :ivar code: Unlocalized string which can be used to programmatically identify the error.
@@ -5074,7 +5564,7 @@ class ErrorDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorDetailAdditionalInfoItem(_Model):
+class ErrorDetailAdditionalInfoItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ErrorDetailAdditionalInfoItem.
 
     :ivar type: The type of additional information.
@@ -5136,7 +5626,7 @@ class ErrorDetailAutoGenerated(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the format of Error response.
 
     :ivar code: Error code.
@@ -5169,7 +5659,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponseAutoGenerated(_Model):
+class ErrorResponseAutoGenerated(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -5229,7 +5719,7 @@ class ErrorResponseCommon(_Model):
     """The error additional info."""
 
 
-class ErrorResponseCommonV2(_Model):
+class ErrorResponseCommonV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common error response for all Azure Resource Manager APIs to return error details for failed
     operations. (This also follows the OData error response format.).
 
@@ -5260,7 +5750,7 @@ class ErrorResponseCommonV2(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponseError(_Model):
+class ErrorResponseError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ErrorResponseError.
 
     :ivar code: Unlocalized string which can be used to programmatically identify the error.
@@ -5318,7 +5808,7 @@ class ErrorResponseError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponseErrorAdditionalInfoItem(_Model):
+class ErrorResponseErrorAdditionalInfoItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ErrorResponseErrorAdditionalInfoItem.
 
     :ivar type: The type of additional information.
@@ -5351,7 +5841,7 @@ class ErrorResponseErrorAdditionalInfoItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EtwProviderDataSource(_Model):
+class EtwProviderDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enables an ETW provider logs to be collected by this data collection rule.
 
     :ivar streams: List of streams that this data source will be sent to. Required.
@@ -5568,7 +6058,7 @@ class EventData(_Model):
     """the Azure tenant Id."""
 
 
-class EventHubDestination(_Model):
+class EventHubDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EventHubDestination.
 
     :ivar event_hub_resource_id: The resource ID of the event hub.
@@ -5605,7 +6095,7 @@ class EventHubDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventHubDirectDestination(_Model):
+class EventHubDirectDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EventHubDirectDestination.
 
     :ivar event_hub_resource_id: The resource ID of the event hub.
@@ -5642,7 +6132,7 @@ class EventHubDirectDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventHubReceiver(_Model):
+class EventHubReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Event hub receiver.
 
     :ivar name: The name of the Event hub receiver. Names must be unique across all receivers
@@ -5709,7 +6199,7 @@ class EventHubReceiver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtensionDataSource(_Model):
+class ExtensionDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of which data will be collected from a separate VM extension that integrates with
     the Azure Monitor Agent. Collected from either Windows and Linux machines, depending on which
     extension is defined.
@@ -5771,7 +6261,7 @@ class ExtensionDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpRequestInfo(_Model):
+class HttpRequestInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Http request info.
 
     :ivar client_request_id: the client request id.
@@ -5818,7 +6308,7 @@ class HttpRequestInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
+class Identity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.
 
     :ivar principal_id: The principal ID of resource identity.
@@ -5867,7 +6357,7 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IisLogsDataSource(_Model):
+class IisLogsDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enables IIS logs to be collected by this data collection rule.
 
     :ivar streams: IIS streams. Required.
@@ -5949,7 +6439,7 @@ class Incident(_Model):
      is still active."""
 
 
-class IncidentReceiver(_Model):
+class IncidentReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Incident receiver.
 
     :ivar name: The name of the Incident receiver. Names must be unique across all receivers within
@@ -5999,7 +6489,7 @@ class IncidentReceiver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentServiceConnection(_Model):
+class IncidentServiceConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The connection info for Incident Receiver.
 
     :ivar name: The name of the connection. Required.
@@ -6033,7 +6523,7 @@ class IncidentServiceConnection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogsQuotaSpec(_Model):
+class LogsQuotaSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LogsQuotaSpec.
 
     :ivar max_size_per_minute_in_gb:
@@ -6068,7 +6558,7 @@ class LogsQuotaSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionQuotasLogs(LogsQuotaSpec):
+class IngestionQuotasLogs(LogsQuotaSpec):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IngestionQuotasLogs.
 
     :ivar max_size_per_minute_in_gb:
@@ -6096,7 +6586,7 @@ class IngestionQuotasLogs(LogsQuotaSpec):
         super().__init__(*args, **kwargs)
 
 
-class ItsmReceiver(_Model):
+class ItsmReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Itsm receiver.
 
     :ivar name: The name of the Itsm receiver. Names must be unique across all receivers within an
@@ -6155,7 +6645,7 @@ class ItsmReceiver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalizableString(_Model):
+class LocalizableString(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The localizable string class.
 
     :ivar value: the invariant value. Required.
@@ -6190,7 +6680,7 @@ class LocalizableString(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocationSpec(_Model):
+class LocationSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LocationSpec.
 
     :ivar location: Name of location.
@@ -6228,7 +6718,7 @@ class LocationSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogAnalyticsDestination(_Model):
+class LogAnalyticsDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Log Analytics destination.
 
     :ivar workspace_resource_id: The resource ID of the Log Analytics workspace.
@@ -6269,7 +6759,7 @@ class LogAnalyticsDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogFilesDataSource(_Model):
+class LogFilesDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of which custom log files will be collected by this data collection rule.
 
     :ivar streams: List of streams that this data source will be sent to. A stream indicates what
@@ -6336,7 +6826,7 @@ class LogFilesDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogFileSettings(_Model):
+class LogFileSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for different log file formats.
 
     :ivar text: Text settings.
@@ -6366,7 +6856,7 @@ class LogFileSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogFilesDataSourceSettings(LogFileSettings):
+class LogFilesDataSourceSettings(LogFileSettings):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The log files specific settings.
 
     :ivar text: Text settings.
@@ -6391,7 +6881,7 @@ class LogFilesDataSourceSettings(LogFileSettings):
         super().__init__(*args, **kwargs)
 
 
-class LogFileTextSettings(_Model):
+class LogFileTextSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for text log files.
 
     :ivar record_start_timestamp_format: One of the supported timestamp formats. Required. Known
@@ -6428,7 +6918,7 @@ class LogFileTextSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogFileSettingsText(LogFileTextSettings):
+class LogFileSettingsText(LogFileTextSettings):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Text settings.
 
     :ivar record_start_timestamp_format: One of the supported timestamp formats. Required. Known
@@ -6457,7 +6947,7 @@ class LogFileSettingsText(LogFileTextSettings):
         super().__init__(*args, **kwargs)
 
 
-class LogicAppReceiver(_Model):
+class LogicAppReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A logic app receiver.
 
     :ivar name: The name of the logic app receiver. Names must be unique across all receivers
@@ -6512,7 +7002,7 @@ class LogicAppReceiver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogProfileProperties(_Model):
+class LogProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The log profile properties.
 
     :ivar storage_account_id: the resource id of the storage account to which you would like to
@@ -6575,7 +7065,7 @@ class LogProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogProfileResource(TrackedResource):
+class LogProfileResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The log profile resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6640,7 +7130,7 @@ class LogProfileResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class LogProfileResourcePatch(_Model):
+class LogProfileResourcePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The log profile resource for patch operations.
 
     :ivar tags: Resource tags.
@@ -6695,62 +7185,7 @@ class LogProfileResourcePatch(_Model):
             super().__setattr__(key, value)
 
 
-class LogSettings(_Model):
-    """Part of MultiTenantDiagnosticSettings. Specifies the settings for a particular log.
-
-    :ivar category: Name of a Diagnostic Log category for a resource type this setting is applied
-     to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
-     diagnostic settings operation.
-    :vartype category: str
-    :ivar category_group: Name of a Diagnostic Log category group for a resource type this setting
-     is applied to. To obtain the list of Diagnostic Log categories for a resource, first perform a
-     GET diagnostic settings operation.
-    :vartype category_group: str
-    :ivar enabled: a value indicating whether this log is enabled. Required.
-    :vartype enabled: bool
-    :ivar retention_policy: the retention policy for this log.
-    :vartype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
-    """
-
-    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of a Diagnostic Log category for a resource type this setting is applied to. To obtain the
-     list of Diagnostic Log categories for a resource, first perform a GET diagnostic settings
-     operation."""
-    category_group: Optional[str] = rest_field(
-        name="categoryGroup", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Name of a Diagnostic Log category group for a resource type this setting is applied to. To
-     obtain the list of Diagnostic Log categories for a resource, first perform a GET diagnostic
-     settings operation."""
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """a value indicating whether this log is enabled. Required."""
-    retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
-        name="retentionPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """the retention policy for this log."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        category: Optional[str] = None,
-        category_group: Optional[str] = None,
-        retention_policy: Optional["_models.RetentionPolicy"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class MetadataValue(_Model):
+class MetadataValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a metric metadata value.
 
     :ivar name: The name of the metadata.
@@ -6783,7 +7218,7 @@ class MetadataValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Metric(_Model):
+class Metric(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result data of a query.
 
     :ivar id: The metric Id. Required.
@@ -6857,7 +7292,7 @@ class Metric(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricAlertAction(_Model):
+class MetricAlertAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An alert action.
 
     :ivar action_group_id: The id of the action group to use.
@@ -6896,7 +7331,7 @@ class MetricAlertAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricAlertCriteria(_Model):
+class MetricAlertCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The rule criteria that defines the conditions of the alert rule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6938,7 +7373,7 @@ class MetricAlertCriteria(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricAlertErrorResponse(_Model):
+class MetricAlertErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the format of Error response.
 
     :ivar error:
@@ -6969,7 +7404,7 @@ class MetricAlertErrorResponse(_Model):
 
 class MetricAlertMultipleResourceMultipleMetricCriteria(
     MetricAlertCriteria, discriminator="Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies the metric alert criteria for multiple resource that has multiple metric criteria.
 
     :ivar all_of: The list of multiple metric criteria for this 'all of' operation.
@@ -7007,7 +7442,7 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(
         self.odata_type = Odatatype.MICROSOFT_AZURE_MONITOR_MULTIPLE_RESOURCE_MULTIPLE_METRIC_CRITERIA  # type: ignore
 
 
-class MetricAlertProperties(_Model):
+class MetricAlertProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An alert rule.
 
     :ivar description: The description of the metric alert that will be included in the alert
@@ -7144,7 +7579,7 @@ class MetricAlertProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricAlertPropertiesPatch(_Model):
+class MetricAlertPropertiesPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An alert rule properties for patch.
 
     :ivar description: The description of the metric alert that will be included in the alert
@@ -7279,7 +7714,7 @@ class MetricAlertPropertiesPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricAlertResource(TrackedResource):
+class MetricAlertResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The metric alert resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7366,7 +7801,7 @@ class MetricAlertResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class MetricAlertResourcePatch(_Model):
+class MetricAlertResourcePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The metric alert resource for patch operations.
 
     :ivar tags: Resource tags.
@@ -7445,7 +7880,7 @@ class MetricAlertResourcePatch(_Model):
 
 class MetricAlertSingleResourceMultipleMetricCriteria(
     MetricAlertCriteria, discriminator="Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies the metric alert criteria for a single resource that has multiple metric criteria.
 
     :ivar all_of: The list of metric criteria for this 'all of' operation.
@@ -7483,7 +7918,7 @@ class MetricAlertSingleResourceMultipleMetricCriteria(
         self.odata_type = Odatatype.MICROSOFT_AZURE_MONITOR_SINGLE_RESOURCE_MULTIPLE_METRIC_CRITERIA  # type: ignore
 
 
-class MetricAlertStatus(_Model):
+class MetricAlertStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An alert status.
 
     :ivar name: The status name.
@@ -7528,7 +7963,7 @@ class MetricAlertStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricAlertStatusCollection(_Model):
+class MetricAlertStatusCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a collection of alert rule resources.
 
     :ivar value: The values for the alert rule resources.
@@ -7558,7 +7993,7 @@ class MetricAlertStatusCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricAlertStatusProperties(_Model):
+class MetricAlertStatusProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An alert status properties.
 
     :ivar dimensions: An object describing the type of the dimensions.
@@ -7598,7 +8033,7 @@ class MetricAlertStatusProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricAvailability(_Model):
+class MetricAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metric availability specifies the time grain (aggregation interval or frequency) and the
     retention period for that time grain.
 
@@ -7638,7 +8073,7 @@ class MetricAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricBaselinesErrorResponse(_Model):
+class MetricBaselinesErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the format of Error response.
 
     :ivar error:
@@ -7667,7 +8102,7 @@ class MetricBaselinesErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricBaselinesProperties(_Model):
+class MetricBaselinesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response to a metric baselines query.
 
     :ivar timespan: The timespan for which the data was retrieved. Its value consists of two
@@ -7720,7 +8155,9 @@ class MetricBaselinesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricCriteria(MultiMetricCriteria, discriminator="StaticThresholdCriterion"):
+class MetricCriteria(
+    MultiMetricCriteria, discriminator="StaticThresholdCriterion"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Criterion to filter metrics.
 
     :ivar name: Name of the criteria. Required.
@@ -7785,7 +8222,7 @@ class MetricCriteria(MultiMetricCriteria, discriminator="StaticThresholdCriterio
         self.criterion_type = CriterionType.STATIC_THRESHOLD_CRITERION  # type: ignore
 
 
-class MetricDefinition(_Model):
+class MetricDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metric definition class specifies the metadata for a metric.
 
     :ivar is_dimension_required: Flag to indicate whether the dimension is required.
@@ -7902,7 +8339,7 @@ class MetricDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricDimension(_Model):
+class MetricDimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies a metric dimension.
 
     :ivar name: Name of the dimension. Required.
@@ -7942,7 +8379,7 @@ class MetricDimension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricNamespace(_Model):
+class MetricNamespace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metric namespace class specifies the metadata for a metric namespace.
 
     :ivar id: The ID of the metric namespace.
@@ -7994,7 +8431,7 @@ class MetricNamespace(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricNamespaceName(_Model):
+class MetricNamespaceName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The fully qualified metric namespace name.
 
     :ivar metric_namespace_name: The metric namespace name.
@@ -8024,58 +8461,7 @@ class MetricNamespaceName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricSettings(_Model):
-    """Part of MultiTenantDiagnosticSettings. Specifies the settings for a particular metric.
-
-    :ivar time_grain: the timegrain of the metric in ISO8601 format.
-    :vartype time_grain: ~datetime.timedelta
-    :ivar category: Name of a Diagnostic Metric category for a resource type this setting is
-     applied to. To obtain the list of Diagnostic metric categories for a resource, first perform a
-     GET diagnostic settings operation.
-    :vartype category: str
-    :ivar enabled: a value indicating whether this category is enabled. Required.
-    :vartype enabled: bool
-    :ivar retention_policy: the retention policy for this category.
-    :vartype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
-    """
-
-    time_grain: Optional[datetime.timedelta] = rest_field(
-        name="timeGrain", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """the timegrain of the metric in ISO8601 format."""
-    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of a Diagnostic Metric category for a resource type this setting is applied to. To obtain
-     the list of Diagnostic metric categories for a resource, first perform a GET diagnostic
-     settings operation."""
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """a value indicating whether this category is enabled. Required."""
-    retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
-        name="retentionPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """the retention policy for this category."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        time_grain: Optional[datetime.timedelta] = None,
-        category: Optional[str] = None,
-        retention_policy: Optional["_models.RetentionPolicy"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class MetricSingleDimension(_Model):
+class MetricSingleDimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The metric dimension name and value.
 
     :ivar name: Name of the dimension. Required.
@@ -8108,7 +8494,7 @@ class MetricSingleDimension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricTrigger(_Model):
+class MetricTrigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The trigger that results in a scaling action.
 
     :ivar metric_name: the name of the metric that defines what the rule monitors. Required.
@@ -8230,7 +8616,7 @@ class MetricTrigger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricValue(_Model):
+class MetricValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a metric value.
 
     :ivar time_stamp: The timestamp for the metric value in ISO 8601 format. Required.
@@ -8287,7 +8673,7 @@ class MetricValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MicrosoftFabricDestination(_Model):
+class MicrosoftFabricDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Fabric destination (non-Azure).
 
     :ivar tenant_id: The tenant id of the Microsoft Fabric resource.
@@ -8343,7 +8729,7 @@ class MicrosoftFabricDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitoringAccountDestination(_Model):
+class MonitoringAccountDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monitoring account destination.
 
     :ivar account_resource_id: The resource ID of the monitoring account.
@@ -8384,7 +8770,7 @@ class MonitoringAccountDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeter(_Model):
+class NetworkSecurityPerimeter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a network security perimeter (NSP).
 
     :ivar id: Fully qualified Azure resource ID of the NSP resource.
@@ -8424,7 +8810,9 @@ class NetworkSecurityPerimeter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfiguration(ProxyResource):
+class NetworkSecurityPerimeterConfiguration(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter (NSP) configuration resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8438,13 +8826,14 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.monitor.models.SystemData
-    :ivar properties:
+    :ivar properties: Network security configuration properties.
     :vartype properties: ~azure.mgmt.monitor.models.NetworkSecurityPerimeterConfigurationProperties
     """
 
     properties: Optional["_models.NetworkSecurityPerimeterConfigurationProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Network security configuration properties."""
 
     @overload
     def __init__(
@@ -8464,28 +8853,32 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network security configuration properties.
 
-    :ivar provisioning_state: Known values are: "Succeeded", "Creating", "Updating", "Deleting",
-     "Accepted", "Failed", and "Canceled".
+    :ivar provisioning_state: Provisioning state of the network security perimeter configuration.
+     Known values are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed", and
+     "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.monitor.models.NetworkSecurityPerimeterConfigurationProvisioningState
     :ivar provisioning_issues: List of provisioning issues, if any.
     :vartype provisioning_issues: list[~azure.mgmt.monitor.models.ProvisioningIssue]
-    :ivar network_security_perimeter:
+    :ivar network_security_perimeter: Information about the network security perimeter (NSP).
     :vartype network_security_perimeter: ~azure.mgmt.monitor.models.NetworkSecurityPerimeter
-    :ivar resource_association:
+    :ivar resource_association: Information about the resource association.
     :vartype resource_association: ~azure.mgmt.monitor.models.ResourceAssociation
-    :ivar profile:
+    :ivar profile: Network security perimeter configuration profile.
     :vartype profile: ~azure.mgmt.monitor.models.NetworkSecurityProfile
     """
 
     provisioning_state: Optional[Union[str, "_models.NetworkSecurityPerimeterConfigurationProvisioningState"]] = (
         rest_field(name="provisioningState", visibility=["read"])
     )
-    """Known values are: \"Succeeded\", \"Creating\", \"Updating\", \"Deleting\", \"Accepted\",
-     \"Failed\", and \"Canceled\"."""
+    """Provisioning state of the network security perimeter configuration. Known values are:
+     \"Succeeded\", \"Creating\", \"Updating\", \"Deleting\", \"Accepted\", \"Failed\", and
+     \"Canceled\"."""
     provisioning_issues: Optional[list["_models.ProvisioningIssue"]] = rest_field(
         name="provisioningIssues", visibility=["read"]
     )
@@ -8493,12 +8886,15 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
     network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = rest_field(
         name="networkSecurityPerimeter", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Information about the network security perimeter (NSP)."""
     resource_association: Optional["_models.ResourceAssociation"] = rest_field(
         name="resourceAssociation", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Information about the resource association."""
     profile: Optional["_models.NetworkSecurityProfile"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Network security perimeter configuration profile."""
 
     @overload
     def __init__(
@@ -8520,7 +8916,7 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityProfile(_Model):
+class NetworkSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter configuration profile.
 
     :ivar name: Name of the profile.
@@ -8576,7 +8972,7 @@ class NetworkSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotificationRequestBody(_Model):
+class NotificationRequestBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request body which contain contact detail metadata.
 
     :ivar alert_type: The value of the supported alert type. Supported alert type values are:
@@ -8700,7 +9096,7 @@ class NotificationRequestBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatus(_Model):
+class OperationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of operation.
 
     :ivar id: The operation Id.
@@ -8759,7 +9155,7 @@ class OperationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OtelDataSourceResourceAttributeRouting(_Model):
+class OtelDataSourceResourceAttributeRouting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enables OTLP (logs, traces, and metrics) payload routing.
 
     :ivar attribute_name: The name of the resource attribute to match.
@@ -8796,7 +9192,7 @@ class OtelDataSourceResourceAttributeRouting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OtelLogsDataSource(_Model):
+class OtelLogsDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enables Otel logs to be collected by this data collection rule.
 
     :ivar streams: List of streams that this data source will be sent to. Required.
@@ -8870,7 +9266,7 @@ class OtelLogsDataSource(_Model):
 
 class OtelLogsDataSourceResourceAttributeRouting(
     OtelDataSourceResourceAttributeRouting
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies the routing policy based on OTLP payload resource attributes to route subset of the
     payload according to matching resource attribute.
 
@@ -8899,7 +9295,7 @@ class OtelLogsDataSourceResourceAttributeRouting(
         super().__init__(*args, **kwargs)
 
 
-class OtelLogsDirectDataSource(_Model):
+class OtelLogsDirectDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OtelLogsDirectDataSource.
 
     :ivar streams: List of streams that this data source will be sent to. Required.
@@ -8961,7 +9357,7 @@ class OtelLogsDirectDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OtelMetricsDataSource(_Model):
+class OtelMetricsDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of OTel metrics configuration.
 
     :ivar streams: List of streams that this data source will be sent to. Required.
@@ -9024,7 +9420,7 @@ class OtelMetricsDataSource(_Model):
 
 class OtelMetricsDataSourceResourceAttributeRouting(
     OtelDataSourceResourceAttributeRouting
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies the routing policy based on OTLP payload resource attributes to route subset of the
     payload according to matching resource attribute.
 
@@ -9053,7 +9449,7 @@ class OtelMetricsDataSourceResourceAttributeRouting(
         super().__init__(*args, **kwargs)
 
 
-class OtelMetricsDirectDataSource(_Model):
+class OtelMetricsDirectDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of OTel metrics configuration.
 
     :ivar streams: List of streams that this data source will be sent to. Required.
@@ -9104,7 +9500,7 @@ class OtelMetricsDirectDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OtelTracesDataSource(_Model):
+class OtelTracesDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enables Otel Traces to be collected by this data collection rule.
 
     :ivar streams: List of streams that this data source will be sent to. A stream indicates what
@@ -9181,7 +9577,7 @@ class OtelTracesDataSource(_Model):
 
 class OtelTracesDataSourceResourceAttributeRouting(
     OtelDataSourceResourceAttributeRouting
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies the routing policy based on OTLP payload resource attributes to route subset of the
     payload according to matching resource attribute.
 
@@ -9210,7 +9606,7 @@ class OtelTracesDataSourceResourceAttributeRouting(
         super().__init__(*args, **kwargs)
 
 
-class OtelTracesDirectDataSource(_Model):
+class OtelTracesDirectDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enables Otel Traces to be collected by this data collection rule.
 
     :ivar streams: List of streams that this data source will be sent to. A stream indicates what
@@ -9276,7 +9672,7 @@ class OtelTracesDirectDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PerfCounterDataSource(_Model):
+class PerfCounterDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of which performance counters will be collected and how they will be collected by
     this data collection rule. Collected from both Windows and Linux machines where the counter is
     present.
@@ -9346,7 +9742,7 @@ class PerfCounterDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PerformanceCountersOTelDataSource(_Model):
+class PerformanceCountersOTelDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of which Open Telemetry performance counters will be collected and how they will be
     collected by this data collection rule. Collected from both Windows and Linux machines where
     the counter is present.
@@ -9405,7 +9801,7 @@ class PerformanceCountersOTelDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlatformTelemetryDataSource(_Model):
+class PlatformTelemetryDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of platform telemetry data source configuration.
 
     :ivar streams: List of platform telemetry streams to collect. Required.
@@ -9440,7 +9836,7 @@ class PlatformTelemetryDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PredictiveAutoscalePolicy(_Model):
+class PredictiveAutoscalePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for enabling predictive autoscale.
 
     :ivar scale_mode: the predictive autoscale mode. Required. Known values are: "Disabled",
@@ -9481,7 +9877,7 @@ class PredictiveAutoscalePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PredictiveResponse(_Model):
+class PredictiveResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response to a metrics query.
 
     :ivar timespan: The timespan for which the data was retrieved. Its value consists of two
@@ -9543,7 +9939,7 @@ class PredictiveResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PredictiveValue(_Model):
+class PredictiveValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a predictive metric value in the given bucket.
 
     :ivar time_stamp: the timestamp for the metric value in ISO 8601 format. Required.
@@ -9589,7 +9985,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Private Endpoint Connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9612,7 +10008,7 @@ class PrivateEndpointConnection(Resource):
     )
     """Resource properties."""
 
-    __flattened_items = ["private_endpoint", "private_link_service_connection_state", "provisioning_state"]
+    __flattened_items = ["group_ids", "private_endpoint", "private_link_service_connection_state", "provisioning_state"]
 
     @overload
     def __init__(
@@ -9650,9 +10046,11 @@ class PrivateEndpointConnection(Resource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
+    :ivar group_ids: The group ids for the private endpoint resource.
+    :vartype group_ids: list[str]
     :ivar private_endpoint: The private endpoint resource.
     :vartype private_endpoint: ~azure.mgmt.monitor.models.PrivateEndpoint
     :ivar private_link_service_connection_state: A collection of information about the state of the
@@ -9665,6 +10063,8 @@ class PrivateEndpointConnectionProperties(_Model):
      ~azure.mgmt.monitor.models.PrivateEndpointConnectionProvisioningState
     """
 
+    group_ids: Optional[list[str]] = rest_field(name="groupIds", visibility=["read"])
+    """The group ids for the private endpoint resource."""
     private_endpoint: Optional["_models.PrivateEndpoint"] = rest_field(
         name="privateEndpoint", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9699,7 +10099,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9740,7 +10140,7 @@ class PrivateLinkResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -9778,7 +10178,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkScopedResource(_Model):
+class PrivateLinkScopedResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateLinkScopedResource.
 
     :ivar resource_id: The resourceId of the Azure Monitor Private Link Scope Scoped Resource
@@ -9816,7 +10216,7 @@ class PrivateLinkScopedResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -9862,7 +10262,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrometheusForwarderDataSource(_Model):
+class PrometheusForwarderDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of Prometheus metrics forwarding configuration.
 
     :ivar streams: List of streams that this data source will be sent to.
@@ -9918,7 +10318,9 @@ class PrometheusForwarderDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PromQLCriteria(MetricAlertCriteria, discriminator="Microsoft.Azure.Monitor.PromQLCriteria"):
+class PromQLCriteria(
+    MetricAlertCriteria, discriminator="Microsoft.Azure.Monitor.PromQLCriteria"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the PromQL criteria for the metric alert resource.
 
     :ivar failing_periods: Configuration for failing periods in query-based alerts.
@@ -9967,13 +10369,14 @@ class ProvisioningIssue(_Model):
 
     :ivar name: Name of the issue.
     :vartype name: str
-    :ivar properties:
+    :ivar properties: Details of the provisioning issue.
     :vartype properties: ~azure.mgmt.monitor.models.ProvisioningIssueProperties
     """
 
     name: Optional[str] = rest_field(visibility=["read"])
     """Name of the issue."""
     properties: Optional["_models.ProvisioningIssueProperties"] = rest_field(visibility=["read"])
+    """Details of the provisioning issue."""
 
 
 class ProvisioningIssueProperties(_Model):
@@ -10014,7 +10417,7 @@ class ProvisioningIssueProperties(_Model):
     """Access rules that can be added to the network security profile (NSP) to remediate the issue."""
 
 
-class QueryFailingPeriods(_Model):
+class QueryFailingPeriods(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for failing periods in query-based alerts.
 
     :ivar for_property: The amount of time (in ISO 8601 duration format) alert must be active
@@ -10045,7 +10448,7 @@ class QueryFailingPeriods(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Recurrence(_Model):
+class Recurrence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The repeating times at which this profile begins. This element is not used if the FixedDate
     element is used.
 
@@ -10089,7 +10492,7 @@ class Recurrence(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecurrentSchedule(_Model):
+class RecurrentSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The scheduling constraints for when the profile begins.
 
     :ivar time_zone: the timezone for the hours of the profile. Some examples of valid time zones
@@ -10193,7 +10596,7 @@ class RecurrentSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReferencesSpecEnrichmentData(EnrichmentData):
+class ReferencesSpecEnrichmentData(EnrichmentData):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """All the enrichment data sources referenced in data flows.
 
     :ivar storage_blobs: All the storage blobs used as enrichment data sources.
@@ -10218,7 +10621,7 @@ class ReferencesSpecEnrichmentData(EnrichmentData):
         super().__init__(*args, **kwargs)
 
 
-class ResolveConfiguration(_Model):
+class ResolveConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResolveConfiguration.
 
     :ivar auto_resolved: Indicates whether the alert should be auto resolved. Required.
@@ -10254,12 +10657,13 @@ class ResolveConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceAssociation(_Model):
+class ResourceAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about resource association.
 
     :ivar name: Name of the resource association.
     :vartype name: str
-    :ivar access_mode: Known values are: "Enforced", "Learning", and "Audit".
+    :ivar access_mode: Access mode of the resource association. Known values are: "Enforced",
+     "Learning", and "Audit".
     :vartype access_mode: str or ~azure.mgmt.monitor.models.ResourceAssociationAccessMode
     """
 
@@ -10268,7 +10672,8 @@ class ResourceAssociation(_Model):
     access_mode: Optional[Union[str, "_models.ResourceAssociationAccessMode"]] = rest_field(
         name="accessMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"Enforced\", \"Learning\", and \"Audit\"."""
+    """Access mode of the resource association. Known values are: \"Enforced\", \"Learning\", and
+     \"Audit\"."""
 
     @overload
     def __init__(
@@ -10289,7 +10694,7 @@ class ResourceAssociation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceForUpdate(_Model):
+class ResourceForUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of ARM tracked top level resource properties for update operation.
 
     :ivar tags: Resource tags.
@@ -10324,7 +10729,7 @@ class ResourceForUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceForUpdateIdentity(ManagedServiceIdentity):
+class ResourceForUpdateIdentity(ManagedServiceIdentity):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed Service Identity.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -10359,7 +10764,7 @@ class ResourceForUpdateIdentity(ManagedServiceIdentity):
         super().__init__(*args, **kwargs)
 
 
-class Response(_Model):
+class Response(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response to a metrics query.
 
     :ivar cost: The integer value representing the relative cost of the query.
@@ -10424,7 +10829,35 @@ class Response(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetentionPolicy(_Model):
+class ResponseWithError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An error response from the API.
+
+    :ivar error: Error information. Required.
+    :vartype error: ~azure.mgmt.monitor.models.Error
+    """
+
+    error: "_models.Error" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error information. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: "_models.Error",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RetentionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the retention policy for the log.
 
     :ivar enabled: a value indicating whether the retention policy is enabled. Required.
@@ -10459,7 +10892,7 @@ class RetentionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuleResolveConfiguration(_Model):
+class RuleResolveConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TBD. Relevant only for rules of the kind LogAlert.
 
     :ivar auto_resolved: The flag that indicates whether or not to auto resolve a fired alert.
@@ -10498,7 +10931,7 @@ class RuleResolveConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScaleAction(_Model):
+class ScaleAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for the scaling action.
 
     :ivar direction: the scale direction. Whether the scaling action increases or decreases the
@@ -10551,7 +10984,7 @@ class ScaleAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScaleCapacity(_Model):
+class ScaleCapacity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The number of instances that can be used during this profile.
 
     :ivar minimum: the minimum number of instances for the resource. Required.
@@ -10594,7 +11027,7 @@ class ScaleCapacity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScaleRule(_Model):
+class ScaleRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule that provide the triggers and parameters for the scaling action.
 
     :ivar metric_trigger: the trigger that results in a scaling action. Required.
@@ -10631,7 +11064,7 @@ class ScaleRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScaleRuleMetricDimension(_Model):
+class ScaleRuleMetricDimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies an auto scale rule metric dimension.
 
     :ivar dimension_name: Name of the dimension. Required.
@@ -10677,7 +11110,7 @@ class ScaleRuleMetricDimension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledQueryRuleCriteria(_Model):
+class ScheduledQueryRuleCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The rule criteria that defines the conditions of the scheduled query rule.
 
     :ivar all_of: A list of conditions to evaluate against the specified scopes.
@@ -10707,7 +11140,7 @@ class ScheduledQueryRuleCriteria(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledQueryRuleProperties(_Model):
+class ScheduledQueryRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """scheduled query rule Definition.
 
     :ivar created_with_api_version: The api-version used when creating this alert rule.
@@ -10880,7 +11313,7 @@ class ScheduledQueryRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledQueryRuleResource(ProxyResource):
+class ScheduledQueryRuleResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The scheduled query rule resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10987,7 +11420,7 @@ class ScheduledQueryRuleResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ScheduledQueryRuleResourcePatch(_Model):
+class ScheduledQueryRuleResourcePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The scheduled query rule resource for patch operations.
 
     :ivar identity: The identity of the resource.
@@ -11067,7 +11500,7 @@ class ScheduledQueryRuleResourcePatch(_Model):
             super().__setattr__(key, value)
 
 
-class ScopedResource(ProxyResource):
+class ScopedResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link scoped resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11128,7 +11561,7 @@ class ScopedResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ScopedResourceProperties(_Model):
+class ScopedResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link scoped resource.
 
     :ivar kind: The kind of scoped Azure monitor resource. Known values are: "Resource" and
@@ -11183,7 +11616,7 @@ class ScopedResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SenderAuthorization(_Model):
+class SenderAuthorization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """the authorization used by the user who has performed the operation that led to this event. This
     captures the RBAC properties of the event. These usually include the 'action', 'role' and the
     'scope'.
@@ -11223,7 +11656,7 @@ class SenderAuthorization(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceDiagnosticSettings(_Model):
+class ServiceDiagnosticSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The diagnostic settings for service.
 
     :ivar storage_account_id: The resource ID of the storage account to which you would like to
@@ -11237,9 +11670,9 @@ class ServiceDiagnosticSettings(_Model):
      authorization rule.
     :vartype event_hub_authorization_rule_id: str
     :ivar metrics: the list of metric settings.
-    :vartype metrics: list[~azure.mgmt.monitor.models.MetricSettings]
+    :vartype metrics: list[~azure.mgmt.monitor.models.DiagnosticsMetricSettings]
     :ivar logs: the list of logs settings.
-    :vartype logs: list[~azure.mgmt.monitor.models.LogSettings]
+    :vartype logs: list[~azure.mgmt.monitor.models.DiagnosticsLogSettings]
     :ivar workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
      Analytics workspace to which you would like to send Diagnostic Logs. Example:
      /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -11260,11 +11693,13 @@ class ServiceDiagnosticSettings(_Model):
         name="eventHubAuthorizationRuleId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource Id for the event hub namespace authorization rule."""
-    metrics: Optional[list["_models.MetricSettings"]] = rest_field(
+    metrics: Optional[list["_models.DiagnosticsMetricSettings"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """the list of metric settings."""
-    logs: Optional[list["_models.LogSettings"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    logs: Optional[list["_models.DiagnosticsLogSettings"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """the list of logs settings."""
     workspace_id: Optional[str] = rest_field(
         name="workspaceId", visibility=["read", "create", "update", "delete", "query"]
@@ -11280,8 +11715,8 @@ class ServiceDiagnosticSettings(_Model):
         storage_account_id: Optional[str] = None,
         service_bus_rule_id: Optional[str] = None,
         event_hub_authorization_rule_id: Optional[str] = None,
-        metrics: Optional[list["_models.MetricSettings"]] = None,
-        logs: Optional[list["_models.LogSettings"]] = None,
+        metrics: Optional[list["_models.DiagnosticsMetricSettings"]] = None,
+        logs: Optional[list["_models.DiagnosticsLogSettings"]] = None,
         workspace_id: Optional[str] = None,
     ) -> None: ...
 
@@ -11296,7 +11731,9 @@ class ServiceDiagnosticSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceDiagnosticSettingsResource(ExtensionResource):
+class ServiceDiagnosticSettingsResource(
+    ExtensionResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a service diagnostic setting.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11374,7 +11811,7 @@ class ServiceDiagnosticSettingsResource(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class ServiceDiagnosticSettingsResourcePatch(_Model):
+class ServiceDiagnosticSettingsResourcePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service diagnostic setting resource for patch operations.
 
     :ivar tags: Resource tags.
@@ -11436,7 +11873,7 @@ class ServiceDiagnosticSettingsResourcePatch(_Model):
             super().__setattr__(key, value)
 
 
-class SingleBaseline(_Model):
+class SingleBaseline(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The baseline values for a single sensitivity value.
 
     :ivar sensitivity: the sensitivity of the baseline. Required. Known values are: "Low",
@@ -11481,7 +11918,7 @@ class SingleBaseline(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SingleMetricBaseline(_Model):
+class SingleMetricBaseline(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The baseline results of a single metric.
 
     :ivar id: The metric baseline Id. Required.
@@ -11546,7 +11983,7 @@ class SingleMetricBaseline(_Model):
             super().__setattr__(key, value)
 
 
-class SmsReceiver(_Model):
+class SmsReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An SMS receiver.
 
     :ivar name: The name of the SMS receiver. Names must be unique across all receivers within an
@@ -11591,7 +12028,9 @@ class SmsReceiver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticPromQLCriteria(MultiPromQLCriteria, discriminator="StaticThresholdCriterion"):
+class StaticPromQLCriteria(
+    MultiPromQLCriteria, discriminator="StaticThresholdCriterion"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The criterion for static prom query.
 
     :ivar name: Name of the criteria. Required.
@@ -11627,7 +12066,7 @@ class StaticPromQLCriteria(MultiPromQLCriteria, discriminator="StaticThresholdCr
         self.criterion_type = CriterionType.STATIC_THRESHOLD_CRITERION  # type: ignore
 
 
-class StorageBlob(_Model):
+class StorageBlob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageBlob.
 
     :ivar resource_id: Resource Id of the storage account that hosts the blob.
@@ -11677,7 +12116,7 @@ class StorageBlob(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageBlobDestination(_Model):
+class StorageBlobDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageBlobDestination.
 
     :ivar container_name: The container name of the Storage Blob.
@@ -11721,7 +12160,7 @@ class StorageBlobDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageTableDestination(_Model):
+class StorageTableDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageTableDestination.
 
     :ivar table_name: The name of the Storage Table.
@@ -11763,7 +12202,7 @@ class StorageTableDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StreamDeclaration(_Model):
+class StreamDeclaration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Declaration of a custom stream.
 
     :ivar columns: List of columns used by data in this stream.
@@ -11793,7 +12232,7 @@ class StreamDeclaration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionScopeMetricDefinition(_Model):
+class SubscriptionScopeMetricDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metric definition class specifies the metadata for a metric.
 
     :ivar is_dimension_required: Flag to indicate whether the dimension is required.
@@ -11911,7 +12350,9 @@ class SubscriptionScopeMetricDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionScopeMetricsRequestBodyParameters(_Model):  # pylint: disable=name-too-long
+class SubscriptionScopeMetricsRequestBodyParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Query parameters can also be specified in the body, specifying the same parameter in both the
     body and query parameters will result in an error.
 
@@ -12043,7 +12484,7 @@ class SubscriptionScopeMetricsRequestBodyParameters(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class SyslogDataSource(_Model):
+class SyslogDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of which syslog data will be collected and how it will be collected. Only collected
     from Linux machines.
 
@@ -12108,7 +12549,7 @@ class SyslogDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -12175,7 +12616,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsResource(_Model):
+class TagsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A container holding only the Tags for a resource, allowing the user to update the tags on a
     PrivateLinkScope instance.
 
@@ -12204,7 +12645,454 @@ class TagsResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestNotificationDetailsResponse(_Model):
+class TenantActionGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A tenant  action group.
+
+    :ivar group_short_name: The short name of the action group. This will be used in SMS messages.
+     Required.
+    :vartype group_short_name: str
+    :ivar enabled: Indicates whether this tenant action group is enabled. If a tenant action group
+     is not enabled, then none of its receivers will receive communications. Required.
+    :vartype enabled: bool
+    :ivar email_receivers: The list of email receivers that are part of this tenant action group.
+    :vartype email_receivers: list[~azure.mgmt.monitor.models.EmailReceiver]
+    :ivar sms_receivers: The list of SMS receivers that are part of this tenant action group.
+    :vartype sms_receivers: list[~azure.mgmt.monitor.models.SmsReceiver]
+    :ivar webhook_receivers: The list of webhook receivers that are part of this tenant action
+     group.
+    :vartype webhook_receivers: list[~azure.mgmt.monitor.models.TenantActionGroupWebhookReceiver]
+    :ivar azure_app_push_receivers: The list of AzureAppPush receivers that are part of this tenant
+     action group.
+    :vartype azure_app_push_receivers: list[~azure.mgmt.monitor.models.AzureAppPushReceiver]
+    :ivar voice_receivers: The list of voice receivers that are part of this tenant action group.
+    :vartype voice_receivers: list[~azure.mgmt.monitor.models.VoiceReceiver]
+    """
+
+    group_short_name: str = rest_field(
+        name="groupShortName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The short name of the action group. This will be used in SMS messages. Required."""
+    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates whether this tenant action group is enabled. If a tenant action group is not enabled,
+     then none of its receivers will receive communications. Required."""
+    email_receivers: Optional[list["_models.EmailReceiver"]] = rest_field(
+        name="emailReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of email receivers that are part of this tenant action group."""
+    sms_receivers: Optional[list["_models.SmsReceiver"]] = rest_field(
+        name="smsReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of SMS receivers that are part of this tenant action group."""
+    webhook_receivers: Optional[list["_models.TenantActionGroupWebhookReceiver"]] = rest_field(
+        name="webhookReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of webhook receivers that are part of this tenant action group."""
+    azure_app_push_receivers: Optional[list["_models.AzureAppPushReceiver"]] = rest_field(
+        name="azureAppPushReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of AzureAppPush receivers that are part of this tenant action group."""
+    voice_receivers: Optional[list["_models.VoiceReceiver"]] = rest_field(
+        name="voiceReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of voice receivers that are part of this tenant action group."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        group_short_name: str,
+        enabled: bool,
+        email_receivers: Optional[list["_models.EmailReceiver"]] = None,
+        sms_receivers: Optional[list["_models.SmsReceiver"]] = None,
+        webhook_receivers: Optional[list["_models.TenantActionGroupWebhookReceiver"]] = None,
+        azure_app_push_receivers: Optional[list["_models.AzureAppPushReceiver"]] = None,
+        voice_receivers: Optional[list["_models.VoiceReceiver"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TenantActionGroupActionDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The action detail.
+
+    :ivar mechanism_type: The mechanism type.
+    :vartype mechanism_type: str
+    :ivar name: The name of the action.
+    :vartype name: str
+    :ivar status: The status of the action.
+    :vartype status: str
+    :ivar sub_state: The substatus of the action.
+    :vartype sub_state: str
+    :ivar send_time: The send time.
+    :vartype send_time: str
+    :ivar message: The detail of the friendly error message.
+    :vartype message: str
+    """
+
+    mechanism_type: Optional[str] = rest_field(
+        name="mechanismType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The mechanism type."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the action."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the action."""
+    sub_state: Optional[str] = rest_field(name="subState", visibility=["read", "create", "update", "delete", "query"])
+    """The substatus of the action."""
+    send_time: Optional[str] = rest_field(name="sendTime", visibility=["read", "create", "update", "delete", "query"])
+    """The send time."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The detail of the friendly error message."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mechanism_type: Optional[str] = None,
+        name: Optional[str] = None,
+        status: Optional[str] = None,
+        sub_state: Optional[str] = None,
+        send_time: Optional[str] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TenantActionGroupPatchBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A tenant action group object for the body of patch operations.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The action group settings for an update operation.
+    :vartype properties: ~azure.mgmt.monitor.models.ActionGroupPatch
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ActionGroupPatch"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action group settings for an update operation."""
+
+    __flattened_items = ["enabled"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ActionGroupPatch"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class TenantActionGroupResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A tenant action group resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The tenant action groups properties of the resource.
+    :vartype properties: ~azure.mgmt.monitor.models.TenantActionGroup
+    """
+
+    properties: Optional["_models.TenantActionGroup"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The tenant action groups properties of the resource."""
+
+    __flattened_items = [
+        "group_short_name",
+        "enabled",
+        "email_receivers",
+        "sms_receivers",
+        "webhook_receivers",
+        "azure_app_push_receivers",
+        "voice_receivers",
+    ]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.TenantActionGroup"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class TenantActionGroupTestNotificationDetailsResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The details of the test notification results.
+
+    :ivar context: The context info.
+    :vartype context: ~azure.mgmt.monitor.models.Context
+    :ivar state: The overall state. Required.
+    :vartype state: str
+    :ivar completed_time: The completed time.
+    :vartype completed_time: str
+    :ivar created_time: The created time.
+    :vartype created_time: str
+    :ivar action_details: The list of action detail.
+    :vartype action_details: list[~azure.mgmt.monitor.models.TenantActionGroupActionDetail]
+    """
+
+    context: Optional["_models.Context"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The context info."""
+    state: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The overall state. Required."""
+    completed_time: Optional[str] = rest_field(
+        name="completedTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The completed time."""
+    created_time: Optional[str] = rest_field(
+        name="createdTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The created time."""
+    action_details: Optional[list["_models.TenantActionGroupActionDetail"]] = rest_field(
+        name="actionDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of action detail."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        state: str,
+        context: Optional["_models.Context"] = None,
+        completed_time: Optional[str] = None,
+        created_time: Optional[str] = None,
+        action_details: Optional[list["_models.TenantActionGroupActionDetail"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TenantActionGroupWebhookReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A webhook receiver.
+
+    :ivar name: The name of the webhook receiver. Names must be unique across all receivers within
+     a tenant action group. Required.
+    :vartype name: str
+    :ivar service_uri: The URI where webhooks should be sent. Required.
+    :vartype service_uri: str
+    :ivar use_common_alert_schema: Indicates whether to use common alert schema.
+    :vartype use_common_alert_schema: bool
+    :ivar use_aad_auth: Indicates whether or not use AAD authentication.
+    :vartype use_aad_auth: bool
+    :ivar object_id: Indicates the webhook app object Id for aad auth.
+    :vartype object_id: str
+    :ivar identifier_uri: Indicates the identifier uri for aad auth.
+    :vartype identifier_uri: str
+    :ivar tenant_id: Indicates the tenant id for aad auth.
+    :vartype tenant_id: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the webhook receiver. Names must be unique across all receivers within a tenant
+     action group. Required."""
+    service_uri: str = rest_field(name="serviceUri", visibility=["read", "create", "update", "delete", "query"])
+    """The URI where webhooks should be sent. Required."""
+    use_common_alert_schema: Optional[bool] = rest_field(
+        name="useCommonAlertSchema", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether to use common alert schema."""
+    use_aad_auth: Optional[bool] = rest_field(
+        name="useAadAuth", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether or not use AAD authentication."""
+    object_id: Optional[str] = rest_field(name="objectId", visibility=["read", "create", "update", "delete", "query"])
+    """Indicates the webhook app object Id for aad auth."""
+    identifier_uri: Optional[str] = rest_field(
+        name="identifierUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates the identifier uri for aad auth."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """Indicates the tenant id for aad auth."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        service_uri: str,
+        use_common_alert_schema: Optional[bool] = None,
+        use_aad_auth: Optional[bool] = None,
+        object_id: Optional[str] = None,
+        identifier_uri: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TenantNotificationRequestBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request body which contain contact detail metadata.
+
+    :ivar alert_type: The value of the supported alert type. Supported alert type value is:
+     servicehealth. Required.
+    :vartype alert_type: str
+    :ivar email_receivers: The list of email receivers that are part of this action group.
+    :vartype email_receivers: list[~azure.mgmt.monitor.models.EmailReceiver]
+    :ivar sms_receivers: The list of SMS receivers that are part of this action group.
+    :vartype sms_receivers: list[~azure.mgmt.monitor.models.SmsReceiver]
+    :ivar webhook_receivers: The list of webhook receivers that are part of this action group.
+    :vartype webhook_receivers: list[~azure.mgmt.monitor.models.TenantActionGroupWebhookReceiver]
+    :ivar azure_app_push_receivers: The list of AzureAppPush receivers that are part of this action
+     group.
+    :vartype azure_app_push_receivers: list[~azure.mgmt.monitor.models.AzureAppPushReceiver]
+    :ivar voice_receivers: The list of voice receivers that are part of this action group.
+    :vartype voice_receivers: list[~azure.mgmt.monitor.models.VoiceReceiver]
+    """
+
+    alert_type: str = rest_field(name="alertType", visibility=["read", "create", "update", "delete", "query"])
+    """The value of the supported alert type. Supported alert type value is: servicehealth. Required."""
+    email_receivers: Optional[list["_models.EmailReceiver"]] = rest_field(
+        name="emailReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of email receivers that are part of this action group."""
+    sms_receivers: Optional[list["_models.SmsReceiver"]] = rest_field(
+        name="smsReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of SMS receivers that are part of this action group."""
+    webhook_receivers: Optional[list["_models.TenantActionGroupWebhookReceiver"]] = rest_field(
+        name="webhookReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of webhook receivers that are part of this action group."""
+    azure_app_push_receivers: Optional[list["_models.AzureAppPushReceiver"]] = rest_field(
+        name="azureAppPushReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of AzureAppPush receivers that are part of this action group."""
+    voice_receivers: Optional[list["_models.VoiceReceiver"]] = rest_field(
+        name="voiceReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of voice receivers that are part of this action group."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        alert_type: str,
+        email_receivers: Optional[list["_models.EmailReceiver"]] = None,
+        sms_receivers: Optional[list["_models.SmsReceiver"]] = None,
+        webhook_receivers: Optional[list["_models.TenantActionGroupWebhookReceiver"]] = None,
+        azure_app_push_receivers: Optional[list["_models.AzureAppPushReceiver"]] = None,
+        voice_receivers: Optional[list["_models.VoiceReceiver"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TestNotificationDetailsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of the test notification results.
 
     :ivar context: The context info.
@@ -12258,7 +13146,7 @@ class TestNotificationDetailsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeSeriesBaseline(_Model):
+class TimeSeriesBaseline(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The baseline values for a single time series.
 
     :ivar aggregation: The aggregation type of the metric. Required.
@@ -12312,7 +13200,7 @@ class TimeSeriesBaseline(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeSeriesElement(_Model):
+class TimeSeriesElement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A time series result type. The discriminator value is always TimeSeries in this case.
 
     :ivar metadatavalues: The metadata values returned if $filter was specified in the call.
@@ -12349,7 +13237,7 @@ class TimeSeriesElement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeWindow(_Model):
+class TimeWindow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A specific date-time for the profile.
 
     :ivar time_zone: the timezone of the start and end times for the profile. Some examples of
@@ -12475,7 +13363,127 @@ class UserIdentityProperties(_Model):
     """The client ID of resource identity."""
 
 
-class VoiceReceiver(_Model):
+class VMInsightsOnboardingStatus(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """VM Insights onboarding status for a resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
+    :ivar properties: Resource properties.
+    :vartype properties: ~azure.mgmt.monitor.models.VMInsightsOnboardingStatusProperties
+    """
+
+    properties: Optional["_models.VMInsightsOnboardingStatusProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource properties."""
+
+    __flattened_items = ["resource_id", "onboarding_status", "data_status", "data"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VMInsightsOnboardingStatusProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class VMInsightsOnboardingStatusProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Resource properties.
+
+    :ivar resource_id: Azure Resource Manager identifier of the resource whose onboarding status is
+     being represented. Required.
+    :vartype resource_id: str
+    :ivar onboarding_status: The onboarding status for the resource. Note that, a higher level
+     scope, e.g., resource group or subscription, is considered onboarded if at least one resource
+     under it is onboarded. Required. Known values are: "onboarded", "notOnboarded", and "unknown".
+    :vartype onboarding_status: str or ~azure.mgmt.monitor.models.OnboardingStatus
+    :ivar data_status: The status of VM Insights data from the resource. When reported as
+     ``present`` the data array will contain information about the data containers to which data for
+     the specified resource is being routed. Required. Known values are: "present" and "notPresent".
+    :vartype data_status: str or ~azure.mgmt.monitor.models.DataStatus
+    :ivar data: Containers that currently store VM Insights data for the specified resource.
+    :vartype data: list[~azure.mgmt.monitor.models.DataContainer]
+    """
+
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
+    """Azure Resource Manager identifier of the resource whose onboarding status is being represented.
+     Required."""
+    onboarding_status: Union[str, "_models.OnboardingStatus"] = rest_field(
+        name="onboardingStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The onboarding status for the resource. Note that, a higher level scope, e.g., resource group
+     or subscription, is considered onboarded if at least one resource under it is onboarded.
+     Required. Known values are: \"onboarded\", \"notOnboarded\", and \"unknown\"."""
+    data_status: Union[str, "_models.DataStatus"] = rest_field(
+        name="dataStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of VM Insights data from the resource. When reported as ``present`` the data array
+     will contain information about the data containers to which data for the specified resource is
+     being routed. Required. Known values are: \"present\" and \"notPresent\"."""
+    data: Optional[list["_models.DataContainer"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Containers that currently store VM Insights data for the specified resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+        onboarding_status: Union[str, "_models.OnboardingStatus"],
+        data_status: Union[str, "_models.DataStatus"],
+        data: Optional[list["_models.DataContainer"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A voice receiver.
 
     :ivar name: The name of the voice receiver. Names must be unique across all receivers within an
@@ -12515,7 +13523,7 @@ class VoiceReceiver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebhookNotification(_Model):
+class WebhookNotification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Webhook notification of an autoscale event.
 
     :ivar service_uri: the service address to receive the notification.
@@ -12550,7 +13558,7 @@ class WebhookNotification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebhookReceiver(_Model):
+class WebhookReceiver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A webhook receiver.
 
     :ivar name: The name of the webhook receiver. Names must be unique across all receivers within
@@ -12626,7 +13634,7 @@ class WebhookReceiver(_Model):
 
 class WebtestLocationAvailabilityCriteria(
     MetricAlertCriteria, discriminator="Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the metric alert rule criteria for a web test resource.
 
     :ivar web_test_id: The Application Insights web test Id. Required.
@@ -12674,7 +13682,7 @@ class WebtestLocationAvailabilityCriteria(
         self.odata_type = Odatatype.MICROSOFT_AZURE_MONITOR_WEBTEST_LOCATION_AVAILABILITY_CRITERIA  # type: ignore
 
 
-class WindowsEventLogDataSource(_Model):
+class WindowsEventLogDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of which Windows Event Log events will be collected and how they will be collected.
     Only collected from Windows machines.
 
@@ -12731,7 +13739,7 @@ class WindowsEventLogDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsFirewallLogsDataSource(_Model):
+class WindowsFirewallLogsDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enables Firewall logs to be collected by this data collection rule.
 
     :ivar streams: Firewall logs streams. Required.
@@ -12761,6 +13769,94 @@ class WindowsFirewallLogsDataSource(_Model):
         streams: list[str],
         profile_filter: Optional[list[Union[str, "_models.KnownWindowsFirewallLogsDataSourceProfileFilter"]]] = None,
         name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WorkspaceInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Information about a Log Analytics Workspace.
+
+    :ivar id: Azure Resource Manager identifier of the Log Analytics Workspace. Required.
+    :vartype id: str
+    :ivar location: Location of the Log Analytics workspace. Required.
+    :vartype location: str
+    :ivar properties: Resource properties. Required.
+    :vartype properties: ~azure.mgmt.monitor.models.WorkspaceInfoProperties
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Azure Resource Manager identifier of the Log Analytics Workspace. Required."""
+    location: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Location of the Log Analytics workspace. Required."""
+    properties: "_models.WorkspaceInfoProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource properties. Required."""
+
+    __flattened_items = ["customer_id"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        location: str,
+        properties: "_models.WorkspaceInfoProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class WorkspaceInfoProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Resource properties.
+
+    :ivar customer_id: Log Analytics workspace identifier. Required.
+    :vartype customer_id: str
+    """
+
+    customer_id: str = rest_field(name="customerId", visibility=["read", "create", "update", "delete", "query"])
+    """Log Analytics workspace identifier. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        customer_id: str,
     ) -> None: ...
 
     @overload
