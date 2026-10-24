@@ -12,6 +12,12 @@ from typing import Any, Dict, Optional, Iterable, List
 # mypy: disable-error-code="import-untyped"
 import requests  # pylint: disable=networking-import-outside-azure-core-transport
 
+from opentelemetry.context import (
+    _SUPPRESS_INSTRUMENTATION_KEY,
+    attach,
+    detach,
+    set_value,
+)
 from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk.metrics import MeterProvider
 
@@ -241,6 +247,11 @@ class _StatsbeatMetrics:
         return observations
 
     def _get_azure_compute_metadata(self) -> bool:
+        # This IMDS probe is internal Statsbeat housekeeping triggered by a metrics-collection
+        # callback/timer, not a user-initiated operation. Suppress instrumentation so it is not
+        # captured as its own application span/trace (mirrors the pattern used for QuickPulse's
+        # background ping/post calls in _quickpulse/_exporter.py).
+        token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
         try:
             request_url = "{0}?{1}&{2}".format(_AIMS_URI, _AIMS_API_VERSION, _AIMS_FORMAT)
             response = requests.get(request_url, headers={"MetaData": "True"}, timeout=0.2)
@@ -251,6 +262,8 @@ class _StatsbeatMetrics:
         except requests.exceptions.RequestException:
             self._vm_retry = True  # retry
             return False
+        finally:
+            detach(token)
 
         try:
             text = response.text
