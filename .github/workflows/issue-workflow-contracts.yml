@@ -1,0 +1,51 @@
+name: Issue Workflow Contracts
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/issue-triage.*
+      - .github/workflows/issue-investigation*
+      - .github/workflows/issue-workflow-contracts.yml
+      - .github/workflows/scripts/issue_*.cjs
+      - .github/workflows/scripts/completed_triage_handoff.cjs
+      - .github/workflows/scripts/copilot_assignment.cjs
+      - .github/workflows/tests/issue_*.cjs
+      - .github/workflows/tests/completed_triage_handoff.cjs
+      - .github/workflows/tests/copilot_assignment.cjs
+      - .github/workflows/tests/test_issue_investigation_workflow.py
+      - .github/workflows/tests/fixtures/triage-controls.json
+      - .github/aw/actions-lock.json
+  pull_request:
+    paths:
+      - .github/workflows/issue-triage.*
+      - .github/workflows/issue-investigation*
+      - .github/workflows/issue-workflow-contracts.yml
+      - .github/workflows/scripts/issue_*.cjs
+      - .github/workflows/scripts/completed_triage_handoff.cjs
+      - .github/workflows/scripts/copilot_assignment.cjs
+      - .github/workflows/tests/issue_*.cjs
+      - .github/workflows/tests/completed_triage_handoff.cjs
+      - .github/workflows/tests/copilot_assignment.cjs
+      - .github/workflows/tests/test_issue_investigation_workflow.py
+      - .github/workflows/tests/fixtures/triage-controls.json
+      - .github/aw/actions-lock.json
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          sparse-checkout: .github
+          persist-credentials: false
+      - name: Setup pinned workflow runtime
+        uses: github/gh-aw-actions/setup@5e508589e03a7757a7e05b26e834292f5445bfb6 # v0.88.8
+        with:
+          destination: ${{ runner.temp }}/workflow-contract-runtime
+      - name: Test issue workflow contracts
+        env:
+          GH_AW_RUNTIME: ${{ runner.temp }}/workflow-contract-runtime
+        run: python3 -m unittest discover -s .github/workflows/tests -p test_issue_investigation_workflow.py -v
