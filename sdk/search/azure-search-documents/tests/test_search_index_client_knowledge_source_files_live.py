@@ -9,7 +9,7 @@ from __future__ import annotations
 from devtools_testutils import AzureRecordedTestCase
 
 from _capabilities import require_capability
-from _search_helpers import live_test, make_index_client, safe_delete
+from _search_helpers import make_index_client, openai_live_test as live_test, safe_delete
 
 _FILE_CAPABILITIES = (
     "azure.search.documents.indexes.SearchIndexClient.create_or_update_knowledge_source",

@@ -115,13 +115,23 @@ async def upload_documents(search_client: Any, documents: list[dict[str, Any]]) 
 # ---------------------------------------------------------------------------
 
 
-def live_test() -> Callable:
+def live_test(*, storage: bool = False, openai: bool = False) -> Callable:
     """Compose the standard async live-test decorator stack."""
 
     def wrap(fn: Callable) -> Callable:
-        return SearchEnvVarPreparer()(search_decorator()(recorded_by_proxy_async(fn)))
+        return SearchEnvVarPreparer(storage=storage, openai=openai)(
+            search_decorator()(recorded_by_proxy_async(fn))
+        )
 
     return wrap
+
+
+def storage_live_test() -> Callable:
+    return live_test(storage=True)
+
+
+def openai_live_test() -> Callable:
+    return live_test(openai=True)
 
 
 # ---------------------------------------------------------------------------

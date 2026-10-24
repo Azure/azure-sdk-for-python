@@ -77,7 +77,7 @@ class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the data to extract from Azure blob storage and tells the indexer which data to
-    extract from image content when "imageAction" is set to a value other than "none".  This
+    extract from image content when \"imageAction\" is set to a value other than \"none\".  This
     applies to embedded image content in a .PDF or other application, or image files such as .jpg
     and .png, in Azure blobs.
     """
@@ -93,23 +93,23 @@ class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class BlobIndexerImageAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines how to process embedded images and image files in Azure blob storage.  Setting the
-    "imageAction" configuration to any value other than "none" requires that a skillset also be
+    \"imageAction\" configuration to any value other than \"none\" requires that a skillset also be
     attached to that indexer.
     """
 
     NONE = "none"
     """Ignores embedded images or image files in the data set.  This is the default."""
     GENERATE_NORMALIZED_IMAGES = "generateNormalizedImages"
-    """Extracts text from images (for example, the word "STOP" from a traffic stop sign), and embeds
-    it into the content field.  This action requires that "dataToExtract" is set to
-    "contentAndMetadata".  A normalized image refers to additional processing resulting in uniform
+    """Extracts text from images (for example, the word \"STOP\" from a traffic stop sign), and embeds
+    it into the content field.  This action requires that \"dataToExtract\" is set to
+    \"contentAndMetadata\".  A normalized image refers to additional processing resulting in uniform
     image output, sized and rotated to promote consistent rendering when you include images in
     visual search results. This information is generated for each image when you use this option."""
     GENERATE_NORMALIZED_IMAGE_PER_PAGE = "generateNormalizedImagePerPage"
-    """Extracts text from images (for example, the word "STOP" from a traffic stop sign), and embeds
+    """Extracts text from images (for example, the word \"STOP\" from a traffic stop sign), and embeds
     it into the content field, but treats PDF files differently in that each page will be rendered
     as an image and normalized accordingly, instead of extracting embedded images.  Non-PDF file
-    types will be treated the same as if "generateNormalizedImages" was set."""
+    types will be treated the same as if \"generateNormalizedImages\" was set."""
 
 
 class BlobIndexerParsingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -931,12 +931,12 @@ class LexicalNormalizerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ASCII_FOLDING = "asciifolding"
     """Converts alphabetic, numeric, and symbolic Unicode characters which are not in the first 127
-    ASCII characters (the "Basic Latin" Unicode block) into their ASCII equivalents, if such
+    ASCII characters (the \"Basic Latin\" Unicode block) into their ASCII equivalents, if such
     equivalents exist. See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html>`_."""
     ELISION = "elision"
-    """Removes elisions. For example, "l'avion" (the plane) will be converted to "avion" (plane). See
+    """Removes elisions. For example, \"l'avion\" (the plane) will be converted to \"avion\" (plane). See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html>`_."""
     LOWERCASE = "lowercase"
@@ -1257,7 +1257,7 @@ class MicrosoftTokenizerLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class OcrLineEnding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the sequence of characters to use between the lines of text recognized by the OCR
-    skill. The default value is "space".
+    skill. The default value is \"space\".
     """
 
     SPACE = "space"
@@ -2360,7 +2360,7 @@ class TokenFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/tr/ApostropheFilter.html>`_."""
     ASCII_FOLDING = "asciifolding"
     """Converts alphabetic, numeric, and symbolic Unicode characters which are not in the first 127
-    ASCII characters (the "Basic Latin" Unicode block) into their ASCII equivalents, if such
+    ASCII characters (the \"Basic Latin\" Unicode block) into their ASCII equivalents, if such
     equivalents exist. See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html>`_."""
@@ -2388,7 +2388,7 @@ class TokenFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/ngram/EdgeNGramTokenFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/ngram/EdgeNGramTokenFilter.html>`_."""
     ELISION = "elision"
-    """Removes elisions. For example, "l'avion" (the plane) will be converted to "avion" (plane). See
+    """Removes elisions. For example, \"l'avion\" (the plane) will be converted to \"avion\" (plane). See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html>`_."""
     GERMAN_NORMALIZATION = "german_normalization"
