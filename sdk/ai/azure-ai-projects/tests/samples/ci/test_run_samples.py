@@ -19,10 +19,12 @@ def ready_state():
     return {
         "schemaVersion": 1,
         "status": "Ready",
+        "subscriptionId": "00000000-0000-0000-0000-000000000000",
         "plan": {
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
             "selectedTests": [
                 {"node_id": "tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_mcp]"}
-            ]
+            ],
         },
         "environment": {
             "FOUNDRY_PROJECT_ENDPOINT": "https://example.services.ai.azure.com/api/projects/test",
@@ -204,7 +206,7 @@ def test_readiness_probe_limits_the_read_request(readiness_probe):
 )
 def test_external_validation_secret_is_required_without_echoing_invalid_values(monkeypatch, value):
     monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", value)
-    with pytest.raises(ValueError, match="ADO secret") as failure:
+    with pytest.raises(ValueError, match="pipeline environment variable") as failure:
         run_samples.require_validation_endpoint()
     assert "do-not-log" not in str(failure.value)
     assert "example.services" not in str(failure.value)
@@ -231,6 +233,7 @@ def test_external_validation_secret_is_env_only_in_real_runner_invocation(tmp_pa
     state_path.write_text(json.dumps(state), encoding="utf-8")
     junit = tmp_path / "results.xml"
     monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", endpoint)
+    monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", state["subscriptionId"])
     monkeypatch.setenv("MCP_GITHUB_PAT", "github_pat_unit_test_placeholder")
     monkeypatch.setattr(run_samples.sys, "argv", ["run_samples.py", "--state", str(state_path), "--junit", str(junit)])
     monkeypatch.setattr(run_samples, "wait_for_project", Mock())
@@ -244,3 +247,40 @@ def test_external_validation_secret_is_env_only_in_real_runner_invocation(tmp_pa
     assert all(endpoint not in argument and "llm-validation-project-endpoint" not in argument for argument in command)
     assert endpoint not in state_path.read_text(encoding="utf-8")
     assert state["environment"] == ready_state()["environment"]
+
+
+@pytest.mark.parametrize("binding", ["state", "plan", "environment"])
+def test_runner_rejects_subscription_mismatch_without_falling_back(binding):
+    state = ready_state()
+    changed = state if binding == "state" else state[binding]
+    key = "AZURE_SUBSCRIPTION_ID" if binding == "environment" else "subscriptionId"
+    changed[key] = "11111111-1111-1111-1111-111111111111"
+    with pytest.raises(ValueError, match="same explicit subscription"):
+        build_command(state, Path("results.xml"))
+
+
+@pytest.mark.parametrize("value", ["", "$(AZURE_SUBSCRIPTION_ID)", "invalid-subscription", None, 12345])
+def test_runner_rejects_missing_or_invalid_subscription(value):
+    state = ready_state()
+    state["subscriptionId"] = value
+    with pytest.raises(ValueError, match="same explicit subscription"):
+        build_command(state, Path("results.xml"))
+
+
+def test_runner_rejects_task_subscription_change_before_readiness(tmp_path, monkeypatch):
+    state = ready_state()
+    state_path = tmp_path / "state.json"
+    state_path.write_text(json.dumps(state), encoding="utf-8")
+    monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", "https://example.services.ai.azure.com/api/projects/test")
+    monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "11111111-1111-1111-1111-111111111111")
+    monkeypatch.setattr(
+        run_samples.sys, "argv", ["run_samples.py", "--state", str(state_path), "--junit", str(tmp_path / "result.xml")]
+    )
+    readiness = Mock()
+    process = Mock()
+    monkeypatch.setattr(run_samples, "wait_for_project", readiness)
+    monkeypatch.setattr(run_samples.subprocess, "run", process)
+    with pytest.raises(ValueError, match="task AZURE_SUBSCRIPTION_ID"):
+        run_samples.main()
+    readiness.assert_not_called()
+    process.assert_not_called()

@@ -24,11 +24,11 @@ ENVIRONMENT_NAMES = {
 
 
 def require_validation_endpoint() -> str:
-    """Read the existing validation project only from the secret task environment."""
+    """Read the existing validation project only from the task environment."""
     endpoint = os.environ.get("LLM_VALIDATION_PROJECT_ENDPOINT", "")
     if not re.fullmatch(r"https://[A-Za-z0-9-]+\.services\.ai\.azure\.com/api/projects/[A-Za-z0-9._-]+/?", endpoint):
         raise ValueError(
-            "Set LLM_VALIDATION_PROJECT_ENDPOINT as an ADO secret containing an existing Foundry project endpoint. "
+            "Set LLM_VALIDATION_PROJECT_ENDPOINT as a pipeline environment variable containing an existing Foundry project endpoint. "
             "The value was suppressed; no validator will be provisioned."
         )
     return endpoint
@@ -41,6 +41,20 @@ def build_command(state: dict, junit_path: Path) -> list[str]:
     required = ENVIRONMENT_NAMES - {"MCP_PROJECT_CONNECTION_ID"}
     if set(environment) - ENVIRONMENT_NAMES or any(not environment.get(name) for name in required):
         raise ValueError("Deployment state must contain only the expected non-secret environment bindings.")
+    subscription = state.get("subscriptionId", "")
+    planned_subscription = state.get("plan", {}).get("subscriptionId", "")
+    environment_subscription = environment["AZURE_SUBSCRIPTION_ID"]
+    if (
+        not isinstance(subscription, str)
+        or not re.fullmatch(r"[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}", subscription)
+        or not isinstance(planned_subscription, str)
+        or planned_subscription.lower() != subscription.lower()
+        or not isinstance(environment_subscription, str)
+        or environment_subscription.lower() != subscription.lower()
+    ):
+        raise ValueError(
+            "Deployment state, plan and AZURE_SUBSCRIPTION_ID must identify the same explicit subscription."
+        )
     if state.get("plan", {}).get("provisionMcp") and not environment.get("MCP_PROJECT_CONNECTION_ID"):
         raise ValueError("MCP provisioning requires a nonempty MCP_PROJECT_CONNECTION_ID output.")
     tests = state.get("plan", {}).get("selectedTests", [])
@@ -127,12 +141,16 @@ def main() -> int:
     arguments = parser.parse_args()
     require_validation_endpoint()
     if arguments.check_validation_config:
-        print("External validation project secret is configured; no Azure resources were queried or changed.")
+        print(
+            "External validation project environment variable is configured; no Azure resources were queried or changed."
+        )
         return 0
     if arguments.state is None or arguments.junit is None:
         parser.error("--state and --junit are required when running samples")
     state = json.loads(arguments.state.read_text(encoding="utf-8-sig"))
     command = build_command(state, arguments.junit)
+    if os.environ.get("AZURE_SUBSCRIPTION_ID", "").lower() != state["subscriptionId"].lower():
+        raise ValueError("The task AZURE_SUBSCRIPTION_ID does not match the deployment state; sample not started.")
     environment = os.environ.copy()
     environment.update(state["environment"])
     environment.update(

@@ -55,6 +55,54 @@ function Read-SampleManifest {
     return $manifest
 }
 
+function Get-SampleSubscriptionId {
+    param([AllowNull()] [AllowEmptyString()] [string] $SubscriptionId = $env:AZURE_SUBSCRIPTION_ID)
+
+    if ($SubscriptionId -notmatch '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$') {
+        throw 'Set AZURE_SUBSCRIPTION_ID to the target Azure subscription GUID; no resources were changed.'
+    }
+    return ([guid] $SubscriptionId).ToString('D')
+}
+
+function Set-SampleSubscriptionContext {
+    param([Parameter(Mandatory)] [hashtable] $Plan)
+
+    $subscription = Get-SampleSubscriptionId
+    Assert-SampleRunPlan -Plan $Plan
+    if ($subscription -ine $Plan.subscriptionId) {
+        throw 'AZURE_SUBSCRIPTION_ID does not match the deployment plan; no resources were changed.'
+    }
+    $active = Invoke-SampleAzure -Arguments @('account', 'show') -Sensitive
+    if ($active['user']['type'] -ne 'servicePrincipal') {
+        throw 'An authorized Azure service connection application is required, not a personal login.'
+    }
+    try {
+        $target = Invoke-SampleAzure -Arguments @('account', 'show', '--subscription', $subscription) -Sensitive
+    } catch {
+        throw 'The authorized service connection cannot access AZURE_SUBSCRIPTION_ID; no resources were changed. Use an approved connection for the target subscription.'
+    }
+    if ($target['id'] -ine $subscription -or $target['state'] -ne 'Enabled' -or
+        $target['tenantId'] -ine $active['tenantId'] -or $target['user']['type'] -ne 'servicePrincipal' -or
+        $target['user']['name'] -ine $active['user']['name']) {
+        throw 'The target subscription must be enabled and accessible by the same application and tenant; no resources were changed.'
+    }
+    $identity = Get-SampleRunnerIdentity -SubscriptionId $subscription
+    if ($identity.tenantId -ine $target['tenantId'] -or $identity.clientId -ine $target['user']['name']) {
+        throw 'The target subscription application identity does not match the authorized connection; no resources were changed.'
+    }
+    # Select only a subscription already accessible to this application. Never log in or change identities.
+    if ($active['id'] -ine $subscription) {
+        $null = Invoke-SampleAzure -Arguments @('account', 'set', '--subscription', $subscription) -Sensitive
+    }
+    $confirmed = Invoke-SampleAzure -Arguments @('account', 'show') -Sensitive
+    if ($confirmed['id'] -ine $subscription -or $confirmed['tenantId'] -ine $identity.tenantId -or
+        $confirmed['user']['type'] -ne 'servicePrincipal' -or $confirmed['user']['name'] -ine $identity.clientId) {
+        throw 'Could not confirm the requested subscription application identity; no resources were changed.'
+    }
+    Write-Host ('Subscription preflight: AZURE_SUBSCRIPTION_ID={0}; tenantId={1}.' -f $subscription, $identity.tenantId)
+    return $identity
+}
+
 function Assert-SampleRunPlan {
     param([Parameter(Mandatory)] [hashtable] $Plan)
 
@@ -66,6 +114,7 @@ function Assert-SampleRunPlan {
     if ($Plan['resourceGroup'] -cne $expectedName) {
         throw 'Resource group does not match the run-owned ephemeral naming convention.'
     }
+    $null = Get-SampleSubscriptionId -SubscriptionId $Plan['subscriptionId']
     foreach ($binding in @(@('SYSTEM_DEFINITIONID', 'definitionId'), @('BUILD_BUILDID', 'buildId'))) {
         $current = [Environment]::GetEnvironmentVariable($binding[0])
         if (-not [string]::IsNullOrWhiteSpace($current) -and $current -cne [string] $Plan[$binding[1]]) {
@@ -93,7 +142,8 @@ function Assert-SampleResourceGroupOwnership {
     )
 
     $expectedId = '/subscriptions/{0}/resourceGroups/{1}' -f $SubscriptionId, $Plan.resourceGroup
-    if ($ResourceGroup['id'] -ine $expectedId -or $ResourceGroup['tags'] -isnot [System.Collections.IDictionary]) {
+    if ($Plan['subscriptionId'] -ine $SubscriptionId -or $ResourceGroup['id'] -ine $expectedId -or
+        $ResourceGroup['tags'] -isnot [System.Collections.IDictionary]) {
         throw 'Refusing a resource group outside the deployment state or without ownership tags.'
     }
     $tags = Get-SampleOwnershipTags -Plan $Plan
@@ -181,11 +231,15 @@ function Get-SampleRunnerPrincipalId {
 }
 
 function Get-SampleRunnerIdentity {
+    param([string] $SubscriptionId = '')
+
     $runnerTokenResponse = $null
     $runnerAccessToken = $null
     $claims = $null
     try {
-        $runnerTokenResponse = Invoke-SampleAzure -Arguments @('account', 'get-access-token', '--resource', 'https://management.azure.com/') -Sensitive
+        $tokenArguments = @('account', 'get-access-token', '--resource', 'https://management.azure.com/')
+        if ($SubscriptionId) { $tokenArguments += @('--subscription', (Get-SampleSubscriptionId -SubscriptionId $SubscriptionId)) }
+        $runnerTokenResponse = Invoke-SampleAzure -Arguments $tokenArguments -Sensitive
         $runnerAccessToken = [string] $runnerTokenResponse.accessToken
         $payload = $runnerAccessToken.Split('.')[1].Replace('-', '+').Replace('_', '/')
         $payload = $payload.PadRight($payload.Length + ((4 - $payload.Length % 4) % 4), '=')

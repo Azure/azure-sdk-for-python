@@ -3,6 +3,118 @@
 
 . (Join-Path $PSScriptRoot 'SampleCiHelpers.ps1')
 
+Describe 'Explicit subscription targeting' {
+    BeforeEach {
+        $script:originalSubscription = $env:AZURE_SUBSCRIPTION_ID
+        $env:AZURE_SUBSCRIPTION_ID = '11111111-1111-1111-1111-111111111111'
+        $script:targetPlan = @{
+            schemaVersion = 1
+            definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
+            buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
+            jobAttempt = '1'
+            ownerToken = '0123456789abcdef0123456789abcdef'
+            subscriptionId = $env:AZURE_SUBSCRIPTION_ID
+        }
+        $script:targetPlan.resourceGroup = 'azsdk-samples-{0}-{1}-1-01234567' -f $script:targetPlan.definitionId, $script:targetPlan.buildId
+        $script:targetAccount = @{
+            id = $env:AZURE_SUBSCRIPTION_ID
+            tenantId = '22222222-2222-2222-2222-222222222222'
+            state = 'Enabled'
+            user = @{ type = 'servicePrincipal'; name = '33333333-3333-3333-3333-333333333333' }
+        }
+        $script:activeAccount = $script:targetAccount.Clone()
+        $script:runnerIdentity = @{
+            principalId = '44444444-4444-4444-4444-444444444444'
+            clientId = $script:targetAccount.user.name
+            tenantId = $script:targetAccount.tenantId
+        }
+        $script:targetUnavailable = $false
+        Mock Get-SampleRunnerIdentity { return $script:runnerIdentity }
+        Mock Invoke-SampleAzure {
+            param($Arguments, $Sensitive)
+            if ($Arguments[0] -ne 'account') { throw 'Only account metadata is expected during context selection.' }
+            if ($Arguments[1] -eq 'set') {
+                $script:activeAccount = $script:targetAccount.Clone()
+                return
+            }
+            if ($Arguments -contains '--subscription') {
+                if ($script:targetUnavailable) { throw 'private CLI diagnostic must not be printed' }
+                return $script:targetAccount
+            }
+            return $script:activeAccount
+        }
+    }
+    AfterEach { $env:AZURE_SUBSCRIPTION_ID = $script:originalSubscription }
+
+    It 'requires an explicit environment subscription rather than the active subscription' {
+        $env:AZURE_SUBSCRIPTION_ID = ''
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'AZURE_SUBSCRIPTION_ID'
+        Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
+    }
+
+    It 'rejects unresolved macros and malformed values without echoing them' {
+        $env:AZURE_SUBSCRIPTION_ID = '$(AZURE_SUBSCRIPTION_ID)'
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'subscription GUID'
+        $env:AZURE_SUBSCRIPTION_ID = 'github_pat_unit_test_placeholder'
+        $message = try { Set-SampleSubscriptionContext -Plan $script:targetPlan } catch { $_.Exception.Message }
+        $message.Contains('github_pat_') | Should Be $false
+        Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
+    }
+
+    It 'rejects a plan for a different subscription before contacting Azure' {
+        $script:targetPlan.subscriptionId = '55555555-5555-5555-5555-555555555555'
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'deployment plan'
+        Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
+    }
+
+    It 'uses the requested subscription without changing the authorized identity' {
+        $identity = Set-SampleSubscriptionContext -Plan $script:targetPlan
+        $identity.principalId | Should Be $script:runnerIdentity.principalId
+        Assert-MockCalled Get-SampleRunnerIdentity -Times 1 -Exactly -Scope It -ParameterFilter { $SubscriptionId -eq $env:AZURE_SUBSCRIPTION_ID }
+        Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It -ParameterFilter { $Arguments[1] -eq 'set' }
+    }
+
+    It 'selects an accessible subscription only within the same application and tenant' {
+        $script:activeAccount.id = '55555555-5555-5555-5555-555555555555'
+        $null = Set-SampleSubscriptionContext -Plan $script:targetPlan
+        $script:activeAccount.id | Should Be $script:targetPlan.subscriptionId
+        Assert-MockCalled Invoke-SampleAzure -Times 1 -Exactly -Scope It -ParameterFilter { $Arguments[1] -eq 'set' -and $Arguments[-1] -eq $env:AZURE_SUBSCRIPTION_ID }
+    }
+
+    It 'fails closed when the service connection cannot access the requested subscription' {
+        $script:targetUnavailable = $true
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'cannot access AZURE_SUBSCRIPTION_ID'
+        Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It -ParameterFilter { $Arguments[1] -eq 'set' }
+    }
+
+    It 'rejects a different tenant instead of switching identities' {
+        $script:activeAccount.tenantId = '55555555-5555-5555-5555-555555555555'
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'same application and tenant'
+        Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It -ParameterFilter { $Arguments[1] -eq 'set' }
+    }
+
+    It 'rejects a different application instead of switching identities' {
+        $script:targetAccount.user = @{ type = 'servicePrincipal'; name = '55555555-5555-5555-5555-555555555555' }
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'same application and tenant'
+        Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It -ParameterFilter { $Arguments[1] -eq 'set' }
+    }
+
+    It 'rejects personal logins for automated provisioning' {
+        $script:activeAccount.user = @{ type = 'user'; name = 'unit-test@example.invalid' }
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'authorized Azure service connection'
+    }
+
+    It 'rejects a disabled subscription' {
+        $script:targetAccount.state = 'Disabled'
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'same application and tenant'
+    }
+
+    It 'rejects token metadata for a different tenant' {
+        $script:runnerIdentity.tenantId = '55555555-5555-5555-5555-555555555555'
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'application identity'
+    }
+}
+
 Describe 'Run-owned ephemeral resource guard' {
     BeforeEach {
         $script:plan = @{
@@ -11,6 +123,7 @@ Describe 'Run-owned ephemeral resource guard' {
             buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
             jobAttempt = '1'
             ownerToken = '0123456789abcdef0123456789abcdef'
+            subscriptionId = '00000000-0000-0000-0000-000000000000'
         }
         $script:plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-1-01234567' -f $script:plan.definitionId, $script:plan.buildId
         $script:subscription = '00000000-0000-0000-0000-000000000000'
@@ -55,6 +168,18 @@ Describe 'Run-owned ephemeral resource guard' {
     It 'rejects malformed ownership metadata' {
         $script:plan.ownerToken = 'not-a-run-token'
         { Assert-SampleRunPlan -Plan $script:plan } | Should Throw 'Invalid CI run ownership'
+    }
+
+    It 'rejects a missing plan subscription' {
+        $script:plan.Remove('subscriptionId')
+        { Assert-SampleRunPlan -Plan $script:plan } | Should Throw 'AZURE_SUBSCRIPTION_ID'
+    }
+
+    It 'rejects a resource group outside the planned subscription even if the state was changed' {
+        $otherSubscription = '11111111-1111-1111-1111-111111111111'
+        $script:group.id = '/subscriptions/{0}/resourceGroups/{1}' -f $otherSubscription, $script:plan.resourceGroup
+        { Assert-SampleResourceGroupOwnership -Plan $script:plan -ResourceGroup $script:group -SubscriptionId $otherSubscription } |
+            Should Throw 'outside the deployment state'
     }
 }
 
@@ -297,6 +422,7 @@ Describe 'Secret-safe ARM error diagnostics' {
             buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
             jobAttempt = '1'
             ownerToken = $owner
+            subscriptionId = '00000000-0000-0000-0000-000000000000'
         }
         $plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
         $state = @{ plan = $plan; subscriptionId = '00000000-0000-0000-0000-000000000000' }
@@ -388,6 +514,7 @@ Describe 'Run-owned readiness diagnostics' {
             buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
             jobAttempt = '1'
             ownerToken = '0123456789abcdef0123456789abcdef'
+            subscriptionId = '00000000-0000-0000-0000-000000000000'
         }
         $plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
         $script:readinessState = @{ plan = $plan; subscriptionId = '00000000-0000-0000-0000-000000000000' }

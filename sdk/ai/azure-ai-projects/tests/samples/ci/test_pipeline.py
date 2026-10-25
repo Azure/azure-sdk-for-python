@@ -79,7 +79,7 @@ def test_failed_runner_captures_safe_diagnostics_before_cleanup(pipeline):
     assert steps.index(runner) < next(i for i, step in enumerate(steps) if "Remove-SampleResources.ps1" in str(step))
 
 
-def test_external_validator_is_secret_env_only_and_checked_before_provisioning(pipeline):
+def test_external_validator_is_env_only_and_checked_before_provisioning(pipeline):
     parameters = {parameter["name"] for parameter in pipeline["parameters"]}
     assert {"LLM_VALIDATION_PROJECT_ENDPOINT", "validationModelVersion", "validationModelCapacity"}.isdisjoint(
         parameters
@@ -96,7 +96,7 @@ def test_external_validator_is_secret_env_only_and_checked_before_provisioning(p
     assert steps.index(preflight) < steps.index(provisioning) < steps.index(runner)
     assert preflight["task"] == "AzureCLI@2"
     assert preflight["inputs"]["azureSubscription"] == provisioning["inputs"]["azureSubscription"]
-    assert "Get-SampleRunnerIdentity" in preflight["inputs"]["inlineScript"]
+    assert "Set-SampleSubscriptionContext" in preflight["inputs"]["inlineScript"]
     assert "pipeline-identity.json" in preflight["inputs"]["inlineScript"]
     assert "MCP_GITHUB_PAT" not in preflight.get("env", {})
 
@@ -111,3 +111,39 @@ def test_validator_model_is_absent_from_plan_and_provisioning_sources():
     assert "validationDeployment" not in template
     assert "validationModel" not in template
     assert "LLM_VALIDATION_PROJECT_ENDPOINT" not in template
+
+
+def test_target_subscription_is_explicit_in_preview_and_every_live_azure_task(pipeline):
+    stages = pipeline["extends"]["parameters"]["stages"]
+    preview = next(stage for stage in stages if stage.get("stage") == "Preview")
+    plan = next(step for step in preview["jobs"][0]["steps"] if "New-SampleDeploymentPlan.ps1" in str(step))
+    assert plan["env"]["AZURE_SUBSCRIPTION_ID"] == "$(AZURE_SUBSCRIPTION_ID)"
+    azure_tasks = [step for step in live_stages(pipeline)[0]["jobs"][0]["steps"] if step.get("task") == "AzureCLI@2"]
+    assert len(azure_tasks) == 4
+    for step in azure_tasks:
+        assert step["env"]["AZURE_SUBSCRIPTION_ID"] == "$(AZURE_SUBSCRIPTION_ID)"
+    preflight = next(step for step in azure_tasks if "--check-validation-config" in str(step))
+    runner = next(step for step in azure_tasks if "--junit" in str(step))
+    assert "Set-SampleSubscriptionContext -Plan" in preflight["inputs"]["inlineScript"]
+    assert "Set-SampleSubscriptionContext -Plan" in runner["inputs"]["inlineScript"]
+
+
+def test_default_model_and_region_use_verified_gpt5_configuration(pipeline):
+    parameters = {parameter["name"]: parameter for parameter in pipeline["parameters"]}
+    assert parameters["location"]["default"] == "westus3"
+    assert parameters["modelName"]["default"] == "gpt-5.2"
+    assert parameters["modelSku"]["default"] == "GlobalStandard"
+    assert parameters["modelCapacity"]["default"] == 10
+
+
+def test_subscription_is_not_derived_from_the_service_connection_default():
+    directory = Path(__file__).resolve().parent
+    source = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    assert "$subscription = [string] $account.id" not in source
+    assert "Set-SampleSubscriptionContext -Plan $plan" in source
+    assert "$subscription = Get-SampleSubscriptionId" in source
+    plan = (directory / "New-SampleDeploymentPlan.ps1").read_text(encoding="utf-8")
+    assert "subscriptionId = $subscription" in plan
+    cleanup = (directory / "Remove-SampleResources.ps1").read_text(encoding="utf-8")
+    assert "$state['subscriptionId'] -ine $state.plan.subscriptionId" in cleanup
+    assert "Set-SampleSubscriptionContext -Plan $state.plan" in cleanup

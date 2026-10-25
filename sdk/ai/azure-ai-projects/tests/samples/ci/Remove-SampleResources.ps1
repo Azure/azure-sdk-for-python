@@ -14,9 +14,10 @@ if (-not (Test-Path -LiteralPath $StatePath)) {
 $state = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json -AsHashtable
 Assert-SampleRunPlan -Plan $state.plan
 $expectedDeployment = 'sample-ci-rg-' + $state.plan.ownerToken
-if ($state['resourceGroupDeployment'] -cne $expectedDeployment -or $state['subscriptionId'] -notmatch '^[a-fA-F0-9-]{36}$') {
+if ($state['resourceGroupDeployment'] -cne $expectedDeployment -or $state['subscriptionId'] -ine $state.plan.subscriptionId) {
     throw 'Invalid cleanup state. No resources were deleted.'
 }
+$null = Set-SampleSubscriptionContext -Plan $state.plan
 $exists = Invoke-SampleAzure -Arguments @('group', 'exists', '--name', $state.plan.resourceGroup, '--subscription', $state.subscriptionId)
 if ($exists) {
     $group = Invoke-SampleAzure -Arguments @('group', 'show', '--name', $state.plan.resourceGroup, '--subscription', $state.subscriptionId)

@@ -25,17 +25,17 @@ parameters:
     type: string
     default: not-configured
   - name: secretVariableGroup
-    displayName: 'Optional authorized Library group containing validation endpoint and MCP secrets; none = pipeline secret variables'
+    displayName: 'Optional authorized Library group containing runtime variables and MCP secret; none = pipeline variables'
     type: string
     default: none
   - name: location
     displayName: 'Azure region for Standard setup and models'
     type: string
-    default: eastus2
+    default: westus3
   - name: modelName
-    displayName: 'Sample model (validation uses the existing project from a secret variable)'
+    displayName: 'Sample model (validation uses the existing project from an environment variable)'
     type: string
-    default: gpt-4.1
+    default: gpt-5.2
   - name: modelVersion
     displayName: 'Sample model version; auto resolves the regional default before provisioning'
     type: string
@@ -106,6 +106,7 @@ extends:
                 workingDirectory: $(packageRoot)
                 displayName: 'Show selected sample paths, exact pytest IDs, and a fresh deployment plan'
                 env:
+                  AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                   SELECTION_KIND: ${{ parameters.selectionKind }}
                   SAMPLE_SELECTION: ${{ parameters.selection }}
                   SAMPLE_LOCATION: ${{ parameters.location }}
@@ -163,19 +164,21 @@ extends:
                     targetPath: $(Pipeline.Workspace)/sample-plan
                   displayName: 'Use this run''s collected sample selection and deployment plan'
                 - task: AzureCLI@2
-                  displayName: 'Identify pipeline application and validate external secret before provisioning'
+                  displayName: 'Identify pipeline application and validate target configuration before provisioning'
                   inputs:
                     azureSubscription: ${{ parameters.azureServiceConnection }}
                     scriptType: pscore
                     scriptLocation: inlineScript
                     inlineScript: |
                       . '$(packageRoot)/tests/samples/ci/SampleCiHelpers.ps1'
-                      $runnerIdentity = Get-SampleRunnerIdentity
+                      $samplePlan = Get-Content -LiteralPath '$(Pipeline.Workspace)/sample-plan/deployment-plan.json' -Raw | ConvertFrom-Json -AsHashtable
+                      $runnerIdentity = Set-SampleSubscriptionContext -Plan $samplePlan
                       $runnerIdentity | ConvertTo-Json | Set-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/pipeline-identity.json' -Encoding utf8
                       Write-Host ('Pipeline application: principalId={0}; clientId={1}; tenantId={2}' -f $runnerIdentity.principalId, $runnerIdentity.clientId, $runnerIdentity.tenantId)
                       python '$(packageRoot)/tests/samples/ci/run_samples.py' --check-validation-config
-                      if ($LASTEXITCODE -ne 0) { throw 'The existing validation-project secret is missing or invalid; no resources were provisioned.' }
+                      if ($LASTEXITCODE -ne 0) { throw 'The existing validation-project environment variable is missing or invalid; no resources were provisioned.' }
                   env:
+                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                     LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
                 - task: AzureCLI@2
                   displayName: 'Provision Standard Foundry, sample model and MCP connection using Bicep'
@@ -190,6 +193,7 @@ extends:
                         -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' `
                         -StandardTemplatePath $standardTemplate -ConfirmProvisioning
                   env:
+                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                     MCP_GITHUB_PAT: $(MCP_GITHUB_PAT)
                 - task: AzureCLI@2
                   displayName: 'Run selected test_samples.py / test_samples_async.py nodes live, without recording'
@@ -199,6 +203,8 @@ extends:
                     scriptLocation: inlineScript
                     inlineScript: |
                       . '$(packageRoot)/tests/samples/ci/SampleCiHelpers.ps1'
+                      $sampleState = Get-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' -Raw | ConvertFrom-Json -AsHashtable
+                      $null = Set-SampleSubscriptionContext -Plan $sampleState.plan
                       python '$(packageRoot)/tests/samples/ci/run_samples.py' `
                         --state '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' `
                         --junit '$(Build.ArtifactStagingDirectory)/sample-results/sample-tests.xml'
@@ -214,6 +220,7 @@ extends:
                         throw 'Selected sample runner failed; inspect readiness diagnostics and pytest results when present.'
                       }
                   env:
+                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                     LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
                 - task: AzureCLI@2
                   displayName: 'Always clean up only the run-owned temporary resources'
@@ -225,6 +232,8 @@ extends:
                     inlineScript: |
                       & '$(packageRoot)/tests/samples/ci/Remove-SampleResources.ps1' `
                         -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' -ConfirmCleanup
+                  env:
+                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                 - task: PublishTestResults@2
                   displayName: 'Publish sample pytest results in the ADO Tests tab'
                   condition: always()

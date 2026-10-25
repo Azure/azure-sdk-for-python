@@ -18,12 +18,9 @@ Assert-SampleRunPlan -Plan $plan
 if (Test-Path -LiteralPath $StatePath) { throw 'Deployment state already exists. Do not adopt or overwrite a previous attempt.' }
 if ($plan.provisionMcp) { Assert-SampleMcpPat }
 
-$account = Invoke-SampleAzure -Arguments @('account', 'show')
-if ($account['user']['type'] -ne 'servicePrincipal') {
-    throw 'Provisioning must run inside AzureCLI@2 using an authorized Azure service connection, not a personal login.'
-}
-$subscription = [string] $account.id
-$runnerPrincipalId = Get-SampleRunnerPrincipalId
+$runnerIdentity = Set-SampleSubscriptionContext -Plan $plan
+$subscription = Get-SampleSubscriptionId
+$runnerPrincipalId = $runnerIdentity.principalId
 $exists = Invoke-SampleAzure -Arguments @('group', 'exists', '--name', $plan.resourceGroup, '--subscription', $subscription)
 if ($exists) { throw 'The generated resource group already exists. No existing group will be reused, retagged, or deleted.' }
 
