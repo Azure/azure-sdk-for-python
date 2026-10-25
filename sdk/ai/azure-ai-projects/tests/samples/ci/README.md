@@ -8,9 +8,9 @@ The first-run default is [../../../samples/agents/tools/sample_agent_mcp_with_pr
 
 1. Collect the real cases in [../test_samples.py](../test_samples.py) and [../test_samples_async.py](../test_samples_async.py). Do not execute samples during collection.
 2. Match the sample-path or test-ID wildcard and show the exact selected cases. Zero matches fail; the pipeline never falls back to all tests.
-3. Require `AZURE_SUBSCRIPTION_ID` and include that explicit target in a non-secret provisioning plan, download integrity-pinned official Standard setup **Bicep sources**, and compile all templates. The default `preview` mode ends here and makes no Azure changes.
+3. Require `AZURE_SUBSCRIPTION_ID` and `AZURE_TENANT_ID` from pipeline environment variables and include both explicit targets in a non-secret provisioning plan, download integrity-pinned official Standard setup **Bicep sources**, and compile all templates. The default `preview` mode ends here and makes no Azure changes.
 4. In `run-and-cleanup` mode, continue automatically after this run's fresh preview succeeds. There is no YAML manual-approval stage. Selecting this mode when queueing explicitly opts in to creating billable resources and deleting this run's temporary resources afterward.
-5. Authenticate with the authorized Azure Resource Manager service connection and verify access to the plan's `AZURE_SUBSCRIPTION_ID` using the same application and tenant. Never fall back to the connection's default subscription. Check provider registration, model availability, Cognitive Services `AccountCount` quota, and model-deployment quota before creating a resource group, then deploy Bicep to create:
+5. Authenticate with the authorized Azure Resource Manager service connection and verify access to the plan's `AZURE_SUBSCRIPTION_ID` in `AZURE_TENANT_ID` using the same application. Never fall back to the connection's default subscription or tenant. Check provider registration, model availability, Cognitive Services `AccountCount` quota, and model-deployment quota before creating a resource group, then deploy Bicep to create:
    - A uniquely named, run-owned resource group.
    - A Foundry account and project with managed identities.
    - A Storage account, Cosmos DB account, AI Search service, project connections, capability hosts and runtime role assignments: the official **Standard agent setup**.
@@ -26,9 +26,9 @@ PowerShell orchestrates Bicep and cleanup; Python collects and invokes the exist
 ### Pipeline and Azure access
 
 - Existing pipeline **8392**, `python - azure-ai-projects - tests`, references the package's [../../../tests.yml](../../../tests.yml). Publish this branch through the normal review process, then select that branch in **Run pipeline**. No definition update is needed if its YAML path is unchanged.
-- Set the normal pipeline variable `AZURE_SUBSCRIPTION_ID` to the intended subscription GUID. It must be available to both Preview and RunSamples; a variable group scoped only to RunSamples is insufficient. Missing, malformed or unresolved values fail closed. The preview records the target, and provisioning, tests and cleanup all verify it against that plan and the deployment state.
+- Set the normal pipeline variables `AZURE_SUBSCRIPTION_ID` and `AZURE_TENANT_ID` to the intended subscription and tenant GUIDs. Neither value is hardcoded in the YAML or supplied as a Run pipeline parameter. Both must be available to Preview and RunSamples; a variable group scoped only to RunSamples is insufficient. The YAML explicitly maps both into each relevant task's environment. Missing, malformed or unresolved values fail closed. The preview records both targets, and provisioning, tests and cleanup verify them against the plan, deployment state and authenticated identity.
 - An administrator must make an **Azure Resource Manager service connection** available to this pipeline; **workload identity federation** is recommended. Enter its name in `azureServiceConnection`.
-- The connection must already have access to the requested subscription in the same tenant. Each Azure task selects that subscription only within its already-authenticated application identity. A different tenant, inaccessible subscription or changed target stops the run before resource changes; setting the variable does not grant access. Do not reuse a connection to an unrelated test tenant.
+- The connection must already have access to the requested subscription in the exact `AZURE_TENANT_ID`. Each Azure task selects that subscription only within its already-authenticated application identity. A different tenant, inaccessible subscription or changed target stops the run before resource changes; these variables do not grant access or change how the service connection authenticates. `azureServiceConnection` is the authorized ARM connection name, not the subscription GUID. Do not reuse a connection to an unrelated test tenant.
 - Provisioning creates a new resource group, so the connection needs subscription-level resource-group/deployment permissions plus management and role-assignment permissions on the new resources. Use an administrator-approved role configuration, for example **Contributor + Role Based Access Control Administrator**, rather than granting the pipeline unrestricted access to unrelated resources. Merely having Foundry User is insufficient to provision Standard setup.
 - Register `Microsoft.CognitiveServices`, `Microsoft.Storage`, `Microsoft.DocumentDB`, and `Microsoft.Search` in advance. Preflight fails rather than registering providers automatically.
 - Ensure the selected region supports Standard Foundry, Cosmos DB, Search, and the selected sample model with sufficient quota. The external validation project must already have deployment **gpt-5.2**. Defaults: `westus3`, **gpt-5.2**, `GlobalStandard`, capacity **10**. `auto` sample model versions resolve from the regional catalog; pin an explicit version when reproducibility requires it. Read-only discovery on 2026-10-23 found agent-compatible GPT-5.2 version `2025-12-11` and sufficient quota/capacity in West US 3 for the requested subscription; this is not a guarantee against later capacity or policy changes.
@@ -42,7 +42,7 @@ An administrator opens **Pipelines → pipeline 8392 → Edit → Variables → 
 
 The pipeline maps the endpoint explicitly only to a configuration-preflight step and the live test task. The endpoint-shape check runs **before resource provisioning**, without echoing the value or calling Azure. A missing value or unresolved ADO variable fails closed. The runner passes it to pytest through the environment; the test configuration preserves it rather than replacing it with a preparer default.
 
-The preflight verifies the subscription and authenticates through the same service connection as the test task, then saves only its application/client ID, principal/object ID and tenant ID in the **pipeline-identity** artifact under **sample-results**. It never saves a token or other authentication claims. This identifies the actual caller for a scoped RBAC investigation even if the validation endpoint is missing. It does not grant roles or prove access to the external project; role and tenant checks must use the project tenant's correct application principal.
+The preflight verifies the subscription and tenant and authenticates through the same service connection as the test task, then saves only its application/client ID, principal/object ID and tenant ID in the **pipeline-identity** artifact under **sample-results**. It never saves a token or other authentication claims. This identifies the actual caller for a scoped RBAC investigation even if the validation endpoint is missing. It does not grant roles or prove access to the external project; role and tenant checks must use the project tenant's correct application principal.
 
 The service-connection identity used by the test task must already have the access required for output validation on that project and its model (including the existing harness's file upload and Code Interpreter calls). A model being deployed does not by itself grant this identity access. The pipeline does not create or update the validation project/model, assign roles on it, or delete it during cleanup. The preflight is not an access or quota check on that shared project.
 
@@ -85,7 +85,7 @@ Attachment capture is enabled only by the on-demand runner's explicit pytest plu
 ## ADO Run pipeline: first sample
 
 1. Open [pipeline 8392](https://dev.azure.com/azure-sdk/internal/_build?definitionId=8392) and select **Run pipeline**.
-2. Choose the branch containing this implementation. Ensure the pipeline's normal `AZURE_SUBSCRIPTION_ID` variable is set to the intended subscription.
+2. Choose the branch containing this implementation. Ensure the pipeline's normal `AZURE_SUBSCRIPTION_ID` and `AZURE_TENANT_ID` variables are set to the intended subscription and tenant.
 3. Set:
    - `runMode`: `preview` for the first check.
    - `selectionKind`: `sample-path`.
@@ -94,7 +94,7 @@ Attachment capture is enabled only by the on-demand runner's explicit pytest plu
 
    `tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_mcp_with_project_connection]`
 
-5. Once the subscription/validation endpoint variables, secret GitHub PAT and target-authorized service connection are configured, run again with `runMode=run-and-cleanup`, the same selection, and that `azureServiceConnection`. Verify the target subscription, region and model in the preview. The pipeline automatically provisions, tests and cleans up after its preview succeeds; no **Review → Resume** action is required by this YAML.
+5. Once the subscription/tenant/validation endpoint variables, secret GitHub PAT and target-authorized service connection are configured, run again with `runMode=run-and-cleanup`, the same selection, and that `azureServiceConnection`. Verify the target subscription, tenant, region and model in the preview. The pipeline automatically provisions, tests and cleans up after its preview succeeds; no **Review → Resume** action is required by this YAML.
 
 Do not enter the PAT or validation endpoint into **Run pipeline** parameters. Those parameters are not secret fields.
 
@@ -104,6 +104,10 @@ Do not enter the PAT or validation endpoint into **Run pipeline** parameters. Th
 - `run-and-cleanup` explicitly opts in to automatic provisioning after a successful preview, including billable resources and ownership-checked cleanup. A failed preview prevents provisioning.
 - Existing service-connection, environment, or organization-level approvals/checks are not changed or bypassed. ADO may still require those administrator-managed authorizations.
 - Runs already queued retain their original YAML snapshot. Removing the manual stage affects only **new runs from the updated, pushed commit**; it does not resume or modify an existing paused run.
+
+### Verify a second clean run
+
+When repeatability is requested, first verify that the first test passed, its ownership-checked cleanup succeeded, and its final deployment state is `CleanedUp`. Only then queue one fresh run with the same reviewed subscription, tenant, region, model and selection. Generate a new plan and resource group; never reuse the first run's resources. Verify the second result and cleanup independently. Existing shared validation resources and separately approved permanent IAM grants are not removed by run-owned cleanup.
 
 ## Wildcard examples shown in the ADO UI
 
@@ -165,7 +169,7 @@ Use a supported region with available account and model quotas, or ask the subsc
 - Standard setup includes Storage **and** Cosmos DB **and** AI Search; these can incur standing charges even when a sample is idle. Application Insights is disabled for this initial MCP scenario.
 - This is the official **public-network** Standard setup, not private-network isolation. Do not use production data. If policy forbids it, prepare a separately reviewed private-network variant instead of relaxing policy.
 - All Standard setup resource-ID override parameters remain empty. This run creates new resources; it never attaches to a production project or shared production Storage account.
-- Cleanup checks the task/plan/state subscription IDs, full resource-group ID, CI purpose, run ID and random owner token. It never adopts, retags, reuses, or deletes an existing group encountered during preflight.
+- Cleanup checks the task/plan/state subscription and tenant IDs, full resource-group ID, CI purpose, run ID and random owner token. It never adopts, retags, reuses, or deletes an existing group encountered during preflight.
 - Cleanup failures fail the pipeline; the non-secret **sample-results** artifact includes state/inventory for administrator follow-up. Do not consider unrelated or unattributed resources safe to delete.
 - `always()` and a cancellation grace period cannot guarantee cleanup after agent loss, hard termination, or control-plane errors. The expiry tag is **metadata, not an automatic deletion policy**. Administrators should monitor expired run-owned groups and review state/tags before removal.
 - Foundry soft-deleted account records may remain after resource-group deletion. The pipeline does not purge them or weaken retention policies automatically.

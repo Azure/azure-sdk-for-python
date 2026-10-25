@@ -6,7 +6,9 @@
 Describe 'Explicit subscription targeting' {
     BeforeEach {
         $script:originalSubscription = $env:AZURE_SUBSCRIPTION_ID
+        $script:originalTenant = $env:AZURE_TENANT_ID
         $env:AZURE_SUBSCRIPTION_ID = '11111111-1111-1111-1111-111111111111'
+        $env:AZURE_TENANT_ID = '22222222-2222-2222-2222-222222222222'
         $script:targetPlan = @{
             schemaVersion = 1
             definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
@@ -14,6 +16,7 @@ Describe 'Explicit subscription targeting' {
             jobAttempt = '1'
             ownerToken = '0123456789abcdef0123456789abcdef'
             subscriptionId = $env:AZURE_SUBSCRIPTION_ID
+            tenantId = $env:AZURE_TENANT_ID
         }
         $script:targetPlan.resourceGroup = 'azsdk-samples-{0}-{1}-1-01234567' -f $script:targetPlan.definitionId, $script:targetPlan.buildId
         $script:targetAccount = @{
@@ -44,11 +47,35 @@ Describe 'Explicit subscription targeting' {
             return $script:activeAccount
         }
     }
-    AfterEach { $env:AZURE_SUBSCRIPTION_ID = $script:originalSubscription }
+    AfterEach {
+        $env:AZURE_SUBSCRIPTION_ID = $script:originalSubscription
+        $env:AZURE_TENANT_ID = $script:originalTenant
+    }
 
     It 'requires an explicit environment subscription rather than the active subscription' {
         $env:AZURE_SUBSCRIPTION_ID = ''
         { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'AZURE_SUBSCRIPTION_ID'
+        Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
+    }
+
+    It 'requires an explicit tenant variable before contacting Azure' {
+        $env:AZURE_TENANT_ID = ''
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'AZURE_TENANT_ID'
+        Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
+    }
+
+    It 'rejects a tenant macro or malformed tenant without echoing it' {
+        $env:AZURE_TENANT_ID = '$(AZURE_TENANT_ID)'
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'tenant GUID'
+        $env:AZURE_TENANT_ID = 'github_pat_unit_test_placeholder'
+        $message = try { Set-SampleSubscriptionContext -Plan $script:targetPlan } catch { $_.Exception.Message }
+        $message.Contains('github_pat_') | Should Be $false
+        Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
+    }
+
+    It 'rejects a tenant different from the preview before contacting Azure' {
+        $script:targetPlan.tenantId = '55555555-5555-5555-5555-555555555555'
+        { Set-SampleSubscriptionContext -Plan $script:targetPlan } | Should Throw 'deployment plan'
         Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
     }
 
@@ -124,6 +151,7 @@ Describe 'Run-owned ephemeral resource guard' {
             jobAttempt = '1'
             ownerToken = '0123456789abcdef0123456789abcdef'
             subscriptionId = '00000000-0000-0000-0000-000000000000'
+            tenantId = '22222222-2222-2222-2222-222222222222'
         }
         $script:plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-1-01234567' -f $script:plan.definitionId, $script:plan.buildId
         $script:subscription = '00000000-0000-0000-0000-000000000000'
@@ -175,11 +203,65 @@ Describe 'Run-owned ephemeral resource guard' {
         { Assert-SampleRunPlan -Plan $script:plan } | Should Throw 'AZURE_SUBSCRIPTION_ID'
     }
 
+    It 'rejects a missing plan tenant' {
+        $script:plan.Remove('tenantId')
+        { Assert-SampleRunPlan -Plan $script:plan } | Should Throw 'AZURE_TENANT_ID'
+    }
+
     It 'rejects a resource group outside the planned subscription even if the state was changed' {
         $otherSubscription = '11111111-1111-1111-1111-111111111111'
         $script:group.id = '/subscriptions/{0}/resourceGroups/{1}' -f $otherSubscription, $script:plan.resourceGroup
         { Assert-SampleResourceGroupOwnership -Plan $script:plan -ResourceGroup $script:group -SubscriptionId $otherSubscription } |
             Should Throw 'outside the deployment state'
+    }
+}
+
+Describe 'Cleanup target-state guard' {
+    BeforeEach {
+        $plan = @{
+            schemaVersion = 1
+            definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
+            buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
+            jobAttempt = '1'
+            ownerToken = '0123456789abcdef0123456789abcdef'
+            subscriptionId = '11111111-1111-1111-1111-111111111111'
+            tenantId = '22222222-2222-2222-2222-222222222222'
+        }
+        $plan.resourceGroup = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
+        $script:cleanupState = @{
+            schemaVersion = 1
+            plan = $plan
+            subscriptionId = $plan.subscriptionId
+            tenantId = $plan.tenantId
+            resourceGroupDeployment = 'sample-ci-rg-' + $plan.ownerToken
+            status = 'Ready'
+        }
+        $script:cleanupPath = Join-Path $TestDrive 'cleanup-state.json'
+        $script:cleanupScript = Join-Path $PSScriptRoot 'Remove-SampleResources.ps1'
+    }
+
+    It 'rejects a changed tenant before any Azure request or deletion' {
+        $script:cleanupState.tenantId = '33333333-3333-3333-3333-333333333333'
+        $script:cleanupState | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $script:cleanupPath -Encoding utf8
+        $message = & {
+            function az { throw 'The native Azure CLI must not run for invalid cleanup state.' }
+            if ((Get-Command az).CommandType -ne 'Function') { throw 'Azure CLI isolation failed.' }
+            try { & $script:cleanupScript -StatePath $script:cleanupPath -ConfirmCleanup } catch { $_.Exception.Message }
+        }
+        $message | Should Be 'Invalid cleanup state. No resources were deleted.'
+        (Get-Content -LiteralPath $script:cleanupPath -Raw | ConvertFrom-Json).status | Should Be 'Ready'
+    }
+
+    It 'rejects a missing tenant before any Azure request or deletion' {
+        $script:cleanupState.Remove('tenantId')
+        $script:cleanupState | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $script:cleanupPath -Encoding utf8
+        $message = & {
+            function az { throw 'The native Azure CLI must not run for invalid cleanup state.' }
+            if ((Get-Command az).CommandType -ne 'Function') { throw 'Azure CLI isolation failed.' }
+            try { & $script:cleanupScript -StatePath $script:cleanupPath -ConfirmCleanup } catch { $_.Exception.Message }
+        }
+        $message | Should Be 'Invalid cleanup state. No resources were deleted.'
+        (Get-Content -LiteralPath $script:cleanupPath -Raw | ConvertFrom-Json).status | Should Be 'Ready'
     }
 }
 
@@ -423,6 +505,7 @@ Describe 'Secret-safe ARM error diagnostics' {
             jobAttempt = '1'
             ownerToken = $owner
             subscriptionId = '00000000-0000-0000-0000-000000000000'
+            tenantId = '22222222-2222-2222-2222-222222222222'
         }
         $plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
         $state = @{ plan = $plan; subscriptionId = '00000000-0000-0000-0000-000000000000' }
@@ -515,6 +598,7 @@ Describe 'Run-owned readiness diagnostics' {
             jobAttempt = '1'
             ownerToken = '0123456789abcdef0123456789abcdef'
             subscriptionId = '00000000-0000-0000-0000-000000000000'
+            tenantId = '22222222-2222-2222-2222-222222222222'
         }
         $plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
         $script:readinessState = @{ plan = $plan; subscriptionId = '00000000-0000-0000-0000-000000000000' }

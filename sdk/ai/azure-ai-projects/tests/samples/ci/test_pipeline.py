@@ -113,15 +113,18 @@ def test_validator_model_is_absent_from_plan_and_provisioning_sources():
     assert "LLM_VALIDATION_PROJECT_ENDPOINT" not in template
 
 
-def test_target_subscription_is_explicit_in_preview_and_every_live_azure_task(pipeline):
+@pytest.mark.parametrize("variable", ["AZURE_SUBSCRIPTION_ID", "AZURE_TENANT_ID"])
+def test_target_ids_are_explicit_in_preview_and_every_live_azure_task(pipeline, variable):
     stages = pipeline["extends"]["parameters"]["stages"]
     preview = next(stage for stage in stages if stage.get("stage") == "Preview")
     plan = next(step for step in preview["jobs"][0]["steps"] if "New-SampleDeploymentPlan.ps1" in str(step))
-    assert plan["env"]["AZURE_SUBSCRIPTION_ID"] == "$(AZURE_SUBSCRIPTION_ID)"
+    assert plan["env"][variable] == f"$({variable})"
     azure_tasks = [step for step in live_stages(pipeline)[0]["jobs"][0]["steps"] if step.get("task") == "AzureCLI@2"]
     assert len(azure_tasks) == 4
     for step in azure_tasks:
-        assert step["env"]["AZURE_SUBSCRIPTION_ID"] == "$(AZURE_SUBSCRIPTION_ID)"
+        assert step["env"][variable] == f"$({variable})"
+    assert variable not in {parameter["name"] for parameter in pipeline["parameters"]}
+    assert variable not in pipeline["variables"]
     preflight = next(step for step in azure_tasks if "--check-validation-config" in str(step))
     runner = next(step for step in azure_tasks if "--junit" in str(step))
     assert "Set-SampleSubscriptionContext -Plan" in preflight["inputs"]["inlineScript"]
@@ -147,3 +150,15 @@ def test_subscription_is_not_derived_from_the_service_connection_default():
     cleanup = (directory / "Remove-SampleResources.ps1").read_text(encoding="utf-8")
     assert "$state['subscriptionId'] -ine $state.plan.subscriptionId" in cleanup
     assert "Set-SampleSubscriptionContext -Plan $state.plan" in cleanup
+
+
+def test_tenant_is_required_from_environment_and_bound_to_plan_and_cleanup():
+    directory = Path(__file__).resolve().parent
+    plan = (directory / "New-SampleDeploymentPlan.ps1").read_text(encoding="utf-8")
+    assert "$tenant = Get-SampleTenantId" in plan
+    assert "tenantId = $tenant" in plan
+    provisioning = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    assert "tenantId = $runnerIdentity.tenantId" in provisioning
+    assert "$state.environment['AZURE_TENANT_ID'] = $runnerIdentity.tenantId" in provisioning
+    cleanup = (directory / "Remove-SampleResources.ps1").read_text(encoding="utf-8")
+    assert "$state['tenantId'] -ine $state.plan.tenantId" in cleanup

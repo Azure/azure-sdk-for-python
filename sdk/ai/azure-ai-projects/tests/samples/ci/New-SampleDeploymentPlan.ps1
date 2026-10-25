@@ -20,12 +20,13 @@ param(
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'SampleCiHelpers.ps1')
 $subscription = Get-SampleSubscriptionId
+$tenant = Get-SampleTenantId
 $manifest = Read-SampleManifest -Path $SelectionManifest -PackageRoot $PackageRoot
 $scanner = Join-Path $PackageRoot '.github/skills/azure-ai-projects-record-sample/scripts/GetSampleRequiredEnvironmentVariables.ps1'
 $samplePaths = @($manifest.tests | ForEach-Object { $_.sample_path } | Sort-Object -Unique)
 $required = @(& $scanner -SamplePath $samplePaths -PackageRoot $PackageRoot)
 $provided = @('FOUNDRY_PROJECT_ENDPOINT', 'FOUNDRY_MODEL_NAME', 'FOUNDRY_AGENT_NAME', 'MCP_PROJECT_CONNECTION_ID',
-    'LLM_VALIDATION_PROJECT_ENDPOINT', 'AZURE_SUBSCRIPTION_ID', 'AZURE_RESOURCE_GROUP')
+    'LLM_VALIDATION_PROJECT_ENDPOINT', 'AZURE_SUBSCRIPTION_ID', 'AZURE_TENANT_ID', 'AZURE_RESOURCE_GROUP')
 $unsupported = @($required | Where-Object { $_ -notin $provided })
 if ($unsupported.Count -gt 0) {
     throw "Selected samples require additional provisioners or inputs: $($unsupported -join ', '). No Azure changes were made."
@@ -39,6 +40,7 @@ $plan = @{
     jobAttempt = $JobAttempt
     ownerToken = $ownerToken
     subscriptionId = $subscription
+    tenantId = $tenant
     resourceGroup = 'azsdk-samples-{0}-{1}-{2}-{3}' -f $DefinitionId, $BuildId, $JobAttempt, $ownerToken.Substring(0, 8)
     location = $Location
     accountPrefix = 'sdk' + $ownerToken.Substring(0, 6)
@@ -56,6 +58,7 @@ $plan | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $OutputDi
 
 Write-Host 'DRY RUN: no Azure resources, role assignments, or project connections were changed.'
 Write-Host ('Target subscription from AZURE_SUBSCRIPTION_ID: {0}.' -f $subscription)
+Write-Host ('Target tenant from AZURE_TENANT_ID: {0}.' -f $tenant)
 Write-Host ('New resource group: {0}; region: {1}' -f $plan.resourceGroup, $Location)
 Write-Host 'Bicep Standard setup: Foundry account/project, Storage, Cosmos DB, AI Search, capability hosts and RBAC.'
 Write-Host ('Sample model: {0} ({1}).' -f $ModelName, $ModelVersion)

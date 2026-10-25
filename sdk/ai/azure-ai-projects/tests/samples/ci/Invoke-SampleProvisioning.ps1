@@ -58,6 +58,7 @@ $state = @{
     schemaVersion = 1
     plan = $plan
     subscriptionId = $subscription
+    tenantId = $runnerIdentity.tenantId
     resourceGroupDeployment = $groupDeploymentName
     status = 'Provisioning'
     provisioningStep = 'ResourceGroup'
@@ -136,6 +137,7 @@ try {
     if ($sampleResources.properties.provisioningState -ne 'Succeeded') { throw 'Sample resources Bicep deployment did not succeed.' }
     $state['environment'] = $sampleResources.properties.outputs.environment.value
     $state.environment['AZURE_SUBSCRIPTION_ID'] = $subscription
+    $state.environment['AZURE_TENANT_ID'] = $runnerIdentity.tenantId
     $state.environment['AZURE_RESOURCE_GROUP'] = $plan.resourceGroup
     $state['status'] = 'Ready'
     $state['provisioningStep'] = 'Complete'

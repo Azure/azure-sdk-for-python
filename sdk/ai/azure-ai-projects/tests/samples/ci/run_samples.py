@@ -19,6 +19,7 @@ ENVIRONMENT_NAMES = {
     "FOUNDRY_AGENT_NAME",
     "MCP_PROJECT_CONNECTION_ID",
     "AZURE_SUBSCRIPTION_ID",
+    "AZURE_TENANT_ID",
     "AZURE_RESOURCE_GROUP",
 }
 
@@ -41,20 +42,22 @@ def build_command(state: dict, junit_path: Path) -> list[str]:
     required = ENVIRONMENT_NAMES - {"MCP_PROJECT_CONNECTION_ID"}
     if set(environment) - ENVIRONMENT_NAMES or any(not environment.get(name) for name in required):
         raise ValueError("Deployment state must contain only the expected non-secret environment bindings.")
-    subscription = state.get("subscriptionId", "")
-    planned_subscription = state.get("plan", {}).get("subscriptionId", "")
-    environment_subscription = environment["AZURE_SUBSCRIPTION_ID"]
-    if (
-        not isinstance(subscription, str)
-        or not re.fullmatch(r"[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}", subscription)
-        or not isinstance(planned_subscription, str)
-        or planned_subscription.lower() != subscription.lower()
-        or not isinstance(environment_subscription, str)
-        or environment_subscription.lower() != subscription.lower()
+    for environment_name, state_key, label in (
+        ("AZURE_SUBSCRIPTION_ID", "subscriptionId", "subscription"),
+        ("AZURE_TENANT_ID", "tenantId", "tenant"),
     ):
-        raise ValueError(
-            "Deployment state, plan and AZURE_SUBSCRIPTION_ID must identify the same explicit subscription."
-        )
+        value = state.get(state_key, "")
+        planned_value = state.get("plan", {}).get(state_key, "")
+        environment_value = environment[environment_name]
+        if (
+            not isinstance(value, str)
+            or not re.fullmatch(r"[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}", value)
+            or not isinstance(planned_value, str)
+            or planned_value.lower() != value.lower()
+            or not isinstance(environment_value, str)
+            or environment_value.lower() != value.lower()
+        ):
+            raise ValueError(f"Deployment state, plan and {environment_name} must identify the same explicit {label}.")
     if state.get("plan", {}).get("provisionMcp") and not environment.get("MCP_PROJECT_CONNECTION_ID"):
         raise ValueError("MCP provisioning requires a nonempty MCP_PROJECT_CONNECTION_ID output.")
     tests = state.get("plan", {}).get("selectedTests", [])
@@ -87,7 +90,8 @@ def build_command(state: dict, junit_path: Path) -> list[str]:
     for name, value in sorted(environment.items()):
         if not isinstance(value, str):
             raise ValueError("Deployment environment bindings must be strings.")
-        if value:
+        # The harness has no tenant CLI option; preserve this authentication setting in the environment only.
+        if value and name != "AZURE_TENANT_ID":
             arguments.append(f"--{name.lower().replace('_', '-')}={value}")
     return arguments
 
@@ -149,8 +153,9 @@ def main() -> int:
         parser.error("--state and --junit are required when running samples")
     state = json.loads(arguments.state.read_text(encoding="utf-8-sig"))
     command = build_command(state, arguments.junit)
-    if os.environ.get("AZURE_SUBSCRIPTION_ID", "").lower() != state["subscriptionId"].lower():
-        raise ValueError("The task AZURE_SUBSCRIPTION_ID does not match the deployment state; sample not started.")
+    for environment_name, state_key in (("AZURE_SUBSCRIPTION_ID", "subscriptionId"), ("AZURE_TENANT_ID", "tenantId")):
+        if os.environ.get(environment_name, "").lower() != state[state_key].lower():
+            raise ValueError(f"The task {environment_name} does not match the deployment state; sample not started.")
     environment = os.environ.copy()
     environment.update(state["environment"])
     environment.update(

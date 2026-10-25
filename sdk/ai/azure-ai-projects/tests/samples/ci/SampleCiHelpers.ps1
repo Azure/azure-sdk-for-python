@@ -64,13 +64,26 @@ function Get-SampleSubscriptionId {
     return ([guid] $SubscriptionId).ToString('D')
 }
 
+function Get-SampleTenantId {
+    param([AllowNull()] [AllowEmptyString()] [string] $TenantId = $env:AZURE_TENANT_ID)
+
+    if ($TenantId -notmatch '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$') {
+        throw 'Set AZURE_TENANT_ID to the target Azure tenant GUID; no resources were changed.'
+    }
+    return ([guid] $TenantId).ToString('D')
+}
+
 function Set-SampleSubscriptionContext {
     param([Parameter(Mandatory)] [hashtable] $Plan)
 
     $subscription = Get-SampleSubscriptionId
+    $tenant = Get-SampleTenantId
     Assert-SampleRunPlan -Plan $Plan
     if ($subscription -ine $Plan.subscriptionId) {
         throw 'AZURE_SUBSCRIPTION_ID does not match the deployment plan; no resources were changed.'
+    }
+    if ($tenant -ine $Plan.tenantId) {
+        throw 'AZURE_TENANT_ID does not match the deployment plan; no resources were changed.'
     }
     $active = Invoke-SampleAzure -Arguments @('account', 'show') -Sensitive
     if ($active['user']['type'] -ne 'servicePrincipal') {
@@ -82,12 +95,13 @@ function Set-SampleSubscriptionContext {
         throw 'The authorized service connection cannot access AZURE_SUBSCRIPTION_ID; no resources were changed. Use an approved connection for the target subscription.'
     }
     if ($target['id'] -ine $subscription -or $target['state'] -ne 'Enabled' -or
-        $target['tenantId'] -ine $active['tenantId'] -or $target['user']['type'] -ne 'servicePrincipal' -or
+        $target['tenantId'] -ine $tenant -or $active['tenantId'] -ine $tenant -or
+        $target['user']['type'] -ne 'servicePrincipal' -or
         $target['user']['name'] -ine $active['user']['name']) {
-        throw 'The target subscription must be enabled and accessible by the same application and tenant; no resources were changed.'
+        throw 'The target subscription must be enabled and accessible by the same application and tenant specified by AZURE_TENANT_ID; no resources were changed.'
     }
     $identity = Get-SampleRunnerIdentity -SubscriptionId $subscription
-    if ($identity.tenantId -ine $target['tenantId'] -or $identity.clientId -ine $target['user']['name']) {
+    if ($identity.tenantId -ine $tenant -or $identity.clientId -ine $target['user']['name']) {
         throw 'The target subscription application identity does not match the authorized connection; no resources were changed.'
     }
     # Select only a subscription already accessible to this application. Never log in or change identities.
@@ -99,7 +113,7 @@ function Set-SampleSubscriptionContext {
         $confirmed['user']['type'] -ne 'servicePrincipal' -or $confirmed['user']['name'] -ine $identity.clientId) {
         throw 'Could not confirm the requested subscription application identity; no resources were changed.'
     }
-    Write-Host ('Subscription preflight: AZURE_SUBSCRIPTION_ID={0}; tenantId={1}.' -f $subscription, $identity.tenantId)
+    Write-Host ('Subscription preflight: AZURE_SUBSCRIPTION_ID={0}; AZURE_TENANT_ID={1}.' -f $subscription, $tenant)
     return $identity
 }
 
@@ -115,6 +129,7 @@ function Assert-SampleRunPlan {
         throw 'Resource group does not match the run-owned ephemeral naming convention.'
     }
     $null = Get-SampleSubscriptionId -SubscriptionId $Plan['subscriptionId']
+    $null = Get-SampleTenantId -TenantId $Plan['tenantId']
     foreach ($binding in @(@('SYSTEM_DEFINITIONID', 'definitionId'), @('BUILD_BUILDID', 'buildId'))) {
         $current = [Environment]::GetEnvironmentVariable($binding[0])
         if (-not [string]::IsNullOrWhiteSpace($current) -and $current -cne [string] $Plan[$binding[1]]) {

@@ -107,6 +107,7 @@ extends:
                 displayName: 'Show selected sample paths, exact pytest IDs, and a fresh deployment plan'
                 env:
                   AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                  AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                   SELECTION_KIND: ${{ parameters.selectionKind }}
                   SAMPLE_SELECTION: ${{ parameters.selection }}
                   SAMPLE_LOCATION: ${{ parameters.location }}
@@ -179,6 +180,7 @@ extends:
                       if ($LASTEXITCODE -ne 0) { throw 'The existing validation-project environment variable is missing or invalid; no resources were provisioned.' }
                   env:
                     AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                     LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
                 - task: AzureCLI@2
                   displayName: 'Provision Standard Foundry, sample model and MCP connection using Bicep'
@@ -194,6 +196,7 @@ extends:
                         -StandardTemplatePath $standardTemplate -ConfirmProvisioning
                   env:
                     AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                     MCP_GITHUB_PAT: $(MCP_GITHUB_PAT)
                 - task: AzureCLI@2
                   displayName: 'Run selected test_samples.py / test_samples_async.py nodes live, without recording'
@@ -221,6 +224,7 @@ extends:
                       }
                   env:
                     AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                     LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
                 - task: AzureCLI@2
                   displayName: 'Always clean up only the run-owned temporary resources'
@@ -234,6 +238,7 @@ extends:
                         -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' -ConfirmCleanup
                   env:
                     AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                 - task: PublishTestResults@2
                   displayName: 'Publish sample pytest results in the ADO Tests tab'
                   condition: always()

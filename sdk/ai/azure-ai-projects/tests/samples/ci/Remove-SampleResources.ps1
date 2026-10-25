@@ -14,7 +14,8 @@ if (-not (Test-Path -LiteralPath $StatePath)) {
 $state = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json -AsHashtable
 Assert-SampleRunPlan -Plan $state.plan
 $expectedDeployment = 'sample-ci-rg-' + $state.plan.ownerToken
-if ($state['resourceGroupDeployment'] -cne $expectedDeployment -or $state['subscriptionId'] -ine $state.plan.subscriptionId) {
+if ($state['resourceGroupDeployment'] -cne $expectedDeployment -or $state['subscriptionId'] -ine $state.plan.subscriptionId -or
+    $state['tenantId'] -ine $state.plan.tenantId) {
     throw 'Invalid cleanup state. No resources were deleted.'
 }
 $null = Set-SampleSubscriptionContext -Plan $state.plan
