@@ -4,10 +4,10 @@
 
 ### Features Added
 
-- Expose the immutable creating agent version as `origin_agent_version` on
-  task records and task contexts. Recovery, retries and later turns preserve
-  the stored version, allowing application-managed compatibility. Unknown
-  legacy origins remain `None`; this does not change execution routing.
+- Expose the persisted execution version as `agent_version` on task records
+  and contexts. New turns from pending/suspended state update the stored
+  version; crash recovery and retries preserve the admitted turn's value.
+  Unknown versions remain `None`; SDK metadata does not select worker images.
 - Added protocol-scoped task-runtime startup requests so protocol hosts can
   obtain scoped `TaskManager` access without mutating the process-wide
   resilient-task switch. This prevents one protocol's enablement from

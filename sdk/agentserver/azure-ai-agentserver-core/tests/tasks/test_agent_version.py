@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Task creation provenance survives newer workers and input replacement."""
+"""New turns refresh task execution versions; crash recovery preserves them."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from azure.ai.agentserver.core.tasks import RetryPolicy, TaskContext, multi_turn_task, task
+from azure.ai.agentserver.core.tasks import RetryPolicy, TaskContext, TaskDeferred, multi_turn_task, task
 from azure.ai.agentserver.core.tasks import _decorator, _manager
 from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
 from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
@@ -43,25 +43,25 @@ async def _suspended(provider: LocalFileTaskProvider, task_id: str) -> TaskInfo:
 
 def test_task_info_round_trips_service_version_and_legacy_absence() -> None:
     wire = {"id": "task", "agent_name": "agent", "session_id": "session", "status": "pending"}
-    assert TaskInfo.from_dict(wire).origin_agent_version is None
-    wire["origin_agent_version"] = "1"
+    assert TaskInfo.from_dict(wire).agent_version is None
+    wire["agent_version"] = "1"
     info = TaskInfo.from_dict(wire)
-    assert info.origin_agent_version == "1"
-    assert info.to_dict()["origin_agent_version"] == "1"
+    assert info.agent_version == "1"
+    assert info.to_dict()["agent_version"] == "1"
 
 
-def test_task_info_rejects_non_string_origin() -> None:
-    with pytest.raises(TypeError, match="origin_agent_version"):
-        TaskInfo.from_dict({"id": "task", "origin_agent_version": 1})
+def test_task_info_rejects_non_string_version() -> None:
+    with pytest.raises(TypeError, match="agent_version"):
+        TaskInfo.from_dict({"id": "task", "agent_version": 1})
 
 
-def test_context_origin_is_read_only_and_does_not_infer_current_version(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_context_version_is_read_only_and_does_not_infer_current_version(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("FOUNDRY_AGENT_VERSION", "2")
-    context = TaskContext(task_id="task", session_id="session", input={}, origin_agent_version="1")
-    assert context.origin_agent_version == "1"
+    context = TaskContext(task_id="task", session_id="session", input={}, agent_version="1")
+    assert context.agent_version == "1"
     with pytest.raises(AttributeError):
-        context.origin_agent_version = "2"
-    assert TaskContext(task_id="legacy", session_id="session", input={}).origin_agent_version is None
+        context.agent_version = "2"
+    assert TaskContext(task_id="legacy", session_id="session", input={}).agent_version is None
 
 
 @pytest.mark.parametrize("version", ["1", ""])
@@ -70,42 +70,45 @@ def test_default_local_backend_captures_configured_creation_version(tmp_path, mo
     monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
     provider = TaskManager._create_provider(_config(version))
     assert isinstance(provider, LocalFileTaskProvider)
-    assert provider._origin_agent_version == (version or None)
+    assert provider._agent_version == (version or None)
 
 
 @pytest.mark.parametrize("origin", ["1", None])
 @pytest.mark.asyncio
-async def test_resume_keeps_origin_and_new_task_uses_new_worker_version(tmp_path, origin: str | None) -> None:
+async def test_resume_updates_execution_version_and_new_task_uses_new_worker_version(
+    tmp_path, origin: str | None
+) -> None:
     observed = []
 
     @multi_turn_task(name="versioned-conversation")
     async def conversation(ctx: TaskContext[str]) -> str | None:
-        observed.append((ctx.input, ctx.entry_mode, ctx.origin_agent_version))
-        return ctx.origin_agent_version
+        observed.append((ctx.input, ctx.entry_mode, ctx.agent_version))
+        return ctx.agent_version
 
-    first_provider = LocalFileTaskProvider(tmp_path, origin_agent_version=origin)
+    first_provider = LocalFileTaskProvider(tmp_path, agent_version=origin)
     first = TaskManager(_config("1"), provider=first_provider)
     _manager.set_task_manager(first)
     await first.startup()
     try:
         run = await conversation.start(task_id="existing", input="first")
         assert await asyncio.wait_for(run.result(), timeout=5) == origin
-        assert (await _suspended(first_provider, "existing")).origin_agent_version == origin
+        assert (await _suspended(first_provider, "existing")).agent_version == origin
     finally:
         await first.shutdown()
-    second_provider = LocalFileTaskProvider(tmp_path, origin_agent_version="2")
+    second_provider = LocalFileTaskProvider(tmp_path, agent_version="2")
     second = TaskManager(_config("2"), provider=second_provider)
     _manager.set_task_manager(second)
     await second.startup()
     try:
         assert len(observed) == 1
+        assert (await second_provider.get("existing")).agent_version == origin
         resumed = await conversation.start(task_id="existing", input="second")
-        assert await asyncio.wait_for(resumed.result(), timeout=5) == origin
-        assert (await _suspended(second_provider, "existing")).origin_agent_version == origin
+        assert await asyncio.wait_for(resumed.result(), timeout=5) == "2"
+        assert (await _suspended(second_provider, "existing")).agent_version == "2"
         fresh = await conversation.start(task_id="new", input="new")
         assert await asyncio.wait_for(fresh.result(), timeout=5) == "2"
-        assert (await _suspended(second_provider, "new")).origin_agent_version == "2"
-        assert observed == [("first", "fresh", origin), ("second", "resumed", origin), ("new", "fresh", "2")]
+        assert (await _suspended(second_provider, "new")).agent_version == "2"
+        assert observed == [("first", "fresh", origin), ("second", "resumed", "2"), ("new", "fresh", "2")]
     finally:
         await second.shutdown()
 
@@ -134,18 +137,18 @@ async def _interrupted_task(provider: LocalFileTaskProvider, name: str) -> None:
 @pytest.mark.parametrize("origin", ["1", None])
 @pytest.mark.parametrize("recovery_path", ["startup", "inline", "periodic"])
 @pytest.mark.asyncio
-async def test_recovery_reads_persisted_origin_not_new_worker(
+async def test_recovery_reads_persisted_execution_version_not_new_worker(
     tmp_path, monkeypatch: pytest.MonkeyPatch, origin: str | None, recovery_path: str
 ) -> None:
     observed = []
 
     @multi_turn_task(name="versioned-recovery")
     async def recovered(ctx: TaskContext[str]) -> str | None:
-        observed.append((ctx.entry_mode, ctx.origin_agent_version))
-        return ctx.origin_agent_version
+        observed.append((ctx.entry_mode, ctx.agent_version))
+        return ctx.agent_version
 
-    creator = LocalFileTaskProvider(tmp_path, origin_agent_version=origin)
-    current_provider = LocalFileTaskProvider(tmp_path, origin_agent_version="2")
+    creator = LocalFileTaskProvider(tmp_path, agent_version=origin)
+    current_provider = LocalFileTaskProvider(tmp_path, agent_version="2")
     current = TaskManager(_config("2"), provider=current_provider)
     _manager.set_task_manager(current)
     if recovery_path == "periodic":
@@ -162,53 +165,53 @@ async def test_recovery_reads_persisted_origin_not_new_worker(
             assert await asyncio.wait_for(run.result(), timeout=5) == origin
         record = await _suspended(current_provider, "interrupted")
         assert observed == [("recovered", origin)]
-        assert record.origin_agent_version == origin
+        assert record.agent_version == origin
     finally:
         await current.shutdown()
 
 
 @pytest.mark.asyncio
-async def test_steered_turn_keeps_recovered_task_origin(tmp_path) -> None:
+async def test_new_steered_turn_refreshes_recovered_task_version(tmp_path) -> None:
     first_entered = asyncio.Event()
     observed = []
 
     @multi_turn_task(name="versioned-steering", steerable=True)
     async def conversation(ctx: TaskContext[str]) -> str | None:
-        observed.append((ctx.input, ctx.entry_mode, ctx.origin_agent_version))
+        observed.append((ctx.input, ctx.entry_mode, ctx.agent_version))
         if ctx.input == "first":
             first_entered.set()
             await ctx.cancel.wait()
             return None
-        return ctx.origin_agent_version
+        return ctx.agent_version
 
-    creator = LocalFileTaskProvider(tmp_path, origin_agent_version="1")
+    creator = LocalFileTaskProvider(tmp_path, agent_version="1")
     await _interrupted_task(creator, conversation.name)
-    provider = LocalFileTaskProvider(tmp_path, origin_agent_version="2")
+    provider = LocalFileTaskProvider(tmp_path, agent_version="2")
     manager = TaskManager(_config("2"), provider=provider, shutdown_grace_seconds=0.1)
     _manager.set_task_manager(manager)
     await manager.startup()
     try:
         await asyncio.wait_for(first_entered.wait(), timeout=5)
         queued = await conversation.start(task_id="interrupted", input="second")
-        assert await asyncio.wait_for(queued.result(), timeout=5) == "1"
-        assert (await _suspended(provider, "interrupted")).origin_agent_version == "1"
-        assert observed == [("first", "recovered", "1"), ("second", "resumed", "1")]
+        assert await asyncio.wait_for(queued.result(), timeout=5) == "2"
+        assert (await _suspended(provider, "interrupted")).agent_version == "2"
+        assert observed == [("first", "recovered", "1"), ("second", "resumed", "2")]
     finally:
         await manager.shutdown()
 
 
 @pytest.mark.asyncio
-async def test_retry_keeps_provider_origin_instead_of_worker_configuration(tmp_path) -> None:
+async def test_retry_keeps_persisted_version_instead_of_worker_configuration(tmp_path) -> None:
     observed = []
 
     @task(name="versioned-retry", retry=RetryPolicy(initial_delay=0, max_delay=0, max_attempts=2, jitter=False))
     async def work(ctx: TaskContext[str]) -> str | None:
-        observed.append((ctx.retry_attempt, ctx.origin_agent_version))
+        observed.append((ctx.retry_attempt, ctx.agent_version))
         if ctx.retry_attempt == 0:
             raise ValueError("retry once")
-        return ctx.origin_agent_version
+        return ctx.agent_version
 
-    provider = LocalFileTaskProvider(tmp_path, origin_agent_version="1")
+    provider = LocalFileTaskProvider(tmp_path, agent_version="1")
     manager = TaskManager(_config("2"), provider=provider)
     _manager.set_task_manager(manager)
     await manager.startup()
@@ -218,3 +221,54 @@ async def test_retry_keeps_provider_origin_instead_of_worker_configuration(tmp_p
         assert observed == [(0, "1"), (1, "1")]
     finally:
         await manager.shutdown()
+
+
+@pytest.mark.asyncio
+async def test_idle_resume_updates_version_then_crash_recovery_preserves_it(tmp_path) -> None:
+    resumed_entered = asyncio.Event()
+    observed = []
+
+    @multi_turn_task(name="idle-then-crash")
+    async def conversation(ctx: TaskContext[str]) -> str | None:
+        observed.append((ctx.entry_mode, ctx.agent_version))
+        if ctx.input == "second" and ctx.entry_mode == "resumed":
+            resumed_entered.set()
+            await ctx.shutdown.wait()
+            return await ctx.exit_for_recovery()
+        return ctx.agent_version
+
+    creator = LocalFileTaskProvider(tmp_path, agent_version="1")
+    first = TaskManager(_config("1"), provider=creator)
+    _manager.set_task_manager(first)
+    await first.startup()
+    try:
+        run = await conversation.start(task_id="chain", input="first")
+        assert await asyncio.wait_for(run.result(), 5) == "1"
+        assert (await _suspended(creator, "chain")).agent_version == "1"
+    finally:
+        await first.shutdown()
+
+    provider = LocalFileTaskProvider(tmp_path, agent_version="2")
+    second = TaskManager(_config("2"), provider=provider)
+    _manager.set_task_manager(second)
+    await second.startup()
+    try:
+        resumed = await conversation.start(task_id="chain", input="second")
+        await asyncio.wait_for(resumed_entered.wait(), 5)
+        running = await provider.get("chain")
+        assert running.status == "in_progress"
+        assert running.agent_version == "2"
+    finally:
+        await second.shutdown()
+    with pytest.raises(TaskDeferred):
+        await resumed.result()
+
+    replacement_provider = LocalFileTaskProvider(tmp_path, agent_version="3")
+    replacement = TaskManager(_config("3"), provider=replacement_provider)
+    _manager.set_task_manager(replacement)
+    await replacement.startup()
+    try:
+        assert (await _suspended(replacement_provider, "chain")).agent_version == "2"
+        assert observed == [("fresh", "1"), ("resumed", "2"), ("recovered", "2")]
+    finally:
+        await replacement.shutdown()

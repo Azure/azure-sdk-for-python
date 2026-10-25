@@ -861,18 +861,18 @@ namespace azure.ai.agentserver.core.tasks
 
 
     class azure.ai.agentserver.core.tasks.TaskContext(Generic[Input]):
-        property origin_agent_version: str | None    # Read-only
+        property agent_version: str | None    # Read-only
         property pending_input_count: int    # Read-only
 
         def __init__(
                 self, 
                 *, 
+                agent_version: str | None = ...,
                 cancel: Event | None = ..., 
                 entry_mode: EntryMode = "fresh", 
                 input: Input, 
                 input_id: str | None = ..., 
                 is_steered_turn: bool = False, 
-                origin_agent_version: str | None = ...,
                 pending_count_provider: Callable[[], int] | None = ..., 
                 recovery_count: int = 0, 
                 retry_attempt: int = 0, 

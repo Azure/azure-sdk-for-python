@@ -4,10 +4,10 @@
 
 ### Features Added
 
-- Expose `ResponseContext.origin_agent_version` from the underlying durable
-  task so handlers can select compatible logic after a version change. The
-  value is unchanged on recovery or later turns and is `None` without a
-  recorded task origin. No execution pinning or migration is automatic.
+- Expose `ResponseContext.agent_version` from the underlying durable
+  task. New turns from suspension record their executing version; crash
+  recovery preserves it. The value is `None` when unknown. SDK metadata does
+  not select worker images or automatically migrate application state.
 
 - Responses hosts now request the task runtime when either
   `resilient_background` or `steerable_conversations` is enabled. Steering-only
@@ -35,7 +35,7 @@
 ### Other Changes
 
 - Raised the minimum `azure-ai-agentserver-core` dependency to `2.3.0b2` for
-  protocol-scoped task-runtime support and task-origin version metadata.
+  protocol-scoped task-runtime support and task execution-version metadata.
 
 ## 2.4.0b1 (2026-10-15)
 

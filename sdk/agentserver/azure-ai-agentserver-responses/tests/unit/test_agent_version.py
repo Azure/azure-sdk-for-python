@@ -29,16 +29,18 @@ def test_response_context_forwards_same_read_only_task_version(origin: str | Non
         request=CreateResponse(model="m", input="hello"),
         mode_flags=ResponseModeFlags(stream=False, store=True, background=True),
     )
-    assert context.origin_agent_version is None
+    assert context.agent_version is None
     context._task_context = TaskContext(
-        task_id="task", session_id="session", input={}, entry_mode=entry_mode, origin_agent_version=origin
+        task_id="task", session_id="session", input={}, entry_mode=entry_mode, agent_version=origin
     )
-    assert context.origin_agent_version == origin
+    assert context.agent_version == origin
     with pytest.raises(AttributeError):
-        context.origin_agent_version = "2"
+        context.agent_version = "2"
 
 
-def test_real_handler_uses_task_origin_not_request_agent_reference(tmp_path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_real_handler_uses_task_execution_version_not_request_agent_reference(
+    tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
     monkeypatch.setenv("AGENTSERVER_TASKS_BACKEND", "local")
     monkeypatch.setenv("FOUNDRY_AGENT_VERSION", "1")
@@ -51,7 +53,7 @@ def test_real_handler_uses_task_origin_not_request_agent_reference(tmp_path, mon
 
     @host.response_handler
     async def handler(request, context, cancellation_signal):
-        observed.append(context.origin_agent_version)
+        observed.append(context.agent_version)
         events = ResponseEventStream(response_id=context.response_id, request=request)
         yield events.emit_created()
         yield events.emit_completed()

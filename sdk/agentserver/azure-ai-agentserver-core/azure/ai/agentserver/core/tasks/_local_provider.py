@@ -97,12 +97,12 @@ class LocalFileTaskProvider:
         Defaults to ``${AGENTSERVER_STATE_ROOT:-~/.agentserver}/tasks``
         via :func:`azure.ai.agentserver.core._config.resolve_state_subdir`.
     :type base_dir: Path | None
-    :param origin_agent_version: Configured creating agent version for new
-        local tasks. Existing task metadata is never replaced with this value.
-    :type origin_agent_version: str | None
+    :param agent_version: Configured execution version for newly created
+        tasks and new turns admitted from pending or suspended state.
+    :type agent_version: str | None
     """
 
-    def __init__(self, base_dir: Path | None = None, *, origin_agent_version: str | None = None) -> None:
+    def __init__(self, base_dir: Path | None = None, *, agent_version: str | None = None) -> None:
         if base_dir is None:
             from .._config import (  # pylint: disable=import-outside-toplevel
                 resolve_state_subdir,
@@ -110,7 +110,7 @@ class LocalFileTaskProvider:
 
             base_dir = resolve_state_subdir("tasks")
         self._base_dir = base_dir
-        self._origin_agent_version = origin_agent_version
+        self._agent_version = agent_version
 
     def _task_dir(self, agent_name: str, session_id: str) -> Path:
         return self._base_dir / agent_name / session_id
@@ -286,7 +286,7 @@ class LocalFileTaskProvider:
             updated_at=now,
             started_at=started_at,
             completed_at=completed_at,
-            origin_agent_version=self._origin_agent_version,
+            agent_version=self._agent_version,
         )
         self._write_task(task)
         logger.debug("Created local task %s", task_id)
@@ -535,6 +535,7 @@ class LocalFileTaskProvider:
                 task.lease = None
                 task.suspension_reason = None
             elif target_status == "in_progress":
+                task.agent_version = self._agent_version
                 if lease_request is not None:
                     self._apply_lease_acquisition(task, lease_request, now)
                 if task.started_at is None:

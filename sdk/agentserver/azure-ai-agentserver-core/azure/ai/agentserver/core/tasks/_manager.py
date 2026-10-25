@@ -593,9 +593,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # Resolve the tasks subdirectory under the agentserver state root.
         # ``AGENTSERVER_STATE_ROOT`` is the single env-var operator knob;
         # the tasks subsystem owns the ``tasks`` subdirectory name.
-        return LocalFileTaskProvider(
-            base_dir=resolve_state_subdir("tasks"), origin_agent_version=config.agent_version or None
-        )
+        return LocalFileTaskProvider(base_dir=resolve_state_subdir("tasks"), agent_version=config.agent_version or None)
 
     @property
     def provider(self) -> TaskProvider:
@@ -1172,7 +1170,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             entry_mode=entry_mode,
             pending_count_provider=self._make_pending_count_provider(task_id),
             input_id=(initial_payload_extras or {}).get("last_input_id"),
-            origin_agent_version=task_info.origin_agent_version,
+            agent_version=task_info.agent_version,
         )
         loop = asyncio.get_running_loop()
         result_future: asyncio.Future[Any] = loop.create_future()
@@ -1580,7 +1578,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             is_steered_turn=is_steered_turn,
             pending_count_provider=self._make_pending_count_provider(task_id),
             input_id=(task_info.payload or {}).get("last_input_id"),
-            origin_agent_version=task_info.origin_agent_version,
+            agent_version=task_info.agent_version,
         )
 
         loop = asyncio.get_running_loop()
@@ -2474,7 +2472,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 # supported for in_progress tasks"), but ACCEPTS lease params as
                 # part of a suspended→in_progress *claim*. Without the status
                 # flip the drain PATCH 409s and the steered turn never runs.
-                await self._provider_update_lock_held(
+                updated_task_info = await self._provider_update_lock_held(
                     task_id,
                     TaskPatchRequest(
                         status="in_progress",
@@ -2484,6 +2482,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                         **self._lease_ext_kwargs(task_id),
                     ),
                 )
+                if updated_task_info is None:
+                    raise TaskNotFound(task_id)
+                task_info = updated_task_info
                 # Spec 031 / FR-002 — the drain consumed the head; the steered
                 # turn's live backlog is the remaining ``pending``. Keep
                 # ``ctx.pending_input_count`` in sync for the new turn.
@@ -2576,7 +2577,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             is_steered_turn=True,
             pending_count_provider=self._make_pending_count_provider(task_id),
             input_id=(task_info.payload or {}).get("last_input_id"),
-            origin_agent_version=task_info.origin_agent_version,
+            agent_version=task_info.agent_version,
         )
 
         # Update active task tracking
