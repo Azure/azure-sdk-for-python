@@ -7,12 +7,19 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import sys
 import threading
 import time
 import uuid
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
+
+if sys.platform == "win32":
+    import msvcrt
+else:
+    import fcntl
 
 from ._errors import (
     FoundryStorageConflictError,
@@ -53,6 +60,57 @@ def _lock_for(path: Path) -> threading.RLock:
         return _LOCKS.setdefault(path, threading.RLock())
 
 
+@contextmanager
+def _file_lock(path: Path) -> Iterator[None]:
+    """Hold an exclusive advisory lock on a sidecar file across processes."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a+b") as handle:
+        if sys.platform == "win32":
+            handle.seek(0)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_LOCK, 1)  # type: ignore[attr-defined]
+        else:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            if sys.platform == "win32":
+                handle.seek(0)
+                msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)  # type: ignore[attr-defined]
+            else:
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+class _TransactionLock:
+    """Re-entrant thread lock combined with a cross-process file lock."""
+
+    def __init__(self, path: Path) -> None:
+        self._thread_lock = _lock_for(path)
+        self._lock_path = path.with_name(f".{path.name}.lock")
+        self._depth = 0
+        self._stack: Any = None
+
+    def __enter__(self) -> None:
+        self._thread_lock.acquire()
+        try:
+            if self._depth == 0:
+                lock = _file_lock(self._lock_path)
+                lock.__enter__()
+                self._stack = lock
+            self._depth += 1
+        except BaseException:
+            self._thread_lock.release()
+            raise
+
+    def __exit__(self, *exc_info: Any) -> None:
+        try:
+            self._depth -= 1
+            if self._depth == 0:
+                lock, self._stack = self._stack, None
+                lock.__exit__(None, None, None)
+        finally:
+            self._thread_lock.release()
+
+
 class LocalStateStoreBackend:
     """Persist one state store as an atomic JSON document."""
 
@@ -72,7 +130,7 @@ class LocalStateStoreBackend:
         self._item_ttl_seconds = item_ttl_seconds
         self._description = description
         self._tags = dict(tags)
-        self._lock = _lock_for(path)
+        self._lock = _TransactionLock(path)
 
     def ensure_store(self) -> StateStore:
         with self._lock:
@@ -125,8 +183,10 @@ class LocalStateStoreBackend:
         with self._lock:
             document = self._read()
             store_id = document["store"]["id"] if document is not None else None
-            if self._path.exists():
+            try:
                 self._path.unlink()
+            except FileNotFoundError:
+                pass
             return DeletedStateStore(
                 {
                     "id": store_id,
@@ -277,9 +337,10 @@ class LocalStateStoreBackend:
         self._tags = dict(store.get("tags") or {})
 
     def _read(self) -> dict[str, Any] | None:
-        if not self._path.exists():
+        try:
+            return json.loads(self._path.read_text(encoding="utf-8"))
+        except FileNotFoundError:
             return None
-        return json.loads(self._path.read_text(encoding="utf-8"))
 
     def _write(self, document: dict[str, Any]) -> None:
         self._path.parent.mkdir(parents=True, exist_ok=True)

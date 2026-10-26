@@ -17,6 +17,11 @@
 
 ### Bugs Fixed
 
+- Serialized local `FoundryStateStore` transactions across processes sharing a
+  state root with an advisory file lock, so concurrent writes, ETag
+  preconditions, and `create_item()` conflicts are no longer lost, and a file
+  deleted mid-read is reported as a missing store instead of raising
+  `FileNotFoundError`.
 - Preserve host-owned recovery callbacks and task options when loading
   process-wide task descriptors at startup.
 - Exclude protocol-disabled task functions before startup, periodic or inline
