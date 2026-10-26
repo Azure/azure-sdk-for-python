@@ -33,6 +33,7 @@ from azure.ai.agentserver.core.tasks import (
     task,
 )
 from azure.ai.agentserver.core.streaming import EventStreamClosedError, EventStreamNotFoundError, streams
+from azure.ai.agentserver.core.tasks._decorator import _host_bound_task_registration
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
@@ -44,6 +45,8 @@ from ..models import _generated as _generated_models
 from ..streaming._internals import materialize_wire_payload
 
 if TYPE_CHECKING:
+    from azure.ai.agentserver.core.tasks._manager import TaskManager
+
     from .._response_context import PlatformContext, ResponseContext
 
     from ..models.runtime import ResponseExecution
@@ -448,32 +451,8 @@ class ResilientResponseOrchestrator:
         # function and does not need this reference.
         self._parent_orchestrator = parent_orchestrator
 
-        # Opting into resilient background responses implies the durable task
-        # subsystem must be constructed (and recovery enabled) for this
-        # deployment. The subsystem is gated SOLELY on the process-global switch
-        # (``AgentServerHost`` constructs the ``TaskManager`` only when it is
-        # set), so translate the explicit ``resilient_background`` opt-in into
-        # that switch here, at host construction time (before the ASGI lifespan
-        # runs).
-        #
-        # NOTE: only ``resilient_background`` auto-enables the subsystem —
-        # ``steerable_conversations`` intentionally does NOT. Recovery is tied to
-        # ``resilient_background`` alone; a steerable host that wants durability
-        # must set ``resilient_background=True`` (or call
-        # ``set_resilient_tasks_enabled(True)`` explicitly). The two-switch UX is
-        # a known rough edge to smooth over post-Public-Preview.
-        #
-        # A host that leaves ``resilient_background`` off (and does not set the
-        # switch) constructs no ``TaskManager``: ``store=true`` work degrades to
-        # non-durable in-process execution (``_start_resilient_background``
-        # swallows ``TaskManagerNotInitialized``).
-        if options.resilient_background:
-            from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
-                set_resilient_tasks_enabled,
-            )
-
-            set_resilient_tasks_enabled(True)
-
+        # The host owns runtime activation. Register callbacks before startup
+        # recovery without changing the independent Invocations enablement switch.
         # Spec 023 — per-request primitive dispatch (SOT §6.6).
         # Two task primitives are registered per deployment; ``_pick_primitive``
         # selects per request based on (conversation_id, previous_response_id,
@@ -483,9 +462,25 @@ class ResilientResponseOrchestrator:
         # at __init__ time. If the core wheel does not expose both ``@task``
         # and ``@multi_turn_task`` symbols, the failure surfaces at server
         # startup instead of per-request.
-        one_shot, multi_turn = self._create_task_fns()
+        # Construction must not publish this host's callbacks into another live host.
+        with _host_bound_task_registration():
+            one_shot, multi_turn = self._create_task_fns()
         self._one_shot_task_fn: Task[dict[str, Any], None] = one_shot
         self._multi_turn_task_fn: MultiTurnTask[dict[str, Any], None] = multi_turn
+
+    def _register_task_callbacks(self, manager: "TaskManager") -> None:
+        """Register this orchestrator's callbacks and options on its own manager.
+
+        :param manager: The owning host's task manager.
+        :type manager: ~azure.ai.agentserver.core.tasks._manager.TaskManager
+        """
+        # pylint: disable=protected-access
+        primitives = (self._one_shot_task_fn, self._multi_turn_task_fn)
+        if not (self._options.resilient_background or self._options.steerable_conversations):
+            manager._disable_recovery_for(*(primitive.name for primitive in primitives))
+            return
+        for primitive in primitives:
+            manager.register_resume_callback(primitive.name, primitive._fn, primitive._opts)
 
     @property
     def task_fn(self) -> Task[dict[str, Any], None]:

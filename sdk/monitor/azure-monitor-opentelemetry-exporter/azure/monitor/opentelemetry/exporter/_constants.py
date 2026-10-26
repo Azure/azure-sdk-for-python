@@ -3,7 +3,7 @@
 # cSpell:disable
 
 from enum import Enum
-from typing import Union
+from typing import FrozenSet, Union
 from opentelemetry.semconv.metrics import MetricInstruments
 from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
@@ -16,11 +16,19 @@ _EXPORTER_DOMAIN_SCHEMA_VERSION = 2
 
 # Environment variables
 
+_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES"
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
 _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = (
     "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
 )
 _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN"
+
+# Add feature names only when their implementations are available.
+_SUPPORTED_EXPERIMENTAL_FEATURES: FrozenSet[str] = frozenset(
+    {
+        "gen_ai_input_output_limit_increase",
+    }
+)
 
 # SDK version
 _AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"

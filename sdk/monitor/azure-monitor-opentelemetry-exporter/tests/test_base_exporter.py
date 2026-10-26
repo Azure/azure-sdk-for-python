@@ -25,6 +25,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
     _DEFAULT_AAD_SCOPE,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
@@ -1866,3 +1867,124 @@ class MockResponse:
 class MockRaw:
     def __init__(self):
         self.enforce_content_length = False
+
+
+class TestBaseExporterExperimentalFeatures(unittest.TestCase):
+    def setUp(self):
+        patches = [
+            mock.patch.dict("os.environ"),
+            mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None),
+            mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager", return_value=None
+            ),
+            mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.BaseExporter._should_collect_stats",
+                return_value=False,
+            ),
+            mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.BaseExporter._should_collect_customer_sdkstats",
+                return_value=False,
+            ),
+        ]
+        for patch in patches:
+            patch.start()
+            self.addCleanup(patch.stop)
+        os.environ.pop(_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES, None)
+
+    def _create_exporter(self):
+        exporter = BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab",
+            disable_offline_storage=True,
+        )
+        self.addCleanup(exporter.client.close)
+        return exporter
+
+    def test_experimental_feature_disabled_by_default(self):
+        for value in (None, "", "   ", ", ,,,"):
+            with self.subTest(value=value):
+                with mock.patch(
+                    "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None
+                ):
+                    if value is not None:
+                        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = value
+                    exporter = self._create_exporter()
+                    self.assertFalse(exporter._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+
+    def test_experimental_feature_enabled_from_environment(self):
+        for value in (
+            "gen_ai_input_output_limit_increase",
+            " GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE ",
+            "gen_ai_input_output_limit_increase, ,gen_ai_input_output_limit_increase,",
+        ):
+            with self.subTest(value=value):
+                with mock.patch(
+                    "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None
+                ):
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = value
+                    exporter = self._create_exporter()
+                    self.assertTrue(exporter._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export._base._SUPPORTED_EXPERIMENTAL_FEATURES",
+        frozenset({"gen_ai_input_output_limit_increase", "another_feature"}),
+    )
+    def test_experimental_features_enabled_only_when_selected(self):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "gen_ai_input_output_limit_increase"
+        exporter = self._create_exporter()
+        self.assertTrue(exporter._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+        self.assertFalse(exporter._is_experimental_feature_enabled("another_feature"))
+
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export._base._SUPPORTED_EXPERIMENTAL_FEATURES",
+        frozenset({"gen_ai_input_output_limit_increase", "another_feature"}),
+    )
+    def test_multiple_experimental_features_enabled(self):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "gen_ai_input_output_limit_increase,another_feature"
+        exporter = self._create_exporter()
+        self.assertTrue(exporter._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+        self.assertTrue(exporter._is_experimental_feature_enabled("another_feature"))
+
+    def test_unknown_experimental_features_warn_once_and_remain_disabled(self):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+            "gen_ai_input_output_limit_increase,unknown_feature,unknown_feature"
+        )
+        with mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger.warning") as warning:
+            first = self._create_exporter()
+            second = self._create_exporter()
+            self.assertTrue(first._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+            self.assertFalse(second._is_experimental_feature_enabled("unknown_feature"))
+        warning.assert_called_once_with(
+            "Ignoring unknown experimental features in %s: %s",
+            _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
+            "unknown_feature",
+        )
+
+    def test_experimental_feature_wildcard_does_not_enable_features(self):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "*"
+        with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="WARNING"):
+            exporter = self._create_exporter()
+        self.assertFalse(exporter._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+        self.assertFalse(exporter._is_experimental_feature_enabled("*"))
+
+    def test_exporter_construction_freezes_experimental_feature_selection(self):
+        for initially_enabled in (False, True):
+            with self.subTest(initially_enabled=initially_enabled):
+                with mock.patch(
+                    "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None
+                ):
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+                        "gen_ai_input_output_limit_increase" if initially_enabled else ""
+                    )
+                    first = self._create_exporter()
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+                        "" if initially_enabled else "gen_ai_input_output_limit_increase"
+                    )
+                    second = self._create_exporter()
+                    self.assertEqual(
+                        first._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+                        initially_enabled,
+                    )
+                    self.assertEqual(
+                        second._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+                        initially_enabled,
+                    )
