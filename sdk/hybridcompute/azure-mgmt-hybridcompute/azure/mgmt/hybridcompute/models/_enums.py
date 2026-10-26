@@ -172,6 +172,8 @@ class IdentityKeyStore(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TPM."""
     DEFAULT = "Default"
     """Default."""
+    TPM_TRANSITION = "TpmTransition"
+    """The machine is transitioning its identity key store to TPM."""
 
 
 class InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -353,9 +355,9 @@ class PatchOperationStartedBy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PatchOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The overall success or failure status of the operation. It remains "InProgress" until the
-    operation completes. At that point it will become "Unknown", "Failed", "Succeeded", or
-    "CompletedWithWarnings.".
+    """The overall success or failure status of the operation. It remains \"InProgress\" until the
+    operation completes. At that point it will become \"Unknown\", \"Failed\", \"Succeeded\", or
+    \"CompletedWithWarnings.\".
     """
 
     UNKNOWN = "Unknown"

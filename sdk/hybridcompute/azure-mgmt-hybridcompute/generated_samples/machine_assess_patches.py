@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-15/machine/Machine_AssessPatches.json
+# x-ms-original-file: 2026-09-01/machine/Machine_AssessPatches.json
 if __name__ == "__main__":
     main()
