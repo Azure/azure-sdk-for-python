@@ -16,7 +16,9 @@ from urllib.parse import (
     parse_qsl,
     urlencode,
     urlparse,
+    urlsplit,
     urlunparse,
+    urlunsplit,
 )
 from wsgiref.handlers import format_date_time
 
@@ -61,6 +63,38 @@ CRC64_HEADER = "x-ms-content-crc64"
 SM_HEADER = "x-ms-structured-body"
 SM_HEADER_V1_CRC64 = "XSM/1.0; properties=crc64"
 SM_LENGTH_HEADER = "x-ms-structured-content-length"
+_LOG_REDACTED = "*****"
+_LOG_REDACTED_HEADERS = frozenset(
+    {
+        "authorization",
+        "x-ms-authorization-auxiliary",
+        "x-ms-copy-source-authorization",
+        "x-ms-encryption-key",
+        "x-ms-source-encryption-key",
+    }
+)
+_LOG_SAS_URL_HEADERS = frozenset(
+    {
+        "x-ms-copy-source",
+        "x-ms-file-rename-source",
+        "x-ms-rename-source",
+    }
+)
+
+
+def _remove_sas_from_url(value: str) -> str:
+    scheme, netloc, path, query, fragment = urlsplit(value)
+    pairs = parse_qsl(query, keep_blank_values=True)
+    query = urlencode([(k, _LOG_REDACTED if k.lower() == "sig" else v) for k, v in pairs])
+    return urlunsplit((scheme, netloc, path, query, fragment))
+
+
+def _redact_header_for_log(name: str, value: Any) -> Any:
+    if name.lower() in _LOG_REDACTED_HEADERS:
+        return _LOG_REDACTED
+    if name.lower() in _LOG_SAS_URL_HEADERS or "sig=" in str(value).lower():
+        return _remove_sas_from_url(str(value))
+    return value
 
 
 def encode_base64(data: Union[bytes, str]) -> str:
@@ -150,6 +184,15 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
         message_id = request.context.options.pop("queue_message_id", None)
         if message_id:
             request.http_request.url = urljoin(request.http_request.url, message_id)
+
+
+class RangeHeaderPolicy(SansIOHTTPPolicy):
+    """Policy that converts the Range header to x-ms-range."""
+
+    def on_request(self, request):
+        range_value = request.http_request.headers.pop("Range", None)
+        if range_value is not None:
+            request.http_request.headers["x-ms-range"] = range_value
 
 
 class StorageHeadersPolicy(HeadersPolicy):
@@ -254,27 +297,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                 _LOGGER.debug("Request method: %r", http_request.method)
                 _LOGGER.debug("Request headers:")
                 for header, value in http_request.headers.items():
-                    if header.lower() == "authorization":
-                        value = "*****"
-                    elif header.lower() == "x-ms-copy-source" and "sig" in value:
-                        # take the url apart and scrub away the signed signature
-                        scheme, netloc, path, params, query, fragment = urlparse(value)
-                        parsed_qs = dict(parse_qsl(query))
-                        parsed_qs["sig"] = "*****"
-
-                        # the SAS needs to be put back together
-                        value = urlunparse(
-                            (
-                                scheme,
-                                netloc,
-                                path,
-                                params,
-                                urlencode(parsed_qs),
-                                fragment,
-                            )
-                        )
-
-                    _LOGGER.debug("    %r: %r", header, value)
+                    _LOGGER.debug("    %r: %r", header, _redact_header_for_log(header, value))
                 _LOGGER.debug("Request body:")
 
                 if logging_body:
@@ -297,7 +320,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                 _LOGGER.debug("Response status: %r", response.http_response.status_code)
                 _LOGGER.debug("Response headers:")
                 for res_header, value in response.http_response.headers.items():
-                    _LOGGER.debug("    %r: %r", res_header, value)
+                    _LOGGER.debug("    %r: %r", res_header, _redact_header_for_log(res_header, value))
 
                 # We don't want to log binary data if the response is a file.
                 _LOGGER.debug("Response content:")
@@ -476,6 +499,7 @@ def _validate_content_response(
                     if hasattr(iterator, "response"):
                         decoder.response = iterator.response  # type: ignore
                     return decoder
+
                 return wrapped
 
             # Patch response to return response iterator wrapped in structured message decoder.

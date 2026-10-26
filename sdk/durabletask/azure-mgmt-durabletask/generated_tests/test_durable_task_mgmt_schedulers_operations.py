@@ -38,6 +38,12 @@ class TestDurableTaskMgmtSchedulersOperations(AzureMgmtRecordedTestCase):
             resource={
                 "location": "str",
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
                     "ipAllowlist": ["str"],
@@ -94,6 +100,12 @@ class TestDurableTaskMgmtSchedulersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             scheduler_name="str",
             properties={
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "properties": {
                     "endpoint": "str",
                     "ipAllowlist": ["str"],
@@ -249,5 +261,16 @@ class TestDurableTaskMgmtSchedulersOperations(AzureMgmtRecordedTestCase):
             scheduler_name="str",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_schedulers_restart(self, resource_group):
+        response = self.client.schedulers.restart(
+            resource_group_name=resource_group.name,
+            scheduler_name="str",
+        )
+
         # please add some check logic here by yourself
         # ...

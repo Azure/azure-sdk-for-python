@@ -1,5 +1,16 @@
 # Release History
 
+## 1.3.1 (2026-10-23)
+
+### Bugs Fixed
+
+- WebSocket connections now reject HTTP redirects to prevent forwarding authentication headers to redirected endpoints.
+
+### Other Changes
+
+- The SDK now identifies Voice Live WebSocket connections through the `User-Agent` header and
+  `x-ms-client-sdk` query parameter.
+
 ## 1.3.0 (2026-08-03)
 
 ### Features Added

@@ -23,6 +23,7 @@ OpenTelemetry tracing with Azure Monitor and OTLP exporters is included by defau
 `AgentServerHost` is the host process for Azure AI Hosted Agent containers. It provides:
 
 - **Health probe** — `GET /readiness` returns `200 OK` when the server is ready.
+- **Snapshot lifecycle** — Private platform hooks prepare a process for capture and restore session-specific state.
 - **Graceful shutdown** — On `SIGTERM` the server drains in-flight requests (default 30 s timeout) before exiting.
 - **OpenTelemetry tracing** — Automatic span creation with Azure Monitor and OTLP export when configured.
 - **Hypercorn ASGI server** — Serves on `0.0.0.0:${PORT:-8088}` with HTTP/1.1.
@@ -90,6 +91,59 @@ async def call_toolbox(query: str) -> str:
     return resp.text  # the toolbox resolved the caller from the call ID and acted as that user
 ```
 
+### Draft original-subject model attribution
+
+`get_request_context().original_subject` carries a separate immutable snapshot
+of the proposed original-subject `oid`, `tid`, and `idtype` fields. Responses,
+Invocations (HTTP, streaming, and WebSocket), and native Activity consume the
+same metadata. The existing user-state identifier and `platform_headers()`
+behavior are unchanged.
+
+This is a draft contract for owner review, not an enabled budget feature.
+The proposed single header is an RFC 9651 Structured Fields dictionary:
+
+```text
+x-ms-original-subject: oid="<object-id>", tid="<tenant-id>", idtype="user"
+```
+
+This draft accepts only `oid`, `tid`, and `idtype` string members, in any
+order, without parameters. Strings use Structured Fields quoting and escaping,
+not JSON or positional CSV. Duplicate header fields or keys, unknown keys,
+malformed syntax, and non-string values raise `ValueError`. Missing keys are
+omitted, not encoded as spaces or literal `"null"`. A missing header means no
+subject; an empty string member remains distinct from a missing member.
+The retired three-header draft is not consumed as a fallback.
+
+For a supported model endpoint whose owner has enabled the contract, pass
+`get_request_context().model_attribution_headers()` as **per-call** headers
+(for example, `extra_headers` on a model SDK call). Keep the model's existing
+credential. Never put a user's tuple in shared client defaults or send it to
+external/BYO endpoints, arbitrary URLs, tools, or storage callbacks.
+
+```python
+from azure.ai.agentserver.core import get_request_context
+
+response = await model_client.responses.create(
+    model=model_deployment,
+    input="Hello",
+    extra_headers=get_request_context().model_attribution_headers(),
+)
+```
+
+The helper supplies the correctly quoted dictionary value and the current call
+ID when available. Do not `json.dumps` the original-subject value: that is a
+different wire format. Other independently supported per-call headers can be
+merged into this mapping without changing their own encoding.
+
+No model client is patched automatically. Absent metadata returns an empty
+mapping; partial, empty, or HTTP-unsafe metadata raises `ValueError` rather
+than silently forwarding an incomplete tuple. Non-user and unknown
+classifications are preserved for receiver-side policy, not treated as users.
+Header assertions are not identity proof: receiver provenance validation,
+invocation binding, wire names, and missing-metadata policy still require
+owner agreement. Durable restore and detached execution are not supported by
+this draft. It does not change authentication, billing, or enforcement.
+
 ### Subclassing AgentServerHost
 
 For custom protocol implementations, subclass `AgentServerHost` and add routes:
@@ -113,6 +167,30 @@ app = MyAgentHost()
 app.run()
 ```
 
+### Readiness handler
+
+By default, `GET /readiness` returns `200 OK` with
+`{"status": "healthy"}`. Register a readiness handler to replace the default
+response with application-specific readiness logic:
+
+```python
+from azure.ai.agentserver.core import AgentServerHost
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+
+app = AgentServerHost()
+
+@app.readiness_handler
+async def readiness(request: Request) -> Response:
+    if await dependencies_ready():
+        return JSONResponse({"status": "healthy"})
+
+    return JSONResponse({"status": "not_ready"}, status_code=503)
+```
+
+When no handler is registered, the built-in healthy response remains
+unchanged.
+
 ### Shutdown handler
 
 Register a cleanup function that runs during graceful shutdown:
@@ -124,6 +202,52 @@ app = AgentServerHost()
 async def on_shutdown():
     # Close database connections, flush buffers, etc.
     pass
+```
+
+### Memory snapshot lifecycle handlers
+
+The host always registers the private platform routes
+`POST /_agent/before-snapshot` and `POST /_agent/after-restore`, with equivalent
+aliases at `POST /_before_snapshot` and `POST /_after_restore`. All four routes
+are processed by the framework, including restore validation and environment
+and configuration hydration. Registering application handlers is optional;
+when absent, only the application callbacks are skipped. Use the hooks to
+release connections that must not be copied into a memory snapshot and rebuild
+them for the restored session:
+
+```python
+from azure.ai.agentserver.core import AgentServerHost, AgentSessionContext
+
+app = AgentServerHost()
+
+@app.before_snapshot_handler
+async def before_snapshot():
+    await database.close()
+
+@app.after_restore_handler
+async def after_restore(context: AgentSessionContext):
+    # context.session_env_overrides has already been applied to os.environ.
+    await database.connect()
+```
+
+Lifecycle calls are serialized and idempotent. A repeated `after-restore`
+request with the same `restore_id` does not invoke the handler again, while a
+new `restore_id` for the same session starts a new restore cycle. The server
+rejects attempts to reuse a restored process for a different session.
+
+Protocol-specific hosts can override the protected `_before_snapshot` and
+`_after_restore` methods to extend the lifecycle before application callbacks
+run. The host still performs validation, session environment and configuration
+hydration, serialization, rollback, and idempotency, so subclass extensions
+cannot accidentally omit those required steps. Overrides should call the
+corresponding `super()` method first so multiple protocol layers compose
+cooperatively:
+
+```python
+class ProtocolAgentHost(AgentServerHost):
+    async def _after_restore(self, context: AgentSessionContext):
+        await super()._after_restore(context)
+        await self._rebuild_protocol_state(context)
 ```
 
 ### Durable state storage
@@ -160,6 +284,13 @@ for a runnable end-to-end example.
 
 
 ### Configuring tracing
+
+The default observability setup stamps every OpenTelemetry span and log record
+with a `microsoft.foundry = "True"` attribute, including telemetry from
+protocol packages and underlying frameworks. Conflicting values for this
+attribute are overridden; the existing `gen_ai.provider.name` attribute is
+left untouched. Custom observability callbacks that replace the default setup
+are responsible for configuring their own enrichment.
 
 Tracing is enabled automatically when an Application Insights connection string is available:
 

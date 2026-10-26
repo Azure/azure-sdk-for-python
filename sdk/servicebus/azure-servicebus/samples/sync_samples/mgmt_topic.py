@@ -9,6 +9,7 @@
 Example to show managing topic entities under a ServiceBus Namespace, including
     - Create a topic
     - Get topic properties and runtime information
+    - Read SQL and correlation filter counts using API version 2024-05
     - Update a topic
     - Delete a topic
     - List topics under the given ServiceBus Namespace
@@ -17,7 +18,7 @@ Example to show managing topic entities under a ServiceBus Namespace, including
 import os
 import uuid
 import datetime
-from azure.servicebus.management import ServiceBusAdministrationClient
+from azure.servicebus.management import ApiVersion, ServiceBusAdministrationClient
 from azure.identity import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
@@ -62,14 +63,20 @@ def get_and_update_topic(servicebus_mgmt_client):
 
 def get_topic_runtime_properties(servicebus_mgmt_client):
     print("-- Get Topic Runtime Properties")
-    get_topic_runtime_properties = servicebus_mgmt_client.get_topic_runtime_properties(TOPIC_NAME)
-    print("Topic Name:", get_topic_runtime_properties.name)
+    runtime_properties = servicebus_mgmt_client.get_topic_runtime_properties(TOPIC_NAME)
+    print("Topic Name:", runtime_properties.name)
+    print("SQL Filter Count:", runtime_properties.sql_filter_count)
+    print("Correlation Filter Count:", runtime_properties.correlation_filter_count)
     print("Please refer to TopicRuntimeProperties from complete available runtime properties.")
     print("")
 
 
 credential = DefaultAzureCredential()
-with ServiceBusAdministrationClient(FULLY_QUALIFIED_NAMESPACE, credential) as servicebus_mgmt_client:
+with ServiceBusAdministrationClient(
+    FULLY_QUALIFIED_NAMESPACE,
+    credential,
+    api_version=ApiVersion.V2024_05,
+) as servicebus_mgmt_client:
     create_topic(servicebus_mgmt_client)
     list_topics(servicebus_mgmt_client)
     get_and_update_topic(servicebus_mgmt_client)

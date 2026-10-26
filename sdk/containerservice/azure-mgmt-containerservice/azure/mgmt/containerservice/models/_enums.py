@@ -25,6 +25,16 @@ class AccelerationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disable acceleration options."""
 
 
+class AddonAutoscaling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether VPA add-on is enabled and configured to scale AKS-managed add-ons."""
+
+    ENABLED = "Enabled"
+    """Feature to autoscale AKS-managed add-ons is enabled. The default VPA update mode is Initial
+    mode."""
+    DISABLED = "Disabled"
+    """Feature to autoscale AKS-managed add-ons is disabled."""
+
+
 class AdoptionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Action if Kubernetes namespace with same name already exists."""
 
@@ -55,6 +65,34 @@ class AdvancedNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disable Layer 7 network policies (FQDN, HTTP/S, Kafka)."""
 
 
+class AgentFabricMembershipProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state of the AgentFabric membership."""
+
+    CANCELED = "Canceled"
+    """The provisioning of the AgentFabric membership was canceled."""
+    CREATING = "Creating"
+    """The AgentFabric membership is being created."""
+    DELETING = "Deleting"
+    """The AgentFabric membership is being deleted."""
+    FAILED = "Failed"
+    """The provisioning of the AgentFabric membership failed."""
+    SUCCEEDED = "Succeeded"
+    """The AgentFabric membership was provisioned successfully."""
+    UPDATING = "Updating"
+    """The AgentFabric membership is being updated."""
+
+
+class AgentFabricMembershipSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU of the AgentFabric membership. The SKU determines which AgentFabric components are
+    deployed to the cluster.
+    """
+
+    STANDARD = "Standard"
+    """The Standard SKU."""
+    PREMIUM = "Premium"
+    """The Premium SKU."""
+
+
 class AgentPoolMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at all times.
     For additional information on agent pool restrictions and best practices, see:
@@ -71,6 +109,37 @@ class AgentPoolMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GATEWAY = "Gateway"
     """Gateway agent pools are dedicated to providing static egress IPs to pods. For more details, see
     `https://aka.ms/aks/static-egress-gateway <https://aka.ms/aks/static-egress-gateway>`_."""
+    MANAGED_SYSTEM = "ManagedSystem"
+    """ManagedSystem is a system pool managed by AKS. The pool scales dynamically according to cluster
+    usage, and has additional automated monitoring and healing capabilities. There can only be one
+    ManagedSystem pool, and it is recommended to delete all other system pools for the best
+    experience."""
+    MACHINES = "Machines"
+    """Machines agent pools are dedicated to hosting machines. Only limited operations, such as
+    creation and deletion, are allowed at the pool level. Please use the machine APIs to manage the
+    full machine lifecycle."""
+
+
+class AgentPoolNetworkInterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of network interface to be provisioned on each virtual machine instance. For more
+    information, see `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_.
+    """
+
+    STANDARD = "Standard"
+    """A standard network interface programmed with an IP from a specified VNet subnet. Must be used
+    with ``vnetSubnetId`` set in the AgentPoolNetworkInterface. IP address family
+    (IPv4/IPv6/Dual-stack) is determined by the subnet."""
+    DYNAMIC = "Dynamic"
+    """A secondary network interface created without IP configuration or subnet attachment. The
+    interface is provisioned in an uninitialized state and the subnet is attached during workload
+    creation. ``vnetSubnetId`` must be set to an empty string (``\"\"``) or omitted."""
+
+
+class AgentPoolNICPublicIPAddressVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IP version of the public IP allocated for a secondary NIC. ``IPv4`` is the only accepted value."""
+
+    I_PV4 = "IPv4"
+    """The public IP allocated for the NIC will be IPv4."""
 
 
 class AgentPoolSSHAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -94,6 +163,35 @@ class AgentPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use of this is strongly discouraged."""
     VIRTUAL_MACHINES = "VirtualMachines"
     """Create an Agent Pool backed by a Single Instance VM orchestration mode."""
+    FLEX_NODES = "FlexNodes"
+    """Create an Agent Pool for BYO machines running the FlexNode agent."""
+
+
+class AlertConfigurationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode of the alert configuration."""
+
+    DISABLED = "Disabled"
+    """Alerts are disabled."""
+    MANAGED = "Managed"
+    """AKS manages the alerts lifecycle including creation, updates, and deletion. Users receive
+    alerts through the configured notification channel."""
+
+
+class AlertConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state of the alert configuration."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    CREATING = "Creating"
+    """The alert configuration is being created."""
+    UPDATING = "Updating"
+    """The alert configuration is being updated."""
+    DELETING = "Deleting"
+    """The alert configuration is being deleted."""
 
 
 class ArtifactSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -116,6 +214,58 @@ class BackendPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the managed inbound Load Balancer BackendPool.
     `https://cloud-provider-azure.sigs.k8s.io/topics/loadbalancer/#configure-load-balancer-backend
     <https://cloud-provider-azure.sigs.k8s.io/topics/loadbalancer/#configure-load-balancer-backend>`_."""
+    POD_IP = "PodIP"
+    """The type of the managed inbound Load Balancer BackendPool. Used only when loadBalancerSku is
+    specified as 'service'.
+    `https://cloud-provider-azure.sigs.k8s.io/topics/loadbalancer/#configure-load-balancer-backend
+    <https://cloud-provider-azure.sigs.k8s.io/topics/loadbalancer/#configure-load-balancer-backend>`_."""
+
+
+class BastionSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU of the managed Azure Bastion. The default is 'Standard'. See
+    `https://aka.ms/aks/BastionSKUs <https://aka.ms/aks/BastionSKUs>`_ for more information about
+    the differences between Azure Bastion SKUs.
+    """
+
+    STANDARD = "Standard"
+    """Use the standard SKU of Azure Bastion."""
+    PREMIUM = "Premium"
+    """Use the premium SKU of Azure Bastion."""
+
+
+class CloudShellProfileMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cloud Shell connectivity mode."""
+
+    DISABLED = "Disabled"
+    """Cloud Shell connectivity is disabled."""
+    MANAGED = "Managed"
+    """Cloud Shell connectivity uses network resources managed by AKS."""
+    CUSTOM = "Custom"
+    """Cloud Shell connectivity uses network resources provided by the user."""
+
+
+class CloudShellStorageProfileMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How Cloud Shell storage resources are managed."""
+
+    DISABLED = "Disabled"
+    """Persistent storage is disabled."""
+    MANAGED = "Managed"
+    """AKS manages the storage resources."""
+    CUSTOM = "Custom"
+    """The user provides the storage resources."""
+
+
+class ClusterServiceLoadBalancerHealthProbeMode(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The health probing behavior for External Traffic Policy Cluster services."""
+
+    SERVICE_NODE_PORT = "ServiceNodePort"
+    """Each External Traffic Policy Cluster service will have its own health probe targeting service
+    nodePort."""
+    SHARED = "Shared"
+    """All External Traffic Policy Cluster services in a Standard Load Balancer will have a dedicated
+    health probe targeting the backend nodes' kube-proxy health check port 10256."""
 
 
 class Code(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -153,6 +303,22 @@ class ContainerNetworkLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure monitor ingestion of container network logs is enabled."""
 
 
+class ControlPlaneScalingSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The scaling size of the control plane. Scaling sizes offer guaranteed capacity and predictable
+    Kubernetes performance beyond standard tier defaults. Higher H sizes provide increased
+    performance guarantees. See `https://aka.ms/aks/hyperscale <https://aka.ms/aks/hyperscale>`_
+    for performance metrics details for each size.
+    """
+
+    H2 = "H2"
+    """H2 is the smallest scaling size with guaranteed capacity and predictable performance beyond
+    standard tier defaults."""
+    H4 = "H4"
+    """H4 scaling size provides increased guaranteed performance over H2."""
+    H8 = "H8"
+    """H8 scaling size provides increased guaranteed performance over H4."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -183,6 +349,32 @@ class DRANETMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DRANET is not managed by AKS."""
     MANAGED = "Managed"
     """DRANET is managed by AKS."""
+
+
+class DriftAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The drift action of the machine. Indicates whether a machine has deviated from its expected
+    state due to changes in managed cluster properties, requiring corrective action.
+    """
+
+    SYNCED = "Synced"
+    """The machine is up to date."""
+    RECREATE = "Recreate"
+    """The machine has drifted and needs to be deleted and recreated."""
+
+
+class DriverType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specify the type of GPU driver to install when creating Windows agent pools. If not provided,
+    AKS selects the driver based on system compatibility. This cannot be changed once the AgentPool
+    has been created. This cannot be set on Linux AgentPools. For Linux AgentPools, the driver is
+    selected based on system compatibility.
+    """
+
+    GRID = "GRID"
+    """Install the GRID driver for the GPU, suitable for applications requiring virtualization
+    support."""
+    CUDA = "CUDA"
+    """Install the CUDA driver for the GPU, optimized for computational tasks in scientific computing
+    and data-intensive applications."""
 
 
 class Expander(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -259,6 +451,16 @@ class GPUInstanceProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MIG 7g GPU instance profile."""
 
 
+class GuardrailsSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether the version is preview or stable."""
+
+    PREVIEW = "Preview"
+    """The version is preview. It is not recommended to use preview versions on critical production
+    clusters. The preview version may not support all use-cases."""
+    STABLE = "Stable"
+    """The version is stable and can be used on critical production clusters."""
+
+
 class IdentityBindingProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the last accepted operation."""
 
@@ -276,6 +478,28 @@ class IdentityBindingProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     """The identity binding is being deleted."""
 
 
+class ImpactedResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The category of a resource impacted by a detected upgrade issue."""
+
+    ARM = "Arm"
+    """An Azure Resource Manager (ARM) resource."""
+    KUBERNETES = "Kubernetes"
+    """A Kubernetes resource."""
+
+
+class InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
+    More information on this can be found under
+    `https://aka.ms/aks/kubernetesResourceObjectEncryption
+    <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_.
+    """
+
+    ENABLED = "Enabled"
+    """Encryption at rest of Kubernetes resource objects using service-managed keys is enabled. More
+    information on this can be found under `https://aka.ms/aks/kubernetesResourceObjectEncryption
+    <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_."""
+
+
 class IPFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """To determine if address belongs IPv4 or IPv6 family."""
 
@@ -285,6 +509,18 @@ class IPFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IPv6 family."""
 
 
+class IpvsScheduler(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IPVS scheduler, for more information please see
+    `http://www.linuxvirtualserver.org/docs/scheduling.html
+    <http://www.linuxvirtualserver.org/docs/scheduling.html>`_.
+    """
+
+    ROUND_ROBIN = "RoundRobin"
+    """Round Robin."""
+    LEAST_CONNECTION = "LeastConnection"
+    """Least Connection."""
+
+
 class IstioIngressGatewayMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mode of an ingress gateway."""
 
@@ -292,6 +528,23 @@ class IstioIngressGatewayMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The ingress gateway is assigned a public IP address and is publicly accessible."""
     INTERNAL = "Internal"
     """The ingress gateway is assigned an internal IP address and cannot is accessed publicly."""
+
+
+class JWTAuthenticatorProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the last accepted operation."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    CREATING = "Creating"
+    """The JWT authenticator is being created."""
+    UPDATING = "Updating"
+    """The JWT authenticator is being updated."""
+    DELETING = "Deleting"
+    """The JWT authenticator is being deleted."""
 
 
 class KeyVaultNetworkAccessTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -329,6 +582,20 @@ class KubernetesSupportPlan(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     to patch CVEs for another 1 year, for a total of 2 years of support."""
 
 
+class KubernetesVersionSupportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The support status of the Kubernetes version the cluster is currently running. This is
+    intentionally binary — there is no discrete ``ApproachingEOL`` value. Proximity to end of
+    support is derived by clients from ``kubernetesVersionEndOfSupportDate`` (comparing it against
+    the current time), so no server-computed \"approaching EOS\" flag or message is returned that
+    could go stale in a cached record.
+    """
+
+    IN_SUPPORT = "InSupport"
+    """The scope is running a Kubernetes version that is still within its support window."""
+    OUT_OF_SUPPORT = "OutOfSupport"
+    """The scope is running a Kubernetes version that is past its end of support."""
+
+
 class LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The license type to use for Windows VMs. See `Azure Hybrid User Benefits
     <https://azure.microsoft.com/pricing/hybrid-benefit/faq/>`_ for more details.
@@ -346,6 +613,11 @@ class LoadBalancerSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     about the differences between load balancer SKUs.
     """
 
+    SERVICE = "service"
+    """Use a service Load Balancer, with native pod-level load balancing. This SKU is specifically
+    built to scale for container-based workloads, with a single instance utilized for each
+    application. For more information, see `https://aka.ms/aks/container-native-slb
+    <https://aka.ms/aks/container-native-slb>`_."""
     STANDARD = "standard"
     """Use a a standard Load Balancer. This is the recommended Load Balancer SKU. For more information
     about on working with the load balancer in the managed cluster, see the `standard Load Balancer
@@ -437,6 +709,17 @@ class LocalDNSState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """localDNS is disabled."""
 
 
+class MaintenanceWindowSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The auto-upgrade schedule that a maintenance window is derived from."""
+
+    CLUSTER_AUTO_UPGRADE_SCHEDULE = "ClusterAutoUpgradeSchedule"
+    """The window is derived from the cluster auto-upgrade schedule (aksManagedAutoUpgradeSchedule),
+    which governs Kubernetes version upgrades."""
+    NODE_OS_UPGRADE_SCHEDULE = "NodeOSUpgradeSchedule"
+    """The window is derived from the node OS auto-upgrade schedule (aksManagedNodeOSUpgradeSchedule),
+    which governs node OS image upgrades."""
+
+
 class ManagedClusterNATGatewaySku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The SKU of a managed cluster NAT Gateway."""
 
@@ -508,6 +791,65 @@ class ManagedGatewayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gateway API CRDs from the standard release channel will be reconciled onto your cluster. See
     `https://aka.ms/gateway-api-versions <https://aka.ms/gateway-api-versions>`_ to see which
     bundle will be installed for your Kubernetes version."""
+
+
+class ManagementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Managed GPU experience installs additional components, such as the Data Center GPU Manager
+    (DCGM) metrics for monitoring, on top of the GPU driver for you. For more details of what is
+    installed, check out aka.ms/aks/managed-gpu.
+    """
+
+    UNMANAGED = "Unmanaged"
+    """Managed GPU experience is disabled for NVIDIA GPUs."""
+    MANAGED = "Managed"
+    """Managed GPU experience is enabled for NVIDIA GPUs."""
+
+
+class MeshMembershipProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the last accepted operation."""
+
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    CREATING = "Creating"
+    """The Mesh Membership is being created."""
+    DELETING = "Deleting"
+    """The Mesh Membership is being deleted."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    UPDATING = "Updating"
+    """The Mesh Membership is being updated."""
+
+
+class MigStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sets the MIG (Multi-Instance GPU) strategy that will be used for managed MIG support. For more
+    information about the different strategies, visit aka.ms/aks/managed-gpu. When not specified,
+    the default is None.
+    """
+
+    NONE = "None"
+    """No MIG partitioning is applied; the GPU is exposed as a single unified whole-device instance.
+    Specifying this value removes any previously active MIG strategy."""
+    SINGLE = "Single"
+    """All MIG partitions on every GPU in the pool are the same size (``nvidia.com/mig.strategy:
+    single``). The uniform partition size is controlled by ``nvidia.migProfiles`` (exactly one
+    element required)."""
+    MIXED = "Mixed"
+    """Each GPU in the pool can host heterogeneous partitions of different sizes simultaneously
+    (``nvidia.com/mig.strategy: mixed``). The exact partition mix per GPU is declared via
+    ``nvidia.migProfiles``."""
+
+
+class Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specify which proxy mode to use ('IPTABLES', 'IPVS' or 'NFTABLES')."""
+
+    IPTABLES = "IPTABLES"
+    """IPTables proxy mode."""
+    IPVS = "IPVS"
+    """IPVS proxy mode. Must be using Kubernetes version >= 1.22."""
+    NFTABLES = "NFTABLES"
+    """NFTables proxy mode. Must be using Kubernetes version >= 1.33."""
 
 
 class NamespaceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -613,6 +955,29 @@ class NginxIngressControllerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     desired."""
 
 
+class NodeDisruptionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy configuration for when to allow certain operations which require node re-image and
+    trigger redeployment. For example, some operations, such as updating the
+    .properties.ManagedClusterSecurityProfile.customCATrustCertificates field on an existing
+    managed cluster, trigger rolling updates of the nodes. This setting allows control over when
+    such updates are accepted. The default is 'Allow'. For a full list of covered operations see
+    aka.ms/aks/nodedisruptionpolicy\".
+    """
+
+    ALLOW = "Allow"
+    """Allows operations that will require node re-image and trigger redeployment."""
+    ALLOW_DURING_MAINTENANCE_WINDOW = "AllowDuringMaintenanceWindow"
+    """Blocks certain operations that will require node re-image and trigger redeployment unless
+    within the aksManagedNodeOSUpgradeSchedule maintenance window. For a full list of covered
+    operations see aka.ms/aks/nodedisruptionpolicy . For more information on using the
+    aksManagedNodeOSUpgradeSchedule maintenance window, please see
+    `https://learn.microsoft.com/azure/aks/planned-maintenance?tabs=azure-cli
+    <https://learn.microsoft.com/azure/aks/planned-maintenance?tabs=azure-cli>`_."""
+    BLOCK = "Block"
+    """Blocks certain operations that will require node re-image and trigger redeployment. For a full
+    list of covered operations see aka.ms/aks/nodedisruptionpolicy."""
+
+
 class NodeOSUpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Node OS Upgrade Channel. Manner in which the OS on your nodes is updated. The default is
     NodeImage.
@@ -669,6 +1034,30 @@ class NodeProvisioningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     (See aka.ms/aks/nap for more details)."""
 
 
+class NvidiaDriverMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NVIDIA GPU resource allocation mode."""
+
+    DEVICE_PLUGIN = "DevicePlugin"
+    """NVIDIA Kubernetes device plugin is installed on the nodes for resource allocation and
+    scheduling."""
+    DRA = "DRA"
+    """NVIDIA Device Resource Allocation (DRA) driver is installed on the nodes for resource
+    allocation and scheduling."""
+
+
+class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """operator represents a key's relationship to a set of values. Valid operators are In and NotIn."""
+
+    IN = "In"
+    """The value of the key should be in the given list."""
+    NOT_IN = "NotIn"
+    """The value of the key should not be in the given list."""
+    EXISTS = "Exists"
+    """The value of the key should exist."""
+    DOES_NOT_EXIST = "DoesNotExist"
+    """The value of the key should not exist."""
+
+
 class OSDiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The OS disk type to be used for machines in the agent pool. The default is 'Ephemeral' if the
     VM supports it and has a cache disk larger than the requested OSDiskSizeGB. Otherwise, defaults
@@ -704,6 +1093,13 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     information. For limitations, visit `https://aka.ms/aks/node-images
     <https://aka.ms/aks/node-images>`_. For OS migration guidance, see
     `https://aka.ms/aks/upgrade-os-version <https://aka.ms/aks/upgrade-os-version>`_."""
+    MARINER = "Mariner"
+    """Deprecated OSSKU. Microsoft recommends that new deployments choose 'AzureLinux' instead."""
+    FLATCAR = "Flatcar"
+    """Use Flatcar Container Linux as the OS for node images. Flatcar is a container-optimized,
+    security-focused Linux OS, with an immutable filesystem and part of the Cloud Native Computing
+    Foundation (CNCF). For more information about Flatcar Container Linux for AKS, see
+    aka.ms/aks/flatcar-container-linux-for-aks."""
     CBL_MARINER = "CBLMariner"
     """Deprecated OSSKU. Microsoft recommends that new deployments choose 'AzureLinux' instead."""
     WINDOWS2019 = "Windows2019"
@@ -720,6 +1116,11 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use Windows2025 as the OS for node images. Unsupported for system node pools. Windows2025
     supports Windows2022 and Windows 2025 containers; it cannot run Windows2019 containers and vice
     versa."""
+    WINDOWS_ANNUAL = "WindowsAnnual"
+    """Use Windows Annual Channel version as the OS for node images. Unsupported for system node
+    pools. Details about supported container images and kubernetes versions under different AKS
+    Annual Channel versions could be seen in `https://aka.ms/aks/windows-annual-channel-details
+    <https://aka.ms/aks/windows-annual-channel-details>`_."""
     UBUNTU2404 = "Ubuntu2404"
     """Use Ubuntu2404 as the OS for node images, however, Ubuntu 24.04 may not be supported for all
     nodepools. For limitations and supported kubernetes versions, see see
@@ -731,6 +1132,10 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     proven container-first, immutable design, while adding Azure Linux packages, servicing, and
     deep integration with the Azure and AKS lifecycle. For more information, see
     `https://aka.ms/azurecontainerlinux <https://aka.ms/azurecontainerlinux>`_."""
+    UBUNTU2604 = "Ubuntu2604"
+    """Use Ubuntu2604 as the OS for node images. For limitations and supported Kubernetes versions,
+    see `https://aka.ms/aks/supported-ubuntu-versions
+    <https://aka.ms/aks/supported-ubuntu-versions>`_."""
 
 
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -787,6 +1192,18 @@ class PodIPAllocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     is better suited to scale with larger subnets of /15 or bigger."""
 
 
+class PodLinkLocalAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines access to special link local addresses (Azure Instance Metadata Service, aka IMDS) for
+    pods with hostNetwork=false. If not specified, the default is 'IMDS'.
+    """
+
+    IMDS = "IMDS"
+    """Pods with hostNetwork=false can access Azure Instance Metadata Service (IMDS) without
+    restriction."""
+    NONE = "None"
+    """Pods with hostNetwork=false cannot access Azure Instance Metadata Service (IMDS)."""
+
+
 class PolicyRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum representing different network policy rules."""
 
@@ -841,6 +1258,8 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Inbound/Outbound to the managedCluster is allowed."""
     DISABLED = "Disabled"
     """Inbound traffic to managedCluster is disabled, traffic from managedCluster is allowed."""
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
+    """Inbound/Outbound traffic is managed by Microsoft.Network/NetworkSecurityPerimeters."""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -860,6 +1279,46 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Do not use a managed identity for the Managed Cluster, service principal will be used instead."""
 
 
+class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of a resource type."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+
+
+class ResourceSkuCapacityScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The scale type applicable to the sku."""
+
+    AUTOMATIC = "Automatic"
+    """Automatic scaling."""
+    MANUAL = "Manual"
+    """Manual scaling."""
+    NONE = "None"
+    """No scaling."""
+
+
+class ResourceSkuRestrictionsReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason for restriction."""
+
+    QUOTA_ID = "QuotaId"
+    """Quota ID restriction."""
+    NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
+    """Not available for subscription."""
+
+
+class ResourceSkuRestrictionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of restrictions."""
+
+    LOCATION = "Location"
+    """Location restriction."""
+    ZONE = "Zone"
+    """Zone restriction."""
+
+
 class RestrictionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The restriction level applied to the cluster's node resource group. If not specified, the
     default is 'Unrestricted'.
@@ -869,6 +1328,16 @@ class RestrictionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """All RBAC permissions are allowed on the managed node resource group."""
     READ_ONLY = "ReadOnly"
     """Only \\*\\/read RBAC permissions allowed on the managed node resource group."""
+
+
+class SafeguardsSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether the version is preview or stable."""
+
+    PREVIEW = "Preview"
+    """The version is preview. It is not recommended to use preview versions on critical production
+    clusters. The preview version may not support all use-cases."""
+    STABLE = "Stable"
+    """The version is stable and can be used on critical production clusters."""
 
 
 class ScaleDownMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -917,6 +1386,18 @@ class SchedulerConfigMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     aka.ms/aks/scheduler-crd for details."""
 
 
+class SeccompDefault(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the default seccomp profile applied to all workloads. If not specified, 'Unconfined'
+    will be used by default.
+    """
+
+    UNCONFINED = "Unconfined"
+    """No seccomp profile is applied, allowing all system calls."""
+    RUNTIME_DEFAULT = "RuntimeDefault"
+    """The default seccomp profile for container runtime is applied, which restricts certain system
+    calls for enhanced security."""
+
+
 class ServiceMeshMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mode of the service mesh."""
 
@@ -931,6 +1412,8 @@ class SnapshotType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NODE_POOL = "NodePool"
     """The snapshot is a snapshot of a node pool."""
+    MANAGED_CLUSTER = "ManagedCluster"
+    """The snapshot is a snapshot of a managed cluster."""
 
 
 class TransitEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -943,6 +1426,9 @@ class TransitEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     `https://docs.cilium.io/en/latest/security/network/encryption-wireguard/
     <https://docs.cilium.io/en/latest/security/network/encryption-wireguard/>`_ on use cases and
     implementation details."""
+    M_TLS = "mTLS"
+    """Enables mTLS authentication and encryption for pod-to-pod traffic within the cluster. Refer to
+    `https://aka.ms/acnsciliummtls <https://aka.ms/acnsciliummtls>`_ for relevant documentation."""
     NONE = "None"
     """Disable Transit encryption."""
 
@@ -1031,6 +1517,119 @@ class UpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disables auto-upgrades and keeps the cluster at its current version of Kubernetes."""
 
 
+class UpgradeInsightStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The overall status of an upgrade insight readiness evaluation. This is an aggregation of the
+    per-issue ``severity`` values in ``detectedIssues``: any ``Blocking`` issue ⇒ ``Failed``;
+    otherwise any ``Warning`` issue ⇒ ``Warning``; otherwise (no issues) ⇒ ``Passed``. The
+    scope-level vocabulary here (Passed/Warning/Failed) intentionally differs from the issue-level
+    ``UpgradeIssueSeverity`` (Blocking/Warning): a ``Blocking`` issue maps to a ``Failed`` status,
+    while ``Warning`` maps through unchanged.
+    """
+
+    PASSED = "Passed"
+    """The evaluation completed and no upgrade issues were found for the target version; the scope
+    appears ready to upgrade."""
+    WARNING = "Warning"
+    """The evaluation found one or more non-blocking warnings; the upgrade is expected to succeed but
+    the warnings should be reviewed."""
+    FAILED = "Failed"
+    """The evaluation found one or more blocking issues that will prevent the upgrade from completing
+    until they are resolved. This reflects the readiness result, not a failure of the compute
+    operation itself (that is conveyed by provisioningState)."""
+
+
+class UpgradeInsightStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The strategy currently used to perform an upgrade (manual or automatic)."""
+
+    MANUAL = "Manual"
+    """Upgrades are initiated manually by the customer."""
+    AUTO = "Auto"
+    """Upgrades are performed automatically by AKS auto-upgrade."""
+
+
+class UpgradeIssueSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The severity of a detected upgrade issue."""
+
+    BLOCKING = "Blocking"
+    """The issue will block the upgrade from completing successfully."""
+    WARNING = "Warning"
+    """The issue may cause problems with client applications or services on the cluster but will not
+    necessarily prevent the upgrade from completing."""
+
+
+class UpgradeIssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a detected upgrade issue."""
+
+    PDB_CONSTRAINT = "PDBConstraint"
+    """A restrictive PodDisruptionBudget prevents node drain during upgrade. See
+    `https://aka.ms/aks/upgrade-insights/pdb-constraint
+    <https://aka.ms/aks/upgrade-insights/pdb-constraint>`_ for remediation guidance."""
+    SUBNET_IP_EXHAUSTED = "SubnetIPExhausted"
+    """The cluster subnet does not have sufficient available IP addresses for surge nodes during
+    upgrade. See `https://aka.ms/aks/upgrade-insights/subnet-ip-exhaustion
+    <https://aka.ms/aks/upgrade-insights/subnet-ip-exhaustion>`_ for remediation guidance."""
+    QUOTA_EXCEEDED = "QuotaExceeded"
+    """Compute quota for the node pool VM SKU is insufficient to accommodate surge nodes during
+    upgrade. See `https://aka.ms/aks/upgrade-insights/quota-exceeded
+    <https://aka.ms/aks/upgrade-insights/quota-exceeded>`_ for remediation guidance."""
+    API_BREAKING_CHANGE = "APIBreakingChange"
+    """The cluster is using deprecated Kubernetes APIs that are removed in the target version. See
+    `https://aka.ms/aks/upgrade-insights/api-breaking-change
+    <https://aka.ms/aks/upgrade-insights/api-breaking-change>`_ for remediation guidance."""
+    COMPONENT_VERSION_MISMATCH = "ComponentVersionMismatch"
+    """An add-on or system component is not compatible with the target Kubernetes version. See
+    `https://aka.ms/aks/upgrade-insights/component-version-mismatch
+    <https://aka.ms/aks/upgrade-insights/component-version-mismatch>`_ for remediation guidance."""
+    UNSUPPORTED_KUBERNETES_VERSION = "UnsupportedKubernetesVersion"
+    """The cluster is running a Kubernetes version that is no longer supported. See
+    `https://aka.ms/aks/upgrade-insights/unsupported-kubernetes-version
+    <https://aka.ms/aks/upgrade-insights/unsupported-kubernetes-version>`_ for remediation
+    guidance."""
+    NODE_IMAGE_OUT_OF_SLA = "NodeImageOutOfSLA"
+    """The cluster node image has not been upgraded within the required compliance interval. See
+    `https://aka.ms/aks/upgrade-insights/node-image-out-of-sla
+    <https://aka.ms/aks/upgrade-insights/node-image-out-of-sla>`_ for remediation guidance."""
+
+
+class UpgradeStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the upgrade strategy for the agent pool. The default is Rolling."""
+
+    ROLLING = "Rolling"
+    """Specifies that the agent pool will conduct rolling upgrade. This is the default upgrade
+    strategy."""
+    BLUE_GREEN = "BlueGreen"
+    """Specifies that the agent pool will conduct blue-green upgrade."""
+
+
+class UpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of upgrade an upgrade insight evaluates. Each upgrade insight resource represents
+    exactly one of these scopes; the scope is encoded in the resource name.
+    """
+
+    CONTROL_PLANE = "ControlPlane"
+    """The control plane (managed cluster) Kubernetes version upgrade."""
+    AGENT_POOL = "AgentPool"
+    """An agent pool (node pool) Kubernetes version upgrade."""
+    NODE_IMAGE = "NodeImage"
+    """An agent pool node OS image upgrade. NodeImage upgrade insights are evaluated per agent pool,
+    mirroring the per-pool node-image upgrade API (.../agentPools/{name}), and cover the node OS
+    image only; agent-pool Kubernetes version readiness is evaluated separately via the AgentPool
+    or ControlPlaneAndAgentPools scopes."""
+    CONTROL_PLANE_AND_AGENT_POOLS = "ControlPlaneAndAgentPools"
+    """A combined evaluation of the control plane plus every agent pool for a single target Kubernetes
+    version. This scope covers Kubernetes version upgrades only; node OS image upgrades are not
+    included and must be evaluated separately using the NodeImage scope."""
+
+
+class VmState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Virtual machine state. Indicates the current state of the underlying virtual machine."""
+
+    RUNNING = "Running"
+    """The virtual machine is currently running."""
+    DELETED = "Deleted"
+    """The virtual machine has been deleted by the user or due to spot eviction."""
+
+
 class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The weekday enum."""
 
@@ -1057,6 +1656,11 @@ class WorkloadRuntime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Nodes will use Kubelet to run standard OCI container workloads."""
     WASM_WASI = "WasmWasi"
     """Nodes will use Krustlet to run WASM workloads using the WASI provider (Preview)."""
+    KATA_MSHV_VM_ISOLATION = "KataMshvVmIsolation"
+    """Nodes can use (Kata + Cloud Hypervisor + Hyper-V) to enable Nested VM-based pods (Preview). Due
+    to the use Hyper-V, AKS node OS itself is a nested VM (the root OS) of Hyper-V. Thus it can
+    only be used with VM series that support Nested Virtualization such as Dv3 series. This naming
+    convention will be deprecated in future releases in favor of KataVmIsolation."""
     KATA_VM_ISOLATION = "KataVmIsolation"
     """Nodes can use (Kata + Cloud Hypervisor + Hyper-V) to enable Nested VM-based pods. Due to the
     use Hyper-V, AKS node OS itself is a nested VM (the root OS) of Hyper-V. Thus it can only be

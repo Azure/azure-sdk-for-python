@@ -10,9 +10,9 @@ from extract_apiview_metadata import extract_metadata
 
 def update_package_info(metadata_path: pathlib.Path, package_info_path: pathlib.Path) -> None:
     metadata = yaml.safe_load(metadata_path.read_text(encoding="utf-8-sig"))
-    api_hash = metadata.get("apiMdSha256") if isinstance(metadata, dict) else None
+    api_hash = metadata.get("apiHash") if isinstance(metadata, dict) else None
     if not isinstance(api_hash, str) or not api_hash:
-        raise ValueError(f"apiMdSha256 was not found in {metadata_path}")
+        raise ValueError(f"apiHash was not found in {metadata_path}")
 
     package_info = json.loads(package_info_path.read_text(encoding="utf-8-sig"))
     package_info["ApiHash"] = api_hash
@@ -46,7 +46,7 @@ def main() -> None:
             ["pwsh", str(export_script), "-TokenJsonPath", str(token_file), "-OutputPath", str(package_artifact_dir)],
             check=True,
         )
-        extract_metadata(package_artifact_dir / "api.md")
+        extract_metadata(package_artifact_dir / "api.md", package_info["Version"])
 
         update_package_info(package_artifact_dir / "api.metadata.yml", package_info_path)
 

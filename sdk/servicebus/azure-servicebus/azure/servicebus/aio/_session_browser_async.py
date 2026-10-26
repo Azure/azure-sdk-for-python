@@ -6,7 +6,7 @@ import asyncio  # pylint:disable=do-not-import-asyncio
 import time
 import uuid
 from datetime import datetime
-from typing import Callable, Optional
+from typing import Callable, Optional, TYPE_CHECKING, Union
 
 from azure.core.async_paging import AsyncItemPaged
 
@@ -15,9 +15,23 @@ from .._common.constants import (
     REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
 )
 from .._common import mgmt_handlers
+from .._common.utils import get_link_ready_deadline, check_link_ready_deadline
 from .._session_browser import _to_last_updated_ms, _page_request_body, _PAGE_SIZE
 from ..exceptions import OperationTimeoutError
-from ._async_utils import create_authentication
+from ._async_utils import (
+    await_with_deadline,
+    close_handler_for_cleanup,
+    close_handler_with_deadline,
+    create_authentication,
+    open_handler_with_deadline,
+)
+
+if TYPE_CHECKING:
+    try:
+        from uamqp.async_ops.client_async import AMQPClientAsync as uamqp_AMQPClientAsync
+    except ImportError:
+        pass
+    from .._pyamqp.aio._client_async import AMQPClientAsync as pyamqp_AMQPClientAsync
 
 
 class _SessionBrowserAsync(AsyncBaseHandler):
@@ -39,6 +53,8 @@ class _SessionBrowserAsync(AsyncBaseHandler):
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)
         self._name = f"SBSessionBrowser-{uuid.uuid4()}"
         self._connection = kwargs.get("connection")
+        # _create_handler always assigns it, so narrow away the base class's Optional.
+        self._handler: Union["uamqp_AMQPClientAsync", "pyamqp_AMQPClientAsync"]
 
     def _create_handler(self, auth):
         self._handler = self._amqp_transport.create_mgmt_client_async(
@@ -49,20 +65,38 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             client_name=self._name,
         )
 
-    async def _open(self):
+    async def _open(self, timeout: Optional[float] = None):
         if self._running:
             return
+        deadline = get_link_ready_deadline(timeout)
         if self._handler:
-            await self._handler.close_async()
-        auth = None if self._connection else (await create_authentication(self))
+            await close_handler_with_deadline(self._handler, deadline)
+
+        check_link_ready_deadline(deadline)
+        auth = (
+            None
+            if self._connection
+            else await await_with_deadline(
+                create_authentication(self), deadline, "Timed out acquiring the AMQP credential."
+            )
+        )
         self._create_handler(auth)
         try:
-            await self._handler.open_async(connection=self._connection)
-            while not await self._handler.client_ready_async():
+            # The token fetch can use the budget, so re-check before opening; the open itself
+            # is bounded by open_handler_with_deadline.
+            check_link_ready_deadline(deadline)
+            await open_handler_with_deadline(self._handler, self._connection, deadline)
+            while True:
+                check_link_ready_deadline(deadline)
+                if await await_with_deadline(
+                    self._handler.client_ready_async(), deadline, "Timed out waiting for the AMQP link to open."
+                ):
+                    break
                 await asyncio.sleep(0.05)
+            check_link_ready_deadline(deadline)
             self._running = True
         except:
-            await self._close_handler()
+            await close_handler_for_cleanup(self._close_handler(), deadline)
             raise
 
     def list_sessions(

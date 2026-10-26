@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 
 class Resource(_Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -45,9 +45,8 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -66,7 +65,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -76,7 +75,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -90,7 +89,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AzureKeyVaultSecretProviderClass(TrackedResource):
+class AzureKeyVaultSecretProviderClass(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AzureKeyVaultSecretProviderClass resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -111,7 +110,7 @@ class AzureKeyVaultSecretProviderClass(TrackedResource):
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties:
      ~azure.mgmt.secretsstoreextension.models.AzureKeyVaultSecretProviderClassProperties
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.secretsstoreextension.models.ExtendedLocation
     """
 
@@ -122,13 +121,14 @@ class AzureKeyVaultSecretProviderClass(TrackedResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
 
     @overload
     def __init__(
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AzureKeyVaultSecretProviderClassProperties"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
@@ -144,11 +144,17 @@ class AzureKeyVaultSecretProviderClass(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class AzureKeyVaultSecretProviderClassProperties(_Model):  # pylint: disable=name-too-long
+class AzureKeyVaultSecretProviderClassProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of the AzureKeyVaultSecretProviderClass.
 
     :ivar keyvault_name: The name of the Azure Key Vault to sync secrets from. Required.
     :vartype keyvault_name: str
+    :ivar cloud_name: The Azure cloud containing the key vault. If omitted, the in-cluster Azure
+     Key Vault provider's configured default cloud is used. Known values are: "AzurePublicCloud",
+     "AzureUSGovernmentCloud", "AzureChinaCloud", "AzureGermanCloud", and "AzureStackCloud".
+    :vartype cloud_name: str or ~azure.mgmt.secretsstoreextension.models.AzureCloudName
     :ivar client_id: The user assigned managed identity client ID that should be used to access the
      Azure Key Vault. Required.
     :vartype client_id: str
@@ -164,6 +170,12 @@ class AzureKeyVaultSecretProviderClassProperties(_Model):  # pylint: disable=nam
 
     keyvault_name: str = rest_field(name="keyvaultName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the Azure Key Vault to sync secrets from. Required."""
+    cloud_name: Optional[Union[str, "_models.AzureCloudName"]] = rest_field(
+        name="cloudName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure cloud containing the key vault. If omitted, the in-cluster Azure Key Vault provider's
+     configured default cloud is used. Known values are: \"AzurePublicCloud\",
+     \"AzureUSGovernmentCloud\", \"AzureChinaCloud\", \"AzureGermanCloud\", and \"AzureStackCloud\"."""
     client_id: str = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
     """The user assigned managed identity client ID that should be used to access the Azure Key Vault.
      Required."""
@@ -185,6 +197,7 @@ class AzureKeyVaultSecretProviderClassProperties(_Model):  # pylint: disable=nam
         keyvault_name: str,
         client_id: str,
         tenant_id: str,
+        cloud_name: Optional[Union[str, "_models.AzureCloudName"]] = None,
         objects: Optional[str] = None,
     ) -> None: ...
 
@@ -199,7 +212,7 @@ class AzureKeyVaultSecretProviderClassProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class AzureKeyVaultSecretProviderClassUpdate(_Model):
+class AzureKeyVaultSecretProviderClassUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the AzureKeyVaultSecretProviderClass.
 
     :ivar tags: Resource tags.
@@ -209,7 +222,7 @@ class AzureKeyVaultSecretProviderClassUpdate(_Model):
      ~azure.mgmt.secretsstoreextension.models.AzureKeyVaultSecretProviderClassUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.AzureKeyVaultSecretProviderClassUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -220,7 +233,7 @@ class AzureKeyVaultSecretProviderClassUpdate(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AzureKeyVaultSecretProviderClassUpdateProperties"] = None,
     ) -> None: ...
 
@@ -235,11 +248,17 @@ class AzureKeyVaultSecretProviderClassUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureKeyVaultSecretProviderClassUpdateProperties(_Model):  # pylint: disable=name-too-long
+class AzureKeyVaultSecretProviderClassUpdateProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The updatable properties of the AzureKeyVaultSecretProviderClass.
 
     :ivar keyvault_name: The name of the Azure Key Vault to sync secrets from.
     :vartype keyvault_name: str
+    :ivar cloud_name: The Azure cloud containing the key vault. If omitted, the in-cluster Azure
+     Key Vault provider's configured default cloud is used. Known values are: "AzurePublicCloud",
+     "AzureUSGovernmentCloud", "AzureChinaCloud", "AzureGermanCloud", and "AzureStackCloud".
+    :vartype cloud_name: str or ~azure.mgmt.secretsstoreextension.models.AzureCloudName
     :ivar client_id: The user assigned managed identity client ID that should be used to access the
      Azure Key Vault.
     :vartype client_id: str
@@ -254,6 +273,12 @@ class AzureKeyVaultSecretProviderClassUpdateProperties(_Model):  # pylint: disab
         name="keyvaultName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the Azure Key Vault to sync secrets from."""
+    cloud_name: Optional[Union[str, "_models.AzureCloudName"]] = rest_field(
+        name="cloudName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure cloud containing the key vault. If omitted, the in-cluster Azure Key Vault provider's
+     configured default cloud is used. Known values are: \"AzurePublicCloud\",
+     \"AzureUSGovernmentCloud\", \"AzureChinaCloud\", \"AzureGermanCloud\", and \"AzureStackCloud\"."""
     client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
     """The user assigned managed identity client ID that should be used to access the Azure Key Vault."""
     tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
@@ -267,6 +292,7 @@ class AzureKeyVaultSecretProviderClassUpdateProperties(_Model):  # pylint: disab
         self,
         *,
         keyvault_name: Optional[str] = None,
+        cloud_name: Optional[Union[str, "_models.AzureCloudName"]] = None,
         client_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         objects: Optional[str] = None,
@@ -319,17 +345,16 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.secretsstoreextension.models.ErrorDetail
@@ -356,7 +381,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The complex type of the extended location.
 
     :ivar name: The name of the extended location. Required.
@@ -393,7 +418,7 @@ class ExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesSecretObjectMapping(_Model):
+class KubernetesSecretObjectMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties defining the mapping between a cloud secret store object and a Kubernetes Secret.
 
     :ivar source_path: SourcePath is the identifier for the secret data as defined by the external
@@ -436,8 +461,8 @@ class KubernetesSecretObjectMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -494,7 +519,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -524,7 +549,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class SecretSync(TrackedResource):
+class SecretSync(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SecretSync resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -544,7 +569,7 @@ class SecretSync(TrackedResource):
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.secretsstoreextension.models.SecretSyncProperties
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.secretsstoreextension.models.ExtendedLocation
     """
 
@@ -555,13 +580,14 @@ class SecretSync(TrackedResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
 
     @overload
     def __init__(
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SecretSyncProperties"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
@@ -636,7 +662,7 @@ class SecretSyncCondition(_Model):
      (dns1123SubdomainFmt/)?(qualifiedNameFmt). Required."""
 
 
-class SecretSyncProperties(_Model):
+class SecretSyncProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the SecretSync instance.
 
     :ivar secret_provider_class_name: SecretProviderClassName specifies the name of the
@@ -650,8 +676,8 @@ class SecretSyncProperties(_Model):
      provider. Required.
     :vartype service_account_name: str
     :ivar kubernetes_secret_type: Type specifies the type of the Kubernetes secret object, e.g.
-     "Opaque" or"kubernetes.io/tls". The controller must have permission to create secrets of the
-     specified type. Required. Known values are: "Opaque" and "kubernetes.io/tls".
+     ``Opaque`` or ``kubernetes.io/tls``. The controller must have permission to create secrets of
+     the specified type. Required. Known values are: "Opaque" and "kubernetes.io/tls".
     :vartype kubernetes_secret_type: str or
      ~azure.mgmt.secretsstoreextension.models.KubernetesSecretType
     :ivar force_synchronization: ForceSynchronization can be used to force the secret
@@ -684,10 +710,10 @@ class SecretSyncProperties(_Model):
      the controller configuration. The audience is used when requesting a token from the API server
      for the service account; the supported audiences are defined by each provider. Required."""
     kubernetes_secret_type: Union[str, "_models.KubernetesSecretType"] = rest_field(
-        name="kubernetesSecretType", visibility=["read", "create", "update", "delete", "query"]
+        name="kubernetesSecretType", visibility=["read", "create"]
     )
-    """Type specifies the type of the Kubernetes secret object, e.g. \"Opaque\"
-     or\"kubernetes.io/tls\". The controller must have permission to create secrets of the specified
+    """Type specifies the type of the Kubernetes secret object, e.g. ``Opaque`` or
+     ``kubernetes.io/tls``. The controller must have permission to create secrets of the specified
      type. Required. Known values are: \"Opaque\" and \"kubernetes.io/tls\"."""
     force_synchronization: Optional[str] = rest_field(
         name="forceSynchronization", visibility=["read", "create", "update", "delete", "query"]
@@ -695,7 +721,7 @@ class SecretSyncProperties(_Model):
     """ForceSynchronization can be used to force the secret synchronization. The secret
      synchronization is triggered by changing the value in this field. This field is not used to
      resolve synchronization conflicts."""
-    object_secret_mapping: List["_models.KubernetesSecretObjectMapping"] = rest_field(
+    object_secret_mapping: list["_models.KubernetesSecretObjectMapping"] = rest_field(
         name="objectSecretMapping", visibility=["read", "create", "update", "delete", "query"]
     )
     """An array of SecretObjectData that maps secret data from the external secret provider to the
@@ -716,7 +742,7 @@ class SecretSyncProperties(_Model):
         secret_provider_class_name: str,
         service_account_name: str,
         kubernetes_secret_type: Union[str, "_models.KubernetesSecretType"],
-        object_secret_mapping: List["_models.KubernetesSecretObjectMapping"],
+        object_secret_mapping: list["_models.KubernetesSecretObjectMapping"],
         force_synchronization: Optional[str] = None,
     ) -> None: ...
 
@@ -751,7 +777,7 @@ class SecretSyncStatus(_Model):
     )
     """LastSuccessfulSyncTime represents the last time the secret was retrieved from the Provider and
      updated."""
-    conditions: Optional[List["_models.SecretSyncCondition"]] = rest_field(visibility=["read"])
+    conditions: Optional[list["_models.SecretSyncCondition"]] = rest_field(visibility=["read"])
     """Conditions represent the status of the secret create and update processes. The status can be
      True, False, or Unknown with various reasons and messages explaining the state. Examples of
      reasons include CreateSucceeded, ProviderError, InvalidClusterSecretLabelError,
@@ -760,7 +786,7 @@ class SecretSyncStatus(_Model):
      ValueChangeOrForceUpdateDetected."""
 
 
-class SecretSyncUpdate(_Model):
+class SecretSyncUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the SecretSync.
 
     :ivar tags: Resource tags.
@@ -769,7 +795,7 @@ class SecretSyncUpdate(_Model):
     :vartype properties: ~azure.mgmt.secretsstoreextension.models.SecretSyncUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.SecretSyncUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -780,7 +806,7 @@ class SecretSyncUpdate(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SecretSyncUpdateProperties"] = None,
     ) -> None: ...
 
@@ -795,7 +821,7 @@ class SecretSyncUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretSyncUpdateProperties(_Model):
+class SecretSyncUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the SecretSync.
 
     :ivar secret_provider_class_name: SecretProviderClassName specifies the name of the
@@ -808,11 +834,6 @@ class SecretSyncUpdateProperties(_Model):
      token from the API server for the service account; the supported audiences are defined by each
      provider.
     :vartype service_account_name: str
-    :ivar kubernetes_secret_type: Type specifies the type of the Kubernetes secret object, e.g.
-     "Opaque" or"kubernetes.io/tls". The controller must have permission to create secrets of the
-     specified type. Known values are: "Opaque" and "kubernetes.io/tls".
-    :vartype kubernetes_secret_type: str or
-     ~azure.mgmt.secretsstoreextension.models.KubernetesSecretType
     :ivar force_synchronization: ForceSynchronization can be used to force the secret
      synchronization. The secret synchronization is triggered by changing the value in this field.
      This field is not used to resolve synchronization conflicts.
@@ -836,19 +857,13 @@ class SecretSyncUpdateProperties(_Model):
      secret store. The audience field in the service account token must be passed as parameter in
      the controller configuration. The audience is used when requesting a token from the API server
      for the service account; the supported audiences are defined by each provider."""
-    kubernetes_secret_type: Optional[Union[str, "_models.KubernetesSecretType"]] = rest_field(
-        name="kubernetesSecretType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type specifies the type of the Kubernetes secret object, e.g. \"Opaque\"
-     or\"kubernetes.io/tls\". The controller must have permission to create secrets of the specified
-     type. Known values are: \"Opaque\" and \"kubernetes.io/tls\"."""
     force_synchronization: Optional[str] = rest_field(
         name="forceSynchronization", visibility=["read", "create", "update", "delete", "query"]
     )
     """ForceSynchronization can be used to force the secret synchronization. The secret
      synchronization is triggered by changing the value in this field. This field is not used to
      resolve synchronization conflicts."""
-    object_secret_mapping: Optional[List["_models.KubernetesSecretObjectMapping"]] = rest_field(
+    object_secret_mapping: Optional[list["_models.KubernetesSecretObjectMapping"]] = rest_field(
         name="objectSecretMapping", visibility=["read", "create", "update", "delete", "query"]
     )
     """An array of SecretObjectData that maps secret data from the external secret provider to the
@@ -861,9 +876,8 @@ class SecretSyncUpdateProperties(_Model):
         *,
         secret_provider_class_name: Optional[str] = None,
         service_account_name: Optional[str] = None,
-        kubernetes_secret_type: Optional[Union[str, "_models.KubernetesSecretType"]] = None,
         force_synchronization: Optional[str] = None,
-        object_secret_mapping: Optional[List["_models.KubernetesSecretObjectMapping"]] = None,
+        object_secret_mapping: Optional[list["_models.KubernetesSecretObjectMapping"]] = None,
     ) -> None: ...
 
     @overload
@@ -877,7 +891,7 @@ class SecretSyncUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.

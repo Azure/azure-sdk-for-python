@@ -1,6 +1,126 @@
 # Release History
 
-## 2.2.0b1 (Unreleased)
+## 2.3.0b2 (2026-10-26)
+
+### Features Added
+
+- Added immutable `FoundryOriginalSubject` assertions and invocation-local
+  `FoundryAgentRequestContext.original_subject` with an explicit, model-only
+  `model_attribution_headers()` helper for the proposed `x-ms-original-subject`
+  dictionary contract. The assertions do not establish identity proof or change
+  model authentication; model integration remains an explicit per-call opt-in.
+  Both the assertions class and header helper are marked experimental.
+- Added protocol-scoped task-runtime startup requests so protocol hosts can
+  obtain scoped `TaskManager` access without mutating the process-wide
+  resilient-task switch. This prevents one protocol's enablement from
+  activating another protocol in a mixed host.
+
+### Bugs Fixed
+
+- Preserve host-owned recovery callbacks and task options when loading
+  process-wide task descriptors at startup.
+- Exclude protocol-disabled task functions before startup, periodic or inline
+  recovery can reclaim their leases or dispatch their handlers.
+- Require explicit owning-host registration for protocol-internal recovery
+  callbacks instead of importing them into unrelated managers.
+- Treat a persisted task function identity as authoritative before recovery
+  cleanup or reclaim. Legacy callback fallback applies only when that
+  identity is absent.
+
+## 2.3.0b1 (2026-10-15)
+
+### Features Added
+
+- Added `AgentServerHost.readiness_handler` for replacing the default
+  `GET /readiness` response with application-specific readiness logic. When no
+  handler is registered, the existing healthy response remains unchanged.
+- Added the private `POST /_agent/before-snapshot` and
+  `POST /_agent/after-restore` lifecycle endpoints, with equivalent
+  `POST /_before_snapshot` and `POST /_after_restore` aliases, for safely
+  capturing and restoring hosted agent processes. Applications can register
+  `before_snapshot_handler` and `after_restore_handler` callbacks; lifecycle
+  calls are serialized and idempotent, and restored session environment
+  overrides are applied before the after-restore callback runs. Protocol
+  subclasses can extend the lifecycle through protected hooks without
+  bypassing the host's required hydration and rollback behavior. Later
+  materializations reset omitted overrides to their captured values and expose
+  the restored session through the ambient request context during callbacks.
+  Environment-backed `AgentConfig` values are refreshed in place before
+  callbacks run, and `AgentSessionContext` is marked experimental.
+
+### Bugs Fixed
+
+- Preserve an observed final terminal marker before recovery-time TTL
+  compaction, keeping closed replay logs closed across subsequent restarts.
+- Retain replay backing ownership through deletion: keep POSIX inode locks
+  until unlink and Windows sidecar locks until log removal. Acquire Windows
+  ownership before opening the log, reject stale or replaced locked descriptors,
+  and retry cleanup without unlinking a successor's backing file.
+- Release owned replay-file and writer-lock resources on every rehydration
+  failure, including callback errors and cancellation. Surface cleanup errors
+  with their original failure context and retain exact registry cleanup owners
+  when resource release must be retried.
+- Fail closed after compaction replaces the log but cannot establish a usable
+  writer. Retire stale handles, reject further writes, wake subscribers with an
+  explicit error, and reacquire ownership before deleting a failed replacement.
+  Keep the original writer usable when preparation fails before replacement.
+- Open existing replay logs in non-creating mode during cold lookup and
+  compaction reopen, preventing concurrent removal from recreating an empty
+  log. Preserve explicit creation and propagate backing-lock acquisition errors.
+- Delete cold file-backed replay logs without deserializing their events, so
+  malformed logs remain removable after restart. Preserve locking and retryable
+  cleanup when file access, lock acquisition, or removal fails.
+- Apply explicit task-list limits to the total returned records for both hosted
+  and local providers, clamped to 100. Keep omitted or `None` limits as complete
+  enumeration so recovery and response-ownership scans include every page.
+- Reclaim per-ID stream lifecycle locks after their last holder or waiter exits,
+  including cancellation, without splitting concurrent lookup, creation, or deletion.
+- Enumerate every matching local durable task when no listing limit is
+  requested, matching hosted task enumeration. Reject missing or repeated
+  hosted continuation cursors instead of returning an incomplete task list.
+- Restore existing file-backed replay logs during stream lookup and deletion
+  after restart without creating absent logs. Serialize lookup, creation, and
+  deletion for the same stream ID within the registry.
+- Propagate replay-file deletion failures without installing a successful
+  deletion tombstone, allowing cleanup to be retried.
+- Make Windows replay lock-file removal failures retryable without closing
+  an already-released file descriptor or reporting successful deletion.
+
+### Other Changes
+
+- Removed the experimental marker (docstring note and one-time runtime warning)
+  from the resilient task public APIs (`TaskContext`, `TaskRun`, `@task`,
+  `@multi_turn_task`, `set_resilient_tasks_enabled`, task exceptions, and
+  retry policy).
+- Changed the default SSE keep-alive interval to 15 seconds. Set
+  `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
+
+## 2.2.0 (2026-09-23)
+
+### Other Changes
+
+- Stable release promoting the 2.2.0 preview series. No functional changes since 2.2.0b2.
+
+## 2.2.0b2 (2026-09-23)
+
+### Features Added
+
+- Added `flush_spans_async`, a non-blocking variant of `flush_spans` that
+  offloads the blocking `TracerProvider.force_flush` to a worker thread so it
+  does not stall the asyncio event loop, and `schedule_flush_spans`, a
+  fire-and-forget helper that flushes in the background without delaying the
+  caller. Background flushes are coalesced: at most one runs at a time and
+  concurrent requests collapse into a single follow-up flush, so the work does
+  not grow with the request rate. Async flushes drain queued or running exports
+  before propagating request cancellation. Both helpers are marked
+  `@experimental`.
+
+### Other Changes
+
+- `azure-ai-agentserver-responses` 2.2.0b2 requires this release for the
+  non-blocking span flush helpers.
+
+## 2.2.0b1 (2026-09-03)
 
 ### Features Added
 

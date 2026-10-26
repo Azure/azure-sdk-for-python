@@ -30,6 +30,7 @@ from .operations import (
     ApplicationGatewayWafDynamicManifestsOperations,
     ApplicationGatewaysOperations,
     ApplicationSecurityGroupsOperations,
+    AuthenticationPoliciesOperations,
     AvailableDelegationsOperations,
     AvailableEndpointServicesOperations,
     AvailablePrivateEndpointTypesOperations,
@@ -57,6 +58,7 @@ from .operations import (
     ExpressRouteCrossConnectionPeeringsOperations,
     ExpressRouteCrossConnectionsOperations,
     ExpressRouteGatewaysOperations,
+    ExpressRouteLagAuthorizationsOperations,
     ExpressRouteLagsOperations,
     ExpressRouteLinksOperations,
     ExpressRoutePortAuthorizationsOperations,
@@ -166,6 +168,7 @@ from .operations import (
     VirtualHubIpConfigurationOperations,
     VirtualHubRouteTableV2SOperations,
     VirtualHubsOperations,
+    VirtualNetworkApplianceCapabilitiesOperations,
     VirtualNetworkAppliancesOperations,
     VirtualNetworkGatewayConnectionsOperations,
     VirtualNetworkGatewayNatRulesOperations,
@@ -216,6 +219,9 @@ class NetworkManagementClient(
     :ivar application_security_groups: ApplicationSecurityGroupsOperations operations
     :vartype application_security_groups:
      azure.mgmt.network.aio.operations.ApplicationSecurityGroupsOperations
+    :ivar authentication_policies: AuthenticationPoliciesOperations operations
+    :vartype authentication_policies:
+     azure.mgmt.network.aio.operations.AuthenticationPoliciesOperations
     :ivar azure_firewalls: AzureFirewallsOperations operations
     :vartype azure_firewalls: azure.mgmt.network.aio.operations.AzureFirewallsOperations
     :ivar bastion_hosts: BastionHostsOperations operations
@@ -258,6 +264,9 @@ class NetworkManagementClient(
      azure.mgmt.network.aio.operations.ExpressRoutePortAuthorizationsOperations
     :ivar express_route_lags: ExpressRouteLagsOperations operations
     :vartype express_route_lags: azure.mgmt.network.aio.operations.ExpressRouteLagsOperations
+    :ivar express_route_lag_authorizations: ExpressRouteLagAuthorizationsOperations operations
+    :vartype express_route_lag_authorizations:
+     azure.mgmt.network.aio.operations.ExpressRouteLagAuthorizationsOperations
     :ivar firewall_policies: FirewallPoliciesOperations operations
     :vartype firewall_policies: azure.mgmt.network.aio.operations.FirewallPoliciesOperations
     :ivar firewall_policy_rule_collection_groups: FirewallPolicyRuleCollectionGroupsOperations
@@ -458,6 +467,10 @@ class NetworkManagementClient(
     :ivar virtual_network_appliances: VirtualNetworkAppliancesOperations operations
     :vartype virtual_network_appliances:
      azure.mgmt.network.aio.operations.VirtualNetworkAppliancesOperations
+    :ivar virtual_network_appliance_capabilities: VirtualNetworkApplianceCapabilitiesOperations
+     operations
+    :vartype virtual_network_appliance_capabilities:
+     azure.mgmt.network.aio.operations.VirtualNetworkApplianceCapabilitiesOperations
     :ivar service_gateways: ServiceGatewaysOperations operations
     :vartype service_gateways: azure.mgmt.network.aio.operations.ServiceGatewaysOperations
     :ivar interconnect_groups: InterconnectGroupsOperations operations
@@ -737,6 +750,9 @@ class NetworkManagementClient(
         self.application_security_groups = ApplicationSecurityGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.authentication_policies = AuthenticationPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.azure_firewalls = AzureFirewallsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.bastion_hosts = BastionHostsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.network_interfaces = NetworkInterfacesOperations(
@@ -779,6 +795,9 @@ class NetworkManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.express_route_lags = ExpressRouteLagsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_lag_authorizations = ExpressRouteLagAuthorizationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.firewall_policies = FirewallPoliciesOperations(
@@ -957,6 +976,9 @@ class NetworkManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_network_appliances = VirtualNetworkAppliancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_appliance_capabilities = VirtualNetworkApplianceCapabilitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.service_gateways = ServiceGatewaysOperations(

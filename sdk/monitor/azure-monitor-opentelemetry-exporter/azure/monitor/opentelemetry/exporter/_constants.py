@@ -3,7 +3,7 @@
 # cSpell:disable
 
 from enum import Enum
-from typing import Union
+from typing import FrozenSet, Union
 from opentelemetry.semconv.metrics import MetricInstruments
 from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
@@ -16,11 +16,19 @@ _EXPORTER_DOMAIN_SCHEMA_VERSION = 2
 
 # Environment variables
 
+_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES"
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
 _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = (
     "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
 )
 _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN"
+
+# Add feature names only when their implementations are available.
+_SUPPORTED_EXPERIMENTAL_FEATURES: FrozenSet[str] = frozenset(
+    {
+        "gen_ai_input_output_limit_increase",
+    }
+)
 
 # SDK version
 _AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
@@ -95,6 +103,14 @@ _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKE
 _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 _MICROSOFT_CUSTOM_MEASUREMENTS = "microsoft.custom_measurements"
+
+# Track Availability telemetry constants
+_MICROSOFT_AVAILABILITY_ID = "microsoft.availability.id"
+_MICROSOFT_AVAILABILITY_NAME = "microsoft.availability.name"
+_MICROSOFT_AVAILABILITY_DURATION = "microsoft.availability.duration"
+_MICROSOFT_AVAILABILITY_SUCCESS = "microsoft.availability.success"
+_MICROSOFT_AVAILABILITY_RUN_LOCATION = "microsoft.availability.runLocation"
+_MICROSOFT_AVAILABILITY_MESSAGE = "microsoft.availability.message"
 
 # ONE SETTINGS
 _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED = "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED"

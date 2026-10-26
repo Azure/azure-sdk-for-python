@@ -1,5 +1,135 @@
 # Release History
 
+## 15.0.0b6 (2026-10-10)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added operation group `adapter_deployments`
+  - Client `CognitiveServicesManagementClient` added operation group `cost_controls`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_bindings`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_regos`
+  - Model `AccountProperties` added property `cost_control_connections`
+  - Model `AccountProperties` added property `cost_control_ids`
+  - Enum `ConnectionCategory` added member `OPEN_API`
+  - Model `DeploymentProperties` added property `cost_control_ids`
+  - Model `ManagedComputeDeploymentProperties` added property `gated_model_access`
+  - Model `RaiPolicyProperties` added property `acs`
+  - Model `RaiPolicyProperties` added property `acs_regos`
+  - Model `RaiPolicyProperties` added property `custom_external_safety_providers`
+  - Model `RaiPolicyProperties` added property `format`
+  - Model `Usage` added property `id`
+  - Model `Usage` added property `type`
+  - Model `WorkbenchProperties` added property `gpu_count`
+  - Model `WorkbenchProperties` added property `instance_type`
+  - Model `WorkbenchProperties` added property `status`
+  - Added model `AdapterDeployment`
+  - Added model `AdapterDeploymentLastOperation`
+  - Added enum `AdapterDeploymentOperationState`
+  - Added enum `AdapterDeploymentOperationType`
+  - Added model `AdapterDeploymentProperties`
+  - Added model `CostControl`
+  - Added model `CostControlConnections`
+  - Added model `CostControlDimension`
+  - Added enum `CostControlDimensionType`
+  - Added model `CostControlMatch`
+  - Added model `CostControlPatch`
+  - Added model `CostControlPatchProperties`
+  - Added enum `CostControlPeriod`
+  - Added model `CostControlProperties`
+  - Added model `CostControlRule`
+  - Added model `CostControlThreshold`
+  - Added enum `CostControlThresholdAction`
+  - Added enum `CostControlThresholdType`
+  - Added enum `CostControlUnit`
+  - Added model `GatedModelAccessProperties`
+  - Added model `RaiAcsEmptyObject`
+  - Added enum `RaiAcsHarmCategory`
+  - Added model `RaiAcsHarmConfiguration`
+  - Added model `RaiAcsInterventionPoint`
+  - Added model `RaiAcsInterventionPoints`
+  - Added model `RaiAcsManifest`
+  - Added model `RaiAcsModerationBindingExtension`
+  - Added enum `RaiAcsModerationSubjectFormat`
+  - Added model `RaiAcsPolicyBinding`
+  - Added enum `RaiAcsPolicyDefinitionType`
+  - Added enum `RaiAcsPolicyTarget`
+  - Added enum `RaiAcsPolicyTargetKind`
+  - Added model `RaiAcsRegoPolicyDefinition`
+  - Added model `RaiAcsToolDefinition`
+  - Added model `RaiAcsToolInterventionPoint`
+  - Added enum `RaiAcsToolNameSelector`
+  - Added model `RaiBinding`
+  - Added model `RaiBindingProperties`
+  - Added model `RaiPolicyCustomExternalSafetyProviderReference`
+  - Added enum `RaiPolicyFormat`
+  - Added model `RaiRego`
+  - Added enum `RaiRegoEncoding`
+  - Added model `RaiRegoProperties`
+  - Added model `RaiRegoReference`
+  - Added enum `WorkbenchProvisioningState`
+  - Added enum `WorkbenchStatus`
+  - Added model `WorkbenchUpdate`
+  - Added model `WorkbenchUpdateProperties`
+  - Operation group `RaiPoliciesOperations` added parameter `etag` in method `begin_delete`
+  - Operation group `RaiPoliciesOperations` added parameter `match_condition` in method `begin_delete`
+  - Operation group `RaiPoliciesOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `RaiPoliciesOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkbenchesOperations` added method `update`
+  - Added operation group `AdapterDeploymentsOperations`
+  - Added operation group `CostControlsOperations`
+  - Added operation group `RaiBindingsOperations`
+  - Added operation group `RaiRegosOperations`
+
+### Breaking Changes
+
+  - Model `Compute` deleted or renamed its instance variable `tags`
+  - Model `Workbench` deleted or renamed its instance variable `location`
+  - Model `Workbench` deleted or renamed its instance variable `tags`
+  - Deleted or renamed method `WorkbenchesOperations.begin_update`
+
+## 15.0.0b5 (2026-08-27)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added operation group `arc_deployments`
+  - Model `AccountProperties` added property `a365_logging_enabled`
+  - Model `AccountProperties` added property `agent_hosting_configurations`
+  - Model `AccountProperties` added property `capability_settings`
+  - Model `ClusterComputeProperties` added property `location`
+  - Model `ComputeProperties` added property `location`
+  - Model `ContainerInstanceComputeProperties` added property `location`
+  - Model `DeploymentProperties` added property `context_cache_container_id`
+  - Model `ProjectProperties` added property `capability_settings`
+  - Enum `ProvisioningState` added member `EXTENSION_UNREACHABLE`
+  - Enum `VmPriority` added member `SPOT`
+  - Added model `AgentHostingConfiguration`
+  - Added enum `AgentHostingType`
+  - Added model `ArcDeployment`
+  - Added enum `ArcDeploymentComputeType`
+  - Added model `ArcDeploymentCpuMemoryResourceRequirements`
+  - Added model `ArcDeploymentKubernetesResources`
+  - Added model `ArcDeploymentModel`
+  - Added model `ArcDeploymentPatchCpuMemoryResourceRequirements`
+  - Added model `ArcDeploymentPatchKubernetesResources`
+  - Added model `ArcDeploymentProperties`
+  - Added model `ArcDeploymentProvisioningDetails`
+  - Added model `ArcDeploymentResourceRequirements`
+  - Added enum `ArcDeploymentRuntime`
+  - Added model `ArcDeploymentSku`
+  - Added enum `ArcDeploymentSkuName`
+  - Added model `ArcDeploymentUpdate`
+  - Added model `ArcDeploymentUpdateProperties`
+  - Added model `ArcDeploymentVllmParameters`
+  - Added model `CapabilitySettings`
+  - Added model `ManagedClusterAgentHostingConfiguration`
+  - Added operation group `ArcDeploymentsOperations`
+
+### Breaking Changes
+
+  - Model `Compute` deleted or renamed its instance variable `location`
+  - Deleted or renamed enum value `VmPriority.LOW_PRIORITY`
+  - Deleted or renamed method `ComputesOperations.begin_update`
+
 ## 15.0.0b4 (2026-07-21)
 
 ### Bugs Fixed

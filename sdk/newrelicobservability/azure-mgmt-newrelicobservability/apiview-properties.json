@@ -153,5 +153,5 @@
         "azure.mgmt.newrelicobservability.operations.SaaSOperations.activate_resource": "NewRelic.Observability.SaaSOperationGroup.activateResource",
         "azure.mgmt.newrelicobservability.aio.operations.SaaSOperations.activate_resource": "NewRelic.Observability.SaaSOperationGroup.activateResource"
     },
-    "CrossLanguageVersion": "4263f4a54c7e"
+    "CrossLanguageVersion": "28c2ce1b4926"
 }

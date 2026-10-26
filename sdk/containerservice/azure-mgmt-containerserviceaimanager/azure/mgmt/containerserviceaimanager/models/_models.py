@@ -312,6 +312,12 @@ class AIManagerProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     :ivar managed_resource_group_name: The name of the managed resource group created by the AI
      Manager to hold underlying infrastructure resources.
     :vartype managed_resource_group_name: str
+    :ivar cluster_resource_id: The Azure resource ID of an existing AKS cluster to attach
+     (bring-your-own). When omitted, AI Manager provisions and manages its own underlying cluster.
+     The referenced cluster must be in the same region as this AI Manager, but may reside in a
+     different subscription within the same Microsoft Entra tenant. This property is immutable after
+     creation.
+    :vartype cluster_resource_id: str
     """
 
     provisioning_state: Optional[Union[str, "_models.AIManagerProvisioningState"]] = rest_field(
@@ -327,12 +333,18 @@ class AIManagerProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     managed_resource_group_name: Optional[str] = rest_field(name="managedResourceGroupName", visibility=["read"])
     """The name of the managed resource group created by the AI Manager to hold underlying
      infrastructure resources."""
+    cluster_resource_id: Optional[str] = rest_field(name="clusterResourceId", visibility=["read", "create"])
+    """The Azure resource ID of an existing AKS cluster to attach (bring-your-own). When omitted, AI
+     Manager provisions and manages its own underlying cluster. The referenced cluster must be in
+     the same region as this AI Manager, but may reside in a different subscription within the same
+     Microsoft Entra tenant. This property is immutable after creation."""
 
     @overload
     def __init__(
         self,
         *,
         delete_policy: Optional[Union[str, "_models.DeletePolicy"]] = None,
+        cluster_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -451,6 +463,55 @@ class AutoscaleProfile(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
+class BaseModelReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The base model a custom model was trained from. A HuggingFace repository supplied by the user
+    because the platform may lack access to private source repositories.
+
+    :ivar id: The HuggingFace ``<org>/<repo>`` id of the base model, e.g.
+     ``meta-llama/Llama-2-7b-chat``. Immutable after creation. Required.
+    :vartype id: str
+    :ivar total_weight_size_bytes: The total size of the model weights in bytes. eg
+     ``28000000000``. Required if the base model is not publicly accessible on HuggingFace.
+    :vartype total_weight_size_bytes: int
+    :ivar config: The verbatim ``config.json`` of the base model, supplied by the user. Required if
+     the base model is not publicly accessible on HuggingFace.  For more information on
+     CustomAIModel configuration see `https://aka.ms/aks/aim-customaimodel
+     <https://aka.ms/aks/aim-customaimodel>`_.
+    :vartype config: dict[str, any]
+    """
+
+    id: str = rest_field(visibility=["read", "create"])
+    """The HuggingFace ``<org>/<repo>`` id of the base model, e.g. ``meta-llama/Llama-2-7b-chat``.
+     Immutable after creation. Required."""
+    total_weight_size_bytes: Optional[int] = rest_field(name="totalWeightSizeBytes", visibility=["read", "create"])
+    """The total size of the model weights in bytes. eg ``28000000000``. Required if the base model is
+     not publicly accessible on HuggingFace."""
+    config: Optional[dict[str, Any]] = rest_field(visibility=["read", "create"])
+    """The verbatim ``config.json`` of the base model, supplied by the user. Required if the base
+     model is not publicly accessible on HuggingFace.  For more information on CustomAIModel
+     configuration see `https://aka.ms/aks/aim-customaimodel
+     <https://aka.ms/aks/aim-customaimodel>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        total_weight_size_bytes: Optional[int] = None,
+        config: Optional[dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CalculateCostPlan(_Model):
     """A GPU SKU pricing plan returned by the ``calculateCost`` action. Describes the cost of running
     a single model replica on the specified ``vmSize``. To estimate the cost of running multiple
@@ -528,10 +589,6 @@ class CalculateCostPlan(_Model):
      error envelope."""
 
 
-class CalculateCostRequest(_Model):
-    """Request body for the AI model ``calculateCost`` action."""
-
-
 class CalculateCostResponse(_Model):
     """Response body for the AI model ``calculateCost`` action.
 
@@ -576,27 +633,40 @@ class CredentialResults(_Model):
 
 
 class CredentialValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A credential value. Exactly one variant must be set.
-
-    In the current API version, only the ``inline`` variant is supported. Future
-    API versions are expected to add additional credential kinds (for example,
-    managed identity and Key Vault secret references) as sibling variants on
-    this model.
+    """A credential value used for accessing gated or private models.
 
     :ivar inline: An inline credential containing a secret value supplied in the request payload.
     :vartype inline: ~azure.mgmt.containerserviceaimanager.models.InlineCredential
+    :ivar managed_identity:   A user-assigned managed identity the platform authenticates as.
+     Required for ``MicrosoftFoundry`` sources and the user must grant the ``Foundry User`` role
+     (role definition id 53ca6127-db72-4b80-b1b0-d745d6d5456d) on the Foundry project. See
+     `https://aka.ms/aks/aim-modelsource <https://aka.ms/aks/aim-modelsource>`_ for more details.
+     The platform federates this identity to an in-cluster puller ServiceAccount (Workload Identity)
+     at deployment time.
+    :vartype managed_identity:
+     ~azure.mgmt.containerserviceaimanager.models.ManagedIdentityCredential
     """
 
     inline: Optional["_models.InlineCredential"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """An inline credential containing a secret value supplied in the request payload."""
+    managed_identity: Optional["_models.ManagedIdentityCredential"] = rest_field(
+        name="managedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A user-assigned managed identity the platform authenticates as. Required for
+     ``MicrosoftFoundry`` sources and the user must grant the ``Foundry User`` role (role definition
+     id 53ca6127-db72-4b80-b1b0-d745d6d5456d) on the Foundry project. See
+     `https://aka.ms/aks/aim-modelsource <https://aka.ms/aks/aim-modelsource>`_ for more details.
+     The platform federates this identity to an in-cluster puller ServiceAccount (Workload Identity)
+     at deployment time."""
 
     @overload
     def __init__(
         self,
         *,
         inline: Optional["_models.InlineCredential"] = None,
+        managed_identity: Optional["_models.ManagedIdentityCredential"] = None,
     ) -> None: ...
 
     @overload
@@ -608,6 +678,147 @@ class CredentialValue(_Model):  # pylint: disable=docstring-keyword-should-match
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class CustomAIModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A custom AI model registered by the user and scoped to a specific AIManager.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerserviceaimanager.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerserviceaimanager.models.CustomAIModelProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.CustomAIModelProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.CustomAIModelProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CustomAIModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Custom AI model properties.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerserviceaimanager.models.CustomAIModelProvisioningState
+    :ivar model_id: The model identifier, interpreted per the referenced ModelSource type. For
+     ``HuggingFace`` sources this is the upstream ``<org>/<repo>`` id, e.g.
+     ``meta-llama/Llama-2-7b-chat``. For ``MicrosoftFoundry`` sources this is ``modelName/version``,
+     e.g. ``private-llama/1``. Immutable after creation. Required.
+    :vartype model_id: str
+    :ivar base_model: The base model this custom model was trained from (id + config.json).
+     Immutable after creation. Required.
+    :vartype base_model: ~azure.mgmt.containerserviceaimanager.models.BaseModelReference
+    :ivar model_source_resource_id: Azure resource id of the ModelSource to use when pulling
+     artifacts. Used to determine model location and access. Immutable after creation. Required.
+    :vartype model_source_resource_id: str
+    :ivar description: Optional. Free-form description of the model. Mutable.
+    :vartype description: str
+    :ivar spec: Read-only. Platform-resolved specification of the model.
+    :vartype spec: ~azure.mgmt.containerserviceaimanager.models.CustomAIModelSpec
+    """
+
+    provisioning_state: Optional[Union[str, "_models.CustomAIModelProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Creating\", \"Updating\", and \"Deleting\"."""
+    model_id: str = rest_field(name="modelId", visibility=["read", "create"])
+    """The model identifier, interpreted per the referenced ModelSource type. For ``HuggingFace``
+     sources this is the upstream ``<org>/<repo>`` id, e.g. ``meta-llama/Llama-2-7b-chat``. For
+     ``MicrosoftFoundry`` sources this is ``modelName/version``, e.g. ``private-llama/1``. Immutable
+     after creation. Required."""
+    base_model: "_models.BaseModelReference" = rest_field(name="baseModel", visibility=["read", "create"])
+    """The base model this custom model was trained from (id + config.json). Immutable after creation.
+     Required."""
+    model_source_resource_id: str = rest_field(name="modelSourceResourceId", visibility=["read", "create"])
+    """Azure resource id of the ModelSource to use when pulling artifacts. Used to determine model
+     location and access. Immutable after creation. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional. Free-form description of the model. Mutable."""
+    spec: Optional["_models.CustomAIModelSpec"] = rest_field(visibility=["read"])
+    """Read-only. Platform-resolved specification of the model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_id: str,
+        base_model: "_models.BaseModelReference",
+        model_source_resource_id: str,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CustomAIModelSpec(_Model):
+    """Platform-resolved specification of a custom model. Extends ``ModelSpec`` with custom
+    model-specific metadata. All fields are read-only. Reserved so custom-model-specific fields can
+    be added without changing the SDK surface.
+
+    :ivar license: The license of the model, when known. SPDX license identifier, e.g. ``mit``,
+     ``apache-2.0``.
+    :vartype license: str
+    :ivar is_restricted: Whether access to the model is restricted and requires credential.
+     Required.
+    :vartype is_restricted: bool
+    :ivar max_context_length: The maximum context length supported by the model, in tokens.
+     Required.
+    :vartype max_context_length: int
+    """
+
+    license: Optional[str] = rest_field(visibility=["read"])
+    """The license of the model, when known. SPDX license identifier, e.g. ``mit``, ``apache-2.0``."""
+    is_restricted: bool = rest_field(name="isRestricted", visibility=["read"])
+    """Whether access to the model is restricted and requires credential. Required."""
+    max_context_length: int = rest_field(name="maxContextLength", visibility=["read"])
+    """The maximum context length supported by the model, in tokens. Required."""
 
 
 class ErrorAdditionalInfo(_Model):
@@ -685,7 +896,8 @@ class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-k
 
 class InfeasibilityReason(_Model):
     """Reason explaining why a ``CalculateCostPlan`` is not deployable. This is a per-plan annotation
-    surfaced inside a successful ``calculateCost`` response, not an ARM error envelope.
+    surfaced inside a successful ``calculateCost`` response, not an Azure Resource Manager error
+    envelope.
 
     :ivar code: Machine-readable reason code. Required. Known values are: "InsufficientQuota",
      "RegionUnavailable", and "InefficientDeployment".
@@ -716,6 +928,37 @@ class InlineCredential(_Model):  # pylint: disable=docstring-keyword-should-matc
         self,
         *,
         value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedIdentityCredential(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A credential backed by a user-owned user-assigned managed identity. The platform authenticates
+    to the model source as this identity via Workload Identity; no secret is stored.
+
+    :ivar resource_id: The Azure resource id of the user-assigned managed identity to authenticate
+     with. Only user-assigned identities are supported. Required.
+    :vartype resource_id: str
+    """
+
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
+    """The Azure resource id of the user-assigned managed identity to authenticate with. Only
+     user-assigned identities are supported. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: str,
     ) -> None: ...
 
     @overload
@@ -798,6 +1041,47 @@ class ManualScalingProfile(_Model):  # pylint: disable=docstring-keyword-should-
         self,
         *,
         replicas: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftFoundrySource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reference to a Microsoft Foundry project that backs a ``MicrosoftFoundry``
+    ModelSource. Only the project Azure id is required; the Foundry account and its
+    data-plane endpoint (``*.services.ai.azure.com``) are resolved by the platform
+    from the project (the account is the project's parent resource).
+
+    Authentication uses the user-assigned managed identity referenced in the
+    ModelSource ``credential.managedIdentity``, which the user must grant the
+    ``Foundry User`` role (role definition id 53ca6127-db72-4b80-b1b0-d745d6d5456d)
+    on this project. See `https://aka.ms/aks/aim-modelsource <https://aka.ms/aks/aim-modelsource>`_
+    for more details.
+
+    :ivar project_resource_id: The ARM resource id of the Foundry project. The scope on which the
+     referenced managed identity must hold the ``Foundry User`` role. The account and endpoint host
+     are derived from this id. Required.
+    :vartype project_resource_id: str
+    """
+
+    project_resource_id: str = rest_field(name="projectResourceId", visibility=["read", "create"])
+    """The ARM resource id of the Foundry project. The scope on which the referenced managed identity
+     must hold the ``Foundry User`` role. The account and endpoint host are derived from this id.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_resource_id: str,
     ) -> None: ...
 
     @overload
@@ -908,10 +1192,10 @@ class ModelDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-sh
      "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerserviceaimanager.models.ModelDeploymentProvisioningState
-    :ivar model_resource_id: Full ARM resource id of the model to deploy. Phase 1 accepts an
-     ``AIModel`` resource id only. Immutable after creation. Required.
+    :ivar model_resource_id: Full Azure resource ID of the model to deploy. Immutable after
+     creation. Required.
     :vartype model_resource_id: str
-    :ivar model_source_resource_id: Full ARM resource id of a ``ModelSource`` to use when pulling
+    :ivar model_source_resource_id: Full Azure resource ID of a ``ModelSource`` to use when pulling
      artifacts for this deployment. Immutable after creation.
     :vartype model_source_resource_id: str
     :ivar performance_mode: Runtime performance mode. Known values are: "Balanced", "Latency", and
@@ -936,10 +1220,9 @@ class ModelDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-sh
     """The status of the last reconciliation. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     model_resource_id: str = rest_field(name="modelResourceId", visibility=["read", "create"])
-    """Full ARM resource id of the model to deploy. Phase 1 accepts an ``AIModel`` resource id only.
-     Immutable after creation. Required."""
+    """Full Azure resource ID of the model to deploy. Immutable after creation. Required."""
     model_source_resource_id: Optional[str] = rest_field(name="modelSourceResourceId", visibility=["read", "create"])
-    """Full ARM resource id of a ``ModelSource`` to use when pulling artifacts for this deployment.
+    """Full Azure resource ID of a ``ModelSource`` to use when pulling artifacts for this deployment.
      Immutable after creation."""
     performance_mode: Optional[Union[str, "_models.ModelDeploymentPerformanceMode"]] = rest_field(
         name="performanceMode", visibility=["read", "create", "update", "delete", "query"]
@@ -1095,13 +1378,16 @@ class ModelSourceProperties(_Model):  # pylint: disable=docstring-keyword-should
     :vartype provisioning_state: str or
      ~azure.mgmt.containerserviceaimanager.models.ResourceProvisioningState
     :ivar source_type: Model source type. Constrains the legal authentication kinds. Immutable
-     after creation. Required. "HuggingFace"
+     after creation. Required. Known values are: "HuggingFace" and "MicrosoftFoundry".
     :vartype source_type: str or ~azure.mgmt.containerserviceaimanager.models.ModelSourceType
     :ivar description: An optional, free-form description of the source.
     :vartype description: str
     :ivar credential: Credential the platform uses to authenticate to the source. Optional for
      public sources (e.g. ungated Hugging Face models).
     :vartype credential: ~azure.mgmt.containerserviceaimanager.models.CredentialValue
+    :ivar microsoft_foundry: Microsoft Foundry project reference. Required when ``sourceType`` is
+     ``MicrosoftFoundry``; must be omitted otherwise. Immutable after creation.
+    :vartype microsoft_foundry: ~azure.mgmt.containerserviceaimanager.models.MicrosoftFoundrySource
     """
 
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
@@ -1111,12 +1397,19 @@ class ModelSourceProperties(_Model):  # pylint: disable=docstring-keyword-should
      \"Canceled\"."""
     source_type: Union[str, "_models.ModelSourceType"] = rest_field(name="sourceType", visibility=["read", "create"])
     """Model source type. Constrains the legal authentication kinds. Immutable after creation.
-     Required. \"HuggingFace\""""
+     Required. Known values are: \"HuggingFace\" and \"MicrosoftFoundry\"."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An optional, free-form description of the source."""
-    credential: Optional["_models.CredentialValue"] = rest_field(visibility=["create", "update"])
+    credential: Optional["_models.CredentialValue"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Credential the platform uses to authenticate to the source. Optional for public sources (e.g.
      ungated Hugging Face models)."""
+    microsoft_foundry: Optional["_models.MicrosoftFoundrySource"] = rest_field(
+        name="microsoftFoundry", visibility=["read", "create"]
+    )
+    """Microsoft Foundry project reference. Required when ``sourceType`` is ``MicrosoftFoundry``; must
+     be omitted otherwise. Immutable after creation."""
 
     @overload
     def __init__(
@@ -1125,6 +1418,7 @@ class ModelSourceProperties(_Model):  # pylint: disable=docstring-keyword-should
         source_type: Union[str, "_models.ModelSourceType"],
         description: Optional[str] = None,
         credential: Optional["_models.CredentialValue"] = None,
+        microsoft_foundry: Optional["_models.MicrosoftFoundrySource"] = None,
     ) -> None: ...
 
     @overload

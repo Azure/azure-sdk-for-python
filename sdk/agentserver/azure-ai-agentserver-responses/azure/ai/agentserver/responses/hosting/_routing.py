@@ -12,7 +12,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import types
 from collections.abc import AsyncIterable, Awaitable
-from typing import Any, AsyncIterator, Callable, Optional, Union
+from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, Optional, Union
 
 from starlette.routing import Route
 
@@ -20,26 +20,28 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
     AgentServerHost,
     build_server_version,
 )
+from azure.ai.agentserver.core._middleware import _task_runtime_middleware
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
 from .._version import VERSION as _RESPONSES_VERSION
-from ..models._generated import CreateResponse, ResponseStreamEvent
+from ..models import _generated as _generated_models
+
 from ..streaming._checkpoint import ResponseCheckpointEvent
 from ..store._base import ResponseProviderProtocol
 from ..store._memory import InMemoryResponseProvider
 from ._endpoint_handler import _ResponseEndpointHandler
-from ._orchestrator import _ResponseOrchestrator
+from ._orchestrator import _ResponseOrchestrator, _close_iterator
 from ._runtime_state import _RuntimeState
 
-CreateHandlerEvent = Union[ResponseStreamEvent, ResponseCheckpointEvent, dict[str, Any]]
+if TYPE_CHECKING:
+    from azure.ai.agentserver.core.tasks._manager import TaskManager
+
+CreateHandlerEvent = Union["_generated_models.ResponseStreamEvent", ResponseCheckpointEvent, dict[str, Any]]
 
 CreateHandlerFn = Callable[
-    [CreateResponse, ResponseContext, asyncio.Event],
-    Union[
-        AsyncIterable[CreateHandlerEvent],
-        Awaitable[AsyncIterable[CreateHandlerEvent]],
-    ],
+    ["_generated_models.CreateResponse", ResponseContext, asyncio.Event],
+    Union[AsyncIterable[CreateHandlerEvent], Awaitable[AsyncIterable[CreateHandlerEvent]]],
 ]
 """Type alias for the user-registered create-response handler function.
 
@@ -74,8 +76,11 @@ async def _sync_to_async_gen(sync_gen: types.GeneratorType) -> AsyncIterator:
     :return: An async iterator yielding items from the synchronous generator.
     :rtype: AsyncIterator
     """
-    for item in sync_gen:
-        yield item
+    try:
+        for item in sync_gen:
+            yield item
+    finally:
+        sync_gen.close()
 
 
 def _serialize_event_payload(payload: Any) -> bytes:
@@ -201,11 +206,7 @@ def _log_startup_configuration(
         runtime_options.shutdown_grace_period_seconds,
     )
 
-    from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
-        resilient_tasks_enabled,
-    )
-
-    if resilient_tasks_enabled():
+    if runtime_options.resilient_background or runtime_options.steerable_conversations:
         logger.info(
             "Responses resilience: ENABLED - store=true responses run inside durable "
             "tasks with crash recovery (in-flight responses are recovered/marked failed "
@@ -216,7 +217,7 @@ def _log_startup_configuration(
             "Responses resilience: DISABLED - store=true responses run in-process and are "
             "NOT durable across an ungraceful crash: a response in-flight when the process "
             "is hard-killed stays in_progress on a later GET (no mark-failed/recovery). "
-            "Enable durability via resilient_background, or set_resilient_tasks_enabled(True)."
+            "Enable the Responses task runtime with resilient_background or steerable_conversations."
         )
 
 
@@ -336,6 +337,9 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         # Build internal components
         runtime_options = options or ResponsesServerOptions()
+        task_middleware = _task_runtime_middleware(
+            self, kwargs, lambda: bool(runtime_options.resilient_background or runtime_options.steerable_conversations)
+        )
 
         # Server version string — the responses segment is built once and
         # registered on the host.  The full x-platform-server value is
@@ -474,30 +478,35 @@ class ResponsesAgentServerHost(AgentServerHost):
                 endpoint.handle_create,
                 methods=["POST"],
                 name="create_response",
+                middleware=task_middleware,
             ),
             Route(
                 f"{normalized_prefix}/responses/{{response_id}}",
                 endpoint.handle_get,
                 methods=["GET"],
                 name="get_response",
+                middleware=task_middleware,
             ),
             Route(
                 f"{normalized_prefix}/responses/{{response_id}}",
                 endpoint.handle_delete,
                 methods=["DELETE"],
                 name="delete_response",
+                middleware=task_middleware,
             ),
             Route(
                 f"{normalized_prefix}/responses/{{response_id}}/cancel",
                 endpoint.handle_cancel,
                 methods=["POST"],
                 name="cancel_response",
+                middleware=task_middleware,
             ),
             Route(
                 f"{normalized_prefix}/responses/{{response_id}}/input_items",
                 endpoint.handle_input_items,
                 methods=["GET"],
                 name="get_input_items",
+                middleware=task_middleware,
             ),
         ]
 
@@ -533,6 +542,16 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         # --- Responses startup configuration + durability-mode logging ---
         _log_startup_configuration(resolved_provider, runtime_options)
+
+    def _register_task_callbacks(self, manager: "TaskManager") -> None:
+        """Bind this host's Responses callbacks before recovery starts.
+
+        :param manager: The owning host's task manager.
+        :type manager: ~azure.ai.agentserver.core.tasks._manager.TaskManager
+        """
+        # pylint: disable=protected-access
+        super()._register_task_callbacks(manager)
+        self._endpoint._orchestrator._resilient_orchestrator._register_task_callbacks(manager)
 
     # ------------------------------------------------------------------
     # Shutdown notification
@@ -640,10 +659,10 @@ class ResponsesAgentServerHost(AgentServerHost):
 
     def _dispatch_create(
         self,
-        request: CreateResponse,
+        request: _generated_models.CreateResponse,
         context: ResponseContext,
         cancellation_signal: asyncio.Event,
-    ) -> AsyncIterator[ResponseStreamEvent]:
+    ) -> AsyncIterator[_generated_models.ResponseStreamEvent]:
         """Dispatch to the registered create handler.
 
         Called by the orchestrator when processing a create request.
@@ -669,7 +688,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         result = self._create_fn(request, context, cancellation_signal)
         return self._normalize_handler_result(result)
 
-    def _normalize_handler_result(self, result: Any) -> AsyncIterator[ResponseStreamEvent]:
+    def _normalize_handler_result(self, result: Any) -> AsyncIterator[_generated_models.ResponseStreamEvent]:
         """Convert a handler result into an AsyncIterator.
 
         Supports sync generators, async generators, coroutines (async def
@@ -692,7 +711,9 @@ class ResponsesAgentServerHost(AgentServerHost):
             return result.__aiter__()  # type: ignore[union-attr, return-value]
         return result  # type: ignore[return-value]
 
-    async def _await_and_normalize(self, coro: Any) -> AsyncIterator[ResponseStreamEvent]:  # type: ignore[misc]
+    async def _await_and_normalize(  # type: ignore[misc]
+        self, coro: Any
+    ) -> AsyncIterator[_generated_models.ResponseStreamEvent]:
         """Await a coroutine and yield events from its normalised result.
 
         :param coro: A coroutine to await.
@@ -701,5 +722,9 @@ class ResponsesAgentServerHost(AgentServerHost):
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
         inner = await coro
-        async for event in self._normalize_handler_result(inner):
-            yield event
+        iterator = self._normalize_handler_result(inner)
+        try:
+            async for event in iterator:
+                yield event
+        finally:
+            await _close_iterator(iterator)

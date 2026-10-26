@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import json
 import logging
-from typing import Optional, Sequence, Any
+from typing import Dict, Optional, Sequence, Any
 
 from opentelemetry._logs.severity import SeverityNumber
 from opentelemetry.sdk._logs import ReadableLogRecord
@@ -23,21 +23,31 @@ except ImportError:
 try:
     from opentelemetry.semconv._incubating.attributes import (
         enduser_attributes as _enduser_attributes,
+        session_attributes as _session_attributes,
     )
 except ImportError:
     _enduser_attributes = None  # type: ignore
+    _session_attributes = None  # type: ignore
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
+    _AVAILABILITY_ENVELOPE_NAME,
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     _DEFAULT_LOG_MESSAGE,
     _EXCEPTION_ENVELOPE_NAME,
     _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _MESSAGE_ENVELOPE_NAME,
+    _MICROSOFT_AVAILABILITY_DURATION,
+    _MICROSOFT_AVAILABILITY_ID,
+    _MICROSOFT_AVAILABILITY_MESSAGE,
+    _MICROSOFT_AVAILABILITY_NAME,
+    _MICROSOFT_AVAILABILITY_RUN_LOCATION,
+    _MICROSOFT_AVAILABILITY_SUCCESS,
     _MICROSOFT_CUSTOM_EVENT_NAME,
     _MICROSOFT_CUSTOM_MEASUREMENTS,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
+    AvailabilityData,
     ContextTagKeys,
     MessageData,
     MonitorDomain,
@@ -69,6 +79,7 @@ _ENDUSER_PSEUDO_ID_ATTRIBUTE = (
     or getattr(_enduser_attributes, "ENDUSER_PSEUDO_ID", None)
     or "enduser.pseudo.id"
 )
+_SESSION_ID_ATTRIBUTE = getattr(_session_attributes, "SESSION_ID", None) or "session.id"
 
 _logger = logging.getLogger(__name__)
 
@@ -99,6 +110,11 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
             _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
+    def force_flush(self, timeout_millis: float = 10_000) -> bool:
+        # Ensure that export of any received log records completes as soon as possible.
+
+        return True
+
     def shutdown(self) -> None:
         """Shuts down the exporter.
 
@@ -108,7 +124,10 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
             self.storage.close()
 
     def _log_to_envelope(self, readable_log_record: ReadableLogRecord) -> TelemetryItem:
-        envelope = _convert_log_to_envelope(readable_log_record)
+        envelope = _convert_log_to_envelope(
+            readable_log_record,
+            increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+        )
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
@@ -144,7 +163,10 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
 
 # pylint: disable=protected-access
 # pylint: disable=too-many-statements
-def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> TelemetryItem:
+# pylint: disable=too-many-branches
+def _convert_log_to_envelope(
+    readable_log_record: ReadableLogRecord, *, increase_truncation_limit: bool = False
+) -> TelemetryItem:
     log_record = readable_log_record.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
@@ -167,6 +189,9 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(  # type: ignore
             ContextTagKeys.AI_OPERATION_NAME
         )
+    session_id = log_record.attributes.get(_SESSION_ID_ATTRIBUTE) if log_record.attributes else None
+    if isinstance(session_id, str):
+        tags[ContextTagKeys.AI_SESSION_ID] = session_id
     if _utils._is_any_synthetic_source(log_record.attributes):
         tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     # Special use case: Customers want to be able to set location ip on log records
@@ -174,9 +199,12 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
     if location_ip:
         tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
-        log_record.attributes, lambda key, val: not _is_ignored_attribute(key)  # type: ignore
+        log_record.attributes,
+        lambda key, val: not _is_ignored_attribute(key),  # type: ignore
+        increase_truncation_limit=increase_truncation_limit,
     )
     measurements = _utils._filter_custom_measurements(log_record.attributes)
+    availability_data = _get_availability_data(log_record)
     exc_type = exc_message = stack_trace = None
     if log_record.attributes:
         exc_type = log_record.attributes.get(EXCEPTION_TYPE)
@@ -231,6 +259,24 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
             measurements=measurements,
         )
         envelope.data = MonitorBase(base_data=data, base_type="EventData")
+    elif availability_data:  # Availability telemetry
+        envelope.name = _AVAILABILITY_ENVELOPE_NAME
+        data = AvailabilityData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
+            id=availability_data["id"],
+            name=availability_data["name"],
+            duration=availability_data["duration"],
+            success=availability_data["success"].lower() == "true",
+            run_location=availability_data.get("run_location"),
+            message=(
+                availability_data["message"]
+                if "message" in availability_data
+                else _map_body_to_message(log_record.body)
+            ),
+            properties=properties,
+            measurements=measurements,
+        )
+        envelope.data = MonitorBase(base_data=data, base_type="AvailabilityData")
     else:  # Message telemetry
         envelope.name = _MESSAGE_ENVELOPE_NAME
         # pylint: disable=line-too-long
@@ -286,6 +332,26 @@ def _map_body_to_message(log_body: Any) -> str:
         return str(log_body)[:32768]
 
 
+def _get_availability_data(log_record) -> Optional[Dict[str, str]]:
+    if not log_record.attributes or _MICROSOFT_AVAILABILITY_NAME not in log_record.attributes:
+        return None
+
+    availability_data = {
+        "id": log_record.attributes.get(_MICROSOFT_AVAILABILITY_ID),
+        "name": log_record.attributes.get(_MICROSOFT_AVAILABILITY_NAME),
+        "duration": log_record.attributes.get(_MICROSOFT_AVAILABILITY_DURATION),
+        "success": log_record.attributes.get(_MICROSOFT_AVAILABILITY_SUCCESS),
+        "run_location": log_record.attributes.get(_MICROSOFT_AVAILABILITY_RUN_LOCATION),
+        "message": log_record.attributes.get(_MICROSOFT_AVAILABILITY_MESSAGE),
+    }
+    if not all(
+        availability_data[field] is not None and str(availability_data[field])
+        for field in ("id", "name", "duration", "success")
+    ):
+        return None
+    return {key: str(value) for key, value in availability_data.items() if value is not None}
+
+
 def _is_ignored_attribute(key: str) -> bool:
     return key in _IGNORED_ATTRS
 
@@ -299,8 +365,15 @@ _IGNORED_ATTRS = frozenset(
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
         _MICROSOFT_CUSTOM_EVENT_NAME,
         _MICROSOFT_CUSTOM_MEASUREMENTS,
+        _MICROSOFT_AVAILABILITY_ID,
+        _MICROSOFT_AVAILABILITY_NAME,
+        _MICROSOFT_AVAILABILITY_DURATION,
+        _MICROSOFT_AVAILABILITY_SUCCESS,
+        _MICROSOFT_AVAILABILITY_RUN_LOCATION,
+        _MICROSOFT_AVAILABILITY_MESSAGE,
         _ENDUSER_ID_ATTRIBUTE,
         _ENDUSER_PSEUDO_ID_ATTRIBUTE,
+        _SESSION_ID_ATTRIBUTE,
     )
 )
 

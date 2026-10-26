@@ -73,6 +73,63 @@ foreach ($line in $lines) {
 }
 Set-Content $f $out
 
+# Normalize generated reStructuredText bullet lists in model and enum docstrings.
+# Join incorrectly indented continuations, then reflow long bullets with valid continuation indentation.
+$files = 'azure\ai\projects\models\_models.py', 'azure\ai\projects\models\_enums.py'
+foreach ($f in $files) {
+    $lines = Get-Content $f
+    $out = @()
+    $inDocstring = $false
+    $inBulletList = $false
+    for ($i = 0; $i -lt $lines.Length; $i++) {
+        $line = $lines[$i]
+        $trimmed = $line.TrimStart()
+        $quoteCount = ([regex]::Matches($line, '"""')).Count
+        $isClosingQuote = $trimmed -eq '"""'
+        $isContinuation = $trimmed -match '^[a-z0-9`(]'
+        if ($inDocstring -and $inBulletList -and $isContinuation -and $line -match '^\s{4}\S') {
+            while ($out.Count -gt 0 -and -not $out[-1].Trim()) { $out = $out[0..($out.Count - 2)] }
+            if ($out.Count -gt 0) {
+                $out[-1] = $out[-1].TrimEnd() + ' ' + $trimmed
+                continue
+            }
+        }
+        if ($inDocstring -and $inBulletList -and $trimmed -match '^\:') {
+            if ($out.Count -gt 0 -and $out[-1].Trim()) { $out += '' }
+            $inBulletList = $false
+        }
+        $out += $line
+        if ($trimmed -match '^\*\s') { $inBulletList = $true }
+        if ($quoteCount % 2 -eq 1 -and -not $isClosingQuote) { $inDocstring = -not $inDocstring }
+        if ($isClosingQuote) { $inDocstring = $false; $inBulletList = $false }
+    }
+    $wrapped = @()
+    foreach ($line in $out) {
+        if ($line.Length -le 120 -or $line -notmatch '^(\s*)\*\s+(.+)$') {
+            $wrapped += $line
+            continue
+        }
+
+        $firstPrefix = $Matches[1] + '* '
+        $continuationPrefix = $Matches[1] + '  '
+        $prefix = $firstPrefix
+        $currentLine = $prefix
+        foreach ($word in $Matches[2] -split '\s+') {
+            if ($currentLine.Length -gt $prefix.Length -and $currentLine.Length + 1 + $word.Length -gt 120) {
+                $wrapped += $currentLine
+                $prefix = $continuationPrefix
+                $currentLine = $prefix + $word
+            }
+            else {
+                $separator = if ($currentLine.Length -eq $prefix.Length) { '' } else { ' ' }
+                $currentLine += $separator + $word
+            }
+        }
+        $wrapped += $currentLine
+    }
+    Set-Content $f $wrapped
+}
+
 # Fix Sphinx docutils warnings in get_session_log_stream docstrings (sync + async).
 # The emitter wraps bullet/code-block lines with insufficient indentation.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
@@ -86,6 +143,64 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
-# Finishing by running 'black' tool to format code. 
-pip install black
-black --config ../../../eng/black-pyproject.toml .
+# Remove invalid single overload stubs for BetaAgentsOperations.generate/create_from_prompt.
+$files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
+foreach ($f in $files) {
+    $c = Get-Content $f -Raw
+    $c = $c -replace '(?ms)\r?\n    @overload\r?\n    (?:async )?def (?:generate|create_from_prompt)\(\r?\n        self, body: _models\.GenerateVoiceAgentRequest, \*, content_type: str = "application/json", \*\*kwargs: Any\r?\n    \) -> _models\.AgentDetails:\r?\n        """Generate an agent\..*?        """\r?\n\r?\n(?=    @distributed_trace)', "`r`n"
+    $c = $c -replace '(?ms)\r?\n    @overload\r?\n    async def (?:generate|create_from_prompt)\(\r?\n        self, body: _models\.GenerateVoiceAgentRequest, \*, content_type: str = "application/json", \*\*kwargs: Any\r?\n    \) -> _models\.AgentDetails:\r?\n        """Generate an agent\..*?        """\r?\n\r?\n(?=    @distributed_trace_async)', "`r`n"
+    Set-Content $f $c -NoNewline
+}
+
+# Remove malformed overloads where the emitter assigns a body List type to the ETag parameter.
+# If only one overload remains for that method, remove that stub too because @overload requires
+# at least two declarations. The concrete implementation remains available.
+$files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
+foreach ($f in $files) {
+    $lines = Get-Content $f
+    $out = @()
+    for ($i = 0; $i -lt $lines.Length;) {
+        if ($lines[$i] -notmatch '^(\s*)@overload\s*$') {
+            $out += $lines[$i]
+            $i++
+            continue
+        }
+
+        $indent = $Matches[1]
+        $overloads = @()
+        while ($i -lt $lines.Length -and $lines[$i] -match ('^' + [regex]::Escape($indent) + '@overload\s*$')) {
+            $end = $i + 1
+            while ($end -lt $lines.Length -and $lines[$end] -notmatch ('^' + [regex]::Escape($indent) + '@')) {
+                $end++
+            }
+            $overload = $lines[$i..($end - 1)]
+            $overloads += ,@{
+                Lines = $overload
+                MalformedEtag = [bool]($overload -match '^\s*etag:\s*List\[[^\]]+\]')
+            }
+            $i = $end
+        }
+
+        $validOverloads = @($overloads | Where-Object { -not $_.MalformedEtag })
+        $removedMalformedEtag = $validOverloads.Count -ne $overloads.Count
+        if (-not $removedMalformedEtag -or $validOverloads.Count -gt 1) {
+            foreach ($overload in $validOverloads) {
+                $out += $overload.Lines
+            }
+        }
+    }
+    Set-Content $f $out
+}
+
+# Regenerate API review artifacts and the public method inventory.
+$pythonExecutable = (Get-Command python -ErrorAction Stop).Source
+& $pythonExecutable -m pip install --no-deps --editable .
+if ($LASTEXITCODE -ne 0) {
+    throw "Editable package installation failed with exit code $LASTEXITCODE."
+}
+azpysdk apistub .
+$apiStubExitCode = $LASTEXITCODE
+.\docs\GeneratePublicMethodsDoc.ps1 -PythonExecutable $pythonExecutable
+if ($apiStubExitCode -ne 0) {
+    throw "API stub generation failed with exit code $apiStubExitCode."
+}

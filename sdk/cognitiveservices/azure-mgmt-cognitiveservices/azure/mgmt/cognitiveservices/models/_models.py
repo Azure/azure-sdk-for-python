@@ -12,13 +12,20 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import AgentDeploymentType, BuiltInAuthorizationScheme, ComputeType, ConnectionAuthType, RuleType
+from ._enums import (
+    AgentDeploymentType,
+    AgentHostingType,
+    BuiltInAuthorizationScheme,
+    ComputeType,
+    ConnectionAuthType,
+    RuleType,
+)
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ConnectionPropertiesV2(_Model):
+class ConnectionPropertiesV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connection property base schema.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -48,11 +55,11 @@ class ConnectionPropertiesV2(_Model):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -110,10 +117,10 @@ class ConnectionPropertiesV2(_Model):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -181,7 +188,9 @@ class ConnectionPropertiesV2(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AADAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="AAD"):
+class AADAuthTypeConnectionProperties(
+    ConnectionPropertiesV2, discriminator="AAD"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This connection type covers the AAD auth for any applicable Azure service.
 
     :ivar category: Category of the connection. Known values are: "PythonFeed",
@@ -197,11 +206,11 @@ class AADAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="AAD
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -268,7 +277,7 @@ class AADAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="AAD
         self.auth_type = ConnectionAuthType.AAD  # type: ignore
 
 
-class AbusePenalty(_Model):
+class AbusePenalty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The abuse penalty.
 
     :ivar action: The action of AbusePenalty. Known values are: "Throttle" and "Block".
@@ -312,7 +321,9 @@ class AbusePenalty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessKeyAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="AccessKey"):
+class AccessKeyAuthTypeConnectionProperties(
+    ConnectionPropertiesV2, discriminator="AccessKey"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AccessKeyAuthTypeConnectionProperties.
 
     :ivar category: Category of the connection. Known values are: "PythonFeed",
@@ -328,11 +339,11 @@ class AccessKeyAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminato
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -450,7 +461,7 @@ class ProxyResource(Resource):
     """
 
 
-class Account(ProxyResource):
+class Account(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services account is an Azure resource representing the provisioned account, it's
     type, location and SKU.
 
@@ -521,7 +532,9 @@ class Account(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AccountKeyAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="AccountKey"):
+class AccountKeyAuthTypeConnectionProperties(
+    ConnectionPropertiesV2, discriminator="AccountKey"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This connection type covers the account key connection for Azure storage.
 
     :ivar category: Category of the connection. Known values are: "PythonFeed",
@@ -537,11 +550,11 @@ class AccountKeyAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminat
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -615,7 +628,7 @@ class AccountKeyAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminat
         self.auth_type = ConnectionAuthType.ACCOUNT_KEY  # type: ignore
 
 
-class DeploymentModel(_Model):
+class DeploymentModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Cognitive Services account deployment model.
 
     :ivar publisher: Deployment model publisher.
@@ -681,7 +694,7 @@ class DeploymentModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccountModel(DeploymentModel):
+class AccountModel(DeploymentModel):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services account Model.
 
     :ivar publisher: Deployment model publisher.
@@ -800,12 +813,12 @@ class AccountModel(DeploymentModel):
         super().__init__(*args, **kwargs)
 
 
-class AccountProperties(_Model):
+class AccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Cognitive Services account.
 
     :ivar provisioning_state: Gets the status of the cognitive services account at the time the
      operation was called. Known values are: "Accepted", "Creating", "Deleting", "Moving", "Failed",
-     "Succeeded", "Canceled", and "ResolvingDNS".
+     "Succeeded", "Canceled", "ResolvingDNS", and "ExtensionUnreachable".
     :vartype provisioning_state: str or ~azure.mgmt.cognitiveservices.models.ProvisioningState
     :ivar endpoint: Endpoint of the created account.
     :vartype endpoint: str
@@ -849,6 +862,9 @@ class AccountProperties(_Model):
     :vartype dynamic_throttling_enabled: bool
     :ivar stored_completions_disabled: The flag to disable stored completions.
     :vartype stored_completions_disabled: bool
+    :ivar a365_logging_enabled: Specifies whether A365 logging is enabled. Defaults to true. Set to
+     false to opt out.
+    :vartype a365_logging_enabled: bool
     :ivar quota_limit:
     :vartype quota_limit: ~azure.mgmt.cognitiveservices.models.QuotaLimit
     :ivar restrict_outbound_network_access:
@@ -890,6 +906,28 @@ class AccountProperties(_Model):
     :ivar associated_projects: Specifies the projects, by project name, that are associated with
      this resource.
     :vartype associated_projects: list[str]
+    :ivar capability_settings: Reusable default agent capability settings inherited by child
+     projects.
+    :vartype capability_settings: ~azure.mgmt.cognitiveservices.models.CapabilitySettings
+    :ivar agent_hosting_configurations: Customer-owned AKS hosting configurations for Foundry
+     agents. This property can only be specified when the account is created; an existing account
+     without a hosting configuration cannot add one later. This API version supports exactly one
+     configuration, while the array shape is reserved for future API versions that may support
+     multiple configurations. Once set, the configuration cannot be changed, removed, or reordered.
+     Account update requests should omit this property or send the complete existing value
+     unchanged. Responses only include hosting configuration types defined by the requested API
+     version.
+    :vartype agent_hosting_configurations:
+     list[~azure.mgmt.cognitiveservices.models.AgentHostingConfiguration]
+    :ivar cost_control_ids: The full resource IDs of cost controls directly attached to this
+     account. At the moment the service only supports a single cost control. This will be expanded
+     in future API versions.
+    :vartype cost_control_ids: list[str]
+    :ivar cost_control_connections: The account-level connections used to publish cost control
+     telemetry and events. Application Insights is optional for attachment, accounting, and
+     enforcement and can be configured later. Event Grid must be configured before attaching a cost
+     control with an alert threshold.
+    :vartype cost_control_connections: ~azure.mgmt.cognitiveservices.models.CostControlConnections
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -897,7 +935,7 @@ class AccountProperties(_Model):
     )
     """Gets the status of the cognitive services account at the time the operation was called. Known
      values are: \"Accepted\", \"Creating\", \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\",
-     \"Canceled\", and \"ResolvingDNS\"."""
+     \"Canceled\", \"ResolvingDNS\", and \"ExtensionUnreachable\"."""
     endpoint: Optional[str] = rest_field(visibility=["read"])
     """Endpoint of the created account."""
     internal_id: Optional[str] = rest_field(name="internalId", visibility=["read"])
@@ -956,6 +994,10 @@ class AccountProperties(_Model):
         name="storedCompletionsDisabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """The flag to disable stored completions."""
+    a365_logging_enabled: Optional[bool] = rest_field(
+        name="a365LoggingEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether A365 logging is enabled. Defaults to true. Set to false to opt out."""
     quota_limit: Optional["_models.QuotaLimit"] = rest_field(name="quotaLimit", visibility=["read"])
     restrict_outbound_network_access: Optional[bool] = rest_field(
         name="restrictOutboundNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
@@ -1008,6 +1050,31 @@ class AccountProperties(_Model):
         name="associatedProjects", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the projects, by project name, that are associated with this resource."""
+    capability_settings: Optional["_models.CapabilitySettings"] = rest_field(
+        name="capabilitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reusable default agent capability settings inherited by child projects."""
+    agent_hosting_configurations: Optional[list["_models.AgentHostingConfiguration"]] = rest_field(
+        name="agentHostingConfigurations", visibility=["read", "create"]
+    )
+    """Customer-owned AKS hosting configurations for Foundry agents. This property can only be
+     specified when the account is created; an existing account without a hosting configuration
+     cannot add one later. This API version supports exactly one configuration, while the array
+     shape is reserved for future API versions that may support multiple configurations. Once set,
+     the configuration cannot be changed, removed, or reordered. Account update requests should omit
+     this property or send the complete existing value unchanged. Responses only include hosting
+     configuration types defined by the requested API version."""
+    cost_control_ids: Optional[list[str]] = rest_field(
+        name="costControlIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The full resource IDs of cost controls directly attached to this account. At the moment the
+     service only supports a single cost control. This will be expanded in future API versions."""
+    cost_control_connections: Optional["_models.CostControlConnections"] = rest_field(
+        name="costControlConnections", visibility=["read", "update"]
+    )
+    """The account-level connections used to publish cost control telemetry and events. Application
+     Insights is optional for attachment, accounting, and enforcement and can be configured later.
+     Event Grid must be configured before attaching a cost control with an alert threshold."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -1023,6 +1090,7 @@ class AccountProperties(_Model):
         api_properties: Optional["_models.ApiProperties"] = None,
         dynamic_throttling_enabled: Optional[bool] = None,
         stored_completions_disabled: Optional[bool] = None,
+        a365_logging_enabled: Optional[bool] = None,
         restrict_outbound_network_access: Optional[bool] = None,
         allowed_fqdn_list: Optional[list[str]] = None,
         disable_local_auth: Optional[bool] = None,
@@ -1034,6 +1102,10 @@ class AccountProperties(_Model):
         allow_project_management: Optional[bool] = None,
         default_project: Optional[str] = None,
         associated_projects: Optional[list[str]] = None,
+        capability_settings: Optional["_models.CapabilitySettings"] = None,
+        agent_hosting_configurations: Optional[list["_models.AgentHostingConfiguration"]] = None,
+        cost_control_ids: Optional[list[str]] = None,
+        cost_control_connections: Optional["_models.CostControlConnections"] = None,
     ) -> None: ...
 
     @overload
@@ -1047,7 +1119,7 @@ class AccountProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccountSku(_Model):
+class AccountSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services resource type and SKU.
 
     :ivar resource_type: Resource Namespace and Type.
@@ -1082,7 +1154,7 @@ class AccountSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccountSkuListResult(_Model):
+class AccountSkuListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of cognitive services accounts operation response.
 
     :ivar value: Gets the list of Cognitive Services accounts and their properties.
@@ -1110,7 +1182,185 @@ class AccountSkuListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentApplication(ProxyResource):
+class AdapterDeployment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An independently managed LoRA adapter attached to a managed compute deployment.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Properties of the Cognitive Services adapter deployment.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.AdapterDeploymentProperties
+    :ivar etag: The concurrency token for this adapter deployment.
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.AdapterDeploymentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the Cognitive Services adapter deployment."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """The concurrency token for this adapter deployment."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AdapterDeploymentProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AdapterDeploymentLastOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The most recently requested adapter lifecycle operation.
+
+    :ivar type: The type of lifecycle operation. Required. Known values are: "Create", "Update",
+     and "Delete".
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.AdapterDeploymentOperationType
+    :ivar status: The current or terminal operation state. Required. Known values are: "Accepted",
+     "Running", "Succeeded", and "Failed".
+    :vartype status: str or ~azure.mgmt.cognitiveservices.models.AdapterDeploymentOperationState
+    :ivar requested_target_deployment_name: The target deployment requested by a create or
+     re-target operation.
+    :vartype requested_target_deployment_name: str
+    :ivar started_at: The time at which the operation started. Required.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the operation reached a terminal state.
+    :vartype completed_at: ~datetime.datetime
+    """
+
+    type: Union[str, "_models.AdapterDeploymentOperationType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of lifecycle operation. Required. Known values are: \"Create\", \"Update\", and
+     \"Delete\"."""
+    status: Union[str, "_models.AdapterDeploymentOperationState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current or terminal operation state. Required. Known values are: \"Accepted\", \"Running\",
+     \"Succeeded\", and \"Failed\"."""
+    requested_target_deployment_name: Optional[str] = rest_field(
+        name="requestedTargetDeploymentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target deployment requested by a create or re-target operation."""
+    started_at: datetime.datetime = rest_field(
+        name="startedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the operation started. Required."""
+    completed_at: Optional[datetime.datetime] = rest_field(
+        name="completedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the operation reached a terminal state."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.AdapterDeploymentOperationType"],
+        status: Union[str, "_models.AdapterDeploymentOperationState"],
+        started_at: datetime.datetime,
+        requested_target_deployment_name: Optional[str] = None,
+        completed_at: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AdapterDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an adapter deployment.
+
+    :ivar source_model_id: The immutable Project Models version produced by Foundry fine-tuning.
+     The identifier uses the Azure AI project model URI format. Model and version segments use ASCII
+     letters, digits, periods, underscores, and hyphens. The service validates LoRA weight type,
+     protected status, provenance, compatibility metadata, and registration state. Required.
+    :vartype source_model_id: str
+    :ivar target_deployment_name: The name of the compatible managed compute parent deployment. The
+     service resolves this name within the adapter's owning account; full Azure Resource Manager
+     resource IDs and cross-account references are not accepted. It cannot equal the adapter
+     deployment's resource name. Updating this value re-targets the adapter while its source model
+     remains unchanged. Required.
+    :vartype target_deployment_name: str
+    :ivar active_target_deployment_name: The managed compute deployment currently serving the
+     adapter. During re-targeting this remains the prior deployment until atomic cutover.
+    :vartype active_target_deployment_name: str
+    :ivar provisioning_state: The provisioning state of the adapter deployment. Known values are:
+     "Accepted", "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled",
+     "ResolvingDNS", and "ExtensionUnreachable".
+    :vartype provisioning_state: str or ~azure.mgmt.cognitiveservices.models.ProvisioningState
+    :ivar last_operation: Information about the most recently requested lifecycle operation.
+    :vartype last_operation: ~azure.mgmt.cognitiveservices.models.AdapterDeploymentLastOperation
+    """
+
+    source_model_id: str = rest_field(name="sourceModelId", visibility=["read", "create"])
+    """The immutable Project Models version produced by Foundry fine-tuning. The identifier uses the
+     Azure AI project model URI format. Model and version segments use ASCII letters, digits,
+     periods, underscores, and hyphens. The service validates LoRA weight type, protected status,
+     provenance, compatibility metadata, and registration state. Required."""
+    target_deployment_name: str = rest_field(
+        name="targetDeploymentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the compatible managed compute parent deployment. The service resolves this name
+     within the adapter's owning account; full Azure Resource Manager resource IDs and cross-account
+     references are not accepted. It cannot equal the adapter deployment's resource name. Updating
+     this value re-targets the adapter while its source model remains unchanged. Required."""
+    active_target_deployment_name: Optional[str] = rest_field(name="activeTargetDeploymentName", visibility=["read"])
+    """The managed compute deployment currently serving the adapter. During re-targeting this remains
+     the prior deployment until atomic cutover."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the adapter deployment. Known values are: \"Accepted\", \"Creating\",
+     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", \"ResolvingDNS\", and
+     \"ExtensionUnreachable\"."""
+    last_operation: Optional["_models.AdapterDeploymentLastOperation"] = rest_field(
+        name="lastOperation", visibility=["read"]
+    )
+    """Information about the most recently requested lifecycle operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_model_id: str,
+        target_deployment_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentApplication(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Agent Application resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1151,7 +1401,7 @@ class AgentApplication(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AgentDeployment(ProxyResource):
+class AgentDeployment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Agent Deployment resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1192,7 +1442,7 @@ class AgentDeployment(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ResourceBase(_Model):
+class ResourceBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceBase.
 
     :ivar description: The asset description text.
@@ -1225,7 +1475,7 @@ class ResourceBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentDeploymentProperties(ResourceBase):
+class AgentDeploymentProperties(ResourceBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Type representing an agent deployment as a management construct.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1316,7 +1566,47 @@ class AgentDeploymentProperties(ResourceBase):
         super().__init__(*args, **kwargs)
 
 
-class AgenticApplicationProperties(ResourceBase):
+class AgentHostingConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Base configuration for hosting Foundry agents.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ManagedClusterAgentHostingConfiguration
+
+    :ivar name: Unique name of the hosting configuration within the Foundry account. Required.
+    :vartype name: str
+    :ivar hosting_type: Type of infrastructure used to host Foundry agents. Required.
+     "ManagedCluster"
+    :vartype hosting_type: str or ~azure.mgmt.cognitiveservices.models.AgentHostingType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique name of the hosting configuration within the Foundry account. Required."""
+    hosting_type: str = rest_discriminator(
+        name="hostingType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of infrastructure used to host Foundry agents. Required. \"ManagedCluster\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        hosting_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgenticApplicationProperties(ResourceBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource type representing an agentic application as a management construct.
 
     :ivar description: The asset description text.
@@ -1413,7 +1703,7 @@ class AgenticApplicationProperties(ResourceBase):
         super().__init__(*args, **kwargs)
 
 
-class AgentProtocolVersion(_Model):
+class AgentProtocolVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Type modeling the protocol and version used by an agent/exposed by a deployment.
 
     :ivar protocol: The protocol used by the agent/exposed by a deployment. Known values are:
@@ -1450,7 +1740,7 @@ class AgentProtocolVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentReference(ProxyResource):
+class AgentReference(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Agent Reference resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1491,7 +1781,7 @@ class AgentReference(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AgentReferenceProperties(_Model):
+class AgentReferenceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Type modeling a reference to a version of an agent definition.
 
     :ivar agent_id: Gets the agent's unique identifier within the organization (subscription).
@@ -1524,7 +1814,7 @@ class AgentReferenceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentReferenceResourceArmPaginatedResult(_Model):
+class AgentReferenceResourceArmPaginatedResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A paginated list of Agent Reference entities.
 
     :ivar next_link: The link to the next page of Agent Reference objects. If null, there are no
@@ -1560,7 +1850,9 @@ class AgentReferenceResourceArmPaginatedResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiKeyAuthConnectionProperties(ConnectionPropertiesV2, discriminator="ApiKey"):
+class ApiKeyAuthConnectionProperties(
+    ConnectionPropertiesV2, discriminator="ApiKey"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This connection type covers the generic ApiKey auth connection categories, for examples:
     AzureOpenAI:
     Category:= AzureOpenAI
@@ -1595,11 +1887,11 @@ class ApiKeyAuthConnectionProperties(ConnectionPropertiesV2, discriminator="ApiK
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -1673,7 +1965,7 @@ class ApiKeyAuthConnectionProperties(ConnectionPropertiesV2, discriminator="ApiK
         self.auth_type = ConnectionAuthType.API_KEY  # type: ignore
 
 
-class ApiKeys(_Model):
+class ApiKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The access keys for the cognitive services account.
 
     :ivar key1: Gets the value of key 1.
@@ -1706,7 +1998,7 @@ class ApiKeys(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiProperties(_Model):
+class ApiProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The api properties for special APIs.
 
     :ivar qna_runtime_endpoint: (QnAMaker Only) The runtime endpoint of QnAMaker.
@@ -1799,7 +2091,7 @@ class ApiProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationAuthorizationPolicy(_Model):
+class ApplicationAuthorizationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a policy for authorizing applications based on specified authentication and
     authorization schemes.
 
@@ -1835,7 +2127,7 @@ class ApplicationAuthorizationPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationTrafficRoutingPolicy(_Model):
+class ApplicationTrafficRoutingPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Type representing an application traffic policy as a property of an agentic application.
 
     :ivar protocol: Methodology used to route traffic to the application's deployments.
@@ -1873,7 +2165,599 @@ class ApplicationTrafficRoutingPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssignedIdentity(_Model):
+class ArcDeployment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cognitive Services account Arc deployment, backed by customer-managed Arc-enabled Kubernetes
+    resources.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Properties of the Cognitive Services Arc deployment. Required.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.ArcDeploymentProperties
+    :ivar sku: The Arc deployment SKU. Only the SKU name is required for Arc deployments. Required.
+    :vartype sku: ~azure.mgmt.cognitiveservices.models.ArcDeploymentSku
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    properties: "_models.ArcDeploymentProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the Cognitive Services Arc deployment. Required."""
+    sku: "_models.ArcDeploymentSku" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Arc deployment SKU. Only the SKU name is required for Arc deployments. Required."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Resource Etag."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.ArcDeploymentProperties",
+        sku: "_models.ArcDeploymentSku",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentCpuMemoryResourceRequirements(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """CPU and memory resource requirements for an Arc deployment replica.
+
+    :ivar cpu: Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required.
+    :vartype cpu: str
+    :ivar memory: Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required.
+    :vartype memory: str
+    """
+
+    cpu: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required."""
+    memory: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cpu: str,
+        memory: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentKubernetesResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Per-replica Kubernetes resource requests and limits for an Arc deployment.
+
+    :ivar requests: Kubernetes CPU and memory resource requests for each deployment replica.
+    :vartype requests:
+     ~azure.mgmt.cognitiveservices.models.ArcDeploymentCpuMemoryResourceRequirements
+    :ivar limits: Kubernetes resource limits for each deployment replica.
+    :vartype limits: ~azure.mgmt.cognitiveservices.models.ArcDeploymentResourceRequirements
+    """
+
+    requests: Optional["_models.ArcDeploymentCpuMemoryResourceRequirements"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Kubernetes CPU and memory resource requests for each deployment replica."""
+    limits: Optional["_models.ArcDeploymentResourceRequirements"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Kubernetes resource limits for each deployment replica."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        requests: Optional["_models.ArcDeploymentCpuMemoryResourceRequirements"] = None,
+        limits: Optional["_models.ArcDeploymentResourceRequirements"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Model reference for an Arc deployment.
+
+    :ivar format: Deployment model format. Required.
+    :vartype format: str
+    :ivar name: Deployment model name. Required.
+    :vartype name: str
+    """
+
+    format: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deployment model format. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deployment model name. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        format: str,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentPatchCpuMemoryResourceRequirements(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """CPU and memory resource requirements for an Arc deployment replica update.
+
+    :ivar cpu: Kubernetes CPU quantity string, for example 500m, 2, 4, or 8.
+    :vartype cpu: str
+    :ivar memory: Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi.
+    :vartype memory: str
+    """
+
+    cpu: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Kubernetes CPU quantity string, for example 500m, 2, 4, or 8."""
+    memory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cpu: Optional[str] = None,
+        memory: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentPatchKubernetesResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Per-replica Kubernetes resource requests and limits for an Arc deployment update.
+
+    :ivar requests: Kubernetes CPU and memory resource requests for each deployment replica.
+    :vartype requests:
+     ~azure.mgmt.cognitiveservices.models.ArcDeploymentPatchCpuMemoryResourceRequirements
+    :ivar limits: Kubernetes resource limits for each deployment replica.
+    :vartype limits: ~azure.mgmt.cognitiveservices.models.ArcDeploymentResourceRequirements
+    """
+
+    requests: Optional["_models.ArcDeploymentPatchCpuMemoryResourceRequirements"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Kubernetes CPU and memory resource requests for each deployment replica."""
+    limits: Optional["_models.ArcDeploymentResourceRequirements"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Kubernetes resource limits for each deployment replica."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        requests: Optional["_models.ArcDeploymentPatchCpuMemoryResourceRequirements"] = None,
+        limits: Optional["_models.ArcDeploymentResourceRequirements"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a Cognitive Services Arc deployment.
+
+    :ivar model: Model reference. Required on creation and immutable after creation. Required.
+    :vartype model: ~azure.mgmt.cognitiveservices.models.ArcDeploymentModel
+    :ivar extension_id: Full Azure resource ID of the Foundry inference extension on the target
+     Arc-enabled Kubernetes cluster. Required on creation and immutable after creation. Required.
+    :vartype extension_id: str
+    :ivar runtime: Inference runtime. Required on creation and immutable after creation. Required.
+     Known values are: "vllm" and "onnx-genai".
+    :vartype runtime: str or ~azure.mgmt.cognitiveservices.models.ArcDeploymentRuntime
+    :ivar compute: Compute type for the deployment. Required on creation and immutable after
+     creation. Required. Known values are: "gpu" and "cpu".
+    :vartype compute: str or ~azure.mgmt.cognitiveservices.models.ArcDeploymentComputeType
+    :ivar deployment_template: Optional deployment template identifier for advanced vLLM tuning.
+     Allowed only when runtime is vllm. Example:
+     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version}.
+    :vartype deployment_template: str
+    :ivar vllm_parameters: Read-only. Effective vLLM runtime parameters resolved for the deployed
+     model. Returned only when runtime is vllm.
+    :vartype vllm_parameters: ~azure.mgmt.cognitiveservices.models.ArcDeploymentVllmParameters
+    :ivar replicas: Physical replica count on the Arc cluster. Required.
+    :vartype replicas: int
+    :ivar resources: Per-replica Kubernetes resource requests and limits. Required.
+    :vartype resources: ~azure.mgmt.cognitiveservices.models.ArcDeploymentKubernetesResources
+    :ivar node_selector: Kubernetes node selector key-value map used to schedule pods onto nodes
+     with matching labels.
+    :vartype node_selector: dict[str, str]
+    :ivar deployment_state: The deployment state. Known values are: "Running" and "Paused".
+    :vartype deployment_state: str or ~azure.mgmt.cognitiveservices.models.DeploymentState
+    :ivar rai_policy_name: The name of RAI policy.
+    :vartype rai_policy_name: str
+    :ivar provisioning_state: Read-only. Current provisioning state. Known values are: "Accepted",
+     "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled", "ResolvingDNS", and
+     "ExtensionUnreachable".
+    :vartype provisioning_state: str or ~azure.mgmt.cognitiveservices.models.ProvisioningState
+    :ivar provisioning_details: Read-only. Status message and timestamp from the last provisioning
+     operation.
+    :vartype provisioning_details:
+     ~azure.mgmt.cognitiveservices.models.ArcDeploymentProvisioningDetails
+    :ivar inference_endpoint: Read-only. Base URL for inference calls to this deployment on the Arc
+     cluster. Populated when provisioningState is Succeeded.
+    :vartype inference_endpoint: str
+    :ivar capabilities: Read-only. Deployment capabilities represented as key-value pairs.
+    :vartype capabilities: dict[str, str]
+    """
+
+    model: "_models.ArcDeploymentModel" = rest_field(visibility=["read", "create"])
+    """Model reference. Required on creation and immutable after creation. Required."""
+    extension_id: str = rest_field(name="extensionId", visibility=["read", "create"])
+    """Full Azure resource ID of the Foundry inference extension on the target Arc-enabled Kubernetes
+     cluster. Required on creation and immutable after creation. Required."""
+    runtime: Union[str, "_models.ArcDeploymentRuntime"] = rest_field(visibility=["read", "create"])
+    """Inference runtime. Required on creation and immutable after creation. Required. Known values
+     are: \"vllm\" and \"onnx-genai\"."""
+    compute: Union[str, "_models.ArcDeploymentComputeType"] = rest_field(visibility=["read", "create"])
+    """Compute type for the deployment. Required on creation and immutable after creation. Required.
+     Known values are: \"gpu\" and \"cpu\"."""
+    deployment_template: Optional[str] = rest_field(name="deploymentTemplate", visibility=["read", "create"])
+    """Optional deployment template identifier for advanced vLLM tuning. Allowed only when runtime is
+     vllm. Example:
+     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version}."""
+    vllm_parameters: Optional["_models.ArcDeploymentVllmParameters"] = rest_field(
+        name="vllmParameters", visibility=["read"]
+    )
+    """Read-only. Effective vLLM runtime parameters resolved for the deployed model. Returned only
+     when runtime is vllm."""
+    replicas: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Physical replica count on the Arc cluster. Required."""
+    resources: "_models.ArcDeploymentKubernetesResources" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per-replica Kubernetes resource requests and limits. Required."""
+    node_selector: Optional[dict[str, str]] = rest_field(
+        name="nodeSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Kubernetes node selector key-value map used to schedule pods onto nodes with matching labels."""
+    deployment_state: Optional[Union[str, "_models.DeploymentState"]] = rest_field(
+        name="deploymentState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The deployment state. Known values are: \"Running\" and \"Paused\"."""
+    rai_policy_name: Optional[str] = rest_field(
+        name="raiPolicyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of RAI policy."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Read-only. Current provisioning state. Known values are: \"Accepted\", \"Creating\",
+     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", \"ResolvingDNS\", and
+     \"ExtensionUnreachable\"."""
+    provisioning_details: Optional["_models.ArcDeploymentProvisioningDetails"] = rest_field(
+        name="provisioningDetails", visibility=["read"]
+    )
+    """Read-only. Status message and timestamp from the last provisioning operation."""
+    inference_endpoint: Optional[str] = rest_field(name="inferenceEndpoint", visibility=["read"])
+    """Read-only. Base URL for inference calls to this deployment on the Arc cluster. Populated when
+     provisioningState is Succeeded."""
+    capabilities: Optional[dict[str, str]] = rest_field(visibility=["read"])
+    """Read-only. Deployment capabilities represented as key-value pairs."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: "_models.ArcDeploymentModel",
+        extension_id: str,
+        runtime: Union[str, "_models.ArcDeploymentRuntime"],
+        compute: Union[str, "_models.ArcDeploymentComputeType"],
+        replicas: int,
+        resources: "_models.ArcDeploymentKubernetesResources",
+        deployment_template: Optional[str] = None,
+        node_selector: Optional[dict[str, str]] = None,
+        deployment_state: Optional[Union[str, "_models.DeploymentState"]] = None,
+        rai_policy_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentProvisioningDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Provisioning status details for an Arc deployment.
+
+    :ivar message: A human-readable status message from the last provisioning operation.
+    :vartype message: str
+    :ivar last_operation_timestamp: Timestamp of the last provisioning operation.
+    :vartype last_operation_timestamp: ~datetime.datetime
+    """
+
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable status message from the last provisioning operation."""
+    last_operation_timestamp: Optional[datetime.datetime] = rest_field(
+        name="lastOperationTimestamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp of the last provisioning operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: Optional[str] = None,
+        last_operation_timestamp: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentResourceRequirements(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Kubernetes resource requirements for an Arc deployment replica. Specify either cpu and memory
+    together, or gpu. GPU is supported only in limits, not requests.
+
+    :ivar cpu: Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required with memory
+     when specifying CPU and memory limits. Do not specify with gpu.
+    :vartype cpu: str
+    :ivar memory: Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required with
+     cpu when specifying CPU and memory limits. Do not specify with gpu.
+    :vartype memory: str
+    :ivar gpu: Kubernetes GPU quantity, for example 1, 2, or 5. Required when specifying GPU
+     limits. Do not specify with cpu or memory.
+    :vartype gpu: int
+    """
+
+    cpu: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required with memory when
+     specifying CPU and memory limits. Do not specify with gpu."""
+    memory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required with cpu when
+     specifying CPU and memory limits. Do not specify with gpu."""
+    gpu: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Kubernetes GPU quantity, for example 1, 2, or 5. Required when specifying GPU limits. Do not
+     specify with cpu or memory."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cpu: Optional[str] = None,
+        memory: Optional[str] = None,
+        gpu: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SKU for an Arc deployment.
+
+    :ivar name: The name of the Arc deployment SKU. Must be Arc. Required. "Arc"
+    :vartype name: str or ~azure.mgmt.cognitiveservices.models.ArcDeploymentSkuName
+    """
+
+    name: Union[str, "_models.ArcDeploymentSkuName"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the Arc deployment SKU. Must be Arc. Required. \"Arc\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Union[str, "_models.ArcDeploymentSkuName"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The object used to update an Arc deployment.
+
+    :ivar properties: Properties that can be updated on an Arc deployment.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.ArcDeploymentUpdateProperties
+    """
+
+    properties: Optional["_models.ArcDeploymentUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties that can be updated on an Arc deployment."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ArcDeploymentUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Mutable properties for an Arc deployment.
+
+    :ivar replicas: Physical replica count on the Arc cluster.
+    :vartype replicas: int
+    :ivar resources: Per-replica Kubernetes resource requests and limits.
+    :vartype resources: ~azure.mgmt.cognitiveservices.models.ArcDeploymentPatchKubernetesResources
+    :ivar node_selector: Kubernetes node selector key-value map used to schedule pods onto nodes
+     with matching labels.
+    :vartype node_selector: dict[str, str]
+    """
+
+    replicas: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Physical replica count on the Arc cluster."""
+    resources: Optional["_models.ArcDeploymentPatchKubernetesResources"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per-replica Kubernetes resource requests and limits."""
+    node_selector: Optional[dict[str, str]] = rest_field(
+        name="nodeSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Kubernetes node selector key-value map used to schedule pods onto nodes with matching labels."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        replicas: Optional[int] = None,
+        resources: Optional["_models.ArcDeploymentPatchKubernetesResources"] = None,
+        node_selector: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArcDeploymentVllmParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Effective vLLM runtime parameters for an Arc deployment.
+
+    :ivar tensor_parallel_size: Number of GPUs used for tensor parallelism.
+    :vartype tensor_parallel_size: int
+    :ivar max_model_len: Maximum model context length.
+    :vartype max_model_len: int
+    :ivar gpu_memory_utilization: Fraction of GPU memory reserved for model execution.
+    :vartype gpu_memory_utilization: float
+    :ivar enforce_eager: Whether eager execution is enforced for the vLLM runtime.
+    :vartype enforce_eager: bool
+    """
+
+    tensor_parallel_size: Optional[int] = rest_field(
+        name="tensorParallelSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of GPUs used for tensor parallelism."""
+    max_model_len: Optional[int] = rest_field(
+        name="maxModelLen", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum model context length."""
+    gpu_memory_utilization: Optional[float] = rest_field(
+        name="gpuMemoryUtilization", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fraction of GPU memory reserved for model execution."""
+    enforce_eager: Optional[bool] = rest_field(
+        name="enforceEager", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether eager execution is enforced for the vLLM runtime."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tensor_parallel_size: Optional[int] = None,
+        max_model_len: Optional[int] = None,
+        gpu_memory_utilization: Optional[float] = None,
+        enforce_eager: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AssignedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Type representing an identity assignment.
 
     :ivar kind: Specifies the kind of Entra identity described by this object. Required. Known
@@ -1941,7 +2825,7 @@ class AssignedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BillingMeterInfo(_Model):
+class BillingMeterInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BillingMeterInfo.
 
     :ivar name:
@@ -1976,7 +2860,7 @@ class BillingMeterInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CalculateModelCapacityParameter(_Model):
+class CalculateModelCapacityParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Calculate Model Capacity parameter.
 
     :ivar model: Properties of Cognitive Services account deployment model.
@@ -2016,7 +2900,7 @@ class CalculateModelCapacityParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CalculateModelCapacityResult(_Model):
+class CalculateModelCapacityResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Calculate Model Capacity result.
 
     :ivar model: Properties of Cognitive Services account deployment model.
@@ -2056,7 +2940,9 @@ class CalculateModelCapacityResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CalculateModelCapacityResultEstimatedCapacity(_Model):  # pylint: disable=name-too-long
+class CalculateModelCapacityResultEstimatedCapacity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Model Estimated Capacity.
 
     :ivar value:
@@ -2089,7 +2975,7 @@ class CalculateModelCapacityResultEstimatedCapacity(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class CallRateLimit(_Model):
+class CallRateLimit(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The call rate limit Cognitive Services account.
 
     :ivar count: The count value of Call Rate Limit.
@@ -2130,7 +3016,7 @@ class CallRateLimit(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CapabilityHost(ProxyResource):
+class CapabilityHost(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Resource Manager resource envelope.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2171,7 +3057,7 @@ class CapabilityHost(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class CapabilityHostProperties(ResourceBase):
+class CapabilityHostProperties(ResourceBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CapabilityHostProperties.
 
     :ivar description: The asset description text.
@@ -2265,7 +3151,51 @@ class CapabilityHostProperties(ResourceBase):
         super().__init__(*args, **kwargs)
 
 
-class CapacityConfig(_Model):
+class CapabilitySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Extensible agent capability configuration. Carries the Azure resource IDs of the agent storage
+    dependencies. Modeled as an object so future capability-backed resources can be added without
+    changing the account or project contract.
+
+    :ivar document_store: Azure resource ID of the document store used by agent runtime state.
+    :vartype document_store: str
+    :ivar vector_store: Azure resource ID of the vector store used by agent retrieval and indexing.
+    :vartype vector_store: str
+    :ivar blob_store: Azure resource ID of the blob store used by agent file and artifact storage.
+    :vartype blob_store: str
+    """
+
+    document_store: Optional[str] = rest_field(
+        name="documentStore", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource ID of the document store used by agent runtime state."""
+    vector_store: Optional[str] = rest_field(
+        name="vectorStore", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource ID of the vector store used by agent retrieval and indexing."""
+    blob_store: Optional[str] = rest_field(name="blobStore", visibility=["read", "create", "update", "delete", "query"])
+    """Azure resource ID of the blob store used by agent file and artifact storage."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        document_store: Optional[str] = None,
+        vector_store: Optional[str] = None,
+        blob_store: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CapacityConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The capacity configuration.
 
     :ivar minimum: The minimum capacity.
@@ -2344,7 +3274,7 @@ class ChannelsBuiltInAuthorizationPolicy(ApplicationAuthorizationPolicy, discrim
         self.type = BuiltInAuthorizationScheme.CHANNELS  # type: ignore
 
 
-class CheckDomainAvailabilityParameter(_Model):
+class CheckDomainAvailabilityParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Check Domain availability parameter.
 
     :ivar subdomain_name: The subdomain name to use. Required.
@@ -2382,7 +3312,7 @@ class CheckDomainAvailabilityParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckSkuAvailabilityParameter(_Model):
+class CheckSkuAvailabilityParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Check SKU availability parameter.
 
     :ivar skus: The SKU of the resource. Required.
@@ -2420,7 +3350,7 @@ class CheckSkuAvailabilityParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComputeProperties(_Model):
+class ComputeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base properties for all compute resource types. The computeType discriminator determines the
     concrete property shape.
 
@@ -2430,6 +3360,8 @@ class ComputeProperties(_Model):
     :ivar compute_type: The type of compute resource. Required. Known values are: "Cluster" and
      "ContainerInstance".
     :vartype compute_type: str or ~azure.mgmt.cognitiveservices.models.ComputeType
+    :ivar location: The location of the compute resource. Required.
+    :vartype location: str
     :ivar provisioning_state: Provisioning state of the compute resource. Known values are:
      "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
      "Stopping", "Restarting", and "Stopped".
@@ -2447,6 +3379,8 @@ class ComputeProperties(_Model):
     )
     """The type of compute resource. Required. Known values are: \"Cluster\" and
      \"ContainerInstance\"."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The location of the compute resource. Required."""
     provisioning_state: Optional[Union[str, "_models.ComputeProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -2463,6 +3397,7 @@ class ComputeProperties(_Model):
         self,
         *,
         compute_type: str,
+        location: str,
     ) -> None: ...
 
     @overload
@@ -2476,9 +3411,13 @@ class ComputeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterComputeProperties(ComputeProperties, discriminator="Cluster"):
+class ClusterComputeProperties(
+    ComputeProperties, discriminator="Cluster"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a Cluster (AKS-backed) compute resource.
 
+    :ivar location: The location of the compute resource. Required.
+    :vartype location: str
     :ivar provisioning_state: Provisioning state of the compute resource. Known values are:
      "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
      "Stopping", "Restarting", and "Stopped".
@@ -2509,6 +3448,7 @@ class ClusterComputeProperties(ComputeProperties, discriminator="Cluster"):
     def __init__(
         self,
         *,
+        location: str,
         pools: list["_models.Pool"],
         subnet_arm_id: Optional[str] = None,
     ) -> None: ...
@@ -2525,7 +3465,7 @@ class ClusterComputeProperties(ComputeProperties, discriminator="Cluster"):
         self.compute_type = ComputeType.CLUSTER  # type: ignore
 
 
-class CommitmentCost(_Model):
+class CommitmentCost(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services account commitment cost.
 
     :ivar commitment_meter_id: Commitment meter Id.
@@ -2562,7 +3502,7 @@ class CommitmentCost(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommitmentPeriod(_Model):
+class CommitmentPeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services account commitment period.
 
     :ivar tier: Commitment period commitment tier.
@@ -2607,7 +3547,7 @@ class CommitmentPeriod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommitmentPlan(ProxyResource):
+class CommitmentPlan(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services account commitment plan.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2672,7 +3612,7 @@ class CommitmentPlan(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class CommitmentPlanAccountAssociation(ProxyResource):
+class CommitmentPlanAccountAssociation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The commitment plan association.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2743,7 +3683,9 @@ class CommitmentPlanAccountAssociation(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CommitmentPlanAccountAssociationProperties(_Model):  # pylint: disable=name-too-long
+class CommitmentPlanAccountAssociationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The commitment plan account association properties.
 
     :ivar account_id: The Azure resource id of the account.
@@ -2771,7 +3713,7 @@ class CommitmentPlanAccountAssociationProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class CommitmentPlanAssociation(_Model):
+class CommitmentPlanAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The commitment plan association.
 
     :ivar commitment_plan_id: The Azure resource id of the commitment plan.
@@ -2808,7 +3750,7 @@ class CommitmentPlanAssociation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommitmentPlanProperties(_Model):
+class CommitmentPlanProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Cognitive Services account commitment plan.
 
     :ivar provisioning_state: Gets the status of the resource at the time the operation was called.
@@ -2890,7 +3832,7 @@ class CommitmentPlanProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommitmentQuota(_Model):
+class CommitmentQuota(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services account commitment quota.
 
     :ivar quantity: Commitment quota quantity.
@@ -2923,7 +3865,7 @@ class CommitmentQuota(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommitmentTier(_Model):
+class CommitmentTier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services account commitment tier.
 
     :ivar kind: The kind (type) of cognitive service account.
@@ -2990,7 +3932,7 @@ class CommitmentTier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Compute(ProxyResource):
+class Compute(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services compute resource. Supports polymorphic compute types (Cluster,
     ContainerInstance) via the computeType discriminator in properties.
 
@@ -3010,10 +3952,6 @@ class Compute(ProxyResource):
     :vartype properties: ~azure.mgmt.cognitiveservices.models.ComputeProperties
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :ivar location: The location of the compute resource.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar kind: The kind (type) of compute resource.
     :vartype kind: str
     :ivar identity: Identity for the resource.
@@ -3025,10 +3963,6 @@ class Compute(ProxyResource):
      ContainerInstance. Required."""
     etag: Optional[str] = rest_field(visibility=["read"])
     """Resource Etag."""
-    location: Optional[str] = rest_field(visibility=["read", "create"])
-    """The location of the compute resource."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     kind: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The kind (type) of compute resource."""
     identity: Optional["_models.Identity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3039,8 +3973,6 @@ class Compute(ProxyResource):
         self,
         *,
         properties: "_models.ComputeProperties",
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
         kind: Optional[str] = None,
         identity: Optional["_models.Identity"] = None,
     ) -> None: ...
@@ -3056,7 +3988,7 @@ class Compute(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ComputeOperationStatus(ProxyResource):
+class ComputeOperationStatus(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of an async compute operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3097,7 +4029,7 @@ class ComputeOperationStatus(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ComputeOperationStatusProperties(_Model):
+class ComputeOperationStatusProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a compute operation status.
 
     :ivar start_time: The start time of the operation.
@@ -3142,7 +4074,7 @@ class ComputeOperationStatusProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionAccessKey(_Model):
+class ConnectionAccessKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectionAccessKey.
 
     :ivar access_key_id:
@@ -3177,7 +4109,7 @@ class ConnectionAccessKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionAccountKey(_Model):
+class ConnectionAccountKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Account key object for connection credential.
 
     :ivar key:
@@ -3204,7 +4136,7 @@ class ConnectionAccountKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionApiKey(_Model):
+class ConnectionApiKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Api key object for connection credential.
 
     :ivar key:
@@ -3231,7 +4163,7 @@ class ConnectionApiKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionManagedIdentity(_Model):
+class ConnectionManagedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectionManagedIdentity.
 
     :ivar client_id:
@@ -3264,7 +4196,7 @@ class ConnectionManagedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionOAuth2(_Model):
+class ConnectionOAuth2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClientId and ClientSecret are required. Other properties are optional depending on each OAuth2
     provider's implementation.
 
@@ -3336,7 +4268,7 @@ class ConnectionOAuth2(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionPersonalAccessToken(_Model):
+class ConnectionPersonalAccessToken(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectionPersonalAccessToken.
 
     :ivar pat:
@@ -3363,7 +4295,7 @@ class ConnectionPersonalAccessToken(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionPropertiesV2BasicResource(ProxyResource):
+class ConnectionPropertiesV2BasicResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connection base resource schema.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3404,7 +4336,7 @@ class ConnectionPropertiesV2BasicResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionServicePrincipal(_Model):
+class ConnectionServicePrincipal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectionServicePrincipal.
 
     :ivar client_id:
@@ -3441,7 +4373,7 @@ class ConnectionServicePrincipal(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionSharedAccessSignature(_Model):
+class ConnectionSharedAccessSignature(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectionSharedAccessSignature.
 
     :ivar sas:
@@ -3468,7 +4400,7 @@ class ConnectionSharedAccessSignature(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionUpdateContent(_Model):
+class ConnectionUpdateContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties that the Cognitive services connection will be updated with.
 
     :ivar properties: The properties that the Cognitive services connection will be updated with.
@@ -3498,7 +4430,7 @@ class ConnectionUpdateContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionUsernamePassword(_Model):
+class ConnectionUsernamePassword(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectionUsernamePassword.
 
     :ivar password:
@@ -3553,9 +4485,13 @@ class ConnectivityEndpoints(_Model):
     """The SSH port for the compute instance."""
 
 
-class ContainerInstanceComputeProperties(ComputeProperties, discriminator="ContainerInstance"):
+class ContainerInstanceComputeProperties(
+    ComputeProperties, discriminator="ContainerInstance"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a Container Instance compute resource.
 
+    :ivar location: The location of the compute resource. Required.
+    :vartype location: str
     :ivar provisioning_state: Provisioning state of the compute resource. Known values are:
      "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
      "Stopping", "Restarting", and "Stopped".
@@ -3608,6 +4544,7 @@ class ContainerInstanceComputeProperties(ComputeProperties, discriminator="Conta
     def __init__(
         self,
         *,
+        location: str,
         target_cluster_id: str,
         image_link: str,
         idle_time_before_shutdown: Optional[str] = None,
@@ -3626,7 +4563,440 @@ class ContainerInstanceComputeProperties(ComputeProperties, discriminator="Conta
         self.compute_type = ComputeType.CONTAINER_INSTANCE  # type: ignore
 
 
-class RaiBlocklistConfig(_Model):
+class CostControl(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A cost control owned by a Cognitive Services account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.CostControlProperties
+    :ivar etag: The entity tag used for optimistic concurrency.
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.CostControlProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """The entity tag used for optimistic concurrency."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.CostControlProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlConnections(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines account-level connections used to publish cost-control telemetry and events.
+    Application Insights is optional and may be removed while policies remain attached. Event Grid
+    is required for alerts; supplied connection references must still be valid.
+
+    :ivar app_insights_connection_id: Gets or sets the full resource ID of the optional Application
+     Insights connection.
+    :vartype app_insights_connection_id: str
+    :ivar event_grid_connection_id: The full resource ID of the Event Grid connection used for cost
+     control alerts. This connection must be configured when an attached cost control contains an
+     alert threshold action and cannot be removed while such an action remains attached.
+    :vartype event_grid_connection_id: str
+    """
+
+    app_insights_connection_id: Optional[str] = rest_field(
+        name="appInsightsConnectionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the full resource ID of the optional Application Insights connection."""
+    event_grid_connection_id: Optional[str] = rest_field(
+        name="eventGridConnectionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The full resource ID of the Event Grid connection used for cost control alerts. This connection
+     must be configured when an attached cost control contains an alert threshold action and cannot
+     be removed while such an action remains attached."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_insights_connection_id: Optional[str] = None,
+        event_grid_connection_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlDimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A request dimension used to partition cost control consumption.
+
+    :ivar type: The kind of request dimension. Required. Known values are: "Agent", "Identity",
+     "Session", "Project", "Account", and "Custom".
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.CostControlDimensionType
+    :ivar attribute: Gets or sets the attribute path retained for legacy Custom counters. Authored
+     rules cannot select Custom; built-in dimensions must omit this property.
+    :vartype attribute: str
+    """
+
+    type: Union[str, "_models.CostControlDimensionType"] = rest_field(visibility=["read", "create", "update"])
+    """The kind of request dimension. Required. Known values are: \"Agent\", \"Identity\",
+     \"Session\", \"Project\", \"Account\", and \"Custom\"."""
+    attribute: Optional[str] = rest_field(visibility=["read"])
+    """Gets or sets the attribute path retained for legacy Custom counters. Authored rules cannot
+     select Custom; built-in dimensions must omit this property."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.CostControlDimensionType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlMatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Gets or sets optional match arrays keyed by ``agentResourceIds``, ``identityObjectIds``,
+    ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty values. Agent resource
+    IDs use
+    /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
+    Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
+    their canonical key.
+
+    :ivar agent_resource_ids: Agent resource IDs use
+     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
+    :vartype agent_resource_ids: list[str]
+    :ivar identity_object_ids: The authenticated principal object IDs to match.
+    :vartype identity_object_ids: list[str]
+    :ivar session_ids: The Foundry session IDs to match.
+    :vartype session_ids: list[str]
+    :ivar project_ids: The Foundry project resource IDs to match.
+    :vartype project_ids: list[str]
+    """
+
+    agent_resource_ids: Optional[list[str]] = rest_field(
+        name="agentResourceIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Agent resource IDs use
+     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}."""
+    identity_object_ids: Optional[list[str]] = rest_field(
+        name="identityObjectIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authenticated principal object IDs to match."""
+    session_ids: Optional[list[str]] = rest_field(
+        name="sessionIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Foundry session IDs to match."""
+    project_ids: Optional[list[str]] = rest_field(
+        name="projectIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Foundry project resource IDs to match."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_resource_ids: Optional[list[str]] = None,
+        identity_object_ids: Optional[list[str]] = None,
+        session_ids: Optional[list[str]] = None,
+        project_ids: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request used to update a cost control.
+
+    :ivar properties: The cost control properties to update.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.CostControlPatchProperties
+    """
+
+    properties: Optional["_models.CostControlPatchProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The cost control properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.CostControlPatchProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties that can be changed on a cost control.
+
+    :ivar display_name: An optional human-readable name for the cost control. Set this property to
+     null to clear it.
+    :vartype display_name: str
+    :ivar rules: The complete replacement set of cost control rules.
+    :vartype rules: list[~azure.mgmt.cognitiveservices.models.CostControlRule]
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional human-readable name for the cost control. Set this property to null to clear it."""
+    rules: Optional[list["_models.CostControlRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The complete replacement set of cost control rules."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        rules: Optional[list["_models.CostControlRule"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The customer-authored settings of a cost control.
+
+    :ivar display_name: An optional human-readable name for the cost control.
+    :vartype display_name: str
+    :ivar rules: The rules enforced by the cost control. Required.
+    :vartype rules: list[~azure.mgmt.cognitiveservices.models.CostControlRule]
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional human-readable name for the cost control."""
+    rules: list["_models.CostControlRule"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The rules enforced by the cost control. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rules: list["_models.CostControlRule"],
+        display_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A cost limit and the population to which it applies.
+
+    :ivar name: The stable rule identifier, unique within the cost control without regard to case.
+     Required.
+    :vartype name: str
+    :ivar counter_key: Gets or sets the single built-in dimension used to partition consumption.
+     Custom dimensions are retained only for legacy reads and metadata-only updates. Legacy
+     singleton arrays are accepted on read; serialization always emits an object. To track another
+     field, create another rule. Required.
+    :vartype counter_key: ~azure.mgmt.cognitiveservices.models.CostControlDimension
+    :ivar unit: The unit used for the cost control amount and absolute thresholds. Required. "Usd"
+    :vartype unit: str or ~azure.mgmt.cognitiveservices.models.CostControlUnit
+    :ivar amount: The maximum consumption allowed by this rule, expressed in the selected unit.
+     Required.
+    :vartype amount: float
+    :ivar period: Gets or sets the calendar-aligned UTC renewal period. Authored rules support Day,
+     Week, or Month. This field is required for recurring rules and must be omitted for
+     non-recurring rules. Legacy stored minute, hour, and year periods are preserved when reading
+     definitions. Known values are: "Minute", "Hour", "Day", "Week", "Month", and "Year".
+    :vartype period: str or ~azure.mgmt.cognitiveservices.models.CostControlPeriod
+    :ivar recurring: Whether the cost control renews. The default is true.
+    :vartype recurring: bool
+    :ivar match: Gets or sets optional match arrays keyed by ``agentResourceIds``,
+     ``identityObjectIds``, ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty
+     values. Agent resource IDs use
+     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
+     Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
+     their canonical key.
+    :vartype match: ~azure.mgmt.cognitiveservices.models.CostControlMatch
+    :ivar thresholds: Gets or sets optional thresholds. Omitted or empty thresholds track usage
+     without explicit actions. Authored thresholds must explicitly specify Alert or Block; Audit is
+     retained for legacy reads.
+    :vartype thresholds: list[~azure.mgmt.cognitiveservices.models.CostControlThreshold]
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update"])
+    """The stable rule identifier, unique within the cost control without regard to case. Required."""
+    counter_key: "_models.CostControlDimension" = rest_field(
+        name="counterKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the single built-in dimension used to partition consumption. Custom dimensions are
+     retained only for legacy reads and metadata-only updates. Legacy singleton arrays are accepted
+     on read; serialization always emits an object. To track another field, create another rule.
+     Required."""
+    unit: Union[str, "_models.CostControlUnit"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unit used for the cost control amount and absolute thresholds. Required. \"Usd\""""
+    amount: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum consumption allowed by this rule, expressed in the selected unit. Required."""
+    period: Optional[Union[str, "_models.CostControlPeriod"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the calendar-aligned UTC renewal period. Authored rules support Day, Week, or
+     Month. This field is required for recurring rules and must be omitted for non-recurring rules.
+     Legacy stored minute, hour, and year periods are preserved when reading definitions. Known
+     values are: \"Minute\", \"Hour\", \"Day\", \"Week\", \"Month\", and \"Year\"."""
+    recurring: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the cost control renews. The default is true."""
+    match: Optional["_models.CostControlMatch"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Gets or sets optional match arrays keyed by ``agentResourceIds``, ``identityObjectIds``,
+     ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty values. Agent resource
+     IDs use
+     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
+     Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
+     their canonical key."""
+    thresholds: Optional[list["_models.CostControlThreshold"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets optional thresholds. Omitted or empty thresholds track usage without explicit
+     actions. Authored thresholds must explicitly specify Alert or Block; Audit is retained for
+     legacy reads."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        counter_key: "_models.CostControlDimension",
+        unit: Union[str, "_models.CostControlUnit"],
+        amount: float,
+        period: Optional[Union[str, "_models.CostControlPeriod"]] = None,
+        recurring: Optional[bool] = None,
+        match: Optional["_models.CostControlMatch"] = None,
+        thresholds: Optional[list["_models.CostControlThreshold"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlThreshold(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An action evaluated when cost control consumption reaches a threshold.
+
+    :ivar type: How the threshold value is interpreted. Required. Known values are: "Percentage"
+     and "Absolute".
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.CostControlThresholdType
+    :ivar value: Gets or sets the threshold value. Legacy Audit definitions retain their stored
+     values; new thresholds support only Alert or Block. Required.
+    :vartype value: float
+    :ivar action: Gets or sets the threshold action. Authored thresholds must explicitly specify
+     Alert or Block. Legacy stored definitions with omitted actions continue to read as Audit.
+     Required. Known values are: "Audit", "Alert", and "Block".
+    :vartype action: str or ~azure.mgmt.cognitiveservices.models.CostControlThresholdAction
+    """
+
+    type: Union[str, "_models.CostControlThresholdType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the threshold value is interpreted. Required. Known values are: \"Percentage\" and
+     \"Absolute\"."""
+    value: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Gets or sets the threshold value. Legacy Audit definitions retain their stored values; new
+     thresholds support only Alert or Block. Required."""
+    action: Union[str, "_models.CostControlThresholdAction"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the threshold action. Authored thresholds must explicitly specify Alert or Block.
+     Legacy stored definitions with omitted actions continue to read as Audit. Required. Known
+     values are: \"Audit\", \"Alert\", and \"Block\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.CostControlThresholdType"],
+        value: float,
+        action: Union[str, "_models.CostControlThresholdAction"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiBlocklistConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure OpenAI blocklist config.
 
     :ivar blocklist_name: Name of ContentFilter.
@@ -3661,7 +5031,7 @@ class RaiBlocklistConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomBlocklistConfig(RaiBlocklistConfig):
+class CustomBlocklistConfig(RaiBlocklistConfig):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gets or sets the source to which filter applies.
 
     :ivar blocklist_name: Name of ContentFilter.
@@ -3699,7 +5069,7 @@ class CustomBlocklistConfig(RaiBlocklistConfig):
         super().__init__(*args, **kwargs)
 
 
-class CustomKeys(_Model):
+class CustomKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom Keys credential object.
 
     :ivar keys_property: Dictionary of <string>.
@@ -3729,7 +5099,9 @@ class CustomKeys(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomKeysConnectionProperties(ConnectionPropertiesV2, discriminator="CustomKeys"):
+class CustomKeysConnectionProperties(
+    ConnectionPropertiesV2, discriminator="CustomKeys"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Category:= CustomKeys AuthType:= CustomKeys (as type discriminator) Credentials:= {CustomKeys}
     as CustomKeys Target:= {any value} Use Metadata property bag for ApiVersion and other metadata
     fields.
@@ -3747,11 +5119,11 @@ class CustomKeysConnectionProperties(ConnectionPropertiesV2, discriminator="Cust
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -3823,7 +5195,7 @@ class CustomKeysConnectionProperties(ConnectionPropertiesV2, discriminator="Cust
         self.auth_type = ConnectionAuthType.CUSTOM_KEYS  # type: ignore
 
 
-class DefenderForAISetting(ProxyResource):
+class DefenderForAISetting(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Defender for AI resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3893,7 +5265,7 @@ class DefenderForAISetting(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DefenderForAISettingProperties(_Model):
+class DefenderForAISettingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Defender for AI resource properties.
 
     :ivar state: Defender for AI state on the AI resource. Known values are: "Disabled" and
@@ -3924,7 +5296,7 @@ class DefenderForAISettingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Deployment(ProxyResource):
+class Deployment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services account deployment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3979,7 +5351,7 @@ class Deployment(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentCapacitySettings(_Model):
+class DeploymentCapacitySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Internal use only.
 
     :ivar designated_capacity: The designated capacity.
@@ -4014,7 +5386,7 @@ class DeploymentCapacitySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentPolicyEvaluationResult(_Model):
+class DeploymentPolicyEvaluationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy evaluation result for a single deployment.
 
     :ivar evaluation_outcome: The evaluation outcome. Known values are: "Compliant",
@@ -4061,7 +5433,7 @@ class DeploymentPolicyEvaluationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentProperties(_Model):
+class DeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Cognitive Services account deployment.
 
     :ivar provisioning_state: Gets the status of the resource at the time the operation was called.
@@ -4071,6 +5443,9 @@ class DeploymentProperties(_Model):
      ~azure.mgmt.cognitiveservices.models.DeploymentProvisioningState
     :ivar model: Properties of Cognitive Services account deployment model.
     :vartype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+    :ivar context_cache_container_id: The resource ID of the context cache container associated
+     with this deployment.
+    :vartype context_cache_container_id: str
     :ivar speculative_decoding: Speculative decoding settings for the deployment. This
      configuration applies to Fireworks model formats.
     :vartype speculative_decoding:
@@ -4118,6 +5493,10 @@ class DeploymentProperties(_Model):
      select the models subset for routing and the routing mode (balanced, quality, cost) for routing
      across all supported models or the model subset.
     :vartype routing: ~azure.mgmt.cognitiveservices.models.DeploymentRouting
+    :ivar cost_control_ids: The full resource IDs of cost controls directly attached to this
+     deployment. At the moment the service only supports a single cost control. This will be
+     expanded in future API versions.
+    :vartype cost_control_ids: list[str]
     """
 
     provisioning_state: Optional[Union[str, "_models.DeploymentProvisioningState"]] = rest_field(
@@ -4128,6 +5507,10 @@ class DeploymentProperties(_Model):
      and \"Canceled\"."""
     model: Optional["_models.DeploymentModel"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Properties of Cognitive Services account deployment model."""
+    context_cache_container_id: Optional[str] = rest_field(
+        name="contextCacheContainerId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the context cache container associated with this deployment."""
     speculative_decoding: Optional["_models.DeploymentSpeculativeDecoding"] = rest_field(
         name="speculativeDecoding", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4192,12 +5575,18 @@ class DeploymentProperties(_Model):
      the deployed model is 'model-router' version 2025-11-18 or later. Allows you to select the
      models subset for routing and the routing mode (balanced, quality, cost) for routing across all
      supported models or the model subset."""
+    cost_control_ids: Optional[list[str]] = rest_field(
+        name="costControlIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The full resource IDs of cost controls directly attached to this deployment. At the moment the
+     service only supports a single cost control. This will be expanded in future API versions."""
 
     @overload
     def __init__(
         self,
         *,
         model: Optional["_models.DeploymentModel"] = None,
+        context_cache_container_id: Optional[str] = None,
         speculative_decoding: Optional["_models.DeploymentSpeculativeDecoding"] = None,
         scale_settings: Optional["_models.DeploymentScaleSettings"] = None,
         rai_policy_name: Optional[str] = None,
@@ -4209,6 +5598,7 @@ class DeploymentProperties(_Model):
         service_tier: Optional[Union[str, "_models.ServiceTier"]] = None,
         deployment_state: Optional[Union[str, "_models.DeploymentState"]] = None,
         routing: Optional["_models.DeploymentRouting"] = None,
+        cost_control_ids: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -4222,7 +5612,7 @@ class DeploymentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentRouting(_Model):
+class DeploymentRouting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Routing configuration for the model-router deployment. Specifies how requests are routed across
     multiple models.
 
@@ -4266,7 +5656,7 @@ class DeploymentRouting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentScaleSettings(_Model):
+class DeploymentScaleSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Cognitive Services account deployment model. (Deprecated, please use
     Deployment.sku instead.).
 
@@ -4330,7 +5720,7 @@ class DeploymentSizeCapacity(_Model):
     """The largest contiguous deployment capacity available for this deployment size."""
 
 
-class DeploymentSpeculativeDecoding(_Model):
+class DeploymentSpeculativeDecoding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Speculative decoding settings for a deployment.
 
     :ivar draft_model: Draft model used to generate speculative decoding tokens. Required.
@@ -4367,7 +5757,7 @@ class DeploymentSpeculativeDecoding(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DomainAvailability(_Model):
+class DomainAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Domain availability.
 
     :ivar is_subdomain_available: Indicates the given SKU is available or not.
@@ -4419,7 +5809,7 @@ class DomainAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Encryption(_Model):
+class Encryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to configure Encryption.
 
     :ivar key_vault_properties: Properties of KeyVault.
@@ -4458,7 +5848,7 @@ class Encryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionScope(ProxyResource):
+class EncryptionScope(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services EncryptionScope.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4508,7 +5898,7 @@ class EncryptionScope(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionScopeProperties(Encryption):
+class EncryptionScopeProperties(Encryption):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to EncryptionScope.
 
     :ivar key_vault_properties: Properties of KeyVault.
@@ -4600,7 +5990,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -4628,7 +6018,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluateDeploymentPoliciesDeployment(_Model):
+class EvaluateDeploymentPoliciesDeployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A hypothetical deployment definition used for policy dry-run evaluation.
 
     :ivar name: The name of the hypothetical deployment. Required.
@@ -4664,7 +6054,9 @@ class EvaluateDeploymentPoliciesDeployment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluateDeploymentPoliciesDeploymentProperties(_Model):  # pylint: disable=name-too-long
+class EvaluateDeploymentPoliciesDeploymentProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a hypothetical deployment for policy evaluation.
 
     :ivar model: The model to evaluate. Required.
@@ -4699,7 +6091,7 @@ class EvaluateDeploymentPoliciesDeploymentProperties(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class EvaluateDeploymentPoliciesRequest(_Model):
+class EvaluateDeploymentPoliciesRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for the evaluateDeploymentPolicies action.
 
     :ivar deployments: The list of hypothetical deployments to evaluate against Azure Policy.
@@ -4731,7 +6123,7 @@ class EvaluateDeploymentPoliciesRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluateDeploymentPoliciesResponse(_Model):
+class EvaluateDeploymentPoliciesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response body for the evaluateDeploymentPolicies action.
 
     :ivar results: Per-deployment policy evaluation results, keyed by deployment name.
@@ -4762,7 +6154,7 @@ class EvaluateDeploymentPoliciesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FoundryAutoUpgrade(_Model):
+class FoundryAutoUpgrade(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the foundry auto-upgrade configuration for a Cognitive Services account. Customers
     can opt out of auto-upgrade by setting mode to Disabled.
 
@@ -4815,7 +6207,7 @@ class FoundryAutoUpgrade(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OutboundRule(_Model):
+class OutboundRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Outbound Rule for the managed network of a cognitive services account.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4876,7 +6268,9 @@ class OutboundRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FqdnOutboundRule(OutboundRule, discriminator="FQDN"):
+class FqdnOutboundRule(
+    OutboundRule, discriminator="FQDN"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FQDN Outbound Rule for the managed network of a cognitive services account.
 
     :ivar category: Category of a managed network Outbound Rule of a cognitive services account.
@@ -4922,7 +6316,39 @@ class FqdnOutboundRule(OutboundRule, discriminator="FQDN"):
         self.type = RuleType.FQDN  # type: ignore
 
 
-class HostedAgentDeployment(AgentDeploymentProperties, discriminator="Hosted"):
+class GatedModelAccessProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Gated model access configuration for a managed compute deployment.
+
+    :ivar connection_id: The fully qualified Azure resource ID of the project connection used to
+     authorize access to a gated model during deployment creation. Required.
+    :vartype connection_id: str
+    """
+
+    connection_id: str = rest_field(name="connectionId", visibility=["read", "create", "update", "delete", "query"])
+    """The fully qualified Azure resource ID of the project connection used to authorize access to a
+     gated model during deployment creation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HostedAgentDeployment(
+    AgentDeploymentProperties, discriminator="Hosted"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a hosted agent deployment where the underlying infrastructure is owned by the
     platform.
 
@@ -4995,7 +6421,7 @@ class HostedAgentDeployment(AgentDeploymentProperties, discriminator="Hosted"):
         self.deployment_type = AgentDeploymentType.HOSTED  # type: ignore
 
 
-class Identity(_Model):
+class Identity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.
 
     :ivar type: The identity type. Known values are: "None", "SystemAssigned", "UserAssigned", and
@@ -5047,7 +6473,7 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpRule(_Model):
+class IpRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule governing the accessibility from a specific ip address or ip range.
 
     :ivar value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
@@ -5077,7 +6503,7 @@ class IpRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultProperties(_Model):
+class KeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to configure keyVault Properties.
 
     :ivar key_name: Name of the Key from KeyVault.
@@ -5125,7 +6551,9 @@ class KeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedAgentDeployment(AgentDeploymentProperties, discriminator="Managed"):
+class ManagedAgentDeployment(
+    AgentDeploymentProperties, discriminator="Managed"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a managed agent deployment where the underlying infrastructure is managed by the
     platform in the deployer's subscription.
 
@@ -5184,7 +6612,84 @@ class ManagedAgentDeployment(AgentDeploymentProperties, discriminator="Managed")
         self.deployment_type = AgentDeploymentType.MANAGED  # type: ignore
 
 
-class ManagedComputeCapacity(ProxyResource):
+class ManagedClusterAgentHostingConfiguration(
+    AgentHostingConfiguration, discriminator="ManagedCluster"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for hosting Foundry agents on an Azure Kubernetes Service managed cluster.
+
+    :ivar name: Unique name of the hosting configuration within the Foundry account. Required.
+    :vartype name: str
+    :ivar hosting_type: Type of infrastructure used to host Foundry agents. Required. Agents are
+     hosted on an Azure Kubernetes Service managed cluster.
+    :vartype hosting_type: str or ~azure.mgmt.cognitiveservices.models.MANAGED_CLUSTER
+    :ivar hosting_management_identity_resource_id: Azure resource ID of the user-assigned managed
+     identity used by the Foundry resource provider to manage the hosting configuration. The
+     identity must be assigned to the Foundry account in identity.userAssignedIdentities. Required.
+    :vartype hosting_management_identity_resource_id: str
+    :ivar workload_identity_resource_id: Azure resource ID of the separate user-assigned managed
+     identity federated to service accounts on the AKS cluster. Hosted agents use this identity to
+     access the Azure Storage blob data plane. Required.
+    :vartype workload_identity_resource_id: str
+    :ivar cluster_resource_id: Azure resource ID of the customer-owned AKS managed cluster that
+     runs the hosted agent workloads. Required.
+    :vartype cluster_resource_id: str
+    :ivar storage_account_resource_id: Azure resource ID of the customer-owned storage account used
+     by the hosted agents. The storage account must be in the same subscription and region as the
+     AKS cluster, and its data-plane endpoint must be reachable from the workload network. Required.
+    :vartype storage_account_resource_id: str
+    """
+
+    hosting_type: Literal[AgentHostingType.MANAGED_CLUSTER] = rest_discriminator(name="hostingType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of infrastructure used to host Foundry agents. Required. Agents are hosted on an Azure
+     Kubernetes Service managed cluster."""
+    hosting_management_identity_resource_id: str = rest_field(
+        name="hostingManagementIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource ID of the user-assigned managed identity used by the Foundry resource provider
+     to manage the hosting configuration. The identity must be assigned to the Foundry account in
+     identity.userAssignedIdentities. Required."""
+    workload_identity_resource_id: str = rest_field(
+        name="workloadIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource ID of the separate user-assigned managed identity federated to service accounts
+     on the AKS cluster. Hosted agents use this identity to access the Azure Storage blob data
+     plane. Required."""
+    cluster_resource_id: str = rest_field(
+        name="clusterResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource ID of the customer-owned AKS managed cluster that runs the hosted agent
+     workloads. Required."""
+    storage_account_resource_id: str = rest_field(
+        name="storageAccountResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource ID of the customer-owned storage account used by the hosted agents. The storage
+     account must be in the same subscription and region as the AKS cluster, and its data-plane
+     endpoint must be reachable from the workload network. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        hosting_management_identity_resource_id: str,
+        workload_identity_resource_id: str,
+        cluster_resource_id: str,
+        storage_account_resource_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.hosting_type = AgentHostingType.MANAGED_CLUSTER  # type: ignore
+
+
+class ManagedComputeCapacity(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed compute capacity information for Cognitive Services managed compute deployments.
     Provides available accelerator capacity per type and region at the subscription level.
 
@@ -5248,7 +6753,7 @@ class ManagedComputeCapacityProperties(_Model):
     """Capacity information broken down by deployment size."""
 
 
-class ManagedComputeDeployment(ProxyResource):
+class ManagedComputeDeployment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services account managed compute deployment, backed by managed compute (GPU)
     resources.
 
@@ -5299,7 +6804,7 @@ class ManagedComputeDeployment(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ManagedComputeDeploymentInfo(_Model):
+class ManagedComputeDeploymentInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment detail within a managed compute usage entry.
 
     :ivar deployment_id: Full ARM resource ID of the deployment.
@@ -5353,7 +6858,7 @@ class ManagedComputeDeploymentInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedComputeDeploymentProperties(_Model):
+class ManagedComputeDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Cognitive Services managed compute deployment.
 
     :ivar model: AzureML Registry model asset URI. Required on creation; immutable after creation.
@@ -5373,6 +6878,9 @@ class ManagedComputeDeploymentProperties(_Model):
      "OnceCurrentVersionExpired", and "NoAutoUpgrade".
     :vartype version_upgrade_option: str or
      ~azure.mgmt.cognitiveservices.models.DeploymentModelVersionUpgradeOption
+    :ivar gated_model_access: Configuration used to authorize access to a gated model during
+     deployment creation.
+    :vartype gated_model_access: ~azure.mgmt.cognitiveservices.models.GatedModelAccessProperties
     :ivar capabilities: Deployment capabilities represented as key-value pairs. Example: {
      assetsV2: "true" }.
     :vartype capabilities: dict[str, str]
@@ -5389,7 +6897,8 @@ class ManagedComputeDeploymentProperties(_Model):
      acceleratorsPerInstance.
     :vartype total_accelerators: int
     :ivar provisioning_state: Read-only. Current provisioning state. Known values are: "Accepted",
-     "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled", and "ResolvingDNS".
+     "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled", "ResolvingDNS", and
+     "ExtensionUnreachable".
     :vartype provisioning_state: str or ~azure.mgmt.cognitiveservices.models.ProvisioningState
     :ivar provisioning_details: Read-only. Status message and timestamp from the last provisioning
      operation.
@@ -5415,6 +6924,10 @@ class ManagedComputeDeploymentProperties(_Model):
     )
     """Template auto-upgrade policy. Defaults to OnceNewDefaultVersionAvailable. Known values are:
      \"OnceNewDefaultVersionAvailable\", \"OnceCurrentVersionExpired\", and \"NoAutoUpgrade\"."""
+    gated_model_access: Optional["_models.GatedModelAccessProperties"] = rest_field(
+        name="gatedModelAccess", visibility=["read", "create"]
+    )
+    """Configuration used to authorize access to a gated model during deployment creation."""
     capabilities: Optional[dict[str, str]] = rest_field(visibility=["read"])
     """Deployment capabilities represented as key-value pairs. Example: { assetsV2: \"true\" }."""
     compute_id: Optional[str] = rest_field(name="computeId", visibility=["read", "create"])
@@ -5431,7 +6944,8 @@ class ManagedComputeDeploymentProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Read-only. Current provisioning state. Known values are: \"Accepted\", \"Creating\",
-     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", and \"ResolvingDNS\"."""
+     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", \"ResolvingDNS\", and
+     \"ExtensionUnreachable\"."""
     provisioning_details: Optional["_models.ManagedComputeDeploymentProvisioningDetails"] = rest_field(
         name="provisioningDetails", visibility=["read"]
     )
@@ -5448,6 +6962,7 @@ class ManagedComputeDeploymentProperties(_Model):
         deployment_template: Optional[str] = None,
         accelerator_type: Optional[str] = None,
         version_upgrade_option: Optional[Union[str, "_models.DeploymentModelVersionUpgradeOption"]] = None,
+        gated_model_access: Optional["_models.GatedModelAccessProperties"] = None,
         compute_id: Optional[str] = None,
         priority: Optional[str] = None,
     ) -> None: ...
@@ -5463,7 +6978,9 @@ class ManagedComputeDeploymentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedComputeDeploymentProvisioningDetails(_Model):  # pylint: disable=name-too-long
+class ManagedComputeDeploymentProvisioningDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Provisioning status details for a managed compute deployment.
 
     :ivar message: A human-readable status message from the last provisioning operation.
@@ -5498,7 +7015,7 @@ class ManagedComputeDeploymentProvisioningDetails(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class ManagedComputeDeploymentRoutes(_Model):
+class ManagedComputeDeploymentRoutes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Inference route paths for a managed compute deployment, relative to the account endpoint.
     Populated when provisioningState is Succeeded.
 
@@ -5541,7 +7058,7 @@ class ManagedComputeDeploymentRoutes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedComputeUsage(_Model):
+class ManagedComputeUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed compute quota usage for a specific SKU.
 
     :ivar id: Fully qualified resource ID for the managed compute usage.
@@ -5613,7 +7130,7 @@ class ManagedComputeUsage(_Model):
 
 class ManagedIdentityAuthTypeConnectionProperties(
     ConnectionPropertiesV2, discriminator="ManagedIdentity"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ManagedIdentityAuthTypeConnectionProperties.
 
     :ivar category: Category of the connection. Known values are: "PythonFeed",
@@ -5629,11 +7146,11 @@ class ManagedIdentityAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -5710,7 +7227,7 @@ class ManagedNetworkProvisionOptions(_Model):
     """Managed Network Provisioning options for managed network of a cognitive services account."""
 
 
-class ManagedNetworkProvisionStatus(_Model):
+class ManagedNetworkProvisionStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of the Provisioning for the managed network of a cognitive services account.
 
     :ivar status: Status for the managed network of a cognitive services account. Known values are:
@@ -5742,7 +7259,7 @@ class ManagedNetworkProvisionStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedNetworkSettings(_Model):
+class ManagedNetworkSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed Network settings for a cognitive services account.
 
     :ivar isolation_mode: Isolation mode for the managed network of a cognitive services account.
@@ -5822,7 +7339,7 @@ class ManagedNetworkSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedNetworkSettingsBasicResource(Resource):
+class ManagedNetworkSettingsBasicResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedNetworkSettingsBasicResource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5863,7 +7380,7 @@ class ManagedNetworkSettingsBasicResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ManagedNetworkSettingsEx(ManagedNetworkSettings):
+class ManagedNetworkSettingsEx(ManagedNetworkSettings):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedNetworkSettingsEx.
 
     :ivar isolation_mode: Isolation mode for the managed network of a cognitive services account.
@@ -5919,7 +7436,7 @@ class ManagedNetworkSettingsEx(ManagedNetworkSettings):
         super().__init__(*args, **kwargs)
 
 
-class ManagedNetworkSettingsProperties(_Model):
+class ManagedNetworkSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the managed network settings of a cognitive services account.
 
     :ivar managed_network: Managed Network settings for a cognitive services account.
@@ -5960,7 +7477,9 @@ class ManagedNetworkSettingsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedNetworkSettingsPropertiesBasicResource(ProxyResource):  # pylint: disable=name-too-long
+class ManagedNetworkSettingsPropertiesBasicResource(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -6003,7 +7522,7 @@ class ManagedNetworkSettingsPropertiesBasicResource(ProxyResource):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class MetricName(_Model):
+class MetricName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A metric name.
 
     :ivar value: The name of the metric.
@@ -6038,7 +7557,7 @@ class MetricName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Model(_Model):
+class Model(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services Model.
 
     :ivar model: Cognitive Services account Model.
@@ -6081,7 +7600,7 @@ class Model(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelCapacityCalculatorWorkload(_Model):
+class ModelCapacityCalculatorWorkload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model Capacity Calculator Workload.
 
     :ivar request_per_minute: Request per minute.
@@ -6119,7 +7638,9 @@ class ModelCapacityCalculatorWorkload(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelCapacityCalculatorWorkloadRequestParam(_Model):  # pylint: disable=name-too-long
+class ModelCapacityCalculatorWorkloadRequestParam(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Dictionary, Model Capacity Calculator Workload Parameters.
 
     :ivar avg_prompt_tokens: Average prompt tokens.
@@ -6156,7 +7677,7 @@ class ModelCapacityCalculatorWorkloadRequestParam(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class ModelCapacityListResultValueItem(ProxyResource):
+class ModelCapacityListResultValueItem(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ModelCapacityListResultValueItem.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6202,7 +7723,7 @@ class ModelCapacityListResultValueItem(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ModelDeprecationInfo(_Model):
+class ModelDeprecationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services account ModelDeprecationInfo.
 
     :ivar fine_tune: The datetime of deprecation of the fineTune Model.
@@ -6249,7 +7770,7 @@ class ModelDeprecationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelSku(_Model):
+class ModelSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an available Cognitive Services Model SKU.
 
     :ivar name: The name of the model SKU.
@@ -6310,7 +7831,7 @@ class ModelSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelSkuCapacityProperties(_Model):
+class ModelSkuCapacityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services account ModelSkuCapacity.
 
     :ivar model: Properties of Cognitive Services account deployment model.
@@ -6371,7 +7892,7 @@ class ModelSkuCapacityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiRegionSettings(_Model):
+class MultiRegionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The multiregion settings Cognitive Services account.
 
     :ivar routing_method: Multiregion routing methods. Known values are: "Priority", "Weighted",
@@ -6408,7 +7929,7 @@ class MultiRegionSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInjection(_Model):
+class NetworkInjection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies in AI Foundry where virtual network injection occurs to secure scenarios like Agents
     entirely within the user's private network, eliminating public internet exposure while
     maintaining control over network configurations and resources.
@@ -6459,7 +7980,7 @@ class NetworkInjection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRuleSet(_Model):
+class NetworkRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A set of rules governing the network accessibility.
 
     :ivar default_action: The default action when no rule from ipRules and from virtualNetworkRules
@@ -6513,7 +8034,7 @@ class NetworkRuleSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeter(_Model):
+class NetworkSecurityPerimeter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a linked Network Security Perimeter.
 
     :ivar id: Fully qualified identifier of the resource.
@@ -6553,7 +8074,7 @@ class NetworkSecurityPerimeter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterAccessRule(_Model):
+class NetworkSecurityPerimeterAccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Security Perimeter Access Rule.
 
     :ivar name: Network Security Perimeter Access Rule Name.
@@ -6589,7 +8110,9 @@ class NetworkSecurityPerimeterAccessRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterAccessRuleProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterAccessRuleProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Properties of Network Security Perimeter Rule.
 
     :ivar direction: Direction of Access Rule. Known values are: "Inbound" and "Outbound".
@@ -6649,7 +8172,9 @@ class NetworkSecurityPerimeterAccessRuleProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Subscription for inbound rule.
 
     :ivar id: Fully qualified identifier of subscription.
@@ -6677,7 +8202,9 @@ class NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem(_Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfiguration(ProxyResource):
+class NetworkSecurityPerimeterConfiguration(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSP Configuration for an Cognitive Services account.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6719,7 +8246,9 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfigurationAssociationInfo(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationAssociationInfo(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network Security Perimeter Configuration Association Information.
 
     :ivar name: Name of the resource association.
@@ -6754,7 +8283,9 @@ class NetworkSecurityPerimeterConfigurationAssociationInfo(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of an NSP Configuration.
 
     :ivar provisioning_state: Provisioning state of NetworkSecurityPerimeter configuration.
@@ -6811,7 +8342,7 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterProfileInfo(_Model):
+class NetworkSecurityPerimeterProfileInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Security Perimeter Profile Information.
 
     :ivar name: Name of the resource profile.
@@ -6867,7 +8398,9 @@ class NetworkSecurityPerimeterProfileInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NoneAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="None"):
+class NoneAuthTypeConnectionProperties(
+    ConnectionPropertiesV2, discriminator="None"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NoneAuthTypeConnectionProperties.
 
     :ivar category: Category of the connection. Known values are: "PythonFeed",
@@ -6883,11 +8416,11 @@ class NoneAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="No
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -6954,7 +8487,9 @@ class NoneAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="No
         self.auth_type = ConnectionAuthType.NONE  # type: ignore
 
 
-class OAuth2AuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="OAuth2"):
+class OAuth2AuthTypeConnectionProperties(
+    ConnectionPropertiesV2, discriminator="OAuth2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OAuth2AuthTypeConnectionProperties.
 
     :ivar category: Category of the connection. Known values are: "PythonFeed",
@@ -6970,11 +8505,11 @@ class OAuth2AuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -7050,7 +8585,7 @@ class OAuth2AuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="
         self.auth_type = ConnectionAuthType.O_AUTH2  # type: ignore
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -7168,7 +8703,7 @@ class OrganizationSharedBuiltInAuthorizationPolicy(
         self.type = BuiltInAuthorizationScheme.ORGANIZATION_SCOPE  # type: ignore
 
 
-class OutboundRuleBasicResource(ProxyResource):
+class OutboundRuleBasicResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -7209,7 +8744,9 @@ class OutboundRuleBasicResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PATAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="PAT"):
+class PATAuthTypeConnectionProperties(
+    ConnectionPropertiesV2, discriminator="PAT"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PATAuthTypeConnectionProperties.
 
     :ivar category: Category of the connection. Known values are: "PythonFeed",
@@ -7225,11 +8762,11 @@ class PATAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="PAT
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -7302,7 +8839,7 @@ class PATAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="PAT
         self.auth_type = ConnectionAuthType.PAT  # type: ignore
 
 
-class PatchResourceSku(_Model):
+class PatchResourceSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object being used to update sku of a resource, in general used for PATCH operations.
 
     :ivar sku: The resource model definition representing SKU.
@@ -7330,7 +8867,7 @@ class PatchResourceSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatchResourceTags(_Model):
+class PatchResourceTags(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object being used to update tags of a resource, in general used for PATCH operations.
 
     :ivar tags: Resource tags.
@@ -7358,7 +8895,7 @@ class PatchResourceTags(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatchResourceTagsAndSku(PatchResourceTags):
+class PatchResourceTagsAndSku(PatchResourceTags):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object being used to update tags and sku of a resource, in general used for PATCH
     operations.
 
@@ -7390,7 +8927,7 @@ class PatchResourceTagsAndSku(PatchResourceTags):
         super().__init__(*args, **kwargs)
 
 
-class PolicyAssignmentEvaluationDetails(_Model):
+class PolicyAssignmentEvaluationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of a non-compliant policy assignment.
 
     :ivar assignment_id: The policy assignment ID.
@@ -7464,7 +9001,7 @@ class PolicyAssignmentEvaluationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyExpressionEvaluationDetails(_Model):
+class PolicyExpressionEvaluationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of a policy expression evaluation.
 
     :ivar expression: The policy expression.
@@ -7523,13 +9060,12 @@ class PolicyExpressionEvaluationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Pool(_Model):
+class Pool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A compute pool configuration.
 
     :ivar name: The name of the pool. Required.
     :vartype name: str
-    :ivar vm_priority: The VM priority of the pool. Required. Known values are: "Regular" and
-     "LowPriority".
+    :ivar vm_priority: The VM priority of the pool. Known values are: "Regular" and "Spot".
     :vartype vm_priority: str or ~azure.mgmt.cognitiveservices.models.VmPriority
     :ivar instance_type: The instance type (VM SKU) used in the pool. Required.
     :vartype instance_type: str
@@ -7539,10 +9075,10 @@ class Pool(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the pool. Required."""
-    vm_priority: Union[str, "_models.VmPriority"] = rest_field(
+    vm_priority: Optional[Union[str, "_models.VmPriority"]] = rest_field(
         name="vmPriority", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The VM priority of the pool. Required. Known values are: \"Regular\" and \"LowPriority\"."""
+    """The VM priority of the pool. Known values are: \"Regular\" and \"Spot\"."""
     instance_type: str = rest_field(name="instanceType", visibility=["read", "create", "update", "delete", "query"])
     """The instance type (VM SKU) used in the pool. Required."""
     node_count: int = rest_field(name="nodeCount", visibility=["read", "create", "update", "delete", "query"])
@@ -7553,9 +9089,9 @@ class Pool(_Model):
         self,
         *,
         name: str,
-        vm_priority: Union[str, "_models.VmPriority"],
         instance_type: str,
         node_count: int,
+        vm_priority: Optional[Union[str, "_models.VmPriority"]] = None,
     ) -> None: ...
 
     @overload
@@ -7580,7 +9116,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Private Endpoint Connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7630,7 +9166,7 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionListResult(_Model):
+class PrivateEndpointConnectionListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of private endpoint connections.
 
     :ivar value: Array of private endpoint connections.
@@ -7660,7 +9196,7 @@ class PrivateEndpointConnectionListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the PrivateEndpointConnectProperties.
 
     :ivar private_endpoint: The resource of private end point.
@@ -7716,7 +9252,9 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointOutboundRule(OutboundRule, discriminator="PrivateEndpoint"):
+class PrivateEndpointOutboundRule(
+    OutboundRule, discriminator="PrivateEndpoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private Endpoint outbound rule for the managed network of a cognitive services account.
 
     :ivar category: Category of a managed network Outbound Rule of a cognitive services account.
@@ -7772,7 +9310,7 @@ class PrivateEndpointOutboundRule(OutboundRule, discriminator="PrivateEndpoint")
         self.type = RuleType.PRIVATE_ENDPOINT  # type: ignore
 
 
-class PrivateEndpointOutboundRuleDestination(_Model):
+class PrivateEndpointOutboundRuleDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private Endpoint destination for an outbound rule.
 
     :ivar service_resource_id: The Azure resource ID of the target private endpoint service.
@@ -7809,7 +9347,7 @@ class PrivateEndpointOutboundRuleDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7850,7 +9388,7 @@ class PrivateLinkResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceListResult(_Model):
+class PrivateLinkResourceListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of private link resources.
 
     :ivar value: Array of private link resources.
@@ -7880,7 +9418,7 @@ class PrivateLinkResourceListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -7922,7 +9460,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -7969,7 +9507,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Project(ProxyResource):
+class Project(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services project is an Azure resource representing the provisioned account's project,
     it's type, location and SKU.
 
@@ -8030,7 +9568,7 @@ class Project(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ProjectCapabilityHost(ProxyResource):
+class ProjectCapabilityHost(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Resource Manager resource envelope for Project CapabilityHost.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8071,7 +9609,7 @@ class ProjectCapabilityHost(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ProjectCapabilityHostProperties(_Model):
+class ProjectCapabilityHostProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ProjectCapabilityHostProperties.
 
     :ivar ai_services_connections: List of AI services connections.
@@ -8137,12 +9675,12 @@ class ProjectCapabilityHostProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProjectProperties(_Model):
+class ProjectProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Cognitive Services Project'.
 
     :ivar provisioning_state: Gets the status of the cognitive services project at the time the
      operation was called. Known values are: "Accepted", "Creating", "Deleting", "Moving", "Failed",
-     "Succeeded", "Canceled", and "ResolvingDNS".
+     "Succeeded", "Canceled", "ResolvingDNS", and "ExtensionUnreachable".
     :vartype provisioning_state: str or ~azure.mgmt.cognitiveservices.models.ProvisioningState
     :ivar display_name: The display name of the Cognitive Services Project.
     :vartype display_name: str
@@ -8152,6 +9690,10 @@ class ProjectProperties(_Model):
     :vartype endpoints: dict[str, str]
     :ivar is_default: Indicates whether the project is the default project for the account.
     :vartype is_default: bool
+    :ivar capability_settings: Effective agent capability settings for the project. Optional
+     partial override of the account defaults; omitted fields inherit from the parent account when
+     present. Settable only at create time.
+    :vartype capability_settings: ~azure.mgmt.cognitiveservices.models.CapabilitySettings
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -8159,7 +9701,7 @@ class ProjectProperties(_Model):
     )
     """Gets the status of the cognitive services project at the time the operation was called. Known
      values are: \"Accepted\", \"Creating\", \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\",
-     \"Canceled\", and \"ResolvingDNS\"."""
+     \"Canceled\", \"ResolvingDNS\", and \"ExtensionUnreachable\"."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8170,6 +9712,12 @@ class ProjectProperties(_Model):
     """The list of endpoint for this Cognitive Services Project."""
     is_default: Optional[bool] = rest_field(name="isDefault", visibility=["read"])
     """Indicates whether the project is the default project for the account."""
+    capability_settings: Optional["_models.CapabilitySettings"] = rest_field(
+        name="capabilitySettings", visibility=["read", "create"]
+    )
+    """Effective agent capability settings for the project. Optional partial override of the account
+     defaults; omitted fields inherit from the parent account when present. Settable only at create
+     time."""
 
     @overload
     def __init__(
@@ -8177,6 +9725,7 @@ class ProjectProperties(_Model):
         *,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
+        capability_settings: Optional["_models.CapabilitySettings"] = None,
     ) -> None: ...
 
     @overload
@@ -8190,7 +9739,7 @@ class ProjectProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProvisioningIssue(_Model):
+class ProvisioningIssue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ProvisioningIssue.
 
     :ivar name: Name of the NSP provisioning issue.
@@ -8225,7 +9774,7 @@ class ProvisioningIssue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProvisioningIssueProperties(_Model):
+class ProvisioningIssueProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Provisioning Issue.
 
     :ivar issue_type: Type of Issue.
@@ -8279,7 +9828,7 @@ class ProvisioningIssueProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaLimit(_Model):
+class QuotaLimit(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """QuotaLimit.
 
     :ivar count:
@@ -8318,7 +9867,7 @@ class QuotaLimit(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaTier(ProxyResource):
+class QuotaTier(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The quota tier information for the subscription.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8359,7 +9908,7 @@ class QuotaTier(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class QuotaTierProperties(_Model):
+class QuotaTierProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Quota Tier resource'.
 
     :ivar current_tier_name: Name of the current quota tier for the subscription.
@@ -8410,7 +9959,7 @@ class QuotaTierProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaTierUpgradeEligibilityInfo(_Model):
+class QuotaTierUpgradeEligibilityInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the quota tier upgrade eligibility for the subscription.
 
     :ivar next_tier_name: Name of the next quota tier for the subscription.
@@ -8467,7 +10016,552 @@ class QuotaTierUpgradeEligibilityInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiBlocklist(ProxyResource):
+class RaiAcsEmptyObject(_Model):
+    """An object that must contain no properties."""
+
+
+class RaiAcsHarmConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Selects one Azure AI Content Safety harm-detector configuration.
+
+    :ivar category: The logical harm category exposed under input.snapshot.moderation.harm.
+     Required. Known values are: "Hate", "SelfHarm", "Sexual", "Violence", "PromptInjection",
+     "ProtectedMaterialText", and "ProtectedMaterialCode".
+    :vartype category: str or ~azure.mgmt.cognitiveservices.models.RaiAcsHarmCategory
+    :ivar harm_config_id: The Azure AI Content Safety detector configuration identifier. When
+     supplied, it must be the configuration supported for the selected category.
+    :vartype harm_config_id: str
+    """
+
+    category: Union[str, "_models.RaiAcsHarmCategory"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The logical harm category exposed under input.snapshot.moderation.harm. Required. Known values
+     are: \"Hate\", \"SelfHarm\", \"Sexual\", \"Violence\", \"PromptInjection\",
+     \"ProtectedMaterialText\", and \"ProtectedMaterialCode\"."""
+    harm_config_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Azure AI Content Safety detector configuration identifier. When supplied, it must be the
+     configuration supported for the selected category."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Union[str, "_models.RaiAcsHarmCategory"],
+        harm_config_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsInterventionPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Binds one logical policy to an Agent Control Specification intervention point.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
+     "$snap.tool_result.value".
+    :vartype policy_target: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTarget
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
+     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
+    :vartype policy_target_kind: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTargetKind
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyBinding
+    :ivar annotations: Standard Agent Control Specification annotation bindings are disabled; when
+     present, this object must be empty.
+    :vartype annotations: ~azure.mgmt.cognitiveservices.models.RaiAcsEmptyObject
+    """
+
+    policy_target: Union[str, "_models.RaiAcsPolicyTarget"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
+     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
+     \"$snap.tool_result.value\"."""
+    policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
+     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
+    policy: "_models.RaiAcsPolicyBinding" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: Optional["_models.RaiAcsEmptyObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Standard Agent Control Specification annotation bindings are disabled; when present, this
+     object must be empty."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy_target: Union[str, "_models.RaiAcsPolicyTarget"],
+        policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"],
+        policy: "_models.RaiAcsPolicyBinding",
+        annotations: Optional["_models.RaiAcsEmptyObject"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsInterventionPoints(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Intervention points supported by the Azure AI Content Safety Unified Moderate host profile.
+
+    :ivar input: The policy evaluated for user input.
+    :vartype input: ~azure.mgmt.cognitiveservices.models.RaiAcsInterventionPoint
+    :ivar pre_tool_call: The policy evaluated before a tool call.
+    :vartype pre_tool_call: ~azure.mgmt.cognitiveservices.models.RaiAcsToolInterventionPoint
+    :ivar post_tool_call: The policy evaluated after a tool call.
+    :vartype post_tool_call: ~azure.mgmt.cognitiveservices.models.RaiAcsToolInterventionPoint
+    :ivar output: The policy evaluated for final output.
+    :vartype output: ~azure.mgmt.cognitiveservices.models.RaiAcsInterventionPoint
+    """
+
+    input: Optional["_models.RaiAcsInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated for user input."""
+    pre_tool_call: Optional["_models.RaiAcsToolInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated before a tool call."""
+    post_tool_call: Optional["_models.RaiAcsToolInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated after a tool call."""
+    output: Optional["_models.RaiAcsInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated for final output."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input: Optional["_models.RaiAcsInterventionPoint"] = None,
+        pre_tool_call: Optional["_models.RaiAcsToolInterventionPoint"] = None,
+        post_tool_call: Optional["_models.RaiAcsToolInterventionPoint"] = None,
+        output: Optional["_models.RaiAcsInterventionPoint"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsManifest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The closed Rego-only Agent Control Specification (ACS) profile supported by Azure AI Content
+    Safety Unified Moderate.
+
+    :ivar agent_control_specification_version: The declared Agent Control Specification manifest
+     version. Required.
+    :vartype agent_control_specification_version: str
+    :ivar metadata: Non-policy manifest metadata.
+    :vartype metadata: dict[str, any]
+    :ivar policies: Named Rego policies in this manifest. Required.
+    :vartype policies: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsRegoPolicyDefinition]
+    :ivar intervention_points: Agent Control Specification intervention-point bindings. At least
+     one intervention point is required. Required.
+    :vartype intervention_points: ~azure.mgmt.cognitiveservices.models.RaiAcsInterventionPoints
+    :ivar tools: Static tool catalog keyed by canonical tool name. The catalog may be omitted or
+     empty when no tool selector is configured. A tool selector requires a non-empty catalog, and an
+     unknown selected key fails closed.
+    :vartype tools: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsToolDefinition]
+    :ivar annotators: Standard Agent Control Specification annotator dispatch is disabled; when
+     present, this object must be empty.
+    :vartype annotators: ~azure.mgmt.cognitiveservices.models.RaiAcsEmptyObject
+    """
+
+    agent_control_specification_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The declared Agent Control Specification manifest version. Required."""
+    metadata: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Non-policy manifest metadata."""
+    policies: dict[str, "_models.RaiAcsRegoPolicyDefinition"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Named Rego policies in this manifest. Required."""
+    intervention_points: "_models.RaiAcsInterventionPoints" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Agent Control Specification intervention-point bindings. At least one intervention point is
+     required. Required."""
+    tools: Optional[dict[str, "_models.RaiAcsToolDefinition"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Static tool catalog keyed by canonical tool name. The catalog may be omitted or empty when no
+     tool selector is configured. A tool selector requires a non-empty catalog, and an unknown
+     selected key fails closed."""
+    annotators: Optional["_models.RaiAcsEmptyObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Standard Agent Control Specification annotator dispatch is disabled; when present, this object
+     must be empty."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_control_specification_version: str,
+        policies: dict[str, "_models.RaiAcsRegoPolicyDefinition"],
+        intervention_points: "_models.RaiAcsInterventionPoints",
+        metadata: Optional[dict[str, Any]] = None,
+        tools: Optional[dict[str, "_models.RaiAcsToolDefinition"]] = None,
+        annotators: Optional["_models.RaiAcsEmptyObject"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsModerationBindingExtension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Azure AI Content Safety moderation work performed before the Agent Control Specification
+    runtime evaluates the selected Rego query.
+
+    :ivar subject_format: How the selected policy target is represented to moderation capabilities.
+     Required. Known values are: "text" and "canonical_json".
+    :vartype subject_format: str or
+     ~azure.mgmt.cognitiveservices.models.RaiAcsModerationSubjectFormat
+    :ivar harm_configs: Harm signals requested for this intervention point. Required.
+    :vartype harm_configs: list[~azure.mgmt.cognitiveservices.models.RaiAcsHarmConfiguration]
+    """
+
+    subject_format: Union[str, "_models.RaiAcsModerationSubjectFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the selected policy target is represented to moderation capabilities. Required. Known
+     values are: \"text\" and \"canonical_json\"."""
+    harm_configs: list["_models.RaiAcsHarmConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Harm signals requested for this intervention point. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subject_format: Union[str, "_models.RaiAcsModerationSubjectFormat"],
+        harm_configs: list["_models.RaiAcsHarmConfiguration"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsPolicyBinding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Identifies the logical policy evaluated at an Agent Control Specification intervention point.
+
+    :ivar id: The logical policy identifier. Required.
+    :vartype id: str
+    :ivar query: An optional intervention-specific Rego query override.
+    :vartype query: str
+    :ivar aacs_moderation: Optional Azure AI Content Safety moderation capabilities invoked before
+     Rego evaluation.
+    :vartype aacs_moderation: ~azure.mgmt.cognitiveservices.models.RaiAcsModerationBindingExtension
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The logical policy identifier. Required."""
+    query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional intervention-specific Rego query override."""
+    aacs_moderation: Optional["_models.RaiAcsModerationBindingExtension"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional Azure AI Content Safety moderation capabilities invoked before Rego evaluation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        query: Optional[str] = None,
+        aacs_moderation: Optional["_models.RaiAcsModerationBindingExtension"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsRegoPolicyDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Rego policy definition in the Azure AI Content Safety Unified Moderate host profile.
+
+    :ivar type: The policy language. This profile supports only Rego. Required. "rego"
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyDefinitionType
+    :ivar query: The fully qualified Rego query evaluated for this policy. Required.
+    :vartype query: str
+    """
+
+    type: Union[str, "_models.RaiAcsPolicyDefinitionType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy language. This profile supports only Rego. Required. \"rego\""""
+    query: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The fully qualified Rego query evaluated for this policy. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.RaiAcsPolicyDefinitionType"],
+        query: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsToolDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Static policy metadata for one Agent Control Specification tool catalog entry.
+
+    :ivar id: Optional host-defined tool identifier. The catalog map key, not this value, controls
+     tool lookup.
+    :vartype id: str
+    :ivar type: Optional host-defined tool type.
+    :vartype type: str
+    :ivar description: Human-readable policy metadata.
+    :vartype description: str
+    :ivar security_labels: Labels describing the sink or capability.
+    :vartype security_labels: list[str]
+    :ivar clearance: Maximum sensitivity or host-defined clearance metadata.
+    :vartype clearance: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional host-defined tool identifier. The catalog map key, not this value, controls tool
+     lookup."""
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional host-defined tool type."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable policy metadata."""
+    security_labels: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Labels describing the sink or capability."""
+    clearance: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum sensitivity or host-defined clearance metadata."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        type: Optional[str] = None,
+        description: Optional[str] = None,
+        security_labels: Optional[list[str]] = None,
+        clearance: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsToolInterventionPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Binds one logical policy to a tool-call intervention point.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
+     "$snap.tool_result.value".
+    :vartype policy_target: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTarget
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
+     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
+    :vartype policy_target_kind: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTargetKind
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyBinding
+    :ivar annotations: Standard Agent Control Specification annotation bindings are disabled; when
+     present, this object must be empty.
+    :vartype annotations: ~azure.mgmt.cognitiveservices.models.RaiAcsEmptyObject
+    :ivar tool_name_from: Selects the tool catalog key from the raw Agent Hooks snapshot using an
+     extensible snapshot path. Known values are: "$snap.tool_call.name" and "$.tool_call.name".
+    :vartype tool_name_from: str or ~azure.mgmt.cognitiveservices.models.RaiAcsToolNameSelector
+    """
+
+    policy_target: Union[str, "_models.RaiAcsPolicyTarget"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
+     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
+     \"$snap.tool_result.value\"."""
+    policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
+     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
+    policy: "_models.RaiAcsPolicyBinding" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: Optional["_models.RaiAcsEmptyObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Standard Agent Control Specification annotation bindings are disabled; when present, this
+     object must be empty."""
+    tool_name_from: Optional[Union[str, "_models.RaiAcsToolNameSelector"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Selects the tool catalog key from the raw Agent Hooks snapshot using an extensible snapshot
+     path. Known values are: \"$snap.tool_call.name\" and \"$.tool_call.name\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy_target: Union[str, "_models.RaiAcsPolicyTarget"],
+        policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"],
+        policy: "_models.RaiAcsPolicyBinding",
+        annotations: Optional["_models.RaiAcsEmptyObject"] = None,
+        tool_name_from: Optional[Union[str, "_models.RaiAcsToolNameSelector"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiBinding(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An account-scoped binding from an Azure resource to an Agent Control Specification policy.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Properties of the RAI binding.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.RaiBindingProperties
+    :ivar etag: Resource ETag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: Optional["_models.RaiBindingProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the RAI binding."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Resource ETag."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.RaiBindingProperties"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiBindingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a binding from an Azure resource to an Agent Control Specification policy.
+
+    :ivar bound_resource_id: A valid Azure Resource Manager resource ID of the resource to bind to
+     the target RAI policy. Required.
+    :vartype bound_resource_id: str
+    :ivar target_policy_name: The same-account Agent Control Specification policy name targeted by
+     the binding. Required.
+    :vartype target_policy_name: str
+    """
+
+    bound_resource_id: str = rest_field(name="boundResourceId", visibility=["read", "create", "update"])
+    """A valid Azure Resource Manager resource ID of the resource to bind to the target RAI policy.
+     Required."""
+    target_policy_name: str = rest_field(
+        name="targetPolicyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The same-account Agent Control Specification policy name targeted by the binding. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        bound_resource_id: str,
+        target_policy_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiBlocklist(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services RaiBlocklist.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8517,7 +10611,7 @@ class RaiBlocklist(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RaiBlocklistItem(ProxyResource):
+class RaiBlocklistItem(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services RaiBlocklist Item.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8567,7 +10661,7 @@ class RaiBlocklistItem(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RaiBlocklistItemBulkRequest(_Model):
+class RaiBlocklistItemBulkRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Cognitive Services RaiBlocklist Item request body.
 
     :ivar name:
@@ -8601,7 +10695,7 @@ class RaiBlocklistItemBulkRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiBlocklistItemProperties(_Model):
+class RaiBlocklistItemProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RAI Custom Blocklist Item properties.
 
     :ivar pattern: Pattern to match against.
@@ -8634,7 +10728,7 @@ class RaiBlocklistItemProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiBlocklistProperties(_Model):
+class RaiBlocklistProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RAI Custom Blocklist properties.
 
     :ivar description: Description of the block list.
@@ -8662,7 +10756,7 @@ class RaiBlocklistProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiContentFilter(ProxyResource):
+class RaiContentFilter(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure OpenAI Content Filter.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8703,7 +10797,7 @@ class RaiContentFilter(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RaiContentFilterProperties(_Model):
+class RaiContentFilterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure OpenAI Content Filter Properties.
 
     :ivar name: Name of Content Filter.
@@ -8748,7 +10842,7 @@ class RaiContentFilterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiEgressHeaderTransform(_Model):
+class RaiEgressHeaderTransform(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A header transformation applied to matched traffic. For Set or Insert operations, exactly one
     of value or valueRef must be provided. For Remove operations, neither value nor valueRef should
     be set.
@@ -8804,7 +10898,7 @@ class RaiEgressHeaderTransform(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiEgressHeaderValueRef(_Model):
+class RaiEgressHeaderValueRef(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A dynamic source for a header value. Exactly one of secretRef or managedIdentityRef must be
     set.
 
@@ -8842,7 +10936,7 @@ class RaiEgressHeaderValueRef(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiEgressManagedIdentityRef(_Model):
+class RaiEgressManagedIdentityRef(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reference to a managed-identity token used as a header value.
 
     :ivar resource: The resource/audience the token is requested for. Required.
@@ -8877,7 +10971,7 @@ class RaiEgressManagedIdentityRef(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiEgressPolicyConfig(_Model):
+class RaiEgressPolicyConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Egress (outbound network) policy configuration nested within an RAI policy. Controls which
     external endpoints sandboxed agents can reach and what transformations (header injection, URL
     rewrite) are applied to matching traffic.
@@ -8945,7 +11039,7 @@ class RaiEgressPolicyConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiEgressRewriteTarget(_Model):
+class RaiEgressRewriteTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Where a Rewrite action sends matched traffic. At least one field must be set; omitted fields
     retain the original request values. This constraint is enforced by the server (400 Bad Request
     if all fields are omitted).
@@ -8988,7 +11082,7 @@ class RaiEgressRewriteTarget(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiEgressRule(_Model):
+class RaiEgressRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single egress rule. Rules are evaluated in order; first match wins.
 
     :ivar name: Name of the rule. Must be unique within the policy. Required.
@@ -9044,7 +11138,7 @@ class RaiEgressRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiEgressRuleAction(_Model):
+class RaiEgressRuleAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The action an egress rule takes when it matches.
 
     * Allow/Deny: no additional fields needed; headers and rewrite must not be set.
@@ -9097,26 +11191,26 @@ class RaiEgressRuleAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiEgressRuleMatch(_Model):
+class RaiEgressRuleMatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The match criteria for an egress rule. If both host and path are omitted, the rule matches all
-    traffic. Host uses DNS wildcard syntax (e.g., "*.openai.com" matches "api.openai.com"). Path
-    uses URI prefix matching with '*' as a single-segment wildcard (e.g., "/v1/*" matches
-    "/v1/chat").
+    traffic. Host uses DNS wildcard syntax (e.g., "\\*.openai.com" matches "api.openai.com"). Path
+    uses URI prefix matching with an asterisk as a single-segment wildcard. For example, "/v1/\\*"
+    matches "/v1/chat".
 
-    :ivar host: Host pattern to match using DNS wildcard syntax (e.g., "*.openai.com"). A leading
-     "*." matches any subdomain. Omit to match all hosts.
+    :ivar host: Host pattern to match using DNS wildcard syntax (e.g., "\\*.openai.com"). A leading
+     "\\*." matches any subdomain. Omit to match all hosts.
     :vartype host: str
-    :ivar path: Path pattern to match using URI prefix with '*' wildcard (e.g., "/v1/*"). Omit to
-     match all paths.
+    :ivar path: Path pattern to match using URI prefix matching. An asterisk serves as a
+     single-segment wildcard. For example, "/v1/\\*" matches "/v1/chat". Omit to match all paths.
     :vartype path: str
     """
 
     host: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Host pattern to match using DNS wildcard syntax (e.g., \"*.openai.com\"). A leading \"*.\"
+    """Host pattern to match using DNS wildcard syntax (e.g., \"\\*.openai.com\"). A leading \"\\*.\"
      matches any subdomain. Omit to match all hosts."""
     path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Path pattern to match using URI prefix with '*' wildcard (e.g., \"/v1/*\"). Omit to match all
-     paths."""
+    """Path pattern to match using URI prefix matching. An asterisk serves as a single-segment
+     wildcard. For example, \"/v1/\\*\" matches \"/v1/chat\". Omit to match all paths."""
 
     @overload
     def __init__(
@@ -9137,7 +11231,7 @@ class RaiEgressRuleMatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiEgressSecretRef(_Model):
+class RaiEgressSecretRef(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reference to a stored secret used as a header value.
 
     :ivar secret_id: Identifier of the secret to inject. Required.
@@ -9177,7 +11271,7 @@ class RaiEgressSecretRef(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiExternalSafetyProviderSchema(ProxyResource):
+class RaiExternalSafetyProviderSchema(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services Rai External Safety provider Schema.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9227,7 +11321,9 @@ class RaiExternalSafetyProviderSchema(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RaiExternalSafetyProviderSchemaProperties(_Model):  # pylint: disable=name-too-long
+class RaiExternalSafetyProviderSchemaProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RAI External SafetyProvider schema properties.
 
     :ivar provider_id: The unique identifier of the safety provider.
@@ -9306,7 +11402,7 @@ class RaiExternalSafetyProviderSchemaProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class RaiMonitorConfig(_Model):
+class RaiMonitorConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services Rai Monitor Config.
 
     :ivar adx_storage_resource_id: The storage resource Id.
@@ -9343,7 +11439,7 @@ class RaiMonitorConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiPolicy(ProxyResource):
+class RaiPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services RaiPolicy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9393,7 +11489,7 @@ class RaiPolicy(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RaiPolicyContentFilter(_Model):
+class RaiPolicyContentFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure OpenAI Content Filter.
 
     :ivar name: Name of ContentFilter.
@@ -9457,9 +11553,71 @@ class RaiPolicyContentFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiPolicyProperties(_Model):
+class RaiPolicyCustomExternalSafetyProviderReference(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A customer-visible reference to a subscription-level external safety provider.
+
+    :ivar external_safety_provider_name: The registered external safety-provider name. Required.
+    :vartype external_safety_provider_name: str
+    :ivar managed_identity_resource_id: Optional managed identity used when invoking the external
+     safety provider.
+    :vartype managed_identity_resource_id: str
+    :ivar source: The request stage at which the provider runs. Required. Known values are:
+     "Prompt", "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+    :vartype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
+    :ivar blocking: Whether a provider rejection blocks the request.
+    :vartype blocking: bool
+    """
+
+    external_safety_provider_name: str = rest_field(
+        name="externalSafetyProviderName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The registered external safety-provider name. Required."""
+    managed_identity_resource_id: Optional[str] = rest_field(
+        name="managedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional managed identity used when invoking the external safety provider."""
+    source: Union[str, "_models.RaiPolicyContentSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The request stage at which the provider runs. Required. Known values are: \"Prompt\",
+     \"Completion\", \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+    blocking: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether a provider rejection blocks the request."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        external_safety_provider_name: str,
+        source: Union[str, "_models.RaiPolicyContentSource"],
+        managed_identity_resource_id: Optional[str] = None,
+        blocking: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure OpenAI Content Filters properties.
 
+    :ivar format: The policy representation. Omission selects ContentFilters when creating a
+     policy. ACS policy creation and replacement require ACS. Known values are: "ContentFilters" and
+     "ACS".
+    :vartype format: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyFormat
+    :ivar acs: The ACS manifest. Required by service validation when format is ACS.
+    :vartype acs: ~azure.mgmt.cognitiveservices.models.RaiAcsManifest
+    :ivar acs_regos: Reusable same-account Rego resources loaded with the ACS manifest.
+    :vartype acs_regos: list[~azure.mgmt.cognitiveservices.models.RaiRegoReference]
     :ivar type: Content Filters policy type. Known values are: "UserManaged" and "SystemManaged".
     :vartype type: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyType
     :ivar mode: Rai policy mode. The enum value mapping is as below: Default = 0, Deferred=1,
@@ -9475,11 +11633,24 @@ class RaiPolicyProperties(_Model):
     :vartype custom_blocklists: list[~azure.mgmt.cognitiveservices.models.CustomBlocklistConfig]
     :ivar safety_providers: The list of Safety Providers.
     :vartype safety_providers: list[~azure.mgmt.cognitiveservices.models.SafetyProviderConfig]
+    :ivar custom_external_safety_providers: Optional external safety-provider references used by
+     this policy.
+    :vartype custom_external_safety_providers:
+     list[~azure.mgmt.cognitiveservices.models.RaiPolicyCustomExternalSafetyProviderReference]
     :ivar egress_policy: Egress (outbound network) policy controlling which external endpoints
      sandboxed agents can reach. Includes rules with Allow/Deny/Transform/Rewrite actions.
     :vartype egress_policy: ~azure.mgmt.cognitiveservices.models.RaiEgressPolicyConfig
     """
 
+    format: Optional[Union[str, "_models.RaiPolicyFormat"]] = rest_field(visibility=["read", "create", "update"])
+    """The policy representation. Omission selects ContentFilters when creating a policy. ACS policy
+     creation and replacement require ACS. Known values are: \"ContentFilters\" and \"ACS\"."""
+    acs: Optional["_models.RaiAcsManifest"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ACS manifest. Required by service validation when format is ACS."""
+    acs_regos: Optional[list["_models.RaiRegoReference"]] = rest_field(
+        name="acsRegos", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reusable same-account Rego resources loaded with the ACS manifest."""
     type: Optional[Union[str, "_models.RaiPolicyType"]] = rest_field(visibility=["read"])
     """Content Filters policy type. Known values are: \"UserManaged\" and \"SystemManaged\"."""
     mode: Optional[Union[str, "_models.RaiPolicyMode"]] = rest_field(
@@ -9505,6 +11676,10 @@ class RaiPolicyProperties(_Model):
         name="safetyProviders", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Safety Providers."""
+    custom_external_safety_providers: Optional[list["_models.RaiPolicyCustomExternalSafetyProviderReference"]] = (
+        rest_field(name="customExternalSafetyProviders", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Optional external safety-provider references used by this policy."""
     egress_policy: Optional["_models.RaiEgressPolicyConfig"] = rest_field(
         name="egressPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9515,11 +11690,17 @@ class RaiPolicyProperties(_Model):
     def __init__(
         self,
         *,
+        format: Optional[Union[str, "_models.RaiPolicyFormat"]] = None,
+        acs: Optional["_models.RaiAcsManifest"] = None,
+        acs_regos: Optional[list["_models.RaiRegoReference"]] = None,
         mode: Optional[Union[str, "_models.RaiPolicyMode"]] = None,
         base_policy_name: Optional[str] = None,
         content_filters: Optional[list["_models.RaiPolicyContentFilter"]] = None,
         custom_blocklists: Optional[list["_models.CustomBlocklistConfig"]] = None,
         safety_providers: Optional[list["_models.SafetyProviderConfig"]] = None,
+        custom_external_safety_providers: Optional[
+            list["_models.RaiPolicyCustomExternalSafetyProviderReference"]
+        ] = None,
         egress_policy: Optional["_models.RaiEgressPolicyConfig"] = None,
     ) -> None: ...
 
@@ -9534,7 +11715,122 @@ class RaiPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiSafetyProviderConfig(_Model):
+class RaiRego(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An account-scoped reusable Rego artifact.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Properties of the reusable Rego artifact.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.RaiRegoProperties
+    :ivar etag: Resource ETag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: Optional["_models.RaiRegoProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the reusable Rego artifact."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Resource ETag."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.RaiRegoProperties"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiRegoProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an account-scoped reusable Rego resource.
+
+    :ivar encoding: How the Rego source is encoded on the wire. The default is None. Known values
+     are: "None" and "Base64".
+    :vartype encoding: str or ~azure.mgmt.cognitiveservices.models.RaiRegoEncoding
+    :ivar rego: Rego source in the selected transport encoding. Required.
+    :vartype rego: str
+    """
+
+    encoding: Optional[Union[str, "_models.RaiRegoEncoding"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the Rego source is encoded on the wire. The default is None. Known values are: \"None\" and
+     \"Base64\"."""
+    rego: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Rego source in the selected transport encoding. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rego: str,
+        encoding: Optional[Union[str, "_models.RaiRegoEncoding"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiRegoReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """References one reusable Rego resource on the same account.
+
+    :ivar rego_name: The same-account Rego resource name. Required.
+    :vartype rego_name: str
+    """
+
+    rego_name: str = rest_field(name="regoName", visibility=["read", "create", "update", "delete", "query"])
+    """The same-account Rego resource name. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rego_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiSafetyProviderConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure OpenAI RAI safety provider config.
 
     :ivar safety_provider_name: Name of RAI Safety Provider.
@@ -9569,7 +11865,7 @@ class RaiSafetyProviderConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiToolLabel(ProxyResource):
+class RaiToolLabel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services RAI Tool Label resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9619,7 +11915,7 @@ class RaiToolLabel(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RaiToolLabelProperties(_Model):
+class RaiToolLabelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RAI Tool Label properties.
 
     :ivar tool_connection_name: The unique tool connection name, e.g., 'Web_Search'. Required.
@@ -9664,7 +11960,7 @@ class RaiToolLabelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiToolLabelPropertiesAccountScope(_Model):
+class RaiToolLabelPropertiesAccountScope(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Account-level tool label definition.
 
     :ivar label_values: Dictionary of label key-value pairs for the account scope.
@@ -9694,7 +11990,7 @@ class RaiToolLabelPropertiesAccountScope(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiToolLabelPropertiesProjectScopesItem(_Model):
+class RaiToolLabelPropertiesProjectScopesItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RaiToolLabelPropertiesProjectScopesItem.
 
     :ivar project: Project name to which this scope applies. Required.
@@ -9729,7 +12025,7 @@ class RaiToolLabelPropertiesProjectScopesItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiTopic(ProxyResource):
+class RaiTopic(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services Rai Topic.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9779,7 +12075,7 @@ class RaiTopic(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RaiTopicProperties(_Model):
+class RaiTopicProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RAI Custom Topic properties.
 
     :ivar topic_id: The unique identifier of the custom topic.
@@ -9850,7 +12146,7 @@ class RaiTopicProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegenerateKeyParameters(_Model):
+class RegenerateKeyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Regenerate key parameters.
 
     :ivar key_name: key name to generate (Key1|Key2). Required. Known values are: "Key1" and
@@ -9881,7 +12177,7 @@ class RegenerateKeyParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegionSetting(_Model):
+class RegionSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The call rate limit Cognitive Services account.
 
     :ivar name: Name of the region.
@@ -9919,7 +12215,7 @@ class RegionSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplacementConfig(_Model):
+class ReplacementConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for model replacement.
 
     :ivar target_model_name: The name of the replacement model.
@@ -9974,7 +12270,7 @@ class ReplacementConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequestMatchPattern(_Model):
+class RequestMatchPattern(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RequestMatchPattern.
 
     :ivar path:
@@ -10005,7 +12301,7 @@ class RequestMatchPattern(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSku(_Model):
+class ResourceSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an available Cognitive Services SKU.
 
     :ivar resource_type: The type of resource the SKU applies to.
@@ -10064,7 +12360,7 @@ class ResourceSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSkuRestrictionInfo(_Model):
+class ResourceSkuRestrictionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceSkuRestrictionInfo.
 
     :ivar locations: Locations where the SKU is restricted.
@@ -10097,7 +12393,7 @@ class ResourceSkuRestrictionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSkuRestrictions(_Model):
+class ResourceSkuRestrictions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes restrictions of a SKU.
 
     :ivar type: The type of restrictions. Known values are: "Location" and "Zone".
@@ -10179,7 +12475,7 @@ class RoleBasedBuiltInAuthorizationPolicy(ApplicationAuthorizationPolicy, discri
         self.type = BuiltInAuthorizationScheme.DEFAULT  # type: ignore
 
 
-class SafetyProviderConfig(RaiSafetyProviderConfig):
+class SafetyProviderConfig(RaiSafetyProviderConfig):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gets or sets the source to which safety providers applies.
 
     :ivar safety_provider_name: Name of RAI Safety Provider.
@@ -10217,7 +12513,9 @@ class SafetyProviderConfig(RaiSafetyProviderConfig):
         super().__init__(*args, **kwargs)
 
 
-class SASAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="SAS"):
+class SASAuthTypeConnectionProperties(
+    ConnectionPropertiesV2, discriminator="SAS"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SASAuthTypeConnectionProperties.
 
     :ivar category: Category of the connection. Known values are: "PythonFeed",
@@ -10233,11 +12531,11 @@ class SASAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="SAS
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -10312,7 +12610,7 @@ class SASAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="SAS
 
 class ServicePrincipalAuthTypeConnectionProperties(
     ConnectionPropertiesV2, discriminator="ServicePrincipal"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ServicePrincipalAuthTypeConnectionProperties.
 
     :ivar category: Category of the connection. Known values are: "PythonFeed",
@@ -10328,11 +12626,11 @@ class ServicePrincipalAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -10405,7 +12703,9 @@ class ServicePrincipalAuthTypeConnectionProperties(
         self.auth_type = ConnectionAuthType.SERVICE_PRINCIPAL  # type: ignore
 
 
-class ServiceTagOutboundRule(OutboundRule, discriminator="ServiceTag"):
+class ServiceTagOutboundRule(
+    OutboundRule, discriminator="ServiceTag"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service Tag outbound rule for the managed network of a cognitive services account.
 
     :ivar category: Category of a managed network Outbound Rule of a cognitive services account.
@@ -10454,7 +12754,7 @@ class ServiceTagOutboundRule(OutboundRule, discriminator="ServiceTag"):
         self.type = RuleType.SERVICE_TAG  # type: ignore
 
 
-class ServiceTagOutboundRuleDestination(_Model):
+class ServiceTagOutboundRuleDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service Tag destination for an outbound rule.
 
     :ivar service_tag: Name of the Azure service tag to target.
@@ -10512,7 +12812,7 @@ class ServiceTagOutboundRuleDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource model definition representing SKU.
 
     :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
@@ -10572,7 +12872,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuAvailability(_Model):
+class SkuAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU availability.
 
     :ivar kind: The kind (type) of cognitive service account.
@@ -10627,7 +12927,7 @@ class SkuAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuAvailabilityListResult(_Model):
+class SkuAvailabilityListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Check SKU availability result list.
 
     :ivar value: Check SKU availability result list.
@@ -10657,7 +12957,7 @@ class SkuAvailabilityListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuCapability(_Model):
+class SkuCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SkuCapability indicates the capability of a certain feature.
 
     :ivar name: The name of the SkuCapability.
@@ -10690,7 +12990,7 @@ class SkuCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuChangeInfo(_Model):
+class SkuChangeInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sku change info of account.
 
     :ivar count_of_downgrades: Gets the count of downgrades.
@@ -10734,7 +13034,7 @@ class SkuChangeInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuResource(_Model):
+class SkuResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Cognitive Services account resource sku resource properties.
 
     :ivar resource_type: The resource type name.
@@ -10776,7 +13076,7 @@ class SkuResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshSettings(_Model):
+class SshSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SSH configuration for a Container Instance compute.
 
     :ivar ssh_public_key: The SSH public key for authenticating to the compute instance.
@@ -10813,7 +13113,7 @@ class SshSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -10880,7 +13180,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThrottlingRule(_Model):
+class ThrottlingRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ThrottlingRule.
 
     :ivar key:
@@ -10933,7 +13233,7 @@ class ThrottlingRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrafficRoutingRule(_Model):
+class TrafficRoutingRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a rule for routing traffic to a specific deployment.
 
     :ivar rule_id: The identifier of this traffic routing rule.
@@ -10981,9 +13281,15 @@ class TrafficRoutingRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Usage(_Model):
+class Usage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The usage data for a usage request.
 
+    :ivar id: Fully qualified resource ID for the usage. Ex -
+     /subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/usages/{usageName}.
+    :vartype id: str
+    :ivar type: The type of the usage resource. E.g.
+     "Microsoft.CognitiveServices/locations/usages".
+    :vartype type: str
     :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds", "Percent",
      "CountPerSecond", "BytesPerSecond", and "Milliseconds".
     :vartype unit: str or ~azure.mgmt.cognitiveservices.models.UnitType
@@ -11007,6 +13313,11 @@ class Usage(_Model):
     :vartype scope_id: str
     """
 
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the usage. Ex -
+     /subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/usages/{usageName}."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the usage resource. E.g. \"Microsoft.CognitiveServices/locations/usages\"."""
     unit: Optional[Union[str, "_models.UnitType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11067,7 +13378,7 @@ class Usage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UsageListResult(_Model):
+class UsageListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response to a list usage request.
 
     :ivar next_link: The link used to get the next page of Usages.
@@ -11117,7 +13428,7 @@ class UserAssignedIdentity(_Model):
 
 class UsernamePasswordAuthTypeConnectionProperties(
     ConnectionPropertiesV2, discriminator="UsernamePassword"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """UsernamePasswordAuthTypeConnectionProperties.
 
     :ivar category: Category of the connection. Known values are: "PythonFeed",
@@ -11133,11 +13444,11 @@ class UsernamePasswordAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -11210,7 +13521,7 @@ class UsernamePasswordAuthTypeConnectionProperties(
         self.auth_type = ConnectionAuthType.USERNAME_PASSWORD  # type: ignore
 
 
-class UserOwnedAmlWorkspace(_Model):
+class UserOwnedAmlWorkspace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The user owned AML account for Cognitive Services account.
 
     :ivar resource_id: Full resource id of a AML account resource.
@@ -11247,7 +13558,7 @@ class UserOwnedAmlWorkspace(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserOwnedStorage(_Model):
+class UserOwnedStorage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The user owned storage for Cognitive Services account.
 
     :ivar resource_id: Full resource id of a Microsoft.Storage resource.
@@ -11283,7 +13594,7 @@ class UserOwnedStorage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VersionedAgentReference(AgentReferenceProperties):
+class VersionedAgentReference(AgentReferenceProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Type modeling a reference to a version of an agent definition.
 
     :ivar agent_id: Gets the agent's unique identifier within the organization (subscription).
@@ -11319,7 +13630,7 @@ class VersionedAgentReference(AgentReferenceProperties):
         super().__init__(*args, **kwargs)
 
 
-class VirtualNetworkRule(_Model):
+class VirtualNetworkRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule governing the accessibility from a specific virtual network.
 
     :ivar id: Full resource id of a vnet subnet, such as
@@ -11363,7 +13674,7 @@ class VirtualNetworkRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Workbench(ProxyResource):
+class Workbench(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workbench resource under a Cognitive Services project. Provides interactive compute with data
     access for AI development.
 
@@ -11382,10 +13693,6 @@ class Workbench(ProxyResource):
     :vartype properties: ~azure.mgmt.cognitiveservices.models.WorkbenchProperties
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :ivar location: The location of the workbench resource.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cognitiveservices.models.Identity
     """
@@ -11394,10 +13701,6 @@ class Workbench(ProxyResource):
     """Properties of the workbench resource. Required."""
     etag: Optional[str] = rest_field(visibility=["read"])
     """Resource Etag."""
-    location: Optional[str] = rest_field(visibility=["read", "create"])
-    """The location of the workbench resource."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     identity: Optional["_models.Identity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identity for the resource."""
 
@@ -11406,8 +13709,6 @@ class Workbench(ProxyResource):
         self,
         *,
         properties: "_models.WorkbenchProperties",
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.Identity"] = None,
     ) -> None: ...
 
@@ -11422,31 +13723,46 @@ class Workbench(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class WorkbenchProperties(_Model):
+class WorkbenchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a Workbench resource.
 
-    :ivar target_cluster_id: ARM resource ID of the parent cluster that hosts this workbench.
-     Required.
+    :ivar target_cluster_id: Resource ID of the Foundry Compute or virtual cluster that hosts this
+     workbench. Changing the cluster requires the workbench to be stopped. Required.
     :vartype target_cluster_id: str
     :ivar image_link: Container image URI (e.g., MCR or ACR image path) for the workbench.
-     Required.
+     Immutable after creation. Required.
     :vartype image_link: str
+    :ivar instance_type: For virtual clusters, an exact Singularity instance type or a full-node
+     Azure VM size. If omitted on creation, defaults to Singularity.D4_v3. Foundry Compute ignores
+     this override and uses the pool configuration. Changing the instance type requires the
+     workbench to be stopped.
+    :vartype instance_type: str
+    :ivar gpu_count: GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a
+     positive multiple of 8. A full-node Azure VM size permits partition selection; omission uses
+     the full node. For an exact Singularity instance type, a supplied count must match that type;
+     the Singularity.D4_v3 fallback accepts 4.
+    :vartype gpu_count: int
     :ivar idle_time_before_shutdown: ISO 8601 duration before the idle workbench is automatically
      shut down (e.g., 'PT30M').
     :vartype idle_time_before_shutdown: str
-    :ivar dataset_id: The dataset ID to mount for the workbench.
+    :ivar dataset_id: The dataset ID to mount for the workbench. Set only during creation.
     :vartype dataset_id: str
-    :ivar ssh_settings: SSH configuration for remote access to the workbench.
+    :ivar ssh_settings: SSH configuration for remote access to the workbench. Set only during
+     creation.
     :vartype ssh_settings: ~azure.mgmt.cognitiveservices.models.SshSettings
     :ivar connectivity_endpoints: Network connectivity endpoints assigned to the workbench.
     :vartype connectivity_endpoints: ~azure.mgmt.cognitiveservices.models.ConnectivityEndpoints
     :ivar web_endpoint: The web endpoint URL for accessing the workbench.
     :vartype web_endpoint: str
-    :ivar provisioning_state: Provisioning state of the workbench resource. Known values are:
-     "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
-     "Stopping", "Restarting", and "Stopped".
+    :ivar provisioning_state: Provisioning state of the workbench resource, independent of runtime
+     lifecycle status. Known values are: "Creating", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.cognitiveservices.models.ComputeProvisioningState
+     ~azure.mgmt.cognitiveservices.models.WorkbenchProvisioningState
+    :ivar status: Runtime lifecycle status of the workbench. Independent of resource provisioning;
+     start, stop, restart, and runtime health changes do not change provisioningState. Known values
+     are: "Unknown", "Creating", "Starting", "Running", "Stopping", "Stopped", "Restarting",
+     "Updating", "Deleting", and "Failed".
+    :vartype status: str or ~azure.mgmt.cognitiveservices.models.WorkbenchStatus
     :ivar errors: Error details for the workbench resource.
     :vartype errors: list[~azure.mgmt.cognitiveservices.models.ErrorDetail]
     :ivar creation_time: Creation time of the workbench resource.
@@ -11456,31 +13772,46 @@ class WorkbenchProperties(_Model):
     target_cluster_id: str = rest_field(
         name="targetClusterId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """ARM resource ID of the parent cluster that hosts this workbench. Required."""
-    image_link: str = rest_field(name="imageLink", visibility=["read", "create", "update", "delete", "query"])
-    """Container image URI (e.g., MCR or ACR image path) for the workbench. Required."""
+    """Resource ID of the Foundry Compute or virtual cluster that hosts this workbench. Changing the
+     cluster requires the workbench to be stopped. Required."""
+    image_link: str = rest_field(name="imageLink", visibility=["read", "create"])
+    """Container image URI (e.g., MCR or ACR image path) for the workbench. Immutable after creation.
+     Required."""
+    instance_type: Optional[str] = rest_field(
+        name="instanceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For virtual clusters, an exact Singularity instance type or a full-node Azure VM size. If
+     omitted on creation, defaults to Singularity.D4_v3. Foundry Compute ignores this override and
+     uses the pool configuration. Changing the instance type requires the workbench to be stopped."""
+    gpu_count: Optional[int] = rest_field(name="gpuCount", visibility=["read", "create", "update", "delete", "query"])
+    """GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a positive multiple
+     of 8. A full-node Azure VM size permits partition selection; omission uses the full node. For
+     an exact Singularity instance type, a supplied count must match that type; the
+     Singularity.D4_v3 fallback accepts 4."""
     idle_time_before_shutdown: Optional[str] = rest_field(
         name="idleTimeBeforeShutdown", visibility=["read", "create", "update", "delete", "query"]
     )
     """ISO 8601 duration before the idle workbench is automatically shut down (e.g., 'PT30M')."""
-    dataset_id: Optional[str] = rest_field(name="datasetId", visibility=["read", "create", "update", "delete", "query"])
-    """The dataset ID to mount for the workbench."""
-    ssh_settings: Optional["_models.SshSettings"] = rest_field(
-        name="sshSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """SSH configuration for remote access to the workbench."""
+    dataset_id: Optional[str] = rest_field(name="datasetId", visibility=["read", "create"])
+    """The dataset ID to mount for the workbench. Set only during creation."""
+    ssh_settings: Optional["_models.SshSettings"] = rest_field(name="sshSettings", visibility=["read", "create"])
+    """SSH configuration for remote access to the workbench. Set only during creation."""
     connectivity_endpoints: Optional["_models.ConnectivityEndpoints"] = rest_field(
         name="connectivityEndpoints", visibility=["read"]
     )
     """Network connectivity endpoints assigned to the workbench."""
     web_endpoint: Optional[str] = rest_field(name="webEndpoint", visibility=["read"])
     """The web endpoint URL for accessing the workbench."""
-    provisioning_state: Optional[Union[str, "_models.ComputeProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.WorkbenchProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """Provisioning state of the workbench resource. Known values are: \"Accepted\", \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Deleting\", \"Scaling\", \"Disabled\", \"Starting\", \"Stopping\",
-     \"Restarting\", and \"Stopped\"."""
+    """Provisioning state of the workbench resource, independent of runtime lifecycle status. Known
+     values are: \"Creating\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+    status: Optional[Union[str, "_models.WorkbenchStatus"]] = rest_field(visibility=["read"])
+    """Runtime lifecycle status of the workbench. Independent of resource provisioning; start, stop,
+     restart, and runtime health changes do not change provisioningState. Known values are:
+     \"Unknown\", \"Creating\", \"Starting\", \"Running\", \"Stopping\", \"Stopped\",
+     \"Restarting\", \"Updating\", \"Deleting\", and \"Failed\"."""
     errors: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """Error details for the workbench resource."""
     creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
@@ -11492,9 +13823,117 @@ class WorkbenchProperties(_Model):
         *,
         target_cluster_id: str,
         image_link: str,
+        instance_type: Optional[str] = None,
+        gpu_count: Optional[int] = None,
         idle_time_before_shutdown: Optional[str] = None,
         dataset_id: Optional[str] = None,
         ssh_settings: Optional["_models.SshSettings"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WorkbenchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The mutable fields of a workbench resource.
+
+    :ivar properties: Properties of the workbench to update.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.WorkbenchUpdateProperties
+    :ivar identity: Identity for the resource. May be changed while the workbench is running only
+     when properties is omitted or null; the change takes effect after restart. If a properties
+     object is supplied, including an empty object or timeout-only update, changing identity
+     requires the workbench to be stopped.
+    :vartype identity: ~azure.mgmt.cognitiveservices.models.Identity
+    """
+
+    properties: Optional["_models.WorkbenchUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the workbench to update."""
+    identity: Optional["_models.Identity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Identity for the resource. May be changed while the workbench is running only when properties
+     is omitted or null; the change takes effect after restart. If a properties object is supplied,
+     including an empty object or timeout-only update, changing identity requires the workbench to
+     be stopped."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.WorkbenchUpdateProperties"] = None,
+        identity: Optional["_models.Identity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WorkbenchUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Mutable properties for a Workbench resource.
+
+    :ivar target_cluster_id: Resource ID of the Foundry Compute or virtual cluster that hosts this
+     workbench. Changing the cluster requires the workbench to be stopped.
+    :vartype target_cluster_id: str
+    :ivar idle_time_before_shutdown: ISO 8601 duration before the idle workbench is automatically
+     shut down (e.g., 'PT30M').
+    :vartype idle_time_before_shutdown: str
+    :ivar instance_type: For virtual clusters, an exact Singularity instance type or a full-node
+     Azure VM size. Omit to preserve the current value; null resets to the Singularity.D4_v3
+     fallback. Foundry Compute ignores this override and uses the pool configuration. An actual
+     instance type change requires the workbench to be stopped.
+    :vartype instance_type: str
+    :ivar gpu_count: GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a
+     positive multiple of 8. Omit to preserve the current value; null clears the override to use the
+     full node or the instance type's default count. Full-node Azure VM sizes permit partition
+     selection. A supplied count must match an exact Singularity instance type; the
+     Singularity.D4_v3 fallback accepts 4.
+    :vartype gpu_count: int
+    """
+
+    target_cluster_id: Optional[str] = rest_field(
+        name="targetClusterId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource ID of the Foundry Compute or virtual cluster that hosts this workbench. Changing the
+     cluster requires the workbench to be stopped."""
+    idle_time_before_shutdown: Optional[str] = rest_field(
+        name="idleTimeBeforeShutdown", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ISO 8601 duration before the idle workbench is automatically shut down (e.g., 'PT30M')."""
+    instance_type: Optional[str] = rest_field(
+        name="instanceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For virtual clusters, an exact Singularity instance type or a full-node Azure VM size. Omit to
+     preserve the current value; null resets to the Singularity.D4_v3 fallback. Foundry Compute
+     ignores this override and uses the pool configuration. An actual instance type change requires
+     the workbench to be stopped."""
+    gpu_count: Optional[int] = rest_field(name="gpuCount", visibility=["read", "create", "update", "delete", "query"])
+    """GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a positive multiple
+     of 8. Omit to preserve the current value; null clears the override to use the full node or the
+     instance type's default count. Full-node Azure VM sizes permit partition selection. A supplied
+     count must match an exact Singularity instance type; the Singularity.D4_v3 fallback accepts 4."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_cluster_id: Optional[str] = None,
+        idle_time_before_shutdown: Optional[str] = None,
+        instance_type: Optional[str] = None,
+        gpu_count: Optional[int] = None,
     ) -> None: ...
 
     @overload

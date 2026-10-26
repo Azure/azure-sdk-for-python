@@ -3511,6 +3511,42 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         assert self.short_byte_data == content
 
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_sas_access_file_name_with_backslash(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        try:
+            share_client.create_directory("dir")
+        except ResourceExistsError:
+            pass
+        file_client = self._create_file("dir\\file")
+
+        token = self.generate_sas(
+            generate_file_sas,
+            file_client.account_name,
+            file_client.share_name,
+            file_client.file_path,
+            file_client.credential.account_key,
+            permission=FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path="dir\\file",
+            credential=token,
+        )
+        content = file_client.download_file().readall()
+
+        # Assert
+        assert self.short_byte_data == content
+
     @FileSharePreparer()
     @recorded_by_proxy
     def test_sas_signed_identifier(self, **kwargs):

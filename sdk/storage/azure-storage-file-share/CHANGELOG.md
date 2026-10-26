@@ -4,6 +4,23 @@
 
 ### Features Added
 
+### Bugs Fixed
+- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_share_sas`,
+  `generate_file_sas`, and `ShareServiceClient.get_user_delegation_key` (sync and async).
+  Datetimes without timezone information continue to be treated as UTC.
+- Fixed an issue where a SAS generated for a file path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
+- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
+
+## 12.27.0 (2026-09-30)
+
+This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
+
+### Breaking Changes
+- Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.
+
+### Features Added
+- Stable release of features from 12.27.0b1
+
 ## 12.27.0b1 (2026-08-10)
 
 ### Features Added
