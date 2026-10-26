@@ -17,7 +17,6 @@ from azure.core.polling.base_polling import (
 )
 from azure.core.utils import case_insensitive_dict
 from .._utils.polling import AIProjectsLROBasePolling, AsyncAIProjectsLROBasePolling
-from . import _models
 from ._patch_evaluation_typeddicts import (
     AzureAIAgentTargetParam,
     AzureAIBenchmarkPreviewEvalRunDataSource,
@@ -806,31 +805,6 @@ __all__: List[str] = [
 ]  # Add all objects you want publicly available to users at this package level
 
 
-def _deserialize_voice(
-    cls: type[_models.VoiceAgentBaseDefinition], data: Any, _exist_discriminators: list[str]
-) -> _models.VoiceAgentBaseDefinition:
-    """Preserve typed voice readback without inserting an omitted sub_protocol.
-
-    The pinned TypeSpec exposes this optional selector as OpenAPI-only metadata.
-    Remove this hook when regenerated models preserve the same types and omission.
-
-    :param data: The wire representation of the voice agent definition.
-    :type data: Any
-    :param _exist_discriminators: Higher-level discriminators supplied by the model deserializer.
-    :type _exist_discriminators: list[str]
-    :return: The concrete voice definition, or the voice base model for a future selector.
-    :rtype: ~azure.ai.projects.models.VoiceAgentBaseDefinition
-    """
-    if not isinstance(data, Mapping):
-        return cls(data)
-    protocol = data.get("sub_protocol", "realtime")
-    if protocol == "realtime":
-        return _models.VoiceAgentDefinition(data)
-    if protocol == "live":
-        return _models.VoiceAgentLiveDefinition(data)
-    return _models.VoiceAgentBaseDefinition(data)
-
-
 def patch_sdk():
     """Do not remove from this file.
 
@@ -838,4 +812,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-    setattr(_models.VoiceAgentBaseDefinition, "_deserialize", classmethod(_deserialize_voice))
