@@ -412,7 +412,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         self._create_block_blob(tags=tags)
         container = self.bsc.get_container_client(self.container_name)
-        blob_list = container.list_blobs(include="tags")
+        blob_list = container.list_blobs(include="tags", response_format="xml")
 
         # Assert
         for blob in blob_list:

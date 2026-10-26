@@ -845,10 +845,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         :keyword response_format:
             The format used to return and parse the List Blobs response.
             Possible values are "auto", "xml", and "arrow".
-            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
-
-            .. note::
-                The use of "arrow" requires `nanoarrow` to be installed.
+            Choose "auto" to let the SDK choose the best algorithm, currently "arrow".
         :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
@@ -884,18 +881,10 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
 
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
-        response_format = kwargs.pop("response_format", "xml")
-        use_arrow = response_format == "arrow"
+        response_format = kwargs.pop("response_format", "auto")
+        use_arrow = response_format in ("auto", "arrow")
         if kwargs.get("end_before") is not None and not use_arrow:
             raise ValueError("'end_before' is only supported when using arrow response format.")
-        if use_arrow:
-            try:
-                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
-            except ImportError as e:
-                raise ValueError(
-                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
-                    "Please install nanoarrow and try again."
-                ) from e
         command = functools.partial(
             (
                 self._client.container.list_blob_flat_segment_apache_arrow
@@ -935,10 +924,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         :keyword response_format:
             The format used to return and parse the List Blobs response.
             Possible values are "auto", "xml", and "arrow".
-            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
-
-            .. note::
-                The use of "arrow" requires `nanoarrow` to be installed.
+            Choose "auto" to let the SDK choose the best algorithm, currently "arrow".
         :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
@@ -963,18 +949,10 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         name_starts_with = kwargs.pop("name_starts_with", None)
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
-        response_format = kwargs.pop("response_format", "xml")
-        use_arrow = response_format == "arrow"
+        response_format = kwargs.pop("response_format", "auto")
+        use_arrow = response_format in ("auto", "arrow")
         if kwargs.get("end_before") is not None and not use_arrow:
             raise ValueError("'end_before' is only supported when using arrow response format.")
-        if use_arrow:
-            try:
-                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
-            except ImportError as e:
-                raise ValueError(
-                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
-                    "Please install nanoarrow and try again."
-                ) from e
 
         # For listing only names we need to create a one-off generated client.
         client = self._build_generated_client()
@@ -1030,10 +1008,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         :keyword response_format:
             The format used to return and parse the List Blobs response.
             Possible values are "auto", "xml", and "arrow".
-            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
-
-            .. note::
-                The use of "arrow" requires `nanoarrow` to be installed.
+            Choose "auto" to let the SDK choose the best algorithm, currently "arrow".
         :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
@@ -1060,18 +1035,11 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
 
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
-        response_format = kwargs.pop("response_format", "xml")
-        use_arrow = response_format == "arrow"
+        response_format = kwargs.pop("response_format", "auto")
+        use_arrow = response_format in ("auto", "arrow")
         if kwargs.get("end_before") is not None and not use_arrow:
             raise ValueError("'end_before' is only supported when using arrow response format.")
         if use_arrow:
-            try:
-                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
-            except ImportError as e:
-                raise ValueError(
-                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
-                    "Please install nanoarrow and try again."
-                ) from e
             command = functools.partial(
                 self._client.container.list_blob_hierarchy_segment_apache_arrow,
                 delimiter=delimiter,

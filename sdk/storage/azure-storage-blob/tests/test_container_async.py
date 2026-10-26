@@ -1143,7 +1143,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             blobs.append(b.name)
 
         assert blobs, ["blob1", "blob2"]
@@ -1163,7 +1163,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await blob_client.set_standard_blob_tier(StandardBlobTier.Hot)
 
         # Act
-        async for blob_properties in container.list_blobs():
+        async for blob_properties in container.list_blobs(response_format="xml"):
             if blob_properties.name == blob_client.blob_name:
                 assert blob_properties.rehydrate_priority == "Standard"
 
@@ -1181,7 +1181,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Cold)
 
         # Act
-        async for blob_properties in container.list_blobs():
+        async for blob_properties in container.list_blobs(response_format="xml"):
             if blob_properties.name == blob_client.blob_name:
                 assert blob_properties.blob_tier == "Cold"
 
@@ -1201,7 +1201,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -1232,7 +1232,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await container.get_blob_client("blob4").upload_blob(data, overwrite=True)
 
         # Act
-        blobs_list = container.list_blobs()
+        blobs_list = container.list_blobs(response_format="xml")
         number_of_blobs_with_policy = 0
         async for blob in blobs_list:
             if blob.object_replication_source_properties:
@@ -1256,7 +1256,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         resp = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             resp.append(b)
         # Assert
         assert resp is not None
@@ -1286,7 +1286,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         resp = []
-        async for b in container.list_blobs(name_starts_with="blob_a"):
+        async for b in container.list_blobs(name_starts_with="blob_a", response_format="xml"):
             resp.append(b)
 
         # Assert
@@ -1314,7 +1314,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await c3.upload_blob(data)
 
         # Act
-        generator = container.list_blobs(results_per_page=2).by_page()
+        generator = container.list_blobs(results_per_page=2, response_format="xml").by_page()
         blobs = []
         async for b in await generator.__anext__():
             blobs.append(b)
@@ -1341,7 +1341,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(include="snapshots"):
+        async for b in container.list_blobs(include="snapshots", response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -1370,7 +1370,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(include="metadata"):
+        async for b in container.list_blobs(include="metadata", response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -1417,7 +1417,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # include deletedwithversions will give you all alive root blobs
         # and the deleted root blobs when versioning is on.
-        async for blob in container.list_blobs(include=["deletedwithversions"]):
+        async for blob in container.list_blobs(include=["deletedwithversions"], response_format="xml"):
             blobs.append(blob)
         downloaded_root_content = await (await blob1.download_blob(version_id=root_version_id)).readall()
         downloaded_original_content = await (await blob1.download_blob(version_id=version_id_1)).readall()
@@ -1451,7 +1451,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(include="uncommittedblobs"):
+        async for b in container.list_blobs(include="uncommittedblobs", response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -1478,7 +1478,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(include="copy"):
+        async for b in container.list_blobs(include="copy", response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -1522,7 +1522,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         resp = []
-        async for w in container.walk_blobs():
+        async for w in container.walk_blobs(response_format="xml"):
             resp.append(w)
 
         # Assert
@@ -1897,7 +1897,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await container.get_blob_client("blob2").upload_blob(data, overwrite=True)
         await container.get_blob_client("blob3").upload_blob(data, overwrite=True)
 
-        blobs = await self._to_list(container.list_blobs(include="snapshots"))
+        blobs = await self._to_list(container.list_blobs(include="snapshots", response_format="xml"))
         assert len(blobs) == 4  # 3 blobs + 1 snapshot
 
         # Act
@@ -1910,7 +1910,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             assert parts_list[1].status_code == 404  # There was no snapshot
             assert parts_list[2].status_code == 404  # There was no snapshot
 
-            blobs = await self._to_list(container.list_blobs(include="snapshots"))
+            blobs = await self._to_list(container.list_blobs(include="snapshots", response_format="xml"))
             assert len(blobs) == 3  # 3 blobs
 
     @pytest.mark.live_test_only
@@ -2145,7 +2145,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
                     blob_list.append(b.name)
 
         # Act
-        await recursive_walk(container.walk_blobs())
+        await recursive_walk(container.walk_blobs(response_format="xml"))
 
         # Assert
         assert len(blob_list) == 4
@@ -2172,7 +2172,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         prefix_list = await self._to_list(
-            container.walk_blobs(name_starts_with="a", delimiter="/", include=["versions"])
+            container.walk_blobs(name_starts_with="a", delimiter="/", include=["versions"], response_format="xml")
         )
 
         # Assert
@@ -2198,7 +2198,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         resp = []
-        async for w in container.walk_blobs():
+        async for w in container.walk_blobs(response_format="xml"):
             resp.append(w)
 
         # Assert
@@ -2222,7 +2222,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(include=["snapshots", "metadata"]):
+        async for b in container.list_blobs(include=["snapshots", "metadata"], response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -2469,11 +2469,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         all_blobs = []
-        async for b in container.list_blob_names():
+        async for b in container.list_blob_names(response_format="xml"):
             all_blobs.append(b)
 
         test_blobs = []
-        async for b in container.list_blob_names(name_starts_with="test"):
+        async for b in container.list_blob_names(name_starts_with="test", response_format="xml"):
             test_blobs.append(b)
 
         # Assert
@@ -2499,7 +2499,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await container.get_blob_client("blob3").upload_blob(data, overwrite=True)
 
         # Act
-        blob_pages = container.list_blob_names(results_per_page=2).by_page()
+        blob_pages = container.list_blob_names(results_per_page=2, response_format="xml").by_page()
         items_on_page1 = []
         async for b in await blob_pages.__anext__():
             items_on_page1.append(b)
@@ -2626,7 +2626,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(name_starts_with="a/", start_from="a/blob2"):
+        async for b in container.list_blobs(name_starts_with="a/", start_from="a/blob2", response_format="xml"):
             blobs.append(b.name)
 
         # Assert
@@ -2659,7 +2659,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
                     blobs.append(b.name)
 
         # Act
-        await recursive_walk(container.walk_blobs(name_starts_with="a/", start_from="a/b/", delimiter="/"))
+        await recursive_walk(
+            container.walk_blobs(name_starts_with="a/", start_from="a/b/", delimiter="/", response_format="xml")
+        )
 
         # Assert
         assert blobs is not None
