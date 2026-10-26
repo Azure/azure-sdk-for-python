@@ -24,7 +24,7 @@ Upgrade to **1.6.1** or a later fixed release to receive the security fix.
 Use only service-generated recording URLs received through trusted,
 integrity-protected events; do not pass untrusted recording URLs to these methods.
 
-Refer to the [release history](CHANGELOG.md) and
+Refer to the [release history](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-callautomation/CHANGELOG.md) and
 [Azure SDK support policy](https://azure.github.io/azure-sdk/policies_support.html)
 for more information.
 
