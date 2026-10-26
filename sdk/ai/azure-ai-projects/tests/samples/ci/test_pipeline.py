@@ -145,10 +145,14 @@ def test_preview_runs_pinned_pester_safety_tests_before_planning(pipeline):
     preview = next(stage for stage in stages if stage.get("stage") == "Preview")
     steps = preview["jobs"][0]["steps"]
     guards = next(step for step in steps if "Invoke-Pester" in step.get("pwsh", ""))
-    assert "Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue" in guards["pwsh"]
-    assert "Register-PSRepository -Default -ErrorAction Stop" in guards["pwsh"]
-    assert guards["pwsh"].index("Register-PSRepository") < guards["pwsh"].index("Install-Module")
-    assert "-RequiredVersion 4.10.1" in guards["pwsh"]
+    assert "eng/common/scripts/Helpers/PSModule-Helpers.ps1" in guards["pwsh"]
+    assert "Get-Module -ListAvailable Pester" in guards["pwsh"]
+    assert guards["pwsh"].index("Get-Module") < guards["pwsh"].index("Install-ModuleIfNotInstalled")
+    assert "Install-ModuleIfNotInstalled 'Pester' '4.10.1'" in guards["pwsh"]
+    assert "$pester.Version -ne [version] '4.10.1'" in guards["pwsh"]
+    assert "$pester | Import-Module -Force" in guards["pwsh"]
+    assert "PSGallery" not in guards["pwsh"]
+    assert guards["pwsh"].index("$pester.Version") < guards["pwsh"].index("Import-Module")
     assert "-Script './tests/samples/ci'" in guards["pwsh"]
     assert "$result.TotalCount -eq 0" in guards["pwsh"]
     assert "$result.FailedCount -ne 0" in guards["pwsh"]

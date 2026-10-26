@@ -96,11 +96,11 @@ extends:
                 workingDirectory: $(packageRoot)
                 displayName: 'Validate wildcard and invocation behavior offline'
               - pwsh: |
-                  if (-not (Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue)) {
-                    Register-PSRepository -Default -ErrorAction Stop
-                  }
-                  Install-Module -Name Pester -RequiredVersion 4.10.1 -Repository PSGallery -Scope CurrentUser -Force -ErrorAction Stop
-                  Import-Module Pester -RequiredVersion 4.10.1 -Force
+                  . (Join-Path '$(Build.SourcesDirectory)' 'eng/common/scripts/Helpers/PSModule-Helpers.ps1')
+                  $pester = Get-Module -ListAvailable Pester | Where-Object { $_.Version -eq [version] '4.10.1' } | Select-Object -First 1
+                  if (-not $pester) { $pester = Install-ModuleIfNotInstalled 'Pester' '4.10.1' }
+                  if ($pester.Version -ne [version] '4.10.1') { throw 'Sample CI safety tests require Pester 4.10.1; no newer version will be substituted.' }
+                  $pester | Import-Module -Force
                   $result = Invoke-Pester -Script './tests/samples/ci' -PassThru
                   if ($result.TotalCount -eq 0 -or $result.FailedCount -ne 0) { throw 'Offline provisioning and cleanup safety tests failed.' }
                 workingDirectory: $(packageRoot)
