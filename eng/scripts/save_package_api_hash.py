@@ -8,13 +8,19 @@ import yaml
 from extract_apiview_metadata import extract_metadata
 
 
-def update_package_info(metadata_path: pathlib.Path, package_info_path: pathlib.Path) -> None:
-    metadata = yaml.safe_load(metadata_path.read_text(encoding="utf-8-sig"))
-    api_hash = metadata.get("apiHash") if isinstance(metadata, dict) else None
-    if not isinstance(api_hash, str) or not api_hash:
-        raise ValueError(f"apiHash was not found in {metadata_path}")
-
+def update_package_info(metadata_path: pathlib.Path | None, package_info_path: pathlib.Path) -> None:
+    """Store the generated hash, or retain an existing hash and default to 'dummy' without API tokens."""
     package_info = json.loads(package_info_path.read_text(encoding="utf-8-sig"))
+    if metadata_path is not None:
+        metadata = yaml.safe_load(metadata_path.read_text(encoding="utf-8-sig"))
+        api_hash = metadata.get("apiHash") if isinstance(metadata, dict) else None
+        if not isinstance(api_hash, str) or not api_hash.strip():
+            raise ValueError(f"apiHash was not found in {metadata_path}")
+    else:
+        api_hash = package_info.get("ApiHash")
+        if not isinstance(api_hash, str) or not api_hash.strip():
+            api_hash = "dummy"
+
     package_info["ApiHash"] = api_hash
     package_info_path.write_text(json.dumps(package_info, indent=2) + "\n", encoding="utf-8")
     print(f"Stored ApiHash in {package_info_path}")
@@ -39,7 +45,8 @@ def main() -> None:
         # API stub generation intentionally omits management-plane packages, so they have no token file.
         # Revisit this behavior if management-plane packages are included in API stub generation.
         if not token_file.is_file():
-            print(f"API token file was not found for {package_name}; skipping ApiHash update")
+            print(f"API token file was not found for {package_name}; retaining ApiHash or using 'dummy'")
+            update_package_info(None, package_info_path)
             continue
 
         subprocess.run(
