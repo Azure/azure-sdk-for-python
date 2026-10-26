@@ -57,16 +57,29 @@ class ApiProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
+class ClusterActiveVersion(_Model):
+    """ClusterActiveVersion represents a version of a resource.
+
+    :ivar version: The version of the resource. Specified in major.minor, same as the input.
+     Required.
+    :vartype version: str
+    """
+
+    version: str = rest_field(visibility=["read"])
+    """The version of the resource. Specified in major.minor, same as the input. Required."""
+
+
 class ClusterAutoscalingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterAutoscaling specifies auto-scaling behavior that applies to all NodePools associated
     with a control plane.
 
-    :ivar max_nodes_total: maxNodesTotal is the maximum allowable number of nodes for the
-     Autoscaler scale out to be operational. The autoscaler will not grow the cluster beyond this
-     number. If omitted, the autoscaler will not have a maximum limit.
+    :ivar max_nodes_total: maxNodesTotal is the maximum allowable number of nodes. The autoscaler
+     will not grow the cluster beyond this number. If omitted, the autoscaler will not have a
+     maximum limit.
     :vartype max_nodes_total: int
-    :ivar max_pod_grace_period_seconds: maxPodGracePeriod is the maximum seconds to wait for
-     graceful pod termination before scaling down a NodePool. The default is 600 seconds.
+    :ivar max_pod_grace_period_seconds: maxPodGracePeriodSeconds is the maximum amount of time in
+     seconds to wait for graceful pod termination before scaling down a NodePool. The default is 600
+     seconds.
     :vartype max_pod_grace_period_seconds: int
     :ivar max_node_provision_time_seconds: maxNodeProvisionTimeSeconds is the maximum time to wait
      for node provisioning before considering the provisioning to be unsuccessful. The default is
@@ -83,14 +96,13 @@ class ClusterAutoscalingProfile(_Model):  # pylint: disable=docstring-keyword-sh
     max_nodes_total: Optional[int] = rest_field(
         name="maxNodesTotal", visibility=["read", "create", "update", "delete", "query"]
     )
-    """maxNodesTotal is the maximum allowable number of nodes for the Autoscaler scale out to be
-     operational. The autoscaler will not grow the cluster beyond this number. If omitted, the
-     autoscaler will not have a maximum limit."""
+    """maxNodesTotal is the maximum allowable number of nodes. The autoscaler will not grow the
+     cluster beyond this number. If omitted, the autoscaler will not have a maximum limit."""
     max_pod_grace_period_seconds: Optional[int] = rest_field(
         name="maxPodGracePeriodSeconds", visibility=["read", "create", "update", "delete", "query"]
     )
-    """maxPodGracePeriod is the maximum seconds to wait for graceful pod termination before scaling
-     down a NodePool. The default is 600 seconds."""
+    """maxPodGracePeriodSeconds is the maximum amount of time in seconds to wait for graceful pod
+     termination before scaling down a NodePool. The default is 600 seconds."""
     max_node_provision_time_seconds: Optional[int] = rest_field(
         name="maxNodeProvisionTimeSeconds", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -162,6 +174,27 @@ class ClusterImageRegistryProfile(_Model):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
+class ClusterResourceStatus(_Model):
+    """ClusterResourceStatus represents the observed status of the cluster resource.
+
+    :ivar conditions: The conditions on the resource.
+    :vartype conditions: list[~azure.mgmt.redhatopenshifthcp.models.Condition]
+    :ivar active_versions: The observed active versions of the cluster. During upgrades, both the
+     previous and target versions may be active simultaneously until the rollout completes, so this
+     array can contain more than one entry. The ordering of entries has no meaning.
+    :vartype active_versions: list[~azure.mgmt.redhatopenshifthcp.models.ClusterActiveVersion]
+    """
+
+    conditions: Optional[list["_models.Condition"]] = rest_field(visibility=["read"])
+    """The conditions on the resource."""
+    active_versions: Optional[list["_models.ClusterActiveVersion"]] = rest_field(
+        name="activeVersions", visibility=["read"]
+    )
+    """The observed active versions of the cluster. During upgrades, both the previous and target
+     versions may be active simultaneously until the rollout completes, so this array can contain
+     more than one entry. The ordering of entries has no meaning."""
+
+
 class Condition(_Model):
     """Condition represents an observation of a resource's state.
 
@@ -210,6 +243,36 @@ class ConsoleProfile(_Model):
     """The cluster web console URL endpoint. Required."""
 
 
+class ContainerRegistryProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Azure Container Registry configuration for a cluster. Configures how worker nodes authenticate
+    container image pulls from Azure Container Registry (ACR).
+
+    :ivar managed_identity: The user-assigned managed identity used for container registry image
+     pulls.
+    :vartype managed_identity: str
+    """
+
+    managed_identity: Optional[str] = rest_field(name="managedIdentity", visibility=["read", "create", "update"])
+    """The user-assigned managed identity used for container registry image pulls."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CustomerManagedEncryptionProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customer managed encryption key profile.
 
@@ -255,18 +318,17 @@ class DnsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
 
     :ivar base_domain: BaseDomain is the base DNS domain of the cluster.
     :vartype base_domain: str
-    :ivar base_domain_prefix: BaseDomainPrefix is the unique name of the cluster representing the
-     OpenShift's cluster name. BaseDomainPrefix is the name that will appear in the cluster's DNS,
-     provisioned cloud providers resources.
+    :ivar base_domain_prefix: BaseDomainPrefix is the base domain prefix for the cluster ingress.
+     It will be used to configure ingress in the cluster through the subdomain
+     "BaseDomainPrefix.BaseDomain".
     :vartype base_domain_prefix: str
     """
 
     base_domain: Optional[str] = rest_field(name="baseDomain", visibility=["read"])
     """BaseDomain is the base DNS domain of the cluster."""
     base_domain_prefix: Optional[str] = rest_field(name="baseDomainPrefix", visibility=["read", "create"])
-    """BaseDomainPrefix is the unique name of the cluster representing the OpenShift's cluster name.
-     BaseDomainPrefix is the name that will appear in the cluster's DNS, provisioned cloud providers
-     resources."""
+    """BaseDomainPrefix is the base domain prefix for the cluster ingress. It will be used to
+     configure ingress in the cluster through the subdomain \"BaseDomainPrefix.BaseDomain\"."""
 
     @overload
     def __init__(
@@ -676,7 +738,7 @@ class ExternalAuthProperties(_Model):  # pylint: disable=docstring-keyword-shoul
     :vartype provisioning_state: str or
      ~azure.mgmt.redhatopenshifthcp.models.ExternalAuthProvisioningState
     :ivar status: Status of the external auth resource.
-    :vartype status: ~azure.mgmt.redhatopenshifthcp.models.ResourceStatus
+    :vartype status: ~azure.mgmt.redhatopenshifthcp.models.ExternalAuthResourceStatus
     :ivar issuer: Token Issuer profile. Required.
     :vartype issuer: ~azure.mgmt.redhatopenshifthcp.models.TokenIssuerProfile
     :ivar clients: External Auth OIDC clients There must not be more than 20 entries and entries
@@ -692,7 +754,7 @@ class ExternalAuthProperties(_Model):  # pylint: disable=docstring-keyword-shoul
     )
     """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", \"Accepted\",
      \"Deleting\", \"Provisioning\", \"Updating\", and \"AwaitingSecret\"."""
-    status: Optional["_models.ResourceStatus"] = rest_field(visibility=["read"])
+    status: Optional["_models.ExternalAuthResourceStatus"] = rest_field(visibility=["read"])
     """Status of the external auth resource."""
     issuer: "_models.TokenIssuerProfile" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Token Issuer profile. Required."""
@@ -724,6 +786,17 @@ class ExternalAuthProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
+class ExternalAuthResourceStatus(_Model):
+    """ExternalAuthResourceStatus represents the observed status of the external auth resource.
+
+    :ivar conditions: The conditions on the resource.
+    :vartype conditions: list[~azure.mgmt.redhatopenshifthcp.models.Condition]
+    """
+
+    conditions: Optional[list["_models.Condition"]] = rest_field(visibility=["read"])
+    """The conditions on the resource."""
+
+
 class GroupClaimProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External Auth claim profile
     This configures how the groups of a cluster identity should be constructed
@@ -736,7 +809,7 @@ class GroupClaimProfile(_Model):  # pylint: disable=docstring-keyword-should-mat
 
     :ivar claim: Claim name of the external profile. Required.
     :vartype claim: str
-    :ivar prefix: Prefix for the claim external profile If this is specified prefixPolicy will be
+    :ivar prefix: Prefix for the claim external profile. If this is specified, prefixPolicy will be
      set to "Prefix" by default.
     :vartype prefix: str
     """
@@ -744,7 +817,7 @@ class GroupClaimProfile(_Model):  # pylint: disable=docstring-keyword-should-mat
     claim: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Claim name of the external profile. Required."""
     prefix: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Prefix for the claim external profile If this is specified prefixPolicy will be set to
+    """Prefix for the claim external profile. If this is specified, prefixPolicy will be set to
      \"Prefix\" by default."""
 
     @overload
@@ -953,14 +1026,14 @@ class HcpOpenShiftClusterProperties(_Model):  # pylint: disable=docstring-keywor
      Valid values are in minutes and from 0 to 10080 minutes (1 week).
      0 means that the MachinePool can be drained without any time limitation.
 
-     This is the value is used a default for all NodePools. It can be overridden
+     This value is used as a default for all NodePools. It can be overridden
      by specifying nodeDrainTimeoutMinutes for a given NodePool.
     :vartype node_drain_timeout_minutes: int
     :ivar cluster_image_registry: OpenShift internal image registry.
     :vartype cluster_image_registry:
      ~azure.mgmt.redhatopenshifthcp.models.ClusterImageRegistryProfile
     :ivar status: Status of the cluster resource.
-    :vartype status: ~azure.mgmt.redhatopenshifthcp.models.ResourceStatus
+    :vartype status: ~azure.mgmt.redhatopenshifthcp.models.ClusterResourceStatus
     :ivar crypto_restrictions: Cryptographic restrictions for kernel and userspace libraries. Known
      values are: "None" and "FIPS".
     :vartype crypto_restrictions: str or ~azure.mgmt.redhatopenshifthcp.models.CryptoRestrictions
@@ -979,7 +1052,7 @@ class HcpOpenShiftClusterProperties(_Model):  # pylint: disable=docstring-keywor
     """Cluster network configuration."""
     console: Optional["_models.ConsoleProfile"] = rest_field(visibility=["read"])
     """Shows the cluster web console information."""
-    api: Optional["_models.ApiProfile"] = rest_field(visibility=["read", "create"])
+    api: Optional["_models.ApiProfile"] = rest_field(visibility=["read", "create", "update"])
     """Shows the cluster API server profile."""
     ingress: Optional["_models.IngressProfile"] = rest_field(visibility=["read", "create"])
     """The cluster ingress configuration."""
@@ -1009,13 +1082,13 @@ class HcpOpenShiftClusterProperties(_Model):  # pylint: disable=docstring-keywor
      Valid values are in minutes and from 0 to 10080 minutes (1 week).
      0 means that the MachinePool can be drained without any time limitation.
      
-     This is the value is used a default for all NodePools. It can be overridden
+     This value is used as a default for all NodePools. It can be overridden
      by specifying nodeDrainTimeoutMinutes for a given NodePool."""
     cluster_image_registry: Optional["_models.ClusterImageRegistryProfile"] = rest_field(
         name="clusterImageRegistry", visibility=["read", "create"]
     )
     """OpenShift internal image registry."""
-    status: Optional["_models.ResourceStatus"] = rest_field(visibility=["read"])
+    status: Optional["_models.ClusterResourceStatus"] = rest_field(visibility=["read"])
     """Status of the cluster resource."""
     crypto_restrictions: Optional[Union[str, "_models.CryptoRestrictions"]] = rest_field(
         name="cryptoRestrictions", visibility=["read", "create"]
@@ -1365,6 +1438,9 @@ class KmsEncryptionProfile(_Model):  # pylint: disable=docstring-keyword-should-
     :vartype visibility: str or ~azure.mgmt.redhatopenshifthcp.models.KeyVaultVisibility
     :ivar active_key: The details of the active key. Required.
     :vartype active_key: ~azure.mgmt.redhatopenshifthcp.models.KmsKey
+    :ivar key_vault_type: The type of keyvault used for KMS encryption. Defaults to KeyVault when
+     absent. Known values are: "KeyVault" and "ManagedHSM".
+    :vartype key_vault_type: str or ~azure.mgmt.redhatopenshifthcp.models.KmsKeyVaultType
     """
 
     vault_name: str = rest_field(name="vaultName", visibility=["read", "create"])
@@ -1374,6 +1450,11 @@ class KmsEncryptionProfile(_Model):  # pylint: disable=docstring-keyword-should-
      \"Private\"."""
     active_key: "_models.KmsKey" = rest_field(name="activeKey", visibility=["read", "create", "update"])
     """The details of the active key. Required."""
+    key_vault_type: Optional[Union[str, "_models.KmsKeyVaultType"]] = rest_field(
+        name="keyVaultType", visibility=["read", "create"]
+    )
+    """The type of keyvault used for KMS encryption. Defaults to KeyVault when absent. Known values
+     are: \"KeyVault\" and \"ManagedHSM\"."""
 
     @overload
     def __init__(
@@ -1382,6 +1463,7 @@ class KmsEncryptionProfile(_Model):  # pylint: disable=docstring-keyword-should-
         vault_name: str,
         visibility: Union[str, "_models.KeyVaultVisibility"],
         active_key: "_models.KmsKey",
+        key_vault_type: Optional[Union[str, "_models.KmsKeyVaultType"]] = None,
     ) -> None: ...
 
     @overload
@@ -1620,6 +1702,18 @@ class NodePool(TrackedResource):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
+class NodePoolActiveVersion(_Model):
+    """NodePoolActiveVersion represents a version of a resource.
+
+    :ivar version: The version of the resource. Specified in major.minor.patch, same as the input.
+     Required.
+    :vartype version: str
+    """
+
+    version: str = rest_field(visibility=["read"])
+    """The version of the resource. Specified in major.minor.patch, same as the input. Required."""
+
+
 class NodePoolAutoScaling(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Node pool autoscaling.
 
@@ -1672,8 +1766,8 @@ class NodePoolAutoScaling(_Model):  # pylint: disable=docstring-keyword-should-m
 class NodePoolPlatformProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure node pool platform configuration.
 
-    :ivar subnet_id: The Azure resource ID of the worker subnet Note that a subnet cannot be reused
-     between ARO-HCP Clusters, however the same subnet can be used for NodePools of the same
+    :ivar subnet_id: The Azure resource ID of the worker subnet. Note that a subnet cannot be
+     reused between ARO-HCP Clusters, however the same subnet can be used for NodePools of the same
      cluster.
     :vartype subnet_id: str
     :ivar vm_size: The VM size according to the documentation:
@@ -1695,7 +1789,7 @@ class NodePoolPlatformProfile(_Model):  # pylint: disable=docstring-keyword-shou
     """
 
     subnet_id: Optional[str] = rest_field(name="subnetId", visibility=["read", "create"])
-    """The Azure resource ID of the worker subnet Note that a subnet cannot be reused between ARO-HCP
+    """The Azure resource ID of the worker subnet. Note that a subnet cannot be reused between ARO-HCP
      Clusters, however the same subnet can be used for NodePools of the same cluster."""
     vm_size: str = rest_field(name="vmSize", visibility=["read", "create"])
     """The VM size according to the documentation:
@@ -1753,12 +1847,17 @@ class NodePoolProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
      * Maximum: 200 (only when availabilityZone is not specified)
      * No maximum when availabilityZone is specified.
     :vartype replicas: int
-    :ivar auto_repair: Auto-repair.
+    :ivar auto_repair: autoRepair specifies whether health checks should be enabled for machines in
+     the NodePool. Enabling this feature will cause the controller to automatically delete unhealthy
+     machines. The unhealthy criteria are determined by checking the Node Ready condition and a
+     timeout that might vary depending on the platform provider. autoRepair will not take action
+     when more than 2 Nodes are unhealthy at the same time, giving time for the cluster to stabilize
+     or for the user to manually intervene.
     :vartype auto_repair: bool
     :ivar auto_scaling: Representation of a autoscaling in a node pool.
     :vartype auto_scaling: ~azure.mgmt.redhatopenshifthcp.models.NodePoolAutoScaling
-    :ivar labels: Kubernetes labels to propagate to the NodePool Nodes Note that when the labels
-     are updated this is only applied to newly create nodes in the Nodepool, existing node labels
+    :ivar labels: Kubernetes labels to propagate to the NodePool Nodes. Note that when the labels
+     are updated this is only applied to newly created nodes in the NodePool, existing node labels
      remain unchanged.
     :vartype labels: list[~azure.mgmt.redhatopenshifthcp.models.Label]
     :ivar taints: Taints for the nodes.
@@ -1776,7 +1875,7 @@ class NodePoolProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
      If unset the cluster nodeDrainTimeoutMinutes value is used as a default.
     :vartype node_drain_timeout_minutes: int
     :ivar status: Status of the node pool resource.
-    :vartype status: ~azure.mgmt.redhatopenshifthcp.models.ResourceStatus
+    :vartype status: ~azure.mgmt.redhatopenshifthcp.models.NodePoolResourceStatus
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -1795,14 +1894,20 @@ class NodePoolProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
       * Maximum: 200 (only when availabilityZone is not specified)
       * No maximum when availabilityZone is specified."""
     auto_repair: Optional[bool] = rest_field(name="autoRepair", visibility=["read", "create"])
-    """Auto-repair."""
+    """autoRepair specifies whether health checks should be enabled for machines in the NodePool.
+     Enabling this feature will cause the controller to automatically delete unhealthy machines. The
+     unhealthy criteria are determined by checking the Node Ready condition and a timeout that might
+     vary depending on the platform provider. autoRepair will not take action when more than 2 Nodes
+     are unhealthy at the same time, giving time for the cluster to stabilize or for the user to
+     manually intervene."""
     auto_scaling: Optional["_models.NodePoolAutoScaling"] = rest_field(
         name="autoScaling", visibility=["read", "create", "update"]
     )
     """Representation of a autoscaling in a node pool."""
     labels: Optional[list["_models.Label"]] = rest_field(visibility=["read", "create", "update"])
-    """Kubernetes labels to propagate to the NodePool Nodes Note that when the labels are updated this
-     is only applied to newly create nodes in the Nodepool, existing node labels remain unchanged."""
+    """Kubernetes labels to propagate to the NodePool Nodes. Note that when the labels are updated
+     this is only applied to newly created nodes in the NodePool, existing node labels remain
+     unchanged."""
     taints: Optional[list["_models.Taint"]] = rest_field(visibility=["read", "create", "update"])
     """Taints for the nodes."""
     node_drain_timeout_minutes: Optional[int] = rest_field(
@@ -1819,7 +1924,7 @@ class NodePoolProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
      0 means that the NodePool can be drained without any time limitation.
      
      If unset the cluster nodeDrainTimeoutMinutes value is used as a default."""
-    status: Optional["_models.ResourceStatus"] = rest_field(visibility=["read"])
+    status: Optional["_models.NodePoolResourceStatus"] = rest_field(visibility=["read"])
     """Status of the node pool resource."""
 
     @overload
@@ -1847,6 +1952,27 @@ class NodePoolProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
+class NodePoolResourceStatus(_Model):
+    """NodePoolResourceStatus represents the observed status of the nodepool resource.
+
+    :ivar conditions: The conditions on the resource.
+    :vartype conditions: list[~azure.mgmt.redhatopenshifthcp.models.Condition]
+    :ivar active_versions: The observed active versions of the node pool. During upgrades, it is
+     common for multiple versions to be active at the same time while old nodes are drained and
+     replaced. The ordering of entries has no meaning.
+    :vartype active_versions: list[~azure.mgmt.redhatopenshifthcp.models.NodePoolActiveVersion]
+    """
+
+    conditions: Optional[list["_models.Condition"]] = rest_field(visibility=["read"])
+    """The conditions on the resource."""
+    active_versions: Optional[list["_models.NodePoolActiveVersion"]] = rest_field(
+        name="activeVersions", visibility=["read"]
+    )
+    """The observed active versions of the node pool. During upgrades, it is common for multiple
+     versions to be active at the same time while old nodes are drained and replaced. The ordering
+     of entries has no meaning."""
+
+
 class NodePoolVersionProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Versions represents an OpenShift version.
 
@@ -1856,6 +1982,9 @@ class NodePoolVersionProfile(_Model):  # pylint: disable=docstring-keyword-shoul
      Each version belongs to only a single set.
 
      If not specified, the default value is 'stable'.
+
+     This property is intended to be updateable, but that support is not yet
+     complete. Until then, changing this value after node pool creation is rejected.
     :vartype channel_group: str
     """
 
@@ -1865,7 +1994,10 @@ class NodePoolVersionProfile(_Model):  # pylint: disable=docstring-keyword-shoul
     """ChannelGroup is the name of the set to which this version belongs.
      Each version belongs to only a single set.
      
-     If not specified, the default value is 'stable'."""
+     If not specified, the default value is 'stable'.
+     
+     This property is intended to be updateable, but that support is not yet
+     complete. Until then, changing this value after node pool creation is rejected."""
 
     @overload
     def __init__(
@@ -2138,7 +2270,7 @@ class OsDiskProfile(_Model):  # pylint: disable=docstring-keyword-should-match-k
 class PlatformProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure specific configuration.
 
-    :ivar managed_resource_group: Resource group name to put cluster resources
+    :ivar managed_resource_group: The name of the resource group to put cluster resources in.
 
      If not specified then a unique name is generated from the
      following pattern
@@ -2149,8 +2281,8 @@ class PlatformProfile(_Model):  # pylint: disable=docstring-keyword-should-match
      (up to 45 characters) followed by a 16-byte universally unique
      identifier per RFC 4122.
     :vartype managed_resource_group: str
-    :ivar subnet_id: The Azure resource ID of the worker subnet Note that a subnet cannot be reused
-     between ARO-HCP Clusters. Required.
+    :ivar subnet_id: The Azure resource ID of the worker subnet. Note that a subnet cannot be
+     reused between ARO-HCP Clusters. Required.
     :vartype subnet_id: str
     :ivar vnet_integration_subnet_id: The Azure resource ID of a subnet that enables direct,
      private network connectivity between the hosted control plane and your cluster's nodes. This
@@ -2168,13 +2300,16 @@ class PlatformProfile(_Model):  # pylint: disable=docstring-keyword-should-match
      authenticate to Azure. Required.
     :vartype operators_authentication:
      ~azure.mgmt.redhatopenshifthcp.models.OperatorsAuthenticationProfile
+    :ivar container_registry: Azure Container Registry configuration for authenticating image pulls
+     on the cluster's worker nodes.
+    :vartype container_registry: ~azure.mgmt.redhatopenshifthcp.models.ContainerRegistryProfile
     :ivar issuer_url: URL for the OIDC provider to be used for authentication to authenticate
      against user Azure cloud account. Required.
     :vartype issuer_url: str
     """
 
     managed_resource_group: Optional[str] = rest_field(name="managedResourceGroup", visibility=["read", "create"])
-    """Resource group name to put cluster resources
+    """The name of the resource group to put cluster resources in.
      
      If not specified then a unique name is generated from the
      following pattern
@@ -2185,7 +2320,7 @@ class PlatformProfile(_Model):  # pylint: disable=docstring-keyword-should-match
      (up to 45 characters) followed by a 16-byte universally unique
      identifier per RFC 4122."""
     subnet_id: str = rest_field(name="subnetId", visibility=["read", "create"])
-    """The Azure resource ID of the worker subnet Note that a subnet cannot be reused between ARO-HCP
+    """The Azure resource ID of the worker subnet. Note that a subnet cannot be reused between ARO-HCP
      Clusters. Required."""
     vnet_integration_subnet_id: str = rest_field(name="vnetIntegrationSubnetId", visibility=["read", "create"])
     """The Azure resource ID of a subnet that enables direct, private network connectivity between the
@@ -2203,6 +2338,11 @@ class PlatformProfile(_Model):  # pylint: disable=docstring-keyword-should-match
         name="operatorsAuthentication", visibility=["read", "create", "update"]
     )
     """The configuration that the operators of the cluster have to authenticate to Azure. Required."""
+    container_registry: Optional["_models.ContainerRegistryProfile"] = rest_field(
+        name="containerRegistry", visibility=["read", "create", "update"]
+    )
+    """Azure Container Registry configuration for authenticating image pulls on the cluster's worker
+     nodes."""
     issuer_url: str = rest_field(name="issuerUrl", visibility=["read"])
     """URL for the OIDC provider to be used for authentication to authenticate against user Azure
      cloud account. Required."""
@@ -2217,6 +2357,7 @@ class PlatformProfile(_Model):  # pylint: disable=docstring-keyword-should-match
         operators_authentication: "_models.OperatorsAuthenticationProfile",
         managed_resource_group: Optional[str] = None,
         outbound_type: Optional[Union[str, "_models.OutboundType"]] = None,
+        container_registry: Optional["_models.ContainerRegistryProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -2228,17 +2369,6 @@ class PlatformProfile(_Model):  # pylint: disable=docstring-keyword-should-match
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ResourceStatus(_Model):
-    """ResourceStatus represents the observed status of the resource.
-
-    :ivar conditions: The conditions on the resource.
-    :vartype conditions: list[~azure.mgmt.redhatopenshifthcp.models.Condition]
-    """
-
-    conditions: Optional[list["_models.Condition"]] = rest_field(visibility=["read"])
-    """The conditions on the resource."""
 
 
 class RoleDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -2465,13 +2595,13 @@ class TokenIssuerProfile(_Model):  # pylint: disable=docstring-keyword-should-ma
 
      issuerURL must use the 'https' scheme. Required.
     :vartype url: str
-    :ivar audiences: This configures the acceptable audiences the JWT token, issued by the identity
-     provider, must be issued to. At least one of the entries must match the
-     'aud' claim in the JWT token.
+    :ivar audiences: This configures the acceptable audiences for JWT tokens issued by the identity
+     provider.
+     At least one of the entries must match the 'aud' claim in the JWT token.
 
-     audiences must contain at least one entry and must not exceed ten entries. Required.
+     Audiences must contain at least one entry and must not exceed ten entries. Required.
     :vartype audiences: list[str]
-    :ivar ca: The issuer of the token
+    :ivar ca: The issuer of the token.
 
      Certificate bundle to use to validate server certificates for the configured URL.
      It must be PEM encoded and when not specified, the system trust is used.
@@ -2485,13 +2615,12 @@ class TokenIssuerProfile(_Model):  # pylint: disable=docstring-keyword-should-ma
      
      issuerURL must use the 'https' scheme. Required."""
     audiences: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """This configures the acceptable audiences the JWT token, issued by the identity
-     provider, must be issued to. At least one of the entries must match the
-     'aud' claim in the JWT token.
+    """This configures the acceptable audiences for JWT tokens issued by the identity provider.
+     At least one of the entries must match the 'aud' claim in the JWT token.
      
-     audiences must contain at least one entry and must not exceed ten entries. Required."""
+     Audiences must contain at least one entry and must not exceed ten entries. Required."""
     ca: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The issuer of the token
+    """The issuer of the token.
      
      Certificate bundle to use to validate server certificates for the configured URL.
      It must be PEM encoded and when not specified, the system trust is used."""
@@ -2629,7 +2758,7 @@ class UsernameClaimProfile(_Model):  # pylint: disable=docstring-keyword-should-
 
     :ivar claim: Claim name of the external profile. Required.
     :vartype claim: str
-    :ivar prefix: Prefix for the claim external profile Must be set when the prefixPolicy field is
+    :ivar prefix: Prefix for the claim external profile. Must be set when the prefixPolicy field is
      set to 'Prefix' and must be unset otherwise.
     :vartype prefix: str
     :ivar prefix_policy: Prefix policy is an optional field that configures how a prefix should be
@@ -2659,7 +2788,7 @@ class UsernameClaimProfile(_Model):  # pylint: disable=docstring-keyword-should-
     claim: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Claim name of the external profile. Required."""
     prefix: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Prefix for the claim external profile Must be set when the prefixPolicy field is set to
+    """Prefix for the claim external profile. Must be set when the prefixPolicy field is set to
      'Prefix' and must be unset otherwise."""
     prefix_policy: Optional[Union[str, "_models.UsernameClaimPrefixPolicy"]] = rest_field(
         name="prefixPolicy", visibility=["read", "create", "update", "delete", "query"]
@@ -2715,6 +2844,9 @@ class VersionProfile(_Model):  # pylint: disable=docstring-keyword-should-match-
      Each version belongs to only a single set.
 
      If not specified, the default value is 'stable'.
+
+     This property is intended to be updateable, but that support is not yet
+     complete. Until then, changing this value after cluster creation is rejected.
     :vartype channel_group: str
     """
 
@@ -2724,7 +2856,10 @@ class VersionProfile(_Model):  # pylint: disable=docstring-keyword-should-match-
     """ChannelGroup is the name of the set to which this version belongs.
      Each version belongs to only a single set.
      
-     If not specified, the default value is 'stable'."""
+     If not specified, the default value is 'stable'.
+     
+     This property is intended to be updateable, but that support is not yet
+     complete. Until then, changing this value after cluster creation is rejected."""
 
     @overload
     def __init__(

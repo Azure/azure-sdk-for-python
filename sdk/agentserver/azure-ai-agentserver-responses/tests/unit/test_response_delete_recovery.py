@@ -1371,7 +1371,8 @@ async def test_crash_empty_replay_is_replaced_by_successful_same_user_execution(
         sent.append(message)
 
     try:
-        await asyncio.wait_for(response.stream_response(send), 2)
+        # File-backed replay flushes to disk; allow for contended CI storage.
+        await asyncio.wait_for(response.stream_response(send), 10)
         body = b"".join(message.get("body", b"") for message in sent)
         assert b"response.created" in body
         assert b"response.completed" in body
@@ -2006,6 +2007,7 @@ async def test_delete_then_same_id_post_resumes_same_conversation_with_a_new_inc
 
     host.response_handler(handler)
     manager = TaskManager(host.config, provider=task_store)
+    host._task_manager = manager
     set_task_manager(manager)
     monkeypatch.setattr(lifecycle, "get_task_manager", lambda: manager)
     suspended = asyncio.Queue()

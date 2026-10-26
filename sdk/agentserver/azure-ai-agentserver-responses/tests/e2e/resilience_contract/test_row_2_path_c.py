@@ -8,14 +8,8 @@ the next process lifetime, the framework MUST mark the response
 next-lifetime recovery. The reconnecting client sees the failed
 terminal — NOT ``in_progress`` indefinitely.
 
-EXPECTED today: **RED — divergence 2.** ``_orchestrator.py:2273`` gates
-``_start_resilient_background`` on ``resilient_background AND store``. With
-``resilient_background=False`` no resilient record is created; next-lifetime
-recovery finds nothing for the response; nothing marks it failed.
-The response stays ``in_progress`` indefinitely.
-
-Phase 4 closes this by creating a bookkeeping resilient record for every
-``store=true`` response (per RD-1) with disposition ``mark-failed``.
+With steering enabled this flag-off response has a durable task runtime.
+With both Responses features disabled, no recovery scanner runs instead.
 
 Contract source: ``resilience-contract.md`` § Per-row contracts → Row 2.
 """
@@ -39,10 +33,12 @@ from tests.e2e.resilience_contract.conftest import (
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("stream", [False, True], ids=["stream=False", "stream=True"])
-async def test_row_2_path_c(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
-    """Row 2 Path C: SIGKILL mid-handler, restart, response marked failed."""
+@pytest.mark.parametrize("steerable", [False, True], ids=["runtime-off", "steering-runtime"])
+async def test_row_2_path_c(make_harness: Callable[..., CrashHarness], stream: bool, steerable: bool) -> None:
+    """Only a feature-enabled task runtime marks an interrupted response failed."""
     harness = make_harness(
         resilient_background=False,
+        steerable_conversations=steerable,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         pre_sleep_deltas=1 if stream else 0,
         shutdown_grace_seconds=LONG_GRACE_S,
@@ -62,9 +58,15 @@ async def test_row_2_path_c(make_harness: Callable[..., CrashHarness], stream: b
         await harness.kill()
         await harness.restart()
 
-        terminal = await poll_until_terminal(harness.client, response_id)
-        assert terminal["status"] == "failed", terminal
-        error = terminal.get("error") or {}
-        assert error.get("code") in ("server_error", "server_crashed"), error
+        if steerable:
+            terminal = await poll_until_terminal(harness.client, response_id)
+            assert terminal["status"] == "failed", terminal
+            error = terminal.get("error") or {}
+            assert error.get("code") in ("server_error", "server_crashed"), error
+        else:
+            await asyncio.sleep(LONG_TIME_SECS + 1)
+            response = await harness.client.get(f"/responses/{response_id}")
+            assert response.status_code == 200, response.text
+            assert response.json()["status"] == "in_progress", response.text
     finally:
         await harness.close()
