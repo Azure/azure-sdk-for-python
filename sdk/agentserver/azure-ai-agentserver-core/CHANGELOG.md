@@ -30,6 +30,12 @@
 
 ### Bugs Fixed
 
+- Include agent identity and the resolved default task directory in runtime
+  compatibility, preventing rollback from retaining incompatible lease owners
+  or providers rooted in an overridden home directory.
+- Close task admission during manager shutdown and settle accepted submissions
+  before worker snapshots, preventing cancellation cleanup from launching
+  untracked child tasks.
 - Quiesce failed-restore workers before provider configuration rollback even
   when the session ID/GUID is unchanged, preserving their original task records
   and allowing retries with omitted provider overrides.

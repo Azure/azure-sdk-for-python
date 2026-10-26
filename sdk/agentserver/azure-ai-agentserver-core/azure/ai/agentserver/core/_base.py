@@ -51,6 +51,7 @@ _AFTER_RESTORE_PATH = "/_agent/after-restore"
 _BEFORE_SNAPSHOT_ALIAS_PATH = "/_before_snapshot"
 _AFTER_RESTORE_ALIAS_PATH = "/_after_restore"
 _SESSION_ID_ENV = "FOUNDRY_AGENT_SESSION_ID"
+_AGENT_NAME_ENV = "FOUNDRY_AGENT_NAME"
 _SESSION_GUID_ENV = "FOUNDRY_AGENT_SESSION_GUID"
 _MEMORY_SNAPSHOT_ENV = "FOUNDRY_MEMORY_SNAPSHOT_ENABLED"
 _MISSING_ENV = object()
@@ -291,7 +292,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             "_task_manager_requirements", [_resilient_tasks_enabled]
         )
         self._task_manager: Optional["TaskManager"] = None
-        self._task_manager_binding: tuple[str, str] | None = None
+        self._task_manager_binding: tuple[str, str, str] | None = None
         self._task_manager_lock = asyncio.Lock()
         self._task_manager_stopping = False
         #  Pre-shutdown callbacks invoked SYNCHRONOUSLY from the
@@ -539,19 +540,19 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         async with self._task_manager_lock:
             if self._task_manager_stopping:
                 raise RuntimeError("Cannot activate tasks while the host is shutting down")
-            binding = (self.config.session_id, self.config.session_guid)
+            binding = (self.config.session_id, self.config.session_guid, self.config.agent_name)
             try:
                 installed = get_task_manager()
             except TaskManagerNotInitialized:
                 installed = None
             if installed is not None and installed is not self._task_manager:
                 raise RuntimeError("TaskManager is already owned by another host")
-            if (
-                self._task_manager is not None
-                and not self._task_manager._provider_configuration_matches()  # pylint: disable=protected-access
+            if self._task_manager is not None and (
+                self._task_manager_binding != binding
+                or not self._task_manager._provider_configuration_matches()  # pylint: disable=protected-access
             ):
                 if self._task_manager._has_live_workers:  # pylint: disable=protected-access
-                    raise RuntimeError("Cannot change task provider configuration while workers are running")
+                    raise RuntimeError("Cannot change task runtime binding while workers are running")
                 await self._task_manager.shutdown(wait_for_workers=True)
                 self._task_manager = None
                 self._task_manager_binding = None
@@ -604,7 +605,12 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 return False
             manager = self._task_manager
             rollback = self._lifecycle.pending_rollback
-            compatible_binding = self._task_manager_binding == (previous_session_id, previous_session_guid)
+            previous_agent_name = self.config.agent_name if rollback is None else rollback.config.get("agent_name")
+            compatible_binding = self._task_manager_binding == (
+                previous_session_id,
+                previous_session_guid,
+                previous_agent_name,
+            )
             if rollback is not None:
                 compatible_binding = (
                     compatible_binding
@@ -910,14 +916,10 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             )
 
         async with self._lifecycle.lock:
-            if self._task_manager_binding is not None and self._task_manager_binding[0] != context.session_id:
-                return create_error_response(
-                    "session_mismatch",
-                    "The task runtime is already assigned to another session.",
-                    status_code=409,
-                )
             assigned_session_id = self._lifecycle.assigned_session_id
-            if assigned_session_id is not None and assigned_session_id != context.session_id:
+            if (self._task_manager_binding is not None and self._task_manager_binding[0] != context.session_id) or (
+                assigned_session_id is not None and assigned_session_id != context.session_id
+            ):
                 return create_error_response(
                     "session_mismatch",
                     "The restored process is already assigned to another session.",
@@ -947,6 +949,23 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             for key, value in previous_environment.items():
                 if key not in captured_environment:
                     captured_environment[key] = None if value is _MISSING_ENV else str(value)
+            agent_name = (
+                effective_environment.get(
+                    _AGENT_NAME_ENV, captured_environment.get(_AGENT_NAME_ENV, os.environ.get(_AGENT_NAME_ENV))
+                )
+                or ""
+            )
+            if (
+                self._task_manager is not None
+                and self._task_manager_binding is not None
+                and self._task_manager_binding[2] != agent_name
+                and self._task_manager._has_live_workers  # pylint: disable=protected-access
+            ):
+                return create_error_response(
+                    "agent_mismatch",
+                    "Cannot change agent identity while task workers are running.",
+                    status_code=409,
+                )
             previous_session_id, previous_session_guid = (
                 self.config.session_id,
                 self.config.session_guid,

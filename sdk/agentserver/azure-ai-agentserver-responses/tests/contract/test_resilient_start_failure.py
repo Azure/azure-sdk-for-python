@@ -147,6 +147,38 @@ class TestTaskStartFailureSurfacesPlatform:
         assert "error" in types, f"expected a standalone error event, got: {types}"
         assert "response.completed" not in types, f"must not complete on start failure, got: {types}"
 
+    @pytest.mark.parametrize("stream", [False, True])
+    @pytest.mark.parametrize("resilient,steerable", [(False, True), (True, False), (True, True)])
+    def test_closed_manager_never_falls_back_to_non_durable_execution(
+        self, _switch_off: Any, caplog: pytest.LogCaptureFixture, stream: bool, resilient: bool, steerable: bool
+    ) -> None:
+        called = []
+
+        async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
+            called.append(True)
+            return await _noop_handler(request, context, cancellation_signal)
+
+        with _build_client(handler, task_runtime=steerable, resilient_background=resilient) as client:
+            manager = get_task_manager()
+            assert client.portal is not None
+            client.portal.call(manager._shutdown_event.set)
+            response = client.post(
+                "/responses",
+                json={"model": "test", "input": "hi", "stream": stream, "store": True},
+            )
+            if stream:
+                types = [event["type"] for event in _collect_sse_events(response.text)]
+                assert "error" in types
+                assert "response.completed" not in types
+            else:
+                assert response.status_code == 500, response.text
+                assert response.headers.get(ERROR_SOURCE) == "platform"
+            assert not called
+            assert any(
+                record.exc_info and "TaskManager is shutting down" in str(record.exc_info[1])
+                for record in caplog.records
+            )
+
 
 class TestNoTaskManagerStillRunsHandler:
     """No task subsystem (opt-out) → handler runs in-process (non-durable)."""

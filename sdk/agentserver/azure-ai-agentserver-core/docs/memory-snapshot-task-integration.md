@@ -202,7 +202,7 @@ TaskManager retains private phase state:
 
 | Phase | Completion means |
 |---|---|
-| Construct/bind | A manager exists for the bound session, before the app handler |
+| Construct/bind | A manager exists for the bound session and agent, before the app handler |
 | Register | Captured definitions/options are installed; task submission is available |
 | Recovery | The application handler returned; best-effort initial scan completed |
 | Periodic | One scanner is present and running |
@@ -236,6 +236,11 @@ inventing a platform restore event.
 - An inactive manager whose construction-time provider configuration no longer
   matches hydrated settings is disposed and rebuilt. Provider changes while
   workers are live fail explicitly instead of sending work to a stale endpoint.
+- Runtime identity includes agent name as well as session ID/GUID. A live
+  agent-name change is rejected before environment/configuration mutation;
+  incompatible inactive runtimes are rebuilt.
+- Local provider comparison uses `resolve_state_subdir("tasks")`, including
+  the default home directory when the root variable is unset or empty.
 
 This is not a general retained-memory reconciliation framework. Changes to
 session-incarnation binding require explicit lifecycle treatment rather than
@@ -255,7 +260,18 @@ finish, so cancelled handlers complete under the binding they started with.
 This rollback-only cleanup preserves unfinished task records and saved inputs.
 It stops workers before expiring their leases, allowing a restore retry to
 recover the original task rather than treating interruption as user cancellation.
-Ordinary shutdown and explicit task cancellation keep their existing behavior.
+Manager shutdown first closes task mutation admission and waits for already
+accepted submissions to settle before taking the final worker/lease snapshot.
+This includes submissions whose provider create/claim has not yet produced an
+active entry. Late accepted handles remain owned even if their workers finish
+before the snapshot. New child submissions from cancellation/finally code are
+rejected, not launched; rejection during rollback preserves the parent for
+recovery rather than turning cleanup into terminal task failure.
+Admission is tied to the actual producer task, not inherited context-variable
+permission. Awaiting a submitted run's result does not hold admission open.
+The gate applies only once TaskManager shutdown begins, not as a new HTTP
+admission policy or a capture-time launch queue. Explicit cancellation of an
+individual task keeps its normal behavior.
 The manager owns execution, renewal, scanner and watchdog workers until they
 finish, independently of active task records. Rollback joins those workers,
 including renewals whose handlers completed before cleanup began.
@@ -285,8 +301,9 @@ under retained live workers.
 Completed inactive phase resources can survive a failed restore attempt and
 be reused after the same session is rebound. However, rollback cannot revert
 shared configuration while recovered workers continue using an incompatible
-binding. Compatibility includes the provider backend/location captured before
-restore, not just session ID/GUID. A changed endpoint, backend or local state
+binding. Compatibility includes agent identity and the provider backend/location
+captured before restore, not just session ID/GUID. A changed agent name,
+endpoint, backend or local state
 root requires worker quiescence even when session identity matches. Records
 remain recoverable in their original provider; rollback does not migrate work
 between projects or storage roots.
@@ -676,6 +693,8 @@ typed-input behavior is not broadened or redesigned.
 | Execution/renewal during hook | Real recovered task/heartbeat integration test |
 | Application handler task submission | Decorated `.start()`/bounded `.run()`, nested definitions, no automatic recovery before dependencies, failed/cancelled-hook retries |
 | Inactive provider configuration changes | Cancelled initial scan followed by omitted endpoint override rebuilds the provider |
+| Shutdown admission/quiescence | Child-in-finally rejection, in-flight create settlement, non-inherited admission and nonblocking run-result waits |
+| Agent/default-directory rollback | Matching-session agent rename and default HOME changes stop incompatible work before rollback |
 | Cold and initial golden LRA activation | Controlled hosted sample, actual external lease renewal |
 | Hard crash after checkpoints 1 and 2 | Controlled hosted recovery; no new invocation during orphan interval |
 | Independent sessions/concurrent tasks | Controlled hosted owner/worker/lease observations |

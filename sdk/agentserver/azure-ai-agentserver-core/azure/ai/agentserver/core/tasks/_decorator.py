@@ -1050,12 +1050,16 @@ class Task(Generic[Input, Output]):
         # per Invariant 1. Operator-facing WARNING logs (in _manager.py
         # and _lease.py) are the only differentiator.
         try:
-            return await self._lifecycle_start_inner(
-                task_id=task_id,
-                input=input,
-                input_id=input_id,
-                if_last_input_id=if_last_input_id,
-            )
+            from ._manager import get_task_manager, _task_manager_scope  # pylint: disable=import-outside-toplevel
+
+            manager = get_task_manager()
+            with _task_manager_scope(lambda: manager), manager._task_admission():  # pylint: disable=protected-access
+                return await self._lifecycle_start_inner(
+                    task_id=task_id,
+                    input=input,
+                    input_id=input_id,
+                    if_last_input_id=if_last_input_id,
+                )
         except _HostedConflict as exc:
             translated = _translate_hosted_conflict(exc, task_id=task_id)
             if translated is None:
