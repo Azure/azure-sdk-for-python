@@ -1436,7 +1436,7 @@ class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ``minimal``, ``low``, ``medium``, ``high``, ``xhigh``, and ``max``. Reducing reasoning effort
     can result in faster responses and fewer tokens used on reasoning in a response. Not all
     reasoning models support every value. See the `reasoning guide
-    <https://platform.openai.com/docs/guides/reasoning>`_ for model-specific support.
+    <https://developers.openai.com/api/docs/guides/reasoning>`_ for model-specific support.
     """
 
     NONE = "none"
