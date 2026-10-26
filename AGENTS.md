@@ -53,7 +53,6 @@ Always:
 | Add a feature or fix a bug in a package under `sdk/` | [`.github/skills/find-package-skill/SKILL.md`](.github/skills/find-package-skill/SKILL.md) (check FIRST for package-specific skills) |
 | Generate or regenerate SDK code from TypeSpec, build, and validate | [`.github/skills/azsdk-common-generate-sdk-locally/SKILL.md`](.github/skills/azsdk-common-generate-sdk-locally/SKILL.md) |
 | Release / publish a package | [`.github/skills/azsdk-common-sdk-release/SKILL.md`](.github/skills/azsdk-common-sdk-release/SKILL.md) |
-| Find management SDK PRs needing attention or check active automated reviews | [`.github/skills/azsdk-python-mgmt-pr-triage/SKILL.md`](.github/skills/azsdk-python-mgmt-pr-triage/SKILL.md) |
 | Prepare a release plan | [`.github/skills/azsdk-common-prepare-release-plan/SKILL.md`](.github/skills/azsdk-common-prepare-release-plan/SKILL.md) |
 | Resolve APIView feedback | [`.github/skills/azsdk-common-apiview-feedback-resolution/SKILL.md`](.github/skills/azsdk-common-apiview-feedback-resolution/SKILL.md) |
 | Analyze a CI / pipeline failure | [`.github/skills/azsdk-common-pipeline-analysis/SKILL.md`](.github/skills/azsdk-common-pipeline-analysis/SKILL.md) |
