@@ -1,17 +1,6 @@
 # Release History
 
-## 4.12.0 (2026-10-23)
-
-### Other Changes
-
-- Regenerated the package with stable Key Vault API version `2026-04-01`.
-- The default service version is now `2026-04-01`.
-
-## 4.11.3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 4.12.0 (2026-10-27)
 
 ### Bugs Fixed
 
@@ -28,6 +17,11 @@
   resource verification is disabled.
 
 ### Other Changes
+
+- Regenerated the package with stable Key Vault API version `2026-04-01`.
+- The default service version is now `2026-04-01`.
+- Python 3.9 is no longer supported. Please use Python 3.10 or later, in accordance with the [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
+- Updated the minimum `azure-core` dependency to `1.37.0` to match the generated client.
 
 ## 4.11.2 (2026-08-25)
 
