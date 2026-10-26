@@ -96,6 +96,7 @@ class GitHub:
                 raise CollectionError(f"No CODEOWNERS for {path}.")
             owners.update(matched)
         maintainers = set()
+        skipped_team = False
         for owner in owners:
             if not owner.startswith("@"):
                 raise CollectionError(f"Cannot resolve CODEOWNERS identity {owner}.")
@@ -104,12 +105,20 @@ class GitHub:
                 with self.lock:
                     key = ("team", owner.casefold())
                     if key not in self.cache:
-                        self.cache[key] = self.pages(f"orgs/{org}/teams/{team}/members?per_page=100")
+                        try:
+                            self.cache[key] = self.pages(f"orgs/{org}/teams/{team}/members?per_page=100")
+                        except CollectionError as error:
+                            self.cache[key] = error
                     members = self.cache[key]
+                if isinstance(members, CollectionError):
+                    if owner.casefold() == "@azure/azure-arm-sdk-reviewers" and "HTTP 403" in str(members):
+                        skipped_team = True
+                        continue
+                    raise members
                 maintainers.update(member["login"].casefold() for member in members)
             else:
                 maintainers.add(owner[1:].casefold())
-        return maintainers, sorted(owners, key=str.casefold)
+        return maintainers, sorted(owners, key=str.casefold), skipped_team
 
     def load_rules(self, base_sha):
         for path in (".github/CODEOWNERS", "CODEOWNERS", "docs/CODEOWNERS"):
@@ -255,11 +264,22 @@ def collect_pr(client, summary):
     reviews = client.pages(f"{endpoint}/reviews?per_page=100")
     issues = []
     try:
-        maintainers, owners = client.owners(pr["base"]["sha"], files, name)
+        maintainers, owners, skipped_team = client.owners(pr["base"]["sha"], files, name)
     except CollectionError as error:
-        maintainers, owners = None, []
+        maintainers, owners, skipped_team = None, [], False
         issues.append(f"Approval verification incomplete: {error}")
     approval = effective_approval(reviews, maintainers) if maintainers is not None else None
+    if (
+        skipped_team
+        and approval is None
+        and summary.get("reviewDecision")
+        not in {
+            "APPROVED",
+            "REVIEW_REQUIRED",
+            "CHANGES_REQUESTED",
+        }
+    ):
+        issues.append("GitHub review decision unavailable; cannot verify team-only approval.")
     followups = []
     if approval:
         inline = client.pages(f"{endpoint}/comments?per_page=100")
@@ -291,7 +311,7 @@ def collect_pr(client, summary):
         "version": version,
         "approval": approval,
         "owners": owners,
-        "ownership_known": maintainers is not None,
+        "ownership_known": maintainers is not None and not skipped_team,
         "review_decision": summary.get("reviewDecision"),
         "bot_review": bot_review(comments),
         "followups": followups,

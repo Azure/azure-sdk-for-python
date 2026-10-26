@@ -14,7 +14,8 @@ for review and release decisions; this skill only helps find PRs.
 
 - Python 3.10+ and authenticated GitHub CLI (`gh`) on PATH.
 - Read access to repository contents, pull requests, and Actions runs.
-- Read access to CODEOWNERS team membership when team owners apply.
+- Read access to CODEOWNERS team membership when team owners apply, except
+  the optional `Azure/azure-arm-sdk-reviewers` lookup described below.
 
 No SDK installation or local repository checkout is needed to run the bundled
 script. In Copilot, ask: **"Use azsdk-python-mgmt-pr-triage to show management SDK
@@ -66,6 +67,15 @@ appear in multiple queues. CODEOWNERS use GitHub file precedence and the last
 matching rule for changed package files at the PR's base commit. Resolve team
 members and use each maintainer's latest opinionated review; a later ordinary
 comment does not invalidate an approval.
+
+If the `Azure/azure-arm-sdk-reviewers` membership lookup returns HTTP 403,
+silently skip that team lookup and cache the failure for the scan. Keep
+approvals from individually named CODEOWNERS and other readable teams. Use
+GitHub's review decision for the human-review queue when a team-only approval
+cannot be verified; do not claim an approval is missing solely because this
+team is unreadable. Changes and author follow-ups after a team-only approval
+cannot be classified unless the approver is also a verified maintainer.
+Other team errors and API failures still produce verification warnings.
 
 ## Evidence and limitations
 

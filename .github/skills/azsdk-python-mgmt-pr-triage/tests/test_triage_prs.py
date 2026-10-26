@@ -113,6 +113,7 @@ class FakeGitHub:
         self.linked_run = run()
         self.workflow_runs = []
         self.ownership_error = False
+        self.skipped_team = False
         self.activity_error = False
         self.last_details = None
         self.get_count = 0
@@ -144,7 +145,7 @@ class FakeGitHub:
     def owners(self, base_sha, files, package):
         if self.ownership_error:
             raise triage.CollectionError("Team membership unreadable")
-        return {"maintainer"}, ["@maintainer"]
+        return {"maintainer"}, ["@maintainer"], self.skipped_team
 
 
 class ApprovalTests(unittest.TestCase):
@@ -178,7 +179,7 @@ class OwnershipTests(unittest.TestCase):
         text = "/sdk/ @general\n/**/*mgmt*/ @maintainer\n/sdk/example/azure-mgmt-example/private/ @special\n"
         with patch.object(self.client, "load_rules", return_value=triage.parse_codeowners(text)) as load:
             owners = self.client.owners(OLD, [FILE], "azure-mgmt-example")
-            self.assertEqual(owners, ({"maintainer"}, ["@maintainer"]))
+            self.assertEqual(owners, ({"maintainer"}, ["@maintainer"], False))
             self.client.owners(OLD, [FILE], "azure-mgmt-example")
             load.assert_called_once()
             special = dict(FILE, filename="sdk/example/azure-mgmt-example/private/client.py")
@@ -217,6 +218,35 @@ class OwnershipTests(unittest.TestCase):
             self.client.load_rules(OLD)
             self.assertIn("/contents/.github/CODEOWNERS?", cached.call_args.args[0])
             cached.assert_called_once()
+
+    def test_expected_team_403_skipped_and_cached_without_losing_named_owners(self):
+        rules = triage.parse_codeowners("/sdk/ @Azure/azure-arm-sdk-reviewers @maintainer")
+        with patch.object(self.client, "load_rules", return_value=rules), patch.object(
+            self.client,
+            "pages",
+            side_effect=triage.CollectionError("Resource not accessible by integration (HTTP 403)"),
+        ) as pages:
+            for _ in range(2):
+                maintainers, owners, skipped = self.client.owners(OLD, [FILE], "azure-mgmt-example")
+                self.assertEqual(maintainers, {"maintainer"})
+                self.assertIn("@Azure/azure-arm-sdk-reviewers", owners)
+                self.assertTrue(skipped)
+            pages.assert_called_once()
+
+    def test_other_team_403_or_other_error_still_reported(self):
+        for owner, error in (
+            ("@Azure/other-team", "HTTP 403"),
+            ("@Azure/azure-arm-sdk-reviewers", "HTTP 401"),
+            ("@Azure/azure-arm-sdk-reviewers", "HTTP 500"),
+        ):
+            with self.subTest(owner=owner, error=error):
+                client = triage.GitHub(REPO)
+                rules = triage.parse_codeowners(f"/sdk/ {owner} @maintainer")
+                with patch.object(client, "load_rules", return_value=rules), patch.object(
+                    client, "pages", side_effect=triage.CollectionError(error)
+                ):
+                    with self.assertRaises(triage.CollectionError):
+                        client.owners(OLD, [FILE], "azure-mgmt-example")
 
     def test_empty_override_does_not_fall_back(self):
         rules = triage.parse_codeowners("/sdk/ @maintainer\n/sdk/example/azure-mgmt-example/\n")
@@ -319,6 +349,40 @@ class FreshnessTests(unittest.TestCase):
 
 
 class CollectionTests(unittest.TestCase):
+    def test_skipped_team_preserves_named_approval_changes_and_followups(self):
+        client = FakeGitHub()
+        client.skipped_team = True
+        client.reviews = [review(commit=OLD)]
+        client.comments.append(comment())
+        item = triage.collect_pr(client, {"number": 42, "reviewDecision": "APPROVED"})
+        triage.classify(item, client, 9, [], [])
+        self.assertIsNotNone(item["approval"])
+        self.assertFalse(item["issues"])
+        self.assertNotIn(3, item["queues"])
+        self.assertIn(4, item["queues"])
+        self.assertIn(5, item["queues"])
+
+    def test_skipped_team_uses_github_decision_without_missing_approval_claim(self):
+        for decision in ("APPROVED", "REVIEW_REQUIRED", "CHANGES_REQUESTED"):
+            with self.subTest(decision=decision):
+                client = FakeGitHub()
+                client.skipped_team = True
+                client.reviews = [review(login="team-only-reviewer")]
+                item = triage.collect_pr(client, {"number": 42, "reviewDecision": decision})
+                triage.classify(item, client, 9, [], [])
+                self.assertFalse(item["issues"])
+                if decision == "APPROVED":
+                    self.assertNotIn(3, item["queues"])
+                else:
+                    self.assertIn(f"GitHub review decision: {decision}", item["queues"][3])
+
+    def test_skipped_team_without_github_decision_is_still_unverified(self):
+        client = FakeGitHub()
+        client.skipped_team = True
+        client.reviews = []
+        item = triage.collect_pr(client, {"number": 42})
+        self.assertIn("GitHub review decision unavailable", item["issues"][0])
+
     def test_first_beta_and_author_followups_in_all_comment_channels(self):
         client = FakeGitHub()
         client.comments.append(comment())
