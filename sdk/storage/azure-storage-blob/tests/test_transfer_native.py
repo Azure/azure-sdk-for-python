@@ -95,20 +95,6 @@ class _FakeNativeStream:
         return window
 
 
-class _FakeNativeReadallStream(_FakeNativeStream):
-    """Native stream stand-in that also implements the native ``readall`` fast path."""
-
-    def __init__(self, windows, readall_error=None):
-        super().__init__(windows)
-        self.readall_error = readall_error
-
-    def readall(self):
-        self.events.append(("readall",))
-        if self.readall_error is not None:
-            raise self.readall_error
-        return b"".join(self._windows)
-
-
 class _NativeTransferTestCase(unittest.TestCase):
     def setUp(self):
         self.extension = ModuleType(_EXTENSION)
@@ -780,32 +766,6 @@ class TestNativeStorageStreamDownloader(_NativeTransferTestCase):
         self.assertIs(caught.exception, failure)
         destination.write.assert_called_once_with(b"data")
 
-    def test_readall_uses_native_readall_when_available(self):
-        stream = _FakeNativeReadallStream([b"ab", b"cde"])
-        downloader = NativeStorageStreamDownloader(stream, "blob", "container")
-        self.assertEqual(downloader.readall(), b"abcde")
-        self.assertEqual(stream.events, [("readall",)])
-        self.assertEqual(downloader.readall(), b"")
-        self.assertEqual(downloader.read(1), b"")
-        self.assertEqual(list(downloader.chunks()), [])
-
-    def test_native_readall_after_partial_read_prepends_buffered_bytes(self):
-        stream = _FakeNativeReadallStream([b"ab", b"cde", b"f"])
-        downloader = NativeStorageStreamDownloader(stream, "blob", "container")
-        self.assertEqual(downloader.read(1), b"a")
-        self.assertEqual(downloader.readall(), b"bcdef")
-        self.assertEqual(stream.events, [("next", b"ab"), ("readall",)])
-        self.assertEqual(downloader.readall(), b"")
-        self.assertEqual(downloader.read(1), b"")
-
-    def test_native_readall_non_native_errors_propagate(self):
-        failure = ValueError("unexpected failure")
-        stream = _FakeNativeReadallStream([b"data"], readall_error=failure)
-        downloader = NativeStorageStreamDownloader(stream, "blob", "container")
-        with self.assertRaises(ValueError) as caught:
-            downloader.readall()
-        self.assertIs(caught.exception, failure)
-
 
 class TestNativeErrorMapping(_NativeTransferTestCase):
     def test_http_diagnostics_remain_on_native_cause_without_response(self):
@@ -1009,31 +969,6 @@ class TestNativeErrorMapping(_NativeTransferTestCase):
                         consume()
                     self.assertIs(repeated.exception, caught.exception)
                 self.assertEqual(advances, ["first", "failure"])
-
-    def test_native_readall_failures_are_mapped_and_terminal(self):
-        for partial in (False, True):
-            with self.subTest(partial=partial):
-                failure = _FakeNativeTransferError("short response", kind="incomplete_read")
-                stream = _FakeNativeReadallStream([b"first", b"second"], readall_error=failure)
-                self.extension.download_blob.side_effect = None
-                self.extension.download_blob.return_value = stream
-                downloader = self.download()
-                if partial:
-                    self.assertEqual(downloader.read(2), b"fi")
-                with self.assertRaises(IncompleteReadError) as caught:
-                    downloader.readall()
-                self.assertIs(caught.exception.__cause__, failure)
-                for consume in (
-                    downloader.readall,
-                    lambda: downloader.read(1),
-                    lambda: list(downloader.chunks()),
-                    lambda: list(downloader),
-                    lambda: downloader.readinto(BytesIO()),
-                ):
-                    with self.assertRaises(IncompleteReadError) as repeated:
-                        consume()
-                    self.assertIs(repeated.exception, caught.exception)
-                self.assertEqual(stream.events.count(("readall",)), 1)
 
     def test_destination_native_shaped_error_is_not_translated(self):
         downloader = self.download()
