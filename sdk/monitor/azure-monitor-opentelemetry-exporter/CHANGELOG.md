@@ -14,6 +14,7 @@
 - Add opt-in multi-endpoint log and trace routing with per-item instrumentation keys,
 - Add opt-in multi-endpoint log, trace, and metric routing with per-item instrumentation keys,
   explicit per-route authentication, and destination-isolated retry storage.
+  Enable it with `multi_endpoint_routing` through `APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES`.
   Span events follow their parent span's route; metrics use each data point's route.
   Routing-enabled exporters can be created without a host connection string.
   Routed offline storage is limited to 64 endpoint/authentication partitions per

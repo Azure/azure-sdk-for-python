@@ -27,6 +27,7 @@ _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMES
 _SUPPORTED_EXPERIMENTAL_FEATURES: FrozenSet[str] = frozenset(
     {
         "gen_ai_input_output_limit_increase",
+        "multi_endpoint_routing",
     }
 )
 

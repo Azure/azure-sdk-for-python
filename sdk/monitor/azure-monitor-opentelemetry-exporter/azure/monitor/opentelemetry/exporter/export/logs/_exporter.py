@@ -197,7 +197,9 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
 def _convert_log_to_envelope(
-    readable_log_record: ReadableLogRecord, *, increase_truncation_limit: bool = False,
+    readable_log_record: ReadableLogRecord,
+    *,
+    increase_truncation_limit: bool = False,
     exclude_routing_attributes: bool = False,
 ) -> TelemetryItem:
     log_record = readable_log_record.log_record
