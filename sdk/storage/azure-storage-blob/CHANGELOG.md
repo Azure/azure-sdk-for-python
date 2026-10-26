@@ -2,6 +2,10 @@
 
 ## 12.32.0b1 (Unreleased)
 
+### Breaking Changes
+- Changed the default `max_single_put_size` from 64 MiB to 4 MiB. This means uploads greater than 4 MiB will now be performed in multiple requests instead of a single request. This may result in more requests and a block blob with more blocks than in previous versions. To restore the previous behavior, pass `max_single_put_size = 64 * 1024 * 1024` when constructing the client.
+- Changed the defualt `max_single_get_size` from 32 MiB to 4 MiB. This means the initial download request will now be 4 MiB rather than 32 MiB which may result in more requests than previous versions depending on blob size. This also means some blob downloads may use parallel requests when they were not previously, if `max_concurrency` is set greater than 1. To restore the previous behavior, pass `max_single_get_size = 32 * 1024 * 1024` when constructing the client.
+
 ### Features Added
 
 ### Bugs Fixed
@@ -15,10 +19,6 @@
 - Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
   and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
   models instead of generated internal types.
-- Changed the default `max_single_put_size` from 64 MiB to 4 MiB and the default `max_single_get_size` from 32 MiB
-to 4 MiB for all clients. Uploads and downloads larger than 4 MiB will now be performed in multiple requests by
-default. To restore the previous behavior, pass `max_single_put_size=64 * 1024 * 1024` and
-`max_single_get_size=32 * 1024 * 1024` when constructing the client.
 
 ## 12.31.0 (2026-09-30)
 
