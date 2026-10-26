@@ -29,7 +29,7 @@ This ensures you get compatible versions of both the SDK and the extensions pack
 - `src/lib.rs`: Python module registration, shared runtime/transport, client construction, and transfer defaults.
 - `src/credentials.rs`: Python token callback credential and process-wide credential cache.
 - `src/upload.rs`: Upload bindings, zero-copy Python buffer ownership, and upload response conversion.
-- `src/download.rs`: Download bindings, the prefetching download stream, and the `readall` fast path.
+- `src/download.rs`: Download bindings and the prefetching download stream.
 - `src/errors.rs`: SDK-independent native error carrier and Rust error conversion.
 
 ## Running Rust tests
@@ -75,13 +75,12 @@ When installed, this package transparently accelerates:
 - **Block blob downloads** — Downloads keep up to `max_concurrency` ranged requests in flight
   and prefetch completed chunks in the background while Python consumes earlier ones.
   Streaming consumers (`readinto()`, `chunks()`) keep memory bounded to roughly two windows of
-  `max_concurrency * max_chunk_size` bytes, regardless of blob size. `readall()` writes the content
-  directly into a single preallocated `bytes` object using Rust's parallel `download_into`. All
-  requests after the first are locked to the ETag of the first response, so a blob modified
-  mid-download fails with a 412 error instead of returning mixed content.
+  `max_concurrency * max_chunk_size` bytes, regardless of blob size. All requests after the first
+  are locked to the ETag of the first response, so a blob modified mid-download fails with a 412
+  error instead of returning mixed content.
 
-Download errors can occur when starting a download, while consuming later chunks, or from
-`readall()`. Incomplete reads raise an error rather than ending iteration successfully. After a
+Download errors can occur when starting a download or while consuming later chunks.
+Incomplete reads raise an error rather than ending iteration successfully. After a
 stream fails, subsequent reads re-raise the failure without issuing more requests.
 Bytes already yielded or written to a destination are not rolled back. Nonempty
 ranged responses must include a valid `Content-Range` total; the response

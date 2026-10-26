@@ -348,8 +348,7 @@ def bench_download(blob_client, expected_len, enabled, iterations, warmups, max_
 
     With ``method="readinto"`` (the default) data is written into a discarding sink, so timing
     reflects transfer cost rather than materializing the blob. ``method="readall"`` measures
-    downloading the whole blob into a single ``bytes`` object, which uses the native ``readall``
-    fast path when the extension is active. Timing spans the whole operation, including the
+    downloading the whole blob into a single ``bytes`` object. Timing spans the whole operation, including the
     native path's initial request, so both paths are compared end-to-end.
     Returns per-iteration seconds.
     """
@@ -520,7 +519,7 @@ def parse_args(argv=None):
         choices=("readinto", "readall"),
         default="readinto",
         help="How downloads are consumed: 'readinto' streams into a discarding sink; 'readall' "
-        "materializes the whole blob as bytes (exercises the native readall fast path).",
+        "materializes the whole blob as bytes.",
     )
     parser.add_argument(
         "--sas",

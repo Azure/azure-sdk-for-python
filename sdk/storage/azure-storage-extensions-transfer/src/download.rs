@@ -224,66 +224,19 @@ impl Pump {
         }
         Ok(())
     }
-
-    /// Fill `buffer` (exactly the whole remaining download) using the SDK's `download_into`
-    /// for everything after the first response, concurrently with reading the first body.
-    async fn read_into(self, buffer: &mut [u8]) -> azure_core::Result<()> {
-        let Pump {
-            client,
-            mut options,
-            first_body,
-            first_offset,
-            rest_offset,
-            ..
-        } = self;
-        let first_len = rest_offset - first_offset;
-        let (head, tail) = buffer.split_at_mut(to_usize(first_len)?);
-        let first = async move {
-            let read = first_body.collect_into(head).await?;
-            validate_download_length(first_offset, first_len, read as u64)
-        };
-        let rest = async move {
-            if tail.is_empty() {
-                return Ok(());
-            }
-            let len = tail.len() as u64;
-            options.range = Some(HttpRange::new(rest_offset, len));
-            let result = client.download_into(tail, Some(options)).await?;
-            validate_download_length(rest_offset, len, result.len as u64)
-        };
-        futures::future::try_join(first, rest).await.map(|_| ())
-    }
 }
 
 enum StreamState {
     /// The first response's headers have arrived; nothing has been consumed yet.
     NotStarted(Box<Pump>),
-    /// A background pump is prefetching partitions into the channel.
-    Streaming(mpsc::Receiver<Chunk>, AbortOnDrop<()>),
+    /// A background pump is prefetching partitions into the channel. The pump handle is held
+    /// only so that dropping this state aborts the pump.
+    Streaming {
+        receiver: mpsc::Receiver<Chunk>,
+        _pump: AbortOnDrop<()>,
+    },
     Done,
     Failed(PyErr),
-}
-
-/// Copy every remaining pumped chunk into `buffer`, which must be exactly the remaining size.
-fn drain_into(
-    receiver: &mut mpsc::Receiver<Chunk>,
-    buffer: &mut [u8],
-    offset: u64,
-) -> azure_core::Result<()> {
-    let mut written = 0usize;
-    while written < buffer.len() {
-        let Some(chunk) = receiver.blocking_recv() else {
-            break;
-        };
-        let chunk = chunk?;
-        let end = written + chunk.len();
-        if end > buffer.len() {
-            return validate_download_length(offset, buffer.len() as u64, end as u64);
-        }
-        buffer[written..end].copy_from_slice(&chunk);
-        written = end;
-    }
-    validate_download_length(offset, buffer.len() as u64, written as u64)
 }
 
 /// A lazy blob download exposed to Python as an iterator of `bytes` chunks.
@@ -292,13 +245,10 @@ fn drain_into(
 /// headers, so the total `size` (from `Content-Range`) and the blob ETag are known after about
 /// one round trip. Every later request is locked to that ETag.
 ///
-/// * Iterating starts a background pump that keeps up to `parallel` single-partition range
-///   requests in flight and prefetches completed partitions into a bounded channel (about one
-///   window of `parallel * partition_size` bytes), so the network keeps working while Python
-///   consumes data. Each yielded chunk is one partition.
-/// * `readall()` on a fresh stream writes the whole remaining range directly into a single
-///   preallocated `bytes` object, using the SDK's `download_into` for everything after the first
-///   partition.
+/// Iterating starts a background pump that keeps up to `parallel` single-partition range requests
+/// in flight and prefetches completed partitions into a bounded channel (about one window of
+/// `parallel * partition_size` bytes), so the network keeps working while Python consumes data.
+/// Each yielded chunk is one partition.
 #[pyclass]
 pub(crate) struct NativeDownloadStream {
     /// Total number of bytes this stream will deliver.
@@ -424,12 +374,15 @@ impl NativeDownloadStream {
             };
             let (sender, receiver) = mpsc::channel(self.prefetch.max(1));
             let task = AbortOnDrop(runtime.spawn(pump.run(sender)));
-            *state = StreamState::Streaming(receiver, task);
+            *state = StreamState::Streaming {
+                receiver,
+                _pump: task,
+            };
         }
         let message = match state {
             StreamState::Failed(error) => return Err(error.clone_ref(py)),
             StreamState::Done | StreamState::NotStarted(_) => return Ok(None),
-            StreamState::Streaming(receiver, _) => py.detach(|| receiver.blocking_recv()),
+            StreamState::Streaming { receiver, .. } => py.detach(|| receiver.blocking_recv()),
         };
         let remaining = self.end_offset - self.next_offset;
         let chunk = match message {
@@ -452,49 +405,13 @@ impl NativeDownloadStream {
         }
         Ok(Some(PyBytes::new(py, &chunk).unbind()))
     }
-
-    /// Return all remaining content as a single `bytes` object.
-    ///
-    /// On a fresh stream the content is written directly into the result with the GIL released,
-    /// using the SDK's `download_into` for everything after the first partition. After partial
-    /// iteration, the prefetched and remaining partitions are copied into the result instead.
-    fn readall(&mut self, py: Python<'_>) -> PyResult<Py<PyBytes>> {
-        let offset = self.next_offset;
-        let remaining = to_usize(self.end_offset - offset).map_err(AzureError::from)?;
-        let runtime = get_runtime()?;
-        let state = self.state.get_mut().unwrap_or_else(PoisonError::into_inner);
-        let result = match std::mem::replace(state, StreamState::Done) {
-            StreamState::Failed(error) => {
-                *state = StreamState::Failed(error.clone_ref(py));
-                return Err(error);
-            }
-            StreamState::Done => return Ok(PyBytes::new(py, &[]).unbind()),
-            StreamState::NotStarted(pump) => PyBytes::new_with(py, remaining, |buffer| {
-                py.detach(|| runtime.block_on(pump.read_into(buffer)))
-                    .map_err(|error| AzureError(error).into())
-            }),
-            StreamState::Streaming(mut receiver, _pump) => {
-                PyBytes::new_with(py, remaining, |buffer| {
-                    py.detach(|| drain_into(&mut receiver, buffer, offset))
-                        .map_err(|error| AzureError(error).into())
-                })
-            }
-        };
-        match result {
-            Ok(bytes) => {
-                self.next_offset = self.end_offset;
-                Ok(bytes.unbind())
-            }
-            Err(error) => Err(Self::fail(state, py, error)),
-        }
-    }
 }
 
-/// Begin a windowed download of a block blob.
+/// Begin a download of a block blob.
 ///
-/// Returns a [`NativeDownloadStream`] that yields the blob content one window at a time. The
-/// first window is fetched eagerly so the total `size` is known immediately (parsed from the
-/// `Content-Range` header) and the first chunk is ready without an extra round trip.
+/// Returns a [`NativeDownloadStream`] that yields the blob content one partition at a time. The
+/// first partition's response headers are awaited eagerly so the total `size` is known
+/// immediately (parsed from the `Content-Range` header).
 #[pyfunction]
 #[pyo3(signature = (
     url,
