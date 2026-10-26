@@ -14,6 +14,7 @@
 
 ### Bugs Fixed
 
+- Fixed prompty-based evaluators scoring an unparsable judge reply with the first digit in the text instead of the judge's verdict score. The fallback now prefers a bare-number reply, then an explicit `Score: N` label, then the last number in the reply ([#49153](https://github.com/Azure/azure-sdk-for-python/issues/49153)).
 - Retained known earlier-turn Decision usage and model metadata when an asynchronous split evaluation is cancelled directly, while preserving `CancelledError` and existing callback cancellation behavior.
 - Rejected non-JSON-safe native answer provenance with typed errors that retain known usage, without validating unused scores on applicability skips.
 - Accepted explicit numeric zero in zero-inclusive shared Prompty score ranges while keeping missing, invalid and boolean grades on the typed error path. Missing-score fallbacks cannot manufacture a ranged grade.
