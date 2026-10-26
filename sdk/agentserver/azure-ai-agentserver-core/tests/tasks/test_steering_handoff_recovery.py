@@ -12,7 +12,6 @@ import pytest
 from pydantic import BaseModel
 
 from azure.ai.agentserver.core.tasks import RetryPolicy, TaskConflictError, TaskContext, multi_turn_task
-from azure.ai.agentserver.core.tasks import _manager as manager_module
 from azure.ai.agentserver.core.tasks._attachments import (
     _FUNCTION_INPUT_KEY,
     _INPUT_THRESHOLD_BYTES,
@@ -214,132 +213,250 @@ async def test_queued_recovery_preserves_retry_policy_for_each_turn(tmp_path):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("claim_timing", ["before-live-read", "conflict-retry"])
-@pytest.mark.parametrize("recovery_progress", ["running", "suspended"])
-async def test_live_drain_does_not_steal_recovered_handoff(tmp_path, monkeypatch, claim_timing, recovery_progress):
-    first_started, finish_first = asyncio.Event(), asyncio.Event()
-    drain_paused, resume_drain = asyncio.Event(), asyncio.Event()
-    second_started, finish_second = asyncio.Event(), asyncio.Event()
-    recovery_paused, resume_recovery = asyncio.Event(), asyncio.Event()
-    observed = []
-    provider = LocalFileTaskProvider(tmp_path)
-    original, recovery = _manager(provider), _manager(provider)
-    runs = []
-    conflict_injected = False
-    # Turn timestamps may be identical; ownership must not depend on the clock.
-    now = manager_module._utc_now_iso()
-    monkeypatch.setattr(manager_module, "_utc_now_iso", lambda: now)
+async def test_public_resume_and_recovery_share_admission(tmp_path, monkeypatch):
+    read, resume_read, scan = (asyncio.Event() for _ in range(3))
+    started, finish, finish_third = (asyncio.Event() for _ in range(3))
+    observed, runs, executions = [], [], set()
 
     @multi_turn_task(name="handoff", steerable=True)
     async def worker(ctx: TaskContext[dict]) -> int:
+        executions.add(asyncio.current_task())
         value = ctx.input["value"]
-        owner = "original" if ctx.shutdown is original._shutdown_event else "recovery"
-        observed.append((owner, value))
-        if value == 1:
-            first_started.set()
-            await finish_first.wait()
-        elif value == 2:
-            second_started.set()
-            await finish_second.wait()
+        observed.append(value)
+        if value == 2:
+            started.set()
+            await finish.wait()
+        else:
+            await finish_third.wait()
         return value
 
-    live_drain = original._try_drain_steering
-
-    async def paused_live_drain(**kwargs):
-        drain_paused.set()
-        await resume_drain.wait()
-        return await live_drain(**kwargs)
-
-    recovery_drain = recovery._try_drain_steering
-
-    async def paused_recovery_drain(**kwargs):
-        recovery_paused.set()
-        await resume_recovery.wait()
-        return await recovery_drain(**kwargs)
-
-    monkeypatch.setattr(original, "_try_drain_steering", paused_live_drain)
-    monkeypatch.setattr(recovery, "_try_drain_steering", paused_recovery_drain)
-    recovery_execution = None
-
-    async def claim_recovery():
-        nonlocal recovery_execution
-        await recovery.startup()
-        await asyncio.wait_for(second_started.wait(), 5)
-        recovery_execution = recovery._active_tasks["chain"].execution_task
-        if recovery_progress == "suspended":
-            finish_second.set()
-            await asyncio.wait_for(recovery_paused.wait(), 5)
-
-    update = provider.update
-
-    async def race_claim(task_id, patch):
-        nonlocal conflict_injected
-        active_input = ((patch.payload or {}).get("steering") or {}).get("active_input")
-        if (
-            claim_timing == "conflict-retry"
-            and not conflict_injected
-            and patch.lease_instance_id == original._instance_id
-            and active_input == {"value": 2}
-        ):
-            conflict_injected = True
-            await claim_recovery()
-        return await update(task_id, patch)
-
-    monkeypatch.setattr(provider, "update", race_claim)
-    set_task_manager(original)
+    provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    set_task_manager(manager)
+    public_start = recovery = None
     try:
-        await original.startup()
+        await manager.startup()
+        await _seed(provider)
+        get = manager._provider_get_tracked
+        armed = True
+
+        async def stale_read(task_id):
+            nonlocal armed
+            info = await get(task_id)
+            if armed and info.status == "suspended":
+                armed = False
+                read.set()
+                await resume_read.wait()
+            return info
+
+        list_tasks = provider.list
+
+        async def scanned(**kwargs):
+            infos = await list_tasks(**kwargs)
+            if kwargs.get("status") == "suspended":
+                scan.set()
+            return infos
+
+        monkeypatch.setattr(manager, "_provider_get_tracked", stale_read)
+        monkeypatch.setattr(provider, "list", scanned)
+        public_start = asyncio.create_task(worker.start(task_id="chain", input={"value": 3}))
+        await asyncio.wait_for(read.wait(), 5)
+        recovery = asyncio.create_task(manager._recover_stale_tasks())
+        await asyncio.wait_for(scan.wait(), 5)
+        resume_read.set()
+        try:
+            third = await asyncio.wait_for(public_start, 5)
+        except TaskConflictError:
+            # An unclaimed queued handoff is busy, not a new idle turn.
+            await asyncio.wait_for(recovery, 5)
+            await asyncio.wait_for(started.wait(), 5)
+            third = await worker.start(task_id="chain", input={"value": 3})
+        runs.append(third)
+        await asyncio.wait_for(started.wait(), 5)
+        saved = await provider.get("chain")
+        assert saved.payload["input"] == {"value": 2}
+        assert manager._active_tasks["chain"].context.input == {"value": 2}
+        assert observed == [2]
+        assert saved.payload["steering"]["pending_inputs"] == [{"value": 3}]
+        finish.set()
+        finish_third.set()
+        assert await asyncio.wait_for(third.result(), 5) == 3
+        await asyncio.wait_for(recovery, 5)
+        assert observed == [2, 3]
+    finally:
+        resume_read.set()
+        finish.set()
+        finish_third.set()
+        await manager.shutdown()
+        await asyncio.gather(
+            *(asyncio.wait_for(task, 5) for task in (public_start, recovery) if task is not None),
+            *(asyncio.wait_for(task, 5) for task in executions),
+            *(asyncio.wait_for(run.result(), 1) for run in runs),
+            return_exceptions=True,
+        )
+        set_task_manager(None)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("already_queued", [False, True], ids=["first-append", "later-append"])
+@pytest.mark.parametrize("large", [False, True], ids=["inline", "attachment"])
+async def test_completion_retry_preserves_raced_append(tmp_path, monkeypatch, already_queued, large):
+    started, finish = asyncio.Event(), asyncio.Event()
+    observed, runs = [], []
+
+    @multi_turn_task(name="handoff", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        observed.append(ctx.input["value"])
+        if ctx.input["value"] == 1:
+            started.set()
+            await finish.wait()
+        return ctx.input["value"]
+
+    provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    set_task_manager(manager)
+    try:
+        await manager.startup()
         first = await worker.start(task_id="chain", input={"value": 1})
         runs.append(first)
-        await asyncio.wait_for(first_started.wait(), 5)
-        second = await worker.start(task_id="chain", input={"value": 2})
-        third = await worker.start(task_id="chain", input={"value": 3})
-        runs.extend([second, third])
-        original_execution = original._active_tasks["chain"].execution_task
-        finish_first.set()
+        await asyncio.wait_for(started.wait(), 5)
+        if already_queued:
+            runs.append(await worker.start(task_id="chain", input={"value": 2}))
+        execution = manager._active_tasks["chain"].execution_task
+        get = manager._provider_get_tracked
+        armed = True
+
+        async def append_after_read(task_id):
+            nonlocal armed
+            info = await get(task_id)
+            if armed:
+                armed = False
+                value = 3 if already_queued else 2
+                runs.append(
+                    await worker.start(
+                        task_id="chain",
+                        input={"value": value, "text": "x" * (_INPUT_THRESHOLD_BYTES + 1024 if large else 0)},
+                    )
+                )
+            return info
+
+        monkeypatch.setattr(manager, "_provider_get_tracked", append_after_read)
+        finish.set()
         assert await asyncio.wait_for(first.result(), 5) == 1
-        await asyncio.wait_for(drain_paused.wait(), 5)
-        set_task_manager(recovery)
-        if claim_timing == "before-live-read":
-            await claim_recovery()
-        resume_drain.set()
-        await asyncio.wait_for(original_execution, 5)
-
-        assert observed == [("original", 1), ("recovery", 2)]
-        assert conflict_injected == (claim_timing == "conflict-retry")
-        saved = await provider.get("chain")
-        expected_status = "in_progress" if recovery_progress == "running" else "suspended"
-        assert saved.status == expected_status
-        assert saved.payload["steering"]["pending_inputs"] == [{"value": 3}]
-        if recovery_progress == "running":
-            assert saved.payload["input"] == {"value": 2}
-            assert saved.lease.instance_id == recovery._instance_id
-        else:
-            assert saved.payload["input"] is None
-            assert saved.lease is None
-        for run in (second, third):
-            with pytest.raises(TaskConflictError) as error:
-                await asyncio.wait_for(run.result(), 5)
-            assert error.value.current_status == expected_status
-
-        finish_second.set()
-        resume_recovery.set()
-        assert recovery_execution is not None
-        await asyncio.wait_for(recovery_execution, 5)
-        assert observed == [("original", 1), ("recovery", 2), ("recovery", 3)]
+        await asyncio.wait_for(execution, 5)
+        assert observed == ([1, 2, 3] if already_queued else [1, 2])
+        assert await asyncio.wait_for(runs[-1].result(), 5) == observed[-1]
         saved = await provider.get("chain")
         assert saved.status == "suspended"
         assert saved.payload["steering"]["pending_inputs"] == []
+        assert "handoff_id" not in saved.payload["steering"]
     finally:
-        finish_first.set()
-        resume_drain.set()
-        finish_second.set()
-        resume_recovery.set()
-        await asyncio.gather(original.shutdown(), recovery.shutdown())
+        finish.set()
+        await manager.shutdown()
         await asyncio.gather(
             *(asyncio.wait_for(run.result(), 1) for run in runs),
             return_exceptions=True,
         )
+        set_task_manager(None)
+
+
+@pytest.mark.asyncio
+async def test_active_suspended_handoff_queues_new_input(tmp_path, monkeypatch):
+    started, finish = asyncio.Event(), asyncio.Event()
+    suspended, reply = asyncio.Event(), asyncio.Event()
+    observed, runs = [], []
+
+    @multi_turn_task(name="handoff", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        observed.append(ctx.input["value"])
+        if ctx.input["value"] == 1:
+            started.set()
+            await finish.wait()
+        return ctx.input["value"]
+
+    provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    update = provider.update
+    pause_once = True
+
+    async def delay_completion_reply(task_id, patch):
+        nonlocal pause_once
+        info = await update(task_id, patch)
+        if pause_once and patch.status == "suspended":
+            pause_once = False
+            suspended.set()
+            await reply.wait()
+        return info
+
+    monkeypatch.setattr(provider, "update", delay_completion_reply)
+    set_task_manager(manager)
+    try:
+        await manager.startup()
+        first = await worker.start(task_id="chain", input={"value": 1})
+        runs.append(first)
+        await asyncio.wait_for(started.wait(), 5)
+        execution = manager._active_tasks["chain"].execution_task
+        finish.set()
+        await asyncio.wait_for(suspended.wait(), 5)
+        second = await worker.start(task_id="chain", input={"value": 2})
+        runs.append(second)
+        assert observed == [1]
+        assert manager._active_tasks["chain"].context.input == {"value": 1}
+        saved = await provider.get("chain")
+        assert saved.status == "suspended"
+        assert saved.lease is None
+        assert saved.payload["steering"]["pending_inputs"] == [{"value": 2}]
+        reply.set()
+        assert await asyncio.wait_for(first.result(), 5) == 1
+        assert await asyncio.wait_for(second.result(), 5) == 2
+        await asyncio.wait_for(execution, 5)
+        assert observed == [1, 2]
+    finally:
+        finish.set()
+        reply.set()
+        await manager.shutdown()
+        await asyncio.gather(
+            *(asyncio.wait_for(run.result(), 1) for run in runs),
+            return_exceptions=True,
+        )
+        set_task_manager(None)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("large", [False, True], ids=["inline", "attachment"])
+async def test_idle_resume_admits_input_with_lease_atomically(tmp_path, monkeypatch, large):
+    @multi_turn_task(name="handoff", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        return ctx.input["value"]
+
+    provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    set_task_manager(manager)
+    try:
+        await manager.startup()
+        suspended = await _seed(provider, pending=[])
+        update = provider.update
+        admissions = []
+
+        async def record_admission(task_id, patch):
+            if (patch.payload or {}).get("input") is not None:
+                admissions.append(patch)
+            return await update(task_id, patch)
+
+        monkeypatch.setattr(provider, "update", record_admission)
+        value = {"value": 3, "text": "x" * (_INPUT_THRESHOLD_BYTES + 1024 if large else 0)}
+        run = await worker.start(task_id="chain", input=value, input_id="turn-3")
+        assert await asyncio.wait_for(run.result(), 5) == 3
+        assert len(admissions) == 1
+        patch = admissions[0]
+        assert patch.status == "in_progress"
+        assert patch.lease_owner == manager._lease_owner
+        assert patch.lease_instance_id == manager._instance_id
+        assert patch.if_match == suspended.etag
+        assert patch.payload["last_input_id"] == "turn-3"
+        assert _read_input_value(patch.payload["input"], patch.attachments) == value
+    finally:
+        await manager.shutdown()
         set_task_manager(None)
 
 
@@ -390,7 +507,7 @@ async def test_queued_recovery_preserves_eligibility_fences(tmp_path, excluded):
 
 
 @pytest.mark.asyncio
-async def test_competing_recovery_uses_snapshot_etag(tmp_path, monkeypatch):
+async def test_concurrent_recovery_scans_dispatch_once(tmp_path, monkeypatch):
     started, finish = asyncio.Event(), asyncio.Event()
     observed = []
 
@@ -402,9 +519,11 @@ async def test_competing_recovery_uses_snapshot_etag(tmp_path, monkeypatch):
         return ctx.input
 
     provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    set_task_manager(manager)
+    await manager.startup()
     await _seed(provider)
-    first, second = _manager(provider), _manager(provider)
-    # Let both managers see the same suspended snapshot before either claims it.
+    # Let two scans of the same manager read the same suspended snapshot.
     original_list = provider.list
     readers = 0
     both_read = asyncio.Event()
@@ -423,13 +542,14 @@ async def test_competing_recovery_uses_snapshot_etag(tmp_path, monkeypatch):
 
     monkeypatch.setattr(provider, "list", synchronized_list)
     try:
-        await asyncio.gather(first.startup(), second.startup())
+        await asyncio.gather(manager._recover_queued_steering_tasks(), manager._recover_queued_steering_tasks())
         await asyncio.wait_for(started.wait(), 5)
         assert observed == [{"value": 2}]
-        assert sum("chain" in manager._active_tasks for manager in (first, second)) == 1
+        assert "chain" in manager._active_tasks
     finally:
         finish.set()
-        await asyncio.gather(first.shutdown(), second.shutdown())
+        await manager.shutdown()
+        set_task_manager(None)
 
 
 @pytest.mark.asyncio

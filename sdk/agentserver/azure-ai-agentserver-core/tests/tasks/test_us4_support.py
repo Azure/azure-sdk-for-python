@@ -105,7 +105,7 @@ def test_drain_does_not_read_payload_input() -> None:
 
 
 def test_suspended_resume_uses_etag_retry_loop() -> None:
-    """The suspended-resume input patch is now etag-protected (T-083).
+    """Suspended input and lease admission share an etag-protected write (T-083).
 
      note: the body of `_lifecycle_start` was extracted to
     `_lifecycle_start_inner`; source assertions follow.
@@ -113,10 +113,13 @@ def test_suspended_resume_uses_etag_retry_loop() -> None:
     import inspect
 
     from azure.ai.agentserver.core.tasks._decorator import Task
+    from azure.ai.agentserver.core.tasks._manager import TaskManager
 
     src = inspect.getsource(Task._lifecycle_start_inner)
-    # Etag retry loop at the suspended-resume site.
-    assert "if_match=etag" in src
+    claim_src = inspect.getsource(TaskManager._start_existing_task)
+    assert "_resume_payload=resume_payload" in src
+    assert "_resume_attachments=attachments_patch" in src
+    assert "if_match=task_info.etag" in claim_src
     # And the standard retry behaviour. The retry catches the local
     # provider's ValueError AND the hosted store's
     # TransportClassifiedError(classification="conflict") — both are
