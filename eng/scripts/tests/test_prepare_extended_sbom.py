@@ -6,7 +6,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from prepare_extended_sbom import prepare_discovery_inputs
+from prepare_extended_sbom import main, prepare_discovery_inputs
 
 
 def make_project(repo, relative_path, name, version="1.0.0"):
@@ -93,9 +93,58 @@ def test_rejects_multiple_versions_of_one_distribution(tmp_path):
         prepare_discovery_inputs(tmp_path / "repo", artifacts, tmp_path / "scan")
 
 
-def test_rejects_empty_artifact(tmp_path):
+@pytest.mark.parametrize("targeting_string", ["", "*", "azure-example"])
+def test_rejects_empty_artifact(tmp_path, targeting_string):
     with pytest.raises(ValueError, match="No wheels"):
-        prepare_discovery_inputs(tmp_path / "repo", tmp_path / "artifacts", tmp_path / "scan")
+        prepare_discovery_inputs(
+            tmp_path / "repo", tmp_path / "artifacts", tmp_path / "scan", targeting_string=targeting_string
+        )
+
+
+def test_accepts_explicitly_empty_selection(tmp_path):
+    output = tmp_path / "scan"
+    prepare_discovery_inputs(tmp_path / "repo", tmp_path / "artifacts", output, targeting_string="null")
+    assert (output / "requirements.txt").read_text() == ""
+    assert list(output.iterdir()) == [output / "requirements.txt"]
+
+
+def test_empty_selection_replaces_stale_requirements(tmp_path):
+    output = tmp_path / "scan"
+    output.mkdir()
+    (output / "requirements.txt").write_text("old-input\n")
+    prepare_discovery_inputs(tmp_path / "repo", tmp_path / "artifacts", output, targeting_string="null")
+    assert (output / "requirements.txt").read_text() == ""
+
+
+def test_empty_selection_still_includes_existing_wheels(tmp_path):
+    repo = tmp_path / "repo"
+    artifacts = tmp_path / "artifacts"
+    output = tmp_path / "scan"
+    source = make_project(repo, "sdk/example/azure-example", "azure-example")
+    make_wheel(artifacts, "azure-example")
+    prepare_discovery_inputs(repo, artifacts, output, targeting_string="null")
+    assert (output / "requirements.txt").read_text().splitlines() == [source.as_uri()]
+
+
+def test_cli_accepts_explicitly_empty_selection(tmp_path, monkeypatch):
+    output = tmp_path / "scan"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "prepare_extended_sbom.py",
+            "--repo-root",
+            str(tmp_path / "repo"),
+            "--artifact-directory",
+            str(tmp_path / "artifacts"),
+            "--output-directory",
+            str(output),
+            "--targeting-string",
+            "null",
+        ],
+    )
+    main()
+    assert (output / "requirements.txt").read_text() == ""
 
 
 @pytest.mark.parametrize("metadata", ["", "Metadata-Version: 2.1\nName: azure-example\n"])
