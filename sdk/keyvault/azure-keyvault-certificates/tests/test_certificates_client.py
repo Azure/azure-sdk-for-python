@@ -338,8 +338,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @recorded_by_proxy
     def test_crud_contacts(self, client, **kwargs):
         contact_list = [
-            CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
-            CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
+            CertificateContact(email="admin@contoso.example.invalid", name="John Doe", phone="1111111111"),
+            CertificateContact(email="admin2@contoso.example.invalid", name="John Doe2", phone="2222222222"),
         ]
 
         # create certificate contacts
@@ -516,7 +516,7 @@ class TestCertificateClient(KeyVaultTestCase):
     @recorded_by_proxy
     def test_backup_restore(self, client, **kwargs):
         policy = CertificatePolicy.get_default()
-        policy._san_user_principal_names = ["john.doe@domain.com"]
+        policy._san_user_principal_names = ["john.doe@example.invalid"]
         cert_name = self.get_resource_name("cert")
         # create certificate
         create_certificate_poller = client.begin_create_certificate(certificate_name=cert_name, policy=policy)
@@ -542,7 +542,9 @@ class TestCertificateClient(KeyVaultTestCase):
     def test_crud_issuer(self, client, **kwargs):
         issuer_name = self.get_resource_name("issuer")
         admin_contacts = [
-            AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+            AdministratorContact(
+                first_name="John", last_name="Doe", email="admin@microsoft.example.invalid", phone="4255555555"
+            )
         ]
 
         # create certificate issuer
@@ -593,7 +595,9 @@ class TestCertificateClient(KeyVaultTestCase):
 
         # update certificate issuer
         admin_contacts = [
-            AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+            AdministratorContact(
+                first_name="Jane", last_name="Doe", email="admin@microsoft.example.invalid", phone="4255555555"
+            )
         ]
 
         expected = CertificateIssuer(
