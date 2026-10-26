@@ -14,7 +14,9 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
 import traceback
-from collections.abc import Awaitable, Callable, Coroutine, Mapping
+from collections.abc import Awaitable, Callable, Coroutine, Iterator, Mapping
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass
 from typing import Any, TypeVar
 
@@ -323,9 +325,9 @@ def get_task_manager() -> TaskManager:
         raise TaskManagerNotInitialized(
             "TaskManager not initialized: resilient tasks are disabled or session initialization is incomplete. "
             "Durable tasks and crash recovery are opt-in - call "
-            "set_resilient_tasks_enabled(True) before host startup (e.g. at import time), "
-            "or, for the responses protocol, construct the host with "
-            "ResponsesServerOptions(resilient_background=True), and wait for session activation."
+            "set_resilient_tasks_enabled(True) for Invocations before host startup, "
+            "or enable resilient_background or steerable_conversations on "
+            "ResponsesServerOptions, run the host lifespan, and wait for session activation."
         )
     return manager
 
@@ -840,9 +842,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 _REGISTERED_DESCRIPTORS,
             )
 
+            registered_callbacks = self._resume_callbacks.copy()
+            registered_opts = self._resume_opts.copy()
             for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
+                if opts._requires_host_registration:
+                    continue
                 self._resume_callbacks[fn_name] = fn
                 self._resume_opts[fn_name] = opts
+            self._resume_callbacks.update(registered_callbacks)
+            self._resume_opts.update(registered_opts)
         register.complete(restore_id)
 
     async def startup(self, *, restore_id: str | None = None) -> None:
@@ -1076,8 +1084,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         for phase in self._startup_phases.values():
             phase.completed = False
             phase.completed_restore_id = None
-        if _manager is self:
-            set_task_manager(None)
+        _clear_task_manager(self)
 
     async def create_and_run(
         self,

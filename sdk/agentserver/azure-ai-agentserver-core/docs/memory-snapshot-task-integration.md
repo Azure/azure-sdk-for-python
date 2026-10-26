@@ -79,15 +79,30 @@ to false, and introduces no extra feature header.
 | `true` | Defer construction/startup; activate through after-restore |
 | `false` | Activate during ordinary cold/local session initialization |
 
-Application resilience enablement is still required through
-`set_resilient_tasks_enabled(True)` or Responses resilience options. A
-declaration alone does not enable the subsystem.
+Task runtime requirements are protocol-specific, matching ordinary startup:
 
-| Resilient tasks enabled | Environment value | Ordinary startup | After-restore |
+| Host / protocol | Requests task execution |
+|---|---|
+| Invocations, including HTTP/WebSocket/Voice | `set_resilient_tasks_enabled(True)` |
+| Responses | `resilient_background=True` or `steerable_conversations=True` |
+| Standalone Core without protocol requirements | The core/Invocations switch |
+| Cooperative multi-protocol host | Any enabled protocol requests one owned manager |
+
+The Invocations switch does not enable or disable Responses. Responses options
+do not mutate that switch. Declaring a task alone never requests the runtime.
+The snapshot variable only chooses when an already-requested runtime starts.
+
+| Host requests task runtime | Environment value | Ordinary startup | After-restore |
 |---|---|---|---|
 | No | absent, `false`, or `true` | No task subsystem | No task subsystem |
 | Yes | absent or `false` | Activate immediately | Activate/retain the same session runtime |
 | Yes | `true` | Defer activation | Prepare before the application callback; recover after it |
+
+Request access remains protocol-scoped even when a mixed host owns a manager.
+An opted-out Invocations route cannot borrow the Responses runtime, and an
+opted-out Responses route cannot borrow the Invocations runtime. The generic
+application restore callback uses the owning host's scope and may submit tasks
+when any of that host's protocols requests the runtime.
 
 Present values must be case-insensitive `true` or `false`; surrounding
 whitespace is accepted. Empty/malformed values fail explicitly. Missing is
@@ -138,7 +153,7 @@ No application task should acquire a lease or execute in the capture sandbox.
 ### Ordinary cold startup
 
 ```text
-absent or false + application resilience opt-in
+absent or false + at least one owning-protocol runtime requirement
   -> construct manager with current session configuration
   -> install registered callbacks
   -> existing initial recovery
@@ -212,6 +227,12 @@ inventing a platform restore event.
 - Shutdown invalidates phase state. A stopped manager cannot restart.
 - A host refuses a manager owned by another host or a conflicting session
   binding rather than replacing it silently.
+- Host/protocol context scopes resolve the owning runtime dynamically, so a
+  deferred manager becomes visible after restore without leaking a different
+  host's runtime. Shutdown clears only its own compatibility singleton.
+- Protocol recovery callbacks/options are explicitly registered before
+  preparation/recovery; host bindings win over process-wide descriptor order.
+  Disabled or unregistered protocol functions are not reclaimed.
 - An inactive manager whose construction-time provider configuration no longer
   matches hydrated settings is disposed and rebuilt. Provider changes while
   workers are live fail explicitly instead of sending work to a stale endpoint.
@@ -345,8 +366,10 @@ record may be deleted, so once-per-logical-session behavior also needs an
 application-owned durable completion marker. No generic exactly-once guarantee,
 automatic task replay, or new receipt type is added.
 
-Opt-out remains authoritative: when resilience is disabled the callback still
-runs, but durable task submission retains `TaskManagerNotInitialized`.
+Opt-out remains authoritative per protocol. If no host requirement is enabled,
+the callback still runs but task submission retains `TaskManagerNotInitialized`.
+Setting the Invocations switch to `False` is not a global veto of an enabled
+Responses option.
 Ordinary cold startup remains unchanged and does not manufacture a restore event
 or invoke this callback.
 
@@ -637,6 +660,8 @@ typed-input behavior is not broadened or redesigned.
 |---|---|
 | True deferral; absent/false cold startup; opt-out; malformed input | Targeted startup tests |
 | Definitions before activation; restored binding | Core/Responses activation tests |
+| Independent protocol enablement across snapshot/cold modes | Responses options vs Invocations switch, mixed MRO, HTTP/WebSocket/Voice, callback submission and host-isolation matrices |
+| Owning protocol recovery after restore | One-shot/multi-turn callback and provider ownership with another host constructed before/after startup |
 | Same-ID concurrent/duplicate hooks | Real ASGI tests; one runtime/scanner |
 | Partial initialization/scanner failure | Completed-phase reuse tests |
 | Actual cancellation and environment rollback | Worker quiescence and retry tests |

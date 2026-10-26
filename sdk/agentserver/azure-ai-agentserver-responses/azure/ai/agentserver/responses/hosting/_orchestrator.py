@@ -4468,11 +4468,7 @@ class _ResponseOrchestrator:
             # surfaces HTTP 409 `conversation_fork_not_supported`.
             raise
         except TaskManagerNotInitialized as exc:
-            from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
-                resilient_tasks_enabled,
-            )
-
-            if resilient_tasks_enabled() and _task_activation_deferred():
+            if _task_activation_deferred():
                 logger.error(
                     "Task runtime is not initialized for enabled resilient response %s",
                     ctx.response_id,

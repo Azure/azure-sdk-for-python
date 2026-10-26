@@ -10,8 +10,7 @@ Two distinct cases with DIFFERENT contracts:
    and surface a *platform* error source (like a Foundry storage failure). A
    real durability failure must not hide behind a healthy-looking response.
 
-2. No task subsystem is installed at all (the host did not enable resilient
-   tasks via ``set_resilient_tasks_enabled``): this is the deliberate opt-out
+2. Neither Responses runtime option is enabled: this is the deliberate opt-out
    path. ``TaskManagerNotInitialized`` is SWALLOWED and the handler runs
    in-process — the response still executes and persists (GET works), it is
    simply not crash-recoverable. This applies regardless of hosted vs local.
@@ -46,8 +45,8 @@ def _switch_off() -> Any:
 
     Both the enable switch and the ``TaskManager`` singleton are process-global
     and other tests in a shared pytest process may have flipped the switch on or
-    installed a manager (e.g. by constructing a ``resilient_background=True``
-    host). Snapshot, reset both to the switch-off / no-manager state so the
+    installed a manager (e.g. by starting an enabled Responses host).
+    Snapshot, reset both to the switch-off / no-manager state so the
     production opt-out path is genuinely exercised, then restore afterwards.
     """
     from azure.ai.agentserver.core.tasks import _manager as _mgr_mod  # pylint: disable=import-outside-toplevel
@@ -72,8 +71,10 @@ async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio
     return _events()
 
 
-def _build_client(handler: Any = None, *, task_runtime: bool = False) -> TestClient:
-    app = ResponsesAgentServerHost(options=ResponsesServerOptions(steerable_conversations=task_runtime))
+def _build_client(handler: Any = None, *, task_runtime: bool = False, resilient_background: bool = False) -> TestClient:
+    app = ResponsesAgentServerHost(
+        options=ResponsesServerOptions(steerable_conversations=task_runtime, resilient_background=resilient_background)
+    )
     app.response_handler(handler or _noop_handler)
     return TestClient(app)
 
@@ -228,17 +229,23 @@ class TestSnapshotTaskActivation:
     """Task definitions stay process-side; requests follow session activation."""
 
     def test_enabled_cold_start_installs_task_runtime(self, _switch_off: Any) -> None:
-        set_resilient_tasks_enabled(True)
-        with _build_client():
+        with _build_client(task_runtime=True):
             assert get_task_manager() is not None
+            assert not resilient_tasks_enabled()
 
     @pytest.mark.parametrize("background", [False, True])
     @pytest.mark.parametrize("user_id", [None, "snapshot-user"])
+    @pytest.mark.parametrize("resilient,steerable", [(False, True), (True, False), (True, True)])
     def test_deferred_start_failure_removes_scoped_runtime(
-        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, background: bool, user_id: str | None
+        self,
+        _switch_off: Any,
+        monkeypatch: pytest.MonkeyPatch,
+        background: bool,
+        user_id: str | None,
+        resilient: bool,
+        steerable: bool,
     ) -> None:
         monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
-        set_resilient_tasks_enabled(True)
         registered: list[tuple[_RuntimeState, ResponseExecution]] = []
         original_add = _RuntimeState.add
 
@@ -259,7 +266,7 @@ class TestSnapshotTaskActivation:
             return await _noop_handler(request, context, cancellation_signal)
 
         headers = {"x-agent-user-id": user_id} if user_id is not None else {}
-        with _build_client(handler) as http:
+        with _build_client(handler, task_runtime=steerable, resilient_background=resilient) as http:
             response = http.post(
                 "/responses",
                 headers=headers,
@@ -278,18 +285,18 @@ class TestSnapshotTaskActivation:
             assert http.get(f"/responses/{record.response_id}", headers=headers).status_code == 404
 
     @pytest.mark.parametrize("stream", [False, True])
+    @pytest.mark.parametrize("resilient,steerable", [(False, True), (True, False), (True, True)])
     def test_enabled_missing_runtime_does_not_fall_back(
-        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, stream: bool
+        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, stream: bool, resilient: bool, steerable: bool
     ) -> None:
         monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
-        set_resilient_tasks_enabled(True)
         called: list[bool] = []
 
         async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
             called.append(True)
             return await _noop_handler(request, context, cancellation_signal)
 
-        with _build_client(handler) as http:
+        with _build_client(handler, task_runtime=steerable, resilient_background=resilient) as http:
             with pytest.raises(TaskManagerNotInitialized):
                 get_task_manager()
             response = http.post(
@@ -314,7 +321,6 @@ class TestSnapshotTaskActivation:
             monkeypatch.delenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", raising=False)
         else:
             monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", value)
-        set_resilient_tasks_enabled(True)
         called: list[bool] = []
 
         async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
@@ -322,7 +328,7 @@ class TestSnapshotTaskActivation:
             return await _noop_handler(request, context, cancellation_signal)
 
         # Plain TestClient (no `with`): the lifespan never runs, so no manager exists.
-        response = _build_client(handler).post(
+        response = _build_client(handler, task_runtime=True).post(
             "/responses",
             json={"model": "test", "input": "hi", "stream": stream, "store": True},
         )
@@ -339,8 +345,7 @@ class TestSnapshotTaskActivation:
     ) -> None:
         monkeypatch.delenv("FOUNDRY_AGENT_SESSION_ID", raising=False)
         monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
-        set_resilient_tasks_enabled(True)
-        with _build_client() as http:
+        with _build_client(task_runtime=True) as http:
             with pytest.raises(TaskManagerNotInitialized):
                 get_task_manager()
             restored = http.post(

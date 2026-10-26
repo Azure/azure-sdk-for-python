@@ -25,7 +25,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 from . import _config, _tracing
 from ._errors import create_error_response
 from ._lifecycle import AgentSessionContext, _LifecycleRollback, _LifecycleState
-from ._middleware import InboundRequestLoggingMiddleware
+from ._middleware import InboundRequestLoggingMiddleware, _TaskManagerMiddleware
 from ._request_context import (
     FoundryAgentRequestContext,
     get_request_context,
@@ -287,6 +287,9 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
         self._readiness_fn: Optional[Callable[[Request], Awaitable[Response]]] = None
         self._lifecycle = _LifecycleState()
+        self._task_manager_requirements: list[Callable[[], bool]] = kwargs.pop(
+            "_task_manager_requirements", [_resilient_tasks_enabled]
+        )
         self._task_manager: Optional["TaskManager"] = None
         self._task_manager_binding: tuple[str, str] | None = None
         self._task_manager_lock = asyncio.Lock()
@@ -334,7 +337,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
 
         # Build lifespan context manager
         @contextlib.asynccontextmanager
-        async def _lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
+        async def _run_lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
             self._task_manager_stopping = False
             logger.info("AgentServerHost started")
 
@@ -365,7 +368,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             )
 
             snapshot_mode = _read_memory_snapshot_enabled()
-            if _resilient_tasks_enabled() and not snapshot_mode:
+            if self._task_manager_required() and not snapshot_mode:
                 try:
                     await self._activate_task_manager()
                 except BaseException:
@@ -374,7 +377,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                     except Exception:  # pylint: disable=broad-exception-caught
                         logger.warning("Error shutting down TaskManager after startup failure", exc_info=True)
                     raise
-            elif _resilient_tasks_enabled():
+            elif self._task_manager_required():
                 logger.info(
                     "TaskManager deferred until after-restore (memory_snapshot_enabled=%s)",
                     snapshot_mode,
@@ -429,7 +432,6 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                     from .tasks._manager import _clear_task_manager  # pylint: disable=import-outside-toplevel
 
                     _clear_task_manager(self._task_manager)
-                    self._task_manager = None
 
         async def _before_snapshot_route(request: Request) -> Response:
             return await AgentServerHost._before_snapshot_endpoint(self, request)
@@ -501,6 +503,9 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         :type manager: ~azure.ai.agentserver.core.tasks._manager.TaskManager
         """
 
+    def _task_manager_required(self) -> bool:
+        return any(required() for required in self._task_manager_requirements)
+
     def add_middleware(
         self,
         middleware_class: MiddlewareFactory[P],
@@ -520,7 +525,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         super().add_middleware(middleware_class, *args, **kwargs)
 
     async def _activate_task_manager(self, restore_id: str | None = None, *, prepare_only: bool = False) -> None:
-        if not _resilient_tasks_enabled():
+        if not self._task_manager_required():
             return
         from .tasks._exceptions import (
             TaskManagerNotInitialized,
@@ -562,6 +567,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 set_task_manager(self._task_manager)
             elif self._task_manager_binding != binding:
                 raise RuntimeError("TaskManager is bound to a different session")
+            self._register_task_callbacks(self._task_manager)
             if prepare_only:
                 self._task_manager._prepare(restore_id)  # pylint: disable=protected-access
                 return
@@ -578,12 +584,8 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
     async def _shutdown_task_manager(self, *, preserve_recoverable_tasks: bool = False) -> None:
         async with self._task_manager_lock:
             if self._task_manager is not None:
-                from .tasks._exceptions import (
-                    TaskManagerNotInitialized,
-                )  # pylint: disable=import-outside-toplevel
                 from .tasks._manager import (
-                    get_task_manager,
-                    set_task_manager,
+                    _clear_task_manager,
                 )  # pylint: disable=import-outside-toplevel
 
                 manager = self._task_manager
@@ -591,12 +593,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                     await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=True)
                 else:
                     await manager.shutdown()
-                try:
-                    installed = get_task_manager()
-                except TaskManagerNotInitialized:
-                    installed = None
-                if installed is manager:
-                    set_task_manager(None)
+                _clear_task_manager(manager)
                 self._task_manager = None
                 self._task_manager_binding = None
                 logger.info("TaskManager shut down")

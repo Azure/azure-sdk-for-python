@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Apply protocol-specific runtime requirements to deferred snapshot activation,
+  preserving independent Invocations/Responses opt-in and owning-host recovery
+  callback bindings.
 - Allow decorated task submission inside `after_restore_handler`, preparing the
   session-bound TaskManager before the callback and starting automatic recovery
   only after application dependencies are ready.
@@ -14,6 +17,17 @@
   best-effort recovery, checkpoint initialization phases by restore ID, wait for
   owned workers to stop before incompatible configuration rollback, and stop
   managers created after startup at shutdown.
+- Added immutable `FoundryOriginalSubject` assertions and invocation-local
+  `FoundryAgentRequestContext.original_subject` with an explicit, model-only
+  `model_attribution_headers()` helper for the proposed `x-ms-original-subject`
+  dictionary contract. The assertions do not establish identity proof or change
+  model authentication; model integration remains an explicit per-call opt-in.
+  Both the assertions class and header helper are marked experimental.
+- Added protocol-scoped task-runtime startup requests so protocol hosts can
+  obtain scoped `TaskManager` access without mutating the process-wide
+  resilient-task switch. This prevents one protocol's enablement from
+  activating another protocol in a mixed host.
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -36,6 +50,15 @@
 - Keep the lease instance stable on same-restore retries, retain worker and
   lease handles until workers finish, and defer steering execution during
   rollback while keeping queued input eligible for recovery.
+- Preserve host-owned recovery callbacks and task options when loading
+  process-wide task descriptors at startup.
+- Exclude protocol-disabled task functions before startup, periodic or inline
+  recovery can reclaim their leases or dispatch their handlers.
+- Require explicit owning-host registration for protocol-internal recovery
+  callbacks instead of importing them into unrelated managers.
+- Treat a persisted task function identity as authoritative before recovery
+  cleanup or reclaim. Legacy callback fallback applies only when that
+  identity is absent.
 
 ### Other Changes
 

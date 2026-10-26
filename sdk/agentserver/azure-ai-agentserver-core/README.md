@@ -259,8 +259,10 @@ request with the same `restore_id` does not invoke the handler again, while a
 new `restore_id` for the same session starts a new restore cycle. The server
 rejects attempts to reuse a restored process for a different session.
 
-With resilient tasks enabled, the SDK prepares a session-bound TaskManager before
-the application `after_restore_handler`. Rebuild application dependencies first,
+When the host's protocols request task execution, the SDK prepares a session-bound
+TaskManager before the application `after_restore_handler`. Invocations uses
+`set_resilient_tasks_enabled(True)`; Responses independently uses
+`resilient_background=True` or `steerable_conversations=True`. Rebuild dependencies first,
 then submit `@task`/`@multi_turn_task` work using the normal task APIs:
 
 ```python
@@ -276,8 +278,10 @@ for that initialization, not for background work to finish. `.run()` is also
 available for bounded work, but awaiting long-running completion can exceed the
 restore timeout. A failed hook can be retried: reconcile unfinished task IDs and
 persist completion state if startup must run only once per logical session.
-Resilience opt-out still disables task submission, and ordinary cold startup
-does not invoke the restore handler.
+Request routes retain their own protocol's opt-out even on a mixed host. The
+restore handler uses the owning host's runtime if any protocol requests one.
+The Invocations switch does not disable an enabled Responses option, and
+ordinary cold startup does not invoke the restore handler.
 
 Protocol-specific hosts can override the protected `_before_snapshot` and
 `_after_restore` methods to extend the lifecycle before application callbacks
