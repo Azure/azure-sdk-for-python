@@ -5,11 +5,13 @@
 from __future__ import annotations
 
 import logging
+from copy import deepcopy
 from typing import cast
 
 import pytest
 
 from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses.aio.streaming import ResponseEventStream as AsyncResponseEventStream
 from azure.ai.agentserver.responses.models import (
     AgentReference,
     CreateResponse,
@@ -29,6 +31,8 @@ def _assert_required_response_shape(response: dict) -> None:
         "output",
         "instructions",
         "parallel_tool_calls",
+        "tools",
+        "tool_choice",
         "agent_reference",
         "response_id",
     ):
@@ -347,3 +351,77 @@ def test_event_stream_builder__constructor_accepts_request_seed_fields() -> None
     assert created["response"]["background"] is True
     assert created["response"]["previous_response_id"] == "resp_prev_seed"
     assert created["response"]["metadata"] == {"tag": "seeded"}
+
+
+@pytest.mark.parametrize("stream_type", [ResponseEventStream, AsyncResponseEventStream])
+@pytest.mark.parametrize("seed_kind", ["request", "response"])
+@pytest.mark.parametrize(
+    "configuration",
+    [
+        {},
+        {"tools": []},
+        {"tool_choice": "auto"},
+        {"tool_choice": "none"},
+        {"tool_choice": "required"},
+        {"tools": [{"type": "function", "name": "lookup", "parameters": {}, "strict": False}]},
+        {"tool_choice": {"type": "function", "name": "lookup"}},
+        {"tool_choice": {"type": "allowed_tools", "mode": "auto", "tools": []}},
+    ],
+)
+def test_event_stream_builder__tool_configuration_defaults_and_seeding(stream_type, seed_kind, configuration) -> None:
+    seed = deepcopy(configuration)
+    if seed_kind == "response":
+        seed["id"] = "resp_tool_configuration"
+    original = deepcopy(seed)
+    stream = stream_type(response_id="resp_tool_configuration", **{seed_kind: seed})
+
+    assert stream.response["tools"] == configuration.get("tools", [])
+    assert stream.response["tool_choice"] == configuration.get("tool_choice", "auto")
+    assert "model" not in stream.response
+    assert seed == original
+
+
+@pytest.mark.parametrize("stream_type", [ResponseEventStream, AsyncResponseEventStream])
+def test_event_stream_builder__fresh_tool_defaults_are_independent(stream_type) -> None:
+    first = stream_type(response_id="resp_first_tools")
+    second = stream_type(response_id="resp_second_tools")
+
+    assert first.response["tools"] == second.response["tools"] == []
+    assert first.response["tool_choice"] == second.response["tool_choice"] == "auto"
+    first.response["tools"].append({"type": "function", "name": "lookup"})
+    assert second.response["tools"] == []
+
+
+@pytest.mark.parametrize("seed_kind", ["request", "response"])
+def test_event_stream_builder__tool_configuration_is_detached(seed_kind) -> None:
+    configuration = {
+        "tools": [
+            {
+                "type": "function",
+                "name": "lookup",
+                "parameters": {"type": "object", "properties": {"query": {"type": "string"}}},
+                "strict": False,
+            }
+        ],
+        "tool_choice": {"type": "allowed_tools", "mode": "auto", "tools": [{"type": "function", "name": "lookup"}]},
+    }
+    seed = deepcopy(configuration)
+    if seed_kind == "response":
+        seed["id"] = "resp_detached_tools"
+    first = ResponseEventStream(response_id="resp_detached_tools", **{seed_kind: seed})
+    second = ResponseEventStream(response_id="resp_detached_tools", **{seed_kind: seed})
+    created = first.emit_created()["response"]
+
+    seed["tools"][0]["parameters"]["properties"]["query"]["type"] = "number"
+    seed["tool_choice"]["tools"][0]["name"] = "source_changed"
+    first.response["tools"][0]["parameters"]["properties"]["query"]["type"] = "boolean"
+    first.response["tool_choice"]["tools"][0]["name"] = "stream_changed"
+    assert created["tools"] == second.response["tools"] == configuration["tools"]
+    assert created["tool_choice"] == second.response["tool_choice"] == configuration["tool_choice"]
+
+    created["tools"][0]["parameters"]["properties"]["query"]["type"] = "integer"
+    created["tool_choice"]["tools"][0]["name"] = "snapshot_changed"
+    assert first.response["tools"][0]["parameters"]["properties"]["query"]["type"] == "boolean"
+    assert first.response["tool_choice"]["tools"][0]["name"] == "stream_changed"
+    assert seed["tools"][0]["parameters"]["properties"]["query"]["type"] == "number"
+    assert seed["tool_choice"]["tools"][0]["name"] == "source_changed"
