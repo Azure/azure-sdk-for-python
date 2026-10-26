@@ -7,6 +7,7 @@
 import datetime
 import sys
 from typing import (
+    AbstractSet,
     Any,
     AsyncContextManager,
     Iterable,
@@ -181,6 +182,51 @@ class CaseInsensitiveSet(set):
         for other in others:
             for item in other:
                 self.add(item)
+
+    def difference_update(self, *others):
+        for other in others:
+            for item in other:
+                self.discard(item)
+
+    def intersection_update(self, *others):
+        for other in others:
+            keep = CaseInsensitiveSet(other)
+            for item in list(self):
+                if item not in keep:
+                    self.discard(item)
+
+    def symmetric_difference_update(self, other):
+        for item in CaseInsensitiveSet(other):
+            if item in self:
+                self.discard(item)
+            else:
+                self.add(item)
+
+    # The in-place operators of the built-in set bypass the methods above and would leave
+    # the lowercase cache out of sync, so route them through the cache-aware methods.
+    def __ior__(self, other):  # type: ignore[misc]  # same as typeshed's set
+        if not isinstance(other, AbstractSet):
+            return NotImplemented
+        self.update(other)
+        return self
+
+    def __iand__(self, other):  # type: ignore[misc]  # same as typeshed's set
+        if not isinstance(other, AbstractSet):
+            return NotImplemented
+        self.intersection_update(other)
+        return self
+
+    def __isub__(self, other):  # type: ignore[misc]  # same as typeshed's set
+        if not isinstance(other, AbstractSet):
+            return NotImplemented
+        self.difference_update(other)
+        return self
+
+    def __ixor__(self, other):  # type: ignore[misc]  # same as typeshed's set
+        if not isinstance(other, AbstractSet):
+            return NotImplemented
+        self.symmetric_difference_update(other)
+        return self
 
     def clear(self):
         super().clear()
