@@ -24,6 +24,7 @@ from a2a.server.routes import (
 from a2a.types import AgentCard
 
 from azure.ai.agentserver.core import (
+    AgentConfig,
     AgentServerHost,
     FoundryAgentRequestContext,
     build_server_version,
@@ -157,6 +158,7 @@ def _get_a2a_routes(
     *,
     card_modifier: Optional[Callable[[AgentCard], Awaitable[AgentCard]]] = None,
     context_builder: Optional[ServerCallContextBuilder] = None,
+    config: Optional[AgentConfig] = None,
 ) -> list[Route]:
     jsonrpc_routes = create_jsonrpc_routes(
         request_handler=request_handler,
@@ -165,7 +167,7 @@ def _get_a2a_routes(
         enable_v0_3_compat=False,
     )
     jsonrpc_route = jsonrpc_routes[0]
-    traced_endpoint = trace_jsonrpc_endpoint(jsonrpc_route.endpoint, agent_card)
+    traced_endpoint = trace_jsonrpc_endpoint(jsonrpc_route.endpoint, agent_card, config=config)
     agent_card_routes = create_agent_card_routes(
         agent_card=agent_card,
         card_modifier=card_modifier,
@@ -236,15 +238,16 @@ class A2AAgentServerHost(AgentServerHost):
     ) -> None:
         self._agent_card = agent_card
         self._request_handler = request_handler
+        existing_routes = list(kwargs.pop("routes", None) or [])
+        super().__init__(routes=existing_routes, **kwargs)
         a2a_routes = _get_a2a_routes(
             agent_card,
             request_handler,
             card_modifier=card_modifier,
             context_builder=context_builder,
+            config=self.config,
         )
-        existing_routes = list(kwargs.pop("routes", None) or [])
-
-        super().__init__(routes=existing_routes + a2a_routes, **kwargs)
+        self.routes[len(existing_routes) : len(existing_routes)] = a2a_routes
         self.add_middleware(_A2APlatformContextMiddleware)
         self.add_middleware(_A2ATransportErrorMiddleware)
         self.register_server_version(build_server_version("azure-ai-agentserver-a2a", _A2A_VERSION))

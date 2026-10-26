@@ -18,11 +18,12 @@ from starlette.requests import Request
 from starlette.responses import Response
 from starlette.types import Message, Receive, Scope, Send
 
-from azure.ai.agentserver.core import detach_context, end_span, schedule_flush_spans
+from azure.ai.agentserver.core import AgentConfig, detach_context, end_span, schedule_flush_spans
 
 from ._version import VERSION
 
 _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.A2A"
+_HOST_INSTRUMENTATION_SCOPE = "azure.ai.agentserver.a2a"
 _BAGGAGE_CONVERSATION_ID = "azure.ai.agentserver.conversation_id"
 _MAX_RESPONSE_BYTES = 1024 * 1024
 _SSE_BOUNDARY = re.compile(rb"\r?\n\r?\n")
@@ -32,11 +33,17 @@ class _TracedResponse(Response):
     """Trace endpoint execution and response transmission under one lifecycle."""
 
     def __init__(
-        self, endpoint: Callable[[Request], Awaitable[Response]], request: Request, attributes: dict[str, Any]
+        self,
+        endpoint: Callable[[Request], Awaitable[Response]],
+        request: Request,
+        attributes: dict[str, Any],
+        config: Optional[AgentConfig],
     ) -> None:
         super().__init__()
         self._endpoint, self._request, self._attributes = endpoint, request, attributes
         self._span: trace.Span = trace.INVALID_SPAN
+        self._config = config
+        self._invocation: Optional[trace.Span] = None
         self._known = "a2a.task.id" in attributes
         self._buffer = b""
         self._discarding = False
@@ -60,6 +67,8 @@ class _TracedResponse(Response):
             return
         if task_id:
             self._span.set_attribute("a2a.task.id", task_id)
+            if self._invocation is not None:
+                self._invocation.set_attribute("a2a.task.id", task_id)
             self._known = True
 
     def observe_chunk(self, body: bytes) -> None:
@@ -81,10 +90,16 @@ class _TracedResponse(Response):
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         attributes = self._attributes
+        self._invocation = _start_hosted_invocation(self._config, attributes)
+        parent_context = (
+            trace.set_span_in_context(self._invocation) if self._invocation is not None else context.get_current()
+        )
         tracer = trace.get_tracer(_INSTRUMENTATION_SCOPE, VERSION)
-        span = tracer.start_span(attributes["a2a.method.name"], kind=SpanKind.SERVER, attributes=attributes)
+        span = tracer.start_span(
+            attributes["a2a.method.name"], context=parent_context, kind=SpanKind.SERVER, attributes=attributes
+        )
         self._span = span
-        operation_context = trace.set_span_in_context(span)
+        operation_context = trace.set_span_in_context(span, parent_context)
         if "gen_ai.conversation.id" in attributes:
             operation_context = baggage.set_baggage(
                 _BAGGAGE_CONVERSATION_ID, attributes["gen_ai.conversation.id"], context=operation_context
@@ -107,7 +122,9 @@ class _TracedResponse(Response):
             raise
         finally:
             detach_context(token)
-            end_span(span, exc=None if isinstance(error, asyncio.CancelledError) else error)
+            error = None if isinstance(error, asyncio.CancelledError) else error
+            end_span(span, exc=error)
+            end_span(self._invocation, exc=error)
             schedule_flush_spans()
 
     def _record_response(self, response: Response) -> None:
@@ -124,13 +141,45 @@ class _TracedResponse(Response):
                 if isinstance(error, dict) and error.get("code") is not None:
                     error_type = str(error["code"])
         if error_type is not None:
-            self._span.set_attribute("error.type", error_type)
-            self._span.set_status(StatusCode.ERROR)
+            for span in (self._span, self._invocation):
+                if span is not None:
+                    span.set_attribute("error.type", error_type)
+                    span.set_status(StatusCode.ERROR)
+
+
+def _start_hosted_invocation(config: Optional[AgentConfig], attributes: dict[str, Any]) -> Optional[trace.Span]:
+    if (
+        not config
+        or not config.is_hosted
+        or attributes["a2a.method.name"] not in {"SendMessage", "SendStreamingMessage"}
+    ):
+        return None
+    hosted = {
+        **attributes,
+        "gen_ai.operation.name": "invoke_agent",
+        "gen_ai.system": "azure.ai.agentserver",
+    }
+    # Deployment identity belongs to the hosted invocation, not the native Agent Card.
+    for key, value in (
+        ("gen_ai.agent.name", config.agent_name),
+        ("gen_ai.agent.version", config.agent_version),
+        ("gen_ai.agent.id", config.agent_id),
+        ("microsoft.foundry.project.id", config.project_id),
+        ("microsoft.session.id", config.session_id),
+    ):
+        hosted.pop(key, None)
+        if value:
+            hosted[key] = value
+    return trace.get_tracer(_HOST_INSTRUMENTATION_SCOPE, VERSION).start_span(
+        f"invoke_agent {config.agent_name}", attributes=hosted
+    )
 
 
 def trace_jsonrpc_endpoint(
     endpoint: Callable[[Request], Awaitable[Response]],
     agent_card: AgentCard,
+    *,
+    config: Optional[AgentConfig] = None,
 ) -> Callable[[Request], Awaitable[Response]]:
     """Trace native A2A operations and correlate returned Task IDs.
 
@@ -138,6 +187,8 @@ def trace_jsonrpc_endpoint(
     :type endpoint: Callable[[Request], Awaitable[Response]]
     :param agent_card: Agent Card metadata to attach to operation spans.
     :type agent_card: AgentCard
+    :keyword config: Resolved host configuration for deployment-aware invocation spans.
+    :paramtype config: ~azure.ai.agentserver.core.AgentConfig or None
     :return: Endpoint that emits one span per request with an A2A method.
     :rtype: Callable[[Request], Awaitable[Response]]
     """
@@ -162,7 +213,7 @@ def trace_jsonrpc_endpoint(
                 if address[1] is not None:
                     attributes[f"{source}.port"] = address[1]
 
-        return _TracedResponse(endpoint, request, attributes)
+        return _TracedResponse(endpoint, request, attributes, config)
 
     return traced_endpoint
 

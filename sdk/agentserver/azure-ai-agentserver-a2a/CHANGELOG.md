@@ -36,6 +36,10 @@
 
 ### Bugs Fixed
 
+- Add a deployment-aware `invoke_agent` parent for hosted A2A message sends so
+  trace discovery does not depend on model calls or native implementation spans.
+  Keep Agent Card metadata on the child A2A span and preserve streaming lifetime,
+  Task-ID correlation, and error classification on both spans.
 - Preserve shared request ID and server-version headers on exception-generated
   error responses.
 - Read telemetry identifiers only from A2A protocol fields,

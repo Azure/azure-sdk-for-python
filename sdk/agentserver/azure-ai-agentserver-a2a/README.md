@@ -88,6 +88,15 @@ extended card, HTTP+JSON/REST, and gRPC are not exposed in the initial release.
 
 ### Distributed tracing
 
+In Foundry-hosted environments, `SendMessage` and `SendStreamingMessage` also
+emit one `invoke_agent` parent span using the deployed Foundry agent name,
+version, and identity. This keeps hosted-agent trace discovery independent of
+LLM calls or native SDK implementation spans. The child A2A operation span
+retains Agent Card metadata, which can differ from the deployment name/version.
+Both spans cover the complete response, including streaming transmission, and
+record a returned Task ID for correlation. Task lookup/list/cancel operations
+do not emit an `invoke_agent` span because they do not execute the agent.
+
 The host emits one `SERVER` span for each valid A2A JSON-RPC operation using
 the `Azure.AI.AgentServer.A2A` instrumentation scope. Span names are the A2A
 method names (`SendMessage`, `SendStreamingMessage`, `GetTask`, and so on).
@@ -115,7 +124,8 @@ and may evolve before that convention becomes stable.
 
 The native `a2a-sdk` currently emits generic implementation-level spans in
 addition to these semantic operation spans. To avoid duplicate server spans,
-set this environment variable **before importing `a2a`**:
+set this environment variable **before importing `a2a`**. The hosted invocation
+span remains enabled:
 
 ```bash
 OTEL_INSTRUMENTATION_A2A_SDK_ENABLED=false

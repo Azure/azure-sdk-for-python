@@ -25,10 +25,13 @@ from starlette.routing import Route
 
 from azure.ai.agentserver.a2a import A2AAgentServerHost
 from azure.ai.agentserver.a2a._tracing import trace_jsonrpc_endpoint
+from azure.ai.agentserver.core import AgentConfig
+from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
 
 _RPC_PATH = "/a2a"
 _FOUNDRY_COMPAT_RPC_PATH = "/invocations/a2a"
 _SCOPE = "Azure.AI.AgentServer.A2A"
+_HOST_SCOPE = "azure.ai.agentserver.a2a"
 
 
 def _agent_card() -> AgentCard:
@@ -85,6 +88,108 @@ def _a2a_spans(exporter: InMemorySpanExporter) -> list[ReadableSpan]:
 def _attributes(span: ReadableSpan):
     assert span.attributes is not None
     return span.attributes
+
+
+@pytest.fixture
+def hosted_span_exporter(monkeypatch):
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "test")
+    monkeypatch.setenv("FOUNDRY_AGENT_NAME", "hosted-echo")
+    monkeypatch.setenv("FOUNDRY_AGENT_VERSION", "42")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "session-42")
+    exporter = InMemorySpanExporter()
+    provider = TracerProvider()
+    provider.add_span_processor(
+        _FoundryEnrichmentSpanProcessor(agent_name="hosted-echo", agent_version="42", agent_id="instance-client-id")
+    )
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    monkeypatch.setattr("azure.ai.agentserver.a2a._tracing.trace.get_tracer", provider.get_tracer)
+    return exporter
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("path", [_RPC_PATH, _FOUNDRY_COMPAT_RPC_PATH])
+@pytest.mark.parametrize("streaming", [False, True])
+async def test_hosted_invocation_preserves_deployment_and_agent_card_identity(
+    client_factory, hosted_span_exporter, path, streaming
+):
+    result = {"task": _task_result()}
+
+    async def generate():
+        assert [s.name for s in hosted_span_exporter.get_finished_spans()] == ["agent-work"]
+        yield f"data: {json.dumps({'result': result})}\n\n".encode()
+        assert [s.name for s in hosted_span_exporter.get_finished_spans()] == ["agent-work"]
+
+    async def endpoint(_request):
+        with trace.get_tracer("sample").start_as_current_span("agent-work"):
+            pass
+        return (
+            StreamingResponse(generate(), media_type="text/event-stream")
+            if streaming
+            else JSONResponse({"result": result})
+        )
+
+    async with client_factory(_host(endpoint)) as client:
+        response = await client.post(
+            path,
+            headers={"traceparent": "00-0123456789abcdef0123456789abcdef-0123456789abcdef-01"},
+            json={
+                "method": "SendStreamingMessage" if streaming else "SendMessage",
+                "params": {"message": {"messageId": "message-42", "contextId": "context-42"}},
+            },
+        )
+
+    assert response.status_code == 200
+    spans = hosted_span_exporter.get_finished_spans()
+    invocation = next(s for s in spans if s.instrumentation_scope.name == _HOST_SCOPE)
+    semantic = _a2a_spans(hosted_span_exporter)[0]
+    work = next(s for s in spans if s.name == "agent-work")
+    assert len(spans) == 3
+    assert invocation.name == "invoke_agent hosted-echo"
+    assert invocation.parent.span_id == int("0123456789abcdef", 16)
+    assert semantic.parent.span_id == invocation.context.span_id
+    assert work.parent.span_id == semantic.context.span_id
+    host_attributes = _attributes(invocation)
+    assert host_attributes["gen_ai.agent.name"] == "hosted-echo"
+    assert host_attributes["gen_ai.agent.version"] == "42"
+    assert host_attributes["gen_ai.agent.id"] == "instance-client-id"
+    assert host_attributes["gen_ai.operation.name"] == "invoke_agent"
+    assert host_attributes["microsoft.session.id"] == "session-42"
+    assert host_attributes["gen_ai.conversation.id"] == "context-42"
+    assert host_attributes["a2a.task.id"] == "task-result"
+    assert _attributes(semantic)["gen_ai.agent.name"] == "Tracing Agent"
+    assert _attributes(semantic)["gen_ai.agent.version"] == "1.2.3"
+    assert "gen_ai.operation.name" not in _attributes(semantic)
+    assert invocation.start_time <= semantic.start_time <= semantic.end_time <= invocation.end_time
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_status", [200, 503])
+async def test_hosted_invocation_records_unary_protocol_and_http_errors(
+    client_factory, hosted_span_exporter, http_status
+):
+    async def endpoint(_request):
+        return JSONResponse({"error": {"code": -32602}}, status_code=http_status)
+
+    async with client_factory(_host(endpoint)) as client:
+        await client.post(_RPC_PATH, json={"method": "SendMessage"})
+
+    spans = hosted_span_exporter.get_finished_spans()
+    assert len(spans) == 2
+    for span in spans:
+        assert span.status.status_code == StatusCode.ERROR
+        assert _attributes(span)["error.type"] == ("-32602" if http_status == 200 else "503")
+
+
+@pytest.mark.asyncio
+async def test_task_lookup_is_not_mislabeled_as_an_agent_invocation(client_factory, hosted_span_exporter):
+    async def endpoint(_request):
+        return JSONResponse({"result": _task_result()})
+
+    async with client_factory(_host(endpoint)) as client:
+        await client.post(_RPC_PATH, json={"method": "GetTask", "params": {"id": "task-result"}})
+
+    assert len(hosted_span_exporter.get_finished_spans()) == 1
+    assert len(_a2a_spans(hosted_span_exporter)) == 1
 
 
 def _application_data():
@@ -554,7 +659,10 @@ async def test_sse_protocol_errors_are_not_inspected(client_factory, span_export
 @pytest.mark.asyncio
 @pytest.mark.parametrize("during_send", [False, True])
 @pytest.mark.parametrize("exception_type", [RuntimeError, asyncio.CancelledError])
-async def test_exception_or_cancellation_ends_span_and_restores_context(span_exporter, during_send, exception_type):
+@pytest.mark.parametrize("hosted", [False, True])
+async def test_exception_or_cancellation_ends_span_and_restores_context(
+    span_exporter, during_send, exception_type, hosted
+):
     original_span = trace.get_current_span()
     original_conversation = _otel_baggage.get_baggage("azure.ai.agentserver.conversation_id")
     scope = {"type": "http", "method": "POST", "path": _RPC_PATH, "headers": [], "query_string": b""}
@@ -574,8 +682,12 @@ async def test_exception_or_cancellation_ends_span_and_restores_context(span_exp
     async def send(_message):
         raise exception_type("send failed")
 
+    config = AgentConfig.from_env()
+    config.is_hosted = hosted
+    config.agent_name = "hosted-echo"
+    config.agent_version = "42"
     with pytest.raises(exception_type):
-        response = await trace_jsonrpc_endpoint(endpoint, _agent_card())(Request(scope, receive))
+        response = await trace_jsonrpc_endpoint(endpoint, _agent_card(), config=config)(Request(scope, receive))
         assert not _a2a_spans(span_exporter)
         await response(scope, receive, send)
 
@@ -587,5 +699,8 @@ async def test_exception_or_cancellation_ends_span_and_restores_context(span_exp
     else:
         assert span.status.status_code == StatusCode.UNSET
         assert not span.events
+    spans = span_exporter.get_finished_spans()
+    assert len(spans) == (2 if hosted else 1)
+    assert all(s.status.status_code == span.status.status_code for s in spans)
     assert trace.get_current_span() is original_span
     assert _otel_baggage.get_baggage("azure.ai.agentserver.conversation_id") == original_conversation
