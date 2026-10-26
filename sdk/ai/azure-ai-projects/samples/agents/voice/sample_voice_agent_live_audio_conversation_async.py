@@ -5,9 +5,11 @@
 
 """
 DESCRIPTION:
-    Talk to a preview GPT Live voice agent using --microphone, or stream a real
-    WAV recording without that flag. Both modes use PCM16 little-endian, mono,
+    Talk to a preview GPT Live voice agent using a microphone, or stream a real
+    WAV recording. Both modes use PCM16 little-endian, mono,
     24 kHz audio and send/receive concurrently.
+    Async is used for full-duplex streaming and nonblocking audio devices,
+    rather than duplicating a synchronous sample.
 
     Microphone mode uses optional PyAudio capture and speaker callbacks,
     following the Realtime audio sample's nonblocking device pattern. Speak
@@ -33,32 +35,32 @@ DESCRIPTION:
 
 USAGE:
     python sample_voice_agent_live_audio_conversation_async.py
-    python sample_voice_agent_live_audio_conversation_async.py --microphone
+
+    Set USE_MICROPHONE = True in this file for microphone capture and speaker
+    playback. Leave it False to stream a WAV file without audio devices.
+    Set SAVE_AUDIO = True to save returned audio in a unique user-temporary
+    folder. Its location is printed and the files remain after exit; remove
+    the folder when it is no longer needed.
 
     pip install "azure-ai-projects[voice]" azure-identity python-dotenv
-    pip install pyaudio  # Only required for --microphone.
+    pip install pyaudio  # Only required for microphone mode.
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
     2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live DEPLOYMENT name.
     3) FOUNDRY_VOICE_AUDIO_INPUT_PATH (required for WAV mode only) - Path to an
        actual spoken-audio WAV file: uncompressed PCM16, mono, 24000 Hz.
-    4) FOUNDRY_VOICE_AUDIO_OUTPUT_PATH (optional) - Explicit WAV output path.
-       When set, saves actual returned audio, not telemetry. Without it no audio
-       file is written. The output must not refer to the input file, including
-       through a symbolic link or hard link.
-    5) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for a uniquely named sample
+    4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for a uniquely named sample
        agent. Only the version created by this run is deleted.
 
     Authenticates with DefaultAzureCredential.
     Choose a short recording; Ctrl-C cancels local tasks and closes the session.
     Conversation persistence is disabled; explicitly saving audio still writes
-    conversation content to your chosen local file.
+    conversation content locally. SAVE_AUDIO is False by default.
 """
 
 from __future__ import annotations
 
-import argparse
 import asyncio
 import base64
 import concurrent.futures
@@ -67,6 +69,7 @@ from dataclasses import dataclass
 import os
 from pathlib import Path
 import queue
+from tempfile import mkdtemp
 import time
 from typing import Any, Optional, TYPE_CHECKING
 import wave
@@ -90,6 +93,9 @@ from live_sample_utils import (
 if TYPE_CHECKING:
     from azure.ai.projects.aio.operations import AsyncBetaLiveConnection
 
+
+USE_MICROPHONE = False
+SAVE_AUDIO = False
 
 _SAMPLE_RATE = 24000
 _CHUNK_FRAMES = 1200
@@ -449,25 +455,26 @@ async def _run_audio_conversation(
         raise asyncio.CancelledError
 
 
-async def main(*, microphone: bool = False) -> None:
+async def main() -> None:
     load_dotenv()
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     model = os.environ["FOUNDRY_VOICE_AGENT_MODEL"]
-    backend = _microphone_backend() if microphone else None
-    input_path = None if microphone else Path(os.environ["FOUNDRY_VOICE_AUDIO_INPUT_PATH"])
-    output_path = os.environ.get("FOUNDRY_VOICE_AUDIO_OUTPUT_PATH")
-    if output_path and input_path is not None:
-        output = Path(output_path)
-        if output.resolve() == input_path.resolve() or (output.exists() and output.samefile(input_path)):
-            raise ValueError("The audio output path must not overwrite the input recording.")
+    backend = _microphone_backend() if USE_MICROPHONE else None
+    input_path = None if USE_MICROPHONE else Path(os.environ["FOUNDRY_VOICE_AUDIO_INPUT_PATH"])
+    output_path: Optional[Path] = None
     agent_name = sample_agent_name("audio")
 
     with ExitStack() as files:
         recording = files.enter_context(wave.open(str(input_path), "rb")) if input_path is not None else None
         if recording is not None:
             _validate_recording(recording)
-        output_file = files.enter_context(wave.open(output_path, "wb")) if output_path else None
-        if output_file is not None:
+        output_file: Optional[wave.Wave_write] = None
+        if SAVE_AUDIO:
+            output_directory = Path(mkdtemp(prefix="voice-agent-live-audio-"))
+            output_path = output_directory / "reply.wav"
+            print(f"Audio output directory: {output_directory}")
+            output_stream = files.enter_context(output_path.open("xb"))
+            output_file = files.enter_context(wave.open(output_stream, "wb"))
             output_file.setnchannels(1)
             output_file.setsampwidth(2)
             output_file.setframerate(_SAMPLE_RATE)
@@ -490,7 +497,7 @@ async def main(*, microphone: bool = False) -> None:
                         store=False,
                     ),
                 )
-                if microphone:
+                if USE_MICROPHONE:
                     await _run_audio_conversation(
                         project_client, agent_name, created_version.version, None, output_file, audio_backend=backend
                     )
@@ -505,16 +512,11 @@ async def main(*, microphone: bool = False) -> None:
                     )
                     print(f"Deleted sample agent version: {created_version.version}")
     if output_path:
-        print("Saved actual returned PCM16 WAV audio to FOUNDRY_VOICE_AUDIO_OUTPUT_PATH (not telemetry).")
+        print(f"Saved actual returned PCM16 WAV audio: {output_path} (not telemetry).")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Talk to GPT Live using a WAV file or your microphone.")
-    parser.add_argument(
-        "--microphone", action="store_true", help="Stream the default microphone and play replies using PyAudio."
-    )
-    arguments = parser.parse_args()
     try:
-        asyncio.run(main(microphone=arguments.microphone))
+        asyncio.run(main())
     except KeyboardInterrupt:
         print("\nStopped.")

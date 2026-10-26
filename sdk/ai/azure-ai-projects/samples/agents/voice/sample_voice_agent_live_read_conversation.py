@@ -15,17 +15,15 @@ DESCRIPTION:
     routes must be available on the service deployment; HTTP 404 is reported
     and raised, never replaced by calls to the older Realtime conversation API.
 
-    By default, no audio files are written and nothing is deleted. Pass
-    --output-dir to download Foundry-managed WAV recordings without overwriting
-    existing files. BYOS recordings must be downloaded with your own storage
-    credentials. Pass --delete only for a conversation you intend to remove:
-    deletion also removes its stored items and audio. A read/download failure
-    prevents deletion.
+    Download Foundry-managed WAV recordings into a unique folder in your user
+    temporary directory and print its location. The files remain available
+    after the sample exits and are not overwritten. Downloads contain stored
+    conversation content; remove the local folder when it is no longer needed.
+    BYOS recordings require your own storage credentials and are not downloaded.
+    The existing agent, conversation, items, and stored audio are never deleted.
 
 USAGE:
     python sample_voice_agent_live_read_conversation.py
-    python sample_voice_agent_live_read_conversation.py --output-dir live-recordings
-    python sample_voice_agent_live_read_conversation.py --delete
 
     pip install azure-ai-projects azure-identity python-dotenv
 
@@ -40,16 +38,15 @@ USAGE:
 
 from __future__ import annotations
 
-import argparse
 from itertools import islice
 import os
 from pathlib import Path
-from typing import Optional
+from tempfile import mkdtemp
 
 from dotenv import load_dotenv
 from live_sample_utils import recording_output, safe_print
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient, models
 from azure.ai.projects.operations import BetaVoiceAgentsLiveConversationsOperations
@@ -61,7 +58,7 @@ def _read_item(
     conversation_id: str,
     item_id: str,
     index: int,
-    output_directory: Optional[Path],
+    output_directory: Path,
 ) -> None:
     detail = conversations.get_item(agent_name, conversation_id, item_id)
     print(f"Item {detail.id}: type={detail.type}")
@@ -78,21 +75,16 @@ def _read_item(
     print(f"  Audio: role={audio.role}, sample_rate={audio.sample_rate}, duration={audio.duration_ms}")
     if audio.blob_uri:
         print("  BYOS item: download from your storage using your own credentials.")
-        if output_directory is not None:
-            raise RuntimeError("This sample downloads Foundry-managed audio only, not BYOS audio.")
-    elif output_directory is not None:
-        with recording_output(output_directory / f"item-{index:04d}.wav") as output:
-            for chunk in conversations.download_audio_item(agent_name, conversation_id, item_id):
-                output.write(chunk)
+        raise RuntimeError("This sample downloads Foundry-managed audio only, not BYOS audio.")
+    with recording_output(output_directory / f"item-{index:04d}.wav") as output:
+        for chunk in conversations.download_audio_item(agent_name, conversation_id, item_id):
+            output.write(chunk)
 
 
 def _read_conversation(
     conversations: BetaVoiceAgentsLiveConversationsOperations,
     agent_name: str,
     conversation_id: str,
-    *,
-    output_directory: Optional[Path],
-    delete: bool,
 ) -> None:
     conversation = conversations.get(agent_name, conversation_id)
     if conversation.status != "completed":
@@ -106,8 +98,8 @@ def _read_conversation(
     for recent in islice(conversations.list(agent_name, limit=5, order="desc"), 5):
         print(f"  {recent.id}: status={recent.status}")
 
-    if output_directory is not None:
-        output_directory.mkdir(parents=True, exist_ok=True)
+    output_directory = Path(mkdtemp(prefix="voice-agent-live-"))
+    print(f"Audio output directory: {output_directory}")
 
     seen_items: set[str] = set()
     for index, item in enumerate(conversations.list_items(agent_name, conversation_id, limit=20, order="asc"), 1):
@@ -123,26 +115,15 @@ def _read_conversation(
     )
     if recording.blob_uri:
         print("BYOS recording: download from your storage using your own credentials.")
-        if output_directory is not None:
-            raise RuntimeError("This sample downloads Foundry-managed audio only, not BYOS audio.")
-    elif output_directory is not None:
-        with recording_output(output_directory / "conversation.wav") as output:
-            for chunk in conversations.download_audio(agent_name, conversation_id):
-                output.write(chunk)
+        raise RuntimeError("This sample downloads Foundry-managed audio only, not BYOS audio.")
+    with recording_output(output_directory / "conversation.wav") as output:
+        for chunk in conversations.download_audio(agent_name, conversation_id):
+            output.write(chunk)
 
-    if delete:
-        conversations.delete(agent_name, conversation_id)
-        try:
-            conversations.get(agent_name, conversation_id)
-        except ResourceNotFoundError:
-            print(f"Deleted conversation {conversation_id}; confirmed HTTP 404.")
-        else:
-            raise RuntimeError("The conversation remains readable after deletion.")
-    else:
-        print("Read-only run: the conversation, items, and audio were not deleted.")
+    print("Read-only REST run: the existing agent, conversation, items, and stored audio were not modified.")
 
 
-def main(*, output_directory: Optional[Path] = None, delete: bool = False) -> None:
+def main() -> None:
     load_dotenv()
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     agent_name = os.environ["FOUNDRY_VOICE_AGENT_NAME"]
@@ -159,8 +140,6 @@ def main(*, output_directory: Optional[Path] = None, delete: bool = False) -> No
                 project_client.beta.voice_agents.live_conversations,
                 agent_name,
                 conversation_id,
-                output_directory=output_directory,
-                delete=delete,
             )
         except HttpResponseError as exc:
             print(f"GPT Live conversation REST request failed: HTTP {exc.status_code}.")
@@ -175,10 +154,4 @@ def main(*, output_directory: Optional[Path] = None, delete: bool = False) -> No
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Read a stored GPT Live conversation through the dedicated REST API.")
-    parser.add_argument(
-        "--output-dir", type=Path, help="Explicitly save audio to this directory; files are not overwritten."
-    )
-    parser.add_argument("--delete", action="store_true", help="Delete the selected conversation, its items, and audio.")
-    options = parser.parse_args()
-    main(output_directory=options.output_dir, delete=options.delete)
+    main()
