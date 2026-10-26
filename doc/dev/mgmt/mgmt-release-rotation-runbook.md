@@ -24,6 +24,14 @@ Rotation assignment does not grant repository, CODEOWNER, or release permissions
 
 ## Step 1. Find PRs needing attention
 
+For a quick grouped list, ask Copilot: **"Use azsdk-python-mgmt-pr-triage to show
+management SDK PRs needing attention."** The read-only
+[PR triage skill](../../../.github/skills/azsdk-python-mgmt-pr-triage/SKILL.md)
+lists automated reviews to trigger, active reviews, missing human approvals,
+changes after approval, and author follow-ups. Its instructions also include a
+standalone command for clients without skill support. Check any verification
+warnings; the report does not establish release readiness.
+
 Start from one [management AutoPR queue](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+draft%3Afalse+%22%5BAutoPR+azure-mgmt-%22+in%3Atitle+sort%3Aupdated-desc).
 It lists open, non-draft PRs, most recently updated first. Open each PR and check
 for these three cases:
@@ -66,6 +74,12 @@ For routine review, focus on the bot comment and current CI:
 
 Leaving `mgmt-review-needed` on the PR does not request another review after a push.
 Do not request another run while one is active.
+To check quickly, use the PR triage skill's **Automated review active** queue,
+which links the management review workflow runs associated with each PR.
+Queued or waiting runs also count as active. If it reports **Review activity
+unknown**, inspect the linked workflow runs or ask the Python owner; do not
+assume it is safe to retrigger. Activity can change after a scan, so confirm
+the linked run status immediately before removing and reapplying the label.
 
 ## Step 3. Approve or re-approve
 
