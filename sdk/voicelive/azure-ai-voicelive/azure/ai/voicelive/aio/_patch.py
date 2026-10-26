@@ -13,6 +13,7 @@ import sys
 import json
 import logging
 from contextlib import AbstractAsyncContextManager
+from types import SimpleNamespace
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 from typing import Any, Mapping, Optional, Sequence, Union, AsyncIterator, cast, overload
 
@@ -665,6 +666,15 @@ class WebsocketConnectionOptions(TypedDict, total=False):
     vendor_options: NotRequired[Mapping[str, Any]]
 
 
+async def _reject_websocket_redirect(
+    _session: aiohttp.ClientSession,
+    _trace_config_ctx: SimpleNamespace,
+    params: aiohttp.TraceRequestRedirectParams,
+) -> None:
+    params.response.close()
+    raise aiohttp.ClientError("WebSocket redirects are not supported.")
+
+
 class _VoiceLiveConnectionManager(
     AbstractAsyncContextManager["VoiceLiveConnection"]
 ):  # pylint: disable=too-many-instance-attributes
@@ -782,7 +792,10 @@ class _VoiceLiveConnectionManager(
             if not any(name.lower() == "user-agent" for name in headers):
                 headers["User-Agent"] = _USER_AGENT
 
-            session = aiohttp.ClientSession()
+            # ws_connect does not expose allow_redirects; reject before credentials can be forwarded.
+            trace_config = aiohttp.TraceConfig()
+            trace_config.on_request_redirect.append(_reject_websocket_redirect)
+            session = aiohttp.ClientSession(trace_configs=[trace_config])
             try:
                 connection_obj = await session.ws_connect(str(url), headers=headers, **self.__connection_options)
                 self.__connection = VoiceLiveConnection(

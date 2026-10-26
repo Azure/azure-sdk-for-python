@@ -25,6 +25,9 @@ from azure.storage.blob import (
     generate_container_sas,
 )
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
+from azure.core.pipeline import PipelineContext, PipelineRequest
+from azure.core.pipeline.transport import HttpRequest  # pylint: disable=non-abstract-transport-import
+from azure.storage.blob._shared.policies import StorageLoggingPolicy
 
 if sys.version_info >= (3,):
     from urllib.parse import parse_qs, quote, urlparse
@@ -400,3 +403,37 @@ class TestStorageLogging(StorageRecordedTestCase):
             # Assert - logging_body=False should override constructor setting on both attempts
             assert request_body not in log_as_str
             assert call_count == 2  # Verify retry happened
+
+    def _log_request(self, headers):
+        request = HttpRequest("PUT", "https://account.blob.core.windows.net/c/b", headers=headers)
+        with LogCaptured(self) as log_captured:
+            StorageLoggingPolicy(logging_enable=True).on_request(PipelineRequest(request, PipelineContext(None)))
+            return log_captured.getvalue()
+
+    def test_secret_headers_are_redacted(self):
+        for header in (
+            "Authorization",
+            "x-ms-encryption-key",
+            "x-ms-source-encryption-key",
+            "x-ms-copy-source-authorization",
+        ):
+            log_as_str = self._log_request({header: "value"})
+            assert header in log_as_str
+            assert "value" not in log_as_str
+
+    def test_source_url_sas_is_scrubbed(self):
+        for header in ("x-ms-copy-source", "x-ms-file-rename-source", "x-ms-rename-source"):
+            log_as_str = self._log_request({header: "https://src.blob.core.windows.net/c/b?sv=2025-01-05&sig=value"})
+            assert "value" not in log_as_str
+            assert "src.blob.core.windows.net" in log_as_str
+
+    def test_diagnostic_headers_remain_visible(self):
+        log_as_str = self._log_request(
+            {
+                "x-ms-encryption-key-sha256": "value",
+                "x-ms-encryption-algorithm": "AES256",
+                "x-ms-client-request-id": "req-id-123",
+            }
+        )
+        for value in ("value", "AES256", "req-id-123"):
+            assert log_as_str.count(value) == 1
