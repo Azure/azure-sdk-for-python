@@ -1,0 +1,35 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: input_asset_defaults_component
+display_name: Component with asset-backed input defaults
+description: This component has default values for non-primitive inputs
+
+version: 0.0.1
+
+inputs:
+  spaceship_data:
+    type: uri_file
+    mode: ro_mount
+    default: azureml:dsp_da_test_use_case_spaceships_uri_file:50322a7173b6976c
+  folder_data:
+    type: uri_folder
+    default: azureml:folder_asset:1
+  table_data:
+    type: mltable
+    default: azureml:table_asset:1
+  year:
+    type: integer
+    default: 2025
+
+outputs:
+  output_path:
+    type: uri_folder
+
+command: >-
+  echo ${{inputs.spaceship_data}} &
+  echo ${{inputs.folder_data}} &
+  echo ${{inputs.table_data}} &
+  echo ${{inputs.year}} > ${{outputs.output_path}}/year
+
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33

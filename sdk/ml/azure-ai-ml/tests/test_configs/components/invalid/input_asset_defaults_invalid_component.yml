@@ -1,0 +1,23 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: input_asset_defaults_invalid_component
+display_name: Component with an invalid default on a non-primitive input
+description: The default of a uri_file input must be a string asset or path reference
+
+version: 0.0.1
+
+inputs:
+  spaceship_data:
+    type: uri_file
+    mode: ro_mount
+    default: 123
+
+outputs:
+  output_path:
+    type: uri_folder
+
+command: >-
+  echo ${{inputs.spaceship_data}} > ${{outputs.output_path}}/out
+
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
