@@ -4,6 +4,10 @@
 
 ### Features Added
 
+- Expose the persisted execution version as `agent_version` on task records
+  and contexts. New turns from pending/suspended state update the stored
+  version; crash recovery and retries preserve the admitted turn's value.
+  Unknown versions remain `None`; SDK metadata does not select worker images.
 - Added protocol-scoped task-runtime startup requests so protocol hosts can
   obtain scoped `TaskManager` access without mutating the process-wide
   resilient-task switch. This prevents one protocol's enablement from

@@ -409,6 +409,7 @@ namespace azure.ai.agentserver.responses
 
 
     class azure.ai.agentserver.responses.ResponseContext:
+        property agent_version: str | None    # Read-only
         property conversation_chain_id: str    # Read-only
         client_cancelled: bool
         client_headers: dict[str, str]

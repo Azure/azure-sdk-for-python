@@ -861,11 +861,13 @@ namespace azure.ai.agentserver.core.tasks
 
 
     class azure.ai.agentserver.core.tasks.TaskContext(Generic[Input]):
+        property agent_version: str | None    # Read-only
         property pending_input_count: int    # Read-only
 
         def __init__(
                 self, 
                 *, 
+                agent_version: str | None = ...,
                 cancel: Event | None = ..., 
                 entry_mode: EntryMode = "fresh", 
                 input: Input, 

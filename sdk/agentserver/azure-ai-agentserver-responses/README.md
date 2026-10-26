@@ -218,6 +218,20 @@ survives client disconnect. For the complete request matrix and advanced
 recovery guidance, see
 the [Resilient Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilient-responses-developer-guide.md).
 
+### Task execution version in handlers
+
+`context.agent_version` forwards the execution version stored on the underlying
+durable task. A new turn resumed from suspension by version `"2"` records `"2"`;
+crash recovery of that turn retains `"2"`. This is the same value exposed by core
+`TaskContext`, not a second stored version or the incoming request's
+`agent_reference.version`. It does not retain the task's creation version.
+
+The value is `None` when no durable task is bound or its execution version is
+unknown, including legacy tasks and older task services. Handle that case
+explicitly; do not assume it means the current/latest version. Keep compatible
+task names and input/state readers across idle upgrades. The SDK does not
+pin an image or automatically migrate state.
+
 ## Examples
 
 ### Echo handler

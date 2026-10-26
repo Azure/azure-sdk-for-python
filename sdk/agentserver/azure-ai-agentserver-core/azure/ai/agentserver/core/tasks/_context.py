@@ -83,12 +83,16 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
     :param shutdown: Container-level shutdown event. Precondition for
         :meth:`exit_for_recovery`.
     :type shutdown: asyncio.Event
+    :param agent_version: Persisted execution version for this turn.
+        Refreshed on a new turn and preserved across crash recovery.
+    :type agent_version: str | None
     """
 
     __slots__ = (
         "task_id",
         "input_id",  #   /
         "_session_id",
+        "_agent_version",
         "input",
         "retry_attempt",
         "recovery_count",
@@ -122,12 +126,14 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         is_steered_turn: bool = False,
         pending_count_provider: Callable[[], int] | None = None,
         input_id: str | None = None,
+        agent_version: str | None = None,
     ) -> None:
         self.task_id = task_id
         #   /: input_id is part of the public TaskContext
         # surface. Defaults to task_id (one-shot 1:1 invariant).
         self.input_id = input_id if input_id is not None else task_id
         self._session_id = session_id
+        self._agent_version = agent_version
         self.input = input
         self.retry_attempt = retry_attempt
         self.recovery_count = recovery_count
@@ -142,6 +148,19 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         self.cancel_requested: bool = False
         self.is_steered_turn: bool = is_steered_turn
         self._pending_count_provider = pending_count_provider
+
+    @property
+    def agent_version(self) -> str | None:
+        """Persisted agent version associated with this execution.
+
+        A new turn from pending or suspended state records its executing
+        agent's version. Recovery and retries keep the interrupted turn's
+        value. None means that execution version is unknown.
+
+        :return: Task execution agent version, or None when unknown.
+        :rtype: str | None
+        """
+        return self._agent_version
 
     @property
     def pending_input_count(self) -> int:

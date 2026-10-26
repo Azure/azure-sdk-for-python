@@ -347,6 +347,21 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self._task_context: "_CoreTaskContext[Any] | None" = None
 
     @property
+    def agent_version(self) -> str | None:
+        """Persisted version for the underlying task's current execution.
+
+        The same value is exposed by TaskContext. New turns from suspension
+        record the executing version; crash recovery preserves that turn's
+        value. None means no task is bound or its execution version is unknown.
+
+        :return: Task execution agent version, or None when unavailable.
+        :rtype: str | None
+        """
+        if self._task_context is None:
+            return None
+        return self._task_context.agent_version
+
+    @property
     def conversation_chain_id(self) -> str:
         """Stable identifier for the multi-turn conversation chain.
 

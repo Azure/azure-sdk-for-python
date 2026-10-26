@@ -119,6 +119,9 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
         :type completed_at: str | None
         :param source: Source/initiator metadata (free-form key/value).
         :type source: dict[str, Any] | None
+        :param agent_version: Persisted version associated with the current
+            execution, refreshed on new turns and preserved during recovery.
+        :type agent_version: str | None
     :param attachments: Optional companion store  for
             per-input payloads larger than the framework's inline-payload
             thresholds. Maximum 20 entries, each ≤ 2 MB. Keys starting with
@@ -147,6 +150,7 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
         "completed_at",
         "source",
         "attachments",
+        "agent_version",
     )
 
     def __init__(
@@ -169,7 +173,10 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
         completed_at: str | None = None,
         source: dict[str, Any] | None = None,
         attachments: dict[str, Any] | None = None,
+        agent_version: str | None = None,
     ) -> None:
+        if agent_version is not None and not isinstance(agent_version, str):
+            raise TypeError("agent_version must be a string or None")
         self.id = id
         self.agent_name = agent_name
         self.session_id = session_id
@@ -188,6 +195,7 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
         self.completed_at = completed_at
         self.source = source
         self.attachments = attachments
+        self.agent_version = agent_version
 
     def __repr__(self) -> str:
         return f"TaskInfo(id={self.id!r}, status={self.status!r}, agent_name={self.agent_name!r})"
@@ -233,6 +241,7 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
             completed_at=data.get("completed_at"),
             source=data.get("source"),
             attachments=data.get("attachments"),
+            agent_version=data.get("agent_version"),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -275,6 +284,8 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
             result["source"] = self.source
         if self.attachments is not None:
             result["attachments"] = self.attachments
+        if self.agent_version is not None:
+            result["agent_version"] = self.agent_version
         result["etag"] = self.etag
         result["created_at"] = self.created_at
         result["updated_at"] = self.updated_at

@@ -324,6 +324,26 @@ print(result)  # {"summary": "..."}
 See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
 See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
 
+### Task execution agent version
+
+`TaskContext.agent_version` is the persisted version associated with the current
+task execution. Hosted task storage records it at creation from the
+validated agent identity; the default local backend records the configured
+`FOUNDRY_AGENT_VERSION`.
+
+A task created by version `"1"` exposes `"1"`. If it suspends and a new turn
+is admitted by version `"2"`, the task document and context are updated to `"2"`.
+Crash recovery, retries, and lease renewals preserve that admitted turn's version:
+a crash after the version `"2"` resume still reports `"2"`. Merely loading a
+suspended task does not update it. The value is `None` when the executing version
+is unknown, including legacy records and older task services; it does not mean
+the latest version.
+
+This field is execution metadata, not immutable creation provenance or a
+state-schema version. Keep task names, input envelopes, and state readers
+compatible across idle upgrades; typed input may be decoded before your handler
+runs. The SDK does not select an image or automatically migrate application state.
+
 ## Troubleshooting
 
 ### Logging
