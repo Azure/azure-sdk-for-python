@@ -65,6 +65,34 @@ class AdvancedNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disable Layer 7 network policies (FQDN, HTTP/S, Kafka)."""
 
 
+class AgentFabricMembershipProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state of the AgentFabric membership."""
+
+    CANCELED = "Canceled"
+    """The provisioning of the AgentFabric membership was canceled."""
+    CREATING = "Creating"
+    """The AgentFabric membership is being created."""
+    DELETING = "Deleting"
+    """The AgentFabric membership is being deleted."""
+    FAILED = "Failed"
+    """The provisioning of the AgentFabric membership failed."""
+    SUCCEEDED = "Succeeded"
+    """The AgentFabric membership was provisioned successfully."""
+    UPDATING = "Updating"
+    """The AgentFabric membership is being updated."""
+
+
+class AgentFabricMembershipSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU of the AgentFabric membership. The SKU determines which AgentFabric components are
+    deployed to the cluster.
+    """
+
+    STANDARD = "Standard"
+    """The Standard SKU."""
+    PREMIUM = "Premium"
+    """The Premium SKU."""
+
+
 class AgentPoolMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at all times.
     For additional information on agent pool restrictions and best practices, see:
@@ -104,7 +132,7 @@ class AgentPoolNetworkInterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     DYNAMIC = "Dynamic"
     """A secondary network interface created without IP configuration or subnet attachment. The
     interface is provisioned in an uninitialized state and the subnet is attached during workload
-    creation. ``vnetSubnetId`` must be set to an empty string (``""``) or omitted."""
+    creation. ``vnetSubnetId`` must be set to an empty string (``\"\"``) or omitted."""
 
 
 class AgentPoolNICPublicIPAddressVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -203,6 +231,28 @@ class BastionSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use the standard SKU of Azure Bastion."""
     PREMIUM = "Premium"
     """Use the premium SKU of Azure Bastion."""
+
+
+class CloudShellProfileMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cloud Shell connectivity mode."""
+
+    DISABLED = "Disabled"
+    """Cloud Shell connectivity is disabled."""
+    MANAGED = "Managed"
+    """Cloud Shell connectivity uses network resources managed by AKS."""
+    CUSTOM = "Custom"
+    """Cloud Shell connectivity uses network resources provided by the user."""
+
+
+class CloudShellStorageProfileMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How Cloud Shell storage resources are managed."""
+
+    DISABLED = "Disabled"
+    """Persistent storage is disabled."""
+    MANAGED = "Managed"
+    """AKS manages the storage resources."""
+    CUSTOM = "Custom"
+    """The user provides the storage resources."""
 
 
 class ClusterServiceLoadBalancerHealthProbeMode(  # pylint: disable=name-too-long
@@ -428,6 +478,15 @@ class IdentityBindingProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     """The identity binding is being deleted."""
 
 
+class ImpactedResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The category of a resource impacted by a detected upgrade issue."""
+
+    ARM = "Arm"
+    """An Azure Resource Manager (ARM) resource."""
+    KUBERNETES = "Kubernetes"
+    """A Kubernetes resource."""
+
+
 class InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
     More information on this can be found under
@@ -521,6 +580,20 @@ class KubernetesSupportPlan(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AKS_LONG_TERM_SUPPORT = "AKSLongTermSupport"
     """Support for the version extended past the KubernetesOfficial support of 1 year. AKS continues
     to patch CVEs for another 1 year, for a total of 2 years of support."""
+
+
+class KubernetesVersionSupportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The support status of the Kubernetes version the cluster is currently running. This is
+    intentionally binary — there is no discrete ``ApproachingEOL`` value. Proximity to end of
+    support is derived by clients from ``kubernetesVersionEndOfSupportDate`` (comparing it against
+    the current time), so no server-computed \"approaching EOS\" flag or message is returned that
+    could go stale in a cached record.
+    """
+
+    IN_SUPPORT = "InSupport"
+    """The scope is running a Kubernetes version that is still within its support window."""
+    OUT_OF_SUPPORT = "OutOfSupport"
+    """The scope is running a Kubernetes version that is past its end of support."""
 
 
 class LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -634,6 +707,17 @@ class LocalDNSState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """localDNS is enabled."""
     DISABLED = "Disabled"
     """localDNS is disabled."""
+
+
+class MaintenanceWindowSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The auto-upgrade schedule that a maintenance window is derived from."""
+
+    CLUSTER_AUTO_UPGRADE_SCHEDULE = "ClusterAutoUpgradeSchedule"
+    """The window is derived from the cluster auto-upgrade schedule (aksManagedAutoUpgradeSchedule),
+    which governs Kubernetes version upgrades."""
+    NODE_OS_UPGRADE_SCHEDULE = "NodeOSUpgradeSchedule"
+    """The window is derived from the node OS auto-upgrade schedule (aksManagedNodeOSUpgradeSchedule),
+    which governs node OS image upgrades."""
 
 
 class ManagedClusterNATGatewaySku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -877,7 +961,7 @@ class NodeDisruptionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     .properties.ManagedClusterSecurityProfile.customCATrustCertificates field on an existing
     managed cluster, trigger rolling updates of the nodes. This setting allows control over when
     such updates are accepted. The default is 'Allow'. For a full list of covered operations see
-    aka.ms/aks/nodedisruptionpolicy".
+    aka.ms/aks/nodedisruptionpolicy\".
     """
 
     ALLOW = "Allow"
@@ -1433,6 +1517,80 @@ class UpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disables auto-upgrades and keeps the cluster at its current version of Kubernetes."""
 
 
+class UpgradeInsightStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The overall status of an upgrade insight readiness evaluation. This is an aggregation of the
+    per-issue ``severity`` values in ``detectedIssues``: any ``Blocking`` issue ⇒ ``Failed``;
+    otherwise any ``Warning`` issue ⇒ ``Warning``; otherwise (no issues) ⇒ ``Passed``. The
+    scope-level vocabulary here (Passed/Warning/Failed) intentionally differs from the issue-level
+    ``UpgradeIssueSeverity`` (Blocking/Warning): a ``Blocking`` issue maps to a ``Failed`` status,
+    while ``Warning`` maps through unchanged.
+    """
+
+    PASSED = "Passed"
+    """The evaluation completed and no upgrade issues were found for the target version; the scope
+    appears ready to upgrade."""
+    WARNING = "Warning"
+    """The evaluation found one or more non-blocking warnings; the upgrade is expected to succeed but
+    the warnings should be reviewed."""
+    FAILED = "Failed"
+    """The evaluation found one or more blocking issues that will prevent the upgrade from completing
+    until they are resolved. This reflects the readiness result, not a failure of the compute
+    operation itself (that is conveyed by provisioningState)."""
+
+
+class UpgradeInsightStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The strategy currently used to perform an upgrade (manual or automatic)."""
+
+    MANUAL = "Manual"
+    """Upgrades are initiated manually by the customer."""
+    AUTO = "Auto"
+    """Upgrades are performed automatically by AKS auto-upgrade."""
+
+
+class UpgradeIssueSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The severity of a detected upgrade issue."""
+
+    BLOCKING = "Blocking"
+    """The issue will block the upgrade from completing successfully."""
+    WARNING = "Warning"
+    """The issue may cause problems with client applications or services on the cluster but will not
+    necessarily prevent the upgrade from completing."""
+
+
+class UpgradeIssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a detected upgrade issue."""
+
+    PDB_CONSTRAINT = "PDBConstraint"
+    """A restrictive PodDisruptionBudget prevents node drain during upgrade. See
+    `https://aka.ms/aks/upgrade-insights/pdb-constraint
+    <https://aka.ms/aks/upgrade-insights/pdb-constraint>`_ for remediation guidance."""
+    SUBNET_IP_EXHAUSTED = "SubnetIPExhausted"
+    """The cluster subnet does not have sufficient available IP addresses for surge nodes during
+    upgrade. See `https://aka.ms/aks/upgrade-insights/subnet-ip-exhaustion
+    <https://aka.ms/aks/upgrade-insights/subnet-ip-exhaustion>`_ for remediation guidance."""
+    QUOTA_EXCEEDED = "QuotaExceeded"
+    """Compute quota for the node pool VM SKU is insufficient to accommodate surge nodes during
+    upgrade. See `https://aka.ms/aks/upgrade-insights/quota-exceeded
+    <https://aka.ms/aks/upgrade-insights/quota-exceeded>`_ for remediation guidance."""
+    API_BREAKING_CHANGE = "APIBreakingChange"
+    """The cluster is using deprecated Kubernetes APIs that are removed in the target version. See
+    `https://aka.ms/aks/upgrade-insights/api-breaking-change
+    <https://aka.ms/aks/upgrade-insights/api-breaking-change>`_ for remediation guidance."""
+    COMPONENT_VERSION_MISMATCH = "ComponentVersionMismatch"
+    """An add-on or system component is not compatible with the target Kubernetes version. See
+    `https://aka.ms/aks/upgrade-insights/component-version-mismatch
+    <https://aka.ms/aks/upgrade-insights/component-version-mismatch>`_ for remediation guidance."""
+    UNSUPPORTED_KUBERNETES_VERSION = "UnsupportedKubernetesVersion"
+    """The cluster is running a Kubernetes version that is no longer supported. See
+    `https://aka.ms/aks/upgrade-insights/unsupported-kubernetes-version
+    <https://aka.ms/aks/upgrade-insights/unsupported-kubernetes-version>`_ for remediation
+    guidance."""
+    NODE_IMAGE_OUT_OF_SLA = "NodeImageOutOfSLA"
+    """The cluster node image has not been upgraded within the required compliance interval. See
+    `https://aka.ms/aks/upgrade-insights/node-image-out-of-sla
+    <https://aka.ms/aks/upgrade-insights/node-image-out-of-sla>`_ for remediation guidance."""
+
+
 class UpgradeStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the upgrade strategy for the agent pool. The default is Rolling."""
 
@@ -1441,6 +1599,26 @@ class UpgradeStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     strategy."""
     BLUE_GREEN = "BlueGreen"
     """Specifies that the agent pool will conduct blue-green upgrade."""
+
+
+class UpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of upgrade an upgrade insight evaluates. Each upgrade insight resource represents
+    exactly one of these scopes; the scope is encoded in the resource name.
+    """
+
+    CONTROL_PLANE = "ControlPlane"
+    """The control plane (managed cluster) Kubernetes version upgrade."""
+    AGENT_POOL = "AgentPool"
+    """An agent pool (node pool) Kubernetes version upgrade."""
+    NODE_IMAGE = "NodeImage"
+    """An agent pool node OS image upgrade. NodeImage upgrade insights are evaluated per agent pool,
+    mirroring the per-pool node-image upgrade API (.../agentPools/{name}), and cover the node OS
+    image only; agent-pool Kubernetes version readiness is evaluated separately via the AgentPool
+    or ControlPlaneAndAgentPools scopes."""
+    CONTROL_PLANE_AND_AGENT_POOLS = "ControlPlaneAndAgentPools"
+    """A combined evaluation of the control plane plus every agent pool for a single target Kubernetes
+    version. This scope covers Kubernetes version upgrades only; node OS image upgrades are not
+    included and must be evaluated separately using the NodeImage scope."""
 
 
 class VmState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -18,11 +18,11 @@ from urllib.parse import urlsplit
 from azure.storage.blob import ContainerClient
 from azure.core.paging import ItemPaged
 from azure.core.polling import NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from .. import models as _models
 from .._utils.model_base import _deserialize
+from .._utils.polling import AIProjectsLROBasePolling
 from ..models import DatasetGenerationLROPoller
 from ..models._patch import (
     _DATA_GENERATION_JOBS_FEATURE_HEADER,
@@ -143,7 +143,7 @@ class _DatasetsOperationsWithGeneration(DatasetsOperationsGenerated):
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                LROBasePolling(
+                AIProjectsLROBasePolling(
                     lro_delay, path_format_arguments=path_format_arguments, headers=polling_headers, **kwargs
                 ),
             )

@@ -37,6 +37,7 @@ from starlette.routing import Route
 from azure.ai.agentserver.core import (
     AgentServerHost,
     FoundryAgentRequestContext,
+    FoundryOriginalSubject,
     build_server_version,
     create_error_response,
     detach_context,
@@ -808,6 +809,16 @@ class ActivityAgentServerHost(AgentServerHost):
         inbound_call_id = request.headers.get(FOUNDRY_CALL_ID, "")
         session_id = _sanitize_id(self._resolve_session_id(request), str(uuid.uuid4()))
 
+        try:
+            original_subject = FoundryOriginalSubject.from_headers(request.headers)
+        except ValueError:
+            response = self._build_bad_request(
+                "Invalid original-subject platform header.", session_id, "invalid_original_subject"
+            )
+            response.headers[ERROR_SOURCE] = ErrorSource.PLATFORM
+            response.headers[ERROR_DETAIL] = "invalid_original_subject"
+            return response
+
         # Bind platform context so handler/tool code can forward the per-request
         # call ID and user ID, and so log records carry the correlation fields.
         ctx_token = set_request_context(
@@ -815,6 +826,7 @@ class ActivityAgentServerHost(AgentServerHost):
                 call_id=inbound_call_id or None,
                 user_id=inbound_user_id or None,
                 session_id=session_id,
+                original_subject=original_subject,
             )
         )
         baggage_token: Optional[Token[Context]] = None

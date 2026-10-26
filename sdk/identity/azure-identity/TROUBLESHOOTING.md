@@ -287,6 +287,18 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 |---|---|---|
 |WorkloadIdentityCredential authentication unavailable. The workload options are not fully configured|The `WorkloadIdentityCredential` requires `client_id`, `tenant_id` and `token_file_path` to authenticate with Microsoft Entra ID.| <ul><li>If using `DefaultAzureCredential` then:</li><ul><li>Ensure client ID is specified via the `workload_identity_client_id` keyword argument or the `AZURE_CLIENT_ID` env variable.</li><li>Ensure tenant ID is specified via the `AZURE_TENANT_ID` env variable.</li><li>Ensure token file path is specified via `AZURE_FEDERATED_TOKEN_FILE` env variable.</li><li>Ensure authority host is specified via `AZURE_AUTHORITY_HOST` env variable.</ul><li>If using `WorkloadIdentityCredential` then:</li><ul><li>Ensure tenant ID is specified via the `tenant_id` keyword argument or the `AZURE_TENANT_ID` env variable.</li><li>Ensure client ID is specified via the `client_id` keyword argument or the `AZURE_CLIENT_ID` env variable.</li><li>Ensure token file path is specified via the `token_file_path` keyword argument or the `AZURE_FEDERATED_TOKEN_FILE` environment variable. </li></ul></li><li>Consult the [product troubleshooting guide](https://azure.github.io/azure-workload-identity/docs/troubleshooting.html) for other issues.</li></ul>|
 
+#### `ClientAuthenticationError` for applications using [Azure Kubernetes Service identity bindings](https://learn.microsoft.com/azure/aks/identity-bindings-concepts)
+
+| Error Message |Description| Mitigation |
+|---|---|---|
+|<ul><li>AADSTS700211: No matching federated identity record found for presented assertion issuer ...</li><li>AADSTS700212: No matching federated identity record found for presented assertion audience 'api://AKSIdentityBinding'.</li></ul> |`WorkloadIdentityCredential` isn't configured to use the identity binding proxy|Set the `enable_azure_proxy` keyword argument to `True` when creating `WorkloadIdentityCredential`. Note that identity binding mode isn't supported when `WorkloadIdentityCredential` is used via `DefaultAzureCredential`. `WorkloadIdentityCredential` should be used directly in this scenario.|
+
+For asynchronous identity binding requests, the credential uses aiohttp when it supports the `server_hostname` argument (aiohttp 3.9 and later). If aiohttp is missing or lacks this support, the credential falls back to Requests running in an executor thread.
+
+Identity binding mode forwards `connection_timeout`, `read_timeout`, `connection_data_block_size`, and `use_env_settings` to its transport. It continues to select its own transport and session and uses the AKS-provided SNI and CA configuration; credential constructor options for custom transports, sessions, and TLS settings do not override that configuration.
+
+Token caching uses the original Microsoft Entra endpoint, not the proxy URL. A path prefix in `AZURE_KUBERNETES_TOKEN_PROXY` therefore doesn't change the tenant used for cache entries or prevent token reuse.
+
 ## Troubleshoot `AzurePipelinesCredential` authentication issues
 
 [comment]: # ( cspell:ignore oidcrequesturi )
