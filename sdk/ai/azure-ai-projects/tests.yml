@@ -96,6 +96,9 @@ extends:
                 workingDirectory: $(packageRoot)
                 displayName: 'Validate wildcard and invocation behavior offline'
               - pwsh: |
+                  if (-not (Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue)) {
+                    Register-PSRepository -Default -ErrorAction Stop
+                  }
                   Install-Module -Name Pester -RequiredVersion 4.10.1 -Repository PSGallery -Scope CurrentUser -Force -ErrorAction Stop
                   Import-Module Pester -RequiredVersion 4.10.1 -Force
                   $result = Invoke-Pester -Script './tests/samples/ci' -PassThru
