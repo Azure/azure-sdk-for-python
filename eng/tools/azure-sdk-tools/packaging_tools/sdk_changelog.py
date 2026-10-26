@@ -49,6 +49,8 @@ def has_prior_ga_release(package_name: str) -> bool:
         releases = PyPIClient(force_pypi=True).project(package_name)["releases"]
         for release, files in releases.items():
             # Yanked files still count as published; empty release entries do not.
+            if not isinstance(files, list):
+                raise ValueError(f"Invalid release file list for {release!r}: expected a list")
             if not files:
                 continue
             version = Version(release)
