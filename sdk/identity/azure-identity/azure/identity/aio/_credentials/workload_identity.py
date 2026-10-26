@@ -4,14 +4,19 @@
 # ------------------------------------
 # cspell:ignore cafile
 import os
+from inspect import signature
 from typing import Any, Optional
 
 from .client_assertion import ClientAssertionCredential
 from ..._credentials.workload_identity import (
     TokenFileMixin,
     WORKLOAD_CONFIG_ERROR,
+    CA_DATA_FILE_ERROR,
+    CUSTOM_PROXY_ENV_ERROR,
+    _TOKEN_PROXY_TRANSPORT_OPTIONS,
 )
 from ..._constants import EnvironmentVariables
+from ..._internal import within_credential_chain, within_dac
 
 
 class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
@@ -35,6 +40,9 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     :keyword str client_id: The client ID of a Microsoft Entra app registration.
     :keyword str token_file_path: The path to a file containing a Kubernetes service account token that authenticates
         the identity.
+    :keyword bool enable_azure_proxy: Whether to use the AKS identity binding proxy when its configuration is available.
+        Defaults to False. Use this credential directly; identity binding mode isn't supported through
+        DefaultAzureCredential.
 
     .. admonition:: Example:
 
@@ -78,6 +86,33 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
         self._token_file_path = token_file_path
 
+        if kwargs.pop("enable_azure_proxy", False) and not within_dac.get() and not within_credential_chain.get():
+            token_proxy_endpoint = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY)
+            sni = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_SNI_NAME)
+            ca_file = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_FILE)
+            ca_data = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_DATA)
+            if token_proxy_endpoint:
+                if ca_file and ca_data:
+                    raise ValueError(CA_DATA_FILE_ERROR)
+
+                transport = _get_transport(
+                    sni=sni,
+                    token_proxy_endpoint=token_proxy_endpoint,
+                    ca_file=ca_file,
+                    ca_data=ca_data,
+                    **{name: kwargs[name] for name in _TOKEN_PROXY_TRANSPORT_OPTIONS if name in kwargs},
+                )
+
+                if transport:
+                    kwargs["transport"] = transport
+                else:
+                    raise ValueError(
+                        "Async transport creation failed. Ensure that the aiohttp or requests package is installed to "
+                        "enable token proxy usage in this credential."
+                    )
+            elif sni or ca_file or ca_data:
+                raise ValueError(CUSTOM_PROXY_ENV_ERROR)
+
         super().__init__(
             tenant_id=tenant_id,
             client_id=client_id,
@@ -85,3 +120,34 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
             token_file_path=token_file_path,
             **kwargs,
         )
+
+
+def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data, **kwargs):
+    try:
+        from aiohttp import ClientSession
+
+        from .._internal.token_binding_transport_aiohttp import CustomAioHttpTransport
+
+        if "server_hostname" not in signature(ClientSession._request).parameters:  # pylint: disable=protected-access
+            raise ImportError("aiohttp transport requires server_hostname support")
+        return CustomAioHttpTransport(
+            sni=sni,
+            proxy_endpoint=token_proxy_endpoint,
+            ca_file=ca_file,
+            ca_data=ca_data,
+            **kwargs,
+        )
+    except ImportError:
+        # Fallback to async-wrapped requests transport
+        try:
+            from .._internal.token_binding_transport_asyncio import CustomAsyncioRequestsTransport
+
+            return CustomAsyncioRequestsTransport(
+                sni=sni,
+                proxy_endpoint=token_proxy_endpoint,
+                ca_file=ca_file,
+                ca_data=ca_data,
+                **kwargs,
+            )
+        except ImportError:
+            return None

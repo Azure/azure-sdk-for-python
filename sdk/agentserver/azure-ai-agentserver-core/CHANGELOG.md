@@ -1,15 +1,19 @@
 # Release History
 
-## 2.3.0b2 (Unreleased)
+## 2.3.0b2 (2026-10-26)
 
 ### Features Added
 
+- Added immutable `FoundryOriginalSubject` assertions and invocation-local
+  `FoundryAgentRequestContext.original_subject` with an explicit, model-only
+  `model_attribution_headers()` helper for the proposed `x-ms-original-subject`
+  dictionary contract. The assertions do not establish identity proof or change
+  model authentication; model integration remains an explicit per-call opt-in.
+  Both the assertions class and header helper are marked experimental.
 - Added protocol-scoped task-runtime startup requests so protocol hosts can
   obtain scoped `TaskManager` access without mutating the process-wide
   resilient-task switch. This prevents one protocol's enablement from
   activating another protocol in a mixed host.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
@@ -27,8 +31,6 @@
 - Treat a persisted task function identity as authoritative before recovery
   cleanup or reclaim. Legacy callback fallback applies only when that
   identity is absent.
-
-### Other Changes
 
 ## 2.3.0b1 (2026-10-15)
 

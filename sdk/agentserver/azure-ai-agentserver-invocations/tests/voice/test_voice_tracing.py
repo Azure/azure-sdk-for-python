@@ -22,6 +22,7 @@ from opentelemetry.trace import SpanContext, TraceFlags, TraceState
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
+from azure.ai.agentserver.core import get_request_context
 from azure.ai.agentserver.invocations._constants import InvocationsWSConstants
 from azure.ai.agentserver.invocations.voice import (
     Session,
@@ -140,6 +141,47 @@ def _session_start_frame() -> dict[str, object]:
             "max_duration_ms": 3,
         },
     }
+
+
+def test_voice_original_subject_is_invocation_local():
+    app = VoiceAgentServerHost(configure_observability=None)
+    observed = []
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        observed.append(get_request_context().model_attribution_headers())
+        await session.send(SessionReady())
+
+    subject = {"x-ms-original-subject": 'oid="voice-user", tid="tenant", idtype="user"'}
+    client = TestClient(app)
+    for headers in (subject, {}):
+        with client.websocket_connect("/invocations_ws", headers=dict(headers)) as websocket:
+            websocket.send_json(_session_start_frame())
+            assert websocket.receive_json()["type"] == "session.ready"
+    assert observed == [subject, {}]
+    assert get_request_context().original_subject is None
+
+
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+def test_voice_malformed_original_subject_closes_without_callback(path, caplog):
+    app = VoiceAgentServerHost(configure_observability=None)
+    observed = []
+
+    @app.on_session_start
+    async def on_session_start(_session, _event):
+        observed.append(True)
+
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        with TestClient(app).websocket_connect(path, headers={"x-ms-original-subject": "malformed"}) as websocket:
+            with pytest.raises(WebSocketDisconnect) as error:
+                websocket.receive_json()
+    assert error.value.code == 1011
+    assert not observed
+    assert any(
+        getattr(record, InvocationsWSConstants.ATTR_SPAN_ERROR_CODE, None) == "invalid_original_subject"
+        for record in caplog.records
+    )
+    assert get_request_context().original_subject is None
 
 
 def _span_by_name(exporter: InMemorySpanExporter, name: str):

@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.containerservice import ContainerServiceClient
+from azure.mgmt.datatransfer import DataTransferMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-containerservice
+    pip install azure-mgmt-datatransfer
 # USAGE
-    python agent_pools_create_managed_gpu.py
+    python get_flow_source_addresses.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,28 +25,19 @@ from azure.mgmt.containerservice import ContainerServiceClient
 
 
 def main():
-    client = ContainerServiceClient(
+    client = DataTransferMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.agent_pools.begin_create_or_update(
-        resource_group_name="rg1",
-        resource_name="clustername1",
-        agent_pool_name="agentpool1",
-        parameters={
-            "properties": {
-                "count": 3,
-                "gpuProfile": {"driver": "Install", "nvidia": {"managementMode": "Managed"}},
-                "mode": "User",
-                "osType": "Linux",
-                "vmSize": "Standard_NC4as_T4_v3",
-            }
-        },
-    ).result()
+    response = client.flows.get_source_addresses(
+        resource_group_name="testRG",
+        connection_name="testConnection",
+        flow_name="testFlow",
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-08-01/AgentPoolsCreate_ManagedGPU.json
+# x-ms-original-file: 2026-02-06-preview/getFlowSourceAddresses.json
 if __name__ == "__main__":
     main()
