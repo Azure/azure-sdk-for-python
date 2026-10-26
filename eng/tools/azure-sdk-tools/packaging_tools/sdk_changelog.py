@@ -9,6 +9,7 @@ import re
 import sys
 import time
 
+from packaging.version import Version
 from typing import Any, Optional
 from .package_utils import (
     change_log_generate,
@@ -38,6 +39,28 @@ def is_valid_changelog_content(content: str) -> bool:
 
 def is_arm_sdk(package_name: str) -> bool:
     return package_name.startswith("azure-mgmt-")
+
+
+def has_prior_ga_release(package_name: str) -> bool:
+    """Determine review eligibility from published PyPI history, retaining review when history is unavailable."""
+    from pypi_tools.pypi import PyPIClient
+
+    try:
+        releases = PyPIClient(force_pypi=True).project(package_name)["releases"]
+        for release, files in releases.items():
+            # Yanked files still count as published; empty release entries do not.
+            if not files:
+                continue
+            version = Version(release)
+            if version.base_version != "0.0.0" and not version.is_prerelease:
+                return True
+        return False
+    except Exception as e:
+        _LOGGER.warning(
+            f"Failed to determine prior GA releases for {package_name}: {e}; "
+            "keeping breaking-change reporting enabled."
+        )
+        return True
 
 
 # CHANGELOG.md is embedded into the package long_description (see setup.py template), so an
@@ -264,10 +287,13 @@ def main(
         changelog_generation_start_time = time.time()
         md_output, last_version = get_changelog_content(package_path, package_result, enable_changelog, timeout=timeout)
         _LOGGER.info(f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds")
+        has_breaking_change = "Breaking Changes" in md_output
+        if has_breaking_change and (package_result or output_json is not None):
+            has_breaking_change = has_prior_ga_release(package_name)
         if package_result:
             package_result["changelog"] = {
                 "content": md_output,
-                "hasBreakingChange": "Breaking Changes" in md_output,
+                "hasBreakingChange": has_breaking_change,
                 "breakingChangeItems": extract_breaking_change(md_output),
             }
             package_result["version"] = last_version
@@ -278,7 +304,7 @@ def main(
         if output_json is not None:
             result = {
                 "changes": md_output,
-                "hasBreakingChange": "Breaking Changes" in md_output,
+                "hasBreakingChange": has_breaking_change,
             }
             output_json = Path(output_json)
             output_json.parent.mkdir(parents=True, exist_ok=True)
