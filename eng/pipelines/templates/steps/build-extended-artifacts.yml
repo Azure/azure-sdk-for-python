@@ -124,6 +124,15 @@ steps:
     displayName: Clean up Artifact Directory
 
   - ${{ if ne(parameters.BuildDocs, 'true') }}:
+    - task: PythonScript@0
+      displayName: Prepare extended SBOM discovery inputs
+      inputs:
+        scriptPath: eng/scripts/prepare_extended_sbom.py
+        arguments: >-
+          --repo-root "$(Build.SourcesDirectory)"
+          --artifact-directory "$(Build.ArtifactStagingDirectory)"
+          --output-directory "$(Agent.TempDirectory)/extended-sbom-sources"
+
     - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)'
