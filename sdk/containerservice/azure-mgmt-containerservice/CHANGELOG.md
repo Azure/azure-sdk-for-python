@@ -1,5 +1,288 @@
 # Release History
 
+## 41.9.0b1 (2026-10-23)
+
+### Features Added
+
+  - Client `ContainerServiceClient` added operation group `agent_fabric_memberships`
+  - Client `ContainerServiceClient` added operation group `alert_configurations`
+  - Client `ContainerServiceClient` added operation group `container_service`
+  - Client `ContainerServiceClient` added operation group `jwt_authenticators`
+  - Client `ContainerServiceClient` added operation group `load_balancers`
+  - Client `ContainerServiceClient` added operation group `maintenance_windows`
+  - Client `ContainerServiceClient` added operation group `managed_cluster_snapshots`
+  - Client `ContainerServiceClient` added operation group `mesh_memberships`
+  - Client `ContainerServiceClient` added operation group `operation_status_result`
+  - Client `ContainerServiceClient` added operation group `upgrade_insights`
+  - Client `ContainerServiceClient` added operation group `vm_skus`
+  - Model `AgentPoolManagedClusterAgentPoolProfileProperties` added property `enable_os_disk_full_caching`
+  - Model `AgentPoolManagedClusterAgentPoolProfileProperties` added property `node_initialization_taints`
+  - Model `AgentPoolManagedClusterAgentPoolProfileProperties` added property `prepared_image_specification_profile`
+  - Model `AgentPoolManagedClusterAgentPoolProfileProperties` added property `upgrade_settings_blue_green`
+  - Model `AgentPoolManagedClusterAgentPoolProfileProperties` added property `upgrade_strategy`
+  - Enum `AgentPoolMode` added member `MACHINES`
+  - Enum `AgentPoolMode` added member `MANAGED_SYSTEM`
+  - Model `AgentPoolNetworkProfile` added property `node_public_ip_prefix_i_ds`
+  - Model `AgentPoolNetworkProfile` added property `secondary_network_interfaces`
+  - Enum `AgentPoolType` added member `FLEX_NODES`
+  - Model `AgentPoolUpgradeProfileProperties` added property `components_by_releases`
+  - Model `AgentPoolUpgradeProfilePropertiesUpgradesItem` added property `is_out_of_support`
+  - Model `AgentPoolUpgradeSettings` added property `max_blocked_nodes`
+  - Model `AgentPoolUpgradeSettings` added property `upgrade_gate_settings`
+  - Enum `BackendPoolType` added member `POD_IP`
+  - Model `ClusterUpgradeSettings` added property `upgrade_gate_settings`
+  - Model `ContainerServiceNetworkProfile` added property `cluster_api_connectivity_profile`
+  - Model `ContainerServiceNetworkProfile` added property `kube_proxy_config`
+  - Model `ContainerServiceNetworkProfile` added property `nat_gateway_id`
+  - Model `ContainerServiceNetworkProfile` added property `pod_link_local_access`
+  - Model `GPUProfile` added property `driver_type`
+  - Model `IdentityBinding` added property `managed_by`
+  - Model `IdentityBindingProperties` added property `allowed_subjects`
+  - Model `KubeletConfig` added property `eviction_max_pod_grace_period_in_seconds`
+  - Model `KubeletConfig` added property `hard_eviction_threshold`
+  - Model `KubeletConfig` added property `kube_reserved`
+  - Model `KubeletConfig` added property `seccomp_default`
+  - Model `KubeletConfig` added property `soft_eviction_grace_period`
+  - Model `KubeletConfig` added property `soft_eviction_threshold`
+  - Enum `LoadBalancerSku` added member `SERVICE`
+  - Model `MachineNetworkProperties` added property `enable_node_public_ip`
+  - Model `MachineNetworkProperties` added property `node_public_ip_prefix_id`
+  - Model `MachineNetworkProperties` added property `node_public_ip_tags`
+  - Model `MachineNetworkProperties` added property `pod_ip_allocation_mode`
+  - Model `MachineNetworkProperties` added property `pod_subnet_id`
+  - Model `MachineNetworkProperties` added property `vnet_subnet_id`
+  - Model `MachineProperties` added property `billing`
+  - Model `MachineProperties` added property `capacity_reservation`
+  - Model `MachineProperties` added property `e_tag`
+  - Model `MachineProperties` added property `eviction_policy`
+  - Model `MachineProperties` added property `hardware`
+  - Model `MachineProperties` added property `kubernetes`
+  - Model `MachineProperties` added property `local_dns_profile`
+  - Model `MachineProperties` added property `mode`
+  - Model `MachineProperties` added property `node_image_version`
+  - Model `MachineProperties` added property `operating_system`
+  - Model `MachineProperties` added property `priority`
+  - Model `MachineProperties` added property `provisioning_state`
+  - Model `MachineProperties` added property `security`
+  - Model `MachineProperties` added property `status`
+  - Model `MachineProperties` added property `tags`
+  - Model `MaintenanceConfigurationProperties` added property `maintenance_window_id`
+  - Model `ManagedClusterAgentPoolProfile` added property `enable_os_disk_full_caching`
+  - Model `ManagedClusterAgentPoolProfile` added property `node_initialization_taints`
+  - Model `ManagedClusterAgentPoolProfile` added property `prepared_image_specification_profile`
+  - Model `ManagedClusterAgentPoolProfile` added property `upgrade_settings_blue_green`
+  - Model `ManagedClusterAgentPoolProfile` added property `upgrade_strategy`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `enable_os_disk_full_caching`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `node_initialization_taints`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `prepared_image_specification_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `upgrade_settings_blue_green`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `upgrade_strategy`
+  - Model `ManagedClusterHTTPProxyConfig` added property `effective_no_proxy`
+  - Model `ManagedClusterIngressProfile` added property `application_load_balancer`
+  - Model `ManagedClusterIngressProfileWebAppRouting` added property `default_domain`
+  - Model `ManagedClusterLoadBalancerProfile` added property `cluster_service_load_balancer_health_probe_mode`
+  - Model `ManagedClusterPoolUpgradeProfile` added property `components_by_releases`
+  - Model `ManagedClusterPoolUpgradeProfileUpgradesItem` added property `is_out_of_support`
+  - Model `ManagedClusterProperties` added property `agent_sandbox_profile`
+  - Model `ManagedClusterProperties` added property `control_plane_scaling_profile`
+  - Model `ManagedClusterProperties` added property `creation_data`
+  - Model `ManagedClusterProperties` added property `enable_namespace_resources`
+  - Model `ManagedClusterProperties` added property `enable_node_hardening`
+  - Model `ManagedClusterProperties` added property `health_monitor_profile`
+  - Model `ManagedClusterProperties` added property `node_disruption_profile`
+  - Model `ManagedClusterProperties` added property `pod_snapshot_profile`
+  - Model `ManagedClusterSecurityProfile` added property `image_integrity`
+  - Model `ManagedClusterSecurityProfile` added property `node_restriction`
+  - Model `ManagedClusterSecurityProfile` added property `service_account_image_pull_profile`
+  - Model `ManagedClusterStorageProfileDiskCSIDriver` added property `quick_attach_detach`
+  - Model `ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler` added property `addon_autoscaling`
+  - Model `NvidiaGPUProfile` added property `driver_mode`
+  - Model `NvidiaGPUProfile` added property `mig_profiles`
+  - Model `NvidiaGPUProfile` added property `mig_strategy`
+  - Enum `OSSKU` added member `FLATCAR`
+  - Enum `OSSKU` added member `MARINER`
+  - Enum `OSSKU` added member `UBUNTU2604`
+  - Enum `OSSKU` added member `WINDOWS_ANNUAL`
+  - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
+  - Enum `SnapshotType` added member `MANAGED_CLUSTER`
+  - Enum `TransitEncryptionType` added member `M_TLS`
+  - Enum `WorkloadRuntime` added member `KATA_MSHV_VM_ISOLATION`
+  - Added enum `AddonAutoscaling`
+  - Added model `AgentFabricMembership`
+  - Added model `AgentFabricMembershipProperties`
+  - Added enum `AgentFabricMembershipProvisioningState`
+  - Added enum `AgentFabricMembershipSkuName`
+  - Added model `AgentPoolBlueGreenUpgradeSettings`
+  - Added model `AgentPoolGenerateUpgradeInsightsContent`
+  - Added model `AgentPoolNICPublicIPAddressConfiguration`
+  - Added enum `AgentPoolNICPublicIPAddressVersion`
+  - Added model `AgentPoolNetworkInterface`
+  - Added enum `AgentPoolNetworkInterfaceType`
+  - Added model `AgentPoolScopeEvaluation`
+  - Added model `AgentPoolUpdate`
+  - Added model `AgentPoolUpdateManualScaleProfile`
+  - Added model `AgentPoolUpdateProperties`
+  - Added model `AgentPoolUpdateScaleProfile`
+  - Added model `AgentPoolUpdateVirtualMachinesProfile`
+  - Added model `AgentPoolUpgradeInsightProperties`
+  - Added model `AlertConfiguration`
+  - Added enum `AlertConfigurationMode`
+  - Added model `AlertConfigurationProperties`
+  - Added enum `AlertConfigurationProvisioningState`
+  - Added model `AlertNotification`
+  - Added model `AllowedSubject`
+  - Added model `ArmImpactedResource`
+  - Added model `BastionProfile`
+  - Added enum `BastionSku`
+  - Added model `BootstrapAzureConfig`
+  - Added model `BootstrapComponentVersions`
+  - Added model `BootstrapKubeletConfig`
+  - Added model `BootstrapNetworkingConfig`
+  - Added model `BootstrapNodeConfig`
+  - Added model `BootstrapTargetCluster`
+  - Added model `BootstrapTokenInfo`
+  - Added model `CapacityReservation`
+  - Added model `CapacityReservationGroup`
+  - Added model `CloudShellNetworkProfile`
+  - Added model `CloudShellProfile`
+  - Added enum `CloudShellProfileMode`
+  - Added model `CloudShellStorageProfile`
+  - Added enum `CloudShellStorageProfileMode`
+  - Added model `ClusterAPIConnectivityProfile`
+  - Added enum `ClusterServiceLoadBalancerHealthProbeMode`
+  - Added model `Component`
+  - Added model `ComponentsByRelease`
+  - Added model `ContainerServiceNetworkProfileKubeProxyConfig`
+  - Added model `ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig`
+  - Added model `ControlPlaneAndAgentPoolsGenerateUpgradeInsightsContent`
+  - Added model `ControlPlaneAndAgentPoolsUpgradeInsightProperties`
+  - Added model `ControlPlaneGenerateUpgradeInsightsContent`
+  - Added enum `ControlPlaneScalingSize`
+  - Added model `ControlPlaneUpgradeInsightProperties`
+  - Added model `DetectedUpgradeIssue`
+  - Added enum `DriftAction`
+  - Added enum `DriverType`
+  - Added model `GenerateUpgradeInsightsContent`
+  - Added model `GuardrailsAvailableVersion`
+  - Added model `GuardrailsAvailableVersionsProperties`
+  - Added enum `GuardrailsSupport`
+  - Added model `HardEvictionThreshold`
+  - Added enum `ImpactedResourceKind`
+  - Added enum `IpvsScheduler`
+  - Added model `JWTAuthenticator`
+  - Added model `JWTAuthenticatorClaimMappingExpression`
+  - Added model `JWTAuthenticatorClaimMappings`
+  - Added model `JWTAuthenticatorExtraClaimMappingExpression`
+  - Added model `JWTAuthenticatorIssuer`
+  - Added model `JWTAuthenticatorProperties`
+  - Added enum `JWTAuthenticatorProvisioningState`
+  - Added model `JWTAuthenticatorValidationRule`
+  - Added model `KubeReserved`
+  - Added model `KubernetesImpactedResource`
+  - Added enum `KubernetesVersionSupportStatus`
+  - Added model `LabelSelector`
+  - Added model `LabelSelectorRequirement`
+  - Added model `ListBootstrapDataRequest`
+  - Added model `LoadBalancer`
+  - Added model `LoadBalancerProperties`
+  - Added model `MachineBillingProfile`
+  - Added model `MachineHardwareProfile`
+  - Added model `MachineKubernetesProfile`
+  - Added model `MachineOSProfile`
+  - Added model `MachineOSProfileLinuxProfile`
+  - Added model `MachineSecurityProfile`
+  - Added model `MachineStatus`
+  - Added model `MaintenanceWindowResource`
+  - Added model `MaintenanceWindowResourceProperties`
+  - Added enum `MaintenanceWindowSource`
+  - Added model `ManagedClusterAgentSandboxProfile`
+  - Added model `ManagedClusterControlPlaneScalingProfile`
+  - Added model `ManagedClusterHealthMonitorProfile`
+  - Added model `ManagedClusterIngressDefaultDomainProfile`
+  - Added model `ManagedClusterIngressProfileApplicationLoadBalancer`
+  - Added model `ManagedClusterPodSnapshotProfile`
+  - Added model `ManagedClusterPropertiesForSnapshot`
+  - Added model `ManagedClusterSecurityProfileImageIntegrity`
+  - Added model `ManagedClusterSecurityProfileNodeRestriction`
+  - Added model `ManagedClusterSnapshot`
+  - Added model `ManagedClusterSnapshotProperties`
+  - Added model `ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach`
+  - Added model `MeshMembership`
+  - Added model `MeshMembershipPrivateConnectProfile`
+  - Added model `MeshMembershipProperties`
+  - Added enum `MeshMembershipProvisioningState`
+  - Added enum `MigStrategy`
+  - Added enum `Mode`
+  - Added model `NetworkProfileForSnapshot`
+  - Added enum `NodeDisruptionPolicy`
+  - Added model `NodeDisruptionProfile`
+  - Added model `NodeImageGenerateUpgradeInsightsContent`
+  - Added model `NodeImageUpgradeInsightProperties`
+  - Added model `NodeImageVersion`
+  - Added enum `NvidiaDriverMode`
+  - Added model `OperationStatusResult`
+  - Added enum `Operator`
+  - Added enum `PodLinkLocalAccess`
+  - Added model `PoolBootstrapData`
+  - Added model `PreparedImageSpecificationProfile`
+  - Added model `RebalanceLoadBalancersRequestBody`
+  - Added enum `ResourceProvisioningState`
+  - Added model `ResourceSku`
+  - Added model `ResourceSkuCapabilities`
+  - Added model `ResourceSkuCapacity`
+  - Added enum `ResourceSkuCapacityScaleType`
+  - Added model `ResourceSkuCosts`
+  - Added model `ResourceSkuLocationInfo`
+  - Added model `ResourceSkuRestrictionInfo`
+  - Added model `ResourceSkuRestrictions`
+  - Added enum `ResourceSkuRestrictionsReasonCode`
+  - Added enum `ResourceSkuRestrictionsType`
+  - Added model `ResourceSkuZoneDetails`
+  - Added model `SafeguardsAvailableVersion`
+  - Added model `SafeguardsAvailableVersionsProperties`
+  - Added enum `SafeguardsSupport`
+  - Added model `ScopeEvaluationResult`
+  - Added enum `SeccompDefault`
+  - Added model `ServiceAccountImagePullProfile`
+  - Added model `SoftEvictionGracePeriod`
+  - Added model `SoftEvictionThreshold`
+  - Added model `UpgradeContext`
+  - Added model `UpgradeGateSettings`
+  - Added model `UpgradeInsight`
+  - Added model `UpgradeInsightEvaluation`
+  - Added model `UpgradeInsightImpactedResource`
+  - Added model `UpgradeInsightMaintenanceWindow`
+  - Added model `UpgradeInsightProperties`
+  - Added model `UpgradeInsightRecommendedAction`
+  - Added enum `UpgradeInsightStatus`
+  - Added enum `UpgradeInsightStrategy`
+  - Added enum `UpgradeIssueSeverity`
+  - Added enum `UpgradeIssueType`
+  - Added enum `UpgradeStrategy`
+  - Added enum `UpgradeType`
+  - Added enum `VmState`
+  - Operation group `AgentPoolsOperations` added method `begin_complete_upgrade`
+  - Operation group `AgentPoolsOperations` added method `begin_update`
+  - Operation group `AgentPoolsOperations` added method `list_bootstrap_data`
+  - Operation group `MachinesOperations` added method `begin_create_or_update`
+  - Operation group `ManagedClustersOperations` added parameter `ignore_pod_disruption_budget` in method `begin_delete`
+  - Operation group `ManagedClustersOperations` added method `begin_rebalance_load_balancers`
+  - Operation group `ManagedClustersOperations` added method `get_guardrails_versions`
+  - Operation group `ManagedClustersOperations` added method `get_safeguards_versions`
+  - Operation group `ManagedClustersOperations` added method `list_guardrails_versions`
+  - Operation group `ManagedClustersOperations` added method `list_safeguards_versions`
+  - Added operation group `AgentFabricMembershipsOperations`
+  - Added operation group `AlertConfigurationsOperations`
+  - Added operation group `ContainerServiceOperations`
+  - Added operation group `JWTAuthenticatorsOperations`
+  - Added operation group `LoadBalancersOperations`
+  - Added operation group `MaintenanceWindowsOperations`
+  - Added operation group `ManagedClusterSnapshotsOperations`
+  - Added operation group `MeshMembershipsOperations`
+  - Added operation group `OperationStatusResultOperations`
+  - Added operation group `UpgradeInsightsOperations`
+  - Added operation group `VmSkusOperations`
+
 ## 41.8.0 (2026-10-19)
 
 ### Features Added
