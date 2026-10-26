@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+from contextlib import suppress
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -15,6 +16,13 @@ import pytest
 from anyio import CancelScope, lowlevel
 from starlette.requests import Request
 
+from azure.ai.agentserver.core import (
+    FoundryAgentRequestContext,
+    FoundryOriginalSubject,
+    get_request_context,
+    reset_request_context,
+    set_request_context,
+)
 from azure.ai.agentserver.core.streaming import EventStreamNotFoundError
 from azure.ai.agentserver.core.platform_headers import PLATFORM_ERROR_TAG
 from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry
@@ -86,6 +94,61 @@ def _host() -> ResponsesAgentServerHost:
 
 async def _send(message: dict[str, Any]) -> None:
     pass
+
+
+@pytest.mark.parametrize("cleanup_raises", [False, True])
+async def test_handler_early_close_keeps_attribution_bound_and_restores_caller(cleanup_raises):
+    subject = FoundryOriginalSubject(oid="handler-subject", tid="tenant", idtype="user")
+    caller = FoundryAgentRequestContext(
+        original_subject=FoundryOriginalSubject(oid="caller-subject", tid="tenant", idtype="user"),
+        call_id="caller-call",
+    )
+    context = ResponseContext(
+        response_id=RESPONSE_ID,
+        mode_flags=ResponseModeFlags(stream=True, store=False, background=False),
+        platform_context=PlatformContext(original_subject=subject, call_id="handler-call", user_id_key="handler-user"),
+    )
+    observed = []
+
+    async def handler():
+        try:
+            observed.append(("prompt", get_request_context()))
+            yield {"type": "response.created"}
+        finally:
+            await asyncio.sleep(0)
+            observed.append(("cleanup", get_request_context()))
+            if cleanup_raises:
+                raise RuntimeError("handler cleanup failed")
+
+    owned_iterator = handler()
+    iterator = orchestration._iter_handler_with_request_context(
+        lambda *_args: owned_iterator, {}, context, asyncio.Event(), "handler-session"
+    )
+    token = set_request_context(caller)
+    try:
+        assert await iterator.__anext__() == {"type": "response.created"}
+        assert get_request_context() is caller
+        if cleanup_raises:
+            with pytest.raises(RuntimeError, match="handler cleanup failed"):
+                await iterator.aclose()
+        else:
+            await iterator.aclose()
+
+        assert [stage for stage, _ in observed] == ["prompt", "cleanup"]
+        for _, request_context in observed:
+            assert request_context.original_subject is subject
+            assert request_context.call_id == "handler-call"
+            assert request_context.user_id == "handler-user"
+            assert request_context.session_id == "handler-session"
+        assert get_request_context() is caller
+    finally:
+        try:
+            with suppress(RuntimeError):
+                await iterator.aclose()
+            with suppress(RuntimeError):
+                await owned_iterator.aclose()
+        finally:
+            reset_request_context(token)
 
 
 @pytest.mark.parametrize("store", [False, True])

@@ -130,17 +130,25 @@ async def _iter_handler_with_request_context(
         )
 
     handler_iterator = create_fn(parsed, context, cancellation_signal)
-    while True:
+    try:
+        while True:
+            token = set_request_context(request_context) if request_context is not None else None
+            try:
+                try:
+                    event = await handler_iterator.__anext__()
+                except StopAsyncIteration:
+                    return
+            finally:
+                if token is not None:
+                    reset_request_context(token)
+            yield event
+    finally:
         token = set_request_context(request_context) if request_context is not None else None
         try:
-            try:
-                event = await handler_iterator.__anext__()
-            except StopAsyncIteration:
-                return
+            await _close_iterator(handler_iterator)
         finally:
             if token is not None:
                 reset_request_context(token)
-        yield event
 
 
 async def _resolve_input_items_for_persistence(

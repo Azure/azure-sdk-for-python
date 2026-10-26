@@ -668,6 +668,99 @@ async def test_voice_malformed_metadata_upgrades_before_close(path, accept_failu
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+async def test_voice_malformed_metadata_stalled_close_is_bounded(path, monkeypatch):
+    monkeypatch.setattr(session_module, "CLOSE_TIMEOUT_SECONDS", 0.01)
+    app = VoiceAgentServerHost(configure_observability=None)
+    websocket = _websocket_with_headers([(b"x-ms-original-subject", b"malformed")])
+    scope = dict(websocket.scope, path=path, raw_path=path.encode("ascii"))
+    close_started = asyncio.Event()
+    close_release = asyncio.Event()
+    close_events = []
+    sent_messages = []
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
+
+    def create_session(*_args, **_kwargs):
+        pytest.fail("Malformed metadata must not create a Voice Session.")
+
+    monkeypatch.setattr(Session, "_create", create_session)
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    async def receive():
+        return {"type": "websocket.connect"}
+
+    async def send(message):
+        sent_messages.append(message)
+        if message["type"] == "websocket.close":
+            assert get_request_context().original_subject is None
+            close_started.set()
+            await close_release.wait()
+
+    endpoint = asyncio.create_task(app(scope, receive, send))
+    try:
+        await asyncio.wait_for(close_started.wait(), timeout=1)
+        await asyncio.wait_for(asyncio.shield(endpoint), timeout=1)
+        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+        assert sent_messages[-1]["code"] == 1011
+        assert close_events == [(1011, "invalid_original_subject")]
+        assert session_module._VOICE_SESSION_SCOPE_KEY not in scope  # pylint: disable=protected-access
+        assert get_request_context().original_subject is None
+    finally:
+        close_release.set()
+        await asyncio.gather(endpoint, return_exceptions=True)
+        await _finish_close_attempts(baseline_attempts)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+@pytest.mark.parametrize("close_cancellation", ["direct", "wrapped", "consumed"])
+async def test_voice_malformed_metadata_close_preserves_cancellation(path, close_cancellation):
+    app = VoiceAgentServerHost(configure_observability=None)
+    websocket = _websocket_with_headers([(b"x-ms-original-subject", b"malformed")])
+    scope = dict(websocket.scope, path=path, raw_path=path.encode("ascii"))
+    close_started = asyncio.Event()
+    close_release = asyncio.Event()
+    close_events = []
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    async def receive():
+        return {"type": "websocket.connect"}
+
+    async def send(message):
+        if message["type"] != "websocket.close":
+            return
+        close_started.set()
+        try:
+            await close_release.wait()
+        except asyncio.CancelledError as cancellation:
+            if close_cancellation == "wrapped":
+                raise OSError("transport wrapped cancellation") from cancellation
+            if close_cancellation == "consumed":
+                return
+            raise
+
+    endpoint = asyncio.create_task(app(scope, receive, send))
+    try:
+        await asyncio.wait_for(close_started.wait(), timeout=1)
+        endpoint.cancel("malformed-close-cancel")
+        with pytest.raises(asyncio.CancelledError) as raised:
+            await asyncio.wait_for(endpoint, timeout=1)
+        assert raised.value.args == (("malformed-close-cancel",) if sys.version_info >= (3, 11) else ())
+        assert close_events == [(1011, "cancelled")]
+        assert session_module._VOICE_SESSION_SCOPE_KEY not in scope  # pylint: disable=protected-access
+        assert get_request_context().original_subject is None
+    finally:
+        close_release.set()
+        await asyncio.gather(endpoint, return_exceptions=True)
+        await _finish_close_attempts(baseline_attempts)
+
+
+@pytest.mark.asyncio
 async def test_voice_accept_unknown_commit_fails_closed():
     app = VoiceAgentServerHost(configure_observability=None)
     sent_messages = []
