@@ -11,6 +11,7 @@
 - Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning
   an empty list.
 - Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
+- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
 
 ### Other Changes
 - Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
