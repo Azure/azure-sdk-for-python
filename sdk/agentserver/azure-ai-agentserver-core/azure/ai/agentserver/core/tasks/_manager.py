@@ -18,6 +18,7 @@ from collections.abc import Awaitable, Callable, Iterator, Mapping
 from contextlib import contextmanager
 from contextvars import ContextVar
 from typing import Any, TypeVar
+from uuid import uuid4
 
 from .._config import AgentConfig
 from .._request_context import (
@@ -375,6 +376,7 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         # Refreshed from every GET/CREATE/PATCH response. Used as
         # ``if_match`` on every subsequent PATCH.
         "current_etag",
+        "completed_handoff_id",
         # Spec 031 / FR-002 — live count of queued steering inputs as
         # observed by THIS process. Read by ``_make_pending_count_provider``
         # to back ``ctx.pending_input_count``. Written (before ``ctx.cancel``
@@ -424,6 +426,7 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         # store interaction (create response, get response, update response).
         # Used as ``if_match`` on subsequent PATCHes.
         self.current_etag: str | None = None
+        self.completed_handoff_id: str | None = None
         # Spec 031 / FR-002 — see __slots__ note. Live in-process count of
         # queued steering inputs backing ``ctx.pending_input_count``.
         self._pending_input_count: int = 0
@@ -2441,6 +2444,23 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             if task_info is None:
                 return None
 
+            active = self._active_tasks.get(task_id)
+            handoff_id = ((task_info.payload or {}).get("steering") or {}).get("handoff_id")
+            if (
+                task_info.status != "suspended"
+                or task_info.suspension_reason != "run_completion"
+                or active is None
+                or active.completed_handoff_id is None
+                or handoff_id != active.completed_handoff_id
+            ):
+                logger.info("No longer owns completed steering handoff for task %s; abandoning local drain", task_id)
+                _resolve_queued_steerers_on_terminal(
+                    self._pending_steering_futures,
+                    task_id,
+                    current_status=task_info.status,
+                )
+                return None
+
             promotion = self._prepare_steering_input(task_info)
             if promotion is None:
                 return None
@@ -2630,6 +2650,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             cancel_requested=bool(pending),
             drain_in_progress=True,
         )
+        steering.pop("handoff_id", None)
         payload.update(steering=steering, retry_attempt=0)
         payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
         return payload, attachments
@@ -3463,6 +3484,33 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         async with self._get_task_write_lock(task_id):
             return await self._provider_update_lock_held(task_id, patch, force_if_match=force_if_match)
 
+    @staticmethod
+    def _prepare_completed_handoff(active: _ActiveTask | None, patch: TaskPatchRequest) -> str | None:
+        """Stamp a completed steering handoff on a suspension PATCH.
+
+        :param active: The local execution, if any.
+        :type active: _ActiveTask | None
+        :param patch: The terminal PATCH being prepared.
+        :type patch: TaskPatchRequest
+        :return: The handoff identity, or None for other writes.
+        :rtype: str | None
+        """
+        if (
+            patch.status != "suspended"
+            or patch.suspension_reason != "run_completion"
+            or active is None
+            or active.opts is None
+            or not active.opts.steerable
+        ):
+            return None
+        handoff_id = uuid4().hex
+        payload = dict(patch.payload or {})
+        steering = dict(payload.get("steering") or {})
+        steering["handoff_id"] = handoff_id
+        payload["steering"] = steering
+        patch.payload = payload
+        return handoff_id
+
     async def _terminal_write_locked(  # pylint: disable=too-many-statements
         self,
         task_id: str,
@@ -3507,6 +3555,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         prior_lease_owner = patch.lease_owner
         prior_lease_instance = patch.lease_instance_id
         async with self._get_task_write_lock(task_id):
+            active = self._active_tasks.get(task_id)
+            handoff_id = self._prepare_completed_handoff(active, patch)
             attempts = 0
             cached_expiry_count = self._cached_expiry_count(task_id)
             while True:
@@ -3518,6 +3568,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     etag = getattr(result, "etag", None)
                     if etag:
                         self._track_etag(task_id, etag)
+                    if active is not None and handoff_id is not None:
+                        active.completed_handoff_id = handoff_id
                     return result
                 except _HostedConflict as exc:
                     translated = _translate_hosted_conflict(exc, task_id=task_id)

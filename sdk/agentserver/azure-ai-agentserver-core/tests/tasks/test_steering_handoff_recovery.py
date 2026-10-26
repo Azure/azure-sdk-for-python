@@ -11,7 +11,8 @@ from unittest.mock import AsyncMock
 import pytest
 from pydantic import BaseModel
 
-from azure.ai.agentserver.core.tasks import RetryPolicy, TaskContext, multi_turn_task
+from azure.ai.agentserver.core.tasks import RetryPolicy, TaskConflictError, TaskContext, multi_turn_task
+from azure.ai.agentserver.core.tasks import _manager as manager_module
 from azure.ai.agentserver.core.tasks._attachments import (
     _FUNCTION_INPUT_KEY,
     _INPUT_THRESHOLD_BYTES,
@@ -209,6 +210,136 @@ async def test_queued_recovery_preserves_retry_policy_for_each_turn(tmp_path):
     finally:
         finish.set()
         await manager.shutdown()
+        set_task_manager(None)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("claim_timing", ["before-live-read", "conflict-retry"])
+@pytest.mark.parametrize("recovery_progress", ["running", "suspended"])
+async def test_live_drain_does_not_steal_recovered_handoff(tmp_path, monkeypatch, claim_timing, recovery_progress):
+    first_started, finish_first = asyncio.Event(), asyncio.Event()
+    drain_paused, resume_drain = asyncio.Event(), asyncio.Event()
+    second_started, finish_second = asyncio.Event(), asyncio.Event()
+    recovery_paused, resume_recovery = asyncio.Event(), asyncio.Event()
+    observed = []
+    provider = LocalFileTaskProvider(tmp_path)
+    original, recovery = _manager(provider), _manager(provider)
+    runs = []
+    conflict_injected = False
+    # Turn timestamps may be identical; ownership must not depend on the clock.
+    now = manager_module._utc_now_iso()
+    monkeypatch.setattr(manager_module, "_utc_now_iso", lambda: now)
+
+    @multi_turn_task(name="handoff", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        value = ctx.input["value"]
+        owner = "original" if ctx.shutdown is original._shutdown_event else "recovery"
+        observed.append((owner, value))
+        if value == 1:
+            first_started.set()
+            await finish_first.wait()
+        elif value == 2:
+            second_started.set()
+            await finish_second.wait()
+        return value
+
+    live_drain = original._try_drain_steering
+
+    async def paused_live_drain(**kwargs):
+        drain_paused.set()
+        await resume_drain.wait()
+        return await live_drain(**kwargs)
+
+    recovery_drain = recovery._try_drain_steering
+
+    async def paused_recovery_drain(**kwargs):
+        recovery_paused.set()
+        await resume_recovery.wait()
+        return await recovery_drain(**kwargs)
+
+    monkeypatch.setattr(original, "_try_drain_steering", paused_live_drain)
+    monkeypatch.setattr(recovery, "_try_drain_steering", paused_recovery_drain)
+    recovery_execution = None
+
+    async def claim_recovery():
+        nonlocal recovery_execution
+        await recovery.startup()
+        await asyncio.wait_for(second_started.wait(), 5)
+        recovery_execution = recovery._active_tasks["chain"].execution_task
+        if recovery_progress == "suspended":
+            finish_second.set()
+            await asyncio.wait_for(recovery_paused.wait(), 5)
+
+    update = provider.update
+
+    async def race_claim(task_id, patch):
+        nonlocal conflict_injected
+        active_input = ((patch.payload or {}).get("steering") or {}).get("active_input")
+        if (
+            claim_timing == "conflict-retry"
+            and not conflict_injected
+            and patch.lease_instance_id == original._instance_id
+            and active_input == {"value": 2}
+        ):
+            conflict_injected = True
+            await claim_recovery()
+        return await update(task_id, patch)
+
+    monkeypatch.setattr(provider, "update", race_claim)
+    set_task_manager(original)
+    try:
+        await original.startup()
+        first = await worker.start(task_id="chain", input={"value": 1})
+        runs.append(first)
+        await asyncio.wait_for(first_started.wait(), 5)
+        second = await worker.start(task_id="chain", input={"value": 2})
+        third = await worker.start(task_id="chain", input={"value": 3})
+        runs.extend([second, third])
+        original_execution = original._active_tasks["chain"].execution_task
+        finish_first.set()
+        assert await asyncio.wait_for(first.result(), 5) == 1
+        await asyncio.wait_for(drain_paused.wait(), 5)
+        set_task_manager(recovery)
+        if claim_timing == "before-live-read":
+            await claim_recovery()
+        resume_drain.set()
+        await asyncio.wait_for(original_execution, 5)
+
+        assert observed == [("original", 1), ("recovery", 2)]
+        assert conflict_injected == (claim_timing == "conflict-retry")
+        saved = await provider.get("chain")
+        expected_status = "in_progress" if recovery_progress == "running" else "suspended"
+        assert saved.status == expected_status
+        assert saved.payload["steering"]["pending_inputs"] == [{"value": 3}]
+        if recovery_progress == "running":
+            assert saved.payload["input"] == {"value": 2}
+            assert saved.lease.instance_id == recovery._instance_id
+        else:
+            assert saved.payload["input"] is None
+            assert saved.lease is None
+        for run in (second, third):
+            with pytest.raises(TaskConflictError) as error:
+                await asyncio.wait_for(run.result(), 5)
+            assert error.value.current_status == expected_status
+
+        finish_second.set()
+        resume_recovery.set()
+        assert recovery_execution is not None
+        await asyncio.wait_for(recovery_execution, 5)
+        assert observed == [("original", 1), ("recovery", 2), ("recovery", 3)]
+        saved = await provider.get("chain")
+        assert saved.status == "suspended"
+        assert saved.payload["steering"]["pending_inputs"] == []
+    finally:
+        finish_first.set()
+        resume_drain.set()
+        finish_second.set()
+        resume_recovery.set()
+        await asyncio.gather(original.shutdown(), recovery.shutdown())
+        await asyncio.gather(
+            *(asyncio.wait_for(run.result(), 1) for run in runs),
+            return_exceptions=True,
+        )
         set_task_manager(None)
 
 
