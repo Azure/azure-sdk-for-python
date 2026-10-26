@@ -37,9 +37,9 @@ parameters:
     type: string
     default: gpt-5.2
   - name: modelVersion
-    displayName: 'Sample model version; auto resolves the regional default before provisioning'
+    displayName: 'Sample model version; use auto to resolve the regional default'
     type: string
-    default: auto
+    default: '2025-12-11'
   - name: modelSku
     displayName: 'Sample model deployment SKU'
     type: string
@@ -95,6 +95,13 @@ extends:
                   if ($LASTEXITCODE -ne 0) { throw 'Offline sample CI unit tests failed.' }
                 workingDirectory: $(packageRoot)
                 displayName: 'Validate wildcard and invocation behavior offline'
+              - pwsh: |
+                  Install-Module -Name Pester -RequiredVersion 4.10.1 -Repository PSGallery -Scope CurrentUser -Force -ErrorAction Stop
+                  Import-Module Pester -RequiredVersion 4.10.1 -Force
+                  $result = Invoke-Pester -Script './tests/samples/ci' -PassThru
+                  if ($result.TotalCount -eq 0 -or $result.FailedCount -ne 0) { throw 'Offline provisioning and cleanup safety tests failed.' }
+                workingDirectory: $(packageRoot)
+                displayName: 'Validate provisioning and cleanup guards offline'
               - pwsh: |
                   $outputDirectory = '$(Build.ArtifactStagingDirectory)/sample-plan'
                   $manifest = Join-Path $outputDirectory 'selected-tests.json'

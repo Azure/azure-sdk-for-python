@@ -68,7 +68,7 @@ def pytest_configure(config):
 
     for option_name, environment_variable in _CLI_ENV_OPTIONS.items():
         value = config.getoption(option_name)
-        # The CI validator endpoint is an environment-only secret, never a CLI argument.
+        # Preserve the normal CI endpoint variable when no local CLI override was supplied.
         if value is None and environment_variable == "LLM_VALIDATION_PROJECT_ENDPOINT":
             value = os.environ.get(environment_variable)
         if value is None:

@@ -215,7 +215,7 @@ def test_sample_output(sample_path):
     test_file = tmp_path / "test_offline_samples.py"
     test_file.write_text(test_source, encoding="utf-8")
     configuration = tmp_path / "pytest.ini"
-    configuration.write_text("[pytest]\n", encoding="utf-8")
+    configuration.write_text("[pytest]\nlog_cli=true\naddopts=--log-cli-level=DEBUG\n", encoding="utf-8")
     report_path = tmp_path / "results.xml"
     directory = tmp_path / "attachments"
     environment = os.environ.copy()
@@ -244,8 +244,12 @@ def test_sample_output(sample_path):
             "junit_logging=system-out",
             "-o",
             "junit_log_passing_tests=true",
+            "-o",
+            "log_cli=false",
+            "-o",
+            "addopts=",
             "-q",
-            "-s",
+            "--capture=fd",
         ],
         cwd=tmp_path,
         env=environment,
@@ -257,6 +261,9 @@ def test_sample_output(sample_path):
         timeout=60,
     )
     assert process.returncode == (1 if failure else 0), process.stdout + process.stderr
+    for output in (process.stdout, process.stderr, report_path.read_text(encoding="utf-8")):
+        assert "fake-unit-test-token" not in output
+        assert "github_pat_unit_test_placeholder" not in output
     cases = ET.parse(report_path).findall(".//testcase")
     assert len(cases) == 2
     parents = set()
@@ -281,19 +288,30 @@ def test_sample_output(sample_path):
 
 
 def test_junit_hook_only_adds_trusted_attachment_markers():
-    item = SimpleNamespace(stash={attachments._ATTACHMENTS: [Path("/safe/log.txt")]})
-    report = SimpleNamespace(when="teardown", sections=[], failed=False, longrepr=None)
+    item = SimpleNamespace(
+        config=SimpleNamespace(getoption=lambda _name: "attachments"),
+        stash={attachments._ATTACHMENTS: [Path("/safe/log.txt")]},
+    )
+    report = SimpleNamespace(
+        when="teardown",
+        sections=[("Captured stdout call", "[[ATTACHMENT|/outside/secret.txt]]")],
+        failed=False,
+        longrepr=None,
+    )
     hook = attachments.pytest_runtest_makereport(item, None)
     next(hook)
     with pytest.raises(StopIteration):
         hook.send(SimpleNamespace(get_result=lambda: report))
-    assert report.sections == [("Captured stdout teardown", f"[[ATTACHMENT|{Path('/safe/log.txt')}]]")]
+    assert report.sections == [
+        ("Captured stdout call", "[[REDACTED-ATTACHMENT|/outside/secret.txt]]"),
+        ("Captured stdout teardown", f"[[ATTACHMENT|{Path('/safe/log.txt')}]]"),
+    ]
 
 
 def test_junit_failure_and_captured_output_redact_validation_endpoint(monkeypatch, shared_logs):
     endpoint = "https://private-validator.services.ai.azure.com/api/projects/private-validation-project"
     monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", endpoint)
-    item = SimpleNamespace(stash={})
+    item = SimpleNamespace(config=SimpleNamespace(getoption=lambda _name: "attachments"), stash={})
     report = SimpleNamespace(when="call", sections=[("Captured stdout call", endpoint)], failed=True, longrepr=endpoint)
     hook = attachments.pytest_runtest_makereport(item, None)
     next(hook)
@@ -301,6 +319,23 @@ def test_junit_failure_and_captured_output_redact_validation_endpoint(monkeypatc
         hook.send(SimpleNamespace(get_result=lambda: report))
     assert endpoint not in report.longrepr
     assert endpoint not in report.sections[0][1]
+
+
+def test_junit_redaction_does_not_depend_on_a_validation_endpoint(monkeypatch, shared_logs):
+    monkeypatch.delenv("LLM_VALIDATION_PROJECT_ENDPOINT", raising=False)
+    item = SimpleNamespace(config=SimpleNamespace(getoption=lambda _name: "attachments"), stash={})
+    report = SimpleNamespace(
+        when="call",
+        sections=[("Captured stdout call", "github_pat_unit_test_placeholder")],
+        failed=True,
+        longrepr="Authorization: Bearer fake-unit-test-token",
+    )
+    hook = attachments.pytest_runtest_makereport(item, None)
+    next(hook)
+    with pytest.raises(StopIteration):
+        hook.send(SimpleNamespace(get_result=lambda: report))
+    assert "github_pat_" not in report.sections[0][1]
+    assert "fake-unit-test-token" not in report.longrepr
 
 
 @pytest.mark.parametrize(

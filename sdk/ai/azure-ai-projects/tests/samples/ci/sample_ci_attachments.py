@@ -75,10 +75,14 @@ def _capture_sample_attachments(request, monkeypatch):
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
-    if os.environ.get("LLM_VALIDATION_PROJECT_ENDPOINT"):
+    if item.config.getoption("sample_attachments_dir"):
         from sample_log import sanitize_log  # pylint: disable=import-outside-toplevel
 
-        report.sections = [(name, sanitize_log(content)) for name, content in report.sections]
+        # Test output is untrusted: only the paths appended below may become JUnit attachments.
+        report.sections = [
+            (name, sanitize_log(content).replace("[[ATTACHMENT|", "[[REDACTED-ATTACHMENT|"))
+            for name, content in report.sections
+        ]
         if report.failed and report.longrepr is not None:
             report.longrepr = sanitize_log(str(report.longrepr))
     if report.when == "teardown":

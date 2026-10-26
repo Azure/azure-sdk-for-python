@@ -10,7 +10,7 @@ The first-run default is [../../../samples/agents/tools/sample_agent_mcp_with_pr
 2. Match the sample-path or test-ID wildcard and show the exact selected cases. Zero matches fail; the pipeline never falls back to all tests.
 3. Require `AZURE_SUBSCRIPTION_ID` and `AZURE_TENANT_ID` from pipeline environment variables and include both explicit targets in a non-secret provisioning plan, download integrity-pinned official Standard setup **Bicep sources**, and compile all templates. The default `preview` mode ends here and makes no Azure changes.
 4. In `run-and-cleanup` mode, continue automatically after this run's fresh preview succeeds. There is no YAML manual-approval stage. Selecting this mode when queueing explicitly opts in to creating billable resources and deleting this run's temporary resources afterward.
-5. Authenticate with the authorized Azure Resource Manager service connection and verify access to the plan's `AZURE_SUBSCRIPTION_ID` in `AZURE_TENANT_ID` using the same application. Never fall back to the connection's default subscription or tenant. Check provider registration, model availability, Cognitive Services `AccountCount` quota, and model-deployment quota before creating a resource group, then deploy Bicep to create:
+5. Authenticate with the authorized Azure Resource Manager service connection and verify access to the plan's `AZURE_SUBSCRIPTION_ID` in `AZURE_TENANT_ID` using the same application. Never fall back to the connection's default subscription or tenant. Check provider registration, regional dependency eligibility, model availability, Cognitive Services `AccountCount` quota, and model-deployment quota before creating a resource group, then deploy Bicep to create:
    - A uniquely named, run-owned resource group.
    - A Foundry account and project with managed identities.
    - A Storage account, Cosmos DB account, AI Search service, project connections, capability hosts and runtime role assignments: the official **Standard agent setup**.
@@ -25,20 +25,21 @@ PowerShell orchestrates Bicep and cleanup; Python collects and invokes the exist
 
 ### Pipeline and Azure access
 
-- Existing pipeline **8392**, `python - azure-ai-projects - tests`, references the package's [../../../tests.yml](../../../tests.yml). Publish this branch through the normal review process, then select that branch in **Run pipeline**. No definition update is needed if its YAML path is unchanged.
+- Configure an on-demand pipeline to use the package's [../../../tests.yml](../../../tests.yml), then select the reviewed branch in **Run pipeline**. An existing pipeline needs no definition update if its YAML path is unchanged.
 - Set the normal pipeline variables `AZURE_SUBSCRIPTION_ID` and `AZURE_TENANT_ID` to the intended subscription and tenant GUIDs. Neither value is hardcoded in the YAML or supplied as a Run pipeline parameter. Both must be available to Preview and RunSamples; a variable group scoped only to RunSamples is insufficient. The YAML explicitly maps both into each relevant task's environment. Missing, malformed or unresolved values fail closed. The preview records both targets, and provisioning, tests and cleanup verify them against the plan, deployment state and authenticated identity.
 - An administrator must make an **Azure Resource Manager service connection** available to this pipeline; **workload identity federation** is recommended. Enter its name in `azureServiceConnection`.
 - The connection must already have access to the requested subscription in the exact `AZURE_TENANT_ID`. Each Azure task selects that subscription only within its already-authenticated application identity. A different tenant, inaccessible subscription or changed target stops the run before resource changes; these variables do not grant access or change how the service connection authenticates. `azureServiceConnection` is the authorized ARM connection name, not the subscription GUID. Do not reuse a connection to an unrelated test tenant.
-- Provisioning creates a new resource group, so the connection needs subscription-level resource-group/deployment permissions plus management and role-assignment permissions on the new resources. Use an administrator-approved role configuration, for example **Contributor + Role Based Access Control Administrator**, rather than granting the pipeline unrestricted access to unrelated resources. Merely having Foundry User is insufficient to provision Standard setup.
+- Provisioning creates a new resource group, so the connection needs subscription-level resource-group/deployment permissions plus management and role-assignment permissions on the new resources. Use an administrator-approved role configuration, for example **Contributor + Role Based Access Control Administrator**, with reviewed scopes and assignment conditions. Merely having Foundry User is insufficient to provision Standard setup. Cleanup remains restricted to the run-owned group regardless of the connection's broader permissions.
 - Register `Microsoft.CognitiveServices`, `Microsoft.Storage`, `Microsoft.DocumentDB`, and `Microsoft.Search` in advance. Preflight fails rather than registering providers automatically.
-- Ensure the selected region supports Standard Foundry, Cosmos DB, Search, and the selected sample model with sufficient quota. The external validation project must already have deployment **gpt-5.2**. Defaults: `westus3`, **gpt-5.2**, `GlobalStandard`, capacity **10**. `auto` sample model versions resolve from the regional catalog; pin an explicit version when reproducibility requires it. Read-only discovery on 2026-10-23 found agent-compatible GPT-5.2 version `2025-12-11` and sufficient quota/capacity in West US 3 for the requested subscription; this is not a guarantee against later capacity or policy changes.
+- Ensure the selected region supports Standard Foundry, Cosmos DB, Search, and the selected sample model with sufficient quota. Defaults: **West US 3** (`westus3`), **gpt-5.2**, version **2025-12-11**, `GlobalStandard`, capacity **10**. Use `modelVersion=auto` explicitly to resolve the regional catalog's default. The external validation project must already have deployment **gpt-5.2**. Regional offerings, quota and policy can change; preflight does not reserve capacity.
+- The orchestration scripts require **PowerShell 7.2 or later**. Preview runs both pytest and the mocked PowerShell safety tests using pinned **Pester 4.10.1** before creating the deployment plan.
 - Authorize the pipeline's use of the Azure SDK package feed and the `azsdk-pool` agent pool. The pipeline reuses the repository's 1ES template and feed-authentication steps. The feed supplies the development-only resource detector dependency.
 
-Current access limitations are independent: permission to **queue** pipeline 8392 does not imply permission to **edit** it, preview modified YAML, save pipeline secrets, create Library groups, or authorize a service connection. Ask a pipeline/Library administrator for the necessary setup; do not change identities or bypass those controls.
+ADO permissions are independent: permission to **queue** a pipeline does not imply permission to **edit** it, preview modified YAML, save variables/secrets, create Library groups, or authorize a service connection. Ask a pipeline/Library administrator for the necessary setup; do not change identities or bypass those controls.
 
 ### Configure the existing validation project endpoint
 
-An administrator opens **Pipelines → pipeline 8392 → Edit → Variables → New variable**, names it `LLM_VALIDATION_PROJECT_ENDPOINT`, enters the existing project's endpoint, and saves. A **normal pipeline variable is supported**; the secret flag is optional for this endpoint, unlike the GitHub PAT. Alternatively, store it in the authorized group selected by `secretVariableGroup`. Do not commit the value, use a Run pipeline parameter, or pass it on a command line.
+An administrator opens **Pipelines → this pipeline → Edit → Variables → New variable**, names it `LLM_VALIDATION_PROJECT_ENDPOINT`, enters the existing project's endpoint, and saves. A **normal pipeline variable is supported**; the secret flag is optional for this endpoint, unlike the GitHub PAT. Alternatively, store it in the authorized group selected by `secretVariableGroup`. Do not commit the value, use a Run pipeline parameter, or pass it on a command line.
 
 The pipeline maps the endpoint explicitly only to a configuration-preflight step and the live test task. The endpoint-shape check runs **before resource provisioning**, without echoing the value or calling Azure. A missing value or unresolved ADO variable fails closed. The runner passes it to pytest through the environment; the test configuration preserves it rather than replacing it with a preparer default.
 
@@ -80,11 +81,13 @@ Each executed sample result includes two UTF-8 attachments in **Tests → select
 
 The shared [sample log writer](../sample_log.py) redacts credential-shaped fields (authorization headers, tokens, API keys, cookies, signed URL parameters and known secret environment values) before any live sample log is written, including print-only output, validation reasons and exception details. Test Proxy's recording sanitizers apply to HTTP recordings, not these live files. The provisioning GitHub PAT remains absent from the test process. Oversized logs are replaced by an omission notice, not truncated across a possible credential. API bodies and print output can still contain sample data: use test data and the appropriate ADO access/retention settings; this is not a general-purpose personal-data filter.
 
+The CI runner captures stdout/stderr rather than streaming raw sample prints with `-s`, and disables live log streaming. The plugin uses the shared redactor on captured reports and failure details before console/JUnit publication, even for samples without output validation. Attachment-like text printed by a test is neutralized; only the plugin's verified run-owned paths become upload markers. Validation still receives the original in-memory sample output.
+
 Attachment capture is enabled only by the on-demand runner's explicit pytest plugin/option. Ordinary local live tests keep their temporary log-file location, now using the same redaction; playback still creates no live logs. For samples without LLM validation, the shared writer creates a capture-only log without claiming a validation result. If provisioning or readiness fails before the sample starts, there are no sample API/print attachments; the deployment/readiness diagnostics remain in **sample-results** instead. Historical test results are not modified; attachments appear on newly executed results.
 
 ## ADO Run pipeline: first sample
 
-1. Open [pipeline 8392](https://dev.azure.com/azure-sdk/internal/_build?definitionId=8392) and select **Run pipeline**.
+1. Open the configured pipeline in Azure DevOps and select **Run pipeline**.
 2. Choose the branch containing this implementation. Ensure the pipeline's normal `AZURE_SUBSCRIPTION_ID` and `AZURE_TENANT_ID` variables are set to the intended subscription and tenant.
 3. Set:
    - `runMode`: `preview` for the first check.
@@ -156,51 +159,50 @@ Standard setup is sourced from [the official Bicep template](https://github.com/
 
 The pinned official template currently compiles with upstream Bicep warnings for capability-host schema metadata and optional AOAI references. The local templates compile without diagnostics. Compilation does not prove that the live subscription's policy, permissions or regional capacity will accept deployment.
 
-### Account quota versus model quota
+### Regional dependency eligibility and quota
+
+Before recording a deployment attempt, the live preflight checks:
+
+- AI Search currently offers **S1** in the requested region, with available subscription service quota.
+- Cosmos DB explicitly allows a new **non-zonal** account for this subscription in that region, matching the pinned template. A globally supported region can still be unavailable to an individual subscription.
+- The pinned template's StorageV2 SKU is offered in the requested region without an applicable restriction: normally **Standard_ZRS**, or its upstream **Standard_GRS** fallback in South India and West US.
+
+These are read-only checks. They do not choose a replacement region/SKU, register providers, attach existing resources, or guarantee deployment-time capacity. Missing or ambiguous eligibility evidence fails before resource-group creation. Consult the [Search offerings API](https://learn.microsoft.com/rest/api/searchmanagement/offerings/list), [Cosmos regional-access API](https://learn.microsoft.com/rest/api/cosmos-db-resource-provider/locations/list), and [Storage SKU API](https://learn.microsoft.com/rest/api/storagerp/skus/list) for their respective contracts.
 
 An `InsufficientQuota` error on `Microsoft.CognitiveServices/accounts` while deploying Standard setup is an account-creation failure, not a sample-test or MCP authentication failure. Available model deployment capacity does not guarantee that another Foundry account can be created.
 
-The live preflight separately checks the `AccountCount` entry from the [Cognitive Services regional usages API](https://learn.microsoft.com/rest/api/aiservices/accountmanagement/usages/list), logs its non-secret used/limit values, and stops before resource-group creation if that quota is exhausted, blocked or unverifiable. This check cannot cover every provider-specific limit or reserve capacity against concurrent runs; ARM validation remains authoritative.
+The live preflight separately checks `AccountCount` and the selected model SKU's exact catalog `usageName` in the [Cognitive Services regional usages API](https://learn.microsoft.com/rest/api/aiservices/accountmanagement/usages/list). Missing, duplicate, nonnumeric, negative or nonfinite quota values fail closed; exhausted or blocked quota stops before resource-group creation. These checks cannot cover every provider-specific limit or reserve capacity against concurrent runs. ARM validation can also pass before a deployment-time capacity failure.
 
 Use a supported region with available account and model quotas, or ask the subscription administrator to review the applicable quota. Do not delete or purge existing accounts to make this test pass. Verify the preceding attempt's ownership-checked cleanup before queueing another live attempt.
 
 ## Cost, networking and cleanup limits
 
 - Standard setup includes Storage **and** Cosmos DB **and** AI Search; these can incur standing charges even when a sample is idle. Application Insights is disabled for this initial MCP scenario.
+- Resource colocation does not mean single-region inference: the default **GlobalStandard** model SKU can route inference globally. Review data-residency requirements before changing the topology or SKU.
 - This is the official **public-network** Standard setup, not private-network isolation. Do not use production data. If policy forbids it, prepare a separately reviewed private-network variant instead of relaxing policy.
 - All Standard setup resource-ID override parameters remain empty. This run creates new resources; it never attaches to a production project or shared production Storage account.
 - Cleanup checks the task/plan/state subscription and tenant IDs, full resource-group ID, CI purpose, run ID and random owner token. It never adopts, retags, reuses, or deletes an existing group encountered during preflight.
-- Cleanup failures fail the pipeline; the non-secret **sample-results** artifact includes state/inventory for administrator follow-up. Do not consider unrelated or unattributed resources safe to delete.
+- Cleanup failures fail the pipeline; the group must be confirmed absent before recording `CleanedUp`. `-WhatIf` never marks cleanup complete. The non-secret **sample-results** artifact includes state/inventory for administrator follow-up. Do not consider unrelated or unattributed resources safe to delete.
 - `always()` and a cancellation grace period cannot guarantee cleanup after agent loss, hard termination, or control-plane errors. The expiry tag is **metadata, not an automatic deletion policy**. Administrators should monitor expired run-owned groups and review state/tags before removal.
 - Foundry soft-deleted account records may remain after resource-group deletion. The pipeline does not purge them or weaken retention policies automatically.
 
-## Local offline validation
+## Local validation
 
-Use the package's configured virtual environment and repository Black configuration. These checks do not run service tests:
+### Offline regression checks
+
+Use the package's configured virtual environment, installed Pester 4.10.1 and repository Black configuration. These checks do not run service tests, load local dotenv values or require Azure credentials:
 
 - Run the unit tests under this directory with `--confcutdir=tests/samples/ci` to avoid parent service fixtures.
-- Run [SampleCiHelpers.Tests.ps1](SampleCiHelpers.Tests.ps1) with Pester for explicit subscription targeting, application/tenant consistency, ownership, PAT-shape, model/account preflight, and secret-safe error-diagnostic tests.
-- Fetch pinned Bicep sources to temporary storage and run [Test-BicepTemplates.ps1](Test-BicepTemplates.ps1); it verifies that compiled ARM contains exactly one sample model and no validation deployment or endpoint output. Parameter compilation uses fictional values and an empty PAT.
-- Collect [../test_samples.py](../test_samples.py) and [../test_samples_async.py](../test_samples_async.py) with [select_samples.py](select_samples.py), then generate an offline plan.
-- Request ADO YAML expansion with `previewRun=true` only if authorized. **Modified-YAML previews require pipeline edit permission**; queue permission alone is insufficient. Do not queue a live run as a workaround for a denied preview.
+- Run all `*.Tests.ps1` files in this directory with Pester. They cover explicit target IDs, application/tenant consistency, regional eligibility, quota values, log-safe diagnostics, default plan generation, and actual cleanup behavior with an isolated fake Azure CLI.
+- With the Bicep compiler and pinned sources already available locally, run [Test-BicepTemplates.ps1](Test-BicepTemplates.ps1). It verifies exactly one sample model and no validation deployment or endpoint output, using fictional bindings and an empty PAT.
+- For harness collection and plan generation, set `PYTHON_DOTENV_DISABLED=true` and supply fictional target IDs through the environment. Collect with [select_samples.py](select_samples.py); collection must not execute samples.
 
-## Verified live execution
+### Networked checks without provisioning
 
-The historical successful runs below used the earlier configuration that provisioned a local validation model. They do not verify the new explicit-subscription/GPT-5.2 configuration. The external validation-project configuration requires an endpoint variable and a target-authorized identity with access to that shared project before a live run can succeed.
+- Installing the pinned Pester release and development packages requires their package feeds.
+- [Get-StandardSetupTemplate.ps1](Get-StandardSetupTemplate.ps1) downloads integrity-pinned sources from GitHub to temporary storage; downloading is not an offline check.
+- ADO YAML expansion with `previewRun=true` requires authorization. **Modified-YAML previews require pipeline edit permission**; queue permission alone is insufficient. Do not queue a live run as a workaround for a denied preview.
 
-[Run 6991675](https://dev.azure.com/azure-sdk/internal/_build/results?buildId=6991675) completed successfully on **2026-10-23 UTC**, using commit `71d7fec682e98a8cd51de91c552c835c061e1b23`, `location=westus3`, and the authorized `azure-sdk-tests-public` service connection.
+### Live validation
 
-- Bicep provisioned Standard Foundry, including Storage, Cosmos DB, AI Search, both model deployments and the project-scoped GitHub MCP connection.
-- The selected synchronous [MCP project-connection sample](../../../samples/agents/tools/sample_agent_mcp_with_project_connection.py) executed through the existing pytest harness: **1 passed, 0 failures, 0 errors, 0 skipped**. JUnit results were published to the ADO **Tests** tab.
-- The read-only readiness check received one agent-index timeout, then succeeded within the bounded retry window. The sample itself was not retried.
-- Ownership-checked cleanup succeeded, and the final deployment-state artifact recorded `status=CleanedUp` and `provisioningStep=Complete`.
-
-This run verifies the selected synchronous MCP sample and this live configuration, not every wildcard-selected sample, the asynchronous counterpart, or other regions/subscriptions. Choose `westus3` to reproduce this verified run; the pipeline's region remains configurable.
-
-### Shared-log attachment validation
-
-[Run 6992778](https://dev.azure.com/azure-sdk/internal/_build/results?buildId=6992778) verified commit `b529172b9ea6ace7335c97a63f7a6cee9ee860f1` in `westus3` with the same service connection. The synchronous MCP sample passed: **1 test, 0 failures, 0 errors, 0 skipped**.
-
-[Test result 65459553 / 100000](https://dev.azure.com/azure-sdk/internal/_testManagement/runs?runId=65459553&resultId=100000&_a=resultSummary) contains the shared executor's original success/API log (**125,951 bytes**) and print-output log (**550 bytes**), retaining their sample names and timestamps. Downloaded attachments were checked in memory: request/response and print content were present, and the raw Bearer/PAT/JWT pattern checks found no matches. The CI plugin attached these files directly without copying or reformatting them.
-
-Provisioning, sample execution, test-result publication and ownership-checked cleanup all succeeded. The final state was `CleanedUp` with `provisioningStep=Complete`. The external monitor lost its connection during cleanup; direct ADO timeline, artifact and test-result checks confirmed success. No additional retry was needed.
+Run `run-and-cleanup` only after the service connection, explicit target variables and shared-validator permissions are configured. A local deployment under a developer's identity does not validate CI permissions or the selected sample. Verify the selected sample result, attachment publication and run-owned cleanup together; retain that run-specific evidence in the PR or pipeline results rather than this guide.

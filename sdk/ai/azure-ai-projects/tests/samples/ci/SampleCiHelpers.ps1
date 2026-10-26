@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-#Requires -Version 7.0
+#Requires -Version 7.2
 
 Set-StrictMode -Version Latest
 
@@ -207,42 +207,102 @@ function Resolve-SampleModel {
     return @{ name = $Name; version = $Version; sku = $Sku; capacity = $Capacity; usageName = $skuDetails[0]['usageName'] }
 }
 
-function Assert-SampleAccountQuota {
+function Get-SampleQuotaAvailable {
     param(
         [Parameter(Mandatory)] [AllowEmptyCollection()] [object[]] $Usages,
-        [Parameter(Mandatory)] [string] $Location
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $UsageName,
+        [Parameter(Mandatory)] [string] $Description,
+        [ValidateRange(1, 1000000)] [int] $RequiredCapacity = 1,
+        [string] $Unit = ''
     )
 
-    # Account creation has a separate quota from the model deployment capacity checked below.
-    # https://learn.microsoft.com/rest/api/aiservices/accountmanagement/usages/list
-    $quota = @($Usages | Where-Object { $_['name']['value'] -ceq 'AccountCount' })
+    $quota = @($Usages | Where-Object {
+        $_ -is [System.Collections.IDictionary] -and $_['name'] -is [System.Collections.IDictionary] -and
+        $_['name']['value'] -ceq $UsageName
+    })
     if ($quota.Count -ne 1) {
-        throw "Cannot verify Cognitive Services AccountCount quota in '$Location'; no resources were created."
+        throw "Cannot verify $Description; no resources were created."
     }
     $usage = $quota[0]
     foreach ($key in @('currentValue', 'limit')) {
         $value = $usage[$key]
         if (($value -isnot [int] -and $value -isnot [long] -and $value -isnot [double] -and $value -isnot [decimal]) -or
             -not [double]::IsFinite([double] $value) -or $value -lt 0) {
-            throw "Cannot verify Cognitive Services AccountCount quota in '$Location'; no resources were created."
+            throw "Cannot verify $Description; no resources were created."
         }
     }
-    if ($usage['unit'] -cne 'Count') {
-        throw "Cannot verify Cognitive Services AccountCount quota in '$Location'; no resources were created."
+    if ($Unit -and $usage['unit'] -cne $Unit) {
+        throw "Cannot verify $Description; no resources were created."
     }
-    $current = $usage.currentValue
-    $limit = $usage.limit
-    if (($limit - $current) -lt 1 -or $usage['status'] -in @('Blocked', 'InOverage', 'Unknown')) {
-        $message = "Insufficient Cognitive Services account quota in '{0}' (AccountCount: {1}/{2}, status: {3})." -f `
-            $Location, $current, $limit, $usage['status']
+    $available = $usage.limit - $usage.currentValue
+    if ($available -lt $RequiredCapacity -or $usage['status'] -in @('Blocked', 'InOverage', 'Unknown')) {
+        $message = 'Insufficient {0} ({1}: {2}/{3}, status: {4}).' -f `
+            $Description, $UsageName, $usage.currentValue, $usage.limit, $usage['status']
         throw ($message + ' No resources were created. Choose a region with available account quota or ask an administrator to review quota; ' +
             'existing accounts will not be deleted.')
     }
-    Write-Host ('Account preflight: {0}, AccountCount {1}/{2}; at least one new account slot is available.' -f $Location, $current, $limit)
+    return $available
 }
 
-function Get-SampleRunnerPrincipalId {
-    return (Get-SampleRunnerIdentity).principalId
+function Assert-SampleAccountQuota {
+    param(
+        [Parameter(Mandatory)] [AllowEmptyCollection()] [object[]] $Usages,
+        [Parameter(Mandatory)] [string] $Location
+    )
+
+    # Account creation has a separate quota from model deployment capacity.
+    $available = Get-SampleQuotaAvailable -Usages $Usages -UsageName 'AccountCount' -Unit 'Count' `
+        -Description "Cognitive Services account quota in '$Location'"
+    Write-Host ('Account preflight: {0}, AccountCount available slots: {1}.' -f $Location, $available)
+}
+
+function Assert-SampleRegionAvailability {
+    param(
+        [Parameter(Mandatory)] [string] $SubscriptionId,
+        [Parameter(Mandatory)] [ValidatePattern('^[a-z0-9]+$')] [string] $Location
+    )
+
+    $subscription = Get-SampleSubscriptionId -SubscriptionId $SubscriptionId
+    $root = 'https://management.azure.com'
+    $scope = "$root/subscriptions/$subscription/providers"
+    $offerings = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--subscription', $subscription, '--url',
+        "$root/providers/Microsoft.Search/offerings?api-version=2025-02-01-preview") -Sensitive
+    $searchRegions = @($offerings['value'] | Where-Object { ($_['regionName'] -replace '\s', '') -ieq $Location })
+    if ($searchRegions.Count -ne 1) { throw "Cannot verify AI Search offerings in '$Location'; no resources were created." }
+    $searchSkus = @($searchRegions[0]['skus'] | Where-Object {
+        $_['name'] -ceq 'standard' -or ($_['sku'] -and $_['sku']['name'] -ceq 'standard')
+    })
+    if ($searchSkus.Count -ne 1) { throw "AI Search S1 is not offered in '$Location'; no resources were created." }
+    $searchUsage = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--subscription', $subscription, '--url',
+        "$scope/Microsoft.Search/locations/$Location/usages?api-version=2025-05-01") -Sensitive
+    $null = Get-SampleQuotaAvailable -Usages @($searchUsage['value']) -UsageName 'standard' -Unit 'Count' `
+        -Description "AI Search S1 service quota in '$Location'"
+
+    $cosmosLocations = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--subscription', $subscription, '--url',
+        "$scope/Microsoft.DocumentDB/locations?api-version=2025-04-15") -Sensitive
+    $cosmosRegions = @($cosmosLocations['value'] | Where-Object { ($_['name'] -replace '\s', '') -ieq $Location })
+    if ($cosmosRegions.Count -ne 1) { throw "Cannot verify Cosmos DB regional access in '$Location'; no resources were created." }
+    $access = $cosmosRegions[0]['properties']['isSubscriptionRegionAccessAllowedForRegular']
+    if ($access -isnot [bool] -or -not $access) {
+        throw "Cosmos DB account creation is not allowed for this subscription in '$Location'; no resources were created."
+    }
+
+    # Match the storage defaults in the integrity-pinned Standard setup template.
+    $storageSku = if ($Location -in @('southindia', 'westus')) { 'Standard_GRS' } else { 'Standard_ZRS' }
+    $storageSkus = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--subscription', $subscription, '--url',
+        "$scope/Microsoft.Storage/skus?api-version=2023-05-01") -Sensitive
+    $storage = @($storageSkus['value'] | Where-Object {
+        $_['name'] -ceq $storageSku -and $_['kind'] -ceq 'StorageV2' -and
+        $Location -iin @($_['locations'] | ForEach-Object { $_ -replace '\s', '' })
+    })
+    if ($storage.Count -ne 1) { throw "Cannot verify StorageV2 $storageSku in '$Location'; no resources were created." }
+    foreach ($restriction in @($storage[0]['restrictions'] | Where-Object { $null -ne $_ })) {
+        $restricted = @($restriction['values'] | ForEach-Object { $_ -replace '\s', '' })
+        if ($restriction['type'] -ine 'Location' -or $restricted.Count -eq 0 -or $Location -iin $restricted) {
+            throw "StorageV2 $storageSku is restricted in '$Location'; no resources were created."
+        }
+    }
+    Write-Host ('Regional dependency preflight: {0}, Search S1, Cosmos DB and StorageV2 {1} are eligible.' -f $Location, $storageSku)
 }
 
 function Get-SampleRunnerIdentity {

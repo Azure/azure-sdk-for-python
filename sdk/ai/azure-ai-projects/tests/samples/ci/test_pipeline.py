@@ -135,8 +135,21 @@ def test_default_model_and_region_use_verified_gpt5_configuration(pipeline):
     parameters = {parameter["name"]: parameter for parameter in pipeline["parameters"]}
     assert parameters["location"]["default"] == "westus3"
     assert parameters["modelName"]["default"] == "gpt-5.2"
+    assert parameters["modelVersion"]["default"] == "2025-12-11"
     assert parameters["modelSku"]["default"] == "GlobalStandard"
     assert parameters["modelCapacity"]["default"] == 10
+
+
+def test_preview_runs_pinned_pester_safety_tests_before_planning(pipeline):
+    stages = pipeline["extends"]["parameters"]["stages"]
+    preview = next(stage for stage in stages if stage.get("stage") == "Preview")
+    steps = preview["jobs"][0]["steps"]
+    guards = next(step for step in steps if "Invoke-Pester" in step.get("pwsh", ""))
+    assert "-RequiredVersion 4.10.1" in guards["pwsh"]
+    assert "-Script './tests/samples/ci'" in guards["pwsh"]
+    assert "$result.TotalCount -eq 0" in guards["pwsh"]
+    assert "$result.FailedCount -ne 0" in guards["pwsh"]
+    assert steps.index(guards) < next(i for i, step in enumerate(steps) if "New-SampleDeploymentPlan.ps1" in str(step))
 
 
 def test_subscription_is_not_derived_from_the_service_connection_default():

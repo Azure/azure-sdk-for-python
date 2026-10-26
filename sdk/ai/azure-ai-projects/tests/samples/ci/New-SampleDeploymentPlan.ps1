@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-#Requires -Version 7.0
+#Requires -Version 7.2
 
 [CmdletBinding()]
 param(
@@ -8,7 +8,7 @@ param(
     [Parameter(Mandatory)] [string] $OutputDirectory,
     [ValidatePattern('^[a-z0-9]+$')] [string] $Location = 'westus3',
     [ValidatePattern('^[A-Za-z0-9._-]+$')] [string] $ModelName = 'gpt-5.2',
-    [ValidatePattern('^[A-Za-z0-9._-]+$')] [string] $ModelVersion = 'auto',
+    [ValidatePattern('^[A-Za-z0-9._-]+$')] [string] $ModelVersion = '2025-12-11',
     [ValidateSet('GlobalStandard', 'Standard')] [string] $ModelSku = 'GlobalStandard',
     [ValidateRange(1, 1000)] [int] $ModelCapacity = 10,
     [ValidatePattern('^\d+$')] [string] $DefinitionId = $env:SYSTEM_DEFINITIONID,
@@ -65,4 +65,4 @@ Write-Host ('Sample model: {0} ({1}).' -f $ModelName, $ModelVersion)
 Write-Host 'Output validation uses an existing project supplied by the LLM_VALIDATION_PROJECT_ENDPOINT environment variable; no validator is provisioned.'
 Write-Host ('GitHub MCP connection: {0}; the PAT is never stored in this plan.' -f $plan.provisionMcp)
 Write-Host 'Public networking. Resources incur charges until cleanup completes.'
-Write-Host 'This offline preview is not ARM what-if. A live run checks identity, providers, model availability and quota before provisioning.'
+Write-Host 'This offline preview is not ARM what-if. A live run checks identity, providers, regional dependency eligibility and model/account quota before provisioning.'

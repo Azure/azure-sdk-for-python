@@ -1,0 +1,51 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+#Requires -Version 7.2
+
+Describe 'Offline deployment-plan defaults' {
+    BeforeEach {
+        $script:originalSubscription = $env:AZURE_SUBSCRIPTION_ID
+        $script:originalTenant = $env:AZURE_TENANT_ID
+        $env:AZURE_SUBSCRIPTION_ID = '11111111-1111-1111-1111-111111111111'
+        $env:AZURE_TENANT_ID = '22222222-2222-2222-2222-222222222222'
+        $script:planDirectory = Join-Path $TestDrive 'plan'
+        $manifest = Join-Path $TestDrive 'selection.json'
+        @{ schemaVersion = 1; tests = @(@{
+            node_id = 'tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_mcp_with_project_connection]'
+            sample_path = 'samples/agents/tools/sample_agent_mcp_with_project_connection.py'
+        }) } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $manifest -Encoding utf8
+        $script:planArguments = @{
+            SelectionManifest = $manifest
+            OutputDirectory = $script:planDirectory
+            DefinitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
+            BuildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
+            JobAttempt = '1'
+        }
+        $script:planScript = Join-Path $PSScriptRoot 'New-SampleDeploymentPlan.ps1'
+    }
+    AfterEach {
+        $env:AZURE_SUBSCRIPTION_ID = $script:originalSubscription
+        $env:AZURE_TENANT_ID = $script:originalTenant
+    }
+
+    It 'defaults to the proven West US 3 GPT-5.2 version without contacting Azure' {
+        & {
+            function az { throw 'Offline planning must not contact Azure.' }
+            & $script:planScript @script:planArguments
+        }
+        $plan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
+        $plan.location | Should Be 'westus3'
+        $plan.sampleModel.name | Should Be 'gpt-5.2'
+        $plan.sampleModel.version | Should Be '2025-12-11'
+        $plan.sampleModel.sku | Should Be 'GlobalStandard'
+        $plan.sampleModel.capacity | Should Be 10
+        $plan.subscriptionId | Should Be $env:AZURE_SUBSCRIPTION_ID
+        $plan.tenantId | Should Be $env:AZURE_TENANT_ID
+    }
+
+    It 'retains auto as an explicit model-version override' {
+        & $script:planScript @script:planArguments -ModelVersion auto
+        $plan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
+        $plan.sampleModel.version | Should Be 'auto'
+    }
+}

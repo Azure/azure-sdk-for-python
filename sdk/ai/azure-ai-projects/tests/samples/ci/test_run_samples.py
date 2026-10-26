@@ -51,6 +51,10 @@ def test_command_executes_pytest_live_without_recording():
     assert command[command.index("-p") + 1] == "sample_ci_attachments"
     assert "junit_logging=system-out" in command
     assert "junit_log_passing_tests=true" in command
+    assert "--capture=fd" in command
+    assert "log_cli=false" in command
+    assert "addopts=" in command
+    assert "-s" not in command
     assert f"--sample-attachments-dir={Path('results.xml').resolve().parent / 'attachments'}" in command
     assert "--foundry-model-name=gpt-4.1" in command
     assert not any(argument.startswith("--azure-tenant-id") for argument in command)
@@ -208,7 +212,7 @@ def test_readiness_probe_limits_the_read_request(readiness_probe):
         " https://example.services.ai.azure.com/api/projects/validator",
     ],
 )
-def test_external_validation_secret_is_required_without_echoing_invalid_values(monkeypatch, value):
+def test_external_validation_endpoint_is_required_without_echoing_invalid_values(monkeypatch, value):
     monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", value)
     with pytest.raises(ValueError, match="pipeline environment variable") as failure:
         run_samples.require_validation_endpoint()
@@ -216,7 +220,7 @@ def test_external_validation_secret_is_required_without_echoing_invalid_values(m
     assert "example.services" not in str(failure.value)
 
 
-def test_secret_preflight_never_calls_azure_or_starts_samples(monkeypatch, capsys):
+def test_endpoint_preflight_never_calls_azure_or_starts_samples(monkeypatch, capsys):
     endpoint = "https://external-validator.services.ai.azure.com/api/projects/validator"
     monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", endpoint)
     monkeypatch.setattr(run_samples.sys, "argv", ["run_samples.py", "--check-validation-config"])
@@ -230,7 +234,7 @@ def test_secret_preflight_never_calls_azure_or_starts_samples(monkeypatch, capsy
     sample_process.assert_not_called()
 
 
-def test_external_validation_secret_is_env_only_in_real_runner_invocation(tmp_path, monkeypatch):
+def test_external_validation_endpoint_is_env_only_in_real_runner_invocation(tmp_path, monkeypatch):
     endpoint = "https://external-validator.services.ai.azure.com/api/projects/validator"
     state = ready_state()
     state_path = tmp_path / "state.json"
@@ -250,6 +254,9 @@ def test_external_validation_secret_is_env_only_in_real_runner_invocation(tmp_pa
     assert environment["LLM_VALIDATION_PROJECT_ENDPOINT"] == endpoint
     assert environment["AZURE_SUBSCRIPTION_ID"] == state["subscriptionId"]
     assert environment["AZURE_TENANT_ID"] == state["tenantId"]
+    assert environment["AZURE_TEST_USE_CLI_AUTH"] == "true"
+    assert environment["AZURE_TOKEN_CREDENTIALS"] == "AzureCliCredential"
+    assert environment["PYTHON_DOTENV_DISABLED"] == "true"
     assert "MCP_GITHUB_PAT" not in environment
     assert all(endpoint not in argument and "llm-validation-project-endpoint" not in argument for argument in command)
     assert endpoint not in state_path.read_text(encoding="utf-8")

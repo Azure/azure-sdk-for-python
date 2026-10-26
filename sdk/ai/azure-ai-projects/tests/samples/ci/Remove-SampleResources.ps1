@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-#Requires -Version 7.0
+#Requires -Version 7.2
 
 [CmdletBinding(SupportsShouldProcess)]
 param([Parameter(Mandatory)] [string] $StatePath, [switch] $ConfirmCleanup)
@@ -29,9 +29,12 @@ if ($exists) {
     $null = Invoke-SampleAzure -Arguments @('group', 'delete', '--name', $state.plan.resourceGroup, '--subscription', $state.subscriptionId, '--yes')
 }
 if (-not $ConfirmCleanup) { return }
-if ($PSCmdlet.ShouldProcess($expectedDeployment, 'Delete the run-owned subscription deployment history')) {
-    $null = Invoke-SampleAzure -Arguments @('deployment', 'sub', 'delete', '--name', $expectedDeployment, '--subscription', $state.subscriptionId)
+if (-not $PSCmdlet.ShouldProcess($expectedDeployment, 'Delete the run-owned subscription deployment history')) { return }
+$remaining = Invoke-SampleAzure -Arguments @('group', 'exists', '--name', $state.plan.resourceGroup, '--subscription', $state.subscriptionId)
+if ($remaining) {
+    throw 'The run-owned resource group still exists. Cleanup was not marked complete.'
 }
+$null = Invoke-SampleAzure -Arguments @('deployment', 'sub', 'delete', '--name', $expectedDeployment, '--subscription', $state.subscriptionId)
 $state['status'] = 'CleanedUp'
 $state | ConvertTo-Json -Depth 15 | Set-Content -LiteralPath $StatePath -Encoding utf8
 Write-Host 'Run-owned temporary resource cleanup completed.'

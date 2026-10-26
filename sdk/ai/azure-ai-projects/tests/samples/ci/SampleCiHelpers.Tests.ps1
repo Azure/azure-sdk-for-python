@@ -565,10 +565,6 @@ Describe 'Service connection identity metadata' {
         ($identity | ConvertTo-Json).Contains('accessToken') | Should Be $false
     }
 
-    It 'preserves the provisioning principal ID helper' {
-        Get-SampleRunnerPrincipalId | Should Be $script:identityClaims.oid
-    }
-
     It 'accepts a v2 application client claim' {
         $script:identityClaims.azp = $script:identityClaims.appid
         $script:identityClaims.Remove('appid')

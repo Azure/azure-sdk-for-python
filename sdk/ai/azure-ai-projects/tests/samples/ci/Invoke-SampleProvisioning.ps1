@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-#Requires -Version 7.0
+#Requires -Version 7.2
 
 [CmdletBinding()]
 param(
@@ -31,19 +31,16 @@ foreach ($namespace in @('Microsoft.CognitiveServices', 'Microsoft.Storage', 'Mi
         throw "Provider '$namespace' must already be registered by an administrator; nothing has been provisioned."
     }
 }
+Assert-SampleRegionAvailability -SubscriptionId $subscription -Location $plan.location
 
 $catalog = @(Invoke-SampleAzure -Arguments @('cognitiveservices', 'model', 'list', '--location', $plan.location, '--subscription', $subscription))
 $sampleModel = Resolve-SampleModel -Catalog $catalog -Name $plan.sampleModel.name -Version $plan.sampleModel.version `
     -Sku $plan.sampleModel.sku -Capacity $plan.sampleModel.capacity
 $usages = @(Invoke-SampleAzure -Arguments @('cognitiveservices', 'usage', 'list', '--location', $plan.location, '--subscription', $subscription))
 Assert-SampleAccountQuota -Usages $usages -Location $plan.location
-foreach ($model in @($sampleModel)) {
-    $quota = @($usages | Where-Object { $_.name.value -eq $model.usageName })
-    if ($quota.Count -ne 1 -or ($quota[0].limit - $quota[0].currentValue) -lt $model.capacity) {
-        throw "Insufficient or unverifiable quota for '$($model.name)' ($($model.usageName)); no resources were created."
-    }
-    Write-Host ('Model preflight: {0} {1}, {2}, capacity {3}.' -f $model.name, $model.version, $model.sku, $model.capacity)
-}
+$null = Get-SampleQuotaAvailable -Usages $usages -UsageName $sampleModel.usageName -RequiredCapacity $sampleModel.capacity `
+    -Description "model deployment quota for '$($sampleModel.name)'"
+Write-Host ('Model preflight: {0} {1}, {2}, capacity {3}.' -f $sampleModel.name, $sampleModel.version, $sampleModel.sku, $sampleModel.capacity)
 
 $groupDeploymentName = 'sample-ci-rg-' + $plan.ownerToken
 $groupArguments = @('--name', $groupDeploymentName, '--location', $plan.location, '--subscription', $subscription,
@@ -75,7 +72,7 @@ try {
 
     # All resource creation is performed by Bicep, including the official Standard setup.
     $state['provisioningStep'] = 'StandardSetup'
-    Write-Host 'Deploying official Standard setup Bicep (capability hosts can take 10-20 minutes).' 
+    Write-Host 'Deploying official Standard setup Bicep (capability hosts can take 10-20 minutes).'
     $standard = Invoke-SampleAzure -Arguments @('deployment', 'group', 'create', '--name', 'standard-setup',
         '--resource-group', $plan.resourceGroup, '--subscription', $subscription, '--template-file', $StandardTemplatePath,
         '--parameters', "location=$($plan.location)", "aiFoundryName=$($plan.accountPrefix)", 'foundryProjectName=project',
@@ -90,7 +87,7 @@ try {
     if ($accounts.Count -ne 1 -or -not $accounts[0].name.StartsWith($plan.accountPrefix, [StringComparison]::Ordinal)) {
         throw 'Cannot identify the single Foundry account created by Standard setup.'
     }
-    $projects = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--url',
+    $projects = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--subscription', $subscription, '--url',
         ('https://management.azure.com{0}/projects?api-version=2025-10-01-preview' -f $accounts[0].id))
     if (@($projects.value).Count -ne 1) { throw 'Cannot identify the single Foundry project created by Standard setup.' }
     $projectResourceId = [string] $projects.value[0]['id']
