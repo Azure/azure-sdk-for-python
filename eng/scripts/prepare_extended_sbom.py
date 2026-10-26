@@ -13,9 +13,7 @@ from packaging.version import Version
 from ci_tools.functions import glob_packages
 
 
-def prepare_discovery_inputs(
-    repo_root: Path, artifact_directory: Path, output_directory: Path, targeting_string: str = "*"
-) -> None:
+def prepare_discovery_inputs(repo_root: Path, artifact_directory: Path, output_directory: Path) -> None:
     requirements_path = output_directory / "requirements.txt"
     requirements_path.unlink(missing_ok=True)
     identities = {}
@@ -33,11 +31,6 @@ def prepare_discovery_inputs(
             raise ValueError(f"Multiple versions of {name} in the artifact: {identities[name]} and {version}")
         identities[name] = version
     if not identities:
-        if targeting_string == "null":
-            output_directory.mkdir(parents=True, exist_ok=True)
-            requirements_path.write_text("", encoding="utf-8")
-            print("No packages selected; SBOM discovery inputs are empty")
-            return
         raise ValueError(f"No wheels found in {artifact_directory}")
 
     candidates = {}
@@ -95,13 +88,9 @@ def main() -> None:
     parser.add_argument("--repo-root", type=Path, required=True)
     parser.add_argument("--artifact-directory", type=Path, required=True)
     parser.add_argument("--output-directory", type=Path, required=True)
-    parser.add_argument("--targeting-string", default="*")
     args = parser.parse_args()
     prepare_discovery_inputs(
-        args.repo_root.resolve(),
-        args.artifact_directory.resolve(),
-        args.output_directory.resolve(),
-        args.targeting_string,
+        args.repo_root.resolve(), args.artifact_directory.resolve(), args.output_directory.resolve()
     )
 
 
