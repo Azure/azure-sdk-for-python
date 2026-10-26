@@ -9,6 +9,7 @@
   `model_attribution_headers()` helper for the proposed `x-ms-original-subject`
   dictionary contract. The assertions do not establish identity proof or change
   model authentication; model integration remains an explicit per-call opt-in.
+  Both the assertions class and header helper are marked experimental.
 - Added protocol-scoped task-runtime startup requests so protocol hosts can
   obtain scoped `TaskManager` access without mutating the process-wide
   resilient-task switch. This prevents one protocol's enablement from

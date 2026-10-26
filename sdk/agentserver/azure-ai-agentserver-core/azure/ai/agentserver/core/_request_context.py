@@ -31,6 +31,7 @@ from dataclasses import dataclass
 import re
 from typing import Mapping
 
+from ._experimental import experimental
 from ._platform_headers import FOUNDRY_CALL_ID
 
 __all__ = [
@@ -48,6 +49,7 @@ _ORIGINAL_SUBJECT_MEMBER = re.compile(
 )
 
 
+@experimental
 @dataclass(frozen=True, repr=False)
 class FoundryOriginalSubject:
     """Invocation-local original-subject assertions, separate from model authentication.
@@ -140,6 +142,7 @@ class FoundryAgentRequestContext:
         self.session_id = session_id
         self.original_subject = original_subject
 
+    @experimental
     def model_attribution_headers(self) -> dict[str, str]:
         """Build draft headers for an explicitly supported model integration.
 
