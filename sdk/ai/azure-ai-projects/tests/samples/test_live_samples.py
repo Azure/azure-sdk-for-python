@@ -8,6 +8,7 @@ import asyncio
 import base64
 from concurrent.futures import Future
 import importlib.util
+import inspect
 import io
 import json
 from pathlib import Path
@@ -18,13 +19,30 @@ from unittest.mock import AsyncMock, MagicMock
 import wave
 
 import pytest
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 
 from azure.ai.projects import models
 
 
 _SAMPLE_DIRECTORY = Path(__file__).resolve().parents[2] / "samples" / "agents" / "voice"
 _SYNC_SCENARIOS = ("connection", "text_conversation", "function_tool")
+
+
+@pytest.mark.parametrize(
+    "filename", sorted(path.name for path in _SAMPLE_DIRECTORY.glob("sample_voice_agent_live_*.py"))
+)
+def test_all_live_samples_have_no_cli_or_entrypoint_arguments(monkeypatch, sample_environment, filename):
+    sample = _load_module(monkeypatch, filename)
+
+    assert not inspect.signature(sample.main).parameters
+    assert not hasattr(sample, "argparse")
+    assert "sys.argv" not in inspect.getsource(sample)
+
+
+def test_only_full_duplex_audio_needs_a_separate_async_live_sample():
+    assert {path.name for path in _SAMPLE_DIRECTORY.glob("sample_voice_agent_live_*_async.py")} == {
+        "sample_voice_agent_live_audio_conversation_async.py"
+    }
 
 
 def _load_module(monkeypatch, filename):
@@ -75,6 +93,20 @@ def _recording(payload=b"\x01\x00" * 1200, *, channels=1, rate=24000, sample_wid
     return wave.open(stream, "rb")
 
 
+def _capture_sample_output_directories(monkeypatch, sample, tmp_path):
+    make_directory = sample.mkdtemp
+    directories = []
+
+    def create_directory(*, prefix):
+        directory = Path(make_directory(prefix=prefix, dir=tmp_path))
+        directories.append(directory)
+        return str(directory)
+
+    factory = MagicMock(side_effect=create_directory)
+    monkeypatch.setattr(sample, "mkdtemp", factory)
+    return factory, directories
+
+
 @pytest.fixture
 def sample_environment(monkeypatch):
     monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://example.invalid/api/projects/offline")
@@ -82,7 +114,6 @@ def sample_environment(monkeypatch):
     monkeypatch.setenv("FOUNDRY_MODEL_NAME", "backend-deployment-test")
     monkeypatch.setenv("FOUNDRY_VOICE_AGENT_NAME", "live-offline")
     monkeypatch.setenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH", "offline-input.wav")
-    monkeypatch.delenv("FOUNDRY_VOICE_AUDIO_OUTPUT_PATH", raising=False)
     monkeypatch.setattr("dotenv.load_dotenv", lambda: False)
 
     client = MagicMock()
@@ -469,37 +500,104 @@ async def test_audio_rejects_invalid_or_partial_pcm(monkeypatch, sample_environm
 
 
 @pytest.mark.asyncio
-async def test_audio_refuses_to_overwrite_the_input_recording(monkeypatch, sample_environment):
+@pytest.mark.parametrize("hard_link", [False, True], ids=["input-path", "hard-linked-input"])
+async def test_audio_temp_output_never_overwrites_input_audio(monkeypatch, sample_environment, tmp_path, hard_link):
     sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")
-    monkeypatch.setenv("FOUNDRY_VOICE_AUDIO_OUTPUT_PATH", "offline-input.wav")
-    with pytest.raises(ValueError, match="must not overwrite"):
-        await sample.main()
-    sample_environment.async_client.agents.create_version.assert_not_awaited()
-
-
-@pytest.mark.asyncio
-async def test_audio_refuses_a_hard_link_to_the_input_without_modifying_either_path(
-    monkeypatch, sample_environment, tmp_path
-):
-    sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")
-    input_path = tmp_path / "input.wav"
-    output_path = tmp_path / "hard-linked-output.wav"
+    input_path = tmp_path / ("input.wav" if hard_link else "reply.wav")
+    output_path = tmp_path / "reply.wav"
     original = _wav_bytes(1)
     input_path.write_bytes(original)
-    output_path.hardlink_to(input_path)
-    assert input_path.resolve() != output_path.resolve()
-    assert output_path.samefile(input_path)
+    if hard_link:
+        output_path.hardlink_to(input_path)
+        assert output_path.samefile(input_path)
     monkeypatch.setenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH", str(input_path))
-    monkeypatch.setenv("FOUNDRY_VOICE_AUDIO_OUTPUT_PATH", str(output_path))
+    monkeypatch.setattr(sample, "SAVE_AUDIO", True)
+    monkeypatch.setattr(sample, "mkdtemp", MagicMock(return_value=str(tmp_path)))
     monkeypatch.setattr(sample, "_run_audio_conversation", AsyncMock())
 
-    with pytest.raises(ValueError, match="must not overwrite"):
+    with pytest.raises(FileExistsError):
         await sample.main()
 
     assert input_path.read_bytes() == original
     assert output_path.read_bytes() == original
     sample_environment.async_client.agents.create_version.assert_not_awaited()
     sample_environment.async_client.beta.voice_agents.live.connect.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("microphone", [False, True], ids=["wav", "microphone"])
+@pytest.mark.parametrize("save_audio", [False, True], ids=["no-recording", "save-reply"])
+async def test_audio_recording_is_opt_in_and_uses_unique_persistent_user_temp_folders(
+    monkeypatch, sample_environment, tmp_path, capsys, microphone, save_audio
+):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")
+    input_path = tmp_path / "input.wav"
+    original = _wav_bytes(1)
+    input_path.write_bytes(original)
+    if microphone:
+        monkeypatch.delenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH")
+    else:
+        monkeypatch.setenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH", str(input_path))
+    monkeypatch.setattr(sample, "USE_MICROPHONE", microphone)
+    monkeypatch.setattr(sample, "SAVE_AUDIO", save_audio)
+    backend = object()
+    monkeypatch.setattr(sample, "_microphone_backend", lambda: backend)
+    output_factory, directories = _capture_sample_output_directories(monkeypatch, sample, tmp_path)
+    reply = b"\x00\x08" * 1200
+
+    async def stream(client, agent_name, agent_version, recording, output_file, *, audio_backend=None):
+        assert client is sample_environment.async_client
+        assert agent_version == "owned-version"
+        assert agent_name.startswith("live-offline-")
+        if microphone:
+            assert recording is None and audio_backend is backend
+        else:
+            assert recording.readframes(recording.getnframes()) == b"\x01\x02" * 1200
+        if save_audio:
+            output_file.writeframesraw(reply)
+        else:
+            assert output_file is None
+
+    run_audio = AsyncMock(side_effect=stream)
+    monkeypatch.setattr(sample, "_run_audio_conversation", run_audio)
+    await sample.main()
+    await sample.main()
+
+    assert input_path.read_bytes() == original
+    assert run_audio.await_count == 2
+    if save_audio:
+        assert len(directories) == 2 and directories[0] != directories[1]
+        assert output_factory.call_count == 2
+        for directory in directories:
+            assert directory.parent == tmp_path
+            with wave.open(str(directory / "reply.wav"), "rb") as recording:
+                assert recording.getparams()[:3] == (1, 2, 24000)
+                assert recording.readframes(recording.getnframes()) == reply
+        output = capsys.readouterr().out
+        assert all(str(directory) in output for directory in directories)
+    else:
+        output_factory.assert_not_called()
+        assert directories == []
+    assert sample_environment.async_client.agents.delete_version.await_count == 2
+    sample_environment.async_client.agents.delete.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_audio_temp_directory_failure_precedes_service_resource_creation(
+    monkeypatch, sample_environment, tmp_path
+):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")
+    input_path = tmp_path / "input.wav"
+    input_path.write_bytes(_wav_bytes(1))
+    monkeypatch.setenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH", str(input_path))
+    monkeypatch.setattr(sample, "SAVE_AUDIO", True)
+    monkeypatch.setattr(sample, "mkdtemp", MagicMock(side_effect=PermissionError("temporary directory unavailable")))
+
+    with pytest.raises(PermissionError, match="temporary directory unavailable"):
+        await sample.main()
+
+    sample_environment.async_client.agents.create_version.assert_not_awaited()
+    sample_environment.async_client.agents.delete_version.assert_not_awaited()
 
 
 @pytest.mark.asyncio
@@ -608,28 +706,15 @@ async def test_continuous_reply_activity_does_not_extend_the_overall_audio_deadl
     assert connection.recv.await_count == 10
 
 
-def _text_sample(monkeypatch, sample_environment, asynchronous):
-    suffix = "_async" if asynchronous else ""
-    sample = _load_module(monkeypatch, f"sample_voice_agent_live_text_conversation{suffix}.py")
-    client = sample_environment.async_client if asynchronous else sample_environment.client
-    connection = sample_environment.async_connection if asynchronous else sample_environment.connection
-    return sample, client, connection
+def _text_sample(monkeypatch, sample_environment):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_text_conversation.py")
+    return sample, sample_environment.client, sample_environment.connection
 
 
-async def _run_text_sample(sample, asynchronous, prompts=None):
-    if asynchronous:
-        await sample.main(prompts)
-    else:
-        sample.main(prompts)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-async def test_text_samples_reuse_one_session_and_wait_for_each_turn(
-    monkeypatch, sample_environment, capsys, asynchronous
-):
-    sample, client, connection = _text_sample(monkeypatch, sample_environment, asynchronous)
+def test_text_sample_reuses_one_session_and_waits_for_each_turn(monkeypatch, sample_environment, capsys):
+    sample, client, connection = _text_sample(monkeypatch, sample_environment)
     prompts = ["My name is Ada.", "What is my name?"]
+    monkeypatch.setattr(sample, "TEXT_PROMPTS", prompts)
     events = iter([_started(), *_text_response("Hello, Ada."), *_text_response("Your name is Ada."), _closed()])
     completed = 0
     submitted = []
@@ -648,7 +733,7 @@ async def test_text_samples_reuse_one_session_and_wait_for_each_turn(
     connection.recv.side_effect = receive
     connection.response.item.create.side_effect = submit
 
-    await _run_text_sample(sample, asynchronous, prompts)
+    sample.main()
 
     assert submitted == prompts
     assert completed == 2
@@ -660,26 +745,17 @@ async def test_text_samples_reuse_one_session_and_wait_for_each_turn(
     client.agents.delete.assert_not_called()
     connection.session.start.assert_not_called()
     connection.response.cancel.assert_not_called()
-    if asynchronous:
-        assert connection.response.item.create.await_count == 2
-        assert connection.response.create.await_count == 2
-        connection.session.close.assert_awaited_once()
-        client.agents.delete_version.assert_awaited_once()
-        client.beta.voice_agents.live.connect.return_value.__aexit__.assert_awaited_once()
-    else:
-        client.beta.voice_agents.live.connect.return_value.__exit__.assert_called_once()
+    client.beta.voice_agents.live.connect.return_value.__exit__.assert_called_once()
     output = capsys.readouterr().out
     assert output.count("Responses backend: Hello, Ada.\n") == 1
     assert output.count("Responses backend: Your name is Ada.\n") == 1
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-async def test_text_samples_keep_the_original_single_prompt_default(monkeypatch, sample_environment, asynchronous):
-    sample, client, connection = _text_sample(monkeypatch, sample_environment, asynchronous)
+def test_text_sample_keeps_the_original_single_prompt_default(monkeypatch, sample_environment):
+    sample, client, connection = _text_sample(monkeypatch, sample_environment)
     connection.recv.side_effect = [_started(), *_text_response("Seattle has a rainy climate."), _closed()]
 
-    await _run_text_sample(sample, asynchronous)
+    sample.main()
 
     definition = client.agents.create_version.call_args.kwargs["definition"]
     assert isinstance(definition.delegation, models.LiveResponsesDelegationParam)
@@ -694,26 +770,22 @@ async def test_text_samples_keep_the_original_single_prompt_default(monkeypatch,
     connection.response.create.assert_called_once()
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("prompts", [[], [""], ["first", " "], "not-a-prompt-list"])
-async def test_text_samples_reject_empty_or_invalid_scripted_prompts(
-    monkeypatch, sample_environment, asynchronous, prompts
-):
-    sample, client, _ = _text_sample(monkeypatch, sample_environment, asynchronous)
+def test_text_sample_rejects_empty_or_invalid_scripted_prompts(monkeypatch, sample_environment, prompts):
+    sample, client, _ = _text_sample(monkeypatch, sample_environment)
+    monkeypatch.setattr(sample, "TEXT_PROMPTS", prompts)
 
     with pytest.raises(ValueError, match="prompt"):
-        await _run_text_sample(sample, asynchronous, prompts)
+        sample.main()
 
     client.agents.create_version.assert_not_called()
     client.beta.voice_agents.live.connect.assert_not_called()
     client.agents.delete_version.assert_not_called()
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-async def test_text_samples_stop_on_a_later_backend_failure_and_clean_up(monkeypatch, sample_environment, asynchronous):
-    sample, client, connection = _text_sample(monkeypatch, sample_environment, asynchronous)
+def test_text_sample_stops_on_a_later_backend_failure_and_cleans_up(monkeypatch, sample_environment):
+    sample, client, connection = _text_sample(monkeypatch, sample_environment)
+    monkeypatch.setattr(sample, "TEXT_PROMPTS", ["first", "second", "must not be sent"])
     connection.recv.side_effect = [
         _started(),
         *_text_response("First answer."),
@@ -721,22 +793,19 @@ async def test_text_samples_stop_on_a_later_backend_failure_and_clean_up(monkeyp
     ]
 
     with pytest.raises(RuntimeError, match="Responses backend response.failed"):
-        await _run_text_sample(sample, asynchronous, ["first", "second", "must not be sent"])
+        sample.main()
 
     assert connection.response.item.create.call_count == 2
     assert connection.response.create.call_count == 2
     connection.session.close.assert_called_once()
     agent_name = client.agents.create_version.call_args.kwargs["agent_name"]
     client.agents.delete_version.assert_called_once_with(agent_name=agent_name, agent_version="owned-version")
-    if asynchronous:
-        client.agents.delete_version.assert_awaited_once()
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("empty", [True, False], ids=["empty-text", "unexpected-tool"])
-async def test_text_samples_reject_non_text_backend_completions(monkeypatch, sample_environment, asynchronous, empty):
-    sample, client, connection = _text_sample(monkeypatch, sample_environment, asynchronous)
+def test_text_sample_rejects_non_text_backend_completions(monkeypatch, sample_environment, empty):
+    sample, client, connection = _text_sample(monkeypatch, sample_environment)
+    monkeypatch.setattr(sample, "TEXT_PROMPTS", ["one", "must not be sent"])
     events = [_started()]
     if not empty:
         events.append(
@@ -749,36 +818,25 @@ async def test_text_samples_reject_non_text_backend_completions(monkeypatch, sam
     connection.recv.side_effect = events
 
     with pytest.raises(RuntimeError, match="without returning any output text|unexpectedly requested"):
-        await _run_text_sample(sample, asynchronous, ["one", "must not be sent"])
+        sample.main()
 
     connection.response.item.create.assert_called_once()
     client.agents.delete_version.assert_called_once()
 
 
 @pytest.mark.asyncio
-async def test_async_text_create_failure_does_not_delete_an_existing_version(monkeypatch, sample_environment):
-    sample, client, _ = _text_sample(monkeypatch, sample_environment, True)
+async def test_async_audio_create_failure_does_not_delete_an_existing_version(monkeypatch, sample_environment):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")
+    client = sample_environment.async_client
     client.agents.create_version.side_effect = RuntimeError("create failed")
 
-    with pytest.raises(RuntimeError, match="create failed"):
-        await sample.main()
+    with _recording() as recording:
+        monkeypatch.setattr(sample, "wave", SimpleNamespace(open=MagicMock(return_value=recording)))
+        with pytest.raises(RuntimeError, match="create failed"):
+            await sample.main()
 
     client.agents.delete_version.assert_not_awaited()
     client.beta.voice_agents.live.connect.assert_not_called()
-
-
-@pytest.mark.asyncio
-async def test_async_text_cancellation_propagates_and_deletes_the_owned_version(monkeypatch, sample_environment):
-    sample, client, connection = _text_sample(monkeypatch, sample_environment, True)
-    connection.recv.side_effect = asyncio.CancelledError
-
-    with pytest.raises(asyncio.CancelledError):
-        await sample.main()
-
-    connection.session.close.assert_awaited_once()
-    agent_name = client.agents.create_version.call_args.kwargs["agent_name"]
-    client.agents.delete_version.assert_awaited_once_with(agent_name=agent_name, agent_version="owned-version")
-    client.beta.voice_agents.live.connect.return_value.__aexit__.assert_awaited_once()
 
 
 @pytest.mark.asyncio
@@ -841,15 +899,11 @@ async def test_async_close_expired_deadline_does_not_create_an_unawaited_send(mo
     sample_environment.async_connection.session.close.assert_not_called()
 
 
-def _rest_values(values, asynchronous):
-    if asynchronous:
+def test_live_rest_sample_entrypoint_has_no_cli_or_mutation_options(monkeypatch, sample_environment):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_read_conversation.py")
 
-        async def iterate():
-            for value in values:
-                yield value
-
-        return iterate()
-    return iter(values)
+    assert not inspect.signature(sample.main).parameters
+    assert not hasattr(sample, "argparse")
 
 
 def _wav_bytes(channels):
@@ -860,16 +914,13 @@ def _wav_bytes(channels):
     return stream.getvalue()
 
 
-@pytest.fixture(params=[False, True], ids=["sync", "async"])
-def rest_sample(request, monkeypatch, sample_environment):
-    asynchronous = request.param
-    filename = "sample_voice_agent_live_read_conversation" + ("_async.py" if asynchronous else ".py")
-    sample = _load_module(monkeypatch, filename)
+@pytest.fixture
+def rest_sample(monkeypatch, sample_environment, tmp_path):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_read_conversation.py")
     monkeypatch.setenv("FOUNDRY_VOICE_AGENT_NAME", "stored-agent-test")
     monkeypatch.setenv("FOUNDRY_VOICE_CONVERSATION_ID", "conversation-test")
-    client = sample_environment.async_client if asynchronous else sample_environment.client
+    client = sample_environment.client
     operations = client.beta.voice_agents.live_conversations
-    method_mock = AsyncMock if asynchronous else MagicMock
     conversation = models.VoiceAgentLiveConversation(
         {"id": "conversation-test", "status": "completed", "created_at": 1, "completed_at": 2}
     )
@@ -903,27 +954,18 @@ def rest_sample(request, monkeypatch, sample_environment):
         }
     )
     item_bytes, merged_bytes = _wav_bytes(1), _wav_bytes(2)
-    operations.get = method_mock(return_value=conversation)
-    operations.list = MagicMock(side_effect=lambda *args, **kwargs: _rest_values([conversation], asynchronous))
-    operations.list_items = MagicMock(side_effect=lambda *args, **kwargs: _rest_values(items, asynchronous))
-    operations.get_item = method_mock(
+    operations.get = MagicMock(return_value=conversation)
+    operations.list = MagicMock(side_effect=lambda *args, **kwargs: iter([conversation]))
+    operations.list_items = MagicMock(side_effect=lambda *args, **kwargs: iter(items))
+    operations.get_item = MagicMock(
         side_effect=lambda agent, conversation, item: next(v for v in items if v.id == item)
     )
-    operations.get_audio_item = method_mock(return_value=audio)
-    operations.get_audio = method_mock(return_value=recording)
-    operations.download_audio_item = method_mock(
-        side_effect=lambda *args: _rest_values([item_bytes[:12], item_bytes[12:]], asynchronous)
-    )
-    operations.download_audio = method_mock(
-        side_effect=lambda *args: _rest_values([merged_bytes[:12], merged_bytes[12:]], asynchronous)
-    )
-    operations.delete = method_mock()
-
-    async def run(**kwargs):
-        if asynchronous:
-            await sample.main(**kwargs)
-        else:
-            sample.main(**kwargs)
+    operations.get_audio_item = MagicMock(return_value=audio)
+    operations.get_audio = MagicMock(return_value=recording)
+    operations.download_audio_item = MagicMock(side_effect=lambda *args: iter([item_bytes[:12], item_bytes[12:]]))
+    operations.download_audio = MagicMock(side_effect=lambda *args: iter([merged_bytes[:12], merged_bytes[12:]]))
+    operations.delete = MagicMock()
+    output_factory, directories = _capture_sample_output_directories(monkeypatch, sample, tmp_path)
 
     return SimpleNamespace(
         sample=sample,
@@ -933,18 +975,20 @@ def rest_sample(request, monkeypatch, sample_environment):
         audio=audio,
         recording=recording,
         items=items,
-        run=run,
+        run=sample.main,
         item_bytes=item_bytes,
         merged_bytes=merged_bytes,
-        asynchronous=asynchronous,
+        output_factory=output_factory,
+        directories=directories,
     )
 
 
-@pytest.mark.asyncio
-async def test_live_rest_samples_are_read_only_by_default(rest_sample, tmp_path, capsys, monkeypatch):
+def test_live_rest_sample_downloads_to_user_temp_without_modifying_resources(
+    rest_sample, tmp_path, capsys, monkeypatch
+):
     for variable in ("FOUNDRY_VOICE_AGENT_MODEL", "FOUNDRY_MODEL_NAME", "FOUNDRY_VOICE_AUDIO_INPUT_PATH"):
         monkeypatch.delenv(variable, raising=False)
-    await rest_sample.run()
+    rest_sample.run()
 
     operations = rest_sample.operations
     operations.get.assert_called_once_with("stored-agent-test", "conversation-test")
@@ -953,75 +997,69 @@ async def test_live_rest_samples_are_read_only_by_default(rest_sample, tmp_path,
     assert operations.get_item.call_count == 2
     operations.get_audio_item.assert_called_once_with("stored-agent-test", "conversation-test", "speech-test")
     operations.get_audio.assert_called_once_with("stored-agent-test", "conversation-test")
-    operations.download_audio.assert_not_called()
-    operations.download_audio_item.assert_not_called()
+    operations.download_audio.assert_called_once_with("stored-agent-test", "conversation-test")
+    operations.download_audio_item.assert_called_once_with("stored-agent-test", "conversation-test", "speech-test")
     operations.delete.assert_not_called()
-    rest_sample.client.agents.create_version.assert_not_called()
-    rest_sample.client.agents.delete_version.assert_not_called()
+    assert not rest_sample.client.agents.mock_calls
     rest_sample.client.beta.voice_agents.live.connect.assert_not_called()
     rest_sample.client.beta.voice_agents.conversations.get.assert_not_called()
-    assert not list(tmp_path.iterdir())
+    rest_sample.output_factory.assert_called_once_with(prefix="voice-agent-live-")
+    output_directory = rest_sample.directories[0]
+    assert output_directory.parent == tmp_path
+    assert (output_directory / "item-0001.wav").read_bytes() == rest_sample.item_bytes
+    assert (output_directory / "conversation.wav").read_bytes() == rest_sample.merged_bytes
     output = capsys.readouterr().out
+    assert str(output_directory) in output
     assert "A synthetic transcript." in output
     assert "Non-speech item" in output
-    assert "Read-only run" in output
+    assert "Read-only REST run" in output
+    rest_sample.client.__exit__.assert_called_once()
 
 
-@pytest.mark.asyncio
-async def test_live_rest_samples_download_both_recordings_and_delete_only_when_requested(rest_sample, tmp_path, capsys):
-    rest_sample.operations.get.side_effect = [rest_sample.conversation, ResourceNotFoundError("deleted")]
+def test_live_rest_sample_uses_unique_persistent_output_folders(rest_sample):
+    rest_sample.run()
+    first = rest_sample.directories[0]
+    rest_sample.run()
+    second = rest_sample.directories[1]
 
-    await rest_sample.run(output_directory=tmp_path, delete=True)
-
-    assert (tmp_path / "item-0001.wav").read_bytes() == rest_sample.item_bytes
-    assert (tmp_path / "conversation.wav").read_bytes() == rest_sample.merged_bytes
-    rest_sample.operations.download_audio_item.assert_called_once_with(
-        "stored-agent-test", "conversation-test", "speech-test"
-    )
-    rest_sample.operations.download_audio.assert_called_once_with("stored-agent-test", "conversation-test")
-    rest_sample.operations.delete.assert_called_once_with("stored-agent-test", "conversation-test")
-    assert rest_sample.operations.get.call_count == 2
-    if rest_sample.asynchronous:
-        for name in ("get_item", "get_audio_item", "get_audio", "download_audio_item", "download_audio", "delete"):
-            method = getattr(rest_sample.operations, name)
-            assert method.await_count == method.call_count
-    assert "confirmed HTTP 404" in capsys.readouterr().out
+    assert first != second
+    assert rest_sample.output_factory.call_count == 2
+    for directory in (first, second):
+        assert (directory / "conversation.wav").read_bytes() == rest_sample.merged_bytes
+        assert (directory / "item-0001.wav").read_bytes() == rest_sample.item_bytes
+    rest_sample.operations.delete.assert_not_called()
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("status", [404, 409, 500])
-async def test_live_rest_samples_surface_service_failures_without_fallback_or_deletion(rest_sample, status, capsys):
+def test_live_rest_sample_surfaces_service_failures_without_fallback_or_deletion(rest_sample, status, capsys):
     failure = HttpResponseError("service failure")
     failure.status_code = status
     rest_sample.operations.get.side_effect = failure
 
     with pytest.raises(HttpResponseError) as caught:
-        await rest_sample.run(delete=True)
+        rest_sample.run()
 
     assert caught.value is failure
     rest_sample.operations.delete.assert_not_called()
     assert not rest_sample.client.beta.voice_agents.conversations.mock_calls
     assert f"HTTP {status}" in capsys.readouterr().out
-    if rest_sample.asynchronous:
-        rest_sample.client.__aexit__.assert_awaited_once()
-    else:
-        rest_sample.client.__exit__.assert_called_once()
+    rest_sample.output_factory.assert_not_called()
+    rest_sample.client.__exit__.assert_called_once()
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("status", ["in_progress", "failed"])
-async def test_live_rest_samples_require_successful_session_finalization(rest_sample, status):
+def test_live_rest_sample_requires_successful_session_finalization(rest_sample, status):
     rest_sample.conversation.status = status
 
     with pytest.raises(RuntimeError, match="must finish successfully"):
-        await rest_sample.run(delete=True)
+        rest_sample.run()
 
     rest_sample.operations.list_items.assert_not_called()
     rest_sample.operations.download_audio.assert_not_called()
     rest_sample.operations.delete.assert_not_called()
+    rest_sample.output_factory.assert_not_called()
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "method,filename",
     [
@@ -1030,31 +1068,23 @@ async def test_live_rest_samples_require_successful_session_finalization(rest_sa
     ],
 )
 @pytest.mark.parametrize("empty", [True, False], ids=["empty-stream", "failed-stream"])
-async def test_live_rest_download_failures_remove_incomplete_files_and_do_not_delete(
-    rest_sample, tmp_path, method, filename, empty
+def test_live_rest_download_failures_remove_incomplete_files_without_deleting_resources(
+    rest_sample, method, filename, empty
 ):
-    async def async_chunks():
-        if not empty:
-            yield b"partial"
-            raise ConnectionError("stream failed")
-
     def sync_chunks():
         if not empty:
             yield b"partial"
             raise ConnectionError("stream failed")
 
-    getattr(rest_sample.operations, method).side_effect = lambda *args: (
-        async_chunks() if rest_sample.asynchronous else sync_chunks()
-    )
+    getattr(rest_sample.operations, method).side_effect = lambda *args: sync_chunks()
 
     with pytest.raises(RuntimeError if empty else ConnectionError, match="no bytes|stream failed"):
-        await rest_sample.run(output_directory=tmp_path, delete=True)
+        rest_sample.run()
 
-    assert not (tmp_path / filename).exists()
+    assert not (rest_sample.directories[0] / filename).exists()
     rest_sample.operations.delete.assert_not_called()
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "filename,method",
     [
@@ -1062,71 +1092,69 @@ async def test_live_rest_download_failures_remove_incomplete_files_and_do_not_de
         ("conversation.wav", "download_audio"),
     ],
 )
-async def test_live_rest_samples_never_overwrite_an_existing_recording(rest_sample, tmp_path, filename, method):
+def test_live_rest_sample_never_overwrites_an_existing_recording(rest_sample, tmp_path, filename, method):
     path = tmp_path / filename
     path.write_bytes(b"keep existing audio")
+    rest_sample.output_factory.side_effect = lambda **kwargs: str(tmp_path)
 
     with pytest.raises(FileExistsError):
-        await rest_sample.run(output_directory=tmp_path, delete=True)
+        rest_sample.run()
 
     assert path.read_bytes() == b"keep existing audio"
     getattr(rest_sample.operations, method).assert_not_called()
     rest_sample.operations.delete.assert_not_called()
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("level", ["item", "merged"])
-@pytest.mark.parametrize("download", [False, True], ids=["metadata-only", "download-requested"])
-async def test_live_rest_samples_explain_byos_without_proxying_downloads(
-    rest_sample, tmp_path, capsys, level, download
-):
+def test_live_rest_sample_explains_byos_without_proxying_downloads(rest_sample, capsys, level):
     metadata = rest_sample.audio if level == "item" else rest_sample.recording
     metadata.blob_uri = "https://example.invalid/private-recording"
-    if download:
-        with pytest.raises(RuntimeError, match="not BYOS audio"):
-            await rest_sample.run(output_directory=tmp_path, delete=True)
-        rest_sample.operations.delete.assert_not_called()
-    else:
-        await rest_sample.run()
+    with pytest.raises(RuntimeError, match="not BYOS audio"):
+        rest_sample.run()
     method = "download_audio_item" if level == "item" else "download_audio"
     getattr(rest_sample.operations, method).assert_not_called()
+    rest_sample.operations.delete.assert_not_called()
     output = capsys.readouterr().out
     assert "BYOS" in output and "https://example.invalid/private-recording" not in output
 
 
-@pytest.mark.asyncio
-async def test_live_rest_samples_reject_repeated_paging_items(rest_sample):
+def test_live_rest_sample_rejects_repeated_paging_items(rest_sample):
     rest_sample.items.append(rest_sample.items[0])
 
     with pytest.raises(RuntimeError, match="pager repeated an item"):
-        await rest_sample.run(delete=True)
+        rest_sample.run()
 
     rest_sample.operations.delete.assert_not_called()
 
 
-@pytest.mark.asyncio
-async def test_live_rest_samples_report_a_delete_that_did_not_take_effect(rest_sample):
-    with pytest.raises(RuntimeError, match="remains readable after deletion"):
-        await rest_sample.run(delete=True)
+def test_live_rest_sample_temp_directory_failure_leaves_service_resources_untouched(rest_sample):
+    rest_sample.output_factory.side_effect = PermissionError("temporary directory unavailable")
 
-    rest_sample.operations.delete.assert_called_once_with("stored-agent-test", "conversation-test")
+    with pytest.raises(PermissionError, match="temporary directory unavailable"):
+        rest_sample.run()
+
+    rest_sample.operations.list_items.assert_not_called()
+    rest_sample.operations.download_audio.assert_not_called()
+    rest_sample.operations.delete.assert_not_called()
+    rest_sample.client.__exit__.assert_called_once()
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("variable", ["FOUNDRY_VOICE_AGENT_NAME", "FOUNDRY_VOICE_CONVERSATION_ID"])
-async def test_live_rest_samples_reject_blank_resource_identifiers(rest_sample, monkeypatch, variable):
+def test_live_rest_sample_rejects_blank_resource_identifiers(rest_sample, monkeypatch, variable):
     monkeypatch.setenv(variable, " ")
 
     with pytest.raises(ValueError, match="nonblank"):
-        await rest_sample.run(delete=True)
+        rest_sample.run()
 
     rest_sample.operations.get.assert_not_called()
     rest_sample.operations.delete.assert_not_called()
+    rest_sample.output_factory.assert_not_called()
 
 
 @pytest.fixture
 def microphone_sample(monkeypatch, sample_environment):
     sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")
+    monkeypatch.setattr(sample, "USE_MICROPHONE", True)
     speaker = MagicMock()
     microphone = MagicMock()
     engine = MagicMock()
@@ -1153,7 +1181,7 @@ async def test_microphone_mode_does_not_require_a_wav_and_preserves_live_lifecyc
     monkeypatch.delenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH")
     setup.connection.recv.side_effect = [_started(), _closed()]
 
-    await setup.sample.main(microphone=True)
+    await setup.sample.main()
 
     assert setup.engine.open.call_count == 2
     output_options, input_options = [call.kwargs for call in setup.engine.open.call_args_list]
@@ -1181,9 +1209,10 @@ async def test_microphone_dependency_error_precedes_agent_creation(monkeypatch, 
     sample = _load_module(monkeypatch, "sample_voice_agent_live_audio_conversation_async.py")
     monkeypatch.setitem(sys.modules, "pyaudio", None)
     monkeypatch.delenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH")
+    monkeypatch.setattr(sample, "USE_MICROPHONE", True)
 
     with pytest.raises(RuntimeError, match="pip install pyaudio"):
-        await sample.main(microphone=True)
+        await sample.main()
 
     sample_environment.async_client.agents.create_version.assert_not_awaited()
 
@@ -1339,7 +1368,7 @@ async def test_microphone_cancellation_closes_the_session_and_deletes_only_its_v
     microphone_sample.connection.recv.side_effect = [_started(), asyncio.CancelledError(), _closed()]
 
     with pytest.raises(asyncio.CancelledError):
-        await microphone_sample.sample.main(microphone=True)
+        await microphone_sample.sample.main()
 
     microphone_sample.connection.session.close.assert_awaited_once()
     microphone_sample.client.agents.delete_version.assert_awaited_once()
@@ -1357,7 +1386,7 @@ async def test_microphone_service_errors_are_not_silently_successful(microphone_
         {"type": "error", "error": {"code": "offline_error", "message": "service failed"}},
     ]
     with pytest.raises(RuntimeError, match="service failed"):
-        await microphone_sample.sample.main(microphone=True)
+        await microphone_sample.sample.main()
     microphone_sample.client.agents.delete_version.assert_awaited_once()
     microphone_sample.microphone.close.assert_called_once()
     microphone_sample.speaker.close.assert_called_once()

@@ -253,50 +253,59 @@ limitation does not affect WebSocket sessions.
 Connection, text, PCM audio-streaming, and function-tool examples are in `samples/agents/voice`
 in the [Samples][samples] folder. The optional `[voice]` dependencies are unchanged.
 
-The synchronous and asynchronous text examples accept quoted prompts for a headless multi-turn
-conversation in one session. Omit prompts to run the original single-turn example:
+The [text sample](samples/agents/voice/sample_voice_agent_live_text_conversation.py) runs a
+single-turn conversation by default. To demonstrate headless multi-turn conversation in one
+session, set `TEXT_PROMPTS = ["My name is Ada.", "What is my name?"]` in the sample, then run:
 
 ```powershell
-python .\samples\agents\voice\sample_voice_agent_live_text_conversation.py "My name is Ada." "What is my name?"
-python .\samples\agents\voice\sample_voice_agent_live_text_conversation_async.py "My name is Ada." "What is my name?"
+python .\samples\agents\voice\sample_voice_agent_live_text_conversation.py
 ```
 
-These text examples print Responses backend text, not completion of the voice frontend's speech.
+The text sample prints Responses backend text, not completion of the voice frontend's speech.
 The WAV audio example uses a bounded speech-inactivity heuristic because Live has no speech-finished
 event. Continued silent PCM does not keep it waiting forever, and silence-only output is not a
 successful spoken reply. A long speech pause can still split a reply.
 
 The same [GPT Live audio sample](samples/agents/voice/sample_voice_agent_live_audio_conversation_async.py)
 also supports live microphone capture and speaker playback, following the Realtime sample's
-nonblocking PyAudio device pattern:
+nonblocking PyAudio device pattern. This is the only asynchronous Live sample because sending
+and receiving audio concurrently and handling audio devices benefit from async execution.
+Set `USE_MICROPHONE = True` in the sample before running microphone mode:
 
 ```powershell
 pip install pyaudio
-python .\samples\agents\voice\sample_voice_agent_live_audio_conversation_async.py --microphone
+python .\samples\agents\voice\sample_voice_agent_live_audio_conversation_async.py
 ```
 
 Microphone mode requires `FOUNDRY_PROJECT_ENDPOINT` and `FOUNDRY_VOICE_AGENT_MODEL`, but not
 `FOUNDRY_VOICE_AUDIO_INPUT_PATH`. Speak normally after the sample prints "Speak now"; use
 headphones to avoid feedback, and press Ctrl-C to close the session and delete its temporary
 agent version. The sample reports actual input/output PCM bytes, durations, and any dropped
-capture frames. No audio file is saved unless `FOUNDRY_VOICE_AUDIO_OUTPUT_PATH` is explicitly
-set; that file contains the received reply, not the microphone input. Conversation persistence
-remains disabled. Live owns turn handling, so this mode does not use Realtime `response.cancel`.
-Omit `--microphone` to retain the original WAV workflow without requiring PyAudio.
+capture frames. No audio file is saved unless `SAVE_AUDIO = True` is set in the sample. Saved
+reply audio goes into a unique user-temporary folder whose location is printed; it remains
+available after exit, so remove the folder when it is no longer needed. The WAV contains the
+received reply, not microphone input or telemetry. Conversation persistence remains disabled.
+Live owns turn handling, so this mode does not use Realtime `response.cancel`.
+Leave `USE_MICROPHONE = False` to use the WAV workflow without requiring PyAudio.
 
-The [synchronous REST sample](samples/agents/voice/sample_voice_agent_live_read_conversation.py)
-and [asynchronous REST sample](samples/agents/voice/sample_voice_agent_live_read_conversation_async.py)
-read an existing stored Live conversation without opening a WebSocket. Set `FOUNDRY_PROJECT_ENDPOINT`,
+The Live samples do not accept command-line arguments. Connection/session controls, text,
+function calling, and stored-conversation REST each have one synchronous example; audio has
+the single asynchronous example described above. Samples delete only the agent version they
+create; the stored-conversation REST sample does not create or delete service resources.
+
+The [REST sample](samples/agents/voice/sample_voice_agent_live_read_conversation.py)
+reads an existing stored Live conversation without opening a WebSocket. Set `FOUNDRY_PROJECT_ENDPOINT`,
 `FOUNDRY_VOICE_AGENT_NAME`, and `FOUNDRY_VOICE_CONVERSATION_ID`. The last value must be
 `session.started.conversation_id` from a session with effective `store=True`, not `session.id`.
 The session must have finished successfully and contain recorded speech.
 
-Both samples demonstrate conversation/item listing and retrieval, plus merged and per-item audio
-metadata. Pass `--output-dir <directory>` to download Foundry-managed WAV audio without overwriting
-existing files. Downloads save conversation content locally, not telemetry. BYOS audio requires your
-own storage credentials. Nothing is deleted unless `--delete` is explicitly supplied; that option
-deletes the selected conversation and its stored items/audio only after all requested reads succeed.
-These samples use the dedicated `.beta.voice_agents.live_conversations` routes. A deployment that
+The sample demonstrates conversation/item listing and retrieval, audio metadata, and merged/per-item
+Foundry-managed WAV downloads. It creates a unique folder in your user temporary directory and prints
+the location. Files remain available after the sample exits; remove the local folder when it is no
+longer needed. These downloads contain conversation content, not telemetry. BYOS audio requires your
+own storage credentials and is not downloaded by this sample. The sample never deletes the existing
+agent or stored conversation, items, or audio, and it does not accept command-line options.
+It uses the dedicated `.beta.voice_agents.live_conversations` routes. A deployment that
 does not support those routes returns HTTP 404, which is surfaced rather than silently falling back
 to `.beta.voice_agents.conversations`.
 

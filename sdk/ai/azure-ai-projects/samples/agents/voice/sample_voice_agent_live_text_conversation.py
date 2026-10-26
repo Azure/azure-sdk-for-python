@@ -12,10 +12,10 @@ DESCRIPTION:
 
 USAGE:
     python sample_voice_agent_live_text_conversation.py
-    python sample_voice_agent_live_text_conversation.py "My name is Ada." "What is my name?"
 
-    Omit prompts to run the original single-turn example. Quote each positional
-    prompt to run a scripted, headless multi-turn conversation.
+    Leave TEXT_PROMPTS as None for the single-turn example. To demonstrate
+    a headless multi-turn conversation, set TEXT_PROMPTS in this file to
+    ["My name is Ada.", "What is my name?"] before running it.
 
     pip install "azure-ai-projects[voice]" azure-identity python-dotenv
 
@@ -33,7 +33,6 @@ USAGE:
 
 from __future__ import annotations
 
-import argparse
 import os
 from typing import Optional, Sequence
 
@@ -50,6 +49,9 @@ from live_sample_utils import (
     text_conversation_prompts,
     wait_for_event,
 )
+
+
+TEXT_PROMPTS: Optional[Sequence[str]] = None
 
 
 def _run_text_conversation(
@@ -76,8 +78,8 @@ def _run_text_conversation(
             close_session(connection)
 
 
-def main(prompts: Optional[Sequence[str]] = None) -> None:
-    prompts = text_conversation_prompts(prompts)
+def main() -> None:
+    prompts = text_conversation_prompts(TEXT_PROMPTS)
     load_dotenv()
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     model = os.environ["FOUNDRY_VOICE_AGENT_MODEL"]
@@ -112,7 +114,4 @@ def main(prompts: Optional[Sequence[str]] = None) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run a headless GPT Live text conversation.")
-    parser.add_argument("prompts", nargs="*", help="Quoted text prompts to send sequentially in one session.")
-    arguments = parser.parse_args()
-    main(arguments.prompts or None)
+    main()
