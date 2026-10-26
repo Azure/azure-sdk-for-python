@@ -4,13 +4,14 @@
 """Recovery of admitted input after an interrupted completion-to-drain handoff."""
 
 import asyncio
+from datetime import timedelta
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
 from pydantic import BaseModel
 
-from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
+from azure.ai.agentserver.core.tasks import RetryPolicy, TaskContext, multi_turn_task
 from azure.ai.agentserver.core.tasks._attachments import (
     _FUNCTION_INPUT_KEY,
     _INPUT_THRESHOLD_BYTES,
@@ -164,6 +165,47 @@ async def test_crash_boundary_recovers_fifo_and_attachment_backed_input(tmp_path
             (TurnInput(value=2, text=large), "resumed", True, 1),
             (TurnInput(value=3), "resumed", True, 0),
         ]
+    finally:
+        finish.set()
+        await manager.shutdown()
+        set_task_manager(None)
+
+
+@pytest.mark.asyncio
+async def test_queued_recovery_preserves_retry_policy_for_each_turn(tmp_path):
+    started, finish = asyncio.Event(), asyncio.Event()
+    observed = []
+
+    @multi_turn_task(
+        name="handoff",
+        steerable=True,
+        retry=RetryPolicy.fixed_delay(delay=timedelta(0), max_attempts=2),
+    )
+    async def worker(ctx: TaskContext[TurnInput]) -> int:
+        observed.append((ctx.input.value, ctx.retry_attempt))
+        if ctx.input.value == 2 and ctx.retry_attempt == 0:
+            started.set()
+            await finish.wait()
+        if ctx.retry_attempt == 0:
+            raise OSError("transient turn failure")
+        return ctx.input.value
+
+    provider = LocalFileTaskProvider(tmp_path)
+    await _seed(provider, pending=[{"value": 2}, {"value": 3}])
+    manager = _manager(provider)
+    set_task_manager(manager)
+    try:
+        await manager.startup()
+        await asyncio.wait_for(started.wait(), 5)
+        execution = manager._active_tasks["chain"].execution_task
+        finish.set()
+        await asyncio.wait_for(execution, 5)
+        assert observed == [(2, 0), (2, 1), (3, 0), (3, 1)]
+        saved = await provider.get("chain")
+        assert saved.status == "suspended"
+        assert saved.error is None
+        assert saved.payload["retry_attempt"] is None
+        assert saved.payload["steering"]["pending_inputs"] == []
     finally:
         finish.set()
         await manager.shutdown()

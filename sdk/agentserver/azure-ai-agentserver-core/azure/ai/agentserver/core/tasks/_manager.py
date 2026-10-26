@@ -3216,6 +3216,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     entry_mode="resumed",
                     input_type=input_type,
                     opts=opts,
+                    retry=opts.retry,
                     _resume_queued=True,
                 )
             except (EtagConflict, TaskConflictError):
