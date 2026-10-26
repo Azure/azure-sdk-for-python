@@ -14,14 +14,19 @@
 - Added JSON-RPC streaming support on the canonical `/a2a` route.
 - Added cooperative composition with other Agent Server protocol hosts.
 - Added development-stage OpenTelemetry A2A server spans for JSON-RPC
-  operations, including streaming lifetime, Agent Card metadata, task and
-  conversation correlation, and JSON-RPC error classification.
+  operations, including streaming lifetime, Agent Card metadata, request task
+  and conversation correlation, and unary JSON-RPC error classification.
 - Added non-advertised compatibility aliases at `POST /invocations/a2a` and
   `GET /invocations/a2a/.well-known/agent-card.json` for older Foundry
   passthrough services and clients.
 
 ### Other Changes
 
+- Simplified A2A tracing to reuse Core's span lifecycle helpers. Response inspection
+  captures only a missing Task ID for correlation, without collecting response-only
+  context IDs or task states; streaming inspection stops once the Task ID is known.
+- Consolidated tracing into one response wrapper and one span cleanup path for
+  endpoint execution and response transmission, with shared JSON decoding.
 - Requires `azure-ai-agentserver-core>=2.2.1,<3.0.0` for preservation of Agent
   Card metadata and the non-blocking span flush helper used by A2A tracing.
 - Added an opt-in internal manual pipeline mode to publish A2A and core alpha
@@ -33,7 +38,7 @@
 
 - Preserve shared request ID and server-version headers on exception-generated
   error responses.
-- Read telemetry identifiers and task state only from A2A protocol fields,
+- Read telemetry identifiers only from A2A protocol fields,
   without interpreting application metadata or data-part contents.
 - Omit A2A from the tracing-only live-test pipeline until it has a marked
   `tracing_e2e` suite; normal CI validation remains enabled.

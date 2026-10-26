@@ -91,10 +91,23 @@ extended card, HTTP+JSON/REST, and gRPC are not exposed in the initial release.
 The host emits one `SERVER` span for each valid A2A JSON-RPC operation using
 the `Azure.AI.AgentServer.A2A` instrumentation scope. Span names are the A2A
 method names (`SendMessage`, `SendStreamingMessage`, `GetTask`, and so on).
-Attributes include protocol, message, task, Agent Card, and `contextId`
-correlation data. JSON-RPC errors set `error.type` and mark the span as failed
-even though the HTTP response status is 200. Streaming spans remain open until
-the SSE response completes.
+Attributes include Agent Card metadata and protocol, message, task, and `contextId`
+identifiers supplied in the request. The host reuses Core's trace propagation,
+exception recording, span completion, and non-blocking flush helpers. HTTP errors
+and buffered unary JSON-RPC errors mark the span as failed, including JSON-RPC
+errors transported with HTTP 200. Streaming spans remain open until the SSE
+response completes.
+
+When the request has no Task ID, tracing also records the first Task ID returned
+by a single-task operation, including streaming responses. This lets a Task-ID
+search find its original creation span. SSE observation stops once the ID is
+known, inspects at most 1 MiB per event, and forwards response bytes unchanged.
+`ListTasks` is not tagged with an arbitrary result Task ID.
+
+Response-only context IDs and task states are not recorded, and JSON-RPC error
+events within an HTTP-200 SSE stream do not mark the span as failed.
+Exceptions raised while producing or sending the stream are still recorded.
+Application metadata, prompts, and artifacts are not added to these spans.
 
 These attributes follow the development-stage proposal in
 [OpenTelemetry GenAI semantic conventions PR 195](https://github.com/open-telemetry/semantic-conventions-genai/pull/195)

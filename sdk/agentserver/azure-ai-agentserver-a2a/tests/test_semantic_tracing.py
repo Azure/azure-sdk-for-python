@@ -1,8 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for proposed OpenTelemetry A2A semantic server spans."""
+"""Tests for lean request-level A2A server spans."""
 
+import asyncio
 import json
 from collections.abc import AsyncIterator
 from typing import cast
@@ -15,13 +16,15 @@ from opentelemetry import baggage as _otel_baggage
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+from opentelemetry import trace
 from opentelemetry.trace import SpanKind, StatusCode
 from opentelemetry.sdk.trace import ReadableSpan
 from starlette.requests import Request
-from starlette.responses import JSONResponse, StreamingResponse
+from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
 from azure.ai.agentserver.a2a import A2AAgentServerHost
+from azure.ai.agentserver.a2a._tracing import trace_jsonrpc_endpoint
 
 _RPC_PATH = "/a2a"
 _FOUNDRY_COMPAT_RPC_PATH = "/invocations/a2a"
@@ -65,7 +68,7 @@ def span_exporter(monkeypatch):
     provider = TracerProvider()
     provider.add_span_processor(SimpleSpanProcessor(exporter))
     monkeypatch.setattr(
-        "azure.ai.agentserver.a2a._tracing._otel_trace.get_tracer",
+        "azure.ai.agentserver.a2a._tracing.trace.get_tracer",
         provider.get_tracer,
     )
     return exporter
@@ -115,12 +118,12 @@ def _task_result():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "method,result,state",
+    "method,result",
     [
-        ("SendMessage", {"task": _task_result()}, "TASK_STATE_COMPLETED"),
-        ("GetTask", _task_result(), "TASK_STATE_COMPLETED"),
-        ("CancelTask", _task_result(), "TASK_STATE_COMPLETED"),
-        ("ListTasks", {"tasks": [_task_result()]}, "TASK_STATE_COMPLETED"),
+        ("SendMessage", {"task": _task_result()}),
+        ("GetTask", _task_result()),
+        ("CancelTask", _task_result()),
+        ("ListTasks", {"tasks": [_task_result()]}),
         (
             "SendMessage",
             {
@@ -132,7 +135,6 @@ def _task_result():
                     "parts": [{"data": _application_data()}],
                 }
             },
-            None,
         ),
         (
             "SubscribeToTask",
@@ -147,7 +149,6 @@ def _task_result():
                     "metadata": _application_data(),
                 }
             },
-            "TASK_STATE_COMPLETED",
         ),
         (
             "SendStreamingMessage",
@@ -159,11 +160,12 @@ def _task_result():
                     "metadata": _application_data(),
                 }
             },
-            None,
         ),
     ],
 )
-async def test_protocol_metadata_ignores_application_data(client_factory, span_exporter, method, result, state):
+async def test_response_task_id_is_recorded_without_harvesting_other_metadata(
+    client_factory, span_exporter, method, result
+):
     async def endpoint(_request: Request) -> JSONResponse:
         return JSONResponse({"jsonrpc": "2.0", "id": "rpc-result", "result": result})
 
@@ -176,16 +178,16 @@ async def test_protocol_metadata_ignores_application_data(client_factory, span_e
 
     assert response.json()["result"] == result
     attributes = _attributes(_a2a_spans(span_exporter)[0])
-    assert attributes["a2a.task.id"] == "task-result"
-    assert attributes["gen_ai.conversation.id"] == "ctx-result"
-    if state is None:
-        assert "a2a.task.state" not in attributes
+    if method == "ListTasks":
+        assert "a2a.task.id" not in attributes
     else:
-        assert attributes["a2a.task.state"] == state
+        assert attributes["a2a.task.id"] == "task-result"
+    assert "gen_ai.conversation.id" not in attributes
+    assert "a2a.task.state" not in attributes
 
 
 @pytest.mark.asyncio
-async def test_stream_updates_ignore_application_data(client_factory, span_exporter):
+async def test_stream_updates_capture_task_id_without_other_metadata(client_factory, span_exporter):
     async def generate() -> AsyncIterator[bytes]:
         for result in (
             {
@@ -218,9 +220,11 @@ async def test_stream_updates_ignore_application_data(client_factory, span_expor
 
     assert response.status_code == 200
     attributes = _attributes(_a2a_spans(span_exporter)[0])
+    assert "artifactUpdate" in response.text
+    assert "statusUpdate" in response.text
     assert attributes["a2a.task.id"] == "task-result"
-    assert attributes["gen_ai.conversation.id"] == "ctx-result"
-    assert attributes["a2a.task.state"] == "TASK_STATE_COMPLETED"
+    assert "gen_ai.conversation.id" not in attributes
+    assert "a2a.task.state" not in attributes
 
 
 @pytest.mark.asyncio
@@ -316,7 +320,7 @@ async def test_send_message_emits_semantic_server_span(
     assert attributes["a2a.message.id"] == "message-1"
     assert attributes["a2a.message.reference_task_ids"] == ("task-prior",)
     assert attributes["a2a.task.id"] == "task-1"
-    assert attributes["a2a.task.state"] == "TASK_STATE_COMPLETED"
+    assert "a2a.task.state" not in attributes
     assert attributes["gen_ai.conversation.id"] == "ctx-request"
     assert attributes["gen_ai.agent.name"] == "Tracing Agent"
     assert attributes["gen_ai.agent.description"] == "Agent Card description"
@@ -360,12 +364,14 @@ async def test_jsonrpc_error_marks_http_200_span_as_error(
 
 
 @pytest.mark.asyncio
-async def test_streaming_span_covers_stream_and_omits_ambiguous_state(
+async def test_streaming_span_covers_stream_and_captures_created_task(
     client_factory,
     span_exporter,
 ):
     async def generate() -> AsyncIterator[bytes]:
         for state in ("TASK_STATE_WORKING", "TASK_STATE_COMPLETED"):
+            assert not _a2a_spans(span_exporter)
+            assert trace.get_current_span().is_recording()
             payload = {
                 "jsonrpc": "2.0",
                 "id": "rpc-stream",
@@ -408,3 +414,178 @@ async def test_streaming_span_covers_stream_and_omits_ambiguous_state(
     assert attributes["a2a.task.id"] == "task-stream"
     assert attributes["gen_ai.conversation.id"] == "ctx-stream"
     assert "a2a.task.state" not in attributes
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("newline", ["\n", "\r\n"])
+@pytest.mark.parametrize("chunk_size", [1, 7, 65536])
+async def test_stream_task_id_handles_split_utf8_multiline_and_multiple_events(
+    client_factory, span_exporter, newline, chunk_size
+):
+    task_id = "task-\u00e9"
+    payload = {"jsonrpc": "2.0", "result": {"task": {"id": task_id}}}
+    event = newline.join(f"data: {line}" for line in json.dumps(payload, ensure_ascii=False, indent=2).splitlines())
+    body = (f": heartbeat{newline}{newline}data: invalid-json{newline}{newline}{event}{newline}{newline}").encode()
+
+    async def generate():
+        for offset in range(0, len(body), chunk_size):
+            yield body[offset : offset + chunk_size]
+
+    async def endpoint(_request):
+        return StreamingResponse(generate(), media_type="text/event-stream")
+
+    async with client_factory(_host(endpoint)) as client:
+        response = await client.post(_RPC_PATH, json={"method": "SendStreamingMessage", "params": {"message": {}}})
+
+    assert response.content == body
+    assert _attributes(_a2a_spans(span_exporter)[0])["a2a.task.id"] == task_id
+
+
+@pytest.mark.asyncio
+async def test_stream_skips_oversized_event_and_still_captures_next_task(client_factory, span_exporter):
+    body = b"data: " + b"x" * (1024 * 1024 + 20) + b'\n\ndata: {"result":{"task":{"id":"new-task"}}}\n\n'
+
+    async def generate():
+        for offset in range(0, len(body), 65536):
+            yield body[offset : offset + 65536]
+
+    async def endpoint(_request):
+        return StreamingResponse(generate(), media_type="text/event-stream")
+
+    async with client_factory(_host(endpoint)) as client:
+        response = await client.post(_RPC_PATH, json={"method": "SendStreamingMessage"})
+
+    assert response.content == body
+    assert _attributes(_a2a_spans(span_exporter)[0])["a2a.task.id"] == "new-task"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("streaming", [False, True])
+async def test_application_data_is_not_mistaken_for_task_id(client_factory, span_exporter, streaming):
+    payload = {"result": {"message": {"messageId": "reply", "parts": [{"data": _application_data()}]}}}
+
+    async def generate():
+        yield f"data: {json.dumps(payload)}\n\n".encode()
+
+    async def endpoint(_request):
+        return StreamingResponse(generate(), media_type="text/event-stream") if streaming else JSONResponse(payload)
+
+    async with client_factory(_host(endpoint)) as client:
+        await client.post(_RPC_PATH, json={"method": "SendStreamingMessage" if streaming else "SendMessage"})
+
+    assert "a2a.task.id" not in _attributes(_a2a_spans(span_exporter)[0])
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("method", ["GetTask", "CancelTask", "SubscribeToTask"])
+async def test_task_and_tenant_attributes_come_from_request(client_factory, span_exporter, method):
+    async def endpoint(_request):
+        return JSONResponse({"jsonrpc": "2.0", "id": "rpc", "result": _task_result()})
+
+    async with client_factory(_host(endpoint)) as client:
+        await client.post(
+            _RPC_PATH,
+            json={
+                "method": method,
+                "params": {"id": "request-task", "contextId": "request-context", "tenant": "tenant"},
+            },
+        )
+
+    attributes = _attributes(_a2a_spans(span_exporter)[0])
+    assert attributes["a2a.task.id"] == "request-task"
+    assert attributes["gen_ai.conversation.id"] == "request-context"
+    assert attributes["a2a.tenant"] == "tenant"
+
+
+@pytest.mark.asyncio
+async def test_http_error_marks_span_as_error(client_factory, span_exporter):
+    async def endpoint(_request):
+        return JSONResponse({"error": "unavailable"}, status_code=503)
+
+    async with client_factory(_host(endpoint)) as client:
+        response = await client.post(_RPC_PATH, json={"method": "SendMessage"})
+
+    span = _a2a_spans(span_exporter)[0]
+    assert response.status_code == 503
+    assert _attributes(span)["error.type"] == "503"
+    assert span.status.status_code == StatusCode.ERROR
+
+
+@pytest.mark.asyncio
+async def test_stream_with_request_task_id_bypasses_response_observation(client_factory, span_exporter):
+    body = b'data: {"result":{"task":{"id":"response-task"}}}\n\n'
+
+    async def generate():
+        yield body
+
+    async def endpoint(_request):
+        return StreamingResponse(generate(), media_type="text/event-stream")
+
+    with patch("azure.ai.agentserver.a2a._tracing._TracedResponse.observe_chunk") as observe:
+        async with client_factory(_host(endpoint)) as client:
+            response = await client.post(
+                _RPC_PATH, json={"method": "SubscribeToTask", "params": {"id": "request-task"}}
+            )
+        observe.assert_not_called()
+
+    assert response.content == body
+    assert _attributes(_a2a_spans(span_exporter)[0])["a2a.task.id"] == "request-task"
+
+
+@pytest.mark.asyncio
+async def test_sse_protocol_errors_are_not_inspected(client_factory, span_exporter):
+    body = b'data: {"jsonrpc":"2.0","error":{"code":-32603}}\n\n'
+
+    async def generate():
+        yield body
+
+    async def endpoint(_request):
+        return StreamingResponse(generate(), media_type="text/event-stream")
+
+    async with client_factory(_host(endpoint)) as client:
+        response = await client.post(_RPC_PATH, json={"method": "SendStreamingMessage"})
+
+    span = _a2a_spans(span_exporter)[0]
+    assert response.content == body
+    assert span.status.status_code == StatusCode.UNSET
+    assert "error.type" not in _attributes(span)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("during_send", [False, True])
+@pytest.mark.parametrize("exception_type", [RuntimeError, asyncio.CancelledError])
+async def test_exception_or_cancellation_ends_span_and_restores_context(span_exporter, during_send, exception_type):
+    original_span = trace.get_current_span()
+    original_conversation = _otel_baggage.get_baggage("azure.ai.agentserver.conversation_id")
+    scope = {"type": "http", "method": "POST", "path": _RPC_PATH, "headers": [], "query_string": b""}
+
+    async def receive():
+        return {
+            "type": "http.request",
+            "body": b'{"method":"SendMessage","params":{"message":{"contextId":"ctx-error"}}}',
+            "more_body": False,
+        }
+
+    async def endpoint(_request):
+        if not during_send:
+            raise exception_type("endpoint failed")
+        return Response("ok")
+
+    async def send(_message):
+        raise exception_type("send failed")
+
+    with pytest.raises(exception_type):
+        response = await trace_jsonrpc_endpoint(endpoint, _agent_card())(Request(scope, receive))
+        assert not _a2a_spans(span_exporter)
+        await response(scope, receive, send)
+
+    span = _a2a_spans(span_exporter)[0]
+    if exception_type is RuntimeError:
+        assert span.status.status_code == StatusCode.ERROR
+        assert _attributes(span)["error.type"] == "RuntimeError"
+        assert len(span.events) == 1
+    else:
+        assert span.status.status_code == StatusCode.UNSET
+        assert not span.events
+    assert trace.get_current_span() is original_span
+    assert _otel_baggage.get_baggage("azure.ai.agentserver.conversation_id") == original_conversation

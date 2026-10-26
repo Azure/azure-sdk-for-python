@@ -1,306 +1,175 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""OpenTelemetry semantic tracing for inbound A2A operations."""
+"""Request-level A2A tracing using Core's shared span lifecycle helpers."""
 
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
+import re
 from collections.abc import Awaitable, Callable
-from contextvars import Token
-from dataclasses import dataclass, field
-from typing import Any, MutableMapping, Optional
+from typing import Any, Optional
 
 from a2a.types import AgentCard
-from opentelemetry import baggage as _otel_baggage
-from opentelemetry import context as _otel_context
-from opentelemetry import trace as _otel_trace
-from opentelemetry.context import Context
-from opentelemetry.trace import Span, SpanKind, Status, StatusCode
+from opentelemetry import baggage, context, trace
+from opentelemetry.trace import SpanKind, StatusCode
 from starlette.requests import Request
 from starlette.responses import Response
-from starlette.types import Receive, Scope, Send
+from starlette.types import Message, Receive, Scope, Send
 
-from azure.ai.agentserver.core import schedule_flush_spans
+from azure.ai.agentserver.core import detach_context, end_span, schedule_flush_spans
 
-from ._version import VERSION as _A2A_VERSION
+from ._version import VERSION
 
 _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.A2A"
 _BAGGAGE_CONVERSATION_ID = "azure.ai.agentserver.conversation_id"
-_MAX_JSON_RESPONSE_BYTES = 1024 * 1024
-
-_ATTR_METHOD = "a2a.method.name"
-_ATTR_MESSAGE_ID = "a2a.message.id"
-_ATTR_REFERENCE_TASK_IDS = "a2a.message.reference_task_ids"
-_ATTR_PROTOCOL_VERSION = "a2a.protocol.version"
-_ATTR_TASK_ID = "a2a.task.id"
-_ATTR_TASK_STATE = "a2a.task.state"
-_ATTR_TENANT = "a2a.tenant"
-_ATTR_AGENT_NAME = "gen_ai.agent.name"
-_ATTR_AGENT_DESCRIPTION = "gen_ai.agent.description"
-_ATTR_AGENT_VERSION = "gen_ai.agent.version"
-_ATTR_CONVERSATION_ID = "gen_ai.conversation.id"
-_ATTR_ERROR_TYPE = "error.type"
-
-
-@dataclass
-class _OperationMetadata:
-    method: str
-    protocol_version: str
-    message_id: Optional[str] = None
-    reference_task_ids: list[str] = field(default_factory=list)
-    tenant: Optional[str] = None
-    task_ids: set[str] = field(default_factory=set)
-    context_ids: set[str] = field(default_factory=set)
-
-
-class _ResponseObserver:
-    def __init__(self, metadata: _OperationMetadata) -> None:
-        self._metadata = metadata
-        self._status_code: Optional[int] = None
-        self._media_type = ""
-        self._json_body = bytearray()
-        self._sse_buffer = ""
-        self._task_states: set[str] = set()
-        self._error_type: Optional[str] = None
-
-    def observe(self, message: MutableMapping[str, Any]) -> None:
-        if message["type"] == "http.response.start":
-            self._status_code = int(message.get("status", 0))
-            for name, value in message.get("headers", []):
-                if name.lower() == b"content-type":
-                    self._media_type = value.decode("latin-1").lower()
-                    break
-            return
-
-        if message["type"] != "http.response.body":
-            return
-
-        body = message.get("body", b"")
-        if not body:
-            return
-
-        if self._media_type.startswith("text/event-stream"):
-            self._observe_sse_chunk(body)
-        elif len(self._json_body) < _MAX_JSON_RESPONSE_BYTES:
-            remaining = _MAX_JSON_RESPONSE_BYTES - len(self._json_body)
-            self._json_body.extend(body[:remaining])
-
-    def finish(self, span: Span) -> None:
-        if self._json_body:
-            try:
-                self._observe_payload(json.loads(self._json_body))
-            except (UnicodeDecodeError, json.JSONDecodeError):
-                pass
-
-        if self._status_code is not None and self._status_code >= 400:
-            self._error_type = str(self._status_code)
-
-        all_task_ids = self._metadata.task_ids
-        if len(all_task_ids) == 1:
-            span.set_attribute(_ATTR_TASK_ID, next(iter(all_task_ids)))
-        if len(self._task_states) == 1:
-            span.set_attribute(_ATTR_TASK_STATE, next(iter(self._task_states)))
-        if len(self._metadata.context_ids) == 1:
-            span.set_attribute(
-                _ATTR_CONVERSATION_ID,
-                next(iter(self._metadata.context_ids)),
-            )
-        if self._error_type is not None:
-            span.set_attribute(_ATTR_ERROR_TYPE, self._error_type)
-            span.set_status(Status(StatusCode.ERROR))
-
-    def record_exception(self, span: Span, error: BaseException) -> None:
-        span.record_exception(error)
-        span.set_attribute(_ATTR_ERROR_TYPE, type(error).__name__)
-        span.set_status(Status(StatusCode.ERROR, str(error)))
-
-    def _observe_sse_chunk(self, body: bytes) -> None:
-        self._sse_buffer += body.decode("utf-8", errors="replace")
-        while "\n\n" in self._sse_buffer or "\r\n\r\n" in self._sse_buffer:
-            normalized = self._sse_buffer.replace("\r\n", "\n")
-            event, separator, remainder = normalized.partition("\n\n")
-            if not separator:
-                return
-            self._sse_buffer = remainder
-            data = "\n".join(line[5:].lstrip() for line in event.splitlines() if line.startswith("data:"))
-            if not data:
-                continue
-            try:
-                self._observe_payload(json.loads(data))
-            except json.JSONDecodeError:
-                continue
-
-    def _observe_payload(self, payload: object) -> None:
-        if not isinstance(payload, dict):
-            return
-
-        error = payload.get("error")
-        if isinstance(error, dict) and error.get("code") is not None:
-            self._error_type = str(error["code"])
-
-        result = payload.get("result")
-        if not isinstance(result, dict):
-            return
-
-        method = self._metadata.method
-        if method in {"GetTask", "CancelTask"}:
-            self._collect_values(result, task=True, status=True)
-        elif method == "ListTasks":
-            tasks = result.get("tasks")
-            if isinstance(tasks, list):
-                for task in tasks:
-                    self._collect_values(task, task=True, status=True)
-        elif method in {"SendMessage", "SendStreamingMessage", "SubscribeToTask"}:
-            self._collect_values(result.get("task"), task=True, status=True)
-            self._collect_values(result.get("message"))
-            if method != "SendMessage":
-                self._collect_values(result.get("statusUpdate"), status=True)
-                self._collect_values(result.get("artifactUpdate"))
-
-    def _collect_values(self, value: object, *, task: bool = False, status: bool = False) -> None:
-        if not isinstance(value, dict):
-            return
-
-        context_id = value.get("contextId")
-        if isinstance(context_id, str) and context_id:
-            self._metadata.context_ids.add(context_id)
-
-        task_id = value.get("id" if task else "taskId")
-        if isinstance(task_id, str) and task_id:
-            self._metadata.task_ids.add(task_id)
-
-        task_status = value.get("status")
-        if status and isinstance(task_status, dict):
-            state = task_status.get("state")
-            if isinstance(state, str) and state:
-                self._task_states.add(state)
+_MAX_RESPONSE_BYTES = 1024 * 1024
+_SSE_BOUNDARY = re.compile(rb"\r?\n\r?\n")
 
 
 class _TracedResponse(Response):
+    """Trace endpoint execution and response transmission under one lifecycle."""
+
     def __init__(
-        self,
-        response: Response,
-        span: Span,
-        context_token: Token[Context],
-        observer: _ResponseObserver,
+        self, endpoint: Callable[[Request], Awaitable[Response]], request: Request, attributes: dict[str, Any]
     ) -> None:
         super().__init__()
-        self._response = response
-        self._span = span
-        self._context_token = context_token
-        self._observer = observer
+        self._endpoint, self._request, self._attributes = endpoint, request, attributes
+        self._span: trace.Span = trace.INVALID_SPAN
+        self._known = "a2a.task.id" in attributes
+        self._buffer = b""
+        self._discarding = False
+
+    def observe_payload(self, payload: dict[str, Any]) -> None:
+        if self._known or not isinstance(payload.get("result"), dict):
+            return
+        result = payload["result"]
+        method = self._attributes["a2a.method.name"]
+        if method in {"GetTask", "CancelTask"}:
+            task_id = _nonempty_string(result.get("id"))
+        elif method in {"SendMessage", "SendStreamingMessage", "SubscribeToTask"}:
+            task_id = None
+            for name in ("task", "message", "statusUpdate", "artifactUpdate"):
+                value = result.get(name)
+                if isinstance(value, dict):
+                    task_id = _nonempty_string(value.get("id" if name == "task" else "taskId"))
+                    if task_id:
+                        break
+        else:
+            return
+        if task_id:
+            self._span.set_attribute("a2a.task.id", task_id)
+            self._known = True
+
+    def observe_chunk(self, body: bytes) -> None:
+        if self._known:
+            return
+        self._buffer += body
+        while boundary := _SSE_BOUNDARY.search(self._buffer):
+            event, self._buffer = self._buffer[: boundary.start()], self._buffer[boundary.end() :]
+            if not self._discarding and len(event) <= _MAX_RESPONSE_BYTES:
+                data = b"\n".join(line[5:].lstrip(b" ") for line in event.splitlines() if line.startswith(b"data:"))
+                self.observe_payload(_json_object(data))
+            self._discarding = False
+            if self._known:
+                self._buffer = b""
+                return
+        if len(self._buffer) > _MAX_RESPONSE_BYTES:
+            # Drop oversized events, retaining only enough bytes to recognize a split boundary.
+            self._buffer, self._discarding = self._buffer[-3:], True
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        async def send_with_observation(message: MutableMapping[str, Any]) -> None:
-            self._observer.observe(message)
+        attributes = self._attributes
+        tracer = trace.get_tracer(_INSTRUMENTATION_SCOPE, VERSION)
+        span = tracer.start_span(attributes["a2a.method.name"], kind=SpanKind.SERVER, attributes=attributes)
+        self._span = span
+        operation_context = trace.set_span_in_context(span)
+        if "gen_ai.conversation.id" in attributes:
+            operation_context = baggage.set_baggage(
+                _BAGGAGE_CONVERSATION_ID, attributes["gen_ai.conversation.id"], context=operation_context
+            )
+        token = context.attach(operation_context)
+
+        async def observe_send(message: Message) -> None:
+            if message["type"] == "http.response.body":
+                self.observe_chunk(message.get("body", b""))
             await send(message)
 
         error: Optional[BaseException] = None
         try:
-            await self._response(scope, receive, send_with_observation)
+            response = await self._endpoint(self._request)
+            self._record_response(response)
+            is_sse = response.headers.get("content-type", "").startswith("text/event-stream")
+            await response(scope, receive, observe_send if is_sse and not self._known else send)
         except BaseException as exc:
             error = exc
-            if not isinstance(exc, asyncio.CancelledError):
-                self._observer.record_exception(self._span, exc)
             raise
         finally:
-            if error is None:
-                self._observer.finish(self._span)
-            try:
-                _otel_context.detach(self._context_token)
-            finally:
-                self._span.end()
-                schedule_flush_spans()
+            detach_context(token)
+            end_span(span, exc=None if isinstance(error, asyncio.CancelledError) else error)
+            schedule_flush_spans()
+
+    def _record_response(self, response: Response) -> None:
+        error_type = None
+        if response.status_code >= 400:
+            error_type = str(response.status_code)
+        else:
+            # JSON-RPC may fail with HTTP 200. Inspect only a buffered unary body here.
+            body = getattr(response, "body", None)
+            if isinstance(body, bytes) and 0 < len(body) <= _MAX_RESPONSE_BYTES:
+                payload = _json_object(body)
+                self.observe_payload(payload)
+                error = payload.get("error")
+                if isinstance(error, dict) and error.get("code") is not None:
+                    error_type = str(error["code"])
+        if error_type is not None:
+            self._span.set_attribute("error.type", error_type)
+            self._span.set_status(StatusCode.ERROR)
 
 
 def trace_jsonrpc_endpoint(
     endpoint: Callable[[Request], Awaitable[Response]],
     agent_card: AgentCard,
 ) -> Callable[[Request], Awaitable[Response]]:
-    """Wrap a native A2A JSON-RPC endpoint with semantic operation tracing.
+    """Trace native A2A operations and correlate returned Task IDs.
 
     :param endpoint: Native A2A JSON-RPC route endpoint.
     :type endpoint: Callable[[Request], Awaitable[Response]]
     :param agent_card: Agent Card metadata to attach to operation spans.
     :type agent_card: AgentCard
-    :return: Endpoint that emits one semantic span per valid A2A operation.
+    :return: Endpoint that emits one span per request with an A2A method.
     :rtype: Callable[[Request], Awaitable[Response]]
     """
 
     async def traced_endpoint(request: Request) -> Response:
-        metadata = await _extract_request_metadata(request)
-        if metadata is None:
+        attributes = await _request_attributes(request)
+        if attributes is None:
             return await endpoint(request)
 
-        attributes: dict[str, Any] = {
-            _ATTR_METHOD: metadata.method,
-            _ATTR_PROTOCOL_VERSION: metadata.protocol_version,
-        }
-        if agent_card.name:
-            attributes[_ATTR_AGENT_NAME] = agent_card.name
-        if agent_card.description:
-            attributes[_ATTR_AGENT_DESCRIPTION] = agent_card.description
-        if agent_card.version:
-            attributes[_ATTR_AGENT_VERSION] = agent_card.version
-        if metadata.message_id:
-            attributes[_ATTR_MESSAGE_ID] = metadata.message_id
-        if metadata.reference_task_ids:
-            attributes[_ATTR_REFERENCE_TASK_IDS] = metadata.reference_task_ids
-        if metadata.tenant:
-            attributes[_ATTR_TENANT] = metadata.tenant
+        for name, value in (
+            ("gen_ai.agent.name", agent_card.name),
+            ("gen_ai.agent.description", agent_card.description),
+            ("gen_ai.agent.version", agent_card.version),
+        ):
+            if value:
+                attributes[name] = value
 
-        server = request.scope.get("server")
-        if server:
-            attributes["server.address"] = server[0]
-            if server[1] is not None:
-                attributes["server.port"] = server[1]
-        client = request.scope.get("client")
-        if client:
-            attributes["client.address"] = client[0]
-            if client[1] is not None:
-                attributes["client.port"] = client[1]
+        for source in ("server", "client"):
+            address = request.scope.get(source)
+            if address:
+                attributes[f"{source}.address"] = address[0]
+                if address[1] is not None:
+                    attributes[f"{source}.port"] = address[1]
 
-        tracer = _otel_trace.get_tracer(_INSTRUMENTATION_SCOPE, _A2A_VERSION)
-        span = tracer.start_span(
-            metadata.method,
-            kind=SpanKind.SERVER,
-            attributes=attributes,
-        )
-        operation_context = _otel_trace.set_span_in_context(span)
-        if len(metadata.context_ids) == 1:
-            operation_context = _otel_baggage.set_baggage(
-                _BAGGAGE_CONVERSATION_ID,
-                next(iter(metadata.context_ids)),
-                context=operation_context,
-            )
-        context_token = _otel_context.attach(operation_context)
-        observer = _ResponseObserver(metadata)
-
-        try:
-            response = await endpoint(request)
-        except BaseException as exc:
-            if not isinstance(exc, asyncio.CancelledError):
-                observer.record_exception(span, exc)
-            try:
-                _otel_context.detach(context_token)
-            finally:
-                span.end()
-                schedule_flush_spans()
-            raise
-
-        return _TracedResponse(response, span, context_token, observer)
+        return _TracedResponse(endpoint, request, attributes)
 
     return traced_endpoint
 
 
-async def _extract_request_metadata(request: Request) -> Optional[_OperationMetadata]:
-    try:
-        payload = json.loads(await request.body())
-    except (UnicodeDecodeError, json.JSONDecodeError):
-        return None
-    if not isinstance(payload, dict) or not isinstance(payload.get("method"), str):
+async def _request_attributes(request: Request) -> Optional[dict[str, Any]]:
+    payload = _json_object(await request.body())
+    if not isinstance(payload.get("method"), str):
         return None
 
     method = payload["method"]
@@ -308,42 +177,38 @@ async def _extract_request_metadata(request: Request) -> Optional[_OperationMeta
     params = params if isinstance(params, dict) else {}
     message = params.get("message")
     message = message if isinstance(message, dict) else {}
-
-    protocol_version = request.headers.get("A2A-Version") or request.query_params.get("a2a-version") or "1.0"
-    metadata = _OperationMetadata(
-        method=method,
-        protocol_version=protocol_version,
-        message_id=_nonempty_string(message.get("messageId")),
-        reference_task_ids=(
-            [value for value in message.get("referenceTaskIds", []) if isinstance(value, str) and value]
-            if isinstance(message.get("referenceTaskIds"), list)
-            else []
+    attributes: dict[str, Any] = {
+        "a2a.method.name": method,
+        "a2a.protocol.version": request.headers.get("A2A-Version") or request.query_params.get("a2a-version") or "1.0",
+    }
+    for name, value in (
+        ("a2a.message.id", message.get("messageId")),
+        ("a2a.tenant", params.get("tenant")),
+        ("gen_ai.conversation.id", _nonempty_string(message.get("contextId")) or params.get("contextId")),
+        (
+            "a2a.task.id",
+            _nonempty_string(message.get("taskId"))
+            or _nonempty_string(params.get("taskId"))
+            or (params.get("id") if method in {"GetTask", "CancelTask", "SubscribeToTask"} else None),
         ),
-        tenant=_nonempty_string(params.get("tenant")),
-    )
-
-    context_id = _nonempty_string(message.get("contextId")) or _nonempty_string(params.get("contextId"))
-    if context_id:
-        metadata.context_ids.add(context_id)
-
-    task_id = (
-        _nonempty_string(message.get("taskId"))
-        or _nonempty_string(params.get("taskId"))
-        or (
-            _nonempty_string(params.get("id"))
-            if method
-            in {
-                "GetTask",
-                "CancelTask",
-                "SubscribeToTask",
-            }
-            else None
-        )
-    )
-    if task_id:
-        metadata.task_ids.add(task_id)
-    return metadata
+    ):
+        if _nonempty_string(value):
+            attributes[name] = value
+    references = message.get("referenceTaskIds")
+    if isinstance(references, list):
+        references = [value for value in references if _nonempty_string(value)]
+        if references:
+            attributes["a2a.message.reference_task_ids"] = references
+    return attributes
 
 
 def _nonempty_string(value: object) -> Optional[str]:
     return value if isinstance(value, str) and value else None
+
+
+def _json_object(body: bytes) -> dict[str, Any]:
+    try:
+        value = json.loads(body)
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return {}
+    return value if isinstance(value, dict) else {}
