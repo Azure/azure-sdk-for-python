@@ -141,8 +141,6 @@
         "azure.ai.projects.models.ChatCompletionTool": "OpenAI.ChatCompletionTool",
         "azure.ai.projects.models.MemoryItem": "Azure.AI.Projects.MemoryItem",
         "azure.ai.projects.models.ChatSummaryMemoryItem": "Azure.AI.Projects.ChatSummaryMemoryItem",
-        "azure.ai.projects.models.CloudComputerUsePreviewTool": "Azure.AI.Projects.CloudComputerUsePreviewTool",
-        "azure.ai.projects.models.CloudComputerUsePreviewToolboxTool": "Azure.AI.Projects.CloudComputerUsePreviewToolboxTool",
         "azure.ai.projects.models.ClusterInsightResult": "Azure.AI.Projects.ClusterInsightResult",
         "azure.ai.projects.models.ClusterTokenUsage": "Azure.AI.Projects.ClusterTokenUsage",
         "azure.ai.projects.models.EvaluatorDefinition": "Azure.AI.Projects.EvaluatorDefinition",
@@ -742,6 +740,7 @@
         "azure.ai.projects.models.VoiceAgentEndOfUtteranceThresholdLevel": "Azure.AI.Projects.VoiceAgentEndOfUtteranceThresholdLevel",
         "azure.ai.projects.models.VoiceAgentEchoCancellationReferenceSource": "Azure.AI.Projects.VoiceAgentEchoCancellationReferenceSource",
         "azure.ai.projects.models.VoiceAgentInputTranscriptionModel": "Azure.AI.Projects.VoiceAgentInputTranscriptionModel",
+        "azure.ai.projects.models.VoiceAgentProfanityFilterMode": "Azure.AI.Projects.VoiceAgentProfanityFilterMode",
         "azure.ai.projects.models.VoiceAgentAudioTimestampType": "Azure.AI.Projects.VoiceAgentAudioTimestampType",
         "azure.ai.projects.models.VoiceOutputModality": "Azure.AI.Projects.VoiceOutputModality",
         "azure.ai.projects.models.VoiceAgentSessionIncludeOption": "Azure.AI.Projects.VoiceAgentSessionIncludeOption",
@@ -1001,5 +1000,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "3e7266b01602"
+    "CrossLanguageVersion": "5ac87b287e4b"
 }

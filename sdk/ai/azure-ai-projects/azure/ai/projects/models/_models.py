@@ -176,12 +176,11 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     A2ATool, A2APreviewTool, ApplyPatchToolParam, AzureAISearchTool, AzureFunctionTool,
     BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationTool,
-    BrowserAutomationPreviewTool, CaptureStructuredOutputsTool, CloudComputerUsePreviewTool,
-    CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool, CustomToolParam,
-    MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
-    GitHubCopilotToolsetPreview, ImageGenTool, LocalShellToolParam, MCPTool,
-    MemorySearchPreviewTool, MicrosoftCopilotToolsetPreview, NamespaceToolParam, OpenApiTool,
-    ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
+    BrowserAutomationPreviewTool, CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool,
+    ComputerUsePreviewTool, CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool,
+    FileSearchTool, FunctionTool, GitHubCopilotToolsetPreview, ImageGenTool, LocalShellToolParam,
+    MCPTool, MemorySearchPreviewTool, MicrosoftCopilotToolsetPreview, NamespaceToolParam,
+    OpenApiTool, ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
     ToolSearchToolParam, WebIQPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
@@ -191,8 +190,8 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      "browser_automation_preview", "fabric_dataagent_preview", "sharepoint_grounding_preview",
      "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
      "web_iq_preview", "github_copilot_toolset_preview", "a2a", "azure_ai_search", "azure_function",
-     "bing_grounding", "browser_automation", "capture_structured_outputs", "openapi",
-     "microsoft_copilot_toolset_preview", and "cloud_computer_use_preview".
+     "bing_grounding", "browser_automation", "capture_structured_outputs", "openapi", and
+     "microsoft_copilot_toolset_preview".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -206,8 +205,8 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      \"sharepoint_grounding_preview\", \"memory_search_preview\", \"work_iq_preview\",
      \"fabric_iq_preview\", \"toolbox_search_preview\", \"web_iq_preview\",
      \"github_copilot_toolset_preview\", \"a2a\", \"azure_ai_search\", \"azure_function\",
-     \"bing_grounding\", \"browser_automation\", \"capture_structured_outputs\", \"openapi\",
-     \"microsoft_copilot_toolset_preview\", and \"cloud_computer_use_preview\"."""
+     \"bing_grounding\", \"browser_automation\", \"capture_structured_outputs\", \"openapi\", and
+     \"microsoft_copilot_toolset_preview\"."""
 
     @overload
     def __init__(
@@ -290,17 +289,15 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     A2AToolboxTool, A2APreviewToolboxTool, AzureAISearchToolboxTool, BrowserAutomationToolboxTool,
-    BrowserAutomationPreviewToolboxTool, CloudComputerUsePreviewToolboxTool,
-    CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool, FileSearchToolboxTool, MCPToolboxTool,
-    OpenApiToolboxTool, ReminderPreviewToolboxTool, ShellToolboxTool, ToolSearchToolboxTool,
-    ToolboxSearchPreviewToolboxTool, WebIQPreviewToolboxTool, WebSearchToolboxTool,
-    WorkIQPreviewToolboxTool
+    BrowserAutomationPreviewToolboxTool, CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool,
+    FileSearchToolboxTool, MCPToolboxTool, OpenApiToolboxTool, ReminderPreviewToolboxTool,
+    ShellToolboxTool, ToolSearchToolboxTool, ToolboxSearchPreviewToolboxTool,
+    WebIQPreviewToolboxTool, WebSearchToolboxTool, WorkIQPreviewToolboxTool
 
     :ivar type: The type of tool. Required. Known values are: "code_interpreter", "file_search",
      "web_search", "mcp", "azure_ai_search", "openapi", "a2a_preview", "browser_automation_preview",
      "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search",
-     "toolbox_search_preview", "a2a", "shell", "web_iq_preview", "browser_automation", and
-     "cloud_computer_use_preview".
+     "toolbox_search_preview", "a2a", "shell", "web_iq_preview", and "browser_automation".
     :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -318,7 +315,7 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
      \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a_preview\",
      \"browser_automation_preview\", \"reminder_preview\", \"work_iq_preview\",
      \"fabric_iq_preview\", \"toolbox_search\", \"toolbox_search_preview\", \"a2a\", \"shell\",
-     \"web_iq_preview\", \"browser_automation\", and \"cloud_computer_use_preview\"."""
+     \"web_iq_preview\", and \"browser_automation\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6035,6 +6032,9 @@ class BrowserAutomationPreviewTool(
     Tool, discriminator="browser_automation_preview"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input definition information for a Browser Automation Tool, as used to configure an Agent.
+    BrowserAutomationPreviewTool is deprecated. Please use BrowserAutomationTool instead. See
+    `https://aka.ms/bat/docs <https://aka.ms/bat/docs>`_ for more information on Browser automation
+    tool.
 
     :ivar type: The object type, which is always 'browser_automation_preview'. Required.
      BROWSER_AUTOMATION_PREVIEW.
@@ -6073,7 +6073,9 @@ class BrowserAutomationPreviewTool(
 class BrowserAutomationPreviewToolboxTool(
     ToolboxTool, discriminator="browser_automation_preview"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A browser automation tool stored in a toolbox.
+    """A browser automation tool stored in a toolbox. BrowserAutomationPreviewToolboxTool is
+    deprecated. Please use BrowserAutomationToolboxTool instead. See `https://aka.ms/bat/docs
+    <https://aka.ms/bat/docs>`_ for more information on Browser automation tool.
 
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -6495,76 +6497,6 @@ class ChatSummaryMemoryItem(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = MemoryItemKind.CHAT_SUMMARY  # type: ignore
-
-
-class CloudComputerUsePreviewTool(Tool, discriminator="cloud_computer_use_preview"):
-    """The input definition information for a cloud computer use tool, as used to configure an agent.
-
-    :ivar type: The object type, which is always ``cloud_computer_use_preview``. Required.
-     CLOUD_COMPUTER_USE_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.CLOUD_COMPUTER_USE_PREVIEW
-    """
-
-    type: Literal[ToolType.CLOUD_COMPUTER_USE_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always ``cloud_computer_use_preview``. Required.
-     CLOUD_COMPUTER_USE_PREVIEW."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.CLOUD_COMPUTER_USE_PREVIEW  # type: ignore
-
-
-class CloudComputerUsePreviewToolboxTool(
-    ToolboxTool, discriminator="cloud_computer_use_preview"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A cloud computer use tool stored in a toolbox.
-
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    :ivar type: Required. CLOUD_COMPUTER_USE_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.CLOUD_COMPUTER_USE_PREVIEW
-    """
-
-    type: Literal[ToolboxToolType.CLOUD_COMPUTER_USE_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. CLOUD_COMPUTER_USE_PREVIEW."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolboxToolType.CLOUD_COMPUTER_USE_PREVIEW  # type: ignore
 
 
 class ClusterInsightResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -29328,8 +29260,8 @@ class VoiceAgentGreetingConfig(_Model):  # pylint: disable=docstring-keyword-sho
 
 
 class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Asynchronous input-audio transcription configuration. Extends the OpenAI Realtime transcription
-    options with the Azure and MAI transcription models, custom speech models, and phrase hints.
+    """Settings for transcribing input audio, including the transcription model, Custom Speech
+    deployments, and phrase hints.
 
     :ivar language: The language of the input audio. Supplying the input language in `ISO-639-1
      <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ (e.g. ``en``) format will improve
@@ -29362,6 +29294,14 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
     :vartype custom_speech: dict[str, str]
     :ivar phrase_list: Optional phrase hints that bias recognition toward domain terms.
     :vartype phrase_list: list[str]
+    :ivar profanity_filter: Controls how profanity is handled in input transcripts. Supported only
+     with managed Azure Speech (``azure-speech``), including Custom Speech. Set this property before
+     the session starts. If omitted, the transcription provider's default applies. You cannot change
+     the mode during a session. Filtering affects transcript events and the text sent to cascaded
+     models. It does not change input audio, voice activity detection, or assistant speech;
+     audio-native models still receive the original audio. Mandatory service masking policies apply
+     even when you select ``unfiltered``. Known values are: "masked", "unfiltered", and "removed".
+    :vartype profanity_filter: str or ~azure.ai.projects.models.VoiceAgentProfanityFilterMode
     """
 
     language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -29399,6 +29339,16 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
     """Optional customer custom speech deployment configuration, keyed by locale."""
     phrase_list: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional phrase hints that bias recognition toward domain terms."""
+    profanity_filter: Optional[Union[str, "_models.VoiceAgentProfanityFilterMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls how profanity is handled in input transcripts. Supported only with managed Azure
+     Speech (``azure-speech``), including Custom Speech. Set this property before the session
+     starts. If omitted, the transcription provider's default applies. You cannot change the mode
+     during a session. Filtering affects transcript events and the text sent to cascaded models. It
+     does not change input audio, voice activity detection, or assistant speech; audio-native models
+     still receive the original audio. Mandatory service masking policies apply even when you select
+     ``unfiltered``. Known values are: \"masked\", \"unfiltered\", and \"removed\"."""
 
     @overload
     def __init__(
@@ -29412,6 +29362,7 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
         delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]] = None,
         custom_speech: Optional[dict[str, str]] = None,
         phrase_list: Optional[list[str]] = None,
+        profanity_filter: Optional[Union[str, "_models.VoiceAgentProfanityFilterMode"]] = None,
     ) -> None: ...
 
     @overload
