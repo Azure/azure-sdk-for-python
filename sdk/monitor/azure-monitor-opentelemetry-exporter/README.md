@@ -155,9 +155,8 @@ the first exporter is constructed. Experimental features may change or be remove
 
 ### Multi-endpoint routing (preview)
 
-Set `enable_multi_endpoint_routing=True` on `AzureMonitorLogExporter`,
-`AzureMonitorTraceExporter`, or `AzureMonitorMetricExporter` to route logs, spans,
-or metric data points using their
+Add `multi_endpoint_routing` to `APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES` before
+constructing any exporter to route logs, spans, or metric data points using their
 `microsoft.instrumentation_key` and `microsoft.ingestion_endpoint`
 attributes. Both attributes are required; the endpoint must be HTTPS. Obtain
 destinations from trusted, server-owned configuration, not request headers or baggage.
@@ -166,6 +165,16 @@ connection string. With routing enabled, a host connection string is optional.
 If supplied explicitly or through the environment, it is still parsed and validated
 normally. Without host configuration, host retry storage, Statsbeat, and customer
 SDK statistics are not initialized; destination-specific retry storage still works.
+
+```powershell
+$env:APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "multi_endpoint_routing"
+# To enable another experimental feature as well:
+$env:APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "multi_endpoint_routing,gen_ai_input_output_limit_increase"
+```
+
+Routing is disabled unless explicitly selected in this list. The selection is
+shared across log, trace, and metric exporters and is fixed at the first exporter
+construction, as described under [Experimental features](#experimental-features).
 
 Items are grouped by normalized endpoint and authentication mode. Set
 `microsoft.ingestion_auth` to `"aad"` to use the exporter's configured credential;
@@ -194,7 +203,7 @@ backoff; export results retain the existing failure semantics.
 Each exporter supports up to 64 offline-storage partitions. Different keys using
 the same normalized endpoint and authentication mode share a partition.
 Additional destinations still transmit, but without offline persistence.
-The option defaults to `False`.
+Routing is disabled by default.
 
 ## Examples
 

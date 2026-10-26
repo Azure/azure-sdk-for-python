@@ -131,18 +131,13 @@ class BaseExporter:
 
         :keyword str api_version: The service API version used. Defaults to latest.
         :keyword str connection_string: The connection string used for your Application Insights resource. Optional when multi-endpoint routing is enabled.
-        :keyword bool enable_multi_endpoint_routing: Opt in to per-item multi-endpoint routing. Defaults to `False`. Items with missing or invalid routing keys or ingestion endpoints are dropped.
         :keyword ManagedIdentityCredential/ClientSecretCredential credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
         :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry records for retry. Defaults to `False`.
         :keyword str storage_directory: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
         :keyword int max_envelopes_per_second: Maximum number of telemetry envelopes sent per second. Acts as a client-side safety cap to prevent overloading shared ingestion infrastructure during telemetry bursts. Defaults to 10000. Set to 0 to disable rate limiting.
         :rtype: None
         """
-        _get_experimental_features()
-        enable_routing = kwargs.pop("enable_multi_endpoint_routing", False)
-        if not isinstance(enable_routing, bool):
-            raise TypeError("enable_multi_endpoint_routing must be a boolean.")
-        self._enable_multi_endpoint_routing = enable_routing
+        self._enable_multi_endpoint_routing = self._is_experimental_feature_enabled("multi_endpoint_routing")
         self._route = _route
         self._route_exporters: Dict[tuple[str, bool], BaseExporter] = {}
         self._route_lock = threading.RLock()
@@ -151,7 +146,7 @@ class BaseExporter:
         self._route_options = kwargs.copy()
         self._local_storage_enabled: Optional[bool] = None
         parsed_connection_string = _connection_string_parser or ConnectionStringParser(
-            kwargs.get("connection_string"), _allow_missing=enable_routing
+            kwargs.get("connection_string"), _allow_missing=self._enable_multi_endpoint_routing
         )
         self._connection_string_parser = parsed_connection_string
 
