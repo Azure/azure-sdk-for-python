@@ -285,7 +285,12 @@ under retained live workers.
 Completed inactive phase resources can survive a failed restore attempt and
 be reused after the same session is rebound. However, rollback cannot revert
 shared configuration while recovered workers continue using an incompatible
-binding. In that case the host first stops the owned runtime, waits for cleanup,
+binding. Compatibility includes the provider backend/location captured before
+restore, not just session ID/GUID. A changed endpoint, backend or local state
+root requires worker quiescence even when session identity matches. Records
+remain recoverable in their original provider; rollback does not migrate work
+between projects or storage roots.
+In that case the host first stops the owned runtime, waits for cleanup,
 and invalidates its state before rolling back environment/configuration.
 
 Cleanup is shielded against cancellation of the hook caller. A cleanup failure

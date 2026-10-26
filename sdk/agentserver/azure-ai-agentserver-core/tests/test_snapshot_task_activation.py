@@ -472,6 +472,113 @@ async def test_restore_handler_task_survives_failed_hook_without_duplicate_execu
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("failure", ["exception", "cancel"])
+@pytest.mark.parametrize("provider_change", ["endpoint", "backend", "state_root"])
+async def test_matching_session_rollback_stops_incompatible_provider_before_retry(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    failure: str,
+    provider_change: str,
+) -> None:
+    from azure.ai.agentserver.core.tasks._client import HostedTaskProvider
+
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "hosted")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "session-1")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
+    monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://captured.example.invalid/project")
+    monkeypatch.setenv("AGENTSERVER_TASKS_BACKEND", "local" if provider_change == "state_root" else "hosted")
+    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path / "captured"))
+    running, finish, failing = asyncio.Event(), asyncio.Event(), asyncio.Event()
+    managers: list[TaskManager] = []
+    stores: list[LocalFileTaskProvider] = []
+    final_bindings: list[tuple[str, str | None]] = []
+    calls = 0
+
+    def create_provider(config: Any) -> Any:
+        local = os.environ["AGENTSERVER_TASKS_BACKEND"] == "local"
+        location = (
+            Path(os.environ["AGENTSERVER_STATE_ROOT"]) / "tasks" if local else tmp_path / f"provider-{len(stores)}"
+        )
+        store = LocalFileTaskProvider(location)
+        stores.append(store)
+        if local:
+            return store
+        provider = HostedTaskProvider(project_endpoint=config.project_endpoint, credential=Mock())
+        for method in ("create", "get", "update", "delete", "list"):
+            monkeypatch.setattr(provider, method, getattr(store, method))
+        return provider
+
+    monkeypatch.setattr(TaskManager, "_create_provider", staticmethod(create_provider))
+    app = host()
+
+    @task(name="provider_rollback_startup")
+    async def startup(ctx: TaskContext[dict[str, str]]) -> str:
+        running.set()
+        try:
+            await finish.wait()
+            return ctx.input["session"]
+        finally:
+            final_bindings.append(get_task_manager()._provider_configuration())
+
+    @app.after_restore_handler
+    async def initialize(context: AgentSessionContext) -> None:
+        nonlocal calls
+        calls += 1
+        managers.append(get_task_manager())
+        if calls == 1:
+            await startup.start(task_id="provider-startup", input={"session": context.session_id})
+            await asyncio.wait_for(running.wait(), 2)
+            failing.set()
+            if failure == "exception":
+                raise RuntimeError("Failure with matching identity and changed provider")
+            await asyncio.Event().wait()
+        assert app.config.project_endpoint == "https://captured.example.invalid/project"
+
+    first_payload = payload()
+    key, value = {
+        "endpoint": ("FOUNDRY_PROJECT_ENDPOINT", "https://failed.example.invalid/project"),
+        "backend": ("AGENTSERVER_TASKS_BACKEND", "local"),
+        "state_root": ("AGENTSERVER_STATE_ROOT", str(tmp_path / "overridden")),
+    }[provider_change]
+    first_payload["session_context"]["session_env_overrides"][key] = value
+    async with app.router.lifespan_context(app), client(app) as http:
+        request = asyncio.create_task(http.post("/_agent/after-restore", json=first_payload))
+        try:
+            await asyncio.wait_for(failing.wait(), 2)
+            original_binding = managers[0]._provider_binding
+            if failure == "cancel":
+                request.cancel()
+                with pytest.raises(asyncio.CancelledError):
+                    await request
+            else:
+                assert (await request).status_code == 500
+            response = await http.post("/_agent/after-restore", json=payload())
+            assert response.status_code == 200, response.text
+            assert calls == 2
+            assert managers[0] is not managers[1]
+            assert managers[0]._shutdown_event.is_set()
+            assert not managers[0]._has_live_workers
+            assert final_bindings == [original_binding]
+            assert get_task_manager()._provider_configuration_matches()
+            if provider_change != "state_root":
+                assert isinstance(managers[1].provider, HostedTaskProvider)
+                assert managers[1].provider._base_url == "https://captured.example.invalid/project/tasks"
+            stored = await stores[0].get("provider-startup")
+            assert stored is not None and stored.status == "in_progress"
+            assert stored.payload is not None and stored.payload["input"] == {"session": "session-1"}
+            assert stored.lease is not None
+            assert datetime.fromisoformat(stored.lease.expires_at) <= datetime.now(timezone.utc)
+            assert await stores[1].get("provider-startup") is None
+            assert (await http.post("/_agent/after-restore", json=payload())).status_code == 200
+            assert calls == 2
+        finally:
+            finish.set()
+            if not request.done():
+                request.cancel()
+            await asyncio.gather(request, return_exceptions=True)
+
+
+@pytest.mark.asyncio
 async def test_restore_handler_task_submission_honors_disabled_resilience(
     provider_factory: tuple[LocalFileTaskProvider, Mock],
 ) -> None:

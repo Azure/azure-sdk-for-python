@@ -519,15 +519,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             self._instance_id = generate_instance_id()
             self._materialization_restore_id = restore_id
 
-    def _provider_configuration(self) -> tuple[str, str | None]:
+    @staticmethod
+    def _provider_configuration_for(config: AgentConfig) -> tuple[str, str | None]:
         backend = os.environ.get("AGENTSERVER_TASKS_BACKEND", "").strip().lower()
-        backend = backend or ("hosted" if self._config.is_hosted else "local")
-        return backend, (
-            self._config.project_endpoint if backend == "hosted" else os.environ.get("AGENTSERVER_STATE_ROOT")
-        )
+        backend = backend or ("hosted" if config.is_hosted else "local")
+        return backend, (config.project_endpoint if backend == "hosted" else os.environ.get("AGENTSERVER_STATE_ROOT"))
 
-    def _provider_configuration_matches(self) -> bool:
-        return self._provider_binding == self._provider_configuration()
+    def _provider_configuration(self) -> tuple[str, str | None]:
+        return self._provider_configuration_for(self._config)
+
+    def _provider_configuration_matches(self, configuration: tuple[str, str | None] | None = None) -> bool:
+        return self._provider_binding == (self._provider_configuration() if configuration is None else configuration)
 
     @staticmethod
     def _build_source(fn_name: str) -> dict[str, str]:

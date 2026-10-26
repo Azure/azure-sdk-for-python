@@ -53,6 +53,7 @@ class _LifecycleRollback:
     environment: dict[str, object] = field(repr=False)
     config: dict[str, object] = field(repr=False)
     task_manager: Optional["TaskManager"]
+    provider_configuration: tuple[str, str | None] = field(repr=False)
 
 
 @dataclass

@@ -14,6 +14,8 @@
 
 ### Bugs Fixed
 
+- Remove the exact caller-scoped runtime record when deferred resilient-task
+  activation fails, rather than retaining an execution that never started.
 - Classify malformed platform attribution headers and end the request span
   before returning an error, without invoking the handler.
 - Bind recovery callbacks and task options to their owning Responses host so
@@ -34,15 +36,19 @@
 ### Other Changes
 
 - Raised the minimum `azure-ai-agentserver-core` dependency to `2.3.0b2` for
-  protocol-scoped task-runtime support and original-subject attribution.
+  protocol-scoped task-runtime support, original-subject attribution and
+  snapshot task deferral/rollback handling.
   Publish that Core version before this package.
+- Require Core's snapshot lifecycle integration. While task startup is deferred
+  (`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true`), enabled-but-uninitialized
+  task errors are propagated instead of running non-durably; intentional opt-out
+  and absent/`false` keep the existing in-process fallback. No new HTTP 503 mapping or
+  author startup-task replay is introduced.
 
 ## 2.4.0b1 (2026-10-15)
 
 ### Bugs Fixed
 
-- Remove the exact caller-scoped runtime record when deferred resilient-task
-  activation fails, rather than retaining an execution that never started.
 - Propagate source cancellation through SSE keep-alive streams instead of
   treating interrupted durable admission as successful stream completion.
 - Signal accepted durable task shutdown before awaiting response execution, so
@@ -123,12 +129,6 @@
 
 ### Other Changes
 
-- Require Core `2.3.0b2` or later for snapshot task deferral and rollback handling.
-- Require Core's snapshot lifecycle integration. While task startup is deferred
-  (`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true`), enabled-but-uninitialized
-  task errors are propagated instead of running non-durably; intentional opt-out
-  and absent/`false` keep the existing in-process fallback. No new HTTP 503 mapping or
-  author startup-task replay is introduced.
 
 ## 2.3.0 (2026-10-05)
 

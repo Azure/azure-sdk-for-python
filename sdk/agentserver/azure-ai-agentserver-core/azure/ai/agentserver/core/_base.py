@@ -600,12 +600,20 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
 
     async def _quiesce_tasks_before_rollback(self, previous_session_id: str, previous_session_guid: str) -> bool:
         async with self._task_manager_lock:
-            if self._task_manager is None or (
-                not self._task_manager._preserve_recoverable_tasks_on_shutdown  # pylint: disable=protected-access
-                and (
-                    self._task_manager_binding == (previous_session_id, previous_session_guid)
-                    or not self._task_manager._has_live_workers  # pylint: disable=protected-access
+            if self._task_manager is None:
+                return False
+            manager = self._task_manager
+            rollback = self._lifecycle.pending_rollback
+            compatible_binding = self._task_manager_binding == (previous_session_id, previous_session_guid)
+            if rollback is not None:
+                compatible_binding = (
+                    compatible_binding
+                    and manager._provider_configuration_matches(  # pylint: disable=protected-access
+                        rollback.provider_configuration
+                    )
                 )
+            if not manager._preserve_recoverable_tasks_on_shutdown and (  # pylint: disable=protected-access
+                compatible_binding or not manager._has_live_workers  # pylint: disable=protected-access
             ):
                 return False
         logger.warning("Stopping task runtime before restoring its previous session binding")
@@ -886,6 +894,8 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             )
 
     async def _run_after_restore(self, request: Request) -> Response:  # pylint: disable=too-many-statements
+        from .tasks._manager import TaskManager  # pylint: disable=import-outside-toplevel
+
         try:
             payload = await AgentServerHost._read_json_object(request)
             context = AgentServerHost._parse_session_context(payload)
@@ -943,7 +953,12 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             )
             previous_config = vars(self.config).copy()
             task_manager = _get_active_task_manager()
-            self._lifecycle.pending_rollback = _LifecycleRollback(previous_environment, previous_config, task_manager)
+            self._lifecycle.pending_rollback = _LifecycleRollback(
+                previous_environment,
+                previous_config,
+                task_manager,
+                TaskManager._provider_configuration_for(self.config),  # pylint: disable=protected-access
+            )
 
             try:
                 for key in environment_variables:

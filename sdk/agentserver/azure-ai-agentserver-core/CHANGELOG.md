@@ -32,6 +32,9 @@
 
 ### Bugs Fixed
 
+- Quiesce failed-restore workers before provider configuration rollback even
+  when the session ID/GUID is unchanged, preserving their original task records
+  and allowing retries with omitted provider overrides.
 - Rebuild inactive task providers when hydrated configuration changes, and
   recreate disposed runtimes for cached restore requests without replaying
   completed application callbacks.
