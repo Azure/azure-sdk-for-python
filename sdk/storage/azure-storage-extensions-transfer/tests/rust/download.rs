@@ -85,12 +85,6 @@ fn collect_chunks(stream: &mut NativeDownloadStream, py: Python<'_>) -> Vec<Vec<
     std::iter::from_fn(|| next_bytes(stream, py)).collect()
 }
 
-fn read_all(stream: &mut NativeDownloadStream, py: Python<'_>) -> PyResult<Vec<u8>> {
-    stream
-        .readall(py)
-        .map(|bytes| bytes.bind(py).as_bytes().to_vec())
-}
-
 fn sorted_ranges(mock: &Arc<MockHttpClient>) -> Vec<(usize, usize)> {
     let mut actual: Vec<_> = mock
         .requests()
@@ -217,9 +211,6 @@ fn multi_frame_bodies_are_merged_into_partitions() {
             collect_chunks(&mut stream, py),
             [b"abc".to_vec(), b"def".to_vec(), b"g".to_vec()]
         );
-        let mock = MockHttpClient::new(framed);
-        let mut stream = self::stream(py, &mock, 0, None, 2, 3).unwrap();
-        assert_eq!(read_all(&mut stream, py).unwrap(), payload);
     });
 }
 
@@ -233,19 +224,12 @@ fn offset_bounded_length_and_end_beyond_blob() {
             (6, Some(20), b"gh".as_slice(), vec![(6, 8)]),
             (1, Some(1), b"b".as_slice(), vec![(1, 1)]),
         ] {
-            for use_readall in [false, true] {
-                let mock = mock_blob(b"abcdefgh");
-                let mut stream = stream(py, &mock, offset, length, 1, 3).unwrap();
-                assert_eq!(stream.size(), expected.len() as u64);
-                let bytes = if use_readall {
-                    read_all(&mut stream, py).unwrap()
-                } else {
-                    collect_chunks(&mut stream, py).concat()
-                };
-                assert_eq!(bytes, expected);
-                assert_ranges(&mock, &expected_ranges);
-                assert_etag_locked(&mock, offset as usize);
-            }
+            let mock = mock_blob(b"abcdefgh");
+            let mut stream = stream(py, &mock, offset, length, 1, 3).unwrap();
+            assert_eq!(stream.size(), expected.len() as u64);
+            assert_eq!(collect_chunks(&mut stream, py).concat(), expected);
+            assert_ranges(&mock, &expected_ranges);
+            assert_etag_locked(&mock, offset as usize);
         }
     });
 }
@@ -259,7 +243,6 @@ fn zero_length_never_requests_even_beyond_eof() {
             let mut stream = stream(py, &mock, start, Some(0), 1, 2).unwrap();
             assert_eq!(stream.size(), 0);
             assert!(next_bytes(&mut stream, py).is_none());
-            assert!(read_all(&mut stream, py).unwrap().is_empty());
             assert!(next_bytes(&mut stream, py).is_none());
         }
         assert!(mock.requests().is_empty());
@@ -289,7 +272,6 @@ fn empty_blob_fallback_and_service_range_errors() {
         let mut stream = stream(py, &mock, 0, None, 1, 2).unwrap();
         assert_eq!(stream.size(), 0);
         assert!(next_bytes(&mut stream, py).is_none());
-        assert!(read_all(&mut stream, py).unwrap().is_empty());
         let requests = mock.requests();
         assert_eq!(requests.len(), 2);
         assert_eq!(range(&requests[0]), Some((0, 1)));
@@ -343,38 +325,27 @@ fn invalid_initial_response_fails_construction() {
 fn short_first_body_fails_on_first_read() {
     Python::initialize();
     Python::attach(|py| {
-        for use_readall in [false, true] {
-            // Content-Range promises two bytes, but the body holds only one.
-            let mock = MockHttpClient::new(|request| match range(request).unwrap() {
-                (0, 1) => response(
-                    StatusCode::PartialContent,
-                    &[("content-range", "bytes 0-1/2"), ("content-length", "2")],
-                    b"a".to_vec(),
-                ),
-                unexpected => panic!("Unexpected range: {unexpected:?}"),
-            });
-            let mut stream = stream(py, &mock, 0, None, 1, 2).unwrap();
-            assert_eq!(stream.size(), 2);
-            let error = if use_readall {
-                stream.readall(py).unwrap_err()
-            } else {
-                stream.__next__(py).unwrap_err()
-            };
-            assert_eq!(error_kind(py, &error), "incomplete_read");
-            for _ in 0..2 {
-                assert!(stream
-                    .__next__(py)
-                    .unwrap_err()
-                    .value(py)
-                    .is(error.value(py)));
-                assert!(stream
-                    .readall(py)
-                    .unwrap_err()
-                    .value(py)
-                    .is(error.value(py)));
-            }
-            assert_ranges(&mock, &[(0, 1)]);
+        // Content-Range promises two bytes, but the body holds only one.
+        let mock = MockHttpClient::new(|request| match range(request).unwrap() {
+            (0, 1) => response(
+                StatusCode::PartialContent,
+                &[("content-range", "bytes 0-1/2"), ("content-length", "2")],
+                b"a".to_vec(),
+            ),
+            unexpected => panic!("Unexpected range: {unexpected:?}"),
+        });
+        let mut stream = stream(py, &mock, 0, None, 1, 2).unwrap();
+        assert_eq!(stream.size(), 2);
+        let error = stream.__next__(py).unwrap_err();
+        assert_eq!(error_kind(py, &error), "incomplete_read");
+        for _ in 0..2 {
+            assert!(stream
+                .__next__(py)
+                .unwrap_err()
+                .value(py)
+                .is(error.value(py)));
         }
+        assert_ranges(&mock, &[(0, 1)]);
     });
 }
 
@@ -449,96 +420,12 @@ fn later_partition_errors_are_terminal_and_preserve_yielded_bytes() {
                     .unwrap_err()
                     .value(py)
                     .is(error.value(py)));
-                assert!(stream
-                    .readall(py)
-                    .unwrap_err()
-                    .value(py)
-                    .is(error.value(py)));
             }
             assert_eq!(stream.size(), 6);
             assert_eq!(first.bind(py).as_bytes(), b"ab");
             let ranges = sorted_ranges(&mock);
             assert!(ranges.starts_with(&[(0, 1), (2, 3)]), "{ranges:?}");
         }
-    });
-}
-
-#[test]
-fn readall_errors_are_terminal() {
-    Python::initialize();
-    Python::attach(|py| {
-        for failure in ["truncated", "excess", "malformed", "http"] {
-            for partial in [false, true] {
-                let mock = failing_mock(failure);
-                let mut stream = stream(py, &mock, 0, None, 1, 2).unwrap();
-                if partial {
-                    assert_eq!(next_bytes(&mut stream, py).unwrap(), b"ab");
-                }
-                let error = stream.readall(py).unwrap_err();
-                assert!(
-                    error.is_instance_of::<crate::errors::NativeTransferError>(py),
-                    "{failure}"
-                );
-                for _ in 0..2 {
-                    assert!(stream
-                        .readall(py)
-                        .unwrap_err()
-                        .value(py)
-                        .is(error.value(py)));
-                    assert!(stream
-                        .__next__(py)
-                        .unwrap_err()
-                        .value(py)
-                        .is(error.value(py)));
-                }
-            }
-        }
-    });
-}
-
-#[test]
-fn readall_writes_remaining_content_with_download_into() {
-    Python::initialize();
-    Python::attach(|py| {
-        let payload = b"abcdefghijklmn";
-        let mock = mock_blob(payload);
-        let mut stream = stream(py, &mock, 0, None, 3, 2).unwrap();
-        assert_eq!(read_all(&mut stream, py).unwrap(), payload);
-        assert_ranges(
-            &mock,
-            &[(0, 1), (2, 3), (4, 5), (6, 7), (8, 9), (10, 11), (12, 13)],
-        );
-        assert_etag_locked(&mock, 0);
-        let count = mock.requests().len();
-        assert!(read_all(&mut stream, py).unwrap().is_empty());
-        assert!(next_bytes(&mut stream, py).is_none());
-        assert_eq!(mock.requests().len(), count);
-
-        // A blob that fits in the first partition needs no further requests.
-        let mock = mock_blob(b"ab");
-        let mut stream = self::stream(py, &mock, 0, None, 3, 4).unwrap();
-        assert_eq!(read_all(&mut stream, py).unwrap(), b"ab");
-        assert_ranges(&mock, &[(0, 3)]);
-    });
-}
-
-#[test]
-fn readall_after_partial_iteration_returns_remainder() {
-    Python::initialize();
-    Python::attach(|py| {
-        let payload = b"abcdefghijklmn";
-        let mock = mock_blob(payload);
-        let mut stream = stream(py, &mock, 0, None, 2, 2).unwrap();
-        assert_eq!(next_bytes(&mut stream, py).unwrap(), b"ab");
-        assert_eq!(next_bytes(&mut stream, py).unwrap(), b"cd");
-        assert_eq!(read_all(&mut stream, py).unwrap(), &payload[4..]);
-        assert!(read_all(&mut stream, py).unwrap().is_empty());
-        assert!(next_bytes(&mut stream, py).is_none());
-        assert_ranges(
-            &mock,
-            &[(0, 1), (2, 3), (4, 5), (6, 7), (8, 9), (10, 11), (12, 13)],
-        );
-        assert_etag_locked(&mock, 0);
     });
 }
 
@@ -562,7 +449,7 @@ fn prefetch_is_bounded_and_dropping_stops_the_pump() {
 }
 
 #[test]
-fn python_iteration_readall_and_size_getter() {
+fn python_iteration_and_size_getter() {
     Python::initialize();
     Python::attach(|py| {
         let mock = mock_blob(b"abcde");
@@ -571,10 +458,10 @@ fn python_iteration_readall_and_size_getter() {
         assert_eq!(object.getattr("size").unwrap().extract::<u64>().unwrap(), 5);
         let iterator = object.try_iter().unwrap();
         assert!(iterator.as_any().is(object.as_any()));
-        let first = iterator.clone().next().unwrap().unwrap();
-        assert_eq!(first.cast::<PyBytes>().unwrap().as_bytes(), b"ab");
-        let rest = object.call_method0("readall").unwrap();
-        assert_eq!(rest.cast::<PyBytes>().unwrap().as_bytes(), b"cde");
+        let chunks: Vec<Vec<u8>> = iterator
+            .map(|item| item.unwrap().cast::<PyBytes>().unwrap().as_bytes().to_vec())
+            .collect();
+        assert_eq!(chunks, [b"ab".to_vec(), b"cd".to_vec(), b"e".to_vec()]);
         assert!(object.try_iter().unwrap().next().is_none());
         assert_eq!(object.getattr("size").unwrap().extract::<u64>().unwrap(), 5);
         assert_ranges(&mock, &[(0, 1), (2, 3), (4, 4)]);
