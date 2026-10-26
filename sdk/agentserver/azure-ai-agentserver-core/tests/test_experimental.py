@@ -5,7 +5,12 @@ import asyncio
 import inspect
 import logging
 
-from azure.ai.agentserver.core import AgentSessionContext, experimental
+from azure.ai.agentserver.core import (
+    AgentSessionContext,
+    FoundryAgentRequestContext,
+    FoundryOriginalSubject,
+    experimental,
+)
 from azure.ai.agentserver.core._experimental import (
     DISABLE_EXPERIMENTAL_WARNING_ENV_VAR,
     EXPERIMENTAL_CLASS_MESSAGE,
@@ -216,3 +221,34 @@ def test_agent_session_context_is_experimental(caplog) -> None:
     assert AgentSessionContext.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_CLASS_MESSAGE in AgentSessionContext.__doc__
     assert len(caplog.records) == 1
+
+
+def test_original_subject_is_experimental(caplog) -> None:
+    _warning_cache.clear()
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        subject = FoundryOriginalSubject(oid="subject", tid="tenant", idtype="user")
+
+    assert (subject.oid, subject.tid, subject.idtype) == ("subject", "tenant", "user")
+    assert FoundryOriginalSubject.__doc__.startswith(".. note::")
+    assert EXPERIMENTAL_CLASS_MESSAGE in FoundryOriginalSubject.__doc__
+    assert EXPERIMENTAL_LINK_MESSAGE in FoundryOriginalSubject.__doc__
+    assert len(caplog.records) == 1
+    assert "FoundryOriginalSubject" in caplog.records[0].message
+    assert EXPERIMENTAL_CLASS_MESSAGE in caplog.records[0].message
+
+
+def test_model_attribution_headers_is_experimental(caplog) -> None:
+    _warning_cache.clear()
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        context = FoundryAgentRequestContext()
+        assert context.model_attribution_headers() == {}
+
+    method = FoundryAgentRequestContext.model_attribution_headers
+    assert method.__doc__.startswith(".. note::")
+    assert EXPERIMENTAL_METHOD_MESSAGE in method.__doc__
+    assert EXPERIMENTAL_LINK_MESSAGE in method.__doc__
+    assert len(caplog.records) == 1
+    assert "FoundryAgentRequestContext.model_attribution_headers" in caplog.records[0].message
+    assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message
