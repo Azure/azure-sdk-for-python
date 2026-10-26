@@ -1,5 +1,15 @@
 # Release History
 
+## 1.6.1 (2026-10-25)
+
+### Bugs Fixed
+
+- Security: Hardened recording URL validation against ambiguous authorities that could send authenticated requests to unintended endpoints. Synchronous and asynchronous recording downloads and deletes now validate each redirect destination before authentication.
+
+### Other Changes
+
+- Deprecated version 1.6.0 as of 2026-10-22 due to the recording URL validation security issue. Upgrade to 1.6.1 or a later fixed release to receive the security fix. This deprecation applies to version 1.6.0 only, not to the library as a whole.
+
 ## 1.6.0 (2026-06-24)
 
 ### Features Added
