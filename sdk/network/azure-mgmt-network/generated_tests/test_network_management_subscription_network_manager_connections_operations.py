@@ -23,7 +23,6 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperations(Azure
     def test_subscription_network_manager_connections_get(self, resource_group):
         response = self.client.subscription_network_manager_connections.get(
             network_manager_connection_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +48,6 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperations(Azure
                 },
                 "type": "str",
             },
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +58,6 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperations(Azure
     def test_subscription_network_manager_connections_delete(self, resource_group):
         response = self.client.subscription_network_manager_connections.delete(
             network_manager_connection_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -69,9 +66,7 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperations(Azure
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_subscription_network_manager_connections_list(self, resource_group):
-        response = self.client.subscription_network_manager_connections.list(
-            api_version="2026-03-01",
-        )
+        response = self.client.subscription_network_manager_connections.list()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

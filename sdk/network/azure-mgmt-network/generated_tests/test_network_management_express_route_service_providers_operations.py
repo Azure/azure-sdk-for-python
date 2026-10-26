@@ -21,9 +21,7 @@ class TestNetworkManagementExpressRouteServiceProvidersOperations(AzureMgmtRecor
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_express_route_service_providers_list(self, resource_group):
-        response = self.client.express_route_service_providers.list(
-            api_version="2026-03-01",
-        )
+        response = self.client.express_route_service_providers.list()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

@@ -26,7 +26,6 @@ class TestNetworkManagementNatRulesOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gateway_name="str",
             nat_rule_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +55,6 @@ class TestNetworkManagementNatRulesOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -71,7 +69,6 @@ class TestNetworkManagementNatRulesOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 gateway_name="str",
                 nat_rule_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -84,7 +81,6 @@ class TestNetworkManagementNatRulesOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.nat_rules.list_by_vpn_gateway(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

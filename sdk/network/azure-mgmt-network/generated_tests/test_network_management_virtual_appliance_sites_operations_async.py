@@ -26,7 +26,6 @@ class TestNetworkManagementVirtualApplianceSitesOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
             site_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +50,6 @@ class TestNetworkManagementVirtualApplianceSitesOperationsAsync(AzureMgmtRecorde
                     },
                     "type": "str",
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -66,7 +64,6 @@ class TestNetworkManagementVirtualApplianceSitesOperationsAsync(AzureMgmtRecorde
                 resource_group_name=resource_group.name,
                 network_virtual_appliance_name="str",
                 site_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -79,7 +76,6 @@ class TestNetworkManagementVirtualApplianceSitesOperationsAsync(AzureMgmtRecorde
         response = self.client.virtual_appliance_sites.list(
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

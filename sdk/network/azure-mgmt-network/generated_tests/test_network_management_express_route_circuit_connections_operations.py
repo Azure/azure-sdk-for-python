@@ -26,7 +26,6 @@ class TestNetworkManagementExpressRouteCircuitConnectionsOperations(AzureMgmtRec
             circuit_name="str",
             peering_name="str",
             connection_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +54,6 @@ class TestNetworkManagementExpressRouteCircuitConnectionsOperations(AzureMgmtRec
                 },
                 "type": "str",
             },
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -69,7 +67,6 @@ class TestNetworkManagementExpressRouteCircuitConnectionsOperations(AzureMgmtRec
             circuit_name="str",
             peering_name="str",
             connection_name="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -82,7 +79,6 @@ class TestNetworkManagementExpressRouteCircuitConnectionsOperations(AzureMgmtRec
             resource_group_name=resource_group.name,
             circuit_name="str",
             peering_name="str",
-            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

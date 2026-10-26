@@ -22,9 +22,7 @@ class TestNetworkManagementExpressRouteProviderPortsLocationOperationsAsync(Azur
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_express_route_provider_ports_location_list(self, resource_group):
-        response = await self.client.express_route_provider_ports_location.list(
-            api_version="2026-03-01",
-        )
+        response = await self.client.express_route_provider_ports_location.list()
 
         # please add some check logic here by yourself
         # ...

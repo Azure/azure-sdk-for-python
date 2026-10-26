@@ -25,7 +25,6 @@ class TestNetworkManagementNetworkSecurityPerimetersOperationsAsync(AzureMgmtRec
         response = await self.client.network_security_perimeters.get(
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +52,6 @@ class TestNetworkManagementNetworkSecurityPerimetersOperationsAsync(AzureMgmtRec
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +64,6 @@ class TestNetworkManagementNetworkSecurityPerimetersOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             parameters={"id": "str", "tags": {"str": "str"}},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +76,6 @@ class TestNetworkManagementNetworkSecurityPerimetersOperationsAsync(AzureMgmtRec
             await self.client.network_security_perimeters.begin_delete(
                 resource_group_name=resource_group.name,
                 network_security_perimeter_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -91,7 +87,6 @@ class TestNetworkManagementNetworkSecurityPerimetersOperationsAsync(AzureMgmtRec
     async def test_network_security_perimeters_list(self, resource_group):
         response = self.client.network_security_perimeters.list(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -100,9 +95,7 @@ class TestNetworkManagementNetworkSecurityPerimetersOperationsAsync(AzureMgmtRec
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_network_security_perimeters_list_by_subscription(self, resource_group):
-        response = self.client.network_security_perimeters.list_by_subscription(
-            api_version="2026-03-01",
-        )
+        response = self.client.network_security_perimeters.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

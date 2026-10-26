@@ -26,7 +26,6 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.dscp_configuration.get(
             resource_group_name=resource_group.name,
             dscp_configuration_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8110,7 +8109,6 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -8124,7 +8122,6 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
             await self.client.dscp_configuration.begin_delete(
                 resource_group_name=resource_group.name,
                 dscp_configuration_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -8136,7 +8133,6 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
     async def test_dscp_configuration_list(self, resource_group):
         response = self.client.dscp_configuration.list(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -8145,9 +8141,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_dscp_configuration_list_all(self, resource_group):
-        response = self.client.dscp_configuration.list_all(
-            api_version="2026-03-01",
-        )
+        response = self.client.dscp_configuration.list_all()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

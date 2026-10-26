@@ -23,7 +23,6 @@ class TestNetworkManagementVirtualApplianceSkusOperations(AzureMgmtRecordedTestC
     def test_virtual_appliance_skus_get(self, resource_group):
         response = self.client.virtual_appliance_skus.get(
             sku_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -32,9 +31,7 @@ class TestNetworkManagementVirtualApplianceSkusOperations(AzureMgmtRecordedTestC
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_virtual_appliance_skus_list(self, resource_group):
-        response = self.client.virtual_appliance_skus.list(
-            api_version="2026-03-01",
-        )
+        response = self.client.virtual_appliance_skus.list()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
