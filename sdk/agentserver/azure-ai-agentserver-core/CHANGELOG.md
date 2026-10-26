@@ -1,6 +1,6 @@
 # Release History
 
-## 2.3.0b2 (Unreleased)
+## 2.3.0b2 (2026-10-26)
 
 ### Features Added
 
@@ -27,8 +27,6 @@
   obtain scoped `TaskManager` access without mutating the process-wide
   resilient-task switch. This prevents one protocol's enablement from
   activating another protocol in a mixed host.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
@@ -62,8 +60,6 @@
 - Treat a persisted task function identity as authoritative before recovery
   cleanup or reclaim. Legacy callback fallback applies only when that
   identity is absent.
-
-### Other Changes
 
 ## 2.3.0b1 (2026-10-15)
 
