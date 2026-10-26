@@ -148,7 +148,7 @@ class TestRoutingMetadata(unittest.TestCase):
         for value, expected in (
             ("Customer-Service", "Customer-Service"),
             (" \tCustomer Service\n", "Customer Service"),
-            ("\u2003\u00c9quipe\u2003", "\u00c9quipe"),
+            ("\u2003Service-\u00c9\u2003", "Service-\u00c9"),
         ):
             with self.subTest(value=value):
                 attributes = MappingProxyType({"microsoft.multi_endpoint_cloud_role": value})
