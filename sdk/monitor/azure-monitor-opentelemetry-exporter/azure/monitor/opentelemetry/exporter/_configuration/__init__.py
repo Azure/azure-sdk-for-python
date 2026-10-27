@@ -54,7 +54,11 @@ class _ConfigurationManager(metaclass=Singleton):
         # Unlike change callbacks, these callbacks are released exactly once after the first request
         # attempt so dependents can wait for OneSettings without blocking the configuration worker.
         self._initial_configuration_callbacks: List[Callable[[Dict[str, str]], None]] = []
+        # Tracks the first-request gate. It remains False while the worker is in its startup delay or
+        # first request, then becomes True when that attempt finishes, whether it succeeds or fails.
         self._initial_configuration_complete = False
+        # Tracks the worker lifecycle only. True means polling has started, not that any OneSettings
+        # request has completed; _initial_configuration_complete records that separate milestone.
         self._initialized = False
 
     def initialize(self, **kwargs):
@@ -77,6 +81,7 @@ class _ConfigurationManager(metaclass=Singleton):
             initial_refresh_interval = self._current_state.refresh_interval_s
 
             self._configuration_worker = _ConfigurationWorker(self, initial_refresh_interval)
+            # The worker is now running, but its randomized delay and first request may still be pending.
             self._initialized = True
 
     def is_initialized(self) -> bool:
@@ -130,6 +135,8 @@ class _ConfigurationManager(metaclass=Singleton):
         with self._state_lock:
             if self._initial_configuration_complete:
                 return
+            # This marks completion of the first attempt only; the worker remains initialized and
+            # continues polling for later configuration changes.
             self._initial_configuration_complete = True
             callbacks = list(self._initial_configuration_callbacks)
             self._initial_configuration_callbacks.clear()
@@ -324,6 +331,8 @@ class _ConfigurationManager(metaclass=Singleton):
         # Worker thread is now joined, so no callback notifications are in flight and no other thread
         # is registering callbacks, so we can clear this state directly. Callbacks are cleared so a
         # subsequent initialize()/re-registration does not accumulate duplicates.
+        # Reset both milestones because a restarted worker has neither started nor completed its new
+        # first request yet.
         self._initialized = False
         self._callbacks.clear()
         self._initial_configuration_callbacks.clear()
