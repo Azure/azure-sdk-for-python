@@ -446,8 +446,13 @@ def _with_task_admission(
     @wraps(method)
     async def admitted(manager: TaskManager, *args: _AdmissionP.args, **kwargs: _AdmissionP.kwargs) -> _AdmissionR:
         task_id = kwargs.get("task_id")
+        if task_id is None and args and isinstance(args[0], str):
+            task_id = args[0]
         if task_id is None:
-            task_id = getattr(kwargs.get("task_info"), "id", None)
+            task_info = kwargs.get("task_info")
+            if task_info is None and args:
+                task_info = args[0]
+            task_id = getattr(task_info, "id", None)
         with _task_manager_scope(lambda: manager), manager._task_admission(  # pylint: disable=protected-access
             task_id=task_id if isinstance(task_id, str) else None
         ):
@@ -1611,6 +1616,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 )
         return None
 
+    @_with_task_admission
     async def _reclaim_one(self, task_info: TaskInfo) -> "TaskInfo | None":
         """: CAS-protected lease reclaim helper.
 

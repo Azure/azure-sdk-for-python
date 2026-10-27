@@ -17,7 +17,7 @@ from azure.ai.agentserver.core.tasks._exceptions import TaskDeferred
 from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
 from azure.ai.agentserver.core.tasks._manager import TaskManager, get_task_manager
 from azure.ai.agentserver.core.tasks._models import TaskPatchRequest
-from test_snapshot_task_activation import client, host, isolate_runtime, payload, provider_factory
+from test_snapshot_task_activation import client, host, isolate_runtime, payload, provider_factory, seed_expired_task
 
 
 @pytest.mark.asyncio
@@ -273,6 +273,86 @@ async def test_compatible_restore_preserves_owned_task_lease_identity(provider_f
                     run = result[0]
             if run is not None:
                 await asyncio.wait_for(asyncio.gather(run.result(), return_exceptions=True), 2)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("api", ["start", "run", "get-active", "manager-keyword", "recovery"])
+async def test_inline_claim_registration_is_excluded_from_recovery(provider_factory, monkeypatch, api):
+    provider, _ = provider_factory
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "session-1")
+    manager = TaskManager(config=host().config, provider=provider, shutdown_grace_seconds=0)
+    _manager.set_task_manager(manager)
+    claimed, release, running, finish = (asyncio.Event() for _ in range(4))
+    observed = []
+    blocked = False
+    original_update = provider.update
+
+    @task(name="inline_claim_registration")
+    async def existing(ctx: TaskContext[dict[str, str]]) -> str:
+        observed.append(ctx.input)
+        running.set()
+        await finish.wait()
+        return ctx.input["value"]
+
+    async def update(task_id, patch):
+        nonlocal blocked
+        result = await original_update(task_id, patch)
+        if not blocked and patch.lease_instance_id == manager._instance_id and patch.lease_duration_seconds:
+            blocked = True
+            claimed.set()
+            await release.wait()
+        return result
+
+    await manager.startup(restore_id="restore-1")
+    await seed_expired_task(provider, existing.name)
+    monkeypatch.setattr(provider, "update", update)
+    if api == "start":
+        operation = existing.start(task_id="existing-task", input={"value": "saved-input"})
+    elif api == "run":
+        operation = existing.run(task_id="existing-task", input={"value": "saved-input"})
+    elif api == "get-active":
+        operation = existing.get_active_run("existing-task")
+    elif api == "recovery":
+        operation = manager._recover_stale_tasks()
+    else:
+        operation = manager.get_active_run(task_id="existing-task")
+    inline = asyncio.create_task(operation)
+    recovery = None
+    run = None
+    try:
+        await asyncio.wait_for(claimed.wait(), 2)
+        stored = await provider.get("existing-task")
+        assert stored.lease.instance_id == manager._instance_id
+        assert not manager._active_tasks
+        recovery = asyncio.create_task(manager._recover_stale_tasks())
+        await asyncio.wait_for(asyncio.shield(recovery), 1)
+        assert manager._admitted_task_ids["existing-task"] > 0
+        assert observed == []
+        release.set()
+        if api not in ("run", "recovery"):
+            run = await asyncio.wait_for(inline, 2)
+            assert run is not None
+        await asyncio.wait_for(running.wait(), 2)
+        if api == "recovery":
+            await asyncio.wait_for(inline, 2)
+            run = await manager.get_active_run(task_id="existing-task")
+            assert run is not None
+        await manager._recover_stale_tasks()
+        assert observed == [{"value": "saved-input"}]
+        assert not manager._admitted_task_ids
+        finish.set()
+        if api == "run":
+            assert await asyncio.wait_for(inline, 2) == "saved-input"
+        else:
+            assert await asyncio.wait_for(run.result(), 2) == "saved-input"
+    finally:
+        release.set()
+        finish.set()
+        pending = [inline] + ([recovery] if recovery is not None else [])
+        results = await asyncio.wait_for(asyncio.gather(*pending, return_exceptions=True), 2)
+        if api != "run" and not isinstance(results[0], BaseException) and results[0] is not None:
+            await asyncio.wait_for(asyncio.gather(results[0].result(), return_exceptions=True), 2)
+        await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=True)
 
 
 @pytest.mark.asyncio

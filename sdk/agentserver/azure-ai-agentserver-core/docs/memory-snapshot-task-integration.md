@@ -253,6 +253,8 @@ inventing a platform restore event.
   no manager, so separate session clones still initialize independent instances.
   Recovery also excludes task IDs whose accepted submission or resume is still
   registering its active handle, avoiding duplicate dispatch during that gap.
+  This includes the outer start/run claim and positional active-run lookup,
+  before either path reaches active-task registration.
 
 This is not a general retained-memory reconciliation framework. Changes to
 session-incarnation binding require explicit lifecycle treatment rather than

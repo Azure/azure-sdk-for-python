@@ -20,6 +20,8 @@
 
 ### Bugs Fixed
 
+- Track task identity throughout inline start/run claims and positional active-
+  run lookup, preventing recovery from dispatching work before claim registration.
 - Interrupt blocked recovery reads when shutdown begins, so admission can drain
   before scanner cancellation while accepted creates and claims settle safely.
 - Keep the lease instance consistent with live task workers and accepted

@@ -1053,7 +1053,9 @@ class Task(Generic[Input, Output]):
             from ._manager import get_task_manager, _task_manager_scope  # pylint: disable=import-outside-toplevel
 
             manager = get_task_manager()
-            with _task_manager_scope(lambda: manager), manager._task_admission():  # pylint: disable=protected-access
+            with _task_manager_scope(lambda: manager), manager._task_admission(  # pylint: disable=protected-access
+                task_id=task_id
+            ):
                 return await self._lifecycle_start_inner(
                     task_id=task_id,
                     input=input,
