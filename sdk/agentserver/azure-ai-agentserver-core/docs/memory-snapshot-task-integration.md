@@ -236,6 +236,9 @@ inventing a platform restore event.
 - An inactive manager whose construction-time provider configuration no longer
   matches hydrated settings is disposed and rebuilt. Provider changes while
   workers are live fail explicitly instead of sending work to a stale endpoint.
+  The candidate provider signature is checked before publishing restored
+  configuration or rotating lease identity. Rejection rolls back temporary
+  environment overrides without changing the existing workers' lease identity.
 - Runtime identity includes agent name as well as session ID/GUID. Live
   agent-name and session-GUID changes are rejected before environment,
   configuration, or lease-instance mutation; incompatible inactive runtimes
@@ -284,6 +287,10 @@ handler dispatch, including after watchdog setup. Before disposing a manager,
 unfinished queued and promoted steering futures receive `TaskDeferred`; their
 in-memory registrations are cleared, not their persisted inputs. Existing
 completed or cancelled futures retain their outcomes.
+Preserving shutdown also settles unfinished result futures from its retained
+accepted handles after joining workers. This includes cancellation during the
+initial watchdog/provider read, before the execution loop or handler starts.
+The original task record and input remain available for replacement recovery.
 After workers stop, rollback reconciles any suspended steering chain whose
 next-input transition was interrupted. Reconciliation uses the same fenced
 drain path with an explicit lease claim before that lease is expired for retry.

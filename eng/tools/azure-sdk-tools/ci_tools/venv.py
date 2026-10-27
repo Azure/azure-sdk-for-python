@@ -9,8 +9,8 @@ legacy ``TOX_PIP_IMPL`` for backward compatibility):
 * anything else (default ``"pip"``) → uses ``python -m venv`` / ``python -m pip``
 """
 
+import json
 import os
-import re
 import subprocess
 import sys
 from typing import List, Optional
@@ -212,14 +212,17 @@ def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
     return collected_output
 
 
-def get_pip_list_output(python_executable: Optional[str] = None):
-    """Uses the invoking python executable to get the output from pip list."""
-    pip_output = run_pip_freeze(python_executable)
+def get_pip_list_output(python_executable: Optional[str] = None) -> dict[str, str]:
+    """List installed versions, including direct-reference and editable packages.
 
-    collected_output = {}
-    for line in pip_output:
-        if "==" in line:
-            package, version = re.split("==", line)
-            collected_output[package] = version
-
-    return collected_output
+    :param python_executable: Interpreter whose installed distributions are queried.
+    :return: Installed distribution names and versions.
+    """
+    executable = python_executable or sys.executable
+    command = get_pip_command(executable) + ["list", "--format=json"]
+    if command[0] == "uv":
+        command += ["--python", executable]
+    else:
+        command.append("--disable-pip-version-check")
+    output = subprocess.check_output(command, encoding="utf-8")
+    return {package["name"]: package["version"] for package in json.loads(output)}

@@ -998,6 +998,14 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                     else:
                         os.environ[key] = value
                 restored_config = _config.AgentConfig.from_env()
+                if (
+                    task_manager is not None
+                    and task_manager._has_live_workers  # pylint: disable=protected-access
+                    and not task_manager._provider_configuration_matches(  # pylint: disable=protected-access
+                        TaskManager._provider_configuration_for(restored_config)  # pylint: disable=protected-access
+                    )
+                ):
+                    raise RuntimeError("Cannot change task provider while workers are running")
                 vars(self.config).update(vars(restored_config))
                 if task_manager is not None:
                     task_manager._rehydrate_session_state(context.restore_id)  # pylint: disable=protected-access

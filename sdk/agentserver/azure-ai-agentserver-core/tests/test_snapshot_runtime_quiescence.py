@@ -16,6 +16,7 @@ from azure.ai.agentserver.core.tasks import _manager
 from azure.ai.agentserver.core.tasks._exceptions import TaskDeferred
 from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
 from azure.ai.agentserver.core.tasks._manager import TaskManager, get_task_manager
+from azure.ai.agentserver.core.tasks._models import TaskPatchRequest
 from test_snapshot_task_activation import client, host, isolate_runtime, payload, provider_factory
 
 
@@ -181,6 +182,177 @@ async def test_live_guid_override_preserves_manager_and_worker_lease_identity(pr
         finally:
             finish.set()
             await asyncio.wait_for(asyncio.gather(*(run.result() for run in runs), return_exceptions=True), 2)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("provider_change", ["endpoint", "backend", "state_root", "home"])
+async def test_live_provider_override_preserves_manager_and_worker_lease_identity(
+    provider_factory, monkeypatch, tmp_path, provider_change
+):
+    provider, factory = provider_factory
+    backend = "local" if provider_change in ("state_root", "home") else "hosted"
+    monkeypatch.setenv("AGENTSERVER_TASKS_BACKEND", backend)
+    monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://captured.example.invalid/project")
+    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path / "captured"))
+    if provider_change == "home":
+        monkeypatch.setattr(Path, "home", classmethod(lambda cls: Path(os.environ["HOME"])))
+        monkeypatch.setenv("HOME", str(tmp_path / "captured-home"))
+        monkeypatch.setenv("AGENTSERVER_STATE_ROOT", "")
+    key, value = {
+        "endpoint": ("FOUNDRY_PROJECT_ENDPOINT", "https://other.example.invalid/project"),
+        "backend": ("AGENTSERVER_TASKS_BACKEND", "local"),
+        "state_root": ("AGENTSERVER_STATE_ROOT", str(tmp_path / "other-root")),
+        "home": ("HOME", str(tmp_path / "other-home")),
+    }[provider_change]
+    original_value = os.environ[key]
+    running, finish = asyncio.Event(), asyncio.Event()
+    callbacks, renewal_identities, runs = [], [], []
+    original_renewal = _manager.lease_renewal_loop
+    app = host()
+
+    async def renewal(*args, **kwargs):
+        renewal_identities.append((kwargs["lease_owner"], kwargs["lease_instance_id"]))
+        await original_renewal(*args, **kwargs)
+
+    monkeypatch.setattr(_manager, "lease_renewal_loop", renewal)
+
+    @task(name="live_provider_startup")
+    async def startup(ctx: TaskContext[str]) -> str:
+        running.set()
+        await finish.wait()
+        return ctx.input
+
+    @app.after_restore_handler
+    async def initialize(context):
+        callbacks.append(context.restore_id)
+        runs.append(await startup.start(task_id="live-provider-startup", input=context.session_id))
+        await asyncio.wait_for(running.wait(), 2)
+
+    async with app.router.lifespan_context(app), client(app) as http:
+        try:
+            assert (await http.post("/_agent/after-restore", json=payload())).status_code == 200
+            manager = get_task_manager()
+            identity = (manager._lease_owner, manager._instance_id)
+            binding = manager._provider_binding
+            worker = manager._active_tasks["live-provider-startup"]
+            original_config = vars(app.config).copy()
+            changed = payload(restore_id="restore-2")
+            changed["session_context"]["session_env_overrides"][key] = value
+            response = await http.post("/_agent/after-restore", json=changed)
+            assert response.status_code == 500, response.text
+            assert response.json()["error"]["code"] == "after_restore_failed"
+            assert get_task_manager() is manager
+            assert manager.provider is provider
+            assert factory.call_count == 1
+            assert callbacks == ["restore-1"]
+            assert manager._materialization_restore_id == "restore-1"
+            assert (manager._lease_owner, manager._instance_id) == identity
+            assert renewal_identities == [identity]
+            assert manager._provider_binding == binding
+            assert manager._provider_configuration_matches()
+            assert manager._active_tasks["live-provider-startup"] is worker
+            assert not worker.execution_task.done()
+            assert not worker.renewal_task.done()
+            assert vars(app.config) == original_config
+            assert os.environ[key] == original_value
+            await manager._provider_update_locked(
+                "live-provider-startup",
+                TaskPatchRequest(
+                    payload={"probe": "after-rejection"},
+                    **manager._lease_ext_kwargs("live-provider-startup"),
+                ),
+            )
+            stored = await provider.get("live-provider-startup")
+            assert (stored.lease.owner, stored.lease.instance_id) == identity
+            assert stored.payload["input"] == "session-1"
+            assert stored.payload["probe"] == "after-rejection"
+        finally:
+            finish.set()
+            await asyncio.wait_for(asyncio.gather(*(run.result() for run in runs), return_exceptions=True), 2)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("failure", ["exception", "cancel"])
+@pytest.mark.parametrize("api", ["handle", "run"])
+@pytest.mark.parametrize("kind", ["one-shot", "multi-turn"])
+async def test_failed_restore_before_handler_defers_accepted_callers(provider_factory, monkeypatch, failure, api, kind):
+    provider, _ = provider_factory
+    app = host()
+    blocked, setup_cancelled, failing, recovered = (asyncio.Event() for _ in range(4))
+    managers, waiters, observed = [], [], []
+    original_read = TaskManager._provider_get_tracked
+    decorate = task if kind == "one-shot" else multi_turn_task
+
+    async def read(manager, task_id):
+        active = manager._active_tasks.get(task_id)
+        if managers and manager is managers[0] and active is not None:
+            if active.execution_task is asyncio.current_task():
+                blocked.set()
+                try:
+                    await asyncio.Event().wait()
+                except asyncio.CancelledError:
+                    setup_cancelled.set()
+                    raise
+        return await original_read(manager, task_id)
+
+    monkeypatch.setattr(TaskManager, "_provider_get_tracked", read)
+
+    @decorate(name="initial_setup_rollback")
+    async def startup(ctx: TaskContext[str]) -> str:
+        observed.append((ctx.input, ctx.entry_mode))
+        recovered.set()
+        return ctx.input
+
+    @app.after_restore_handler
+    async def initialize(context):
+        managers.append(get_task_manager())
+        if len(managers) != 1:
+            return
+        if api == "handle":
+            run = await startup.start(task_id="initial-setup", input=context.session_id)
+            waiters.append(asyncio.create_task(run.result()))
+        else:
+            waiters.append(asyncio.create_task(startup.run(task_id="initial-setup", input=context.session_id)))
+        await asyncio.wait_for(blocked.wait(), 2)
+        failing.set()
+        if failure == "exception":
+            raise RuntimeError("Fail restore before the accepted task enters its handler")
+        await asyncio.Event().wait()
+
+    async with app.router.lifespan_context(app), client(app) as http:
+        request = asyncio.create_task(http.post("/_agent/after-restore", json=payload()))
+        try:
+            await asyncio.wait_for(failing.wait(), 2)
+            if failure == "cancel":
+                request.cancel()
+                with pytest.raises(asyncio.CancelledError):
+                    await request
+            else:
+                assert (await request).status_code == 500
+            assert setup_cancelled.is_set()
+            assert not managers[0]._has_live_workers
+            assert observed == []
+            with pytest.raises(TaskDeferred):
+                await asyncio.wait_for(waiters[0], 2)
+            stored = await provider.get("initial-setup")
+            assert stored.status == "in_progress"
+            assert stored.payload["input"] == "session-1"
+            assert datetime.fromisoformat(stored.lease.expires_at) <= datetime.now(timezone.utc)
+            response = await http.post("/_agent/after-restore", json=payload())
+            assert response.status_code == 200, response.text
+            await asyncio.wait_for(recovered.wait(), 2)
+            assert managers[0] is not managers[1]
+            assert observed == [("session-1", "recovered")]
+            active = managers[1]._active_tasks.get("initial-setup")
+            if active is not None:
+                await asyncio.wait_for(asyncio.shield(active.execution_task), 2)
+        finally:
+            if not request.done():
+                request.cancel()
+            for waiter in waiters:
+                if not waiter.done():
+                    waiter.cancel()
+            await asyncio.gather(request, *waiters, return_exceptions=True)
 
 
 @pytest.mark.asyncio

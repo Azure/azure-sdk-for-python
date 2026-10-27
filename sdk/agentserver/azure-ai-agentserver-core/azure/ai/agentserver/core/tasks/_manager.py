@@ -1031,12 +1031,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             retained.update(self._retain_shutdown_workers())
         return retained
 
-    def _defer_steering_futures(self) -> None:
-        """Release old-lifetime waiters without removing their durable inputs."""
+    def _defer_shutdown_futures(self, active_tasks: list[_ActiveTask]) -> None:
+        """Release old-lifetime waiters without removing their durable inputs.
+
+        :param active_tasks: Retained accepted tasks whose workers have been joined.
+        :type active_tasks: list[_ActiveTask]
+        """
         from ._exceptions import TaskDeferred  # pylint: disable=import-outside-toplevel
 
         futures = set(self._active_generation_future.values())
         futures.update(future for pending in self._pending_steering_futures.values() for future in pending)
+        futures.update(active.result_future for active in active_tasks)
         for future in futures:
             if not future.done():
                 future.set_exception(TaskDeferred())
@@ -1149,7 +1154,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if not preserve_recoverable_tasks:
             await self._cancel_workers(wait=wait_for_workers)
 
-        self._defer_steering_futures()
+        self._defer_shutdown_futures(remaining if preserve_recoverable_tasks else [])
         self._active_tasks.clear()
         self._timeout_watchdogs.clear()
         self._pending_shutdown_tasks.clear()
