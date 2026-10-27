@@ -759,17 +759,32 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             lease_kwargs: dict[str, Any] = {}
             if task_info.status == "in_progress":
                 lease_kwargs = self._lease_ext_kwargs(task_id)
-            updated = await self._provider_update_lock_held(
-                task_id,
-                TaskPatchRequest(
-                    payload=payload_patch,
-                    attachments=attachments_patch or None,
-                    **lease_kwargs,
-                ),
+            # Keep both locks until a committed removal has updated its local future.
+            patch_task = asyncio.create_task(
+                self._provider_update_lock_held(
+                    task_id,
+                    TaskPatchRequest(
+                        payload=payload_patch,
+                        attachments=attachments_patch or None,
+                        **lease_kwargs,
+                    ),
+                )
             )
+            cancelled = False
+            while True:
+                try:
+                    updated = await asyncio.shield(patch_task)
+                    break
+                except asyncio.CancelledError:
+                    cancelled = True
+                    if patch_task.done():
+                        updated = patch_task.result()
+                        break
             if updated is None:
                 raise TaskNotFound(task_id)
             finish_cancel()
+            if cancelled:
+                raise asyncio.CancelledError()
 
     async def startup(self) -> None:
         """Initialize the manager and recover stale tasks.

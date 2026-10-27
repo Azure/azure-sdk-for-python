@@ -1795,39 +1795,40 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
         except RuntimeError:
             return  # no manager -> nothing to delete
 
-        # 1. Resolve any active in-process caller's future with TaskCancelled.
-        active = getattr(mgr, "_active_tasks", {}).get(task_id)
-        if active is not None:
-            fut = getattr(active, "result_future", None)
-            if fut is not None and not fut.done():
-                fut.set_exception(TaskCancelled())
-            # Signal the handler's cancel event so the running coroutine
-            # winds down cooperatively.
-            cancel_evt = getattr(active.context, "cancel", None)
-            if cancel_evt is not None:
-                cancel_evt.set()
-            # Force-cancel the running execution_task so handlers blocked
-            # on awaits that don't check ctx.cancel still exit.
-            exec_task = getattr(active, "execution_task", None)
-            if exec_task is not None and not exec_task.done():
-                exec_task.cancel()
+        async with mgr._get_task_admission_lock(task_id):  # pylint: disable=protected-access
+            # 1. Resolve any active in-process caller's future with TaskCancelled.
+            active = getattr(mgr, "_active_tasks", {}).get(task_id)
+            if active is not None:
+                fut = getattr(active, "result_future", None)
+                if fut is not None and not fut.done():
+                    fut.set_exception(TaskCancelled())
+                # Signal the handler's cancel event so the running coroutine
+                # winds down cooperatively.
+                cancel_evt = getattr(active.context, "cancel", None)
+                if cancel_evt is not None:
+                    cancel_evt.set()
+                # Force-cancel the running execution_task so handlers blocked
+                # on awaits that don't check ctx.cancel still exit.
+                exec_task = getattr(active, "execution_task", None)
+                if exec_task is not None and not exec_task.done():
+                    exec_task.cancel()
 
-        # 2. Resolve all queued steerer futures with TaskCancelled.
-        pending = getattr(mgr, "_pending_steering_futures", {}).pop(task_id, [])
-        for queued_fut in pending:
-            if queued_fut is not None and not queued_fut.done():
-                queued_fut.set_exception(TaskCancelled())
+            # 2. Resolve all queued steerer futures with TaskCancelled.
+            pending = getattr(mgr, "_pending_steering_futures", {}).pop(task_id, [])
+            for queued_fut in pending:
+                if queued_fut is not None and not queued_fut.done():
+                    queued_fut.set_exception(TaskCancelled())
 
-        # 3. Force-delete the record (idempotent — only swallow the
-        # "already-gone" classes).
-        provider = getattr(mgr, "_provider", None)
-        if provider is not None:
-            from ._exceptions_internal import TaskNotFound  # pylint: disable=import-outside-toplevel
+            # 3. Force-delete the record (idempotent — only swallow the
+            # "already-gone" classes).
+            provider = getattr(mgr, "_provider", None)
+            if provider is not None:
+                from ._exceptions_internal import TaskNotFound  # pylint: disable=import-outside-toplevel
 
-            try:
-                await provider.delete(task_id, force=True)
-            except TaskNotFound:
-                pass  # idempotent: already gone
+                try:
+                    await provider.delete(task_id, force=True)
+                except TaskNotFound:
+                    pass  # idempotent: already gone
 
 
 @overload

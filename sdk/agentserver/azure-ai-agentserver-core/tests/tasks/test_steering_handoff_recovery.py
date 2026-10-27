@@ -802,3 +802,119 @@ async def test_active_lookup_waits_for_queued_recovery_claim(tmp_path, monkeypat
         await manager.shutdown()
         await asyncio.gather(*(task for task in (recovery, lookup) if task is not None), return_exceptions=True)
         set_task_manager(None)
+
+
+@pytest.mark.asyncio
+async def test_delete_waits_for_committed_queued_recovery_claim(tmp_path, monkeypatch):
+    committed, reply, delete_locked, finish = (asyncio.Event() for _ in range(4))
+    observed = []
+
+    @multi_turn_task(name="handoff", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        observed.append(ctx.input["value"])
+        await finish.wait()
+        return ctx.input["value"]
+
+    provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    set_task_manager(manager)
+    recovery = deletion = None
+    try:
+        await manager.startup()
+        await _seed(provider)
+        update = provider.update
+        delayed = True
+
+        async def delayed_claim(task_id, patch):
+            nonlocal delayed
+            result = await update(task_id, patch)
+            if delayed and patch.status == "in_progress":
+                delayed = False
+                committed.set()
+                await reply.wait()
+            return result
+
+        monkeypatch.setattr(provider, "update", delayed_claim)
+        get_lock = manager._get_task_admission_lock
+
+        def observed_lock(task_id):
+            if asyncio.current_task() is deletion:
+                delete_locked.set()
+            return get_lock(task_id)
+
+        monkeypatch.setattr(manager, "_get_task_admission_lock", observed_lock)
+        recovery = asyncio.create_task(manager._recover_queued_steering_tasks())
+        await asyncio.wait_for(committed.wait(), 5)
+        deletion = asyncio.create_task(worker.delete("chain"))
+        await asyncio.wait_for(delete_locked.wait(), 5)
+        assert await provider.get("chain") is not None
+        reply.set()
+        await asyncio.wait_for(recovery, 5)
+        await asyncio.wait_for(deletion, 5)
+        assert await provider.get("chain") is None
+    finally:
+        reply.set()
+        finish.set()
+        await manager.shutdown()
+        await asyncio.gather(*(task for task in (recovery, deletion) if task is not None), return_exceptions=True)
+        set_task_manager(None)
+
+
+@pytest.mark.asyncio
+async def test_cancel_after_committed_queue_removal_reply_is_cancelled(tmp_path, monkeypatch):
+    entered, finish, committed, reply = (asyncio.Event() for _ in range(4))
+    observed = []
+
+    @multi_turn_task(name="handoff", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        value = ctx.input["value"]
+        observed.append(value)
+        if value == 1:
+            entered.set()
+            await finish.wait()
+        return value
+
+    provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    set_task_manager(manager)
+    cancelling = None
+    try:
+        await manager.startup()
+        first = await worker.start(task_id="chain", input={"value": 1})
+        await asyncio.wait_for(entered.wait(), 5)
+        queued = await worker.start(task_id="chain", input={"value": 2})
+        update = provider.update
+        delayed = True
+
+        async def delayed_removal(task_id, patch):
+            nonlocal delayed
+            result = await update(task_id, patch)
+            steering = (patch.payload or {}).get("steering") or {}
+            if delayed and "pending_inputs" in steering and not steering["pending_inputs"]:
+                delayed = False
+                committed.set()
+                await reply.wait()
+            return result
+
+        monkeypatch.setattr(provider, "update", delayed_removal)
+        cancelling = asyncio.create_task(queued.cancel())
+        await asyncio.wait_for(committed.wait(), 5)
+        cancelling.cancel()
+        reply.set()
+        with pytest.raises(asyncio.CancelledError):
+            await cancelling
+        assert (await provider.get("chain")).payload["steering"]["pending_inputs"] == []
+        with pytest.raises(TaskCancelled):
+            await asyncio.wait_for(queued.result(), 5)
+        third = await worker.start(task_id="chain", input={"value": 3})
+        finish.set()
+        assert await asyncio.wait_for(first.result(), 5) == 1
+        assert await asyncio.wait_for(third.result(), 5) == 3
+        assert observed == [1, 3]
+    finally:
+        reply.set()
+        finish.set()
+        await manager.shutdown()
+        if cancelling is not None:
+            await asyncio.gather(cancelling, return_exceptions=True)
+        set_task_manager(None)
