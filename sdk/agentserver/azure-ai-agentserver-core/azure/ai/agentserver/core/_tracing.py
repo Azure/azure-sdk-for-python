@@ -95,6 +95,7 @@ _OTLP_METRICS_PROTOCOL = "OTEL_EXPORTER_OTLP_METRICS_PROTOCOL"
 _OTLP_LOGS_ENDPOINT = "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT"
 _OTLP_LOGS_PROTOCOL = "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL"
 _OTEL_TRACES_SAMPLER = "OTEL_TRACES_SAMPLER"
+_OTEL_PYTHON_DISABLED_INSTRUMENTATIONS = "OTEL_PYTHON_DISABLED_INSTRUMENTATIONS"
 _OTLP_ENV_VARS = (
     _OTLP_ENDPOINT,
     _OTLP_PROTOCOL,
@@ -260,11 +261,10 @@ def _configure_tracing(
                 instrumentation_options=instrumentation_options,
             )
         azure_sdk_options = (instrumentation_options or {}).get("azure_sdk", {})
-        if (
-            _is_otlp_enabled()
-            and not connection_string
-            and azure_sdk_options.get("enabled") is not False
-        ):
+        azure_sdk_enabled = azure_sdk_options.get(
+            "enabled", "azure_sdk" not in _get_otel_disabled_instrumentations()
+        )
+        if _is_otlp_enabled() and not connection_string and azure_sdk_enabled:
             # Azure Monitor configures this bridge through its instrumentation
             # setup. Plain OTLP uses the same provider but needs it explicitly.
             _configure_azure_core_opentelemetry()
@@ -347,6 +347,12 @@ def _resolve_instrumentation_options(
     for name, options in (instrumentation_options or {}).items():
         resolved.setdefault(name, {}).update(options)
     return resolved
+
+
+def _get_otel_disabled_instrumentations() -> set[str]:
+    """Return instrumentation names disabled through the standard OTel environment variable."""
+    disabled = os.environ.get(_OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, "")
+    return {name.strip() for name in disabled.split(",") if name.strip()}
 
 
 def _configure_azure_core_opentelemetry() -> None:

@@ -221,6 +221,43 @@ class TestSetupDistroExport:
 
         mock_bridge.assert_not_called()
 
+    def test_plain_otlp_respects_environment_azure_sdk_opt_out(self) -> None:
+        with (
+            mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export"),
+            mock.patch("azure.ai.agentserver.core._tracing._configure_azure_core_opentelemetry") as mock_bridge,
+            mock.patch.dict(
+                os.environ,
+                {
+                    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318",
+                    "OTEL_PYTHON_DISABLED_INSTRUMENTATIONS": "requests, azure_sdk, httpx",
+                },
+                clear=True,
+            ),
+        ):
+            _tracing._configure_tracing(connection_string=None)
+
+        mock_bridge.assert_not_called()
+
+    def test_explicit_azure_sdk_enablement_overrides_environment_opt_out(self) -> None:
+        with (
+            mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export"),
+            mock.patch("azure.ai.agentserver.core._tracing._configure_azure_core_opentelemetry") as mock_bridge,
+            mock.patch.dict(
+                os.environ,
+                {
+                    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318",
+                    "OTEL_PYTHON_DISABLED_INSTRUMENTATIONS": "azure_sdk",
+                },
+                clear=True,
+            ),
+        ):
+            _tracing._configure_tracing(
+                connection_string=None,
+                instrumentation_options={"azure_sdk": {"enabled": True}},
+            )
+
+        mock_bridge.assert_called_once()
+
     def test_no_telemetry_does_not_configure_azure_core_opentelemetry(self) -> None:
         with (
             mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export"),
