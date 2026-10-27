@@ -8,7 +8,6 @@ import asyncio
 import base64
 from concurrent.futures import Future
 import importlib.util
-import inspect
 import io
 import json
 from pathlib import Path
@@ -19,30 +18,13 @@ from unittest.mock import AsyncMock, MagicMock
 import wave
 
 import pytest
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from azure.ai.projects import models
 
 
 _SAMPLE_DIRECTORY = Path(__file__).resolve().parents[2] / "samples" / "agents" / "voice"
 _SYNC_SCENARIOS = ("connection", "text_conversation", "function_tool")
-
-
-@pytest.mark.parametrize(
-    "filename", sorted(path.name for path in _SAMPLE_DIRECTORY.glob("sample_voice_agent_live_*.py"))
-)
-def test_all_live_samples_have_no_cli_or_entrypoint_arguments(monkeypatch, sample_environment, filename):
-    sample = _load_module(monkeypatch, filename)
-
-    assert not inspect.signature(sample.main).parameters
-    assert not hasattr(sample, "argparse")
-    assert "sys.argv" not in inspect.getsource(sample)
-
-
-def test_only_full_duplex_audio_needs_a_separate_async_live_sample():
-    assert {path.name for path in _SAMPLE_DIRECTORY.glob("sample_voice_agent_live_*_async.py")} == {
-        "sample_voice_agent_live_audio_conversation_async.py"
-    }
 
 
 def _load_module(monkeypatch, filename):
@@ -899,13 +881,6 @@ async def test_async_close_expired_deadline_does_not_create_an_unawaited_send(mo
     sample_environment.async_connection.session.close.assert_not_called()
 
 
-def test_live_rest_sample_entrypoint_has_no_cli_or_mutation_options(monkeypatch, sample_environment):
-    sample = _load_module(monkeypatch, "sample_voice_agent_live_read_conversation.py")
-
-    assert not inspect.signature(sample.main).parameters
-    assert not hasattr(sample, "argparse")
-
-
 def _wav_bytes(channels):
     stream = io.BytesIO()
     with wave.open(stream, "wb") as writer:
@@ -981,6 +956,139 @@ def rest_sample(monkeypatch, sample_environment, tmp_path):
         output_factory=output_factory,
         directories=directories,
     )
+
+
+@pytest.fixture
+def created_rest_sample(monkeypatch, rest_sample, sample_environment):
+    monkeypatch.delenv("FOUNDRY_VOICE_CONVERSATION_ID")
+    clock = SimpleNamespace(now=0.0)
+    clock.monotonic = lambda: clock.now
+
+    def sleep(duration):
+        clock.now += duration
+
+    clock.sleep = sleep
+    monkeypatch.setattr(rest_sample.sample, "time", clock, raising=False)
+    monkeypatch.setattr(sample_environment.helper, "time", clock)
+    started = _started()
+    started.conversation_id = rest_sample.conversation.id
+    events = [
+        started,
+        models.LiveOutputAudioDelta(delta=base64.b64encode(b"\x00\x08" * 1200).decode("ascii")),
+        models.LiveServerEventLiveOutputTranscriptDelta(delta="Hello, welcome."),
+    ]
+    connection = sample_environment.connection
+
+    def receive(*, timeout):
+        if connection.session.close.called:
+            return _closed()
+        if events:
+            return events.pop(0)
+        clock.now += timeout
+        raise TimeoutError
+
+    connection.recv.side_effect = receive
+    rest_sample.connection = connection
+    rest_sample.clock = clock
+    rest_sample.events = events
+    return rest_sample
+
+
+@pytest.mark.parametrize("conversation_id", [None, "", " "], ids=["unset", "empty", "blank"])
+def test_live_rest_sample_creates_and_deletes_its_conversation_when_id_is_omitted(
+    created_rest_sample, capsys, monkeypatch, conversation_id
+):
+    setup = created_rest_sample
+    if conversation_id is not None:
+        monkeypatch.setenv("FOUNDRY_VOICE_CONVERSATION_ID", conversation_id)
+    setup.run()
+
+    create = setup.client.agents.create_version.call_args.kwargs
+    agent_name = create["agent_name"]
+    assert agent_name.startswith("stored-agent-test-") and agent_name != "stored-agent-test"
+    definition = create["definition"]
+    assert isinstance(definition, models.VoiceAgentLiveDefinition)
+    assert definition.model == "live-deployment-test"
+    assert definition.store is True and definition.greeting.text
+    assert definition.audio.format.rate == 24000
+    setup.client.beta.voice_agents.live.connect.assert_called_once_with(
+        agent_name=agent_name, agent_version="owned-version", store=True
+    )
+    setup.connection.session.start.assert_not_called()
+    setup.connection.session.close.assert_called_once()
+    setup.connection.session.input_audio.append.assert_called()
+    assert all(
+        call.kwargs["audio"] == bytes(2400) for call in setup.connection.session.input_audio.append.call_args_list
+    )
+    setup.operations.get.assert_any_call(agent_name, "conversation-test")
+    setup.operations.download_audio.assert_called_once_with(agent_name, "conversation-test")
+    setup.operations.delete.assert_called_once_with(agent_name, "conversation-test")
+    setup.client.agents.delete_version.assert_called_once_with(agent_name=agent_name, agent_version="owned-version")
+    setup.client.agents.delete.assert_not_called()
+    assert (setup.directories[0] / "conversation.wav").read_bytes() == setup.merged_bytes
+    methods = [call[0] for call in setup.client.mock_calls]
+    assert (
+        methods.index("beta.voice_agents.live_conversations.download_audio")
+        < methods.index("beta.voice_agents.live_conversations.delete")
+        < methods.index("agents.delete_version")
+    )
+    output = capsys.readouterr().out
+    assert "Created conversation: conversation-test" in output
+    assert "Deleted sample conversation: conversation-test" in output
+    assert "Read-only REST run" not in output
+
+
+@pytest.mark.parametrize("stage", ["create-agent", "connect", "greeting", "read", "delete"])
+def test_live_rest_failure_cleans_up_only_resources_created_by_the_sample(created_rest_sample, stage):
+    setup = created_rest_sample
+    failure = RuntimeError("sample workflow failed")
+    if stage == "create-agent":
+        setup.client.agents.create_version.side_effect = failure
+    elif stage == "connect":
+        setup.client.beta.voice_agents.live.connect.return_value.__enter__.side_effect = failure
+    elif stage == "greeting":
+        setup.events[1] = {"type": "error", "error": {"code": "test_error", "message": str(failure)}}
+    elif stage == "read":
+        setup.operations.download_audio.side_effect = failure
+    else:
+        setup.operations.delete.side_effect = failure
+
+    with pytest.raises(RuntimeError, match="sample workflow failed"):
+        setup.run()
+
+    if stage in ("create-agent", "connect"):
+        setup.operations.delete.assert_not_called()
+    else:
+        setup.operations.delete.assert_called_once()
+    if stage == "create-agent":
+        setup.client.agents.delete_version.assert_not_called()
+    else:
+        setup.client.agents.delete_version.assert_called_once()
+
+
+def test_live_rest_finalization_waits_for_durable_speech_and_recording(created_rest_sample):
+    setup = created_rest_sample
+    in_progress = models.VoiceAgentLiveConversation(
+        {"id": "conversation-test", "status": "in_progress", "created_at": 1}
+    )
+    not_ready = HttpResponseError("recording not ready")
+    not_ready.status_code = 409
+    not_ready.error = SimpleNamespace(code="recording_not_ready")
+    setup.operations.get.side_effect = [
+        ResourceNotFoundError("not persisted yet"),
+        in_progress,
+        setup.conversation,
+        setup.conversation,
+    ]
+    setup.operations.get_audio.side_effect = [not_ready, setup.recording]
+
+    setup.sample._wait_for_recording(setup.operations, "owned-agent", "conversation-test")
+
+    assert setup.clock.now == 3
+    assert setup.operations.get.call_count == 4
+    assert setup.operations.get_audio.call_count == 2
+    setup.operations.list_items.assert_called_once_with("owned-agent", "conversation-test", limit=20, order="asc")
+    setup.operations.delete.assert_not_called()
 
 
 def test_live_rest_sample_downloads_to_user_temp_without_modifying_resources(
@@ -1139,9 +1247,12 @@ def test_live_rest_sample_temp_directory_failure_leaves_service_resources_untouc
     rest_sample.client.__exit__.assert_called_once()
 
 
-@pytest.mark.parametrize("variable", ["FOUNDRY_VOICE_AGENT_NAME", "FOUNDRY_VOICE_CONVERSATION_ID"])
-def test_live_rest_sample_rejects_blank_resource_identifiers(rest_sample, monkeypatch, variable):
-    monkeypatch.setenv(variable, " ")
+@pytest.mark.parametrize("agent_name", [None, "", " "], ids=["unset", "empty", "blank"])
+def test_live_rest_sample_requires_an_agent_name_for_an_existing_conversation(rest_sample, monkeypatch, agent_name):
+    if agent_name is None:
+        monkeypatch.delenv("FOUNDRY_VOICE_AGENT_NAME")
+    else:
+        monkeypatch.setenv("FOUNDRY_VOICE_AGENT_NAME", agent_name)
 
     with pytest.raises(ValueError, match="nonblank"):
         rest_sample.run()

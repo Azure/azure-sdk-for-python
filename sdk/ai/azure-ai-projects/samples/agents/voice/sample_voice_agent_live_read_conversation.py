@@ -8,48 +8,183 @@ DESCRIPTION:
     Read a stored GPT Live conversation using the preview
     project_client.beta.voice_agents.live_conversations REST APIs. Retrieve the
     conversation, recent conversations, ordered items, individual items, and
-    merged/per-item audio metadata. No agent or WebSocket session is created.
+    merged/per-item audio metadata.
 
-    Requires an ended speech session with effective store=True. Use
-    session.started.conversation_id, not session.id. These dedicated Live REST
-    routes must be available on the service deployment; HTTP 404 is reported
-    and raised, never replaced by calls to the older Realtime conversation API.
+    If FOUNDRY_VOICE_CONVERSATION_ID is omitted or blank, create a temporary
+    GPT Live agent and a stored greeting session, close it, wait for persistence,
+    read its recordings, then delete the conversation and agent version.
+    No microphone, input recording, or Responses backend is needed.
+
+    If an existing conversation ID is supplied, read it without creating an
+    agent or opening a WebSocket and never delete its resources. It must come
+    from session.started.conversation_id, not session.id, after a successful
+    speech session with effective store=True. Dedicated Live REST routes must
+    be available; no fallback to older Realtime conversation routes is used.
 
     Download Foundry-managed WAV recordings into a unique folder in your user
     temporary directory and print its location. The files remain available
     after the sample exits and are not overwritten. Downloads contain stored
     conversation content; remove the local folder when it is no longer needed.
     BYOS recordings require your own storage credentials and are not downloaded.
-    The existing agent, conversation, items, and stored audio are never deleted.
+    Only the agent version and conversation created by this run are deleted.
 
 USAGE:
     python sample_voice_agent_live_read_conversation.py
 
-    pip install azure-ai-projects azure-identity python-dotenv
+    pip install "azure-ai-projects[voice]" azure-identity python-dotenv
 
-    Environment variables (all required):
-    1) FOUNDRY_PROJECT_ENDPOINT - The Foundry project endpoint.
-    2) FOUNDRY_VOICE_AGENT_NAME - The existing GPT Live agent name.
-    3) FOUNDRY_VOICE_CONVERSATION_ID - The stored Foundry conversation ID.
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
+    2) FOUNDRY_VOICE_CONVERSATION_ID (optional) - An existing stored conversation.
+       When unset or blank, this sample creates and deletes its own conversation.
+    3) FOUNDRY_VOICE_AGENT_NAME (required with an existing conversation ID) -
+       The existing GPT Live agent name. Otherwise, an optional name prefix
+       for the uniquely named temporary agent; an existing agent is not changed.
+    4) FOUNDRY_VOICE_AGENT_MODEL (required without a conversation ID) -
+       Your GPT Live deployment name, used to create the temporary agent.
 
-    Authenticates with DefaultAzureCredential. No model deployment name,
-    microphone, or WebSocket dependency is needed.
+    Authenticates with DefaultAzureCredential. Existing-conversation mode
+    requires no model deployment name or WebSocket dependency.
 """
 
 from __future__ import annotations
 
+import base64
+from contextlib import contextmanager, ExitStack
 from itertools import islice
 import os
 from pathlib import Path
+import struct
 from tempfile import mkdtemp
+import time
+from typing import Iterator
 
 from dotenv import load_dotenv
-from live_sample_utils import recording_output, safe_print
+from live_sample_utils import (
+    audio_settings,
+    check_event,
+    check_session_open,
+    close_session,
+    recording_output,
+    remaining_time,
+    safe_print,
+    sample_agent_name,
+    wait_for_event,
+)
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient, models
-from azure.ai.projects.operations import BetaVoiceAgentsLiveConversationsOperations
+from azure.ai.projects.operations import BetaLiveConnection, BetaVoiceAgentsLiveConversationsOperations
+
+
+_SESSION_TIMEOUT = 45.0
+_FINALIZATION_TIMEOUT = 90.0
+
+
+def _receive_greeting(connection: BetaLiveConnection) -> None:
+    deadline = time.monotonic() + _SESSION_TIMEOUT
+    next_input = time.monotonic()
+    last_content = next_input
+    speech_received = False
+    input_bytes = output_bytes = 0
+    while True:
+        remaining = remaining_time(deadline, "the sample greeting audio")
+        now = time.monotonic()
+        if speech_received and now - last_content >= 2:
+            print(f"Greeting audio: sent {input_bytes} silence bytes; received {output_bytes} PCM16 bytes.")
+            return
+        if now >= next_input:
+            connection.session.input_audio.append(audio=bytes(2400))
+            input_bytes += 2400
+            next_input = now + 0.05
+        try:
+            event = connection.recv(timeout=min(remaining, max(0.001, next_input - time.monotonic())))
+        except TimeoutError:
+            continue
+        check_event(event)
+        check_session_open(event)
+        if isinstance(event, models.LiveOutputAudioDelta):
+            pcm = base64.b64decode(event.delta, validate=True)
+            if len(pcm) % 2:
+                raise ValueError("The service returned an incomplete PCM16 sample.")
+            output_bytes += len(pcm)
+            if any(abs(sample) > 256 for (sample,) in struct.iter_unpack("<h", pcm)):
+                speech_received = True
+                last_content = time.monotonic()
+        elif isinstance(event, models.LiveServerEventLiveOutputTranscriptDelta) and event.delta.strip():
+            safe_print(f"Greeting transcript: {event.delta}")
+            last_content = time.monotonic()
+
+
+def _wait_for_recording(
+    conversations: BetaVoiceAgentsLiveConversationsOperations, agent_name: str, conversation_id: str
+) -> None:
+    print("Waiting for the sample conversation and audio to finish persisting.")
+    deadline = time.monotonic() + _FINALIZATION_TIMEOUT
+    while True:
+        remaining_time(deadline, "stored conversation finalization")
+        try:
+            conversation = conversations.get(agent_name, conversation_id)
+        except ResourceNotFoundError:
+            pass
+        else:
+            if conversation.id != conversation_id:
+                raise RuntimeError("The service returned a different stored conversation ID.")
+            if conversation.status == "failed":
+                raise RuntimeError(f"Sample conversation persistence failed: {conversation.last_error}")
+            if conversation.status == "completed":
+                try:
+                    conversations.get_audio(agent_name, conversation_id)
+                except HttpResponseError as exc:
+                    if exc.status_code != 409 or getattr(exc.error, "code", None) != "recording_not_ready":
+                        raise
+                else:
+                    items = conversations.list_items(agent_name, conversation_id, limit=20, order="asc")
+                    if any(
+                        isinstance(item, models.VoiceAgentLiveOutputConversationItem) and item.audio is not None
+                        for item in islice(items, 20)
+                    ):
+                        return
+            elif conversation.status != "in_progress":
+                raise RuntimeError(f"Unexpected sample conversation status: {conversation.status}")
+        time.sleep(min(1.0, remaining_time(deadline, "stored conversation finalization")))
+
+
+@contextmanager
+def _temporary_conversation(project_client: AIProjectClient, model: str) -> Iterator[tuple[str, str]]:
+    agent_name = sample_agent_name("rest")
+    conversations = project_client.beta.voice_agents.live_conversations
+    with ExitStack() as cleanup:
+        agent = project_client.agents.create_version(
+            agent_name=agent_name,
+            definition=models.VoiceAgentLiveDefinition(
+                model=model,
+                instructions="Greet the caller briefly.",
+                greeting=models.VoiceAgentTemplateGreetingConfig(text="Hello, welcome."),
+                audio=audio_settings(),
+                delegation=models.LiveClientDelegationParam(),
+                store=True,
+            ),
+        )
+        cleanup.callback(project_client.agents.delete_version, agent_name=agent_name, agent_version=agent.version)
+        with project_client.beta.voice_agents.live.connect(
+            agent_name=agent_name, agent_version=agent.version, store=True
+        ) as connection:
+            try:
+                started = wait_for_event(connection, "session.started")
+                stored_id = started.get("conversation_id")
+                if not isinstance(stored_id, str) or not stored_id.strip() or stored_id == started["session"]["id"]:
+                    raise RuntimeError("The stored session did not return a valid stored conversation ID.")
+                conversation_id = stored_id
+                cleanup.callback(conversations.delete, agent_name, conversation_id)
+                print(f"Created conversation: {conversation_id}")
+                _receive_greeting(connection)
+            finally:
+                close_session(connection)
+        _wait_for_recording(conversations, agent_name, conversation_id)
+        yield agent_name, conversation_id
+    print(f"Deleted sample conversation: {conversation_id} and temporary agent version: {agent.version}")
 
 
 def _read_item(
@@ -120,27 +255,36 @@ def _read_conversation(
         for chunk in conversations.download_audio(agent_name, conversation_id):
             output.write(chunk)
 
-    print("Read-only REST run: the existing agent, conversation, items, and stored audio were not modified.")
-
 
 def main() -> None:
     load_dotenv()
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-    agent_name = os.environ["FOUNDRY_VOICE_AGENT_NAME"]
-    conversation_id = os.environ["FOUNDRY_VOICE_CONVERSATION_ID"]
-    if not agent_name.strip() or not conversation_id.strip():
-        raise ValueError("Provide a nonblank existing agent name and stored Foundry conversation ID.")
+    agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME", "").strip()
+    conversation_id = os.environ.get("FOUNDRY_VOICE_CONVERSATION_ID", "").strip()
+    model = ""
+    if conversation_id:
+        if not agent_name:
+            raise ValueError("Provide a nonblank existing agent name with the stored Foundry conversation ID.")
+    else:
+        model = os.environ["FOUNDRY_VOICE_AGENT_MODEL"].strip()
+        if not model:
+            raise ValueError("Provide a nonblank GPT Live deployment name to create the sample conversation.")
 
     with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
         try:
-            _read_conversation(
-                project_client.beta.voice_agents.live_conversations,
-                agent_name,
-                conversation_id,
-            )
+            if conversation_id:
+                _read_conversation(project_client.beta.voice_agents.live_conversations, agent_name, conversation_id)
+                print(
+                    "Read-only REST run: the existing agent, conversation, items, and stored audio were not modified."
+                )
+            else:
+                with _temporary_conversation(project_client, model) as (created_agent, created_conversation):
+                    _read_conversation(
+                        project_client.beta.voice_agents.live_conversations, created_agent, created_conversation
+                    )
         except HttpResponseError as exc:
             print(f"GPT Live conversation REST request failed: HTTP {exc.status_code}.")
             if exc.status_code == 404:
