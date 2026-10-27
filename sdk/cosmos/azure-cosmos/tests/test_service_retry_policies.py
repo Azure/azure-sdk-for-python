@@ -352,29 +352,6 @@ class TestServiceRetryPolicyHelpers(unittest.TestCase):
         request_params = SimpleNamespace(operation_type=_OperationType.Read)
         assert _retry_utility._is_read_retryable_request(request, request_params) is True
 
-    def test_synthetic_transport_preserves_target_tls_behavior(self):
-        for host, supplied, expected in (
-            ("https://localhost:8081/", True, False),
-            ("https://127.0.0.1:8081/", True, False),
-            ("https://account.documents.azure.com/", True, True),
-            ("https://account.documents.azure.com/", "custom-ca.pem", "custom-ca.pem"),
-            ("https://localhost.example.com/", True, True),
-            ("https://127.0.0.10/", True, True),
-        ):
-            with self.subTest(host=host, supplied=supplied):
-                request = HttpRequest("GET", "https://westus.retry-test.invalid/dbs/test")
-                original_url = request.url
-                seen = []
-
-                def send(outgoing, **kwargs):
-                    seen.append((outgoing.url, kwargs["connection_verify"]))
-                    raise ServiceRequestError("transport error")
-
-                with self.assertRaises(ServiceRequestError):
-                    send_to_test_host(send, host, request, connection_verify=supplied)
-                self.assertEqual(seen, [(host + "dbs/test", expected)])
-                self.assertEqual(request.url, original_url)
-
     def test_non_synthetic_transport_does_not_change_tls_options(self):
         request = HttpRequest("GET", "https://localhost:8081/dbs/test")
         sender = Mock(return_value="response")
@@ -401,3 +378,30 @@ class TestServiceRetryPolicyHelpers(unittest.TestCase):
         # is available (request is None).
         request_params = SimpleNamespace(operation_type=_OperationType.Read)
         assert _retry_utility._is_read_retryable_request(None, request_params) is True
+
+
+@pytest.mark.cosmosEmulator
+@pytest.mark.parametrize(
+    "host,supplied,expected",
+    [
+        ("https://localhost:8081/", True, False),
+        ("https://127.0.0.1:8081/", True, False),
+        ("https://account.documents.azure.com/", True, True),
+        ("https://account.documents.azure.com/", "custom-ca.pem", "custom-ca.pem"),
+        ("https://localhost.example.com/", True, True),
+        ("https://127.0.0.10/", True, True),
+    ],
+)
+def test_synthetic_transport_preserves_target_tls_behavior(host, supplied, expected):
+    request = HttpRequest("GET", "https://westus.retry-test.invalid/dbs/test")
+    original_url = request.url
+    seen = []
+
+    def send(outgoing, **kwargs):
+        seen.append((outgoing.url, kwargs["connection_verify"]))
+        raise ServiceRequestError("transport error")
+
+    with pytest.raises(ServiceRequestError):
+        send_to_test_host(send, host, request, connection_verify=supplied)
+    assert seen == [(host + "dbs/test", expected)]
+    assert request.url == original_url

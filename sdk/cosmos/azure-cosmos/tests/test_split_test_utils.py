@@ -50,22 +50,6 @@ class TestSplitTestUtils(unittest.TestCase):
         self.assertFalse(diagnostics["order_matches"])
         self.assertEqual(diagnostics["duplicate_count"], 0)
 
-    def test_change_feed_ids_detect_missing_unexpected_and_duplicate_items(self):
-        for actual, missing, unexpected, duplicates in (
-            (["doc2", "doc3"], 1, 0, 0),
-            (["doc2", "doc3", "stale-item"], 1, 1, 0),
-            (["doc2", "doc3", "doc3"], 1, 1, 1),
-            (["doc2", "doc3", "doc4", "doc2"], 0, 1, 1),
-        ):
-            with self.subTest(actual=actual):
-                diagnostics = {}
-                with self.assertRaises(AssertionError):
-                    assert_change_feed_ids(actual, ["doc2", "doc3", "doc4"], diagnostics)
-                self.assertEqual(diagnostics["missing_count"], missing)
-                self.assertEqual(diagnostics["unexpected_count"], unexpected)
-                self.assertEqual(diagnostics["duplicate_count"], duplicates)
-                self.assertFalse(diagnostics["ids_match"])
-
     def test_change_feed_failure_diagnostics_do_not_expose_ids(self):
         output = io.StringIO()
         failures = []
@@ -211,6 +195,26 @@ class TestSplitTestUtils(unittest.TestCase):
             with split_stage("split_and_convergence", failures):
                 raise unittest.SkipTest("not ready")
         self.assertEqual(failures, [])
+
+
+@pytest.mark.cosmosEmulator
+@pytest.mark.parametrize(
+    "actual,missing,unexpected,duplicates",
+    [
+        pytest.param(["doc2", "doc3"], 1, 0, 0, id="missing"),
+        pytest.param(["doc2", "doc3", "stale-item"], 1, 1, 0, id="unexpected"),
+        pytest.param(["doc2", "doc3", "doc3"], 1, 1, 1, id="duplicate-replaces-missing"),
+        pytest.param(["doc2", "doc3", "doc4", "doc2"], 0, 1, 1, id="extra-duplicate"),
+    ],
+)
+def test_change_feed_ids_detect_missing_unexpected_and_duplicate_items(actual, missing, unexpected, duplicates):
+    diagnostics = {}
+    with pytest.raises(AssertionError):
+        assert_change_feed_ids(actual, ["doc2", "doc3", "doc4"], diagnostics)
+    assert diagnostics["missing_count"] == missing
+    assert diagnostics["unexpected_count"] == unexpected
+    assert diagnostics["duplicate_count"] == duplicates
+    assert diagnostics["ids_match"] is False
 
 
 @pytest.mark.cosmosEmulator
