@@ -4,7 +4,6 @@
 // license information.
 // --------------------------------------------------------------------------
 
-use std::collections::VecDeque;
 use std::num::NonZero;
 use std::str::FromStr;
 use std::sync::{Arc, Mutex, PoisonError};
@@ -15,7 +14,8 @@ use azure_core::http::{AsyncResponseBody, Etag};
 use azure_core::Bytes;
 use azure_storage_blob::models::{BlobClientDownloadOptions, EncryptionAlgorithmType, HttpRange};
 use azure_storage_blob::BlobClient;
-use futures::StreamExt;
+use futures::future::Either;
+use futures::{stream, StreamExt};
 use pyo3::exceptions::{PyMemoryError, PyValueError};
 use pyo3::ffi;
 use pyo3::prelude::*;
@@ -61,16 +61,13 @@ fn total_blob_size(
     }
 }
 
-fn validate_download_length(offset: u64, expected: u64, actual: u64) -> azure_core::Result<()> {
-    if actual == expected {
-        return Ok(());
-    }
+fn length_mismatch(offset: u64, expected: u64, actual: u64) -> azure_core::Error {
     let kind = if actual < expected {
         std::io::ErrorKind::UnexpectedEof
     } else {
         std::io::ErrorKind::InvalidData
     };
-    Err(azure_core::Error::new(
+    azure_core::Error::new(
         ErrorKind::Io,
         std::io::Error::new(
             kind,
@@ -78,7 +75,15 @@ fn validate_download_length(offset: u64, expected: u64, actual: u64) -> azure_co
                 "Incomplete blob download: expected {expected} bytes at offset {offset}, but received {actual} bytes."
             ),
         ),
-    ))
+    )
+}
+
+fn validate_download_length(offset: u64, expected: u64, actual: u64) -> azure_core::Result<()> {
+    if actual == expected {
+        Ok(())
+    } else {
+        Err(length_mismatch(offset, expected, actual))
+    }
 }
 
 /// One partition of the download and the absolute blob offset where it starts.
@@ -88,19 +93,6 @@ struct Partition {
 }
 
 type Chunk = azure_core::Result<Partition>;
-
-/// Fail unless a partition starts exactly where the previously delivered data ended.
-fn check_partition_offset(expected: u64, actual: u64) -> azure_core::Result<()> {
-    if actual == expected {
-        return Ok(());
-    }
-    Err(azure_core::Error::with_message(
-        ErrorKind::Other,
-        format!(
-            "Download data arrived out of order: expected data at offset {expected}, but received data at offset {actual}."
-        ),
-    ))
-}
 
 /// Aborts the wrapped task when dropped, so abandoned downloads stop issuing requests.
 struct AbortOnDrop<T>(JoinHandle<T>);
@@ -124,40 +116,23 @@ fn to_usize(value: u64) -> azure_core::Result<usize> {
     })
 }
 
-/// Read a response body that must contain exactly `len` bytes into one contiguous chunk.
-///
-/// A single-frame body is returned without copying; multi-frame bodies are merged into one
-/// buffer sized up front.
+/// Read a response body that must contain exactly `len` bytes into one contiguous buffer.
 async fn read_body(
     mut body: AsyncResponseBody,
     offset: u64,
     len: u64,
 ) -> azure_core::Result<Bytes> {
-    let mut single: Option<Bytes> = None;
-    let mut merged: Vec<u8> = Vec::new();
-    let mut received: u64 = 0;
+    let mut data = Vec::with_capacity(to_usize(len)?);
     while let Some(frame) = body.next().await {
         let frame = frame?;
-        received = received.saturating_add(frame.len() as u64);
+        let received = data.len() as u64 + frame.len() as u64;
         if received > len {
-            validate_download_length(offset, len, received)?;
+            return Err(length_mismatch(offset, len, received));
         }
-        if merged.is_empty() {
-            match single.take() {
-                None => {
-                    single = Some(frame);
-                    continue;
-                }
-                Some(previous) => {
-                    merged.reserve_exact(to_usize(len)?);
-                    merged.extend_from_slice(&previous);
-                }
-            }
-        }
-        merged.extend_from_slice(&frame);
+        data.extend_from_slice(&frame);
     }
-    validate_download_length(offset, len, received)?;
-    Ok(single.unwrap_or_else(|| Bytes::from(merged)))
+    validate_download_length(offset, len, data.len() as u64)?;
+    Ok(Bytes::from(data))
 }
 
 /// Download exactly one partition-sized (or smaller) range with a single request.
@@ -171,18 +146,6 @@ async fn fetch_range(
     let response = client.download(Some(options)).await?;
     let data = read_body(response.body, offset, len).await?;
     Ok(Partition { offset, data })
-}
-
-enum PumpStop {
-    /// The consumer dropped the receiving end; stop quietly.
-    Closed,
-    Failed(azure_core::Error),
-}
-
-impl From<azure_core::Error> for PumpStop {
-    fn from(error: azure_core::Error) -> Self {
-        Self::Failed(error)
-    }
 }
 
 /// Everything needed to deliver the rest of a download after the first response's headers.
@@ -200,14 +163,9 @@ struct Pump {
 }
 
 impl Pump {
-    /// Stream the download into `sender` in order, one partition per message.
+    /// Deliver the download to `sender` in order, one partition per message. Stops after the first
+    /// error, which is delivered as the final message, or once the consumer has gone away.
     async fn run(self, sender: mpsc::Sender<Chunk>) {
-        if let Err(PumpStop::Failed(error)) = self.forward(&sender).await {
-            let _ = sender.send(Err(error)).await;
-        }
-    }
-
-    async fn forward(self, sender: &mpsc::Sender<Chunk>) -> Result<(), PumpStop> {
         let Pump {
             client,
             options,
@@ -218,43 +176,44 @@ impl Pump {
             partition_size,
             parallel,
         } = self;
-        let send = |partition: Partition| async move {
-            sender
-                .send(Ok(partition))
+        let first = async move {
+            read_body(first_body, first_offset, rest_offset - first_offset)
                 .await
-                .map_err(|_| PumpStop::Closed)
+                .map(|data| Partition {
+                    offset: first_offset,
+                    data,
+                })
         };
-        // Ranged requests run as separate tasks so they progress (and copy) in parallel, while
-        // results are delivered strictly in order. Completed-but-undelivered ranges stay in the
-        // queue, so buffered memory is bounded by `parallel` partitions plus the channel.
-        let mut in_flight: VecDeque<AbortOnDrop<Chunk>> = VecDeque::with_capacity(parallel);
-        let mut next_offset = rest_offset;
-        let mut fill = |in_flight: &mut VecDeque<AbortOnDrop<Chunk>>, limit: usize| {
-            while in_flight.len() < limit && next_offset < end_offset {
-                let len = (end_offset - next_offset).min(partition_size);
-                in_flight.push_back(AbortOnDrop(tokio::spawn(fetch_range(
+        // Every later range runs as its own task, so ranges download (and copy) in parallel. The
+        // task is spawned only when `buffered` pulls its range, and aborted if the pump is dropped.
+        let rest = (rest_offset..end_offset)
+            .step_by(usize::try_from(partition_size).unwrap_or(usize::MAX))
+            .map(move |offset| {
+                let len = (end_offset - offset).min(partition_size);
+                let mut task = AbortOnDrop(tokio::spawn(fetch_range(
                     client.clone(),
                     options.clone(),
-                    next_offset,
+                    offset,
                     len,
-                ))));
-                next_offset += len;
+                )));
+                async move {
+                    (&mut task.0)
+                        .await
+                        .unwrap_or_else(|error| Err(task_error(error)))
+                }
+            });
+        // `buffered` keeps at most `parallel` partitions (the first body included) in flight and
+        // yields them strictly in order; ranges that finish early wait for their turn. It is only
+        // polled while the channel has room, so buffered memory stays bounded.
+        let mut partitions =
+            stream::iter(std::iter::once(Either::Left(first)).chain(rest.map(Either::Right)))
+                .buffered(parallel);
+        while let Some(partition) = partitions.next().await {
+            let failed = partition.is_err();
+            if sender.send(partition).await.is_err() || failed {
+                return;
             }
-        };
-
-        // The first body is still streaming on its own connection; keep the total at `parallel`.
-        fill(&mut in_flight, parallel.saturating_sub(1).max(1));
-        send(Partition {
-            offset: first_offset,
-            data: read_body(first_body, first_offset, rest_offset - first_offset).await?,
-        })
-        .await?;
-        while let Some(mut task) = in_flight.pop_front() {
-            fill(&mut in_flight, parallel);
-            let partition = (&mut task.0).await.map_err(task_error)??;
-            send(partition).await?;
         }
-        Ok(())
     }
 }
 
@@ -357,24 +316,51 @@ impl<'py> BytesBuilder<'py> {
     }
 }
 
-/// Copy every remaining pumped chunk into `writer`, which must be exactly the remaining size.
+/// Receive the next partition from the pump. It must start at `expected_offset` and fit within the
+/// `remaining` bytes of the download.
+fn recv_partition(
+    receiver: &mut mpsc::Receiver<Chunk>,
+    expected_offset: u64,
+    remaining: u64,
+) -> azure_core::Result<Bytes> {
+    let partition = receiver
+        .blocking_recv()
+        .ok_or_else(|| length_mismatch(expected_offset, remaining, 0))??;
+    if partition.offset != expected_offset {
+        return Err(azure_core::Error::with_message(
+            ErrorKind::Other,
+            format!(
+                "Download data arrived out of order: expected data at offset {expected_offset}, but received data at offset {}.",
+                partition.offset
+            ),
+        ));
+    }
+    let len = partition.data.len() as u64;
+    if len > remaining {
+        return Err(length_mismatch(expected_offset, remaining, len));
+    }
+    Ok(partition.data)
+}
+
+/// Copy every remaining pumped partition into `writer`, which must be exactly the remaining size.
 fn drain_into(
     receiver: &mut mpsc::Receiver<Chunk>,
     writer: &mut BytesWriter,
     offset: u64,
 ) -> azure_core::Result<()> {
     while writer.remaining() > 0 {
-        let Some(partition) = receiver.blocking_recv() else {
-            break;
-        };
-        let partition = partition?;
-        check_partition_offset(offset + writer.written as u64, partition.offset)?;
-        if !writer.push(&partition.data) {
-            let received = writer.written as u64 + partition.data.len() as u64;
-            return validate_download_length(offset, writer.len as u64, received);
+        let expected_offset = offset + writer.written as u64;
+        let remaining = writer.remaining() as u64;
+        let data = recv_partition(receiver, expected_offset, remaining)?;
+        if !writer.push(&data) {
+            return Err(length_mismatch(
+                expected_offset,
+                remaining,
+                data.len() as u64,
+            ));
         }
     }
-    validate_download_length(offset, writer.len as u64, writer.written as u64)
+    Ok(())
 }
 
 /// A lazy blob download exposed to Python as an iterator of `bytes` chunks.
@@ -396,8 +382,6 @@ pub(crate) struct NativeDownloadStream {
     next_offset: u64,
     /// Absolute end offset (exclusive) of the overall requested region.
     end_offset: u64,
-    /// Prefetch channel capacity, in partitions.
-    prefetch: usize,
     // A Mutex makes the non-`Sync` response body safe to hold in a Python object; access always
     // goes through `&mut self`, so it is never contended.
     state: Mutex<StreamState>,
@@ -424,7 +408,6 @@ impl NativeDownloadStream {
             size: 0,
             next_offset: start,
             end_offset: start,
-            prefetch: 1,
             state: Mutex::new(StreamState::Done),
         };
         if length == Some(0) {
@@ -458,7 +441,6 @@ impl NativeDownloadStream {
                 "The response blob size is smaller than the requested offset.",
             ))
         })?;
-        stream.prefetch = parallel;
         if stream.size == 0 {
             return Ok(stream);
         }
@@ -485,26 +467,38 @@ impl NativeDownloadStream {
         Ok(stream)
     }
 
-    fn fail(state: &mut StreamState, py: Python<'_>, error: PyErr) -> PyErr {
-        *state = StreamState::Failed(error.clone_ref(py));
+    fn state_mut(&mut self) -> &mut StreamState {
+        self.state.get_mut().unwrap_or_else(PoisonError::into_inner)
+    }
+
+    /// Record `error` as the stream's terminal failure and return it.
+    fn fail(&mut self, py: Python<'_>, error: azure_core::Error) -> PyErr {
+        let error = PyErr::from(AzureError(error));
+        *self.state_mut() = StreamState::Failed(error.clone_ref(py));
         error
     }
 
-    /// Start the background pump if it has not started yet.
-    fn start_pump(&mut self) -> PyResult<()> {
-        let state = self.state.get_mut().unwrap_or_else(PoisonError::into_inner);
-        if matches!(state, StreamState::NotStarted(_)) {
-            let runtime = get_runtime()?;
-            let StreamState::NotStarted(pump) = std::mem::replace(state, StreamState::Done) else {
-                unreachable!();
-            };
-            let (sender, receiver) = mpsc::channel(self.prefetch.max(1));
-            *state = StreamState::Streaming {
-                receiver,
-                _pump: AbortOnDrop(runtime.spawn(pump.run(sender))),
-            };
+    /// Start the pump if needed and return its receiver, `None` once everything has been
+    /// delivered, or the stream's terminal failure.
+    fn receiver(&mut self, py: Python<'_>) -> PyResult<Option<&mut mpsc::Receiver<Chunk>>> {
+        let runtime = get_runtime()?;
+        let state = self.state_mut();
+        *state = match std::mem::replace(state, StreamState::Done) {
+            StreamState::NotStarted(pump) => {
+                let (sender, receiver) = mpsc::channel(pump.parallel);
+                StreamState::Streaming {
+                    receiver,
+                    _pump: AbortOnDrop(runtime.spawn(pump.run(sender))),
+                }
+            }
+            other => other,
+        };
+        match state {
+            StreamState::Failed(error) => Err(error.clone_ref(py)),
+            StreamState::Streaming { receiver, .. } => Ok(Some(receiver)),
+            StreamState::Done => Ok(None),
+            StreamState::NotStarted(_) => unreachable!("the pump was started above"),
         }
-        Ok(())
     }
 }
 
@@ -522,33 +516,17 @@ impl NativeDownloadStream {
 
     /// Return the next partition as `bytes`, or `None` (StopIteration) when the blob is exhausted.
     fn __next__(&mut self, py: Python<'_>) -> PyResult<Option<Py<PyBytes>>> {
-        self.start_pump()?;
-        let state = self.state.get_mut().unwrap_or_else(PoisonError::into_inner);
-        let message = match state {
-            StreamState::Failed(error) => return Err(error.clone_ref(py)),
-            StreamState::Done | StreamState::NotStarted(_) => return Ok(None),
-            StreamState::Streaming { receiver, .. } => py.detach(|| receiver.blocking_recv()),
+        let (offset, remaining) = (self.next_offset, self.end_offset - self.next_offset);
+        let Some(receiver) = self.receiver(py)? else {
+            return Ok(None);
         };
-        let remaining = self.end_offset - self.next_offset;
-        let checked = match message {
-            Some(Ok(partition)) => check_partition_offset(self.next_offset, partition.offset)
-                .and_then(|()| {
-                    let len = partition.data.len() as u64;
-                    if len > remaining {
-                        validate_download_length(self.next_offset, remaining, len)?;
-                    }
-                    Ok(partition.data)
-                }),
-            Some(Err(error)) => Err(error),
-            None => validate_download_length(self.next_offset, remaining, 0).map(|()| Bytes::new()),
-        };
-        let chunk = match checked {
+        let chunk = match py.detach(|| recv_partition(receiver, offset, remaining)) {
             Ok(chunk) => chunk,
-            Err(error) => return Err(Self::fail(state, py, AzureError(error).into())),
+            Err(error) => return Err(self.fail(py, error)),
         };
         self.next_offset += chunk.len() as u64;
         if self.next_offset == self.end_offset {
-            *state = StreamState::Done;
+            *self.state_mut() = StreamState::Done;
         }
         Ok(Some(PyBytes::new(py, &chunk).unbind()))
     }
@@ -561,27 +539,18 @@ impl NativeDownloadStream {
     fn readall(&mut self, py: Python<'_>) -> PyResult<Py<PyBytes>> {
         let offset = self.next_offset;
         let remaining = to_usize(self.end_offset - offset).map_err(AzureError::from)?;
-        if let StreamState::Failed(error) =
-            self.state.get_mut().unwrap_or_else(PoisonError::into_inner)
-        {
-            return Err(error.clone_ref(py));
-        }
-        if remaining == 0 {
+        let Some(receiver) = self.receiver(py)? else {
             return Ok(PyBytes::new(py, &[]).unbind());
-        }
-        self.start_pump()?;
-        let builder = BytesBuilder::new(py, remaining)?;
-        let state = self.state.get_mut().unwrap_or_else(PoisonError::into_inner);
-        let StreamState::Streaming { receiver, .. } = state else {
-            unreachable!("a stream with remaining content is streaming after start_pump");
         };
-        match builder.build_without_gil(|writer| drain_into(receiver, writer, offset)) {
+        let result = BytesBuilder::new(py, remaining)?
+            .build_without_gil(|writer| drain_into(receiver, writer, offset));
+        match result {
             Ok(bytes) => {
                 self.next_offset = self.end_offset;
-                *state = StreamState::Done;
+                *self.state_mut() = StreamState::Done;
                 Ok(bytes.unbind())
             }
-            Err(error) => Err(Self::fail(state, py, AzureError(error).into())),
+            Err(error) => Err(self.fail(py, error)),
         }
     }
 }
@@ -677,16 +646,6 @@ fn download_with_client(
 ) -> PyResult<NativeDownloadStream> {
     let (concurrency, chunk_size) =
         transfer_sizes(max_concurrency, max_chunk_size).map_err(PyValueError::new_err)?;
-    let concurrency_u64 = u64::try_from(concurrency.get())
-        .map_err(|e| PyValueError::new_err(format!("Invalid max_concurrency value: {e}")))?;
-    // The prefetch buffer holds about one window of `concurrency * chunk_size` bytes.
-    concurrency_u64
-        .checked_mul(chunk_size.get())
-        .ok_or_else(|| {
-            PyValueError::new_err(
-                "max_concurrency multiplied by max_chunk_size exceeds the supported window size.",
-            )
-        })?;
     let start = offset.unwrap_or(0);
     let mut download_options = BlobClientDownloadOptions::default();
     download_options.lease_id = lease_id.map(str::to_string);
@@ -892,26 +851,6 @@ mod tests {
                     NativeDownloadStream::new(py, mock.client(), options, start, length).is_err()
                 );
             }
-            assert!(download_with_client(
-                py,
-                mock.client(),
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                Some(2),
-                Some(u64::MAX),
-            )
-            .is_err());
             assert!(mock.requests().is_empty());
         });
     }
