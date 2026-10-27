@@ -26,7 +26,7 @@ Rotation assignment does not grant repository, CODEOWNER, or release permissions
 
 For a quick grouped list, ask Copilot: **"Use azsdk-python-mgmt-pr-triage to show
 management SDK PRs needing attention."** The read-only
-[PR triage skill](../../../.github/skills/azsdk-python-mgmt-pr-triage/SKILL.md)
+[PR triage skill](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/skills/azsdk-python-mgmt-pr-triage/SKILL.md)
 lists automated reviews to trigger, active reviews, missing human approvals,
 changes after approval, and author follow-ups. Its instructions also include a
 standalone command for clients without skill support. Check any verification
