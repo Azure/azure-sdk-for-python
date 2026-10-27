@@ -1110,6 +1110,22 @@ class TestMultiEndpointRouting(unittest.TestCase):
             ]
         )
 
+    def test_internal_stats_exporters_use_configured_host(self):
+        point = NumberDataPoint(attributes={}, start_time_unix_nano=1, time_unix_nano=2, value=1)
+        data = self._data(self._metric([point]))
+        for option in ("is_sdkstats", "is_customer_sdkstats"):
+            with self.subTest(option=option):
+                exporter = self._exporter(**{option: True})
+                self.assertFalse(exporter._enable_multi_endpoint_routing)
+                self.assertEqual(exporter.export(data), MetricExportResult.SUCCESS)
+                request = self.transport.send.call_args.args[0]
+                self.assertTrue(request.url.startswith("https://host.example/"))
+                self.assertEqual(
+                    [item["iKey"] for item in json.loads(request.body)],
+                    ["1234abcd-5678-4efa-8abc-1234567890ab"],
+                )
+                self.transport.send.reset_mock()
+
     def test_grouping_and_per_point_keys_across_resources(self):
         exporter = self._exporter()
         points = [self._point(key=" key-one ", value=1), self._point(endpoint="https://two.example/", value=2)]
