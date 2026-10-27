@@ -340,7 +340,6 @@ namespace azure.messaging.webpubsubchatservice
         def list_roles(
                 self,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatRole]: ...
@@ -350,49 +349,44 @@ namespace azure.messaging.webpubsubchatservice
                 self,
                 room_id: str,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatRoomMember]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_rooms(
                 self,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatRoom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'user_id', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'user_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_rooms_for_user(
                 self,
                 user_id: str,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatUserRoom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_topics(
                 self,
                 room_id: str,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatTopic]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_users(
                 self,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatUser]: ...
@@ -819,7 +813,6 @@ namespace azure.messaging.webpubsubchatservice.aio
         def list_roles(
                 self,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatRole]: ...
@@ -829,49 +822,44 @@ namespace azure.messaging.webpubsubchatservice.aio
                 self,
                 room_id: str,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatRoomMember]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_rooms(
                 self,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatRoom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'user_id', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'user_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_rooms_for_user(
                 self,
                 user_id: str,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatUserRoom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_topics(
                 self,
                 room_id: str,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatTopic]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list_users(
                 self,
                 *,
-                continuation_token_parameter: Optional[str] = ...,
                 max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatUser]: ...

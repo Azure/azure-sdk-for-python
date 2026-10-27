@@ -13,6 +13,7 @@
 
 ### Breaking Changes
 
+  - Removed the `continuation_token_parameter` argument from listing operations. Resume paging with `by_page(continuation_token=...)` on the returned `ItemPaged` or `AsyncItemPaged` instead.
   - Create or replace operations now accept dedicated `ChatRoleCreateOrReplace`, `ChatRoomCreateOrReplace`, `ChatRoomMemberCreateOrReplace`, and `ChatUserCreateOrReplace` (including `HumanChatUserCreateOrReplace`) request models instead of resource response models.
   - Message updates accept `ChatMessageUpdate`, whose fields are optional, instead of `ChatMessage`. Resource response model names are unchanged.
 
