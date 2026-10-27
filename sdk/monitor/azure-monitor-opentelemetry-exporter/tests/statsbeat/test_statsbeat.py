@@ -56,15 +56,24 @@ class TestStatsbeat(unittest.TestCase):
         if StatsbeatManager in StatsbeatManager._instances:
             del StatsbeatManager._instances[StatsbeatManager]
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.threading.Timer")
     def test_collect_statsbeat_metrics(
-        self, mock_timer_class, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics
+        self,
+        mock_timer_class,
+        mock_exporter,
+        mock_reader,
+        mock_meter_provider,
+        mock_statsbeat_metrics,
+        mock_get_configuration_manager,
     ):
         """Test that collect_statsbeat_metrics properly initializes statsbeat collection."""
+        # No configuration manager available, so initialization happens synchronously.
+        mock_get_configuration_manager.return_value = None
         # Arrange
         exporter = mock.Mock()
         exporter._endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -404,6 +413,7 @@ class TestStatsbeat(unittest.TestCase):
         # Verify that the configuration manager callback was NOT registered
         mock_config_manager_instance.register_callback.assert_not_called()
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
@@ -418,8 +428,11 @@ class TestStatsbeat(unittest.TestCase):
         mock_meter_provider,
         mock_statsbeat_metrics,
         mock_get_manager,
+        mock_get_configuration_manager,
     ):
         """Test that collect_statsbeat_metrics reuses existing configuration when called multiple times with same config."""  # pylint: disable=line-too-long
+        # No configuration manager available, so initialization happens synchronously.
+        mock_get_configuration_manager.return_value = None
         # Arrange
         exporter = mock.Mock()
         exporter._endpoint = "test endpoint"
@@ -479,12 +492,17 @@ class TestStatsbeat(unittest.TestCase):
         flush_mock.assert_called_once()
         mock_statsbeat_metrics_instance.init_non_initial_metrics.assert_called_once()
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics_non_eu(self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager):
+    def test_collect_statsbeat_metrics_non_eu(
+        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager, mock_get_configuration_manager
+    ):
         """Test collect_statsbeat_metrics with non-EU endpoint uses correct connection string."""
+        # No configuration manager available, so initialization happens synchronously.
+        mock_get_configuration_manager.return_value = None
         # Arrange
         exporter = mock.Mock()
         exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3333"
@@ -529,12 +547,17 @@ class TestStatsbeat(unittest.TestCase):
         expected_connection_string = call_args[1]["connection_string"]
         self.assertIn(_DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";", maxsplit=1)[0], expected_connection_string)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics_eu(self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager):
+    def test_collect_statsbeat_metrics_eu(
+        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager, mock_get_configuration_manager
+    ):
         """Test collect_statsbeat_metrics with EU endpoint uses correct connection string."""
+        # No configuration manager available, so initialization happens synchronously.
+        mock_get_configuration_manager.return_value = None
         # Arrange
         exporter = mock.Mock()
         exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3333"
@@ -579,12 +602,17 @@ class TestStatsbeat(unittest.TestCase):
         expected_connection_string = call_args[1]["connection_string"]
         self.assertIn(_DEFAULT_EU_STATS_CONNECTION_STRING.split(";", maxsplit=1)[0], expected_connection_string)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics_aad(self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager):
+    def test_collect_statsbeat_metrics_aad(
+        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager, mock_get_configuration_manager
+    ):
         """Test collect_statsbeat_metrics with AAD credentials."""
+        # No configuration manager available, so initialization happens synchronously.
+        mock_get_configuration_manager.return_value = None
         # Arrange
         exporter = mock.Mock()
         TEST_ENDPOINT = "test endpoint"
@@ -609,12 +637,17 @@ class TestStatsbeat(unittest.TestCase):
         self.assertEqual(manager._metrics._ikey, TEST_IKEY)
         self.assertTrue(manager._metrics._feature >= _StatsbeatFeature.AAD)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics_no_aad(self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager):
+    def test_collect_statsbeat_metrics_no_aad(
+        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager, mock_get_configuration_manager
+    ):
         """Test collect_statsbeat_metrics without AAD credentials."""
+        # No configuration manager available, so initialization happens synchronously.
+        mock_get_configuration_manager.return_value = None
         # Arrange
         exporter = mock.Mock()
         TEST_ENDPOINT = "test endpoint"
@@ -639,14 +672,17 @@ class TestStatsbeat(unittest.TestCase):
         self.assertEqual(manager._metrics._ikey, TEST_IKEY)
         self.assertTrue(manager._metrics._feature < _StatsbeatFeature.AAD)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
     def test_collect_statsbeat_metrics_distro_version(
-        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager
+        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager, mock_get_configuration_manager
     ):
         """Test collect_statsbeat_metrics with distribution version."""
+        # No configuration manager available, so initialization happens synchronously.
+        mock_get_configuration_manager.return_value = None
         # Arrange
         exporter = mock.Mock()
         TEST_ENDPOINT = "test endpoint"
@@ -671,14 +707,17 @@ class TestStatsbeat(unittest.TestCase):
         self.assertEqual(manager._metrics._ikey, TEST_IKEY)
         self.assertTrue(manager._metrics._feature > _StatsbeatFeature.DISTRO)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
     def test_collect_statsbeat_metrics_local_storage(
-        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager
+        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager, mock_get_configuration_manager
     ):
         """Test collect_statsbeat_metrics with local storage."""
+        # No configuration manager available, so initialization happens synchronously.
+        mock_get_configuration_manager.return_value = None
         # Arrange
         exporter = mock.Mock()
         TEST_ENDPOINT = "test endpoint"
@@ -703,15 +742,24 @@ class TestStatsbeat(unittest.TestCase):
         self.assertEqual(manager._metrics._ikey, TEST_IKEY)
         self.assertTrue(manager._metrics._feature >= _StatsbeatFeature.DISK_RETRY)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     def test_shutdown_statsbeat_metrics(
-        self, mock_get_manager, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics
+        self,
+        mock_get_manager,
+        mock_exporter,
+        mock_reader,
+        mock_meter_provider,
+        mock_statsbeat_metrics,
+        mock_get_configuration_manager,
     ):
         """Test shutdown_statsbeat_metrics after initialization."""
+        # No configuration manager available, so initialization happens synchronously.
+        mock_get_configuration_manager.return_value = None
         # Arrange - First initialize statsbeat
         exporter = mock.Mock()
         exporter._endpoint = "test endpoint"
