@@ -291,20 +291,28 @@ Leave `USE_MICROPHONE = False` to use the WAV workflow without requiring PyAudio
 The Live samples do not accept command-line arguments. Connection/session controls, text,
 function calling, and stored-conversation REST each have one synchronous example; audio has
 the single asynchronous example described above. Samples delete only the agent version they
-create; the stored-conversation REST sample does not create or delete service resources.
+create. The stored-conversation REST sample also deletes a conversation only when it created it.
 
 The [REST sample](samples/agents/voice/sample_voice_agent_live_read_conversation.py)
-reads an existing stored Live conversation without opening a WebSocket. Set `FOUNDRY_PROJECT_ENDPOINT`,
-`FOUNDRY_VOICE_AGENT_NAME`, and `FOUNDRY_VOICE_CONVERSATION_ID`. The last value must be
-`session.started.conversation_id` from a session with effective `store=True`, not `session.id`.
-The session must have finished successfully and contain recorded speech.
+can run without a pre-created conversation. Set `FOUNDRY_PROJECT_ENDPOINT` and
+`FOUNDRY_VOICE_AGENT_MODEL`. When `FOUNDRY_VOICE_CONVERSATION_ID` is unset or blank, the sample
+creates a uniquely named temporary agent and a stored greeting session over a WebSocket,
+waits for the conversation and its audio to finish persisting, and reads them through REST.
+It deletes its own conversation and agent version afterward, including on failure. No microphone,
+input WAV, or Responses backend is needed. An optional `FOUNDRY_VOICE_AGENT_NAME` is used only
+as a name prefix in this mode, so an existing agent with that name is not modified.
+
+Alternatively, supply both `FOUNDRY_VOICE_AGENT_NAME` and `FOUNDRY_VOICE_CONVERSATION_ID` to read
+an existing conversation without opening a WebSocket or requiring a model deployment name.
+The ID must be `session.started.conversation_id` from a successfully ended speech session with
+effective `store=True`, not `session.id`. Existing conversations and agents are never deleted.
 
 The sample demonstrates conversation/item listing and retrieval, audio metadata, and merged/per-item
 Foundry-managed WAV downloads. It creates a unique folder in your user temporary directory and prints
 the location. Files remain available after the sample exits; remove the local folder when it is no
 longer needed. These downloads contain conversation content, not telemetry. BYOS audio requires your
-own storage credentials and is not downloaded by this sample. The sample never deletes the existing
-agent or stored conversation, items, or audio, and it does not accept command-line options.
+own storage credentials and is not downloaded by this sample. The sample deletes only service
+resources it created, and it does not accept command-line options.
 It uses the dedicated `.beta.voice_agents.live_conversations` routes. A deployment that
 does not support those routes returns HTTP 404, which is surfaced rather than silently falling back
 to `.beta.voice_agents.conversations`.

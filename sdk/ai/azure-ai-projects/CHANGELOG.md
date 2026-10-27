@@ -18,7 +18,7 @@
 
 ### Sample updates
 
-* Added GPT Live samples under `samples/agents/voice` demonstrating session lifecycle and configuration, single- and multi-turn text conversations, function-tool calling, WAV audio streaming, microphone capture with speaker playback, and stored-conversation/item/audio retrieval with Foundry-managed WAV downloads to a unique user-temporary folder.
+* Added GPT Live samples under `samples/agents/voice` demonstrating session lifecycle and configuration, single- and multi-turn text conversations, function-tool calling, WAV audio streaming, microphone capture with speaker playback, and stored-conversation/item/audio retrieval with Foundry-managed WAV downloads to a unique user-temporary folder. The REST sample can create and clean up its own stored greeting conversation or read an existing conversation without modifying it.
 
 ## 2.9.0 (2026-10-16)
 
