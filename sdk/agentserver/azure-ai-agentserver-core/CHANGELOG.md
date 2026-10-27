@@ -1,5 +1,14 @@
 # Release History
 
+## 2.3.0b3 (Unreleased)
+
+### Bugs Fixed
+
+- Recover admitted steering input stranded when a multi-turn handler
+  completes but its queued-input drain is interrupted. Preserve FIFO order
+  and the matching local caller's result when recovery occurs in the same
+  manager.
+
 ## 2.3.0b2 (2026-10-26)
 
 ### Features Added
