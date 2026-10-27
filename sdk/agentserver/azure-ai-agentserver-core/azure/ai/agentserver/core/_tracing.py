@@ -259,6 +259,10 @@ def _configure_tracing(
                 enable_sensitive_data=enable_sensitive_data,
                 instrumentation_options=instrumentation_options,
             )
+        if _is_otlp_enabled() and not connection_string:
+            # Azure Monitor configures this bridge through its instrumentation
+            # setup. Plain OTLP uses the same provider but needs it explicitly.
+            _configure_azure_core_opentelemetry()
         logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
     except ImportError:
         logger.warning("microsoft-opentelemetry is not installed — tracing export disabled.")
@@ -338,6 +342,14 @@ def _resolve_instrumentation_options(
     for name, options in (instrumentation_options or {}).items():
         resolved.setdefault(name, {}).update(options)
     return resolved
+
+
+def _configure_azure_core_opentelemetry() -> None:
+    """Enable Azure Core spans when Agent Server exports through plain OTLP."""
+    from azure.core.settings import settings
+    from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+
+    settings.tracing_implementation = OpenTelemetrySpan
 
 
 def _append_managed_otlp_components(

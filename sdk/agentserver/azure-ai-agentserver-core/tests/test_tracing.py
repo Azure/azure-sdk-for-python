@@ -188,6 +188,36 @@ class TestSetupDistroExport:
             kwargs = mock_distro.call_args[1]
             assert kwargs["connection_string"] is None
 
+    def test_plain_otlp_configures_azure_core_opentelemetry(self) -> None:
+        with (
+            mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export"),
+            mock.patch("azure.ai.agentserver.core._tracing._configure_azure_core_opentelemetry") as mock_bridge,
+            mock.patch.dict(os.environ, {"OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318"}, clear=True),
+        ):
+            _tracing._configure_tracing(connection_string=None)
+
+        mock_bridge.assert_called_once()
+
+    def test_azure_monitor_does_not_reconfigure_azure_core_opentelemetry(self) -> None:
+        with (
+            mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export"),
+            mock.patch("azure.ai.agentserver.core._tracing._configure_azure_core_opentelemetry") as mock_bridge,
+            mock.patch.dict(os.environ, {"OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318"}, clear=True),
+        ):
+            _tracing._configure_tracing(connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000")
+
+        mock_bridge.assert_not_called()
+
+    def test_no_telemetry_does_not_configure_azure_core_opentelemetry(self) -> None:
+        with (
+            mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export"),
+            mock.patch("azure.ai.agentserver.core._tracing._configure_azure_core_opentelemetry") as mock_bridge,
+            mock.patch.dict(os.environ, {}, clear=True),
+        ):
+            _tracing._configure_tracing(connection_string=None)
+
+        mock_bridge.assert_not_called()
+
     def test_grpc_protocol_without_optional_extra_logs_warning(self, caplog) -> None:
         from azure.ai.agentserver.core import _tracing
 
@@ -513,6 +543,25 @@ class TestAzureMonitorDistroExport:
             policy.on_request(request)
 
             assert policy.TRACING_CONTEXT not in request.context
+
+    def test_plain_otlp_bridge_starts_azure_core_spans(self) -> None:
+        from azure.core.pipeline import PipelineContext, PipelineRequest
+        from azure.core.pipeline.policies import DistributedTracingPolicy
+        from azure.core.rest import HttpRequest
+        from azure.core.settings import settings
+
+        # Isolate the process-global Azure Core tracing configuration.
+        with mock.patch.object(settings.tracing_implementation, "_user_value", None):
+            _tracing._configure_azure_core_opentelemetry()
+            request = PipelineRequest(
+                HttpRequest("GET", "https://example.test"),
+                PipelineContext(None),
+            )
+            policy = DistributedTracingPolicy()
+
+            policy.on_request(request)
+
+            assert policy.TRACING_CONTEXT in request.context
 
     def test_customer_can_enable_disabled_instrumentations(self) -> None:
         kwargs = self._run(
