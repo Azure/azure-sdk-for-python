@@ -182,9 +182,10 @@ in playback. Inspect recordings for secrets and valid nested JSON before
 publication. Sanitizers remove cookies/private headers, redact signed query
 values and identity fields, replace image URLs, and redact unrelated resources
 in subscription lists while preserving the target identity. The package replaces
-the generic SAS sanitizer with an escape-preserving expression; it does not
-require changes to shared SDK tooling. Mocked regressions cover nested JSON,
-escaped slashes and Unicode escapes.
+the generic SAS sanitizer with an escape-preserving expression. The shared
+SDK-tools SAS expression also preserves closing JSON escapes; otherwise it can
+corrupt embedded documents before package sanitizers run. Mocked regressions
+cover both expressions with nested JSON, escaped slashes and Unicode escapes.
 
 This package is already migrated to external recording assets. Use the
 [recording update workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#update-test-recordings),

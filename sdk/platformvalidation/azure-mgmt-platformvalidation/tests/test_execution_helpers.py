@@ -245,6 +245,30 @@ def test_subscription_list_sanitizers_preserve_target_identity(monkeypatch):
     assert json.loads(re.sub(settings["regex"], settings["value"], tagged)) == {"tags": {}}
 
 
+@pytest.mark.parametrize("key", ["sig", "se", "st", "sv"])
+@pytest.mark.parametrize("depth", [0, 1, 2])
+@pytest.mark.parametrize("value", ["private", r"\/private", r"private\/tail", r"\u0070rivate"])
+def test_common_sas_sanitizer_preserves_embedded_json_escapes(monkeypatch, key, depth, value):
+    import devtools_testutils.proxy_startup as startup
+    from devtools_testutils.sanitizers import Sanitizer
+
+    batch = Mock()
+    monkeypatch.setattr(startup, "add_batch_sanitizers", batch)
+    monkeypatch.setattr(startup, "set_custom_default_matcher", Mock())
+    monkeypatch.setattr(startup, "remove_batch_sanitizers", Mock())
+    startup.set_common_sanitizers()
+    settings = batch.call_args.kwargs["sanitizers"][Sanitizer.GENERAL_REGEX][0]
+    regex = settings["regex"].replace("(?<secret>", "(?P<secret>")
+    document = '{"sourceVhdUri": "https://example.invalid/?' + key + "=" + value + '"}'
+    for _ in range(depth):
+        document = json.dumps({"planConfigurationJson": document})
+    sanitized = re.sub(regex, lambda match: match[0].replace(match["secret"], "Sanitized"), document)
+    assert "private" not in sanitized
+    for _ in range(depth):
+        sanitized = json.loads(sanitized)["planConfigurationJson"]
+    assert json.loads(sanitized)["sourceVhdUri"].endswith("=Sanitized")
+
+
 @pytest.mark.parametrize("key", ["sig", "se", "st", "sv", "s", "c", "h", "t"])
 @pytest.mark.parametrize("depth", [0, 1, 2])
 @pytest.mark.parametrize("value", ["private", r"\/private", r"private\/tail", r"\u0070rivate"])
