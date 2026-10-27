@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2025-07-01",
+  "apiVersion": "2026-04-01",
   "apiVersions": {
-    "KeyVault": "2025-07-01"
+    "KeyVault": "2026-04-01"
   },
-  "commit": "942c8b2fd38b3be3f322e219c97c5c3a75f2e97b",
+  "commit": "569464e8c8b02ebd1b4d939f899508467528c696",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/keyvault/data-plane/Secrets",
-  "emitterVersion": "0.61.1"
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
 }
