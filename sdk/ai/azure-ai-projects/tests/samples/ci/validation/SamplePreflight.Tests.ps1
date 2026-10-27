@@ -158,11 +158,27 @@ Describe 'Subscription-specific Standard dependency eligibility' {
             Should Throw 'restricted'
     }
 
-    It 'matches the pinned template GRS fallback without changing its SKU' {
-        $script:searchOfferings.value[0].regionName = 'South India'
-        $script:cosmosLocations.value[0].name = 'South India'
+    It 'rejects GRS-only evidence where the local template still deploys ZRS: <Region>' -TestCases @(
+        @{ Region = 'southindia' }, @{ Region = 'westus' }
+    ) {
+        param($Region)
+        $script:searchOfferings.value[0].regionName = $Region
+        $script:cosmosLocations.value[0].name = $Region
         $script:storageSkus.value[0].name = 'Standard_GRS'
-        $script:storageSkus.value[0].locations = @('southindia')
-        Assert-SampleRegionAvailability -SubscriptionId $script:regionalSubscription -Location 'southindia'
+        $script:storageSkus.value[0].locations = @($Region)
+        { Assert-SampleRegionAvailability -SubscriptionId $script:regionalSubscription -Location $Region } |
+            Should Throw 'Cannot verify StorageV2 Standard_ZRS'
+        Assert-MockCalled Invoke-SampleAzure -Times 4 -Exactly -Scope It
+    }
+
+    It 'checks the deployed ZRS SKU without a regional fallback: <Region>' -TestCases @(
+        @{ Region = 'southindia' }, @{ Region = 'westus' }, @{ Region = 'uksouth' }
+    ) {
+        param($Region)
+        $script:searchOfferings.value[0].regionName = $Region
+        $script:cosmosLocations.value[0].name = $Region
+        $script:storageSkus.value[0].locations = @($Region)
+        Assert-SampleRegionAvailability -SubscriptionId $script:regionalSubscription -Location $Region
+        Assert-MockCalled Invoke-SampleAzure -Times 4 -Exactly -Scope It
     }
 }

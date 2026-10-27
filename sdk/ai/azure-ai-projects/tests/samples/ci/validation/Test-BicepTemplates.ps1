@@ -7,6 +7,7 @@ param([ValidateNotNullOrEmpty()] [string] $StandardTemplatePath)
 
 $ErrorActionPreference = 'Stop'
 $infra = Join-Path $PSScriptRoot '../infra'
+$identitySkill = Join-Path $PSScriptRoot '../../../../.github/skills/azure-ai-projects-provision-identities'
 
 function Invoke-BicepCompilation {
     param([Parameter(Mandatory)] [string] $Path, [switch] $Parameters)
@@ -98,18 +99,28 @@ function Assert-SharedIdentity {
     }
 }
 
-# These five local templates are mandatory regardless of the optional official reference.
+# Compile the three worker templates and the single bootstrap owner's two assets.
+# Bootstrap IAM is intentional; only the worker graphs must contain zero ARM IAM.
 $standard = Invoke-BicepCompilation -Path (Join-Path $infra 'standard-shared-identities.bicep')
 $sample = Invoke-BicepCompilation -Path (Join-Path $infra 'sample-resources.bicep')
-foreach ($name in @('bootstrap-identities.bicep', 'shared-identities.bicep', 'resource-group.bicep')) {
-    $null = Invoke-BicepCompilation -Path (Join-Path $infra $name)
+$group = Invoke-BicepCompilation -Path (Join-Path $infra 'resource-group.bicep')
+foreach ($name in @('bootstrap.bicep', 'identities.bicep')) {
+    $null = Invoke-BicepCompilation -Path (Join-Path $identitySkill "assets/$name")
 }
-# Bootstrap intentionally owns six project service grants plus one pipeline grant.
+# Bootstrap intentionally owns six project service grants plus an optional pipeline grant.
 # Never apply the worker zero-IAM assertion to either bootstrap template or the official reference.
 $standardResources = @(Get-ArmResources -Template $standard)
 $sampleResources = @(Get-ArmResources -Template $sample)
 Assert-NoArmRoleAssignments -Resources $standardResources
 Assert-NoArmRoleAssignments -Resources $sampleResources
+Assert-NoArmRoleAssignments -Resources @(Get-ArmResources -Template $group)
+if ($standard['parameters']['location'].Contains('defaultValue') -or $standard['parameters']['location'].Contains('allowedValues')) {
+    throw 'The worker region must be supplied by the selected MI set, never a Bicep default or fixed region allowlist.'
+}
+$storageResources = @($standardResources | Where-Object { $_.Type -ieq 'Microsoft.Storage/storageAccounts' })
+if ($storageResources.Count -ne 1 -or $storageResources[0].Definition['sku']['name'] -cne 'Standard_ZRS') {
+    throw 'The deployed StorageV2 SKU must match the Standard_ZRS regional preflight contract.'
+}
 
 foreach ($binding in @(
     @{ Type = 'Microsoft.CognitiveServices/accounts'; Parameter = 'sharedAccountIdentityResourceId' },
@@ -162,7 +173,7 @@ if ($models.Count -ne 1 -or $sample['parameters'].Contains('validationModel') -o
     ($sample['outputs'] | ConvertTo-Json -Depth 100 -Compress) -match 'mcpPat|MCP_GITHUB_PAT') {
     throw 'Sample resources must contain one model, no runner IAM parameter, and no secret or validation endpoint output.'
 }
-Write-Host 'Five local templates compiled; shared identities, zero worker ARM IAM, native Cosmos grant, and secure single-model MCP contract verified.'
+Write-Host 'Three worker templates and two identity-skill assets compiled; shared identities, zero worker ARM IAM, native Cosmos grant, and secure single-model MCP contract verified.'
 
 # Only fictional bindings are used to validate the dynamic .bicepparam file.
 $bindings = @{

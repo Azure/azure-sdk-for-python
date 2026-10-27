@@ -38,7 +38,8 @@ function Invoke-QueueTestEnvironment {
 }
 
 function New-OfflineQueuePlan {
-    param([Parameter(Mandatory)] [string] $OutputDirectory, [string] $QueueName = 'q1')
+    param([Parameter(Mandatory)] [string] $OutputDirectory, [string] $QueueName = 'q1',
+        [string] $ProjectIdentityName = 'mi-azsdk-sample-project-wus3')
 
     $null = New-Item -ItemType Directory -Path $OutputDirectory -Force
     $manifest = Join-Path $OutputDirectory 'selection.json'
@@ -48,7 +49,7 @@ function New-OfflineQueuePlan {
     }) } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $manifest -Encoding utf8
     $planScript = Join-Path $PSScriptRoot '../New-SampleDeploymentPlan.ps1'
     & $planScript -SelectionManifest $manifest -OutputDirectory $OutputDirectory -QueueName $QueueName `
-        -DefinitionId $env:SYSTEM_DEFINITIONID -BuildId $env:BUILD_BUILDID -JobAttempt $env:SYSTEM_JOBATTEMPT
+        -DefinitionId $env:SYSTEM_DEFINITIONID -BuildId $env:BUILD_BUILDID -JobAttempt $env:SYSTEM_JOBATTEMPT -ProjectIdentityName $ProjectIdentityName
     return (Get-Content -LiteralPath (Join-Path $OutputDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable)
 }
 
@@ -202,6 +203,9 @@ Describe 'Bootstrap-owned shared identity bindings and existing grants' {
             tenantId = '22222222-2222-2222-2222-222222222222'
             responseSubscriptionId = '11111111-1111-1111-1111-111111111111'
             responseTenantId = '22222222-2222-2222-2222-222222222222'
+            responseLocation = 'westus3'
+            responseType = 'Microsoft.ManagedIdentity/userAssignedIdentities'
+            ownerByPurpose = @{}
             ids = Get-QueueTestIdentityIds
             principals = @{
                 project = '44444444-4444-4444-4444-444444444444'
@@ -246,11 +250,15 @@ Describe 'Bootstrap-owned shared identity bindings and existing grants' {
             })
             if ($purposes.Count -ne 1) { throw 'Unexpected shared identity metadata URI.' }
             $purpose = $purposes[0]
-            $tags = @{ purpose = 'azsdk-sample-identities'; 'sample-ci-retention' = 'permanent'; 'sample-ci-identity' = $purpose }
+            $tags = @{ purpose = 'azsdk-sample-identities'; 'sample-ci-retention' = 'permanent'; 'sample-ci-identity' = $purpose;
+                'sample-ci-owner' = '0123456789abcdef0123456789abcdef' }
+            if ($script:sharedIdentityFixture.ownerByPurpose.ContainsKey($purpose)) { $tags['sample-ci-owner'] = $script:sharedIdentityFixture.ownerByPurpose[$purpose] }
             foreach ($entry in $script:sharedIdentityFixture.tagChanges.GetEnumerator()) { $tags[$entry.Key] = $entry.Value }
             return @{
                 id = $script:sharedIdentityFixture.ids[$purpose].Replace(
                     $script:sharedIdentityFixture.subscriptionId, $script:sharedIdentityFixture.responseSubscriptionId)
+                location = $script:sharedIdentityFixture.responseLocation
+                type = $script:sharedIdentityFixture.responseType
                 properties = @{
                     tenantId = $script:sharedIdentityFixture.responseTenantId
                     principalId = $script:sharedIdentityFixture.principals[$purpose]
@@ -271,6 +279,56 @@ Describe 'Bootstrap-owned shared identity bindings and existing grants' {
             }
             Assert-MockCalled Invoke-SampleAzure -Times 4 -Exactly -Scope It
             $script:queueAzureCalls.Count | Should Be 0
+        }
+    }
+
+    It 'verifies the selected skill-managed set in its own region with no ARM writes' {
+        Invoke-QueueTestEnvironment {
+            $plan = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'generic-set') -ProjectIdentityName mi-azsdk-unit-test-project-uksouth
+            foreach ($purpose in @('project', 'account', 'search', 'function')) {
+                $script:sharedIdentityFixture.ids[$purpose] = "/subscriptions/$env:AZURE_SUBSCRIPTION_ID/resourceGroups/rg-azsdk-identities-unit-test-uksouth/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mi-azsdk-unit-test-$purpose-uksouth"
+            }
+            $script:sharedIdentityFixture.responseLocation = 'uksouth'
+            $identities = Get-SampleSharedIdentities -Plan $plan
+            $identities.Count | Should Be 4
+            foreach ($purpose in @('project', 'account', 'search', 'function')) {
+                $identities[$purpose].resourceId | Should BeExactly $script:sharedIdentityFixture.ids[$purpose]
+            }
+            Assert-MockCalled Invoke-SampleAzure -Times 4 -Exactly -Scope It
+            $script:queueAzureCalls.Count | Should Be 0
+        }
+    }
+
+    It 'rejects returned identity region or type instead of trusting the selected name: <Field>' -TestCases @(
+        @{ Field = 'responseLocation'; Value = 'uksouth' },
+        @{ Field = 'responseLocation'; Value = $null },
+        @{ Field = 'responseType'; Value = 'Microsoft.Storage/storageAccounts' }
+    ) {
+        param($Field, $Value)
+        Invoke-QueueTestEnvironment {
+            $plan = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'metadata-mismatch')
+            $script:sharedIdentityFixture[$Field] = $Value
+            { Get-SampleSharedIdentities -Plan $plan } | Should Throw 'Cannot verify the bootstrap-owned shared identity'
+            Assert-MockCalled Invoke-SampleAzure -Times 1 -Exactly -Scope It
+            $script:queueAzureCalls.Count | Should Be 0
+        }
+    }
+
+    It 'rejects identities from different recorded bootstrap generations' {
+        Invoke-QueueTestEnvironment {
+            $plan = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'mixed-generations')
+            $script:sharedIdentityFixture.ownerByPurpose['search'] = 'abcdef0123456789abcdef0123456789'
+            { Get-SampleSharedIdentities -Plan $plan } | Should Throw 'one bootstrap-owned set'
+            $script:queueAzureCalls.Count | Should Be 0
+        }
+    }
+
+    It 'rejects a region changed independently of the selected MI before contacting Azure' {
+        Invoke-QueueTestEnvironment {
+            $plan = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'forged-region')
+            $plan.location = 'uksouth'
+            { Get-SampleSharedIdentities -Plan $plan } | Should Throw 'planned region'
+            Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
         }
     }
 
@@ -332,7 +390,8 @@ Describe 'Bootstrap-owned shared identity bindings and existing grants' {
     It 'requires the exact bootstrap ownership tag: <Tag>' -TestCases @(
         @{ Tag = 'purpose'; Value = 'unrelated-identities' },
         @{ Tag = 'sample-ci-retention'; Value = 'temporary' },
-        @{ Tag = 'sample-ci-identity'; Value = 'another-purpose' }
+        @{ Tag = 'sample-ci-identity'; Value = 'another-purpose' },
+        @{ Tag = 'sample-ci-owner'; Value = '' }
     ) {
         param($Tag, $Value)
         Invoke-QueueTestEnvironment {
@@ -516,7 +575,12 @@ Describe 'Aggregate four-queue capacity admission' {
         Invoke-QueueTestEnvironment {
             $plans = @(New-OfflineQueuePlans -OutputDirectory (Join-Path $TestDrive 'batch-target'))
             $plans[3][$Field] = $Value
-            { Assert-SampleBatchCapacity -Plans $plans } | Should Throw 'one explicit target and pipeline run'
+            $expectedError = switch ($Field) {
+                'location' { 'planned region' }
+                'subscriptionId' { 'Unexpected shared identity binding' }
+                default { 'one explicit target and pipeline run' }
+            }
+            { Assert-SampleBatchCapacity -Plans $plans } | Should Throw $expectedError
             Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
             $script:queueAzureCalls.Count | Should Be 0
         }
@@ -535,6 +599,15 @@ Describe 'Aggregate four-queue capacity admission' {
             { Assert-SampleBatchCapacity -Plans $plans } | Should Throw 'same sample model configuration'
             Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
             $script:queueAzureCalls.Count | Should Be 0
+        }
+    }
+
+    It 'rejects a different valid identity set in one worker before checking batch capacity' {
+        Invoke-QueueTestEnvironment {
+            $plans = @(New-OfflineQueuePlans -OutputDirectory (Join-Path $TestDrive 'mixed-identity-sets'))
+            $plans[1] = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'other-set') -QueueName q2 -ProjectIdentityName mi-azsdk-unit-test-project-westus3
+            { Assert-SampleBatchCapacity -Plans $plans } | Should Throw 'one explicit target and pipeline run'
+            Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
         }
     }
 }

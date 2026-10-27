@@ -3,7 +3,7 @@
 
 targetScope = 'subscription'
 
-import { SharedIdentities as SharedIdentityDictionary } from './shared-identities.bicep'
+import { SharedIdentities as SharedIdentityDictionary } from './identities.bicep'
 
 @sealed()
 type RoleAssignmentMetadata = {
@@ -11,7 +11,6 @@ type RoleAssignmentMetadata = {
   principalId: string
   roleDefinitionId: string
   scope: string
-  // Empty strings mean these optional properties are omitted from the assignment.
   condition: string
   conditionVersion: string
 }
@@ -19,40 +18,34 @@ type RoleAssignmentMetadata = {
 @sealed()
 type BootstrapRoleAssignments = {
   project: RoleAssignmentMetadata[]
-  pipeline: RoleAssignmentMetadata
+  pipeline: RoleAssignmentMetadata?
 }
 
-@description('Only the explicitly approved NEW identity resource group may be bootstrapped. The parent must reject any pre-existing group except its own exact recorded state.')
-@allowed([
-  'rg-azsdk-sample-identities-wus3'
-])
+// The guarded entry point derives these names from the explicit set and canonical
+// region and rejects existing resources. ARM declarations alone are NOT create-only.
+@minLength(1)
+@maxLength(90)
 param identityResourceGroup string
 
-@description('Explicitly approved prefix for the four permanent shared identities.')
-@allowed([
-  'mi-azsdk-sample'
-])
+@minLength(1)
+@maxLength(33)
 param namePrefix string
 
-@description('Explicitly approved Azure region; no region fallback is permitted.')
-@allowed([
-  'westus3'
-])
+@minLength(1)
+@maxLength(30)
 param location string
 
-@description('Non-secret, 32-character ownership token from the parent bootstrap state; preserve it on an exact-state retry.')
 @minLength(32)
 @maxLength(32)
 param ownerToken string
 
-@description('Service principal OBJECT GUID, not application/client ID. The parent must validate a nonzero GUID and verify the approved principal belongs to the deployment tenant.')
-@minLength(36)
-@maxLength(36)
+// Empty principal AND assignment ID mean no pipeline grant. A reused grant is
+// verified by the entry point, but is deliberately absent from the deployment.
 param pipelinePrincipalId string
+param pipelineRoleAssignmentId string
+param createPipelineGrant bool
 
-// The parent must bind and verify the explicitly approved subscription and tenant.
-// Bicep resource declarations are upserts, not create-only ownership checks.
-var locationSuffix = 'wus3'
+var locationSuffix = location
 
 resource identityResources 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   name: identityResourceGroup
@@ -64,7 +57,7 @@ resource identityResources 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   }
 }
 
-module sharedIdentities './shared-identities.bicep' = {
+module sharedIdentities './identities.bicep' = {
   name: 'shared-identities-${uniqueString(identityResources.id, namePrefix, locationSuffix)}'
   scope: identityResources
   params: {
@@ -84,41 +77,19 @@ var approvedRoleDefinitionIds = {
   searchIndexDataContributor: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8ebe5a00-799e-43f5-93ac-243d3dce84a7')
 }
 
-// Pinned blob-storage-container-role-assignments.bicep at fbbe89b701c758e871922adaceea0ac0e4dae40f:
-// remove ONLY the explicitly approved workspace-prefix conjunct, preserving the rest.
-// Only these three actions require the suffix; other Owner permissions remain allowed.
+// Preserve the reviewed condition byte-for-byte, including whitespace. Only these
+// three actions are suffix-restricted; other Blob Data Owner permissions remain.
 var storageBlobOwnerCondition = '((!(ActionMatches{\'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/read\'})  AND  !(ActionMatches{\'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/filter/action\'}) AND  !(ActionMatches{\'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/write\'}) ) OR (@Resource[Microsoft.Storage/storageAccounts/blobServices/containers:name] StringLikeIgnoreCase \'*-azureml-agent\'))'
 
 var projectServiceGrants = [
-  {
-    roleDefinitionId: approvedRoleDefinitionIds.foundryUser
-    condition: ''
-  }
-  {
-    roleDefinitionId: approvedRoleDefinitionIds.storageBlobDataContributor
-    condition: ''
-  }
-  {
-    roleDefinitionId: approvedRoleDefinitionIds.storageBlobDataOwner
-    condition: storageBlobOwnerCondition
-  }
-  {
-    roleDefinitionId: approvedRoleDefinitionIds.cosmosDbOperator
-    condition: ''
-  }
-  {
-    roleDefinitionId: approvedRoleDefinitionIds.searchServiceContributor
-    condition: ''
-  }
-  {
-    roleDefinitionId: approvedRoleDefinitionIds.searchIndexDataContributor
-    condition: ''
-  }
+  { roleDefinitionId: approvedRoleDefinitionIds.foundryUser, condition: '' }
+  { roleDefinitionId: approvedRoleDefinitionIds.storageBlobDataContributor, condition: '' }
+  { roleDefinitionId: approvedRoleDefinitionIds.storageBlobDataOwner, condition: storageBlobOwnerCondition }
+  { roleDefinitionId: approvedRoleDefinitionIds.cosmosDbOperator, condition: '' }
+  { roleDefinitionId: approvedRoleDefinitionIds.searchServiceContributor, condition: '' }
+  { roleDefinitionId: approvedRoleDefinitionIds.searchIndexDataContributor, condition: '' }
 ]
 
-// A new MI's principalId is runtime-only and cannot seed a Bicep resource name.
-// Use its stable principal resource ID with scope, role, and exact condition instead.
-// The parent must reject replacement identities or stale subscription assignments.
 var projectIdentityResourceId = resourceId(
   subscription().subscriptionId,
   identityResourceGroup,
@@ -126,14 +97,10 @@ var projectIdentityResourceId = resourceId(
   '${namePrefix}-project-${locationSuffix}'
 )
 
-// These six fixed service roles do not grant ARM IAM-administration permissions.
 resource projectRoleAssignments 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for grant in projectServiceGrants: {
-  name: guid(
-    toLower(projectIdentityResourceId),
-    toLower(subscription().id),
-    toLower(grant.roleDefinitionId),
-    grant.condition
-  )
+  // Keep the original UUIDv5 seeds, including full lowercase role definition ID
+  // and the empty final argument for an unconditioned role.
+  name: guid(toLower(projectIdentityResourceId), toLower(subscription().id), toLower(grant.roleDefinitionId), grant.condition)
   scope: subscription()
   properties: {
     principalId: sharedIdentities.outputs.identities.project.principalId
@@ -144,14 +111,8 @@ resource projectRoleAssignments 'Microsoft.Authorization/roleAssignments@2022-04
   }
 }]
 
-// Add only Foundry User. Never create or alter Contributor or an IAM-admin grant.
-resource pipelineFoundryUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(
-    toLower(pipelinePrincipalId),
-    toLower(subscription().id),
-    toLower(approvedRoleDefinitionIds.foundryUser),
-    ''
-  )
+resource pipelineFoundryUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (createPipelineGrant) {
+  name: guid(toLower(pipelinePrincipalId), toLower(subscription().id), toLower(approvedRoleDefinitionIds.foundryUser), '')
   scope: subscription()
   properties: {
     principalId: pipelinePrincipalId
@@ -166,20 +127,15 @@ output roleDefinitionIds object = approvedRoleDefinitionIds
 output blobOwnerCondition string = storageBlobOwnerCondition
 output roleAssignments BootstrapRoleAssignments = {
   project: map(projectServiceGrants, grant => {
-    roleAssignmentId: subscriptionResourceId('Microsoft.Authorization/roleAssignments', guid(
-      toLower(projectIdentityResourceId),
-      toLower(subscription().id),
-      toLower(grant.roleDefinitionId),
-      grant.condition
-    ))
+    roleAssignmentId: subscriptionResourceId('Microsoft.Authorization/roleAssignments', guid(toLower(projectIdentityResourceId), toLower(subscription().id), toLower(grant.roleDefinitionId), grant.condition))
     principalId: sharedIdentities.outputs.identities.project.principalId
     roleDefinitionId: grant.roleDefinitionId
     scope: subscription().id
     condition: grant.condition
     conditionVersion: empty(grant.condition) ? '' : '2.0'
   })
-  pipeline: {
-    roleAssignmentId: pipelineFoundryUser.id
+  pipeline: empty(pipelinePrincipalId) ? null : {
+    roleAssignmentId: pipelineRoleAssignmentId
     principalId: pipelinePrincipalId
     roleDefinitionId: approvedRoleDefinitionIds.foundryUser
     scope: subscription().id
@@ -187,3 +143,4 @@ output roleAssignments BootstrapRoleAssignments = {
     conditionVersion: ''
   }
 }
+

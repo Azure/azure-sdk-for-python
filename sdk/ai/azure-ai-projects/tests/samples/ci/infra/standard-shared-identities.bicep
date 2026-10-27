@@ -12,11 +12,9 @@
 
 targetScope = 'resourceGroup'
 
-@description('Reviewed region for the entire Standard bundle; no regional fallback.')
-@allowed([
-  'westus3'
-])
-param location string = 'westus3'
+@description('Region bound to the selected shared MI set and verified by live preflight; no regional fallback.')
+@minLength(1)
+param location string
 
 @description('Foundry account prefix, followed by the pinned four-character suffix.')
 @minLength(1)

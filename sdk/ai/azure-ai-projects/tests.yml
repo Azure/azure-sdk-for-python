@@ -2,13 +2,6 @@ trigger: none
 pr: none
 
 parameters:
-  - name: runMode
-    displayName: 'preview = plan only; run-and-cleanup = provision billable resources, test, delete'
-    type: string
-    default: preview
-    values:
-      - preview
-      - run-and-cleanup
   - name: selectionKind
     displayName: 'Query type (test-id example: *test_agent_tools_samples*[*mcp*project_connection*])'
     type: string
@@ -21,7 +14,7 @@ parameters:
     type: string
     default: 'samples/agents/tools/sample_agent_mcp_with_project_connection.py;samples/agents/tools/sample_agent_mcp_with_project_connection_async.py'
   - name: testQueueCount
-    displayName: 'Maximum parallel RG workers (selection is divided round-robin, not repeated)'
+    displayName: 'Maximum parallel billable RG workers (selection is divided round-robin, not repeated)'
     type: number
     default: 4
     values:
@@ -29,20 +22,10 @@ parameters:
       - 2
       - 3
       - 4
-  - name: azureServiceConnection
-    displayName: 'Authorized Azure Resource Manager service connection (needed only for run-and-cleanup)'
+  - name: projectIdentityName
+    displayName: 'Name of project MI (selects the existing shared identity set and region)'
     type: string
-    default: not-configured
-  - name: secretVariableGroup
-    displayName: 'Optional authorized Library group containing runtime variables and MCP secret; none = pipeline variables'
-    type: string
-    default: none
-  - name: location
-    displayName: 'Reviewed shared-identity Standard setup region'
-    type: string
-    default: westus3
-    values:
-      - westus3
+    default: mi-azsdk-sample-project-wus3
   - name: modelName
     displayName: 'Sample model (validation uses the existing project from an environment variable)'
     type: string
@@ -65,6 +48,8 @@ parameters:
 
 variables:
   packageRoot: $(Build.SourcesDirectory)/sdk/ai/azure-ai-projects
+  # Connection configuration belongs here, not in the Run pipeline form.
+  azureServiceConnection: azure-sdk-tests
   PYTHON_DOTENV_DISABLED: 'true'
   PYTEST_ADDOPTS: ''
 
@@ -72,10 +57,10 @@ extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     stages:
-      - stage: Preview
+      - stage: Plan
         displayName: 'Select samples and generate deployment plan (no Azure changes)'
         jobs:
-          - job: Preview
+          - job: Plan
             timeoutInMinutes: 45
             pool:
               name: azsdk-pool
@@ -110,7 +95,7 @@ extends:
                   foreach ($queueName in @($matrix.Keys | Sort-Object)) {
                     & ./tests/samples/ci/New-SampleDeploymentPlan.ps1 -SelectionManifest (Join-Path $outputDirectory "$queueName/selected-tests.json") `
                       -OutputDirectory (Join-Path $outputDirectory $queueName) -QueueName $queueName `
-                      -Location $env:SAMPLE_LOCATION -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
+                      -ProjectIdentityName $env:SAMPLE_PROJECT_IDENTITY_NAME -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
                       -ModelSku $env:SAMPLE_MODEL_SKU -ModelCapacity ([int] $env:SAMPLE_MODEL_CAPACITY)
                   }
                   $matrixJson = $matrix | ConvertTo-Json -Compress
@@ -123,167 +108,163 @@ extends:
                   AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                   SELECTION_KIND: ${{ parameters.selectionKind }}
                   SAMPLE_SELECTION: ${{ parameters.selection }}
-                  SAMPLE_LOCATION: ${{ parameters.location }}
+                  SAMPLE_PROJECT_IDENTITY_NAME: ${{ parameters.projectIdentityName }}
                   SAMPLE_MODEL: ${{ parameters.modelName }}
                   SAMPLE_MODEL_VERSION: ${{ parameters.modelVersion }}
                   SAMPLE_MODEL_SKU: ${{ parameters.modelSku }}
                   SAMPLE_MODEL_CAPACITY: ${{ parameters.modelCapacity }}
                   SAMPLE_QUEUE_COUNT: ${{ parameters.testQueueCount }}
 
-      - ${{ if eq(parameters.runMode, 'run-and-cleanup') }}:
-        - stage: RunSamples
-          displayName: 'Bicep provision -> sample pytest -> run-owned cleanup'
-          dependsOn: Preview
-          condition: succeeded()
-          variables:
-            - ${{ if ne(parameters.secretVariableGroup, 'none') }}:
-              - group: ${{ parameters.secretVariableGroup }}
-          jobs:
-            - job: AdmitTestQueues
-              displayName: 'Check shared identities and aggregate capacity without creating resources'
-              timeoutInMinutes: 20
-              pool:
-                name: azsdk-pool
-                image: ubuntu-24.04
-                os: linux
-              steps:
-                - checkout: self
-                - task: DownloadPipelineArtifact@2
-                  inputs:
-                    artifactName: sample-plan
-                    targetPath: $(Pipeline.Workspace)/sample-plan
-                - task: AzureCLI@2
-                  displayName: 'Verify shared MI grants, no leftover RGs and batch quota'
-                  inputs:
-                    azureSubscription: ${{ parameters.azureServiceConnection }}
-                    scriptType: pscore
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      & '$(packageRoot)/tests/samples/ci/Invoke-SampleProvisioning.ps1' `
-                        -BatchPlanDirectory '$(Pipeline.Workspace)/sample-plan'
-                  env:
-                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-            - job: ProvisionTestCleanup
-              dependsOn: AdmitTestQueues
-              strategy:
-                maxParallel: 4
-                matrix: $[ stageDependencies.Preview.Preview.outputs['Plan.WorkerMatrix'] ]
-              timeoutInMinutes: 180
-              cancelTimeoutInMinutes: 30
-              pool:
-                name: azsdk-pool
-                image: ubuntu-24.04
-                os: linux
-              templateContext:
-                outputs:
-                  - output: pipelineArtifact
-                    targetPath: $(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)
-                    artifactName: sample-results-$(QueueName)
-                    condition: always()
-                    sbomEnabled: false
-              steps:
-                - checkout: self
-                - template: /eng/pipelines/templates/steps/use-python-version.yml
-                  parameters:
-                    versionSpec: '3.12'
-                - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
-                  parameters:
-                    EnableTwineAuth: false
-                    EnableUvAuth: false
-                - pwsh: |
-                    New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)' -Force | Out-Null
-                    python -m pip install --disable-pip-version-check -r dev_requirements.txt -e .
-                    if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
-                  workingDirectory: $(packageRoot)
-                  displayName: 'Install SDK source and live sample dependencies'
-                - task: DownloadPipelineArtifact@2
-                  inputs:
-                    artifactName: sample-plan
-                    targetPath: $(Pipeline.Workspace)/sample-plan
-                  displayName: 'Use this run''s collected sample selection and deployment plan'
-                - task: AzureCLI@2
-                  displayName: 'Identify pipeline application and validate target configuration before provisioning'
-                  inputs:
-                    azureSubscription: ${{ parameters.azureServiceConnection }}
-                    scriptType: pscore
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      . '$(packageRoot)/tests/samples/ci/SampleCiHelpers.ps1'
-                      $samplePlan = Get-Content -LiteralPath '$(Pipeline.Workspace)/sample-plan/$(QueueName)/deployment-plan.json' -Raw | ConvertFrom-Json -AsHashtable
-                      $runnerIdentity = Set-SampleSubscriptionContext -Plan $samplePlan
-                      $runnerIdentity | ConvertTo-Json | Set-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/pipeline-identity.json' -Encoding utf8
-                      Write-Host ('Pipeline application: principalId={0}; clientId={1}; tenantId={2}' -f $runnerIdentity.principalId, $runnerIdentity.clientId, $runnerIdentity.tenantId)
-                      python '$(packageRoot)/tests/samples/ci/run_samples.py' --check-validation-config
-                      if ($LASTEXITCODE -ne 0) { throw 'The existing validation-project environment variable is missing or invalid; no resources were provisioned.' }
-                  env:
-                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                    LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
-                    SAMPLE_QUEUE_NAME: $(QueueName)
-                - task: AzureCLI@2
-                  displayName: 'Provision Standard Foundry, sample model and MCP connection using Bicep'
-                  inputs:
-                    azureSubscription: ${{ parameters.azureServiceConnection }}
-                    scriptType: pscore
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      & '$(packageRoot)/tests/samples/ci/Invoke-SampleProvisioning.ps1' `
-                        -PlanPath '$(Pipeline.Workspace)/sample-plan/$(QueueName)/deployment-plan.json' `
-                        -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
-                        -QueueName $env:SAMPLE_QUEUE_NAME -ConfirmProvisioning
-                  env:
-                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                    MCP_GITHUB_PAT: $(MCP_GITHUB_PAT)
-                    SAMPLE_QUEUE_NAME: $(QueueName)
-                - task: AzureCLI@2
-                  displayName: 'Run selected test_samples.py / test_samples_async.py nodes live, without recording'
-                  inputs:
-                    azureSubscription: ${{ parameters.azureServiceConnection }}
-                    scriptType: pscore
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      . '$(packageRoot)/tests/samples/ci/SampleCiHelpers.ps1'
-                      $sampleState = Get-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' -Raw | ConvertFrom-Json -AsHashtable
-                      $null = Set-SampleSubscriptionContext -Plan $sampleState.plan
-                      python '$(packageRoot)/tests/samples/ci/run_samples.py' `
-                        --state '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
-                        --junit '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/sample-tests.xml'
-                      $sampleExitCode = $LASTEXITCODE
-                      if ($sampleExitCode -ne 0) {
-                        throw 'Selected sample runner failed; inspect the task output and pytest results when present.'
-                      }
-                  env:
-                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                    LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
-                    SAMPLE_QUEUE_NAME: $(QueueName)
-                - task: AzureCLI@2
-                  displayName: 'Always clean up only the run-owned temporary resources'
+      - stage: RunSamples
+        displayName: 'Provision billable resources -> sample pytest -> run-owned cleanup'
+        dependsOn: Plan
+        condition: succeeded()
+        jobs:
+          - job: AdmitTestQueues
+            displayName: 'Check shared identities and aggregate capacity without creating resources'
+            timeoutInMinutes: 20
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+            steps:
+              - checkout: self
+              - task: DownloadPipelineArtifact@2
+                inputs:
+                  artifactName: sample-plan
+                  targetPath: $(Pipeline.Workspace)/sample-plan
+              - task: AzureCLI@2
+                displayName: 'Verify shared MI grants, no leftover RGs and batch quota'
+                inputs:
+                  azureSubscription: ${{ variables.azureServiceConnection }}
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    & '$(packageRoot)/tests/samples/ci/Invoke-SampleProvisioning.ps1' `
+                      -BatchPlanDirectory '$(Pipeline.Workspace)/sample-plan'
+                env:
+                  AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                  AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+          - job: ProvisionTestCleanup
+            dependsOn: AdmitTestQueues
+            strategy:
+              maxParallel: 4
+              matrix: $[ stageDependencies.Plan.Plan.outputs['Plan.WorkerMatrix'] ]
+            timeoutInMinutes: 180
+            cancelTimeoutInMinutes: 30
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)
+                  artifactName: sample-results-$(QueueName)
                   condition: always()
-                  inputs:
-                    azureSubscription: ${{ parameters.azureServiceConnection }}
-                    scriptType: pscore
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      & '$(packageRoot)/tests/samples/ci/Remove-SampleResources.ps1' `
-                        -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
-                        -QueueName $env:SAMPLE_QUEUE_NAME -ConfirmCleanup
-                  env:
-                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                    SAMPLE_QUEUE_NAME: $(QueueName)
-                - task: PublishTestResults@2
-                  displayName: 'Publish sample pytest results in the ADO Tests tab'
-                  condition: always()
-                  inputs:
-                    testResultsFormat: JUnit
-                    testResultsFiles: sample-tests.xml
-                    searchFolder: $(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)
-                    testRunTitle: 'Foundry sample tests - $(Build.BuildNumber) - $(QueueName)'
-                    failTaskOnFailedTests: true
-                    failTaskOnMissingResultsFile: false
-                    failTaskOnFailureToPublishResults: true
-                    publishRunAttachments: true
+                  sbomEnabled: false
+            steps:
+              - checkout: self
+              - template: /eng/pipelines/templates/steps/use-python-version.yml
+                parameters:
+                  versionSpec: '3.12'
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  EnableTwineAuth: false
+                  EnableUvAuth: false
+              - pwsh: |
+                  New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)' -Force | Out-Null
+                  python -m pip install --disable-pip-version-check -r dev_requirements.txt -e .
+                  if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
+                workingDirectory: $(packageRoot)
+                displayName: 'Install SDK source and live sample dependencies'
+              - task: DownloadPipelineArtifact@2
+                inputs:
+                  artifactName: sample-plan
+                  targetPath: $(Pipeline.Workspace)/sample-plan
+                displayName: 'Use this run''s collected sample selection and deployment plan'
+              - task: AzureCLI@2
+                displayName: 'Identify pipeline application and validate target configuration before provisioning'
+                inputs:
+                  azureSubscription: ${{ variables.azureServiceConnection }}
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    . '$(packageRoot)/tests/samples/ci/SampleCiHelpers.ps1'
+                    $samplePlan = Get-Content -LiteralPath '$(Pipeline.Workspace)/sample-plan/$(QueueName)/deployment-plan.json' -Raw | ConvertFrom-Json -AsHashtable
+                    $runnerIdentity = Set-SampleSubscriptionContext -Plan $samplePlan
+                    $runnerIdentity | ConvertTo-Json | Set-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/pipeline-identity.json' -Encoding utf8
+                    Write-Host ('Pipeline application: principalId={0}; clientId={1}; tenantId={2}' -f $runnerIdentity.principalId, $runnerIdentity.clientId, $runnerIdentity.tenantId)
+                    python '$(packageRoot)/tests/samples/ci/run_samples.py' --check-validation-config
+                    if ($LASTEXITCODE -ne 0) { throw 'The existing validation-project environment variable is missing or invalid; no resources were provisioned.' }
+                env:
+                  AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                  AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                  LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
+                  SAMPLE_QUEUE_NAME: $(QueueName)
+              - task: AzureCLI@2
+                displayName: 'Provision Standard Foundry, sample model and MCP connection using Bicep'
+                inputs:
+                  azureSubscription: ${{ variables.azureServiceConnection }}
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    & '$(packageRoot)/tests/samples/ci/Invoke-SampleProvisioning.ps1' `
+                      -PlanPath '$(Pipeline.Workspace)/sample-plan/$(QueueName)/deployment-plan.json' `
+                      -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
+                      -QueueName $env:SAMPLE_QUEUE_NAME -ConfirmProvisioning
+                env:
+                  AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                  AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                  MCP_GITHUB_PAT: $(MCP_GITHUB_PAT)
+                  SAMPLE_QUEUE_NAME: $(QueueName)
+              - task: AzureCLI@2
+                displayName: 'Run selected test_samples.py / test_samples_async.py nodes live, without recording'
+                inputs:
+                  azureSubscription: ${{ variables.azureServiceConnection }}
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    . '$(packageRoot)/tests/samples/ci/SampleCiHelpers.ps1'
+                    $sampleState = Get-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' -Raw | ConvertFrom-Json -AsHashtable
+                    $null = Set-SampleSubscriptionContext -Plan $sampleState.plan
+                    python '$(packageRoot)/tests/samples/ci/run_samples.py' `
+                      --state '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
+                      --junit '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/sample-tests.xml'
+                    $sampleExitCode = $LASTEXITCODE
+                    if ($sampleExitCode -ne 0) {
+                      throw 'Selected sample runner failed; inspect the task output and pytest results when present.'
+                    }
+                env:
+                  AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                  AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                  LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
+                  SAMPLE_QUEUE_NAME: $(QueueName)
+              - task: AzureCLI@2
+                displayName: 'Always clean up only the run-owned temporary resources'
+                condition: always()
+                inputs:
+                  azureSubscription: ${{ variables.azureServiceConnection }}
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    & '$(packageRoot)/tests/samples/ci/Remove-SampleResources.ps1' `
+                      -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
+                      -QueueName $env:SAMPLE_QUEUE_NAME -ConfirmCleanup
+                env:
+                  AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                  AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                  SAMPLE_QUEUE_NAME: $(QueueName)
+              - task: PublishTestResults@2
+                displayName: 'Publish sample pytest results in the ADO Tests tab'
+                condition: always()
+                inputs:
+                  testResultsFormat: JUnit
+                  testResultsFiles: sample-tests.xml
+                  searchFolder: $(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)
+                  testRunTitle: 'Foundry sample tests - $(Build.BuildNumber) - $(QueueName)'
+                  failTaskOnFailedTests: true
+                  failTaskOnMissingResultsFile: false
+                  failTaskOnFailureToPublishResults: true
+                  publishRunAttachments: true
 

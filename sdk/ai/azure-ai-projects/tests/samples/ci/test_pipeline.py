@@ -16,9 +16,7 @@ def pipeline():
 
 def live_stages(pipeline):
     stages = pipeline["extends"]["parameters"]["stages"]
-    return next(
-        group["${{ if eq(parameters.runMode, 'run-and-cleanup') }}"] for group in stages if "stage" not in group
-    )
+    return [stage for stage in stages if stage.get("stage") == "RunSamples"]
 
 
 def worker(pipeline):
@@ -34,15 +32,29 @@ def test_no_manual_approval_stage_or_task(pipeline):
             assert not any(step.get("task", "").startswith("ManualValidation@") for step in job.get("steps", []))
 
 
-def test_live_run_remains_opt_in_and_requires_successful_preview(pipeline):
-    mode = next(parameter for parameter in pipeline["parameters"] if parameter["name"] == "runMode")
-    assert mode["default"] == "preview"
-    assert mode["values"] == ["preview", "run-and-cleanup"]
+def test_manual_run_requires_successful_internal_planning_without_a_preview_choice(pipeline):
+    assert pipeline["trigger"] == "none"
+    assert pipeline["pr"] == "none"
+    assert "runMode" not in {parameter["name"] for parameter in pipeline["parameters"]}
     stages = pipeline["extends"]["parameters"]["stages"]
-    assert [stage["stage"] for stage in stages if "stage" in stage] == ["Preview"]
+    assert [stage["stage"] for stage in stages] == ["Plan", "RunSamples"]
     run_stage = next(stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples")
-    assert run_stage["dependsOn"] == "Preview"
+    assert run_stage["dependsOn"] == "Plan"
     assert run_stage["condition"] == "succeeded()"
+
+
+def test_run_form_uses_project_mi_without_connection_group_or_region_fields(pipeline):
+    parameters = {parameter["name"]: parameter for parameter in pipeline["parameters"]}
+    assert {"runMode", "azureServiceConnection", "secretVariableGroup", "location"}.isdisjoint(parameters)
+    assert parameters["projectIdentityName"]["default"] == "mi-azsdk-sample-project-wus3"
+    assert pipeline["variables"]["azureServiceConnection"] == "azure-sdk-tests"
+    stages = pipeline["extends"]["parameters"]["stages"]
+    assert all("variables" not in stage for stage in stages)
+    azure_tasks = [
+        step for job in live_stages(pipeline)[0]["jobs"] for step in job["steps"] if step.get("task") == "AzureCLI@2"
+    ]
+    assert len(azure_tasks) == 5
+    assert all(step["inputs"]["azureSubscription"] == "${{ variables.azureServiceConnection }}" for step in azure_tasks)
 
 
 def test_cleanup_and_result_publication_still_run_on_failure(pipeline):
@@ -116,10 +128,10 @@ def test_validator_model_is_absent_from_plan_and_provisioning_sources():
 
 
 @pytest.mark.parametrize("variable", ["AZURE_SUBSCRIPTION_ID", "AZURE_TENANT_ID"])
-def test_target_ids_are_explicit_in_preview_and_every_live_azure_task(pipeline, variable):
+def test_target_ids_are_explicit_in_plan_and_every_live_azure_task(pipeline, variable):
     stages = pipeline["extends"]["parameters"]["stages"]
-    preview = next(stage for stage in stages if stage.get("stage") == "Preview")
-    plan = next(step for step in preview["jobs"][0]["steps"] if "New-SampleDeploymentPlan.ps1" in str(step))
+    planning = next(stage for stage in stages if stage.get("stage") == "Plan")
+    plan = next(step for step in planning["jobs"][0]["steps"] if "New-SampleDeploymentPlan.ps1" in str(step))
     assert plan["env"][variable] == f"$({variable})"
     azure_tasks = [step for step in worker(pipeline)["steps"] if step.get("task") == "AzureCLI@2"]
     assert len(azure_tasks) == 4
@@ -135,22 +147,25 @@ def test_target_ids_are_explicit_in_preview_and_every_live_azure_task(pipeline, 
 
 def test_default_model_and_region_use_verified_gpt5_configuration(pipeline):
     parameters = {parameter["name"]: parameter for parameter in pipeline["parameters"]}
-    assert parameters["location"]["default"] == "westus3"
-    assert parameters["location"]["values"] == ["westus3"]
+    assert parameters["projectIdentityName"]["default"] == "mi-azsdk-sample-project-wus3"
     assert parameters["modelName"]["default"] == "gpt-5.2"
     assert parameters["modelVersion"]["default"] == "2025-12-11"
     assert parameters["modelSku"]["default"] == "GlobalStandard"
     assert parameters["modelCapacity"]["default"] == 10
 
 
-def test_preview_only_collects_and_plans_without_test_framework_bootstrap(pipeline):
+def test_internal_plan_only_collects_and_plans_without_test_framework_bootstrap(pipeline):
     stages = pipeline["extends"]["parameters"]["stages"]
-    preview = next(stage for stage in stages if stage.get("stage") == "Preview")
-    steps = preview["jobs"][0]["steps"]
+    planning = next(stage for stage in stages if stage.get("stage") == "Plan")
+    steps = planning["jobs"][0]["steps"]
     scripts = [step["pwsh"] for step in steps if "pwsh" in step]
     assert len(scripts) == 2  # Dependency installation, then collection and plan generation.
     assert "select_samples.py" in scripts[1]
     assert "New-SampleDeploymentPlan.ps1" in scripts[1]
+    assert "-ProjectIdentityName $env:SAMPLE_PROJECT_IDENTITY_NAME" in scripts[1]
+    assert "-Location" not in scripts[1]
+    assert steps[-1]["env"]["SAMPLE_PROJECT_IDENTITY_NAME"] == "${{ parameters.projectIdentityName }}"
+    assert "SAMPLE_LOCATION" not in steps[-1]["env"]
     for script in scripts:
         assert not any(
             command in script
@@ -231,9 +246,9 @@ def test_round_robin_workers_are_isolated_without_an_environment_dependency(pipe
     job = worker(pipeline)
     assert job["dependsOn"] == "AdmitTestQueues"
     assert job["strategy"]["maxParallel"] == 4
-    assert job["strategy"]["matrix"] == "$[ stageDependencies.Preview.Preview.outputs['Plan.WorkerMatrix'] ]"
-    preview = next(stage for stage in pipeline["extends"]["parameters"]["stages"] if stage.get("stage") == "Preview")
-    plan = next(step for step in preview["jobs"][0]["steps"] if step.get("name") == "Plan")
+    assert job["strategy"]["matrix"] == "$[ stageDependencies.Plan.Plan.outputs['Plan.WorkerMatrix'] ]"
+    planning = next(stage for stage in pipeline["extends"]["parameters"]["stages"] if stage.get("stage") == "Plan")
+    plan = next(step for step in planning["jobs"][0]["steps"] if step.get("name") == "Plan")
     assert "--queue-count $env:SAMPLE_QUEUE_COUNT" in plan["pwsh"]
     assert '"$queueName/selected-tests.json"' in plan["pwsh"]
     assert "queue-matrix.json" in plan["pwsh"]

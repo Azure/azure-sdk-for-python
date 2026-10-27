@@ -4,14 +4,11 @@
 
 ## Workflow
 
-| `runMode` | Behavior |
-| --- | --- |
-| `preview` (default) | Collect samples without execution and publish a separate fresh plan for each queue. No Azure resources are queried or changed. |
-| `run-and-cleanup` | Generate plans, check shared identities and aggregate capacity, then provision/test/clean up each nonempty queue in parallel. |
+Every manually queued run generates plans, checks the selected shared identities and aggregate capacity, then provisions/tests/cleans up each nonempty queue in parallel. **Queueing this pipeline opts in to billable resources.** There is no preview/run-mode selector, automatic CI/PR trigger or YAML manual-approval stage.
 
-Preview is **plan-only**, not ARM `what-if`, a permission/capacity check, or a regression-test job. Pester installation and unit-test execution are not part of an on-demand sample run. Maintainer checks are described below.
+The internal **Plan** stage collects samples without execution and publishes a fresh plan per queue before the live stage may start. It changes no Azure resources and is not ARM `what-if`, a permission/capacity check or a regression-test job. Pester installation and unit-test execution are not part of an on-demand sample run. Maintainer checks are described below.
 
-Defaults: **up to four RG workers**, **West US 3** (`westus3`), **gpt-5.2**, version **2025-12-11**, `GlobalStandard`, capacity **10 per active queue**. `testQueueCount` accepts 1–4 as a maximum; fewer samples produce fewer workers, never empty RGs. Model settings remain configurable and `modelVersion=auto` resolves the regional catalog default. The reviewed shared-identity composition currently supports only West US 3.
+Defaults: **up to four RG workers**, project MI **mi-azsdk-sample-project-wus3** (West US 3), **gpt-5.2**, version **2025-12-11**, `GlobalStandard`, capacity **10 per active queue**. `testQueueCount` accepts 1–4 as a maximum; fewer samples produce fewer workers, never empty RGs. Model settings remain configurable and `modelVersion=auto` resolves the regional catalog default. No separate region input is required: the project MI selects the identity set and its region. West US 3 remains the live-validated configuration; other regions must pass all identity, service, quota and model checks and are not guaranteed capacity.
 
 Selected cases are sorted by pytest node ID and divided **round-robin, without repetition**. Five cases across four workers assign cases 1 and 5 to `q1`, case 2 to `q2`, case 3 to `q3` and case 4 to `q4`. Each worker runs its assigned cases sequentially, independently of the other workers.
 
@@ -28,9 +25,9 @@ Configure a pipeline to use [../../../tests.yml](../../../tests.yml), authorize 
 | `LLM_VALIDATION_PROJECT_ENDPOINT` | Existing Foundry project endpoint. A normal variable is supported; secret storage is optional. |
 | `MCP_GITHUB_PAT` | **Secret** containing the complete GitHub PAT, including `github_pat_` or `ghp_`. Required for the MCP sample. |
 
-The target IDs must be available to **both** Preview and RunSamples. Runtime values may also come from the authorized group selected by `secretVariableGroup`, but that group is scoped only to RunSamples. Do not put secrets in YAML, chat, runtime parameters, command-line arguments, plans or artifacts.
+The target IDs must be available to **both** Plan and RunSamples. Save runtime variables directly in the pipeline; there is no Library-group runtime parameter. Do not put secrets in YAML, chat, runtime parameters, command-line arguments, plans or artifacts.
 
-Set `azureServiceConnection` to an authorized **Azure Resource Manager connection name**, preferably using workload identity federation. Its service principal must already have:
+The YAML variable `azureServiceConnection` is configured as **azure-sdk-tests**, an authorized Azure Resource Manager connection. It is not a Run pipeline field. Changing the connection requires updating that configuration and authorizing the pipeline; a subscription/MI name does not select or grant access to a service connection. Prefer workload identity federation. Its service principal must already have:
 
 - Access to the explicit subscription and tenant; resource-group/deployment permissions, attachment of the existing UAMIs, and native Cosmos SQL role-assignment permissions. **Contributor** covers these management operations; workers do not need Azure IAM-administrator roles.
 - The preconfigured subscription-scoped **Foundry User** grant checked by admission. Workers only verify Azure IAM grants; they never create or repair them.
@@ -39,17 +36,30 @@ Set `azureServiceConnection` to an authorized **Azure Resource Manager connectio
 
 The scripts require **PowerShell 7.2+**. Azure subscription roles do not grant Azure DevOps pipeline-edit or service-connection authorization rights. Existing organization/service-connection approvals are not bypassed.
 
-Enter the PAT directly in the pipeline secret field or an authorized Library secret. Use minimum GitHub permissions and an appropriate expiration/SSO authorization; see [GitHub MCP authentication](https://github.com/github/github-mcp-server/blob/main/docs/remote-server.md).
+Enter the PAT directly in the pipeline secret field. Use minimum GitHub permissions and an appropriate expiration/SSO authorization; see [GitHub MCP authentication](https://github.com/github/github-mcp-server/blob/main/docs/remote-server.md).
+
+### Select an existing MI set
+
+**Name of project MI** accepts the project identity's resource name, not a client/principal GUID or full resource ID:
+
+- `mi-azsdk-sample-project-wus3` selects the original permanent RG `rg-azsdk-sample-identities-wus3`, its four `mi-azsdk-sample-{project,account,search,function}-wus3` identities and region `westus3`.
+- `mi-azsdk-{setName}-project-{region}` selects a skill-created set in `rg-azsdk-identities-{setName}-{region}`, its four corresponding identities and the canonical region encoded in that name.
+
+The subscription/tenant still come from the saved variables, never from an active-account default or a search across subscriptions. Planning derives the exact resource IDs and expected region from the naming contract. Before any workload creation, live preflight GETs verify all four actual identities' IDs, resource types, tenant, region, permanent ownership tags and common bootstrap generation, plus the preconfigured grants. Missing MIs, arbitrary names, mixed sets and metadata mismatches fail closed. No identity is created, replaced or granted roles by the pipeline.
 
 ### Permanent identities and service grants
 
-An authorized administrator separately runs [validation/Initialize-SharedSampleIdentities.ps1](validation/Initialize-SharedSampleIdentities.ps1). Supply the target IDs through the two environment variables above and explicit pipeline/caller identifiers through its mandatory parameters. First run the default dry run, review it and obtain explicit approval, then use `-Apply` with the same saved preview. Finish with `-VerifyOnly`. Keep the local state: applied or ambiguous attempts must be reconciled, never replayed or automatically deleted.
+The [identity-provisioning skill](../../../.github/skills/azure-ai-projects-provision-identities/SKILL.md) is the single bootstrap owner. An authorized administrator uses its [guarded entry point](../../../.github/skills/azure-ai-projects-provision-identities/scripts/Initialize-SharedSampleIdentities.ps1), never a worker job. Supply explicit subscription, tenant, canonical region, stable set name, expected caller and an external state path; optional pipeline object/client IDs must be supplied together. **Each provisioning invocation of the skill re-creates the same named skill-managed MI/RBAC set instead of reusing its MIs**, following the [replacement contract](../../../.github/skills/azure-ai-projects-provision-identities/references/recreation.md). Existing-set deletion requires recorded ownership, no attached/in-use consumers, a fresh deletion dry run and explicit approval. Client/principal IDs change; pipeline grants are preserved. The create script itself remains create-only and refuses existing resources/replayed state. First save a preview, review its subscription-wide grants and obtain explicit approval, then use `-Apply` with the same inputs. Finish with `-VerifyOnly`. Preserve each generation's state; no failure-triggered cleanup or automatic retry.
 
-[infra/bootstrap-identities.bicep](infra/bootstrap-identities.bicep) creates only:
+**Default CI set:** permanent RG `rg-azsdk-sample-identities-wus3` and four UAMIs named `mi-azsdk-sample-{project,account,search,function}-wus3`. Verify their original schema-1 state through the skill's entry point with `-VerifyOnly` and matching target/caller/pipeline IDs (the original target environment variables are accepted in this legacy mode). Verification preserves every original state byte/hash/status and requires no old templates; legacy preview, apply and state upgrades are forbidden. Do not recreate the existing set.
 
-- Permanent RG `rg-azsdk-sample-identities-wus3` and four UAMIs named `mi-azsdk-sample-{project,account,search,function}-wus3`.
+The skill's [bootstrap template](../../../.github/skills/azure-ai-projects-provision-identities/assets/bootstrap.bicep) and [identity module](../../../.github/skills/azure-ai-projects-provision-identities/assets/identities.bicep) create only:
+
+- A new permanent RG `rg-azsdk-identities-{setName}-{region}` and four UAMIs named `mi-azsdk-{setName}-{project,account,search,function}-{region}`.
 - Six **subscription-scoped** roles for the project UAMI: Foundry User, Storage Blob Data Contributor, Storage Blob Data Owner, Cosmos DB Operator, Search Service Contributor and Search Index Data Contributor.
-- Subscription-scoped Foundry User for the established pipeline principal. Existing Contributor access is unchanged; no Owner, User Access Administrator or RBAC Administrator is granted.
+- Optional subscription-scoped Foundry User for the explicitly supplied pipeline principal. An exact existing grant is verified and reused without redeployment. Existing Contributor access is unchanged; no Owner, User Access Administrator or RBAC Administrator is granted.
+
+**A new skill-created set does not automatically run this pipeline.** Explicitly select its project MI name when queueing a run after reviewing the target, broad role scope and regional eligibility. The [identity mapping](SampleCiHelpers.ps1) supports the default and skill naming contracts only; it does not discover/adopt arbitrary sets. Do not infer workload compatibility from successful MI creation.
 
 The other three identities have **no grants** until a separately reviewed integration needs them. Bootstrap creates no test workloads. The CI cleanup never deletes these identities or grants.
 
@@ -66,9 +76,9 @@ Read-only admission still rejects leftover temporary sample RGs, repeated/empty 
 ## Run a sample
 
 1. Select the reviewed branch in **Run pipeline**.
-2. Start with `runMode=preview`, `selectionKind=sample-path`, and the default `selection`.
-3. Inspect the full selection, the per-queue selections/plans under `q1` through the active queue count, and the worker matrix in the **sample-plan** artifact. Confirm every selected node appears exactly once across queue plans.
-4. Once the variables, service connection and permissions are configured, queue `runMode=run-and-cleanup` with the same selection. This opts in to billable resources and cleanup after the plan succeeds; there is no YAML manual-approval stage.
+2. Set `selectionKind`, `selection`, maximum worker count, **Name of project MI** and model options. No preview, connection, Library-group or region fields are shown.
+3. Before queueing, verify the saved variables, configured connection, selected identity set and previous run's cleanup. **Run** authorizes provisioning billable resources after internal planning and live admission succeed.
+4. Inspect the per-queue selections/plans under `q1` through the active queue count and worker matrix in **sample-plan**. Each selected node must appear exactly once; workers run automatically after admission. For plan-only inspection without a live run, maintainers can invoke the local selector/planner with fictional target IDs; this is not a separate pipeline mode.
 5. Verify every queue's ADO **Tests** results and attachments and final deployment state `CleanedUp` in **sample-results-q1** through **sample-results-q4**, as applicable.
 
 To verify repeatability, wait for all queues to pass and finish verified cleanup before queueing a second fresh batch. Each queue gets a new plan, owner token and RG; shared identities alone persist. Never reuse the first batch's workloads or overlap retries.
@@ -90,7 +100,7 @@ To verify repeatability, wait for all queues to pass and finish verified cleanup
 - **Explicit targets and identity:** task, plan and state subscription/tenant IDs must match the same authorized service-principal identity. No fallback to an active account, another tenant, or a developer's login.
 - **Live preflight:** check provider registration, Search S1 offerings/service quota, Cosmos subscription-region access, the pinned template's Storage SKU restrictions, model availability, and separate account/model quotas. Missing or invalid evidence fails closed. These checks do not reserve capacity or change region, SKU, registration or policy.
 - **Reviewed local Bicep:** [infra/standard-shared-identities.bicep](infra/standard-shared-identities.bicep) is a local UAMI composition based on the unchanged official reference pinned by [infra/standard-setup.lock.json](infra/standard-setup.lock.json), not an unchanged upstream deployment. The official 14 sources remain checksum-verified maintainer references; workers do not download them. State is saved before the first resource mutation.
-- **Fresh workloads only:** every queue creates a Foundry account/project, Storage, Cosmos DB, Search, three AAD connections, two capability hosts, a native Cosmos data grant, one model deployment and an MCP connection. Only the four pinned UAMIs are reused. No worker Azure IAM assignments, Application Insights, Function App or ACR are created. `GlobalStandard` inference may run globally despite resource colocation.
+- **Fresh workloads only:** every queue creates a Foundry account/project, Storage, Cosmos DB, Search, three AAD connections, two capability hosts, a native Cosmos data grant, one model deployment and an MCP connection. Only the four selected UAMIs are reused. No worker Azure IAM assignments, Application Insights, Function App or ACR are created. `GlobalStandard` inference may run globally despite resource colocation.
 - **Secrets:** only provisioning receives the PAT, through an environment-backed Bicep `@secure()` parameter. The connection stores the full Bearer token; the sample receives only its connection ID. No job explicitly maps an ADO access token; the sample subprocess strips any inherited token and the PAT. The external validator endpoint is passed only through the preflight/test environment and excluded from plans, state, Bicep outputs and pytest arguments.
 - **Readiness:** bounded read-only retries precede sample execution. An already-started sample is never retried automatically.
 - **Logs:** results attach the shared executor's sanitized API/print log and print-only output log through native JUnit markers. Captured console/JUnit reports are redacted; raw sample prints/live logging cannot bypass capture. Only verified run-owned attachment paths are published. Validator input remains the original in-memory output. Logs can still contain test data; use suitable access and retention settings.
@@ -114,6 +124,6 @@ Provisioning can incur standing charges. Agent loss, hard termination or Azure e
 Retained Python unit tests live in this directory; mocked PowerShell tests and [the Bicep checker](validation/Test-BicepTemplates.ps1) live under [validation](validation). No new PR pipeline is introduced here.
 
 - With dotenv/live execution disabled, run the Python tests using `--confcutdir=tests/samples/ci` to avoid parent service fixtures.
-- Run the PowerShell `*.Tests.ps1` files under validation using the existing compatible **Pester 4.10.1** environment. They mock Azure calls and do not provision resources. On-demand pipeline agents do not need Pester.
-- The Bicep checker always compiles five local templates and fictional sample parameters with an empty PAT. Its optional `StandardTemplatePath` input also verifies and compiles the 14 unchanged cached official sources. It rejects worker Azure IAM writes while allowing the separate administrator bootstrap's approved grants.
+- Run the PowerShell `*.Tests.ps1` files under validation **and** the skill's [bootstrap test suite](../../../.github/skills/azure-ai-projects-provision-identities/tests/Initialize-SharedSampleIdentities.Tests.ps1) using the existing compatible **Pester 4.10.1** environment. Both suites isolate Azure calls and do not provision resources. The skill suite owns bootstrap/legacy-state coverage and checks consistency with the worker identity/grant contract. On-demand pipeline agents do not need Pester.
+- The Bicep checker compiles the three worker templates, the skill's two bootstrap assets and fictional sample parameters with an empty PAT. Its optional `StandardTemplatePath` input also verifies and compiles the 14 unchanged cached official sources. It rejects worker Azure IAM writes while allowing the separate administrator bootstrap's approved grants.
 - Use the repository Black configuration, PowerShell syntax checks and `git diff --check`. Real harness collection must use `PYTHON_DOTENV_DISABLED=true` and fictional target IDs and must not execute samples.
