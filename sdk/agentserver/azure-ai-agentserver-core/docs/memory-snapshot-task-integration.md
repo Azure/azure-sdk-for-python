@@ -281,6 +281,9 @@ rejected, not launched; rejection during rollback preserves the parent for
 recovery rather than turning cleanup into terminal task failure.
 Admission is tied to the actual producer task, not inherited context-variable
 permission. Awaiting a submitted run's result does not hold admission open.
+Recovery LIST reads observe shutdown and cancel/join their read before admission
+drains, avoiding a scanner-cancellation deadlock. Accepted provider creates,
+claims and other mutations still settle before worker/lease cleanup.
 The gate applies only once TaskManager shutdown begins, not as a new HTTP
 admission policy or a capture-time launch queue. Explicit cancellation of an
 individual task keeps its normal behavior.

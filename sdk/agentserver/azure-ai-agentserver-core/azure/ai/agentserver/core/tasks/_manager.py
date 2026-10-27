@@ -3275,19 +3275,18 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             logger.warning("Legacy task cleanup delete failed for %s", task_info.id, exc_info=True)
         return True
 
-    @_with_task_admission
-    async def _recover_stale_tasks(self) -> None:
-        """Recover stale in-progress tasks from previous instances."""
-        agent_name = self._config.agent_name or "default"
-        session_id = self._config.session_id or "local"
+    async def _list_tasks_for_recovery(self, agent_name: str, session_id: str) -> list[TaskInfo]:
+        """Stop a recovery read when shutdown needs its admission to drain.
 
-        try:
-            #   / C-FLT-1 — scope the recovery scan to
-            # framework-owned tasks via source_type. Tasks created by
-            # other systems sharing the same (agent, session,
-            # lease_owner) triple MUST NOT be enumerated by the
-            # framework's reclaim path.
-            stale_tasks = await self._provider.list(
+        :param agent_name: Agent whose framework-owned tasks are queried.
+        :type agent_name: str
+        :param session_id: Native session scope.
+        :type session_id: str
+        :return: Recovery candidates, or no candidates when shutdown interrupts the read.
+        :rtype: list[~azure.ai.agentserver.core.tasks._models.TaskInfo]
+        """
+        query = asyncio.create_task(
+            self._provider.list(
                 agent_name=agent_name,
                 session_id=session_id,
                 status="in_progress",
@@ -3295,6 +3294,28 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 source_type=_SOURCE_TYPE,
                 limit=None,
             )
+        )
+        stopping = asyncio.create_task(self._shutdown_event.wait())
+        try:
+            done, _ = await asyncio.wait((query, stopping), return_when=asyncio.FIRST_COMPLETED)
+            if query not in done:
+                logger.info("Stopping a recovery query before draining task admission")
+                return []
+            return await query
+        finally:
+            for pending in (query, stopping):
+                if not pending.done():
+                    pending.cancel()
+            await asyncio.gather(query, stopping, return_exceptions=True)
+
+    @_with_task_admission
+    async def _recover_stale_tasks(self) -> None:
+        """Recover stale in-progress tasks from previous instances."""
+        agent_name = self._config.agent_name or "default"
+        session_id = self._config.session_id or "local"
+
+        try:
+            stale_tasks = await self._list_tasks_for_recovery(agent_name, session_id)
         except Exception:  # pylint: disable=broad-exception-caught
             logger.warning("Failed to query stale tasks for recovery", exc_info=True)
             return

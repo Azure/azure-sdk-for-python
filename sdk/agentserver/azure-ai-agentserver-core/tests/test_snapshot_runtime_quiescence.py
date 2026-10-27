@@ -276,6 +276,49 @@ async def test_compatible_restore_preserves_owned_task_lease_identity(provider_f
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("preserve", [False, True])
+async def test_shutdown_interrupts_blocked_periodic_recovery_list(provider_factory, monkeypatch, preserve):
+    provider, _ = provider_factory
+    monkeypatch.setattr(_manager, "_PERIODIC_RECOVERY_INTERVAL_SECONDS", 0.01)
+    manager = TaskManager(config=host().config, provider=provider, shutdown_grace_seconds=0)
+    blocked, release, cancelled = (asyncio.Event() for _ in range(3))
+    original_list = provider.list
+    calls = 0
+
+    async def list_tasks(**kwargs):
+        nonlocal calls
+        calls += 1
+        if calls > 1:
+            blocked.set()
+            try:
+                await release.wait()
+            except asyncio.CancelledError:
+                cancelled.set()
+                raise
+        return await original_list(**kwargs)
+
+    monkeypatch.setattr(provider, "list", list_tasks)
+    shutdown = None
+    try:
+        await manager.startup(restore_id="restore-1")
+        scanner = manager._periodic_recovery_task
+        await asyncio.wait_for(blocked.wait(), 2)
+        shutdown = asyncio.create_task(manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=preserve))
+        await asyncio.wait_for(asyncio.shield(shutdown), 1)
+        assert cancelled.is_set()
+        assert scanner.done()
+        assert manager._periodic_recovery_task is None
+        assert manager._admissions_drained.is_set()
+        assert not manager._active_admissions
+        assert not manager._has_live_workers
+    finally:
+        release.set()
+        if shutdown is not None:
+            await asyncio.wait_for(asyncio.gather(shutdown, return_exceptions=True), 2)
+        await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=preserve)
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("inner_id", ["outer", "inner"])
 async def test_task_registration_admission_cleans_up_nested_failure(provider_factory, inner_id):
     provider, _ = provider_factory

@@ -20,6 +20,8 @@
 
 ### Bugs Fixed
 
+- Interrupt blocked recovery reads when shutdown begins, so admission can drain
+  before scanner cancellation while accepted creates and claims settle safely.
 - Keep the lease instance consistent with live task workers and accepted
   submissions across compatible in-place restores with a new restore ID.
   Idle runtimes without owned task work still rotate their lease instance.
