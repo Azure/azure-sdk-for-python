@@ -16,7 +16,8 @@ use azure_core::Bytes;
 use azure_storage_blob::models::{BlobClientDownloadOptions, EncryptionAlgorithmType, HttpRange};
 use azure_storage_blob::BlobClient;
 use futures::StreamExt;
-use pyo3::exceptions::PyValueError;
+use pyo3::exceptions::{PyMemoryError, PyValueError};
+use pyo3::ffi;
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 use tokio::sync::mpsc;
@@ -80,7 +81,26 @@ fn validate_download_length(offset: u64, expected: u64, actual: u64) -> azure_co
     ))
 }
 
-type Chunk = azure_core::Result<Bytes>;
+/// One partition of the download and the absolute blob offset where it starts.
+struct Partition {
+    offset: u64,
+    data: Bytes,
+}
+
+type Chunk = azure_core::Result<Partition>;
+
+/// Fail unless a partition starts exactly where the previously delivered data ended.
+fn check_partition_offset(expected: u64, actual: u64) -> azure_core::Result<()> {
+    if actual == expected {
+        return Ok(());
+    }
+    Err(azure_core::Error::with_message(
+        ErrorKind::Other,
+        format!(
+            "Download data arrived out of order: expected data at offset {expected}, but received data at offset {actual}."
+        ),
+    ))
+}
 
 /// Aborts the wrapped task when dropped, so abandoned downloads stop issuing requests.
 struct AbortOnDrop<T>(JoinHandle<T>);
@@ -108,7 +128,11 @@ fn to_usize(value: u64) -> azure_core::Result<usize> {
 ///
 /// A single-frame body is returned without copying; multi-frame bodies are merged into one
 /// buffer sized up front.
-async fn read_body(mut body: AsyncResponseBody, offset: u64, len: u64) -> Chunk {
+async fn read_body(
+    mut body: AsyncResponseBody,
+    offset: u64,
+    len: u64,
+) -> azure_core::Result<Bytes> {
     let mut single: Option<Bytes> = None;
     let mut merged: Vec<u8> = Vec::new();
     let mut received: u64 = 0;
@@ -145,7 +169,8 @@ async fn fetch_range(
 ) -> Chunk {
     options.range = Some(HttpRange::new(offset, len));
     let response = client.download(Some(options)).await?;
-    read_body(response.body, offset, len).await
+    let data = read_body(response.body, offset, len).await?;
+    Ok(Partition { offset, data })
 }
 
 enum PumpStop {
@@ -193,8 +218,11 @@ impl Pump {
             partition_size,
             parallel,
         } = self;
-        let send = |chunk: Bytes| async move {
-            sender.send(Ok(chunk)).await.map_err(|_| PumpStop::Closed)
+        let send = |partition: Partition| async move {
+            sender
+                .send(Ok(partition))
+                .await
+                .map_err(|_| PumpStop::Closed)
         };
         // Ranged requests run as separate tasks so they progress (and copy) in parallel, while
         // results are delivered strictly in order. Completed-but-undelivered ranges stay in the
@@ -216,11 +244,15 @@ impl Pump {
 
         // The first body is still streaming on its own connection; keep the total at `parallel`.
         fill(&mut in_flight, parallel.saturating_sub(1).max(1));
-        send(read_body(first_body, first_offset, rest_offset - first_offset).await?).await?;
+        send(Partition {
+            offset: first_offset,
+            data: read_body(first_body, first_offset, rest_offset - first_offset).await?,
+        })
+        .await?;
         while let Some(mut task) = in_flight.pop_front() {
             fill(&mut in_flight, parallel);
-            let chunk = (&mut task.0).await.map_err(task_error)??;
-            send(chunk).await?;
+            let partition = (&mut task.0).await.map_err(task_error)??;
+            send(partition).await?;
         }
         Ok(())
     }
@@ -239,6 +271,112 @@ enum StreamState {
     Failed(PyErr),
 }
 
+/// Sequential, bounds-checked writer over the uninitialized buffer of a [`BytesBuilder`].
+struct BytesWriter {
+    ptr: *mut u8,
+    len: usize,
+    written: usize,
+}
+
+// SAFETY: the buffer belongs to a `bytes` object that no other code can reach until
+// `BytesBuilder::build_without_gil` returns it, so the thread holding the writer has exclusive
+// access.
+unsafe impl Send for BytesWriter {}
+
+impl BytesWriter {
+    fn remaining(&self) -> usize {
+        self.len - self.written
+    }
+
+    /// Append `data` after the bytes written so far. Writes nothing and returns `false` if it does
+    /// not fit.
+    fn push(&mut self, data: &[u8]) -> bool {
+        if data.len() > self.remaining() {
+            return false;
+        }
+        // SAFETY: `written..written + data.len()` lies within the buffer, which only this writer
+        // writes, and `data` is a separate allocation so the ranges cannot overlap.
+        unsafe {
+            std::ptr::copy_nonoverlapping(data.as_ptr(), self.ptr.add(self.written), data.len());
+        }
+        self.written += data.len();
+        true
+    }
+}
+
+/// Builds a `bytes` object by writing directly into a freshly allocated, uninitialized buffer.
+///
+/// Unlike `PyBytes::new_with`, the buffer is not zero-filled first, which would be a full pass over
+/// the result with the GIL held before any data arrives. The object is only handed out by
+/// [`BytesBuilder::build_without_gil`] once every byte has been written; otherwise it is discarded
+/// without ever being exposed to Python.
+struct BytesBuilder<'py> {
+    object: Bound<'py, PyBytes>,
+    writer: BytesWriter,
+}
+
+impl<'py> BytesBuilder<'py> {
+    fn new(py: Python<'py>, len: usize) -> PyResult<Self> {
+        let size = ffi::Py_ssize_t::try_from(len)
+            .map_err(|_| PyMemoryError::new_err("The download is too large for a bytes object."))?;
+        // SAFETY: a null source asks CPython for a new `bytes` object with an uninitialized buffer
+        // of `size` bytes, which may be written until the object is shared (for `size == 0` the
+        // shared empty object is returned, and nothing is ever written to it). The owned reference
+        // is checked for allocation failure before use.
+        unsafe {
+            let raw = ffi::PyBytes_FromStringAndSize(std::ptr::null(), size);
+            let object = Bound::from_owned_ptr_or_err(py, raw)?.cast_into_unchecked::<PyBytes>();
+            let ptr = ffi::PyBytes_AsString(raw).cast::<u8>();
+            debug_assert!(!ptr.is_null());
+            Ok(Self {
+                object,
+                writer: BytesWriter {
+                    ptr,
+                    len,
+                    written: 0,
+                },
+            })
+        }
+    }
+
+    /// Fill the buffer with `fill` while the GIL is released, and return the `bytes` object only
+    /// if every byte was written.
+    fn build_without_gil(
+        mut self,
+        fill: impl Send + FnOnce(&mut BytesWriter) -> azure_core::Result<()>,
+    ) -> azure_core::Result<Bound<'py, PyBytes>> {
+        let writer = &mut self.writer;
+        self.object.py().detach(|| fill(writer))?;
+        if self.writer.written != self.writer.len {
+            return Err(azure_core::Error::with_message(
+                ErrorKind::Other,
+                "Download buffer was not completely filled.",
+            ));
+        }
+        Ok(self.object)
+    }
+}
+
+/// Copy every remaining pumped chunk into `writer`, which must be exactly the remaining size.
+fn drain_into(
+    receiver: &mut mpsc::Receiver<Chunk>,
+    writer: &mut BytesWriter,
+    offset: u64,
+) -> azure_core::Result<()> {
+    while writer.remaining() > 0 {
+        let Some(partition) = receiver.blocking_recv() else {
+            break;
+        };
+        let partition = partition?;
+        check_partition_offset(offset + writer.written as u64, partition.offset)?;
+        if !writer.push(&partition.data) {
+            let received = writer.written as u64 + partition.data.len() as u64;
+            return validate_download_length(offset, writer.len as u64, received);
+        }
+    }
+    validate_download_length(offset, writer.len as u64, writer.written as u64)
+}
+
 /// A lazy blob download exposed to Python as an iterator of `bytes` chunks.
 ///
 /// Construction sends a single ranged request for the first partition and waits only for its
@@ -248,7 +386,8 @@ enum StreamState {
 /// Iterating starts a background pump that keeps up to `parallel` single-partition range requests
 /// in flight and prefetches completed partitions into a bounded channel (about one window of
 /// `parallel * partition_size` bytes), so the network keeps working while Python consumes data.
-/// Each yielded chunk is one partition.
+/// Each yielded chunk is one partition. `readall()` instead copies the pumped partitions straight
+/// into a single preallocated `bytes` object with the GIL released.
 #[pyclass]
 pub(crate) struct NativeDownloadStream {
     /// Total number of bytes this stream will deliver.
@@ -350,6 +489,23 @@ impl NativeDownloadStream {
         *state = StreamState::Failed(error.clone_ref(py));
         error
     }
+
+    /// Start the background pump if it has not started yet.
+    fn start_pump(&mut self) -> PyResult<()> {
+        let state = self.state.get_mut().unwrap_or_else(PoisonError::into_inner);
+        if matches!(state, StreamState::NotStarted(_)) {
+            let runtime = get_runtime()?;
+            let StreamState::NotStarted(pump) = std::mem::replace(state, StreamState::Done) else {
+                unreachable!();
+            };
+            let (sender, receiver) = mpsc::channel(self.prefetch.max(1));
+            *state = StreamState::Streaming {
+                receiver,
+                _pump: AbortOnDrop(runtime.spawn(pump.run(sender))),
+            };
+        }
+        Ok(())
+    }
 }
 
 #[pymethods]
@@ -366,44 +522,67 @@ impl NativeDownloadStream {
 
     /// Return the next partition as `bytes`, or `None` (StopIteration) when the blob is exhausted.
     fn __next__(&mut self, py: Python<'_>) -> PyResult<Option<Py<PyBytes>>> {
+        self.start_pump()?;
         let state = self.state.get_mut().unwrap_or_else(PoisonError::into_inner);
-        if matches!(state, StreamState::NotStarted(_)) {
-            let runtime = get_runtime()?;
-            let StreamState::NotStarted(pump) = std::mem::replace(state, StreamState::Done) else {
-                unreachable!();
-            };
-            let (sender, receiver) = mpsc::channel(self.prefetch.max(1));
-            let task = AbortOnDrop(runtime.spawn(pump.run(sender)));
-            *state = StreamState::Streaming {
-                receiver,
-                _pump: task,
-            };
-        }
         let message = match state {
             StreamState::Failed(error) => return Err(error.clone_ref(py)),
             StreamState::Done | StreamState::NotStarted(_) => return Ok(None),
             StreamState::Streaming { receiver, .. } => py.detach(|| receiver.blocking_recv()),
         };
         let remaining = self.end_offset - self.next_offset;
-        let chunk = match message {
-            Some(Ok(chunk)) if chunk.len() as u64 <= remaining => chunk,
-            Some(Ok(chunk)) => {
-                let error =
-                    validate_download_length(self.next_offset, remaining, chunk.len() as u64)
-                        .unwrap_err();
-                return Err(Self::fail(state, py, AzureError(error).into()));
-            }
-            Some(Err(error)) => return Err(Self::fail(state, py, AzureError(error).into())),
-            None => {
-                let error = validate_download_length(self.next_offset, remaining, 0).unwrap_err();
-                return Err(Self::fail(state, py, AzureError(error).into()));
-            }
+        let checked = match message {
+            Some(Ok(partition)) => check_partition_offset(self.next_offset, partition.offset)
+                .and_then(|()| {
+                    let len = partition.data.len() as u64;
+                    if len > remaining {
+                        validate_download_length(self.next_offset, remaining, len)?;
+                    }
+                    Ok(partition.data)
+                }),
+            Some(Err(error)) => Err(error),
+            None => validate_download_length(self.next_offset, remaining, 0).map(|()| Bytes::new()),
+        };
+        let chunk = match checked {
+            Ok(chunk) => chunk,
+            Err(error) => return Err(Self::fail(state, py, AzureError(error).into())),
         };
         self.next_offset += chunk.len() as u64;
         if self.next_offset == self.end_offset {
             *state = StreamState::Done;
         }
         Ok(Some(PyBytes::new(py, &chunk).unbind()))
+    }
+
+    /// Return all remaining content as a single `bytes` object.
+    ///
+    /// The result is allocated once and the pump's partitions are copied straight into it with the
+    /// GIL released, so the copy overlaps with the remaining downloads and no intermediate `bytes`
+    /// objects are created. Works on a fresh stream and after partial iteration.
+    fn readall(&mut self, py: Python<'_>) -> PyResult<Py<PyBytes>> {
+        let offset = self.next_offset;
+        let remaining = to_usize(self.end_offset - offset).map_err(AzureError::from)?;
+        if let StreamState::Failed(error) =
+            self.state.get_mut().unwrap_or_else(PoisonError::into_inner)
+        {
+            return Err(error.clone_ref(py));
+        }
+        if remaining == 0 {
+            return Ok(PyBytes::new(py, &[]).unbind());
+        }
+        self.start_pump()?;
+        let builder = BytesBuilder::new(py, remaining)?;
+        let state = self.state.get_mut().unwrap_or_else(PoisonError::into_inner);
+        let StreamState::Streaming { receiver, .. } = state else {
+            unreachable!("a stream with remaining content is streaming after start_pump");
+        };
+        match builder.build_without_gil(|writer| drain_into(receiver, writer, offset)) {
+            Ok(bytes) => {
+                self.next_offset = self.end_offset;
+                *state = StreamState::Done;
+                Ok(bytes.unbind())
+            }
+            Err(error) => Err(Self::fail(state, py, AzureError(error).into())),
+        }
     }
 }
 
@@ -633,6 +812,71 @@ mod tests {
                     expected
                 );
             }
+        });
+    }
+
+    #[test]
+    fn bytes_builder_returns_object_only_when_completely_written() {
+        Python::initialize();
+        Python::attach(|py| {
+            let filled = BytesBuilder::new(py, 5)
+                .unwrap()
+                .build_without_gil(|writer| {
+                    assert!(writer.push(b"ab"));
+                    assert!(!writer.push(b"cdef"), "Overflowing writes are rejected");
+                    assert_eq!(writer.remaining(), 3);
+                    assert!(writer.push(b"cde"));
+                    assert!(!writer.push(b"f"));
+                    Ok(())
+                })
+                .unwrap();
+            assert_eq!(filled.as_bytes(), b"abcde");
+
+            let partial = BytesBuilder::new(py, 4)
+                .unwrap()
+                .build_without_gil(|writer| {
+                    assert!(writer.push(b"ab"));
+                    Ok(())
+                });
+            assert!(partial.is_err(), "Partly written buffers are never exposed");
+
+            let failed = BytesBuilder::new(py, 4)
+                .unwrap()
+                .build_without_gil(|writer| {
+                    assert!(writer.push(b"ab"));
+                    Err(azure_core::Error::with_message(ErrorKind::Io, "failed"))
+                });
+            assert!(matches!(failed.unwrap_err().kind(), ErrorKind::Io));
+
+            let empty = BytesBuilder::new(py, 0)
+                .unwrap()
+                .build_without_gil(|writer| {
+                    assert!(!writer.push(b"x"));
+                    Ok(())
+                })
+                .unwrap();
+            assert!(empty.as_bytes().is_empty());
+        });
+    }
+
+    #[test]
+    fn readall_drain_rejects_out_of_order_partitions() {
+        Python::initialize();
+        Python::attach(|py| {
+            let (sender, mut receiver) = mpsc::channel(4);
+            for (offset, data) in [(10, b"ab"), (14, b"ef"), (12, b"cd")] {
+                let data = Bytes::from_static(data);
+                sender
+                    .blocking_send(Ok(Partition { offset, data }))
+                    .unwrap();
+            }
+            drop(sender);
+            let error = BytesBuilder::new(py, 6)
+                .unwrap()
+                .build_without_gil(|writer| drain_into(&mut receiver, writer, 10))
+                .unwrap_err();
+            assert!(matches!(error.kind(), ErrorKind::Other));
+            assert!(error.to_string().contains("expected data at offset 12"));
         });
     }
 

@@ -27,6 +27,7 @@ from typing import (
     Optional,
     Tuple,
     Type,
+    TypeVar,
     TYPE_CHECKING,
 )
 
@@ -53,6 +54,8 @@ if TYPE_CHECKING:
     from ._shared.models import StorageConfiguration
 
 _STORAGE_SCOPE = "https://storage.azure.com/.default"
+
+_T = TypeVar("_T")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -136,10 +139,22 @@ class _NativeErrorIterator:
         return self
 
     def __next__(self) -> bytes:
+        return self.call(next, self._stream)
+
+    def call(self, function: Callable[..., _T], *args: Any) -> _T:
+        """Invoke a native stream operation, mapping native errors and making failures sticky.
+
+        :param function: The native operation to invoke.
+        :type function: callable
+        :param args: Positional arguments for the operation.
+        :type args: any
+        :returns: The operation's result.
+        :rtype: any
+        """
         if self._failure is not None:
             raise self._failure
         try:
-            return next(self._stream)
+            return function(*args)
         except self._native_error as error:
             try:
                 _raise_native_error(error)
@@ -420,7 +435,8 @@ class NativeStorageStreamDownloader:
     ``max_chunk_get_size`` bytes each) and mimics the key parts of StorageStreamDownloader so callers
     (e.g. readall(), readinto(), chunks()) work transparently. The native stream prefetches about
     one window (``max_concurrency`` partitions) ahead of consumption, so memory for the streaming
-    paths (readinto/chunks) stays bounded; readall() necessarily materializes the full blob.
+    paths (readinto/chunks) stays bounded. readall() necessarily materializes the full blob, and
+    uses the native stream's own ``readall()`` when available to fill a single preallocated result.
     """
 
     def __init__(self, stream: Any, name: str, container: str) -> None:
@@ -446,10 +462,13 @@ class NativeStorageStreamDownloader:
         :returns: The complete blob content.
         :rtype: bytes
         """
-        chunks = []
-        if self._buffer:
-            chunks.append(bytes(self._buffer))
-            self._buffer = bytearray()
+        buffered = bytes(self._buffer) if self._buffer else b""
+        self._buffer = bytearray()
+        native_readall = getattr(self._stream, "readall", None)
+        if native_readall is not None:
+            remainder = self._iter.call(native_readall)
+            return buffered + remainder if buffered else remainder
+        chunks = [buffered] if buffered else []
         chunks.extend(self._iter)
         return b"".join(chunks)
 
@@ -518,7 +537,8 @@ def try_native_download_eager(
     If successful, returns a NativeStorageStreamDownloader wrapping the native download stream.
     The stream keeps up to ``max_concurrency`` ranged requests in flight, ETag-locked to the
     first response, and prefetches a bounded number of partitions ahead of consumption, so memory
-    stays bounded for the streaming paths.
+    stays bounded for the streaming paths. readall() has the native stream copy the downloaded
+    partitions straight into a single preallocated result.
 
     Returns ``None`` only when the extension is unavailable or explicitly disabled. Once the
     extension is available, unsupported inputs and native execution failures are raised rather
