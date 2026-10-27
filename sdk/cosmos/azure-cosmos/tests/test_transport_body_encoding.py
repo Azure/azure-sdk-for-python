@@ -119,7 +119,6 @@ class _DummyHeaderClient:
 
     UseMultipleWriteLocations = False
     master_key = None
-    resource_tokens = None
     client_id = None
 
     class connection_policy:

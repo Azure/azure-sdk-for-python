@@ -67,8 +67,10 @@ def demonstrate_read_items(container: ContainerProxy) -> None:
     hook_captured_data = {}
 
     def response_hook(hook_headers, results):
-        """A simple hook to capture the aggregated headers and the final result list."""
+        """Observe the parsed results and exposed headers, not HTTP pipeline objects."""
         print("Response hook called!")
+        print(f"Order IDs: {[item['id'] for item in results]}")
+        print(f"Request charge: {hook_headers['x-ms-request-charge']}")
         hook_captured_data['hook_headers'] = hook_headers
         hook_captured_data['results'] = results
         hook_captured_data['call_count'] = hook_captured_data.get('call_count', 0) + 1

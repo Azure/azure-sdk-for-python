@@ -30,6 +30,7 @@ from ._retry_options import RetryOptions
 
 if TYPE_CHECKING:
     from ._retry_utility import ConnectionRetryPolicy
+    from .aio._retry_utility_async import _ConnectionRetryPolicy
 
 
 class UserConsistencyPolicy(TypedDict, total=False):
@@ -215,71 +216,6 @@ class ConnectionMode:
     """
 
 
-class PermissionMode:
-    """Applicability of a permission."""
-    NoneMode: Literal["none"] = "none"  # None is python's key word.
-    """None"""
-    Read: Literal["read"] = "read"
-    """Permission applicable for read operations only."""
-    All: Literal["all"] = "all"
-    """Permission applicable for all operations."""
-
-
-class TriggerType:
-    """Specifies the type of trigger."""
-    Pre: Literal["pre"] = "pre"
-    """Trigger should be executed before the associated operation(s)."""
-    Post: Literal["post"] = "post"
-    """Trigger should be executed after the associated operation(s)."""
-
-
-class TriggerOperation:
-    """Specifies the operations on which a trigger should be executed."""
-    All: Literal["all"] = "all"
-    """All operations."""
-    Create: Literal["create"] = "create"
-    """Create operations only."""
-    Update: Literal["update"] = "update"
-    """Update operations only."""
-    Delete: Literal["delete"] = "delete"
-    """Delete operations only."""
-    Replace: Literal["replace"] = "replace"
-    """Replace operations only."""
-
-
-class SSLConfiguration:
-    """Configuration for SSL connections.
-
-    See https://requests.readthedocs.io/en/master/user/advanced/#ssl-cert-verification
-    for more information.
-
-    :ivar str SSLKeyFIle:
-        The path of the key file for ssl connection.
-    :ivar str SSLCertFile:
-        The path of the cert file for ssl connection.
-    :ivar SSLCaCerts:
-        The path of the CA_BUNDLE file with certificates of trusted CAs.
-    :vartype SSLCaCerts: str or bool
-    """
-    def __init__(self) -> None:
-        self.SSLKeyFile: Optional[str] = None
-        self.SSLCertFile: Optional[str] = None
-        self.SSLCaCerts: Optional[Union[str, bool]] = None
-
-
-class ProxyConfiguration:
-    """Configuration for a proxy.
-
-    :ivar str Host:
-        The host address of the proxy.
-    :ivar int Port:
-        The port number of the proxy.
-    """
-    def __init__(self) -> None:
-        self.Host: Optional[str] = None
-        self.Port: Optional[int] = None
-
-
 class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     """Represents the Connection policy associated with a CosmosClientConnection.
 
@@ -290,18 +226,14 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         Gets or sets the connection mode used in the client. (Currently only
         Gateway is supported.)
     :vartype ConnectionMode: ~azure.cosmos.documents.ConnectionMode
-    :ivar SSLConfiguration:
-        Gets or sets the SSL configuration.
-    :vartype SSLConfiguration: ~azure.cosmos.documents.SSLConfiguration
-    :ivar ProxyConfiguration:
-        Gets or sets the proxy configuration.
-    :vartype ProxyConfiguration: ~azure.cosmos.documents.ProxyConfiguration
     :ivar boolean EnableEndpointDiscovery:
         Gets or sets endpoint discovery flag for geo-replicated database
         accounts. When EnableEndpointDiscovery is true, the client will
         automatically discover the current write and read locations and direct
         the requests to the correct location taking into consideration of the
         user's preference(if provided) as PreferredLocations.
+        Retained for the legacy comparison backend only. Explicit assignment
+        is rejected when this policy is supplied to a Rust-backed client.
     :ivar PreferredLocations:
         Gets or sets the preferred locations for geo-replicated database
         accounts. When EnableEndpointDiscovery is true and PreferredLocations is
@@ -321,15 +253,11 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         Gets or sets the retry options to be applied to all requests when
         retrying.
     :vartype RetryOptions: ~RetryOptions
-    :ivar boolean DisableSSLVerification:
-        Flag to disable SSL verification for the requests. SSL verification is
-        enabled by default.
-        This is intended to be used only when targeting emulator endpoint to
-        avoid failing your requests with SSL related error.
-        DO NOT set this when targeting production endpoints.
     :ivar boolean UseMultipleWriteLocations:
         Flag to enable writes on any locations (regions) for geo-replicated
         database accounts in the Azure Cosmos database service.
+        Retained for the legacy comparison backend only. Rust uses the
+        account's multi-write capability and rejects explicit assignment.
     :ivar ConnectionRetryConfiguration:
         Retry Configuration to be used for connection retries.
     :vartype ConnectionRetryConfiguration:
@@ -342,33 +270,29 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
 
     __defaultRequestTimeout: int = 5  # seconds
     __defaultDBAConnectionTimeout: int = 3  # seconds
-    __defaultReadTimeout: float = 65  # seconds
-    __defaultRecoveryReadTimeout: int = 6  # seconds
-    __defaultDBAReadTimeout: int = 3 # seconds
     __defaultMaxBackoff: int = 1 # seconds
     __defaultInferenceRequestTimeout: int = 5  # seconds
+
+    # Class defaults distinguish an untouched policy from an explicit assignment,
+    # including one that repeats the legacy default.
+    EnableEndpointDiscovery: bool = True
+    UseMultipleWriteLocations: bool = False
 
     def __init__(self) -> None:
         # RequestTimeout is the connection timeout for all operations except database account
         self.RequestTimeout: int = self.__defaultRequestTimeout
         self.DBAConnectionTimeout: int = self.__defaultDBAConnectionTimeout
-        self.ReadTimeout: float = self.__defaultReadTimeout
         # The request timeout for a request trying to recover a unavailable partition
         # This is only applicable if circuit breaker is enabled
-        self.RecoveryReadTimeout: int = self.__defaultRecoveryReadTimeout
-        self.DBAReadTimeout: int = self.__defaultDBAReadTimeout
         self.InferenceRequestTimeout: int = self.__defaultInferenceRequestTimeout
         self.MaxBackoff: int = self.__defaultMaxBackoff
         self.ConnectionMode: int = ConnectionMode.Gateway
-        self.SSLConfiguration: Optional[SSLConfiguration] = None
-        self.ProxyConfiguration: Optional[ProxyConfiguration] = None
-        self.EnableEndpointDiscovery: bool = True
         self.PreferredLocations: list[str] = []
         self.ExcludedLocations: Optional[list[str]] = None
         self.RetryOptions: RetryOptions = RetryOptions()
-        self.DisableSSLVerification: bool = False
-        self.UseMultipleWriteLocations: bool = False
-        self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
+        self.ConnectionRetryConfiguration: Optional[
+            Union["ConnectionRetryPolicy", "_ConnectionRetryPolicy"]
+        ] = None
         self.ResponsePayloadOnWriteDisabled: bool = False
         self.RetryNonIdempotentWrites: int = 0
 

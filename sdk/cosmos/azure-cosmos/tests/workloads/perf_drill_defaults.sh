@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Source shared engineering defaults after exporting credentials and target overrides.
+# These are test settings, not customer capacity or latency recommendations.
+source "$(dirname "${BASH_SOURCE[0]}")/perf_common.sh" || return 2
+perf_resolve_client_lifecycle || return 2
+export COSMOS_URI="${COSMOS_URI:-https://sdkdev-dikshi.documents.azure.com:443/}"
+export COSMOS_DATABASE="${COSMOS_DATABASE:-scale_db}"
+export COSMOS_CONTAINER="${COSMOS_CONTAINER:-scale_cont}"
+export COSMOS_PARTITION_KEY="${COSMOS_PARTITION_KEY:-id}"
+export COSMOS_MAX_ITEM_INDEX="${COSMOS_MAX_ITEM_INDEX:-10000}"
+export COSMOS_THROUGHPUT="${COSMOS_THROUGHPUT:-100000}"
+export COSMOS_PREFERRED_LOCATIONS="${COSMOS_PREFERRED_LOCATIONS:-West US 2}"
+export WORKLOAD_NUM_CLIENTS="${WORKLOAD_NUM_CLIENTS:-1}"
+export COSMOS_CONCURRENT_REQUESTS="${COSMOS_CONCURRENT_REQUESTS:-100}"
+export WORKLOAD_USE_SYNC="${WORKLOAD_USE_SYNC:-false}"
+export COSMOS_REQUEST_TIMEOUT="${COSMOS_REQUEST_TIMEOUT:-30}"
+export WORKLOAD_ARRIVAL_RATE="${WORKLOAD_ARRIVAL_RATE:-0}"
+export WORKLOAD_MAX_INFLIGHT="${WORKLOAD_MAX_INFLIGHT:-10000}"
+export WORKLOAD_GC_FREEZE="${WORKLOAD_GC_FREEZE:-false}"
+export WORKLOAD_LOOP_LAG_MONITOR="${WORKLOAD_LOOP_LAG_MONITOR:-true}"
+export COSMOS_LOG_LEVEL="${COSMOS_LOG_LEVEL:-WARNING}"
+export COSMOS_ENABLE_DIAGNOSTICS_LOGGING="${COSMOS_ENABLE_DIAGNOSTICS_LOGGING:-false}"
+export PERF_ENABLED="${PERF_ENABLED:-true}"
+export RESULTS_COSMOS_URI="${RESULTS_COSMOS_URI:-$COSMOS_URI}"
+export RESULTS_COSMOS_DATABASE="${RESULTS_COSMOS_DATABASE:-perfdb}"
+export RESULTS_COSMOS_CONTAINER="${RESULTS_COSMOS_CONTAINER:-perfresults-v2}"
+export PERF_REPORT_INTERVAL="${PERF_REPORT_INTERVAL:-300}"
+
+if [[ -z "${COSMOS_KEY:-}" ]]; then
+  echo "ERROR: export COSMOS_KEY before sourcing perf_drill_defaults.sh." >&2
+  return 1 2>/dev/null || exit 1
+fi
+export COSMOS_KEY
+export RESULTS_COSMOS_KEY="${RESULTS_COSMOS_KEY:-$COSMOS_KEY}"

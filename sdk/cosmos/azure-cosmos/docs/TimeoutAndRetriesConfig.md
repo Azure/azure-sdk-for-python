@@ -2,25 +2,38 @@
 
 ### Timeout config
 
-The timeout options for the client can be changed from the default configurations with the options below. 
-These options can be passed in at the client constructor or on a per-request basis. These are:
-- `Client Timeout`: can be changed by passing the `timeout` option. Changes the value of the per-operation client timeout (operations like cross-partition queries can make multiple requests for instance - it would be considered as one query operation). If not present,
-the 'Connection Timeout' connectivity timeouts below will be used. `connection_timeout` must be smaller than your `timeout` to be used.
-- `Connection Timeout`: can be changed through `connection_timeout` option. Changes the value on the client's http transport timeout when
-connecting to the socket. Default value is 5s. 
-- `Read Timeout`: can be changed through `read_timeout` option. Changes the value on the client's http transport timeout when
-reading the service buffer stream, or receiving responses from the server. Default value is 65s.
+`timeout` sets an overall operation budget, including preparation and retries.
+Set a client default or a non-`None` override on supported operations; `None`
+inherits the client default. A paged operation gets a fresh budget for each
+public page fetch, not for each internal service request or the whole enumeration.
 
-These options can also be combined, as seen in the example below.
-This will set the client timeout to 10 seconds, connection timeout to 3 seconds, and read timeout to 60 seconds.
+For Rust clients, configure transport limits on `ConnectionPoolOptions` and
+pass an explicitly created `CosmosRuntime` to the client:
+- `connection_timeout`: connection establishment, 0.1–6 seconds.
+- `data_http_request_timeout`: one complete data HTTP attempt, at least 0.1 seconds.
+- `metadata_http_request_timeout`: one complete metadata HTTP attempt, 0.1–65 seconds.
+
+Without overrides, these limits are 5, 6, and 65 seconds respectively.
+All durations are finite seconds; overall budgets must be at least one second
+and less than `2**64`. The HTTP-attempt limits do not measure read inactivity.
+`read_timeout` and its connection-policy fields are removed on both execution
+paths; explicitly supplying them, even as `None`, raises `TypeError`.
+
+This example sets a ten-second overall default, a three-second connection limit,
+and separate data/metadata HTTP-attempt limits.
 ```python
-from azure.cosmos import CosmosClient
+from azure.cosmos import ConnectionPoolOptions, CosmosClient, CosmosRuntime
 
 import os
 URL = os.environ['ACCOUNT_URI']
 KEY = os.environ['ACCOUNT_KEY']
 
-client = CosmosClient(URL, credential=KEY, timeout=10, connection_timeout=3, read_timeout=60)
+runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
+    connection_timeout=3,
+    data_http_request_timeout=6,
+    metadata_http_request_timeout=60,
+))
+client = CosmosClient(URL, credential=KEY, runtime=runtime, timeout=10)
 ```
 
 
@@ -28,15 +41,31 @@ client = CosmosClient(URL, credential=KEY, timeout=10, connection_timeout=3, rea
 
 The options for the resource throttle retry policy used for 429 error codes can be changed from the default client configurations with the options below. These are:
 - `Retry Throttle Total`: Represents the total amount of retries. Can be changed by passing the `retry_throttle_total` option. Default value is 9.
-- `Retry Fixed Interval`: Represents a fixed wait period between retry attempts in seconds. Can be changed by passing the
-`retry_fixed_interval` option (`float`). The default behaviour is to use an exponential retry policy. Must be a value >= 1.
-- `Retry Throttle Backoff Max`: Represents the maximum retry wait time. Can be changed by passing the `retry_throttle_backoff_max` option. Default value is 30s.
+- `Retry Fixed Interval`: On legacy Python, `retry_fixed_interval` selects a fixed throttle retry delay in milliseconds instead of the service response's requested delay. Rust-backed clients reject this keyword with `TypeError`, including `None` and zero; omit it.
+- `Throttle Retry Wait Threshold Seconds`: Configures the ordinary throttle retry waiting threshold through `throttle_retry_wait_threshold_seconds`. The value is in seconds; the legacy default is 30 seconds.
+
+This replaces `retry_throttle_backoff_max` without changing the value's units
+or retry behavior. The old name raises `TypeError` with migration guidance,
+including when supplied as `None`. The threshold is not a fixed delay before
+each retry or an overall operation timeout.
+
+On the Rust-backed path, this allowance governs ordinary throttle retries;
+it is not a strict cap on all waiting. The driver can use remaining operation
+time for a final retry after the ordinary allowance is exhausted. Configure
+`timeout` to bound the overall operation, including retry waiting.
+
+Rust-backed clients also reject a non-`None`
+`connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds`.
+Leave that grouped setting at its default `None`. This applies to sync/async
+clients and connection-string factories; legacy Python retains fixed-delay
+support.
 
 Previously, `retry_total` and `retry_backoff_max` were used to set both the throttle and connection retry policy configurations. 
 This option is backwards compatible though, the option remains to set both throttle and connection retry configurations with the same `retry_total` and `retry_backoff_max` value.
 
-In the example below the total number of throttle retries is 5, the fixed interval is set to 3 seconds, and the maximum throttle retry backoff wait time is 15 seconds.
-This leaves the connection retry policies set to their default values. 
+Alpha Bank allows up to five throttle retries and sets the ordinary waiting
+threshold to 15 seconds. It does not request a fixed delay before each retry.
+These throttle-specific options leave the connection retry settings unchanged.
 
 ```python
 from azure.cosmos import CosmosClient
@@ -45,12 +74,24 @@ import os
 URL = os.environ['ACCOUNT_URI']
 KEY = os.environ['ACCOUNT_KEY']
 
-client = CosmosClient(URL, credential=KEY, retry_throttle_total=5, retry_fixed_interval=3.0, retry_throttle_backoff_max=15)
+client = CosmosClient(URL, credential=KEY, retry_throttle_total=5, throttle_retry_wait_threshold_seconds=15)
 ```
 
 ### Connection Retry config
 
-The retry options below can be changed from the default client configurations. These are:
+Alpha Bank wants to control retries after a connection failure or an interrupted
+response. On legacy Python, the settings below configure the connection-retry
+policy. Rust-backed clients currently reject `retry_connect` and `retry_read`
+with `TypeError` during construction, even for `None` or zero. This includes
+sync/async clients and connection-string factories.
+
+Omit these keywords on Rust; omission keeps the driver's retry behavior,
+not a zero-retry guarantee. Rejection is an interim safeguard pending the
+retry-control review, rather than a permanent exclusion. The remaining
+settings below must not be assumed to configure equivalent Rust connection
+retries merely because they are accepted.
+
+Legacy Python settings:
 - `Retry Total`: Represents the total amount of retries. Can be changed by passing the `retry_total` option. Default value is 9.
 - `Retry Connect`: Maximum number of connection error retry attempts. Can be changed by passing the `retry_connect` option. Default value is 3.
 - `Retry Read`: Maximum number of socket read retry attempts. Can be changed by passing the `retry_read` option. Default value is 3.
@@ -58,7 +99,8 @@ The retry options below can be changed from the default client configurations. T
 - `Retry Backoff Max`: Represents the maximum retry wait time. Can be changed by passing the `retry_backoff_max` option. Default value is 30s.
 
 
-In the example below, the maximum total retries is 7 attempts, the connection error retry is 5 attempts, and the socket read retry is 4 attempts.
+The following example is for legacy Python; Rust rejects it during construction.
+The maximum total retries is 7 attempts, the connection error retry is 5 attempts, and the socket read retry is 4 attempts.
 The retry backoff factor is set to 2. When the retry backoff factor is 2, it means the wait time for retries will increase exponentially (1s, 2s, 4s, 8s, 16s...).
 Lastly, the retry backoff max is 20, meaning that the maximum wait time between retries will be 20 seconds. 
 ```python
@@ -86,7 +128,7 @@ KEY = os.environ['ACCOUNT_KEY']
 
 client = CosmosClient(URL, credential=KEY,
                         retry_backoff_max=35,
-                        retry_throttle_backoff_max=25,
+                        throttle_retry_wait_threshold_seconds=25,
                         retry_throttle_total=5,
                         retry_total=10)
 ```

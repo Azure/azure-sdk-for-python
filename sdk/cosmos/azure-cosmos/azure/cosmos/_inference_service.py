@@ -21,14 +21,13 @@
 
 import json
 import os
-import urllib
 from typing import Any, cast, Optional
 from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
-from azure.core.pipeline.policies import (ContentDecodePolicy, CustomHookPolicy, DistributedTracingPolicy,
-                                          HeadersPolicy, HTTPPolicy, NetworkTraceLoggingPolicy, ProxyPolicy,
+from azure.core.pipeline.policies import (ContentDecodePolicy, DistributedTracingPolicy,
+                                          HeadersPolicy, HTTPPolicy, NetworkTraceLoggingPolicy,
                                           UserAgentPolicy)
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.utils import CaseInsensitiveDict
@@ -119,22 +118,13 @@ class _InferenceService:
             raise TypeError(
                 "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
-        proxies = {}
-        if connection_policy.ProxyConfiguration and connection_policy.ProxyConfiguration.Host:
-            host = connection_policy.ProxyConfiguration.Host
-            url = urllib.parse.urlparse(host)
-            proxy = host if url.port else host + ":" + str(connection_policy.ProxyConfiguration.Port)
-            proxies.update({url.scheme: proxy})
-
         self._user_agent: str = self._client_connection._user_agent
         policies = [
             HeadersPolicy(),
-            ProxyPolicy(proxies=proxies),
             UserAgentPolicy(base_user_agent=self._user_agent),
             ContentDecodePolicy(),
             retry_policy,
             auth_policy,
-            CustomHookPolicy(),
             NetworkTraceLoggingPolicy(),
             DistributedTracingPolicy(),
             CosmosHttpLoggingPolicy(

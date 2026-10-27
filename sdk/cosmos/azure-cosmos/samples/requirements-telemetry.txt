@@ -1,0 +1,2 @@
+# Optional Azure delivery for tracing_rust_attempts_async.py --azure-monitor.
+azure-monitor-opentelemetry-exporter==1.0.0b57

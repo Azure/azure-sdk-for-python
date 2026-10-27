@@ -26,18 +26,7 @@ import test_config
 from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
-
-
-# Server-side scripts CRUD (sproc/trigger/UDF create/list/get/replace/delete),
-# users, and permissions are not in the AAD/RBAC data-plane action set today.
-# Empirically these operations return 403 under AAD in data-plane tests.
-# Stored procedure EXECUTE is currently also skipped under AAD in this class.
-# TODO: re-enable these under AAD once the service exposes RBAC actions for these APIs.
-_skip_under_aad = pytest.mark.skipif(
-    test_config.TestConfig.data_auth_mode == 'aad',
-    reason="server-side scripts CRUD / users / permissions are not authorized via AAD/RBAC "
-           "data plane today (403).",
-)
+from _client_transport import create_client_with_transport
 
 
 class TimeoutTransport(RequestsTransport):
@@ -98,7 +87,7 @@ class TestCRUDOperations(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        # Key-auth client for control-plane operations (create/delete containers, users, permissions, sprocs)
+        # Key-auth client for container setup and cleanup.
         cls.key_client, cls.key_databaseForTest, cls.client, cls.databaseForTest = (
             test_config.TestConfig.create_test_clients(cls.configs.TEST_DATABASE_ID, multiple_write_locations=use_multiple_write_locations))
 
@@ -207,240 +196,6 @@ class TestCRUDOperations(unittest.TestCase):
 
         self.assertEqual(1, len(documentlist))
         self._delete_container_for_test(created_collection.id)
-
-    @_skip_under_aad
-    def test_partitioned_collection_execute_stored_procedure(self):
-        key_collection = self.key_databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        document_id = str(uuid.uuid4())
-
-        sproc = {
-            'id': 'storedProcedure' + str(uuid.uuid4()),
-            'body': (
-                    'function () {' +
-                    '   var client = getContext().getCollection();' +
-                    '   client.createDocument(client.getSelfLink(), { id: "' + document_id + '", pk : 2}, ' +
-                    '   {}, function(err, docCreated, options) { ' +
-                    '   if(err) throw new Error(\'Error while creating document: \' + err.message);' +
-                    '   else {' +
-                    '   getContext().getResponse().setBody(1);' +
-                    '        }' +
-                    '   });}')
-        }
-
-        created_sproc = key_collection.scripts.create_stored_procedure(sproc)
-
-        # Partition Key value same as what is specified in the stored procedure body
-        result = created_collection.scripts.execute_stored_procedure(sproc=created_sproc['id'], partition_key=2)
-        self.assertEqual(result, 1)
-
-        # Partition Key value different than what is specified in the stored procedure body will cause a bad request(400) error
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            created_collection.scripts.execute_stored_procedure,
-            created_sproc['id'],
-            3)
-
-    @_skip_under_aad
-    def test_script_logging_execute_stored_procedure(self):
-        key_collection = self.key_databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        stored_proc_id = 'storedProcedure-1-' + str(uuid.uuid4())
-
-        sproc = {
-            'id': stored_proc_id,
-            'body': (
-                    'function () {' +
-                    '   var mytext = \'x\';' +
-                    '   var myval = 1;' +
-                    '   try {' +
-                    '       console.log(\'The value of %s is %s.\', mytext, myval);' +
-                    '       getContext().getResponse().setBody(\'Success!\');' +
-                    '   }' +
-                    '   catch (err) {' +
-                    '       getContext().getResponse().setBody(\'inline err: [\' + err.number + \'] \' + err);' +
-                    '   }'
-                    '}')
-        }
-
-        created_sproc = key_collection.scripts.create_stored_procedure(sproc)
-
-        result = created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            partition_key=1
-        )
-
-        self.assertEqual(result, 'Success!')
-        self.assertFalse(
-            HttpHeaders.ScriptLogResults in created_collection.scripts.client_connection.last_response_headers)
-
-        result = created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            enable_script_logging=True,
-            partition_key=1
-        )
-
-        self.assertEqual(result, 'Success!')
-        self.assertEqual(urllib.quote('The value of x is 1.'),
-                         created_collection.scripts.client_connection.last_response_headers.get(
-                             HttpHeaders.ScriptLogResults))
-
-        result = created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            enable_script_logging=False,
-            partition_key=1
-        )
-
-        self.assertEqual(result, 'Success!')
-        self.assertFalse(
-            HttpHeaders.ScriptLogResults in created_collection.scripts.client_connection.last_response_headers)
-
-    @_skip_under_aad
-    def test_stored_procedure_functionality(self):
-        # create database
-        db = self.databaseForTest
-        # create collection
-        collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        key_collection = self.key_databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-
-        stored_proc_id = 'storedProcedure-1-' + str(uuid.uuid4())
-
-        sproc1 = {
-            'id': stored_proc_id,
-            'body': (
-                    'function () {' +
-                    '  for (var i = 0; i < 1000; i++) {' +
-                    '    var item = getContext().getResponse().getBody();' +
-                    '    if (i > 0 && item != i - 1) throw \'body mismatch\';' +
-                    '    getContext().getResponse().setBody(i);' +
-                    '  }' +
-                    '}')
-        }
-
-        retrieved_sproc = key_collection.scripts.create_stored_procedure(sproc1)
-        result = collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc['id'],
-            partition_key=1
-        )
-        self.assertEqual(result, 999)
-        stored_proc_id_2 = 'storedProcedure-2-' + str(uuid.uuid4())
-        sproc2 = {
-            'id': stored_proc_id_2,
-            'body': (
-                    'function () {' +
-                    '  for (var i = 0; i < 10; i++) {' +
-                    '    getContext().getResponse().appendValue(\'Body\', i);' +
-                    '  }' +
-                    '}')
-        }
-        retrieved_sproc2 = key_collection.scripts.create_stored_procedure(sproc2)
-        result = collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc2['id'],
-            partition_key=1
-        )
-        self.assertEqual(int(result), 123456789)
-        stored_proc_id_3 = 'storedProcedure-3-' + str(uuid.uuid4())
-        sproc3 = {
-            'id': stored_proc_id_3,
-            'body': (
-                    'function (input) {' +
-                    '  getContext().getResponse().setBody(' +
-                    '      \'a\' + input.temp);' +
-                    '}')
-        }
-        retrieved_sproc3 = key_collection.scripts.create_stored_procedure(sproc3)
-        result = collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc3['id'],
-            params={'temp': 'so'},
-            partition_key=1
-        )
-        self.assertEqual(result, 'aso')
-
-    @_skip_under_aad
-    def test_partitioned_collection_permissions(self):
-        created_db = self.key_databaseForTest
-
-        collection_id = 'test_partitioned_collection_permissions all collection' + str(uuid.uuid4())
-
-        all_collection = created_db.create_container(
-            id=collection_id,
-            partition_key=PartitionKey(path='/key', kind=documents.PartitionKind.Hash)
-        )
-
-        collection_id = 'test_partitioned_collection_permissions read collection' + str(uuid.uuid4())
-
-        read_collection = created_db.create_container(
-            id=collection_id,
-            partition_key=PartitionKey(path='/key', kind=documents.PartitionKind.Hash)
-        )
-
-        user = created_db.create_user(body={'id': 'user' + str(uuid.uuid4())})
-
-        permission_definition = {
-            'id': 'all permission',
-            'permissionMode': documents.PermissionMode.All,
-            'resource': all_collection.container_link,
-            'resourcePartitionKey': [1]
-        }
-
-        all_permission = user.create_permission(body=permission_definition)
-
-        permission_definition = {
-            'id': 'read permission',
-            'permissionMode': documents.PermissionMode.Read,
-            'resource': read_collection.container_link,
-            'resourcePartitionKey': [1]
-        }
-
-        read_permission = user.create_permission(body=permission_definition)
-
-        resource_tokens = {}
-        # storing the resource tokens based on Resource IDs
-        resource_tokens["dbs/" + created_db.id + "/colls/" + all_collection.id] = (all_permission.properties['_token'])
-        resource_tokens["dbs/" + created_db.id + "/colls/" + read_collection.id] = (
-            read_permission.properties['_token'])
-
-        restricted_client = cosmos_client.CosmosClient(
-            TestCRUDOperations.host, resource_tokens, "Session", connection_policy=TestCRUDOperations.connectionPolicy)
-
-        document_definition = {'id': 'document1',
-                               'key': 1
-                               }
-
-        all_collection.client_connection = restricted_client.client_connection
-        read_collection.client_connection = restricted_client.client_connection
-
-        # Create document in all_collection should succeed since the partitionKey is 1 which is what specified as resourcePartitionKey in permission object and it has all permissions
-        created_document = all_collection.create_item(body=document_definition)
-
-        # Create document in read_collection should fail since it has only read permissions for this collection
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.FORBIDDEN,
-            read_collection.create_item,
-            document_definition)
-
-        document_definition['key'] = 2
-        # Create document should fail since the partitionKey is 2 which is different that what is specified as resourcePartitionKey in permission object
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.FORBIDDEN,
-            all_collection.create_item,
-            document_definition)
-
-        document_definition['key'] = 1
-        # Delete document should succeed since the partitionKey is 1 which is what specified as resourcePartitionKey in permission object
-        created_document = all_collection.delete_item(item=created_document['id'],
-                                                      partition_key=document_definition['key'])
-
-        # Delete document in read_collection should fail since it has only read permissions for this collection
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.FORBIDDEN,
-            read_collection.delete_item,
-            document_definition['id'],
-            document_definition['id']
-        )
-
-        created_db.delete_container(all_collection)
-        created_db.delete_container(read_collection)
 
     def test_partitioned_collection_partition_key_value_types(self):
         created_db = self.databaseForTest
@@ -724,6 +479,11 @@ class TestCRUDOperations(unittest.TestCase):
             before_create_documents_count + 1,
             'create should increase the number of documents')
 
+        stored_document = created_collection.read_item(item='doc', partition_key='pk')
+        self.assertEqual(
+            {key: stored_document[key] for key in ('id', 'name', 'spam', 'pk', 'key')},
+            {'id': 'doc', 'name': 'sample document', 'spam': 'eggs', 'pk': 'pk', 'key': 'value'})
+
         # update document
         created_document['name'] = 'replaced document'
         created_document['spam'] = 'not eggs'
@@ -750,6 +510,11 @@ class TestCRUDOperations(unittest.TestCase):
             len(documents),
             before_create_documents_count + 1,
             'number of documents should remain same')
+
+        stored_document = created_collection.read_item(item='doc', partition_key='pk')
+        self.assertEqual(
+            {key: stored_document[key] for key in ('id', 'name', 'spam', 'pk', 'key')},
+            {'id': 'doc', 'name': 'replaced document', 'spam': 'not eggs', 'pk': 'pk', 'key': 'value'})
 
         created_document['id'] = 'new id'
 
@@ -838,415 +603,19 @@ class TestCRUDOperations(unittest.TestCase):
 
         self._delete_container_for_test(collection)
 
-    # CRUD test for User resource
-    @_skip_under_aad
-    def test_user_crud(self):
-        # Should do User CRUD operations successfully.
-        # create database
-        db = self.key_databaseForTest
-        # list users
-        users = list(db.list_users())
-        before_create_count = len(users)
-        # create user
-        user_id = 'new user' + str(uuid.uuid4())
-        user = db.create_user(body={'id': user_id})
-        self.assertEqual(user.id, user_id, 'user id error')
-        # list users after creation
-        users = list(db.list_users())
-        self.assertEqual(len(users), before_create_count + 1)
-        # query users
-        results = list(db.query_users(
-            query='SELECT * FROM root r WHERE r.id=@id',
-            parameters=[
-                {'name': '@id', 'value': user_id}
-            ]
-        ))
-        self.assertTrue(results)
-
-        # replace user
-        replaced_user_id = 'replaced user' + str(uuid.uuid4())
-        user_properties = user.read()
-        user_properties['id'] = replaced_user_id
-        replaced_user = db.replace_user(user_id, user_properties)
-        self.assertEqual(replaced_user.id,
-                         replaced_user_id,
-                         'user id should change')
-        self.assertEqual(user_properties['id'],
-                         replaced_user.id,
-                         'user id should stay the same')
-        # read user
-        user = db.get_user_client(replaced_user.id)
-        self.assertEqual(replaced_user.id, user.id)
-        # delete user
-        db.delete_user(user.id)
-        # read user after deletion
-        deleted_user = db.get_user_client(user.id)
-        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
-                                           deleted_user.read)
-
-    @_skip_under_aad
-    def test_user_upsert(self):
-        # create database
-        db = self.key_databaseForTest
-
-        # read users and check count
-        users = list(db.list_users())
-        before_create_count = len(users)
-
-        # create user using Upsert API
-        user_id = 'user' + str(uuid.uuid4())
-        user = db.upsert_user(body={'id': user_id})
-
-        # verify id property
-        self.assertEqual(user.id, user_id, 'user id error')
-
-        # read users after creation and verify updated count
-        users = list(db.list_users())
-        self.assertEqual(len(users), before_create_count + 1)
-
-        # Should replace the user since it already exists, there is no public property to change here
-        user_properties = user.read()
-        upserted_user = db.upsert_user(user_properties)
-
-        # verify id property
-        self.assertEqual(upserted_user.id,
-                         user.id,
-                         'user id should remain same')
-
-        # read users after upsert and verify count doesn't increases again
-        users = list(db.list_users())
-        self.assertEqual(len(users), before_create_count + 1)
-
-        user_properties = user.read()
-        user_properties['id'] = 'new user' + str(uuid.uuid4())
-        user.id = user_properties['id']
-
-        # Upsert should create new user since id is different
-        new_user = db.upsert_user(user_properties)
-
-        # verify id property
-        self.assertEqual(new_user.id, user.id, 'user id error')
-
-        # read users after upsert and verify count increases
-        users = list(db.list_users())
-        self.assertEqual(len(users), before_create_count + 2)
-
-        # delete users
-        db.delete_user(upserted_user.id)
-        db.delete_user(new_user.id)
-
-        # read users after delete and verify count remains the same
-        users = list(db.list_users())
-        self.assertEqual(len(users), before_create_count)
-
-    @_skip_under_aad
-    def test_permission_crud(self):
-        # Should do Permission CRUD operations successfully
-        # create database
-        db = self.key_databaseForTest
-        # create user
-        user = db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
-        # list permissions
-        permissions = list(user.list_permissions())
-        before_create_count = len(permissions)
-        permission = {
-            'id': 'new permission',
-            'permissionMode': documents.PermissionMode.Read,
-            'resource': 'dbs/AQAAAA==/colls/AQAAAJ0fgTc='  # A random one.
-        }
-        # create permission
-        permission = user.create_permission(permission)
-        self.assertEqual(permission.id,
-                         'new permission',
-                         'permission id error')
-        # list permissions after creation
-        permissions = list(user.list_permissions())
-        self.assertEqual(len(permissions), before_create_count + 1)
-        # query permissions
-        results = list(user.query_permissions(
-            query='SELECT * FROM root r WHERE r.id=@id',
-            parameters=[
-                {'name': '@id', 'value': permission.id}
-            ]
-        ))
-        self.assertTrue(results)
-
-        # replace permission
-        change_permission = permission.properties.copy()
-        permission.properties['id'] = 'replaced permission'
-        permission.id = permission.properties['id']
-        replaced_permission = user.replace_permission(change_permission['id'], permission.properties)
-        self.assertEqual(replaced_permission.id,
-                         'replaced permission',
-                         'permission id should change')
-        self.assertEqual(permission.id,
-                         replaced_permission.id,
-                         'permission id should stay the same')
-        # read permission
-        permission = user.get_permission(replaced_permission.id)
-        self.assertEqual(replaced_permission.id, permission.id)
-        # delete permission
-        user.delete_permission(replaced_permission.id)
-        # read permission after deletion
-        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
-                                           user.get_permission,
-                                           permission.id)
-
-    @_skip_under_aad
-    def test_permission_upsert(self):
-        # create database
-        db = self.key_databaseForTest
-
-        # create user
-        user = db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
-
-        # read permissions and check count
-        permissions = list(user.list_permissions())
-        before_create_count = len(permissions)
-
-        permission_definition = {
-            'id': 'permission',
-            'permissionMode': documents.PermissionMode.Read,
-            'resource': 'dbs/AQAAAA==/colls/AQAAAJ0fgTc='  # A random one.
-        }
-
-        # create permission using Upsert API
-        created_permission = user.upsert_permission(permission_definition)
-
-        # verify id property
-        self.assertEqual(created_permission.id,
-                         permission_definition['id'],
-                         'permission id error')
-
-        # read permissions after creation and verify updated count
-        permissions = list(user.list_permissions())
-        self.assertEqual(len(permissions), before_create_count + 1)
-
-        # update permission mode
-        permission_definition['permissionMode'] = documents.PermissionMode.All
-
-        # should repace the permission since it already exists
-        upserted_permission = user.upsert_permission(permission_definition)
-        # verify id property
-        self.assertEqual(upserted_permission.id,
-                         created_permission.id,
-                         'permission id should remain same')
-
-        # verify changed property
-        self.assertEqual(upserted_permission.permission_mode,
-                         permission_definition['permissionMode'],
-                         'permissionMode should change')
-
-        # read permissions and verify count doesn't increases again
-        permissions = list(user.list_permissions())
-        self.assertEqual(len(permissions), before_create_count + 1)
-
-        # update permission id
-        created_permission.properties['id'] = 'new permission'
-        created_permission.id = created_permission.properties['id']
-        # resource needs to be changed along with the id in order to create a new permission
-        created_permission.properties['resource'] = 'dbs/N9EdAA==/colls/N9EdAIugXgA='
-        created_permission.resource_link = created_permission.properties['resource']
-
-        # should create new permission since id has changed
-        new_permission = user.upsert_permission(created_permission.properties)
-
-        # verify id and resource property
-        self.assertEqual(new_permission.id,
-                         created_permission.id,
-                         'permission id should be same')
-
-        self.assertEqual(new_permission.resource_link,
-                         created_permission.resource_link,
-                         'permission resource should be same')
-
-        # read permissions and verify count increases
-        permissions = list(user.list_permissions())
-        self.assertEqual(len(permissions), before_create_count + 2)
-
-        # delete permissions
-        user.delete_permission(upserted_permission.id)
-        user.delete_permission(new_permission.id)
-
-        # read permissions and verify count remains the same
-        permissions = list(user.list_permissions())
-        self.assertEqual(len(permissions), before_create_count)
-
     def test_authorization(self):
-        def __SetupEntities():
-            """
-            Sets up entities for this test.
-
-            :Parameters:
-                - `client`: cosmos_client_connection.CosmosClientConnection
-
-            :Returns:
-                dict
-
-            """
-            # create database
-            db = self.key_databaseForTest
-            # create collection (control-plane via setup)
-            collection_ref = db.create_container(
-                id='test_authorization' + str(uuid.uuid4()),
-                partition_key=PartitionKey(path='/id', kind='Hash')
-            )
-            # get data-plane proxy for item operations
-            collection = self.databaseForTest.get_container_client(collection_ref.id)
-            # create document1
-            document = collection.create_item(
-                body={'id': 'doc1',
-                      'spam': 'eggs',
-                      'key': 'value'},
-            )
-
-            # create user
-            user = db.create_user(body={'id': 'user' + str(uuid.uuid4())})
-
-            # create permission for collection
-            permission = {
-                'id': 'permission On Coll',
-                'permissionMode': documents.PermissionMode.Read,
-                'resource': "dbs/" + db.id + "/colls/" + collection.id
-            }
-            permission_on_coll = user.create_permission(body=permission)
-            self.assertIsNotNone(permission_on_coll.properties['_token'],
-                                 'permission token is invalid')
-
-            # create permission for document
-            permission = {
-                'id': 'permission On Doc',
-                'permissionMode': documents.PermissionMode.All,
-                'resource': "dbs/" + db.id + "/colls/" + collection.id + "/docs/" + document["id"]
-            }
-            permission_on_doc = user.create_permission(body=permission)
-            self.assertIsNotNone(permission_on_doc.properties['_token'],
-                                 'permission token is invalid')
-
-            entities = {
-                'db': db,
-                'coll': collection,
-                'doc': document,
-                'user': user,
-                'permissionOnColl': permission_on_coll,
-                'permissionOnDoc': permission_on_doc,
-            }
-            return entities
-
-        # Client without any authorization will fail.
-        try:
+        with self.assertRaises(ValueError):
             cosmos_client.CosmosClient(TestCRUDOperations.host, {}, "Session",
                                        connection_policy=TestCRUDOperations.connectionPolicy)
-            raise Exception("Test did not fail as expected.")
-        except exceptions.CosmosHttpResponseError as error:
-            self.assertEqual(error.status_code, StatusCodes.UNAUTHORIZED)
 
-        # setup entities
-        entities = __SetupEntities()
-        resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
-                               entities['permissionOnColl'].properties['_token']}
-        col_client = cosmos_client.CosmosClient(
-            TestCRUDOperations.host, resource_tokens, "Session", connection_policy=TestCRUDOperations.connectionPolicy)
-        db = entities['db']
 
-        old_client_connection = db.client_connection
-        db.client_connection = col_client.client_connection
-        # 1. Success-- Use Col Permission to Read
-        success_coll = db.get_container_client(container=entities['coll'])
-        # 2. Failure-- Use Col Permission to delete
-        self.__AssertHTTPFailureWithStatus(StatusCodes.FORBIDDEN,
-                                           db.delete_container,
-                                           success_coll)
-        # 3. Success-- Use Col Permission to Read All Docs
-        success_documents = list(success_coll.read_all_items())
-        self.assertTrue(success_documents != None,
-                        'error reading documents')
-        self.assertEqual(len(success_documents),
-                         1,
-                         'Expected 1 Document to be successfully read')
-        # 4. Success-- Use Col Permission to Read Doc
-
-        docId = entities['doc']['id']
-        success_doc = success_coll.read_item(
-            item=docId,
-            partition_key=docId
-        )
-        self.assertTrue(success_doc != None, 'error reading document')
-        self.assertEqual(
-            success_doc['id'],
-            entities['doc']['id'],
-            'Expected to read children using parent permissions')
-
-        # 5. Failure-- Use Col Permission to Delete Doc
-        self.__AssertHTTPFailureWithStatus(StatusCodes.FORBIDDEN,
-                                           success_coll.delete_item,
-                                           docId, docId)
-
-        resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id + "/docs/" + docId:
-                               entities['permissionOnDoc'].properties['_token']}
-
-        doc_client = cosmos_client.CosmosClient(
-            TestCRUDOperations.host, resource_tokens, "Session", connection_policy=TestCRUDOperations.connectionPolicy)
-
-        # 6. Success-- Use Doc permission to read doc
-        read_doc = doc_client.get_database_client(db.id).get_container_client(success_coll.id).read_item(docId, docId)
-        self.assertEqual(read_doc["id"], docId)
-
-        # 6. Success-- Use Doc permission to delete doc
-        doc_client.get_database_client(db.id).get_container_client(success_coll.id).delete_item(docId, docId)
-        self.assertEqual(read_doc["id"], docId)
-
-        db.client_connection = old_client_connection
-        self.key_databaseForTest.delete_container(entities['coll'])
-
-    def test_client_request_timeout(self):
-        # Test is flaky on Emulator
-        if not ('localhost' in self.host or '127.0.0.1' in self.host):
-            connection_policy = documents.ConnectionPolicy()
-            # making timeout 0 ms to make sure it will throw
-            connection_policy.ReadTimeout = 0.000000000001
-
-            # client does a getDatabaseAccount on initialization, which will not time out because
-            # there is a forced timeout for those calls
-            client = cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
-                                                connection_policy=connection_policy)
-            with self.assertRaises(ServiceResponseError):
-                databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
-                container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
-
-    def test_read_timeout(self):
+    def test_database_account_connection_timeout(self):
         connection_policy = documents.ConnectionPolicy()
-        # making timeout 0 ms to make sure it will throw
-        connection_policy.DBAReadTimeout = 0.000000000001
-        # this will make a get database account call
-        # this succeeds because the timeout is changed for database account call retries
-        with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
-            print('initialization')
-
         connection_policy.DBAConnectionTimeout = 0.000000000001
         with self.assertRaises(ServiceRequestError):
             with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
                 print('initialization')
 
-    def test_client_request_timeout_when_connection_retry_configuration_specified(self):
-        connection_policy = documents.ConnectionPolicy()
-        # making timeout 0 ms to make sure it will throw
-        connection_policy.ReadTimeout = 0.000000000001
-        connection_policy.ConnectionRetryConfiguration = Retry(
-            total=3,
-            read=3,
-            connect=3,
-            backoff_factor=0.3,
-            status_forcelist=(500, 502, 504)
-        )
-        # client does a getDatabaseAccount on initialization, which will not time out because
-        # there is a forced timeout for those calls
-        with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
-            with self.assertRaises(ServiceResponseError):
-                databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
-                container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
 
     # TODO: Skipping this test to debug later
     @unittest.skip
@@ -1295,7 +664,7 @@ class TestCRUDOperations(unittest.TestCase):
         # Initialize transport with passthrough enabled for client setup
         timeout_transport = TimeoutTransport(error_response, passthrough=True)
 
-        client = cosmos_client.CosmosClient(
+        client = create_client_with_transport(cosmos_client.CosmosClient,
             self.host, self.masterKey, "Session", transport=timeout_transport)
         timeout_transport.passthrough = False
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
@@ -1305,7 +674,7 @@ class TestCRUDOperations(unittest.TestCase):
         # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response, passthrough=True)
-        client = cosmos_client.CosmosClient(
+        client = create_client_with_transport(cosmos_client.CosmosClient,
             self.host, self.masterKey, "Session", transport=timeout_transport)
 
         timeout_transport.passthrough = False
@@ -1320,7 +689,7 @@ class TestCRUDOperations(unittest.TestCase):
         # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response, passthrough=True)
-        client = cosmos_client.CosmosClient(
+        client = create_client_with_transport(cosmos_client.CosmosClient,
             self.host, self.masterKey, "Session", transport=timeout_transport)
 
         timeout_transport.passthrough = False
@@ -1374,7 +743,7 @@ class TestCRUDOperations(unittest.TestCase):
 
             # Verify timeout fails when cumulative time exceeds limit
             delayed_transport = DelayedTransport(delay_per_request=3)
-            client_with_delay = cosmos_client.CosmosClient(
+            client_with_delay = create_client_with_transport(cosmos_client.CosmosClient,
                 self.host,
                 self.masterKey,
                 transport=delayed_transport
@@ -1446,7 +815,7 @@ class TestCRUDOperations(unittest.TestCase):
 
         # Test with delayed transport
         delayed_transport = DelayedTransport(delay_seconds=3)
-        client_with_delay = cosmos_client.CosmosClient(
+        client_with_delay = create_client_with_transport(cosmos_client.CosmosClient,
             self.host, self.masterKey, transport=delayed_transport
         )
         container_with_delay = client_with_delay.get_database_client(
@@ -1518,286 +887,13 @@ class TestCRUDOperations(unittest.TestCase):
         finally:
             self._delete_container_for_test(created_container.id)
 
-    def test_request_level_timeout_overrides_client_read_timeout(self):
-        """Test that request-level read_timeout overrides client-level timeout for reads and writes"""
 
-        # Create container with normal client
-        normal_container = self._create_container_for_test(
-            container_id='request_timeout_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk")
-        )
 
-        try:
-            # Create test items
-            for i in range(5):
-                test_item = {
-                    'id': f'test_item_{i}',
-                    'pk': f'partition{i}',
-                    'data': f'test_data_{i}'
-                }
-                normal_container.create_item(test_item)
 
-            # Create client with very short read timeout at client level
-            with cosmos_client.CosmosClient(
-                url=self.host,
-                credential=self.masterKey,
-                read_timeout=0.000000000001  # Very short timeout that would normally fail
-            ) as timeout_client:
-                database = timeout_client.get_database_client(self.databaseForTest.id)
-                container = database.get_container_client(normal_container.id)
-
-                # Test 1: Point read with request-level timeout should succeed (overrides client timeout)
-                result = container.read_item(
-                    item='test_item_0',
-                    partition_key='partition0',
-                    read_timeout=30  # Higher timeout at request level
-                )
-                self.assertEqual(result['id'], 'test_item_0')
-
-                # Test 2: Query with request-level timeout should succeed (overrides client timeout)
-                results = list(container.query_items(
-                    query="SELECT * FROM c WHERE c.pk = @pk",
-                    parameters=[{"name": "@pk", "value": "partition1"}],
-                    read_timeout=30  # Higher timeout at request level
-                ))
-                self.assertEqual(len(results), 1)
-                self.assertEqual(results[0]['id'], 'test_item_1')
-
-                # Test 3: Upsert (write) with request-level timeout should succeed
-                upsert_item = {
-                    'id': 'test_item_0',
-                    'pk': 'partition0',
-                    'data': 'updated_data'
-                }
-                result = container.upsert_item(
-                    body=upsert_item,
-                    read_timeout=30  # Higher timeout at request level
-                )
-                self.assertEqual(result['data'], 'updated_data')
-
-                # Test 4: Create (write) with request-level timeout should succeed
-                new_item = {
-                    'id': 'new_test_item',
-                    'pk': 'new_partition',
-                    'data': 'new_data'
-                }
-                result = container.create_item(
-                    body=new_item,
-                    read_timeout=30  # Higher timeout at request level
-                )
-                self.assertEqual(result['id'], 'new_test_item')
-
-        finally:
-            self.key_databaseForTest.delete_container(normal_container.id)
-
-    def test_point_operation_read_timeout(self):
-        """Test that point operations respect client provided read timeout"""
-
-        # Create a container for testing
-        container = self._create_container_for_test(
-            container_id='point_op_timeout_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk")
-        )
-
-        try:
-            # Create a test item
-            test_item = {
-                'id': 'test_item_1',
-                'pk': 'partition1',
-                'data': 'test_data'
-            }
-            container.create_item(test_item)
-
-            # Point read with extremely short timeout should time out
-            with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
-                container.read_item(
-                    item='test_item_1',
-                    partition_key='partition1',
-                    read_timeout=0.000003
-                )
-        finally:
-            self.key_databaseForTest.delete_container(container.id)
-
-    def test_client_level_read_timeout_on_queries_and_point_operations(self):
-        """Test that queries and point operations respect client-level read timeout"""
-
-        # Create container with normal client
-        normal_container = self._create_container_for_test(
-            container_id='read_timeout_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk")
-        )
-
-        try:
-            # Create test items
-            for i in range(5):
-                test_item = {
-                    'id': f'test_item_{i}',
-                    'pk': f'partition{i}',
-                    'data': f'test_data_{i}'
-                }
-                normal_container.create_item(test_item)
-
-            # Create client with very short read timeout
-            with cosmos_client.CosmosClient(
-                url=self.host,
-                credential=self.masterKey,
-                read_timeout=0.000000000001  # Very short timeout to force failure
-            ) as timeout_client:
-                database = timeout_client.get_database_client(self.databaseForTest.id)
-                container = database.get_container_client(normal_container.id)
-
-                # Test 1: Point read operation should time out
-                with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
-                    container.read_item(
-                        item='test_item_0',
-                        partition_key='partition0'
-                    )
-
-                # Test 2: Query operation should time out
-                with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
-                    list(container.query_items(
-                        query="SELECT * FROM c WHERE c.pk = @pk",
-                        parameters=[{"name": "@pk", "value": "partition0"}]
-                    ))
-        finally:
-            self.key_databaseForTest.delete_container(normal_container.id)
-
-    def test_policy_level_read_timeout_on_queries_and_point_operations(self):
-        """Test that queries and point operations respect connection-policy level read timeout"""
-
-        # Create container with normal client
-        normal_container = self._create_container_for_test(
-            container_id='read_timeout_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk")
-        )
-
-        try:
-            # Create test items
-            for i in range(5):
-                test_item = {
-                    'id': f'test_item_{i}',
-                    'pk': f'partition{i}',
-                    'data': f'test_data_{i}'
-                }
-                normal_container.create_item(test_item)
-
-            # Create client with very short read timeout via connection policy
-            connection_policy = documents.ConnectionPolicy()
-            connection_policy.ReadTimeout = 0.000000000001
-            with cosmos_client.CosmosClient(
-                url=self.host,
-                credential=self.masterKey,
-                connection_policy=connection_policy
-            ) as timeout_client:
-                database = timeout_client.get_database_client(self.databaseForTest.id)
-                container = database.get_container_client(normal_container.id)
-
-                # Test 1: Point read operation should time out
-                with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
-                    container.read_item(
-                        item='test_item_0',
-                        partition_key='partition0'
-                    )
-
-                # Test 2: Query operation should time out
-                with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
-                    list(container.query_items(
-                        query="SELECT * FROM c WHERE c.pk = @pk",
-                        parameters=[{"name": "@pk", "value": "partition0"}]
-                    ))
-
-                # Test 3: Point read with request-level override should succeed
-                # Request-level read_timeout takes precedence over the short policy-level timeout
-                result = container.read_item(
-                    item='test_item_0',
-                    partition_key='partition0',
-                    read_timeout=30
-                )
-                self.assertEqual(result['id'], 'test_item_0')
-
-                # Test 4: Query with request-level override should succeed
-                results = list(container.query_items(
-                    query="SELECT * FROM c WHERE c.pk = @pk",
-                    parameters=[{"name": "@pk", "value": "partition1"}],
-                    read_timeout=30
-                ))
-                self.assertEqual(len(results), 1)
-                self.assertEqual(results[0]['id'], 'test_item_1')
-        finally:
-            self.key_databaseForTest.delete_container(normal_container.id)
 
     # TODO: for read timeouts azure-core returns a ServiceResponseError, needs to be fixed in azure-core and then this test can be enabled
-    @unittest.skip
-    def test_query_operation_single_partition_read_timeout(self):
-        """Test that timeout is properly maintained across multiple network requests for a single logical operation
-        """
-        # Create a container with multiple partitions
-        container = self._create_container_for_test(
-            container_id='single_partition_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk"),
-        )
-        single_partition_key = 0
-
-        large_string = 'a' * 1000  # 1KB string
-        for i in range(500):  # Insert 500 documents
-            container.create_item({
-                'id': f'item_{i}',
-                'pk': single_partition_key,
-                'data': large_string,
-                'order_field': i
-            })
-
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            items = list(container.query_items(
-                query="SELECT * FROM c ORDER BY c.order_field ASC",
-                max_item_count=100,
-                read_timeout=0.00005,
-                partition_key=single_partition_key
-            ))
-            self.assertEqual(len(items), 500)
 
     # TODO: for read timeouts azure-core returns a ServiceResponseError, needs to be fixed in azure-core and then this test can be enabled
-    @unittest.skip
-    def test_query_operation_cross_partition_read_timeout(self):
-        """Test that timeout is properly maintained across multiple partition requests for a single logical operation
-        """
-        # Create a container with multiple partitions
-        container = self._create_container_for_test(
-            container_id='multi_partition_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk"),
-            offer_throughput=11000
-        )
-
-        # 2. Create large documents to increase payload size
-        large_string = 'a' * 1000  # 1KB string
-        for i in range(500):  # Insert 500 documents
-            container.create_item({
-                'id': f'item_{i}',
-                'pk': i % 2,
-                'data': large_string,
-                'order_field': i
-            })
-
-        pk_ranges = list(container.client_connection._ReadPartitionKeyRanges(
-            container.container_link))
-
-        self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            # This should timeout because of multiple partition requests
-            list(container.query_items(
-                query="SELECT * FROM c ORDER BY c.order_field ASC",
-                enable_cross_partition_query=True,
-                max_item_count=100,
-                read_timeout=0.00005,
-            ))
-        # This shouldn't result in any error because the default 65seconds is respected
-
-        items = list(container.query_items(
-             query="SELECT * FROM c ORDER BY c.order_field ASC",
-             enable_cross_partition_query=True,
-             max_item_count=100,
-        ))
-        self.assertEqual(len(items), 500)
 
 
     def test_query_iterable_functionality(self):
@@ -1860,7 +956,6 @@ class TestCRUDOperations(unittest.TestCase):
 
     def test_get_resource_with_dictionary_and_object(self):
         created_db = self.databaseForTest
-        key_db = self.key_databaseForTest
 
         # read database with id
         read_db = self.client.get_database_client(created_db.id)
@@ -1875,7 +970,6 @@ class TestCRUDOperations(unittest.TestCase):
         self.assertEqual(read_db.id, created_db.id)
 
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        key_container = self.key_databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # read container with id
         read_container = created_db.get_container_client(created_container.id)
@@ -1899,85 +993,6 @@ class TestCRUDOperations(unittest.TestCase):
         # read item with properties
         read_item = created_container.read_item(item=created_item, partition_key=created_item['pk'])
         self.assertEqual(read_item['id'], created_item['id'])
-
-        # Sproc/trigger/UDF creation is control-plane  -  route through key_container
-        created_sproc = key_container.scripts.create_stored_procedure({
-            'id': 'storedProcedure' + str(uuid.uuid4()),
-            'body': 'function () { }'
-        })
-
-        # read sproc with id
-        read_sproc = key_container.scripts.get_stored_procedure(created_sproc['id'])
-        self.assertEqual(read_sproc['id'], created_sproc['id'])
-
-        # read sproc with properties
-        read_sproc = key_container.scripts.get_stored_procedure(created_sproc)
-        self.assertEqual(read_sproc['id'], created_sproc['id'])
-
-        created_trigger = key_container.scripts.create_trigger({
-            'id': 'sample trigger' + str(uuid.uuid4()),
-            'serverScript': 'function() {var x = 10;}',
-            'triggerType': documents.TriggerType.Pre,
-            'triggerOperation': documents.TriggerOperation.All
-        })
-
-        # read trigger with id
-        read_trigger = key_container.scripts.get_trigger(created_trigger['id'])
-        self.assertEqual(read_trigger['id'], created_trigger['id'])
-
-        # read trigger with properties
-        read_trigger = key_container.scripts.get_trigger(created_trigger)
-        self.assertEqual(read_trigger['id'], created_trigger['id'])
-
-        created_udf = key_container.scripts.create_user_defined_function({
-            'id': 'sample udf' + str(uuid.uuid4()),
-            'body': 'function() {var x = 10;}'
-        })
-
-        # read udf with id
-        read_udf = key_container.scripts.get_user_defined_function(created_udf['id'])
-        self.assertEqual(created_udf['id'], read_udf['id'])
-
-        # read udf with properties
-        read_udf = key_container.scripts.get_user_defined_function(created_udf)
-        self.assertEqual(created_udf['id'], read_udf['id'])
-
-        # User/permission operations are control-plane  -  route through key_db
-        created_user = key_db.create_user({
-            'id': 'user' + str(uuid.uuid4())
-        })
-
-        # read user with id
-        read_user = key_db.get_user_client(created_user.id)
-        self.assertEqual(read_user.id, created_user.id)
-
-        # read user with instance
-        read_user = key_db.get_user_client(created_user)
-        self.assertEqual(read_user.id, created_user.id)
-
-        # read user with properties
-        created_user_properties = created_user.read()
-        read_user = key_db.get_user_client(created_user_properties)
-        self.assertEqual(read_user.id, created_user.id)
-
-        created_permission = created_user.create_permission({
-            'id': 'all permission' + str(uuid.uuid4()),
-            'permissionMode': documents.PermissionMode.All,
-            'resource': created_container.container_link,
-            'resourcePartitionKey': [1]
-        })
-
-        # read permission with id
-        read_permission = created_user.get_permission(created_permission.id)
-        self.assertEqual(read_permission.id, created_permission.id)
-
-        # read permission with instance
-        read_permission = created_user.get_permission(created_permission)
-        self.assertEqual(read_permission.id, created_permission.id)
-
-        # read permission with properties
-        read_permission = created_user.get_permission(created_permission.properties)
-        self.assertEqual(read_permission.id, created_permission.id)
 
     def test_delete_all_items_by_partition_key(self):
         # create container via setup client (control-plane)
@@ -2057,40 +1072,41 @@ class TestCRUDOperations(unittest.TestCase):
         patched_item = created_container.patch_item(item="patch_item", partition_key=pkValue,
                                                     patch_operations=operations)
         # Verify results from patch operations
-        self.assertTrue(patched_item.get("color") is None)
-        self.assertTrue(patched_item.get("prop") is None)
+        self.assertNotIn("color", patched_item)
+        self.assertNotIn("prop", patched_item)
         self.assertEqual(patched_item.get("company"), "CosmosDB")
         self.assertEqual(patched_item.get("address").get("new_city"), "Atlanta")
         self.assertEqual(patched_item.get("number"), 10)
         self.assertEqual(patched_item.get("favorite_color"), "yellow")
 
+        stored_item = created_container.read_item("patch_item", partition_key=pkValue)
+        self.assertNotIn("color", stored_item)
+        self.assertNotIn("prop", stored_item)
+        self.assertEqual(stored_item.get("favorite_color"), "yellow")
+
         # Negative test - attempt to replace non-existent field
         operations = [{"op": "replace", "path": "/wrong_field", "value": "wrong_value"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+        self.assertEqual(caught.exception.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to remove non-existent field
         operations = [{"op": "remove", "path": "/wrong_field"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+        self.assertEqual(caught.exception.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to increment non-number field
         operations = [{"op": "incr", "path": "/company", "value": 3}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+        self.assertEqual(caught.exception.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to move from non-existent field
         operations = [{"op": "move", "from": "/wrong_field", "path": "/other_field"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+        self.assertEqual(caught.exception.status_code, StatusCodes.BAD_REQUEST)
 
     def test_conditional_patching(self):
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -2120,11 +1136,14 @@ class TestCRUDOperations(unittest.TestCase):
         # Run patch operations with wrong filter
         num_false = item.get("number") + 1
         filter_predicate = "from root where root.number = " + str(num_false)
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             created_container.patch_item(item="conditional_patch_item", partition_key=pkValue,
                                          patch_operations=operations, filter_predicate=filter_predicate)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, StatusCodes.PRECONDITION_FAILED)
+        self.assertEqual(caught.exception.status_code, StatusCodes.PRECONDITION_FAILED)
+        unchanged = created_container.read_item(item["id"], partition_key=pkValue)
+        self.assertEqual({key: unchanged[key] for key in item}, item)
+        self.assertNotIn("color", unchanged)
+        self.assertNotIn("favorite_color", unchanged)
 
         # Run patch operations with correct filter
         filter_predicate = "from root where root.number = " + str(item.get("number"))
@@ -2137,6 +1156,18 @@ class TestCRUDOperations(unittest.TestCase):
         self.assertEqual(patched_item.get("address").get("new_city"), "Atlanta")
         self.assertEqual(patched_item.get("number"), 10)
         self.assertEqual(patched_item.get("favorite_color"), "yellow")
+
+        expected = {
+            "id": item["id"], "pk": item["pk"], "company": "CosmosDB",
+            "address": {"city": "Redmond", "new_city": "Atlanta"},
+            "number": 10, "favorite_color": "yellow",
+        }
+        self.assertEqual({key: patched_item[key] for key in expected}, expected)
+        stored = created_container.read_item(item["id"], partition_key=pkValue)
+        self.assertEqual({key: stored[key] for key in expected}, expected)
+        for result in (patched_item, stored):
+            self.assertNotIn("color", result)
+            self.assertNotIn("prop", result)
 
     # Temporarily commenting analytical storage tests until emulator support comes.
     # def test_create_container_with_analytical_store_off(self):
@@ -2261,4 +1292,3 @@ if __name__ == '__main__':
     except SystemExit as inst:
         if inst.args[0] is True:  # raised by sys.exit(True) when tests failed
             raise
-

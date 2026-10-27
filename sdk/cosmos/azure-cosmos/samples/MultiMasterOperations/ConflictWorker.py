@@ -6,18 +6,16 @@ import json
 from azure.cosmos import exceptions, PartitionKey
 
 class ConflictWorker(object):
-    def __init__(self, database_name, basic_collection_name, manual_collection_name, lww_collection_name, udp_collection_name):
+    def __init__(self, database_name, basic_collection_name, manual_collection_name, lww_collection_name):
         self.clients = []
         self.basic_collection_link = "dbs/" + database_name + "/colls/" + basic_collection_name
         self.manual_collection_link = "dbs/" + database_name + "/colls/" + manual_collection_name
         self.lww_collection_link = "dbs/" + database_name + "/colls/" + lww_collection_name
-        self.udp_collection_link = "dbs/" + database_name + "/colls/" + udp_collection_name
 
         self.database_name = database_name
         self.basic_collection_name = basic_collection_name
         self.manual_collection_name = manual_collection_name
         self.lww_collection_name = lww_collection_name
-        self.udp_collection_name = udp_collection_name
 
     def add_client(self, client):
         self.clients.append(client)
@@ -35,67 +33,6 @@ class ConflictWorker(object):
 
         lww_collection = self.create_document_collection(database, self.lww_collection_name, lww_conflict_resolution_policy)
 
-        udp_custom_resolution_policy = {'mode': 'Custom' }
-        udp_collection = self.create_document_collection(database,self.udp_collection_name, udp_custom_resolution_policy)
-
-        lww_sproc = {'id':'resolver',
-                    'body': "function resolver(incomingRecord, existingRecord, isTombstone, conflictingRecords) {\r\n" +
-                "    var collection = getContext().getCollection();\r\n" +
-                "\r\n" +
-                "    if (!incomingRecord) {\r\n" +
-                "        if (existingRecord) {\r\n" +
-                "\r\n" +
-                "            collection.deleteDocument(existingRecord._self, {}, function(err, responseOptions) {\r\n" +
-                "                if (err) throw err;\r\n" +
-                "            });\r\n" +
-                "        }\r\n" +
-                "    } else if (isTombstone) {\r\n" +
-                "        // delete always wins.\r\n" +
-                "    } else {\r\n" +
-                "        var documentToUse = incomingRecord;\r\n" +
-                "\r\n" +
-                "        if (existingRecord) {\r\n" +
-                "            if (documentToUse.regionId < existingRecord.regionId) {\r\n" +
-                "                documentToUse = existingRecord;\r\n" +
-                "            }\r\n" +
-                "        }\r\n" +
-                "\r\n" +
-                "        var i;\r\n" +
-                "        for (i = 0; i < conflictingRecords.length; i++) {\r\n" +
-                "            if (documentToUse.regionId < conflictingRecords[i].regionId) {\r\n" +
-                "                documentToUse = conflictingRecords[i];\r\n" +
-                "            }\r\n" +
-                "        }\r\n" +
-                "\r\n" +
-                "        tryDelete(conflictingRecords, incomingRecord, existingRecord, documentToUse);\r\n" +
-                "    }\r\n" +
-                "\r\n" +
-                "    function tryDelete(documents, incoming, existing, documentToInsert) {\r\n" +
-                "        if (documents.length > 0) {\r\n" +
-                "            collection.deleteDocument(documents[0]._self, {}, function(err, responseOptions) {\r\n" +
-                "                if (err) throw err;\r\n" +
-                "\r\n" +
-                "                documents.shift();\r\n" +
-                "                tryDelete(documents, incoming, existing, documentToInsert);\r\n" +
-                "            });\r\n" +
-                "        } else if (existing) {\r\n" +
-                "                collection.replaceDocument(existing._self, documentToInsert,\r\n" +
-                "                    function(err, documentCreated) {\r\n" +
-                "                        if (err) throw err;\r\n" +
-                "                    });\r\n" +
-                "        } else {\r\n" +
-                "            collection.createDocument(collection.getSelfLink(), documentToInsert,\r\n" +
-                "                function(err, documentCreated) {\r\n" +
-                "                    if (err) throw err;\r\n" +
-                "                });\r\n" +
-                "        }\r\n" +
-                "    }\r\n" +
-                "}"
-                }
-        try:
-            udp_collection.scripts.create_stored_procedure(lww_sproc)
-        except exceptions.CosmosResourceExistsError:
-            return
 
     def create_document_collection (self, database, collection_id, conflict_resolution_policy):
         read_collection = database.create_container_if_not_exists(id=collection_id, partition_key=PartitionKey(path="/id"),
@@ -121,16 +58,6 @@ class ConflictWorker(object):
 
         print("\r\nDelete Conflict\r\n")
         self.run_delete_conflict_on_LWW_async()
-
-    def run_UDP_async(self):
-        print("\r\nInsert Conflict\r\n")
-        self.run_insert_conflict_on_UDP_async()
-
-        print("\r\nUpdate Conflict\r\n")
-        self.run_update_conflict_on_UDP_async()
-
-        print("\r\nDelete Conflict\r\n")
-        self.run_delete_conflict_on_UDP_async()
 
     def run_insert_conflict_on_manual_async(self):
         while True:
@@ -340,110 +267,8 @@ class ConflictWorker(object):
             if len(delete_documents) > 1:
                 print("2) Caused %d delete conflicts, verifying conflict resolution" % len(delete_documents))
                 time.sleep(2) #allow conflicts resolution to propagate
-                # Delete should always win. irrespective of UDP.
+                # Delete should always win.
                 self.validate_LWW_async(self.clients, delete_documents, True)
-                break
-            else:
-                print("Retrying update/delete to induce conflicts")
-
-    def run_insert_conflict_on_UDP_async(self):
-        while True:
-            print("1) Performing conflicting insert across 3 regions on %s" % self.udp_collection_link)
-
-            id = str(uuid.uuid4())
-            i = 0
-            pool = ThreadPool(processes = len(self.clients))
-            insert_document_futures = []
-            for client in self.clients:
-                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.client_connection.ReadEndpoint}
-                insert_document_future = pool.apply_async(self.try_insert_document, (client, self.udp_collection_name, conflict_document))
-                insert_document_futures.append(insert_document_future)
-                i += 1
-
-            inserted_documents = []
-            for insert_document_future in insert_document_futures:
-                inserted_document = insert_document_future.get()
-                if inserted_document:
-                    inserted_documents.append(inserted_document)
-
-            if len(inserted_documents) > 1:
-                print("2) Caused %d insert conflicts, verifying conflict resolution" % len(inserted_documents))
-
-                time.sleep(2) #allow conflicts resolution to propagate
-                self.validate_UDP_async(self.clients, inserted_documents, False)
-                break
-            else:
-                print("Retrying insert to induce conflicts")
-
-    def run_update_conflict_on_UDP_async(self):
-        while True:
-            id = str(uuid.uuid4())
-            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].client_connection.ReadEndpoint}
-            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.udp_collection_name, conflict_document_for_insertion)
-            time.sleep(1) #1 Second for write to sync.
-
-            print("1) Performing conflicting update across %d regions on %s" % (len(self.clients), self.udp_collection_link))
-
-            i = 0
-            access_condition = {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}
-            pool = ThreadPool(processes = len(self.clients))
-            update_document_futures = []
-            for client in self.clients:
-                database = client.get_database_client(self.database_name)
-                container = database.get_container_client(self.udp_collection_name)
-                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.client_connection.ReadEndpoint}
-                update_document_future = pool.apply_async(self.try_update_document, (container, conflict_document, access_condition))
-                update_document_futures.append(update_document_future)
-                i += 1
-
-            update_documents = []
-            for update_document_future in update_document_futures:
-                update_document = update_document_future.get()
-                if update_document:
-                    update_documents.append(update_document)
-
-            if len(update_documents) > 1:
-                print("2) Caused %d update conflicts, verifying conflict resolution" % len(update_documents))
-
-                time.sleep(2) #allow conflicts resolution to propagate
-                self.validate_UDP_async(self.clients, update_documents, False)
-                break
-            else:
-                print("Retrying update to induce conflicts")
-
-    def run_delete_conflict_on_UDP_async(self):
-        while True:
-            id = str(uuid.uuid4())
-            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].client_connection.ReadEndpoint}
-            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.udp_collection_name, conflict_document_for_insertion)
-            time.sleep(1) #1 Second for write to sync.
-
-            print("1) Performing conflicting update/delete across 3 regions on %s" % self.udp_collection_link)
-
-            i = 0
-            access_condition = {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}
-            pool = ThreadPool(processes = len(self.clients))
-            delete_document_futures = []
-            for client in self.clients:
-                database = client.get_database_client(self.database_name)
-                container = database.get_container_client(self.udp_collection_name)
-                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.client_connection.ReadEndpoint}
-                delete_document_future = pool.apply_async(self.try_update_or_delete_document, (container, conflict_document, access_condition))
-                delete_document_futures.append(delete_document_future)
-                i += 1
-
-            delete_documents = []
-            for delete_document_future in delete_document_futures:
-                delete_document = delete_document_future.get()
-                if delete_document:
-                    delete_documents.append(delete_document)
-
-            if len(delete_documents) > 1:
-                print("2) Caused %d delete conflicts, verifying conflict resolution" % len(delete_documents))
-
-                time.sleep(2) #allow conflicts resolution to propagate
-                # Delete should always win. irrespective of UDP.
-                self.validate_UDP_async(self.clients, delete_documents, True)
                 break
             else:
                 print("Retrying update/delete to induce conflicts")
@@ -609,71 +434,6 @@ class ConflictWorker(object):
                 self.trace_error("Winner document from region %d is not found @ %s, retrying..." %
                                 (int(winner_document["regionId"]), client.client_connection.WriteEndpoint))
 
-                time.sleep(0.5)
-
-    def validate_UDP_async(self, clients, conflict_document, has_delete_conflict):
-        for client in clients:
-            self.validate_UDP_async_internal(client, conflict_document, has_delete_conflict)
-
-    def validate_UDP_async_internal(self, client, conflict_document, has_delete_conflict):
-        database = client.get_database_client(self.database_name)
-        container = database.get_container_client(self.udp_collection_name)
-        conflicts_iterator = iter(container.list_conflicts())
-
-        conflict = next(conflicts_iterator, None)
-        conflict_count = 0
-        while conflict:
-            conflict_count += 1
-            conflict = next(conflicts_iterator, None)
-
-        if conflict_count > 0:
-            self.trace_error("Found %d conflicts in the udp collection" % conflict_count)
-            return
-
-        if has_delete_conflict:
-            while True:
-                try:
-                    container.read_item(conflict_document[0]['id'], conflict_document[0]['id'])
-
-                    self.trace_error("Delete conflict for document %s didn't win @ %s" %
-                                     (conflict_document[0]['id'], client.client_connection.ReadEndpoint))
-
-                    time.sleep(0.5)
-                except exceptions.CosmosResourceNotFoundError:
-                    print("Delete conflict won @ %s" % client.client_connection.ReadEndpoint)
-                    return
-                except exceptions.CosmosHttpResponseError:
-                    self.trace_error("Delete conflict for document %s didn't win @ %s" %
-                                    (conflict_document[0]['id'], client.client_connection.ReadEndpoint))
-                    time.sleep(0.5)
-
-        winner_document: Optional[Dict[str, Any]] = None
-
-        for document in conflict_document:
-            if winner_document is None or int(winner_document['regionId']) <= int(document['regionId']):
-                winner_document = document
-        if winner_document is None:
-            print("Winner document not found.")
-            return
-
-        print("Document from region %d should be the winner" % int(winner_document['regionId']))
-
-        while True:
-            try:
-                existing_document = container.read_item(winner_document['id'], winner_document['id'])
-
-                if int(existing_document['regionId']) == int(winner_document['regionId']):
-                    print("Winner document from region %d found at %s" %
-                          (int(existing_document["regionId"]), client.client_connection.ReadEndpoint))
-                    break
-                else:
-                    self.trace_error("Winning document version from region %d is not found @ %s, retrying..." %
-                                     (int(winner_document['regionId']), client.client_connection.WriteEndpoint))
-
-                    time.sleep(0.5)
-            except exceptions.AzureError:
-                self.trace_error("Winner document from region %d is not found @ %s, retrying..." %
-                                 (int(winner_document['regionId']), client.client_connection.WriteEndpoint))
                 time.sleep(0.5)
 
     def trace_error(self, message):

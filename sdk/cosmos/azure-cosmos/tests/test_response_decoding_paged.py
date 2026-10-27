@@ -39,7 +39,6 @@ def _build_request_args():
     request_params = MagicMock()
     request_params.healthy_tentative_location = False
     request_params.resource_type = ResourceType.DatabaseAccount
-    request_params.read_timeout_override = None
     request_params.endpoint_override = _FAKE_ENDPOINT
     request_params.should_cancel_request.return_value = False
     request_params.operation_type = "ReadFeed"
@@ -47,12 +46,7 @@ def _build_request_args():
 
     connection_policy = MagicMock()
     connection_policy.RequestTimeout = 30
-    connection_policy.ReadTimeout = 30
-    connection_policy.RecoveryReadTimeout = 5
-    connection_policy.DBAReadTimeout = 5
     connection_policy.DBAConnectionTimeout = 5
-    connection_policy.SSLConfiguration = None
-    connection_policy.DisableSSLVerification = False
 
     global_endpoint_manager = MagicMock()
     pipeline_client = MagicMock()

@@ -16,6 +16,10 @@ import test_config
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos._routing.routing_range import PKRange
 
+pytestmark = pytest.mark.skip(
+    reason="Legacy Python fault-injection suite is disabled; targeted Rust-path coverage runs separately."
+)
+
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio

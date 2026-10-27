@@ -1,0 +1,524 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+"""Execute synchronous requests through the compiled Python/Rust binding.
+
+A customer app reading database "sales" needs properties held by the service
+backend. BindingAdapter is Python wrapper code: it passes the prepared read
+to azure.cosmos._rust, the Python-callable module exposed by the binding.
+
+The binding translates the prepared inputs into a Rust driver call. The
+separately owned Rust driver performs the service operation. The binding
+converts its result into Python values, which the Python wrapper uses to
+produce the database properties returned to the customer app.
+
+The responsibilities are::
+
+    Python wrapper: prepare the read for database "sales"
+        -> binding: translate the prepared inputs into a Rust driver call
+        -> Rust driver: request database properties from the service backend
+        -> service backend: return the database properties
+
+Importing without the compiled binding remains possible for migration checks.
+Construction still requires the binding to reject retired client settings;
+a missing binding is not a supported release mode.
+"""
+from __future__ import annotations
+import contextvars
+import logging
+import threading
+from concurrent.futures import Future, wait
+from typing import TYPE_CHECKING, Any, Iterator, Optional
+
+from azure.core.exceptions import ServiceResponseError
+from .._operation_deadline import remaining_timeout
+from ..exceptions import CosmosClientTimeoutError
+from .._telemetry import get_operation
+from ..runtime import CosmosRuntime
+
+from .cosmos_backend import CosmosBackend
+from .operations import (
+    OP_TO_BINDING_FUNCTION_NAME,
+    get_page_binding_function_name,
+)
+from .errors import BindingProtocolError, PagePreflightError
+from .contracts import BackendResponse, ContainerMetadata, PreparedClientConfig, PreparedPageRequest, PreparedRequest, BackendPage
+from ._binding_conversions import (
+    build_backend_response, build_binding_request_from_page,
+    build_container_metadata, metadata_exception_from_binding,
+    build_backend_page, page_binding_call_arguments,
+)
+from ._binding_adapter_shared import (
+    BindingAdapterShared,
+    _binding_error_type,
+    driver_transport_error_type,
+    driver_unsupported_query_error_type,
+    finalize_adapter_resources,
+    page_binding_call_errors,
+    validate_page_request,
+)
+from .constants import BACKEND_NAME_RUST
+from .request_settings import binding_settings_contract_error
+
+if TYPE_CHECKING:
+    from azure.cosmos._rust import _DriverHandle, _ItemFeedCursor
+
+_LOGGER = logging.getLogger(__name__)
+
+# Load once during normal use. Tests can replace this reference with a fake binding.
+_rust_module: Optional[Any] = None
+try:
+    from azure.cosmos import _rust  # type: ignore[attr-defined]
+    _rust_module = _rust
+except ImportError:
+    _LOGGER.debug(
+        "_rust module not available; BindingAdapter operations "
+        "will raise NotImplementedError until the Rust module is built."
+    )
+
+# Save binding exception classes for conversion to public Python exceptions.
+_DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
+_DRIVER_RESPONSE_ERROR = _binding_error_type(_rust_module, "_DriverResponseError")
+_UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
+_REQUEST_CONTRACT_ERROR = binding_settings_contract_error(_rust_module) if _rust_module is not None else None
+
+
+def _release_driver_handle(driver_handle: _DriverHandle, binding: Any) -> None:
+    release = getattr(binding, "release_driver_handle", None)
+    if release is not None:
+        try:
+            release(driver_handle)
+        except Exception:  # pylint: disable=broad-except
+            # Binding exception text can contain the handle.
+            _LOGGER.debug("BindingAdapter.close failed while releasing the driver handle")
+
+
+# Look up functions per call so tests can install a stand-in binding.
+def _binding_function_for_op(op: str) -> Optional[Any]:
+    """Find the binding function that runs one operation.
+
+    ``op`` is the Python wrapper's name for the operation. It usually matches
+    the public method the customer called, including ``get_throughput`` and
+    ``replace_throughput``. ``OP_TO_BINDING_FUNCTION_NAME`` holds the mapping, and
+    ``BindingAdapter.execute`` is the only caller.
+
+    ``None`` means the binding cannot run ``op`` in this process, which
+    ``execute`` reports as ``NotImplementedError``. It covers four cases: the
+    binding is not installed; the installed binding is too old to export this
+    operation; the operation has no binding function at all; or the operation
+    is a feed such as ``query_items``, left out of the mapping on
+    purpose because feeds go through ``execute_pages``.
+
+    A match only means the binding exposes that name. It acquires no Rust
+    driver, checks no arguments, and promises nothing about service support.
+
+    :param op: The Python wrapper's operation name, from the prepared request.
+    :returns: The matching binding function, or ``None``.
+    """
+    binding_function_name = OP_TO_BINDING_FUNCTION_NAME.get(op)
+    if binding_function_name is None or _rust_module is None:
+        return None
+    return getattr(_rust_module, binding_function_name, None)
+
+
+def _binding_function_by_name(binding_function_name: Optional[str]) -> Optional[Any]:
+    """Find a binding function the caller has already named.
+
+    An operation name and a binding function name are usually the same word,
+    which is what makes them easy to confuse: operation ``"read_item"`` is run
+    by binding function ``"read_item"``. They come apart for feeds, where one
+    operation can be served by two different binding functions::
+
+        op "query_items", pager made no cursor -> binding function "query_items"
+        op "query_items", pager made a cursor  -> binding function "fetch_page_with_cursor"
+
+    Only the caller knows whether it made a cursor, so the caller resolves the
+    name with ``get_page_binding_function_name`` and passes the result here. That is
+    the entire reason this exists next to :func:`_binding_function_for_op`,
+    which takes an operation name and resolves the mapping itself.
+
+    ``get_page_binding_function_name`` returns ``None`` when no function matches
+    the operation and cursor mode; that ``None`` is passed straight through.
+
+    :param binding_function_name: A binding function name, or ``None`` if none applies.
+    :returns: The matching binding function, or ``None``.
+    """
+    if binding_function_name is None or _rust_module is None:
+        return None
+    return getattr(_rust_module, binding_function_name, None)
+
+
+class BindingAdapter(BindingAdapterShared, CosmosBackend):
+    """Retain one client's settings and execute its prepared requests.
+
+    A driver handle is an opaque binding object retaining a specific CosmosDriver.
+    This adapter acquires one on first use and reuses it::
+
+        construct -> store settings, no driver handle
+        first operation -> acquire handle H -> execute
+        later operation -> reuse H -> execute
+        close -> release this client's acquisition of H
+
+    H is an illustration, not an actual handle. Clients with matching account,
+    credential, configuration, and runtime can share a CosmosDriver. BindingAdapterShared
+    supplies common setup and cleanup code, not a shared Python settings object.
+    """
+
+    name = BACKEND_NAME_RUST
+
+    def __init__(
+        self,
+        endpoint: str,
+        master_key: Optional[str] = None,
+        client_config: Optional[PreparedClientConfig] = None,
+        token_credential: Optional[Any] = None,
+        runtime: Optional[CosmosRuntime] = None,
+    ) -> None:
+        """Remember the client's inputs without acquiring a CosmosDriver.
+
+        A customer app's endpoint and region preference follow this path::
+
+            endpoint + credential + PreparedClientConfig
+                -> save on this BindingAdapter
+                -> reject retired client-level network settings
+
+        Construction retains a custom runtime or selects the default for later
+        acquisition; it does not initialize the default runtime.
+        """
+        self._init_future: Optional[Future[_DriverHandle]] = None
+        self._init_shared(endpoint, master_key, client_config, token_credential, runtime)
+
+    def _ensure_driver_handle(self, *, deadline: Optional[float] = None) -> _DriverHandle:
+        """Reuse a handle or wait within this caller's budget for shared acquisition.
+
+        One worker acquires the handle for all concurrent callers. Each caller
+        has its own deadline; timing out stops only that wait, not the worker.
+        A late handle remains available to an open client. If close wins, the
+        worker releases the acquisition instead of publishing it.
+        """
+        if _REQUEST_CONTRACT_ERROR is not None:
+            raise RuntimeError(_REQUEST_CONTRACT_ERROR)
+        if _rust_module is None:
+            raise NotImplementedError(
+                "BindingAdapter: the compiled azure.cosmos._rust "
+                "module is not present in this environment. Build it with "
+                "`maturin develop` from the repo root."
+            )
+        remaining_timeout(deadline)
+        with self._driver_handle_lock:
+            if self._closing:
+                raise RuntimeError("BindingAdapter: the client is closed.")
+            if self._driver_handle is not None:
+                return self._driver_handle
+            future = self._init_future
+            if future is None:
+                args = self._acquire_driver_handle_args()
+                context = contextvars.copy_context()
+                future = Future()
+                self._init_future = future
+                try:
+                    threading.Thread(
+                        target=context.run,
+                        args=(self._acquire_driver_handle, future, _rust_module, self._runtime, args),
+                        name="cosmos-driver-acquisition",
+                        daemon=True,
+                    ).start()
+                except BaseException as error:
+                    self._init_future = None
+                    future.set_exception(error)
+                    raise
+        while not future.done():
+            remaining = remaining_timeout(deadline)
+            wait((future,), timeout=None if remaining is None else min(remaining, threading.TIMEOUT_MAX))
+            remaining_timeout(deadline)
+        driver_handle = future.result()
+        remaining_timeout(deadline)
+        return driver_handle
+
+    def _acquire_driver_handle(
+        self,
+        future: Future[_DriverHandle],
+        binding: Any,
+        runtime: Optional[CosmosRuntime],
+        args: tuple[Any, ...],
+    ) -> None:
+        """Complete one shared acquisition without holding the state lock during setup."""
+        try:
+            handle = self._initialize_driver(binding, runtime, acquisition_args=args)
+            with self._driver_handle_lock:
+                closed = self._closing
+                if not closed:
+                    self._driver_handle = handle
+            if closed:
+                _release_driver_handle(handle, binding)
+                raise RuntimeError("BindingAdapter: the client was closed during initialization.")
+        except BaseException as error:
+            with self._driver_handle_lock:
+                self._init_future = None
+            future.set_exception(error)
+            # Observe late failures even if every caller stopped waiting.
+            _LOGGER.debug("Rust driver initialization failed")
+        else:
+            with self._driver_handle_lock:
+                self._init_future = None
+            future.set_result(handle)
+
+    def close(self) -> None:
+        """Release this client's resources without closing another client's driver.
+
+        When two clients have acquired the same driver::
+
+            clients A and B use H -> close A -> B still holds its acquisition
+            close A again -> no second driver release
+
+        Mark this BindingAdapter closed and remove its handle before cleanup. Release
+        its SDK-owned async credential bridge, if present, but not the customer's
+        credential. Driver release is still attempted if credential cleanup raises.
+        An operation already in progress can also retain the driver.
+        """
+        with self._driver_handle_lock:
+            self._closing = True
+            driver_handle = self._driver_handle
+            self._driver_handle = None
+            self._runtime = None
+        try:
+            self._close_token_credential_bridge()
+        finally:
+            if driver_handle is not None:
+                _release_driver_handle(driver_handle, _rust_module)
+
+    def __del__(self) -> None:
+        """Hand abandoned resources to the cleanup helper without raising.
+
+        Unclosed BindingAdapter -> detach its async credential bridge and driver handle
+        -> finalize_adapter_resources. Explicit close remains the normal path.
+        """
+        try:
+            with self._driver_handle_lock:
+                self._closing = True
+                driver_handle, self._driver_handle = self._driver_handle, None
+            credential = self._take_token_credential_for_close()
+            finalize_adapter_resources(credential, driver_handle, _rust_module)
+        except Exception:  # pylint: disable=broad-except
+            # Never raise from object finalization.
+            pass
+
+    def execute(  # pylint: disable=too-many-branches
+        self, prepared: PreparedRequest, *, deadline: Optional[float] = None
+    ) -> BackendResponse:
+        """Send one prepared operation and return a BackendResponse.
+
+        An illustrative read of order-42 follows this path::
+
+            PreparedRequest(op="read_item", ...)
+                -> select _rust.read_item before acquiring a driver
+                -> call with the driver handle and prepared request
+                -> (status, sub_status, headers, body_bytes, diagnostics)
+                -> BackendResponse
+
+        The body remains bytes; Python response helpers produce the customer's
+        item. If the deadline has 1.5 seconds left, pass timeout_seconds=1.5,
+        not a fresh operation budget. Convert binding errors without retrying
+        the operation through the legacy Python implementation.
+        """
+        if not isinstance(prepared, PreparedRequest):
+            raise TypeError("execute requires a PreparedRequest")
+        prepared = self._with_client_headers(prepared)
+        deadline = self._request_deadline(deadline, prepared.settings.timeout_seconds)
+        if _rust_module is None:
+            raise NotImplementedError(
+                "BindingAdapter.execute: the compiled "
+                "azure.cosmos._rust module is not present in "
+                "this environment. Build it with `maturin develop` from "
+                "the repo root."
+            )
+
+        binding_function = _binding_function_for_op(prepared.op)
+        if binding_function is None:
+            raise NotImplementedError(
+                "BindingAdapter.execute does not yet support op={!r}.".format(prepared.op)
+            )
+        operation = get_operation(self, prepared.op)
+        contribution = operation.begin_contribution() if operation is not None else None
+        driver_handle = self._ensure_driver_handle(deadline=deadline)
+        # This records the chosen function, not proof that a request was sent.
+        # Do not include the driver handle in logs.
+        _LOGGER.debug(
+            "cosmos backend=%s op=%s binding_function=%s",
+            BACKEND_NAME_RUST,
+            prepared.op,
+            OP_TO_BINDING_FUNCTION_NAME.get(prepared.op),
+        )
+        # A transport error does not prove the service backend did no work.
+        try:
+            binding_kwargs: dict[str, Any] = {}
+            if deadline is not None:
+                binding_kwargs["timeout_seconds"] = remaining_timeout(deadline)
+            if contribution is not None:
+                binding_kwargs["include_attempts"] = True
+            raw_response = binding_function(driver_handle, prepared, **binding_kwargs)
+        except TimeoutError as exc:
+            if contribution is not None:
+                contribution.error(exc)
+            if deadline is None:
+                raise
+            raise CosmosClientTimeoutError(error=exc) from exc
+        except _DRIVER_TRANSPORT_ERROR as exc:
+            if contribution is not None:
+                contribution.error(exc)
+            raise ServiceResponseError(message=str(exc)) from exc
+        except _DRIVER_RESPONSE_ERROR as exc:
+            raise metadata_exception_from_binding(exc) from exc
+        if raw_response is None:
+            raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
+        if contribution is not None:
+            raw_response = contribution.response(raw_response)
+        return build_backend_response(*raw_response)
+
+    def _debug_fault_injection_rule_hit_count(self, rule_id: str) -> int:
+        """Return how many Rust request attempts applied the named test rule."""
+        if _rust_module is None:
+            raise NotImplementedError(
+                "Rust fault injection requires the compiled azure.cosmos._rust module."
+            )
+        return int(
+            _rust_module._debug_fault_injection_rule_hit_count(
+                self._ensure_driver_handle(),
+                rule_id,
+            )
+        )
+
+    def get_container_metadata(
+        self, container_link: str, *, deadline: Optional[float] = None
+    ) -> ContainerMetadata:
+        """Obtain container properties needed to prepare an item operation.
+
+        For a customer app's orders container, an illustrative result is::
+
+            "dbs/checkout/colls/orders"
+                -> _rust.get_container_metadata(handle, container_link)
+                -> (rid, ("/customerId",), "Hash", False)
+                -> ContainerMetadata
+
+        rid is the service-assigned container ID, not the name "orders".
+        The driver may fetch missing properties rather than use cached ones.
+        This returns properties, not order rows or a BackendResponse.
+        """
+        deadline = self._request_deadline(deadline)
+        if _rust_module is None:
+            raise NotImplementedError(
+                "BindingAdapter.get_container_metadata: the compiled "
+                "azure.cosmos._rust module is not present in this environment."
+            )
+        binding_function = getattr(_rust_module, "get_container_metadata", None)
+        if binding_function is None:
+            raise NotImplementedError("The Rust binding does not expose get_container_metadata")
+        driver_handle = self._ensure_driver_handle(deadline=deadline)
+        try:
+            raw_response = (
+                binding_function(driver_handle, container_link)
+                if deadline is None
+                else binding_function(driver_handle, container_link, timeout_seconds=remaining_timeout(deadline))
+            )
+        except TimeoutError as exc:
+            if deadline is None:
+                raise
+            raise CosmosClientTimeoutError(error=exc) from exc
+        except _DRIVER_TRANSPORT_ERROR as exc:
+            raise ServiceResponseError(message=str(exc)) from exc
+        except _DRIVER_RESPONSE_ERROR as exc:
+            raise metadata_exception_from_binding(exc) from exc
+        return build_container_metadata(raw_response)
+
+    def execute_pages(
+        self, prepared: PreparedPageRequest, *, deadline: Optional[float] = None
+    ) -> Iterator[BackendPage]:
+        """Yield one page when the caller iterates this generator.
+
+        For an orders query using feed cursor C::
+
+            PreparedPageRequest(op="query_items", cursor=C, ...)
+                -> build the binding request
+                -> _rust.fetch_page_with_cursor(handle, request, C, ...)
+                -> one BackendPage with body and continuation metadata
+
+        Without a feed cursor, select the stateless page binding function.
+        Calling this method creates a generator; iteration performs the fetch.
+        The caller owns subsequent page fetches, not a loop inside this method.
+        """
+        self.validate_page_request(prepared)
+        deadline = self._request_deadline(deadline, prepared.settings.timeout_seconds)
+        binding_function_name = get_page_binding_function_name(
+            prepared.op, uses_cursor=prepared.cursor is not None
+        )
+        binding_function = _binding_function_by_name(binding_function_name)
+        if binding_function is None:
+            raise BindingProtocolError("Validated page binding function is no longer available")
+        operation = (
+            get_operation(self, prepared.op)
+            if prepared.op in ("list_databases", "query_databases", "list_containers", "query_containers")
+            or (
+                prepared.op in ("read_all_items", "query_items", "query_items_change_feed")
+                and prepared.cursor is not None
+            )
+            else None
+        )
+        contribution = operation.begin_contribution() if operation is not None else None
+        driver_handle = self._ensure_driver_handle(deadline=deadline)
+        binding_request = self._with_client_headers(build_binding_request_from_page(prepared))
+        _LOGGER.debug(
+            "cosmos backend=%s op=%s binding_function=%s",
+            BACKEND_NAME_RUST,
+            prepared.op,
+            binding_function_name,
+        )
+        with page_binding_call_errors(deadline, _UNSUPPORTED_QUERY_ERROR, _DRIVER_TRANSPORT_ERROR):
+            args, kwargs = page_binding_call_arguments(driver_handle, binding_request, prepared, deadline)
+            if contribution is not None:
+                kwargs["include_attempts"] = True
+            try:
+                result = binding_function(*args, **kwargs)
+            except TimeoutError as exc:
+                if contribution is not None:
+                    contribution.error(exc)
+                raise
+            except _DRIVER_TRANSPORT_ERROR as exc:
+                if contribution is not None:
+                    contribution.error(exc)
+                raise
+            except _UNSUPPORTED_QUERY_ERROR as exc:
+                if contribution is not None:
+                    contribution.error(exc)
+                raise
+            if contribution is not None:
+                result = contribution.response(result)
+            response = build_backend_response(*result)
+        yield build_backend_page(prepared, response)
+
+    def validate_page_request(self, prepared: PreparedPageRequest) -> None:
+        """Check page support before acquiring a driver or fetching results.
+
+        Orders query with feed cursor -> require fetch_page_with_cursor.
+        Orders query without feed cursor -> require query_items.
+        Missing support raises here instead of after driver acquisition.
+        """
+        validate_page_request(prepared, _rust_module, _binding_function_by_name, "BindingAdapter")
+
+    def create_item_feed_cursor(self) -> _ItemFeedCursor:
+        """Create an empty feed cursor retained by one page iterator.
+
+        Create feed cursor C -> first page uses C -> later pages reuse C.
+        This calls the binding's cursor constructor synchronously, but does not
+        acquire a driver handle or fetch a page. One page iterator retains C.
+        """
+        if _rust_module is None:
+            raise PagePreflightError(
+                "The compiled azure.cosmos._rust module is not present."
+            )
+        if not hasattr(_rust_module, "_ItemFeedCursor"):
+            raise RuntimeError(
+                "The compiled binding lacks _ItemFeedCursor; rebuild it from the current source."
+            )
+        return _rust_module._ItemFeedCursor()

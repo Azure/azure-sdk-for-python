@@ -1,0 +1,138 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+"""Async parity tests for ``Container.read_items``.
+
+Async twin of ``test_read_items_parity.py``. Each test runs the same batched read
+once on core-python and once on rust through the ``azure.cosmos.aio`` client
+against one shared, pre-seeded container, then compares the returned items
+(projected to id + data). Covers the single-item (point read), same-partition
+(query), and cross-partition (fan-out) shapes plus missing-omitted and
+empty-result, so rust returns the same set of items core-python does.
+"""
+from __future__ import annotations
+
+import os
+import uuid
+
+import pytest
+
+from azure.cosmos import PartitionKey
+from azure.cosmos import CosmosClient as SyncCosmosClient
+from common._parity_helpers import run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
+
+pytestmark = [skip_unless_emulator(), skip_unless_rust_binding(), pytest.mark.asyncio]
+
+
+@pytest.fixture(scope="module")
+def seeded():
+    """Create and seed the shared container with a sync client (kept sync so it is
+    an ordinary pytest fixture), then hand tests the container id, the seeded
+    (id, pk) pairs, and a couple of ids that were never created."""
+    client = SyncCosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
+    db = client.create_database_if_not_exists("parity_db")
+    container_id = "parity_read_items_async_" + uuid.uuid4().hex[:8]
+    container = db.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+
+    seeded_pairs = []
+    layout = [("pk-a", 2), ("pk-b", 2), ("pk-c", 1)]
+    for pk_value, n in layout:
+        for i in range(n):
+            doc_id = f"{pk_value}-item-{i}"
+            container.upsert_item({"id": doc_id, "pk": pk_value, "data": f"{pk_value}:{i}"})
+            seeded_pairs.append((doc_id, pk_value))
+
+    missing = [("ghost-1", "pk-a"), ("ghost-2", "pk-z")]
+    try:
+        yield {"container_id": container_id, "seeded": seeded_pairs, "missing": missing}
+    finally:
+        try:
+            db.delete_container(container_id)
+        except Exception:  # pylint: disable=broad-except
+            pass
+
+
+async def _run(container_id, items, description, request_kwargs):
+    """Compare the customer-visible items returned by both backends."""
+    async def _do(client):
+        container = client.get_database_client("parity_db").get_container_client(container_id)
+        result = await container.read_items(items=items)
+        return sorted((doc["id"], doc.get("data")) for doc in result)
+
+    comparison = await run_on_both_backends_async(
+        _do, description=description, request_kwargs=request_kwargs
+    )
+    comparison.print_report()
+    comparison.assert_functional_parity()
+
+
+async def test_read_items_single_item_rust(seeded):
+    """One item -> read as a point read; same item on both backends."""
+    await _run(seeded["container_id"], [seeded["seeded"][-1]],
+               description="async read_items single item (point-read leaf)",
+               request_kwargs={"count": 1})
+
+
+async def test_read_items_same_partition_rust(seeded):
+    """Several items in one partition -> read as one query; same set on both backends."""
+    items = [pair for pair in seeded["seeded"] if pair[1] == "pk-a"]
+    await _run(seeded["container_id"], items,
+               description="async read_items multiple items in one partition (query leaf)",
+               request_kwargs={"count": len(items)})
+
+
+async def test_read_items_across_partitions_rust(seeded):
+    """Items spread across partitions -> fan-out; same merged set on both backends."""
+    items = list(seeded["seeded"])
+    await _run(seeded["container_id"], items,
+               description="async read_items across partitions (fan-out)",
+               request_kwargs={"count": len(items)})
+
+
+async def test_read_items_missing_omitted_rust(seeded):
+    """A mix of real and non-existent ids -> only the real ones come back, on both."""
+    items = list(seeded["seeded"]) + seeded["missing"]
+    await _run(seeded["container_id"], items,
+               description="async read_items with missing ids omitted",
+               request_kwargs={"requested": len(items), "existing": len(seeded["seeded"])})
+
+
+async def test_read_items_all_missing_rust(seeded):
+    """Only non-existent ids -> an empty result on both backends."""
+    await _run(seeded["container_id"], list(seeded["missing"]),
+               description="async read_items all-missing returns empty",
+               request_kwargs={"requested": len(seeded["missing"]), "existing": 0})
+
+
+async def _run_with_options(container_id, items, description, read_items_kwargs):
+    """Same as ``_run`` but forwards extra kwargs to ``read_items`` -- checks that
+    per-request options (availability strategy, custom headers, read timeout)
+    leave the returned items identical on both backends."""
+    async def _do(client):
+        container = client.get_database_client("parity_db").get_container_client(container_id)
+        result = await container.read_items(items=items, **read_items_kwargs)
+        return sorted((doc["id"], doc.get("data")) for doc in result)
+
+    comparison = await run_on_both_backends_async(
+        _do, description=description, request_kwargs=read_items_kwargs
+    )
+    comparison.print_report()
+    comparison.assert_functional_parity()
+
+
+async def test_read_items_availability_strategy_disabled_rust(seeded):
+    """availability_strategy=False (hedging off) is honored on the rust point
+    leg and returns the same items as legacy."""
+    await _run_with_options(seeded["container_id"], [seeded["seeded"][-1]],
+                            description="async read_items availability_strategy=False",
+                            read_items_kwargs={"availability_strategy": False})
+
+
+async def test_L6_read_items_custom_initial_headers_rust(seeded):
+    """A non-x-ms customer header on read_items is forwarded on both backends and
+    does not change the returned items."""
+    await _run_with_options(seeded["container_id"], [seeded["seeded"][-1]],
+                            description="[L6] async read_items initial_headers (custom)",
+                            read_items_kwargs={"initial_headers": {"x-trace-id": "read-items-parity"}})

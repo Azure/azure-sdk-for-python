@@ -42,7 +42,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
     container: ContainerProxy = None
     client: cosmos_client.CosmosClient = None
     # Key-auth client/database  -  control-plane (create_container, delete_container, replace_throughput,
-    # get_throughput, read_offer)
+    # get_throughput, get_throughput)
     key_database: DatabaseProxy = None
     key_container: ContainerProxy = None
     key_client: cosmos_client.CosmosClient = None
