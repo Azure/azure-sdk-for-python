@@ -36,6 +36,8 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
     PLATFORM_ERROR_TAG,
     USER_ID,
 )
+from azure.ai.agentserver.core._middleware import _task_runtime_middleware
+from azure.ai.agentserver.core.tasks import resilient_tasks_enabled
 
 from ._constants import InvocationConstants
 from ._invocation_ws import _WSHandlerMixin
@@ -88,6 +90,7 @@ def _classify_error(exc: BaseException) -> tuple[str, Optional[str]]:
             detail = detail[: MAX_ERROR_DETAIL_LENGTH - len(suffix)] + suffix
         return _ERROR_SOURCE_PLATFORM, detail
     return _ERROR_SOURCE_UPSTREAM, None
+
 
 # Maximum length and allowed characters for user-provided IDs (defense in depth).
 _MAX_ID_LENGTH = 256
@@ -173,7 +176,13 @@ def _platform_context_from_request(
 
 
 def _invalid_original_subject_response(headers: dict[str, str]) -> Response:
-    """Reject malformed platform attribution without exposing its contents."""
+    """Reject malformed platform attribution without exposing its contents.
+
+    :param headers: Response headers to preserve alongside the platform error classification.
+    :type headers: dict[str, str]
+    :return: A classified bad-request response.
+    :rtype: ~starlette.responses.Response
+    """
     logger.warning("Request rejected: invalid original-subject platform header.")
     return create_error_response(
         "invalid_request",
@@ -251,13 +260,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         # preserve backward-compat with existing callers passing dict-like
         # Mapping subclasses; consider unifying in a future release.
         if asyncapi_spec_json is not None and not isinstance(asyncapi_spec_json, dict):
-            raise TypeError(
-                f"asyncapi_spec_json must be dict, got {type(asyncapi_spec_json).__name__}"
-            )
+            raise TypeError(f"asyncapi_spec_json must be dict, got {type(asyncapi_spec_json).__name__}")
         if asyncapi_spec_yaml is not None and not isinstance(asyncapi_spec_yaml, str):
-            raise TypeError(
-                f"asyncapi_spec_yaml must be str, got {type(asyncapi_spec_yaml).__name__}"
-            )
+            raise TypeError(f"asyncapi_spec_yaml must be str, got {type(asyncapi_spec_yaml).__name__}")
         self._openapi_spec = openapi_spec
         self._asyncapi_spec_json = asyncapi_spec_json
         self._asyncapi_spec_yaml = asyncapi_spec_yaml
@@ -266,6 +271,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         # interval lives on ``AgentConfig`` and is wired into Hypercorn
         # by ``AgentServerHost._build_hypercorn_config``).
         self._init_ws_state()
+        task_middleware = _task_runtime_middleware(self, kwargs, resilient_tasks_enabled)
 
         # Build invocation routes and pass to parent via routes kwarg
         invocation_routes: list[Any] = [
@@ -292,18 +298,21 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 self._create_invocation_endpoint,
                 methods=["POST"],
                 name="create_invocation",
+                middleware=task_middleware,
             ),
             Route(
                 "/invocations/{invocation_id}",
                 self._get_invocation_endpoint,
                 methods=["GET"],
                 name="get_invocation",
+                middleware=task_middleware,
             ),
             Route(
                 "/invocations/{invocation_id}/cancel",
                 self._cancel_invocation_endpoint,
                 methods=["POST"],
                 name="cancel_invocation",
+                middleware=task_middleware,
             ),
         ]
 
@@ -324,9 +333,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     # Handler decorators
     # ------------------------------------------------------------------
 
-    def invoke_handler(
-        self, fn: Callable[[Request], Awaitable[Response]]
-    ) -> Callable[[Request], Awaitable[Response]]:
+    def invoke_handler(self, fn: Callable[[Request], Awaitable[Response]]) -> Callable[[Request], Awaitable[Response]]:
         """Register a function as the invoke handler.
 
         Usage::
@@ -394,15 +401,14 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     async def _dispatch_invoke(self, request: Request) -> Response:
         if self._invoke_fn is not None:
             return await self._invoke_fn(request)
-        raise NotImplementedError(
-            "No invoke handler registered. Use the @invocations.invoke_handler decorator."
-        )
+        raise NotImplementedError("No invoke handler registered. Use the @invocations.invoke_handler decorator.")
 
     async def _dispatch_get_invocation(self, request: Request) -> Response:
         if self._get_invocation_fn is not None:
             return await self._get_invocation_fn(request)
         return create_error_response(
-            "not_found", "get_invocation not implemented",
+            "not_found",
+            "get_invocation not implemented",
             status_code=404,
             headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
         )
@@ -411,7 +417,8 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         if self._cancel_invocation_fn is not None:
             return await self._cancel_invocation_fn(request)
         return create_error_response(
-            "not_found", "cancel_invocation not implemented",
+            "not_found",
+            "cancel_invocation not implemented",
             status_code=404,
             headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
         )
@@ -440,7 +447,8 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         spec = self.get_openapi_spec()
         if spec is None:
             return create_error_response(
-                "not_found", "No OpenAPI spec registered",
+                "not_found",
+                "No OpenAPI spec registered",
                 status_code=404,
                 headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
             )
@@ -450,7 +458,8 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         spec = self.get_asyncapi_spec_json()
         if spec is None:
             return create_error_response(
-                "not_found", "No AsyncAPI (JSON) spec registered",
+                "not_found",
+                "No AsyncAPI (JSON) spec registered",
                 status_code=404,
                 headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
             )
@@ -460,7 +469,8 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         spec = self.get_asyncapi_spec_yaml()
         if spec is None:
             return create_error_response(
-                "not_found", "No AsyncAPI (YAML) spec registered",
+                "not_found",
+                "No AsyncAPI (YAML) spec registered",
                 status_code=404,
                 headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
             )
@@ -493,16 +503,16 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             # Re-establish the invocation context for the streaming task.
             stream_inv_token = _invocation_id_var.set(invocation_id)
             stream_session_token = _session_id_var.set(session_id)
-            stream_ctx_token = (
-                set_request_context(platform_context) if platform_context is not None else None
-            )
+            stream_ctx_token = set_request_context(platform_context) if platform_context is not None else None
             try:
                 async for chunk in original_iterator:
                     yield chunk
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error(
                     "Error processing invocation %s: %s",
-                    invocation_id, exc, exc_info=True,
+                    invocation_id,
+                    exc,
+                    exc_info=True,
                 )
                 # Record the exception on the current span.
                 span = trace.get_current_span()
@@ -553,10 +563,14 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         # Add protocol-specific baggage entries for this invocation.
         ctx = _otel_context.get_current()
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.invocation_id", invocation_id, context=ctx,
+            "azure.ai.agentserver.invocation_id",
+            invocation_id,
+            context=ctx,
         )
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", session_id, context=ctx,
+            "azure.ai.agentserver.session_id",
+            session_id,
+            context=ctx,
         )
         baggage_token = _otel_context.attach(ctx)
 
@@ -616,9 +630,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         # Wrap streaming response body so exceptions during iteration are
         # recorded on the current trace span and logged as invocation errors.
         if isinstance(response, StreamingResponse):
-            response = self._wrap_streaming_response(
-                response, invocation_id, session_id, platform_ctx
-            )
+            response = self._wrap_streaming_response(response, invocation_id, session_id, platform_ctx)
 
         return response
 
@@ -681,11 +693,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             reset_request_context(ctx_token)
 
     async def _get_invocation_endpoint(self, request: Request) -> Response:
-        return await self._traced_invocation_endpoint(
-            request, "get_invocation", self._dispatch_get_invocation
-        )
+        return await self._traced_invocation_endpoint(request, "get_invocation", self._dispatch_get_invocation)
 
     async def _cancel_invocation_endpoint(self, request: Request) -> Response:
-        return await self._traced_invocation_endpoint(
-            request, "cancel_invocation", self._dispatch_cancel_invocation
-        )
+        return await self._traced_invocation_endpoint(request, "cancel_invocation", self._dispatch_cancel_invocation)

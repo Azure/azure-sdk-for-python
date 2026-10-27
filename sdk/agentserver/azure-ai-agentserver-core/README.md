@@ -102,7 +102,7 @@ behavior are unchanged.
 This is a draft contract for owner review, not an enabled budget feature.
 The proposed single header is an RFC 9651 Structured Fields dictionary:
 
-```http
+```text
 x-ms-original-subject: oid="<object-id>", tid="<tenant-id>", idtype="user"
 ```
 
