@@ -35,7 +35,9 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _MICROSOFT_OPENTELEMETRY_VERSION,
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
-    _GEN_AI_ATTRIBUTES,
+    _CUSTOM_PROPERTY_MAX_LENGTH,
+    _GEN_AI_ATTRIBUTE_INCREASED_MAX_LENGTHS,
+    _GEN_AI_ATTRIBUTE_MAX_LENGTHS,
     _MICROSOFT_CUSTOM_MEASUREMENTS,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -430,26 +432,27 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 # pylint: disable=W0622
 def _filter_custom_properties(
-    properties: Attributes, filter=None, *, increase_truncation_limit: bool = False  # pylint: disable=unused-argument
+    properties: Attributes, filter=None, *, increase_truncation_limit: bool = False
 ) -> Dict[str, str]:
-    max_length = 8 * 1024
-    max_length_for_gen_ai_attributes = 256 * 1024
     processed_properties: Dict[str, str] = {}
     if not properties:
         return processed_properties
+    max_lengths = (
+        _GEN_AI_ATTRIBUTE_INCREASED_MAX_LENGTHS if increase_truncation_limit else _GEN_AI_ATTRIBUTE_MAX_LENGTHS
+    )
     for key, val in properties.items():
         # Apply filter function
         if filter is not None:
             if not filter(key, val):
                 continue
         # Apply truncation rules
-        # Max key length is 150, value is 8 * 1024
+        # Max key length is 150. Max value length is 8 KiB, except for specific
+        # GenAI attributes (256 KiB). When increase_truncation_limit is enabled,
+        # GenAI input/output messages are allowed up to 4 MiB.
         if not key or len(key) > 150 or val is None:
             continue
-        if key in _GEN_AI_ATTRIBUTES:
-            processed_properties[key] = str(val)[:max_length_for_gen_ai_attributes]
-        else:
-            processed_properties[key] = str(val)[:max_length]
+        max_length = max_lengths.get(key, _CUSTOM_PROPERTY_MAX_LENGTH)
+        processed_properties[key] = str(val)[:max_length]
     return processed_properties
 
 
