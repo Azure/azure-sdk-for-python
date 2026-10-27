@@ -100,7 +100,7 @@ same metadata. The existing user-state identifier and `platform_headers()`
 behavior are unchanged.
 
 This is a draft contract for owner review, not an enabled budget feature.
-The proposed single header is an RFC 9651 Structured Fields dictionary:
+The inbound original-subject header is an RFC 9651 Structured Fields dictionary:
 
 ```text
 x-ms-original-subject: oid="<object-id>", tid="<tenant-id>", idtype="user"
@@ -130,13 +130,34 @@ response = await model_client.responses.create(
 )
 ```
 
-The helper supplies the correctly quoted dictionary value and the current call
-ID when available. Do not `json.dumps` the original-subject value: that is a
-different wire format. Other independently supported per-call headers can be
-merged into this mapping without changing their own encoding.
+The helper supplies the correctly quoted standalone dictionary for compatibility
+and billing, the current call ID when available, and one custom
+`x-ms-foundry-baggage` member, `foundry.original_subject`. That member is the
+**entire same dictionary**, percent-encoded once, not three scalar dimensions.
+Do not `json.dumps` the original-subject value or pre-encode it.
 
-No model client is patched automatically. Absent metadata returns an empty
-mapping; partial, empty, or HTTP-unsafe metadata raises `ValueError` rather
+Pass any existing per-call header dictionary into the helper to merge safely:
+
+```python
+extra_headers = get_request_context().model_attribution_headers(
+    {"x-ms-foundry-baggage": "application=example", "x-example-context": "value"}
+)
+```
+
+Each call returns a fresh mapping. Unrelated headers and baggage values keep
+their encoding. Case-insensitive competing subject headers, reserved subject
+baggage members (including retired scalar dimensions), and stale call IDs are
+removed before the current invocation assertions are added. Duplicate baggage
+keys are collapsed case-insensitively, with the last value retained. Neither the
+input dictionary, shared client defaults, nor the context is mutated. Always
+merge before sending, not by overlaying the result onto stale headers.
+
+No model client is patched automatically. There is no Microsoft Agent Framework
+(MAF) adapter in this package tree. An integration must forward the helper's
+result at its supported per-call model boundary, including streaming calls;
+calling the helper alone does not integrate an external framework.
+Absent metadata returns only unrelated supplied headers, or an empty mapping
+when none remain; partial, empty, or HTTP-unsafe metadata raises `ValueError` rather
 than silently forwarding an incomplete tuple. Non-user and unknown
 classifications are preserved for receiver-side policy, not treated as users.
 Header assertions are not identity proof: receiver provenance validation,

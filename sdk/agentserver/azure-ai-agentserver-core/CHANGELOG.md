@@ -1,5 +1,15 @@
 # Release History
 
+## Unreleased
+
+### Features Added
+
+- Add one percent-encoded `foundry.original_subject` member to custom Foundry
+  baggage alongside the identical standalone model-attribution dictionary.
+  The experimental `model_attribution_headers` helper accepts optional existing
+  per-call headers, preserving unrelated dimensions without mutating defaults
+  and replacing or clearing competing subject assertions.
+
 ## 2.3.0b2 (2026-10-26)
 
 ### Features Added

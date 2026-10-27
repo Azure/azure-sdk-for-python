@@ -30,6 +30,7 @@ from contextvars import ContextVar, Token
 from dataclasses import dataclass
 import re
 from typing import Mapping
+from urllib.parse import quote, unquote
 
 from ._experimental import experimental
 from ._platform_headers import FOUNDRY_CALL_ID
@@ -44,9 +45,9 @@ __all__ = [
 
 # Draft RFC 9651 dictionary profile: only these string members, without parameters.
 _ORIGINAL_SUBJECT_HEADER = "x-ms-original-subject"
-_ORIGINAL_SUBJECT_MEMBER = re.compile(
-    r'(oid|tid|idtype)="((?:[\x20-\x21\x23-\x5b\x5d-\x7e]|\\["\\])*)"'
-)
+_FOUNDRY_BAGGAGE_HEADER = "x-ms-foundry-baggage"
+_ORIGINAL_SUBJECT_BAGGAGE = "foundry.original_subject"
+_ORIGINAL_SUBJECT_MEMBER = re.compile(r'(oid|tid|idtype)="((?:[\x20-\x21\x23-\x5b\x5d-\x7e]|\\["\\])*)"')
 
 
 @experimental
@@ -97,7 +98,7 @@ class FoundryOriginalSubject:
             if member is None or member[1] in values:
                 raise ValueError("Original-subject attribution requires unique oid/tid/idtype string members.")
             values[member[1]] = re.sub(r'\\(["\\])', r"\1", member[2])
-            remaining = remaining[member.end():].lstrip(" \t")
+            remaining = remaining[member.end() :].lstrip(" \t")
             if not remaining:
                 break
             if not remaining.startswith(",") or not remaining[1:].strip(" \t"):
@@ -143,7 +144,7 @@ class FoundryAgentRequestContext:
         self.original_subject = original_subject
 
     @experimental
-    def model_attribution_headers(self) -> dict[str, str]:
+    def model_attribution_headers(self, headers: Mapping[str, str] | None = None) -> dict[str, str]:
         """Build draft headers for an explicitly supported model integration.
 
         Pass the result as per-call headers, never shared client defaults. Only
@@ -151,28 +152,61 @@ class FoundryAgentRequestContext:
         Do not send these assertions to external/BYO endpoints, storage, tools,
         or arbitrary URLs. No client is patched automatically.
 
-        Absence preserves legacy behavior. Partial, empty, or HTTP-unsafe tuples
-        raise instead of silently becoming an unattributed model call. Values,
+        Existing headers and unrelated baggage are copied, not mutated. Reserved
+        subject assertions are replaced case-insensitively, or removed when the
+        invocation has no subject. The baggage member contains the full quoted
+        dictionary, percent-encoded once, matching the standalone header.
+
+        Partial, empty, or HTTP-unsafe tuples raise instead of silently becoming
+        an unattributed model call. Values,
         including non-user/unknown classifications, are not normalized here.
         Durable restore and detached work have no attribution support in this draft.
 
+        :param headers: Optional existing per-call headers, including Foundry baggage.
+        :type headers: Mapping[str, str] or None
         :return: A fresh per-call header mapping; model credentials are unchanged.
         :rtype: dict[str, str]
         :raises ValueError: The supplied tuple is incomplete or HTTP-unsafe.
         """
+        result: dict[str, str] = {}
+        baggage: dict[str, str] = {}
+        for name, value in (headers or {}).items():
+            lowered = name.lower()
+            if lowered == _FOUNDRY_BAGGAGE_HEADER:
+                for member in value.split(","):
+                    member = member.strip()
+                    key = unquote(member.split("=", 1)[0].strip()).lower()
+                    if (
+                        not member
+                        or key == _ORIGINAL_SUBJECT_BAGGAGE
+                        or key.startswith(_ORIGINAL_SUBJECT_BAGGAGE + ".")
+                    ):
+                        continue
+                    baggage[key] = member
+            elif (
+                lowered != _ORIGINAL_SUBJECT_HEADER
+                and not lowered.startswith(_ORIGINAL_SUBJECT_HEADER + "-")
+                and lowered != FOUNDRY_CALL_ID
+            ):
+                result[name] = value
         subject = self.original_subject
         if subject is None:
-            return {}
+            if baggage:
+                result[_FOUNDRY_BAGGAGE_HEADER] = ",".join(baggage.values())
+            return result
         members = []
         for name, value in (("oid", subject.oid), ("tid", subject.tid), ("idtype", subject.idtype)):
             if not value or any(character < "!" or character > "~" for character in value):
                 raise ValueError("Original-subject attribution requires a complete, HTTP-safe tuple.")
             escaped = value.replace("\\", "\\\\").replace('"', '\\"')
             members.append(f'{name}="{escaped}"')
-        headers = {_ORIGINAL_SUBJECT_HEADER: ", ".join(members)}
+        value = ", ".join(members)
+        result[_ORIGINAL_SUBJECT_HEADER] = value
+        baggage[_ORIGINAL_SUBJECT_BAGGAGE] = f"{_ORIGINAL_SUBJECT_BAGGAGE}={quote(value, safe='')}"
+        result[_FOUNDRY_BAGGAGE_HEADER] = ",".join(baggage.values())
         if self.call_id is not None:
-            headers[FOUNDRY_CALL_ID] = self.call_id
-        return headers
+            result[FOUNDRY_CALL_ID] = self.call_id
+        return result
 
     def platform_headers(self) -> dict[str, str]:
         """Build the platform identity headers to forward on outbound 1P calls.

@@ -20,6 +20,7 @@ import json
 from importlib.metadata import requires
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote, unquote
 
 import httpx
 from openai import AsyncOpenAI
@@ -103,7 +104,11 @@ async def test_model_sdk_extra_headers_preserve_the_dictionary_and_independent_j
             response = await client.responses.create(
                 model="test",
                 input="Hello",
-                extra_headers={"x-example-context": independent_json, **get_request_context().model_attribution_headers()},
+                extra_headers=get_request_context().model_attribution_headers({
+                    "x-example-context": independent_json,
+                    "X-MS-Foundry-Baggage": "application=example,Foundry.Original_Subject=stale",
+                    "X-MS-Original-Subject": "stale",
+                }),
             )
         assert response.id == "resp_test"
     finally:
@@ -111,6 +116,10 @@ async def test_model_sdk_extra_headers_preserve_the_dictionary_and_independent_j
 
     assert len(observed) == 1
     assert observed[0].headers["x-ms-original-subject"] == subject_value
+    baggage = observed[0].headers["x-ms-foundry-baggage"].split(",")
+    assert baggage[0] == "application=example"
+    assert unquote(baggage[1].split("=", 1)[1]) == subject_value
+    assert len(baggage) == 2
     assert observed[0].headers["x-agent-foundry-call-id"] == "call-current"
     assert observed[0].headers["x-example-context"] == independent_json
     assert observed[0].headers["authorization"] == "Bearer test-model-key"
@@ -170,7 +179,12 @@ class TestStreamingRequestContext:
             headers={**subject, "x-agent-foundry-call-id": "call-current", "x-agent-user-id": "state-key"},
         )
         assert response.status_code == 200
-        assert captured["model_headers"] == {**subject, "x-agent-foundry-call-id": "call-current"}
+        assert captured["model_headers"] == {
+            **subject,
+            "x-agent-foundry-call-id": "call-current",
+            "x-ms-foundry-baggage": "foundry.original_subject="
+            + quote(subject["x-ms-original-subject"], safe=""),
+        }
         assert captured["platform_headers"] == {"x-agent-foundry-call-id": "call-current"}
         assert captured["user_id"] == "state-key"
         assert get_request_context().original_subject is None

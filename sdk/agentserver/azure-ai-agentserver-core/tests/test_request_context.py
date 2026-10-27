@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import FrozenInstanceError
+from urllib.parse import quote, unquote
 
 import httpx
 import pytest
@@ -23,6 +24,11 @@ from azure.ai.agentserver.core._platform_headers import FOUNDRY_CALL_ID, USER_ID
 SUBJECT_HEADER = "x-ms-original-subject"
 SUBJECT_VALUE = 'oid="original-oid", tid="original-tid", idtype="user"'
 SUBJECT_HEADERS = {SUBJECT_HEADER: SUBJECT_VALUE}
+BAGGAGE_HEADER = "x-ms-foundry-baggage"
+
+
+def model_headers(value: str) -> dict[str, str]:
+    return {SUBJECT_HEADER: value, BAGGAGE_HEADER: f"foundry.original_subject={quote(value, safe='')}"}
 
 
 class TestOriginalSubject:
@@ -40,7 +46,10 @@ class TestOriginalSubject:
             call_id="opaque-call",
             user_id="different-state-key",
         )
-        assert context.model_attribution_headers() == {**expected, FOUNDRY_CALL_ID: "opaque-call"}
+        assert context.model_attribution_headers() == {
+            **model_headers(expected[SUBJECT_HEADER]),
+            FOUNDRY_CALL_ID: "opaque-call",
+        }
         assert context.platform_headers() == {FOUNDRY_CALL_ID: "opaque-call"}
         copied = context.model_attribution_headers()
         copied[SUBJECT_HEADER] = "changed"
@@ -120,13 +129,84 @@ class TestOriginalSubject:
             ),
         })
         assert subject == FoundryOriginalSubject(oid="original-oid", tid="original-tid", idtype="user")
-        assert FoundryAgentRequestContext(original_subject=subject).model_attribution_headers() == SUBJECT_HEADERS
+        assert FoundryAgentRequestContext(original_subject=subject).model_attribution_headers() == model_headers(
+            SUBJECT_VALUE
+        )
 
     def test_structured_fields_escaping_round_trips_without_splitting_quoted_commas(self) -> None:
         value = r'oid="original\\oid\",branch", tid="original-tid", idtype="user"'
         subject = FoundryOriginalSubject.from_headers({SUBJECT_HEADER: value})
         assert subject == FoundryOriginalSubject(oid='original\\oid",branch', tid="original-tid", idtype="user")
-        assert FoundryAgentRequestContext(original_subject=subject).model_attribution_headers() == {SUBJECT_HEADER: value}
+        assert FoundryAgentRequestContext(original_subject=subject).model_attribution_headers() == model_headers(value)
+
+    @pytest.mark.parametrize("present", [False, True])
+    def test_merge_replaces_reserved_subjects_without_mutating_headers(self, present: bool) -> None:
+        existing = {
+            "Authorization": "test-key",
+            "X-MS-Original-Subject": "stale",
+            "x-ms-original-subject": "also-stale",
+            "X-MS-Original-Subject-Oid": "stale",
+            "X-AGENT-FOUNDRY-CALL-ID": "stale-call",
+            "X-MS-Foundry-Baggage": (
+                "app=example,Foundry.Original_Subject=stale,"
+                "foundry.original_subject.oid=stale,FOUNDry.original_subject.tid=stale"
+            ),
+            "x-ms-foundry-baggage": (
+                "trace=opaque%252Cvalue;flag,app=example,"
+                "FOUNDRY.ORIGINAL_SUBJECT=other,foundry.original_subject.idtype=app"
+            ),
+        }
+        snapshot = existing.copy()
+        context = FoundryAgentRequestContext(
+            original_subject=FoundryOriginalSubject(oid="current", tid="tenant", idtype="app") if present else None,
+            call_id="current-call",
+        )
+        result = context.model_attribution_headers(existing)
+        assert existing == snapshot
+        assert result["Authorization"] == "test-key"
+        members = result[BAGGAGE_HEADER].split(",")
+        assert members[:2] == ["app=example", "trace=opaque%252Cvalue;flag"]
+        keys = [member.split("=", 1)[0].lower() for member in members]
+        assert len(keys) == len(set(keys))
+        assert all(name in {"Authorization", BAGGAGE_HEADER, SUBJECT_HEADER, FOUNDRY_CALL_ID} for name in result)
+        if present:
+            assert unquote(members[-1].split("=", 1)[1]) == result[SUBJECT_HEADER]
+            assert FoundryOriginalSubject.from_headers(result) == context.original_subject
+            assert result[FOUNDRY_CALL_ID] == "current-call"
+        else:
+            assert result == {"Authorization": "test-key", BAGGAGE_HEADER: ",".join(members[:2])}
+        result[BAGGAGE_HEADER] = "changed"
+        assert context.model_attribution_headers(existing)[BAGGAGE_HEADER] != "changed"
+
+    def test_reserved_only_headers_disappear_without_a_subject(self) -> None:
+        assert (
+            FoundryAgentRequestContext().model_attribution_headers(
+                {
+                    "X-MS-Original-Subject": SUBJECT_VALUE,
+                    BAGGAGE_HEADER: "foundry.original_subject=stale,FOUNDry.original_subject.oid=stale",
+                }
+            )
+            == {}
+        )
+
+    def test_baggage_encodes_full_quoted_tuple_exactly_once(self) -> None:
+        subject = FoundryOriginalSubject(oid='a%2C\\",=b', tid="tenant", idtype="user")
+        result = FoundryAgentRequestContext(original_subject=subject).model_attribution_headers()
+        encoded = result[BAGGAGE_HEADER].split("=", 1)[1]
+        assert "%252C" in encoded
+        assert unquote(encoded) == result[SUBJECT_HEADER]
+        assert FoundryOriginalSubject.from_headers({SUBJECT_HEADER: unquote(encoded)}) == subject
+        assert len(result[BAGGAGE_HEADER].split(",")) == 1
+
+    def test_typical_complete_tuple_fits_existing_carrier_limits(self) -> None:
+        subject = FoundryOriginalSubject(
+            oid="11111111-2222-3333-4444-555555555555",
+            tid="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+            idtype="user",
+        )
+        result = FoundryAgentRequestContext(original_subject=subject).model_attribution_headers()
+        assert len(result[BAGGAGE_HEADER]) <= 1024
+        assert len(unquote(result[BAGGAGE_HEADER].split("=", 1)[1])) <= 256
 
     def test_retired_headers_are_not_used_as_fallback_or_mixed_into_the_snapshot(self) -> None:
         retired = {
@@ -163,6 +243,8 @@ class TestOriginalSubject:
             transport=httpx.MockTransport(receive),
             headers={"Authorization": "Bearer model-agent-token"},
         ) as client:
+            client.headers[BAGGAGE_HEADER] = "application=shared"
+
             async def invoke(user: str) -> None:
                 nonlocal bound
                 token = set_request_context(FoundryAgentRequestContext(
@@ -177,7 +259,7 @@ class TestOriginalSubject:
                     for _ in range(2):
                         response = await client.post(
                             "https://model.test/responses",
-                            headers=get_request_context().model_attribution_headers(),
+                            headers=get_request_context().model_attribution_headers(client.headers),
                             json={"input": "test"},
                         )
                     assert response.status_code == 200
@@ -187,6 +269,7 @@ class TestOriginalSubject:
 
             await asyncio.gather(invoke("alice"), invoke("bob"))
             assert SUBJECT_HEADER not in client.headers
+            assert client.headers[BAGGAGE_HEADER] == "application=shared"
 
         assert attempts == {"alice": 2, "bob": 2}
         for headers in observed:
@@ -195,6 +278,9 @@ class TestOriginalSubject:
             user = subject.oid
             assert subject.tid == f"tenant-{user}"
             assert headers[FOUNDRY_CALL_ID] == f"call-{user}"
+            baggage = headers[BAGGAGE_HEADER].split(",")
+            assert baggage[0] == "application=shared"
+            assert unquote(baggage[1].split("=", 1)[1]) == headers[SUBJECT_HEADER]
             assert headers["authorization"] == "Bearer model-agent-token"
             assert USER_ID not in headers
         assert get_request_context().original_subject is None

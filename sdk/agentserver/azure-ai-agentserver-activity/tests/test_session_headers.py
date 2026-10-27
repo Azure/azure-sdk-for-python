@@ -4,6 +4,7 @@
 """Tests for session resolution and required response headers."""
 
 from importlib.metadata import requires
+from urllib.parse import unquote
 
 import pytest
 from packaging.requirements import Requirement
@@ -71,7 +72,10 @@ async def test_original_subject_comes_from_headers_not_activity_payload(asgi_cli
             headers={**subject, "Authorization": "Bearer bot-token", "x-agent-user-id": "state-key"},
         )
         assert response.status_code == 200
-        assert response.json() == subject
+        forwarded = response.json()
+        assert forwarded["x-ms-original-subject"] == subject["x-ms-original-subject"]
+        assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
+        assert len(forwarded) == 2
         response = await client.post(
             "/activity/messages", json=payload, headers={"Authorization": "Bearer bot-token"},
         )

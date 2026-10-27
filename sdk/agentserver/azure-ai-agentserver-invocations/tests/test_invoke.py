@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Tests for the POST /invocations invoke dispatch."""
+import asyncio
 import json
 import uuid
 from importlib.metadata import requires
+from urllib.parse import unquote
 
 import pytest
 import httpx
@@ -96,10 +98,55 @@ async def test_invoke_original_subject_is_available_during_body_iteration(stream
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:
         response = await client.post("/invocations", headers={**subject, "x-agent-user-id": "state-key"})
         assert response.status_code == 200
-        assert response.json() == subject
+        forwarded = response.json()
+        assert forwarded["x-ms-original-subject"] == subject["x-ms-original-subject"]
+        assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
+        assert len(forwarded) == 2
         response = await client.post("/invocations")
         assert response.status_code == 200
         assert response.json() == {}
+    assert get_request_context().original_subject is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("stream", [False, True])
+async def test_concurrent_invocations_keep_baggage_bound_to_each_body(stream):
+    app = InvocationAgentServerHost(configure_observability=None)
+    both_bound = asyncio.Event()
+    bound = 0
+
+    async def current_headers():
+        nonlocal bound
+        bound += 1
+        if bound == 2:
+            both_bound.set()
+        await asyncio.wait_for(both_bound.wait(), timeout=10)
+        return get_request_context().model_attribution_headers({"x-ms-foundry-baggage": "application=shared"})
+
+    @app.invoke_handler
+    async def handler(_request):
+        if stream:
+            async def body():
+                yield json.dumps(await current_headers())
+            return StreamingResponse(body(), media_type="application/json")
+        return JSONResponse(await current_headers())
+
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:
+        async def invoke(oid):
+            subject = f'oid="{oid}", tid="tenant-{oid}", idtype="user"'
+            response = await client.post("/invocations", headers={
+                "x-ms-original-subject": subject,
+                "x-agent-foundry-call-id": f"call-{oid}",
+            })
+            assert response.status_code == 200
+            forwarded = response.json()
+            assert forwarded["x-ms-original-subject"] == subject
+            assert forwarded["x-agent-foundry-call-id"] == f"call-{oid}"
+            members = forwarded["x-ms-foundry-baggage"].split(",")
+            assert members[0] == "application=shared"
+            assert unquote(members[1].split("=", 1)[1]) == subject
+
+        await asyncio.gather(invoke("alice"), invoke("bob"))
     assert get_request_context().original_subject is None
 
 

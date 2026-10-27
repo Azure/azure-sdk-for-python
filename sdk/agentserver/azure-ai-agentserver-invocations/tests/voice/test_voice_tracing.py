@@ -10,6 +10,7 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import unquote
 
 import pytest
 from opentelemetry import baggage, metrics, trace
@@ -158,7 +159,11 @@ def test_voice_original_subject_is_invocation_local():
         with client.websocket_connect("/invocations_ws", headers=dict(headers)) as websocket:
             websocket.send_json(_session_start_frame())
             assert websocket.receive_json()["type"] == "session.ready"
-    assert observed == [subject, {}]
+    assert len(observed) == 2
+    assert observed[0]["x-ms-original-subject"] == subject["x-ms-original-subject"]
+    assert unquote(observed[0]["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
+    assert len(observed[0]) == 2
+    assert observed[1] == {}
     assert get_request_context().original_subject is None
 
 
