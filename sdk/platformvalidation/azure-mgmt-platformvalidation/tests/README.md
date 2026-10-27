@@ -1,155 +1,205 @@
 # PlatformValidation recorded integration tests
 
-These handwritten tests follow the [management-plane testing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md)
-and the [Python SDK testing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md). Do not edit the
-regeneration-owned files in `generated_tests/`.
+These handwritten tests follow the [Python SDK testing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md)
+and [management-plane testing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md).
+Do not edit regeneration-owned files in `generated_tests/`.
 
-## Coverage
+## Verified coverage
 
-The suite contains six recorded scenarios (three per client) and ten mocked
-cleanup tests. The SDK exposes 25 service methods per client; seven currently
-have positive live-recorded coverage. An operation count is not a scenario count,
-and neither demonstrates full SDK coverage.
+Twenty recorded scenarios, ten per client, exercise all 25 SDK methods in both
+sync and async clients. Mocked regressions separately exercise ownership, cleanup,
+timeouts, serialization and sanitization. Method coverage does not mean every
+input, authorization boundary or deployment has been tested.
 
-| Operation group | Methods per client | Recorded coverage (sync and async) |
+| Operation group | Methods exercised per client | Main assertions |
 | --- | --- | --- |
-| `cloud_validations` | 6: create/update, get, update, delete, list by RG, list by subscription | Positive lifecycle; missing GET and post-delete GET return 404 |
-| `operations` | 1: list | Positive discovery; expected CloudValidation and plan permission names, display metadata and data-action flags |
-| `validation_execution_plans` | 5: create/update, get, update, delete, list | Not recorded: prerequisite CloudValidation provisioning failed before any plan operation |
-| `execution_plan_runs` | 4: create/update, get, delete, list | Not recorded: needs a provisioned parent and approved executable workload fixture |
-| `validation_test_runs` | 2: get, list | Not recorded: needs an execution run that produces test results |
-| `validation_tests` | 2: get, list | Not recorded: list discovery returned 404 `InvalidResourceType` |
-| `validation_test_versions` | 2: get, list | Not recorded: needs an available catalog test/version |
-| `validation_test_categories` | 2: get, list | Not recorded: list discovery returned 502 `BadGatewayConnection` |
-| `operation_status` | 1: get | No direct method coverage; CloudValidation LRO polling is exercised, but does not call this SDK method |
+| `cloud_validations` | `begin_create_or_update`, `get`, `begin_update`, `begin_delete`, `list_by_resource_group`, `list_by_subscription` | Identity, location, state, tags, description, existing-resource PUT, missing GET and post-delete 404 |
+| `validation_execution_plans` | `begin_create_or_update`, `get`, `begin_update`, `begin_delete`, `list_by_resource_group` | Tags/description/configuration PATCH, omitted-field preservation, existing-resource PUT, lists and post-delete 404 |
+| `execution_plan_runs` | `begin_create_or_update`, `get`, `begin_delete`, `list_by_execution_plan` | New run completes with one passing boot test; deletion removes the run and its test results |
+| `validation_test_runs` | `get`, `list_by_execution_plan_run` | Exact parent identity, completed state, pass counts, timestamps and absence of failure details |
+| `validation_tests` | `get`, `list_by_subscription` | Public entry discovery and exact provider-global identity |
+| `validation_test_versions` | `get`, `list` | Public version discovery and exact parent/version identity |
+| `validation_test_categories` | `get`, `list_by_subscription` | Public category discovery and exact identity |
+| `operation_status` | `get` | Direct polling of the supported route returned by a plan PATCH |
+| `operations` | `list` | Expected permission names, display metadata and data-action flags |
 
-These blockers were observed in the approved live environment and are not claims
-about all deployments. The plan prerequisite failed with
-`MoboBrokerProvisioningFailed`: the service backend could not perform
-`Microsoft.Authorization/roleAssignments/write`. Provider metadata did not
-advertise the validation-test/version resource types. Failed probes are not
-passing coverage, and their recordings are not published. No execution workload
-was started. Plan CRUD alone does not execute a plan; run creation does, and
-requires approved workload inputs and a verified cleanup procedure.
+Existing-resource PUT is covered for CloudValidation and execution plans.
+`execution_plan_runs.begin_create_or_update` is covered by creation of a new run,
+not replay of an existing completed run.
 
-Both synchronous and asynchronous clients exercise CloudValidation create, get,
-list by resource group, list by subscription, update and delete. Assertions cover
-resource identity, location, provisioning state, tags, description persistence and
-HTTP 404 after deletion. Separate tests check GET of a nonexistent resource.
-The lifecycle tests identify their own resource in list results, without assuming
-the subscription or resource group is empty.
+Catalog requests are subscription-scoped; the approved deployment returns
+provider-global IDs beginning `/providers/Microsoft.PlatformValidation/`.
+Tests assert that exact identity. Description-only PATCH tests verify that
+omitted tags and configuration are preserved.
 
-Each lifecycle test also checks that `<cvname>-mrg` does not exist before creation
-and verifies its absence after CloudValidation cleanup, including failure cleanup.
-These resource-management SDK checks are recorded with the scenario. Absence must
-be observed three consecutive times, with up to 60 checks spaced 10 seconds apart
-in live mode. Playback skips the sleeps. A leftover managed group fails the test;
-the tests never explicitly delete a managed group or unrelated resources.
+Run serially; do not re-submit an existing execution merely to test its
+update-shaped SDK entrypoint.
 
-## Setup
+## Setup and authentication
 
-Use an isolated Python environment and, from this package directory, install the
-repository's test tooling and the local SDK:
+From this package directory, use an isolated virtual environment and install
+the repository tooling, test dependencies and local SDK:
 
 ```powershell
 python -m pip install -r dev_requirements.txt -e .
 ```
 
 Follow the repository's [feed configuration](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#package-index-configuration)
-and [authentication instructions](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#configure-test-variables).
-Use an approved test subscription with `Microsoft.PlatformValidation` registered,
-a supported CloudValidation location, and permission for resource-group creation
-and deletion, resource-group existence checks, the CloudValidation lifecycle, and
-subscription-list operations.
+and [test authentication guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#configure-test-variables).
+Use an approved subscription with `Microsoft.PlatformValidation` registered,
+a supported location, and permission to create/delete test resource groups and
+exercise the listed operations. The resource-management SDK is a test dependency,
+not a runtime dependency of PlatformValidation.
 
-Configure `AZURE_SUBSCRIPTION_ID` and `PLATFORMVALIDATION_LOCATION`.
-Live mode requires the service location; playback uses a sanitized placeholder,
-not a live target. `ResourceGroupPreparer` creates a uniquely named prerequisite
-resource group per test and requests its deletion afterward, as described in the
-[management-plane example](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md#example-2-basic-preparer-usage).
-Resource-group metadata is stored in `eastus`; this does not select the
-CloudValidation service location.
+For Azure CLI authentication, sign in with `az login`, then configure:
 
-Leave `AZURE_RESOURCEGROUP_NAME` unset for automatic provisioning. The standard
-preparer also supports this variable to reuse an existing group, which it will
-not create or delete. That is optional, not a requirement. Resource-group
-preparation is excluded from HTTP recordings and uses a fake group during playback.
-The resource-management package in `dev_requirements.txt` supports the preparer;
-it is not a runtime dependency of the PlatformValidation SDK.
+```powershell
+$env:AZURE_SUBSCRIPTION_ID = "<approved-test-subscription-id>"
+$env:PLATFORMVALIDATION_LOCATION = "<supported-service-location>"
+$env:AZURE_TEST_USE_CLI_AUTH = "true"
+$env:AZURE_TEST_USE_PWSH_AUTH = "false"
+$env:AZURE_TEST_USE_AZD_AUTH = "false"
+Remove-Item Env:\AZURE_RESOURCEGROUP_NAME -ErrorAction SilentlyContinue
+```
 
-For user authentication, choose the documented `AZURE_TEST_USE_*_AUTH` option.
-For Azure CLI authentication, sign in using `az login` and set
-`AZURE_TEST_USE_CLI_AUTH=true`. Put the approved subscription and service location
-in the repository-root, git-ignored `.env`, or provide them as environment
-variables. Do not commit subscription-specific target configuration.
-For service-principal authentication with `EnvironmentVariableLoader`, set
-`PLATFORMVALIDATION_TENANT_ID`, `PLATFORMVALIDATION_CLIENT_ID` and
-`PLATFORMVALIDATION_CLIENT_SECRET`; the loader maps them to the shared credential
-variables. Never commit credentials or a local `.env`.
+Other documented authentication modes remain available. With the environment
+loader, service-principal inputs are `PLATFORMVALIDATION_TENANT_ID`,
+`PLATFORMVALIDATION_CLIENT_ID` and `PLATFORMVALIDATION_CLIENT_SECRET`.
+Never commit credentials or local target configuration.
 
-## Record, replay and publish recordings
+`AzureMgmtRecordedTestCase` creates framework-managed clients and selects
+live/fake credentials. Async tests use `get_credential(..., is_async=True)` and
+`create_client_from_credential`, and close their credentials.
 
-Live mode calls Azure and incurs resource creation/deletion. Only run it after the
-target and resource mutations are approved. Run serially; do not run concurrent
-copies of the same lifecycle test against the same subscription. CloudValidation
-names are deterministic and their managed-group names are subscription-wide,
-even when the parent groups differ. Simultaneous-run support is still a gap
-against the SDK testing guidelines, not a verified property of this suite.
+## Execution prerequisites and cleanup
+
+The full workload lifecycle uses this preparer order:
+
+```python
+@ExecutionEnvironmentPreparer()
+@ExecutionResourceGroupPreparer(
+    name_prefix="platformvalidationexec", random_name_enabled=True, location="eastus"
+)
+@ExecutionPrerequisitesPreparer()
+@recorded_by_proxy
+def test_execution_lifecycle(self, platformvalidation_location, resource_group, cloud_validation_name):
+    ...
+```
+
+The async scenario uses the same preparers and `recorded_by_proxy_async`.
+Preparers create a fresh parent RG and CloudValidation outside recordings.
+The service must create `<cvname>-mrg`; setup verifies its `managedBy` association.
+There is no manual MRG creation, role assignment or fallback.
+Playback supplies fake prerequisites and creates no Azure resources.
+
+Cleanup order is EPR and cascaded VTRs, VEP, CV, service-managed MRG disappearance,
+then the owned parent RG. Exact IDs, ownership tags, run descriptions and terminal
+states are required. Unexpected siblings, active resources and orphan results
+block deletion. The parent is retained if prerequisite cleanup is unconfirmed,
+even when ARM's generic resource list is empty.
+
+CV deletion retries only HTTP 409 `CannotDeleteResource`, at most 30 attempts
+ten seconds apart, checking that the plan list is empty before each attempt.
+Other errors still fail. Managed-group absence requires three consecutive checks,
+with at most 60 checks ten seconds apart; playback skips sleeps.
+Managed groups are never deleted directly.
+
+Plan-only/update scenarios borrow an approved, successfully provisioned CV.
+Read-only result scenarios additionally need a completed, one-test boot run:
+
+```powershell
+$env:PLATFORMVALIDATION_EXECUTION_RESOURCE_GROUP = "<approved-parent-group>"
+$env:PLATFORMVALIDATION_EXECUTION_CLOUD_VALIDATION = "<approved-cv>"
+$env:PLATFORMVALIDATION_EXECUTION_OWNERSHIP = "borrowed-parent"
+$env:PLATFORMVALIDATION_EXECUTION_PLAN = "<completed-plan>"
+$env:PLATFORMVALIDATION_EXECUTION_RUN = "<completed-run>"
+```
+
+Borrowed-parent tests never create/delete the CV, MRG or parent group. Update
+tests create and delete only their own new plans and submit no executions.
+Read-only result tests create or delete nothing.
+
+Creation tests also require `PLATFORMVALIDATION_SOURCE_VHD_URI`: supply an
+approved HTTPS Linux Gen1 X64 image through a secure process environment.
+Do not place a signed URI in source, shell history, `.env`, logs or recordings.
+Playback uses `https://example.invalid/image.vhd` and needs no image access.
+The approved fixture uses `Standard_D4s_v3` and one
+`compute-vmimagevalidation-vm-boot-test` step.
+
+The embedded configuration uses `microsoft.validate/executionPlan.v0` and
+`ExecutionPlan`, separately from ARM API version `2026-08-01-preview`.
+
+## Record, replay and publish
+
+The following maps the official guide to this suite:
+
+| Guide step | Implementation or command |
+| --- | --- |
+| Install tooling and local library | `python -m pip install -r dev_requirements.txt -e .` |
+| Select framework credentials | Base test case and environment loaders; no handwritten credential construction |
+| Prepare auxiliary resources | Framework preparers, excluded from recordings |
+| Record actual service traffic | `recorded_by_proxy` / `recorded_by_proxy_async` and the `test_proxy` fixture |
+| Sanitize secrets | Package-scoped fixtures plus image-input and list-response sanitizers |
+| Replay the same tests | Set `AZURE_TEST_RUN_LIVE=false`; run `python -m pytest tests -q` |
+| Publish updates | Supported `manage_recordings.py push`; include its generated `assets.json` |
+| Verify contribution | Replay the full included suite from a clean checkout using published assets; inspect PR CI |
+
+Start with a single provisioning scenario:
 
 ```powershell
 $env:AZURE_TEST_RUN_LIVE = "true"
 $env:AZURE_SKIP_LIVE_RECORDING = "false"
-python -m pytest tests -v
-
-$env:AZURE_TEST_RUN_LIVE = "false"
-python -m pytest tests -v
+python -m pytest tests\test_cloud_validations.py::TestCloudValidations::test_cloud_validation_lifecycle -v --maxfail=1
 ```
 
-For an offline check before recordings exist:
+Then record its async equivalent, fresh execution lifecycles and other configured
+scenarios serially. Catalog live tests additionally accept
+`PLATFORMVALIDATION_CATALOG_ENDPOINT` and `PLATFORMVALIDATION_CATALOG_TEST`.
+The approved retest used regional Canary ARM and the boot catalog entry;
+these are environment settings, not public SDK endpoint defaults.
+
+Stop and investigate live failures. Before recording, locate the cache and
+preserve unpublished changes:
+
+```powershell
+python ..\..\..\scripts\manage_recordings.py locate
+```
+
+A failed live test can replace its cached recording. Retain failure evidence
+privately and restore that scenario's last-known-good asset, if any.
+Do not fabricate recordings, hand-edit failures into successes or publish
+failed recordings as passing coverage.
+
+After successful recording:
 
 ```powershell
 $env:AZURE_TEST_RUN_LIVE = "false"
-python -m pytest tests --collect-only -q
-python -m pytest tests/test_managed_group_cleanup.py -q
+python -m pytest tests -q
 ```
 
-The cleanup unit tests use mocked resource-management calls, not live requests
-or fabricated HTTP recordings. They check delayed deletion, reappearance,
-timeout and request-error handling for both sync and async clients.
+The included suite needs no Azure credentials, image URI or real prerequisites
+in playback. Inspect recordings for secrets and valid nested JSON before
+publication. Sanitizers remove cookies/private headers, redact signed query
+values and identity fields, replace image URLs, and redact unrelated resources
+in subscription lists while preserving the target identity. The package replaces
+the generic SAS sanitizer with an escape-preserving expression; it does not
+require changes to shared SDK tooling. Mocked regressions cover nested JSON,
+escaped slashes and Unicode escapes.
 
-The test proxy starts through `conftest.py`. The first command captures real HTTP
-interactions; the second verifies the same tests against those recordings without
-calling Azure. Do not fabricate recordings, skip tests to hide missing recordings,
-or treat collection-only checks as a successful playback run.
-
-Sanitizers remove cookies instead of substituting `Set-Cookie`, which could make
-playback clients send cookies absent from the original requests. Signed ARM
-polling query parameters are redacted consistently in URLs and response headers.
-The checked-in `assets.json` references the sanitized live recordings used by
-playback; normal playback does not require Azure credentials.
-
-Before publishing, inspect all recordings for sensitive values, including
-unrelated resources returned by subscription listing. Follow the official
-[initial recording migration](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/recording_migration_guide.md)
-to upload recordings to `Azure/azure-sdk-assets` and generate `assets.json`. This
-requires asset-repository write access. Include the generated, verified pointer
-with the test PR, not secrets or an invented asset tag.
-
-For subsequent recording updates, use the repository's
-[recording update workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#update-test-recordings):
+This package is already migrated to external recording assets. Use the
+[recording update workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#update-test-recordings),
+not initial migration:
 
 ```powershell
 python ..\..\..\scripts\manage_recordings.py push
 ```
 
-Run from this package directory, inspect the resulting `assets.json`, and replay
-the full suite against the published tag before committing.
+This requires asset-repository write access and generates a new tag pointer in
+`assets.json`. Verify the tag remotely and replay from a clean checkout without
+the old cache or local shared-tool modifications. Commit the generated pointer
+with the tests, not recordings, credentials or private diagnostics.
 
-The lifecycle tests refuse to overwrite an existing resource and check the test
-tag before deletion. Cleanup is attempted on failure. If creation fails or times
-out, inspect the target for late provisioning and service-managed resources;
-an immediate 404 is not proof that provisioning cannot complete later. A cleanup
-failure fails the test and must be resolved before recording again. The shared
-resource-group preparer requests deletion without waiting for completion and can
-log deletion errors instead of failing, so also verify live resource-group cleanup
-before considering a recording run complete.
+ResourceGroupPreparer can request deletion without waiting. Independently
+confirm live parent-group cleanup before declaring a run complete.
+Passing playback is evidence for recorded behavior, not a repeatability or
+concurrent-live-run claim.

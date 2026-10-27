@@ -41,6 +41,67 @@ async def complete_operation(poller: AsyncLROPoller[_ResultT]) -> _ResultT:
 
 
 class TestCloudValidationsAsync(CloudValidationTestCase):
+    @PlatformValidationPreparer()
+    @ResourceGroupPreparer(name_prefix="platformvalidation", random_name_enabled=True, location="eastus")
+    @recorded_by_proxy_async
+    async def test_cloud_validation_put_existing(self, resource_group, platformvalidation_location: str) -> None:
+        from _update_testcase import response_observation
+
+        group = resource_group.name
+        name = self.get_resource_name("pyaputcv")
+        location = platformvalidation_location
+        managed_group = f"{name}-mrg"
+        tags = {"sdk-test": name}
+        description = "SDK isolated PUT CloudValidation"
+        self.update_observations = []
+
+        def observe(response):
+            self.update_observations.append(response_observation(response))
+
+        credential = self.get_credential(ResourceManagementClient, is_async=True)
+        try:
+            async with (
+                self.create_client() as client,
+                self.create_client_from_credential(
+                    ResourceManagementClient,
+                    credential,
+                    subscription_id=self.get_settings_value("SUBSCRIPTION_ID"),
+                ) as resources,
+            ):
+                operations = client.cloud_validations
+                with pytest.raises(ResourceNotFoundError) as missing:
+                    await operations.get(group, name)
+                assert missing.value.status_code == 404
+                assert not await resources.resource_groups.check_existence(managed_group)
+                try:
+                    for phase in ("create", "idempotent", "metadata-replacement"):
+                        if phase == "metadata-replacement":
+                            tags = {**tags, "phase": phase}
+                            description = "PUT existing CloudValidation metadata"
+                        result = await complete_operation(
+                            await operations.begin_create_or_update(
+                                group,
+                                name,
+                                CloudValidation(
+                                    location=location,
+                                    tags=tags,
+                                    properties=CloudValidationProperties(description=description),
+                                ),
+                                raw_response_hook=observe,
+                            )
+                        )
+                        self.assert_resource(result, group, name, location, description, tags)
+                        self.assert_resource(
+                            await operations.get(group, name), group, name, location, description, tags
+                        )
+                finally:
+                    try:
+                        await self.delete_owned_resource(client, group, name, allow_missing=True)
+                    finally:
+                        await wait_for_managed_group_deletion_async(resources, managed_group)
+        finally:
+            await credential.close()
+
     @asynccontextmanager
     async def create_client(self) -> AsyncIterator[PlatformValidationMgmtClient]:
         credential = self.get_credential(PlatformValidationMgmtClient, is_async=True)
@@ -64,6 +125,7 @@ class TestCloudValidationsAsync(CloudValidationTestCase):
         tags = {"sdk-test": name, "phase": "created"}
         description = "Async Python SDK recorded CloudValidation"
         managed_group = f"{name}-mrg"
+        self.log_live_target(group, name, location)
         credential = self.get_credential(ResourceManagementClient, is_async=True)
         try:
             async with (
@@ -117,6 +179,7 @@ class TestCloudValidationsAsync(CloudValidationTestCase):
             self.assert_list_contains_resource(
                 [resource async for resource in operations.list_by_resource_group(group)], group, name
             )
+            self.sanitize_subscription_list(name)
             self.assert_list_contains_resource(
                 [resource async for resource in operations.list_by_subscription()], group, name
             )

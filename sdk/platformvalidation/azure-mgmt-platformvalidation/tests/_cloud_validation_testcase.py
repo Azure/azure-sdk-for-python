@@ -5,12 +5,19 @@
 # --------------------------------------------------------------------------
 from functools import partial
 import asyncio
+import json
+import logging
 import time
 
 from azure.mgmt.platformvalidation.models import CloudValidation
 from azure.mgmt.resource.resources import ResourceManagementClient
 from azure.mgmt.resource.resources.aio import ResourceManagementClient as AsyncResourceManagementClient
-from devtools_testutils import AzureMgmtRecordedTestCase, EnvironmentVariableLoader
+from devtools_testutils import (
+    AzureMgmtRecordedTestCase,
+    EnvironmentVariableLoader,
+    add_body_key_sanitizer,
+    add_body_regex_sanitizer,
+)
 
 PlatformValidationPreparer = partial(
     EnvironmentVariableLoader,
@@ -22,6 +29,7 @@ OPERATION_TIMEOUT = 600
 MANAGED_GROUP_CHECKS = 60
 MANAGED_GROUP_CHECK_INTERVAL = 10
 MANAGED_GROUP_ABSENCE_CONFIRMATIONS = 3
+_LOGGER = logging.getLogger(__name__)
 
 
 def wait_for_managed_group_deletion(client: ResourceManagementClient, name: str) -> None:
@@ -51,6 +59,43 @@ async def wait_for_managed_group_deletion_async(client: AsyncResourceManagementC
 
 
 class CloudValidationTestCase(AzureMgmtRecordedTestCase):
+    def sanitize_subscription_list(self, name: str) -> None:
+        condition = json.dumps(
+            {"uriRegex": r"(?i)/subscriptions/[^/]+/providers/Microsoft.PlatformValidation/cloudValidations(?:\?|$)"}
+        )
+        other = f"$.value[?(@.name != '{name}')]"
+        prefix = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/other-group"
+        for path, value in (
+            (".id", f"{prefix}/providers/Microsoft.PlatformValidation/cloudValidations/other-cloud-validation"),
+            (".location", "eastus"),
+            (".properties.description", "Sanitized"),
+            (
+                ".properties.managedOnBehalfOfConfiguration.moboBrokerResources[*].id",
+                f"{prefix}/providers/Microsoft.Resources/deployments/other",
+            ),
+            (".name", "other-cloud-validation"),
+        ):
+            add_body_key_sanitizer(json_path=other + path, value=value, condition=condition, function_scoped=True)
+        # Tag dictionaries can contain tenant-specific keys as well as values.
+        add_body_regex_sanitizer(
+            regex=r'"tags"\s*:\s*\{(?:\s*"(?:\\.|[^"\\])*"\s*:\s*"(?:\\.|[^"\\])*"\s*,?)*\s*\}',
+            value='"tags":{}',
+            condition=condition,
+            function_scoped=True,
+        )
+
+    def log_live_target(self, resource_group: str, name: str, location: str) -> None:
+        if self.is_live:
+            _LOGGER.info(
+                "CloudValidation live test: subscription=%s, resource_group=%s, name=%s, "
+                "location=%s, managed_resource_group=%s-mrg",
+                self.get_settings_value("SUBSCRIPTION_ID"),
+                resource_group,
+                name,
+                location,
+                name,
+            )
+
     def resource_id(self, resource_group: str, name: str) -> str:
         subscription = self.get_settings_value("SUBSCRIPTION_ID")
         return (
