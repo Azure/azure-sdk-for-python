@@ -143,6 +143,7 @@ class BaseExporter:
         self._route = route
         self._route_exporters: Dict[tuple[str, bool], BaseExporter] = {}
         self._route_lock = threading.RLock()
+        self._transmit_lock = threading.Lock()
         self._routing_shutdown = False
         self._route_retry_task: Optional[PeriodicTask] = None
         self._route_options = kwargs.copy()
@@ -315,7 +316,8 @@ class BaseExporter:
                     _MAX_ROUTE_STORAGE_PARTITIONS,
                 )
             else:
-                assert self._storage_directory is not None
+                if self._storage_directory is None:
+                    self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
                 options["storage_directory"] = os.path.join(
                     os.path.abspath(self._storage_directory) + "-routes",
                     _get_sha256_hash(f"{endpoint}|{is_aad}"),
@@ -343,33 +345,42 @@ class BaseExporter:
         try:
             if self._routing_shutdown:
                 return
-            token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
-            try:
-                for exporter in self._route_exporters.values():
-                    if exporter.storage and exporter._route_retry_at <= time.monotonic():
-                        try:
-                            exporter._transmit_from_storage()
-                        except Exception:  # pylint: disable=broad-except
-                            logger.exception(  # pylint: disable=C4769
-                                "Exception occurred while retrying routed telemetry."
-                            )
-            finally:
-                detach(token)
+            exporters = tuple(self._route_exporters.values())
         finally:
             self._route_lock.release()
+        token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
+        try:
+            for exporter in exporters:
+                with exporter._transmit_lock:
+                    if self._routing_shutdown:
+                        return
+                    if not exporter.storage or exporter._route_retry_at > time.monotonic():
+                        continue
+                    try:
+                        exporter._transmit_from_storage()
+                    except Exception:  # pylint: disable=broad-except
+                        logger.exception("Exception occurred while retrying routed telemetry.")  # pylint: disable=C4769
+        finally:
+            detach(token)
 
     def _transmit_routed(self, groups: Dict[tuple[str, bool], List[TelemetryItem]]) -> ExportResult:
         # pylint: disable=protected-access
         result = ExportResult.SUCCESS
+        routes = []
         with self._route_lock:
             if self._routing_shutdown:
                 logger.error("Cannot export routed telemetry after shutdown.")
                 return ExportResult.FAILED_NOT_RETRYABLE
             for (endpoint, is_aad), envelopes in groups.items():
                 try:
-                    exporter = self._get_route_exporter(endpoint, is_aad)
+                    routes.append((self._get_route_exporter(endpoint, is_aad), envelopes))
                 except ValueError as error:
                     logger.error("Cannot initialize a routed exporter: %s", error)
+                    result = ExportResult.FAILED_NOT_RETRYABLE
+        for exporter, envelopes in routes:
+            with exporter._transmit_lock:
+                if self._routing_shutdown:
+                    logger.error("Cannot export routed telemetry after shutdown.")
                     result = ExportResult.FAILED_NOT_RETRYABLE
                     continue
                 route_result = exporter._transmit(envelopes)
@@ -379,19 +390,21 @@ class BaseExporter:
         return result
 
     def _shutdown_route_exporters(self) -> None:
+        # pylint: disable=protected-access
         with self._route_lock:
             if self._routing_shutdown:
                 return
             self._routing_shutdown = True
+            if self._route_retry_task is not None:
+                self._route_retry_task.cancel()
+                self._route_retry_task.join()
             with ExitStack() as cleanup:
                 cleanup.callback(self.client.close)
                 for exporter in self._route_exporters.values():
+                    cleanup.enter_context(exporter._transmit_lock)
                     cleanup.callback(exporter.client.close)
                     if exporter.storage:
                         cleanup.callback(exporter.storage.close)
-                if self._route_retry_task is not None:
-                    self._route_retry_task.cancel()
-                    cleanup.callback(self._route_retry_task.join)
                 self._route_exporters.clear()
 
     # Maximum number of blobs to drain from storage per invocation.
@@ -867,7 +880,8 @@ class BaseExporter:
             else:
                 self._disable_local_storage()
             for exporter in self._route_exporters.values():
-                exporter._local_storage_configuration_callback(settings)
+                with exporter._transmit_lock:
+                    exporter._local_storage_configuration_callback(settings)
 
     def _enable_local_storage(self) -> None:
         if self._route is None and self._instrumentation_key is None:

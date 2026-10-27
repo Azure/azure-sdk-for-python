@@ -1245,6 +1245,24 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.assertNotIn("Authorization", requests[0].headers)
         self.assertEqual(requests[1].headers["Authorization"], f"Bearer {credential.get_token.return_value.token}")
 
+    @mock.patch.dict(os.environ)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._get_storage_directory")
+    def test_routing_without_host_uses_default_for_none_storage_directory(self, default_storage):
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        default_path = str(Path(self.directory.name) / "default")
+        default_storage.return_value = default_path
+        exporter = self._exporter(
+            connection_string=None,
+            storage_directory=None,
+            disable_offline_storage=False,
+        )
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+        route = exporter._route_exporters[("https://one.example/proxy/", False)]
+        self.assertIsNotNone(route.storage)
+        self.assertEqual(os.path.dirname(route.storage._path), os.path.abspath(default_path + "-routes"))
+        default_storage.assert_called_once_with("")
+
     def test_route_creation_preserves_resolved_host_configuration(self):
         with mock.patch.dict(
             os.environ,
@@ -1833,6 +1851,54 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.transport.send.reset_mock()
         retry()
         self.transport.send.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    def test_background_retry_does_not_block_other_routes_and_shutdown_waits(self, worker):
+        exporter = self._exporter(disable_offline_storage=False)
+        first_record = self._record()
+        second_record = self._record(endpoint="https://two.example/")
+        self.assertEqual(exporter.export([first_record, second_record]), LogRecordExportResult.SUCCESS)
+        first = next(iter(exporter._route_exporters.values()))
+        retry = worker.call_args.kwargs["function"]
+        retry_started = threading.Event()
+        release_retry = threading.Event()
+        foreground_done = threading.Event()
+        shutdown_started = threading.Event()
+        shutdown_done = threading.Event()
+        foreground_result = []
+
+        def block_retry():
+            retry_started.set()
+            release_retry.wait(2)
+
+        def export_healthy_route():
+            foreground_result.append(exporter.export([second_record]))
+            foreground_done.set()
+
+        def shutdown():
+            shutdown_started.set()
+            exporter.shutdown()
+            shutdown_done.set()
+
+        with mock.patch.object(first, "_transmit_from_storage", side_effect=block_retry):
+            retry_thread = threading.Thread(target=retry, daemon=True)
+            foreground_thread = threading.Thread(target=export_healthy_route, daemon=True)
+            shutdown_thread = threading.Thread(target=shutdown, daemon=True)
+            try:
+                retry_thread.start()
+                self.assertTrue(retry_started.wait(2))
+                foreground_thread.start()
+                self.assertTrue(foreground_done.wait(2), "An unrelated route was blocked by retry I/O.")
+                self.assertEqual(foreground_result, [LogRecordExportResult.SUCCESS])
+                shutdown_thread.start()
+                self.assertTrue(shutdown_started.wait(2))
+                self.assertFalse(shutdown_done.wait(0.1), "Shutdown closed a client during retry I/O.")
+            finally:
+                release_retry.set()
+                retry_thread.join(timeout=2)
+                foreground_thread.join(timeout=2)
+                shutdown_thread.join(timeout=2)
+        self.assertTrue(shutdown_done.is_set())
 
     def test_real_background_worker_retries_without_new_telemetry(self):
         exporter = self._exporter(
