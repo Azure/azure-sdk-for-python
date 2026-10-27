@@ -14,6 +14,7 @@ from unittest import mock
 from functools import partial
 
 # pylint: disable=import-error
+from opentelemetry.context import _SUPPRESS_INSTRUMENTATION_KEY, get_value
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_MESSAGE,
     EXCEPTION_STACKTRACE,
@@ -1532,16 +1533,16 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.transport.send.side_effect = lambda request, **kwargs: (
             _Response(request, 307, {"location": "https://westus.in.applicationinsights.azure.com/"})
             if request.url.startswith("https://eastus.")
-            else _Response(request, 429, {"Retry-After": "120"})
+            else _Response(request, 429, {"Retry-After": "10"})
         )
         self.assertEqual(exporter.export([record]), LogRecordExportResult.FAILURE)
         self.assertEqual(self.transport.send.call_count, 2)
         self.transport.send.reset_mock()
         self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
-        clock.return_value = 161
+        clock.return_value = 109
         self.assertEqual(exporter.export([record]), LogRecordExportResult.FAILURE)
         self.transport.send.assert_not_called()
-        clock.return_value = 220
+        clock.return_value = 110
         self.assertEqual(exporter.export([record]), LogRecordExportResult.SUCCESS)
         self.transport.send.assert_called_once()
 
@@ -1679,7 +1680,13 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.assertEqual(result, LogRecordExportResult.FAILURE)
         retry = worker.call_args.kwargs["function"]
         self.transport.send.reset_mock()
-        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        suppression = []
+
+        def send(request, **kwargs):
+            suppression.append(bool(get_value(_SUPPRESS_INSTRUMENTATION_KEY)))
+            return _Response(request)
+
+        self.transport.send.side_effect = send
         clock.return_value = 150
         with mock.patch(
             "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + datetime.timedelta(seconds=61)
@@ -1688,6 +1695,8 @@ class TestMultiEndpointRouting(unittest.TestCase):
             self.transport.send.assert_not_called()
             clock.return_value = 161
             retry()
+        self.assertEqual(suppression, [True, True])
+        self.assertFalse(get_value(_SUPPRESS_INSTRUMENTATION_KEY))
         requests = [call.args[0] for call in self.transport.send.call_args_list]
         self.assertEqual([json.loads(request.body)[0]["iKey"] for request in requests], ["key-only", "aad-key"])
         self.assertTrue(all(request.url.startswith("https://one.example/proxy/") for request in requests))
@@ -1784,12 +1793,20 @@ class TestMultiEndpointRouting(unittest.TestCase):
         )
         first, second = exporter._route_exporters.values()
         retry = worker.call_args.kwargs["function"]
-        with mock.patch.object(first, "_transmit_from_storage", side_effect=RuntimeError("test failure")):
+        suppression = []
+
+        def fail():
+            suppression.append(bool(get_value(_SUPPRESS_INSTRUMENTATION_KEY)))
+            raise RuntimeError("test failure")
+
+        with mock.patch.object(first, "_transmit_from_storage", side_effect=fail):
             with mock.patch.object(second, "_transmit_from_storage") as drain:
                 with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as logs:
                     retry()
         self.assertIn("test failure", logs.output[0])
         drain.assert_called_once()
+        self.assertEqual(suppression, [True])
+        self.assertFalse(get_value(_SUPPRESS_INSTRUMENTATION_KEY))
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
     def test_background_retry_does_not_wait_for_export_lock_or_run_after_shutdown(self, worker):

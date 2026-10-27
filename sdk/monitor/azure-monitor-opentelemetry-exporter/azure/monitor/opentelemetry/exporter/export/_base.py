@@ -16,6 +16,8 @@ from typing import Dict, FrozenSet, List, Optional, Any
 from urllib.parse import urlparse
 import psutil
 
+from opentelemetry.context import _SUPPRESS_INSTRUMENTATION_KEY, attach, detach, set_value
+
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
@@ -133,7 +135,11 @@ class BaseExporter:
         """
         route: Optional[tuple[str, bool]] = kwargs.pop("_route", None)
         connection_string_parser: Optional[ConnectionStringParser] = kwargs.pop("_connection_string_parser", None)
-        self._enable_multi_endpoint_routing = self._is_experimental_feature_enabled("multi_endpoint_routing")
+        self._enable_multi_endpoint_routing = (
+            self._is_experimental_feature_enabled("multi_endpoint_routing")
+            and not self._is_stats_exporter()
+            and not self._is_customer_sdkstats_exporter()
+        )
         self._route = route
         self._route_exporters: Dict[tuple[str, bool], BaseExporter] = {}
         self._route_lock = threading.RLock()
@@ -337,12 +343,18 @@ class BaseExporter:
         try:
             if self._routing_shutdown:
                 return
-            for exporter in self._route_exporters.values():
-                if exporter.storage and exporter._route_retry_at <= time.monotonic():
-                    try:
-                        exporter._transmit_from_storage()
-                    except Exception:  # pylint: disable=broad-except
-                        logger.exception("Exception occurred while retrying routed telemetry.")  # pylint: disable=C4769
+            token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
+            try:
+                for exporter in self._route_exporters.values():
+                    if exporter.storage and exporter._route_retry_at <= time.monotonic():
+                        try:
+                            exporter._transmit_from_storage()
+                        except Exception:  # pylint: disable=broad-except
+                            logger.exception(  # pylint: disable=C4769
+                                "Exception occurred while retrying routed telemetry."
+                            )
+            finally:
+                detach(token)
         finally:
             self._route_lock.release()
 
@@ -680,6 +692,7 @@ class BaseExporter:
                                 )  # pylint: disable=W0212
                                 # Attempt to export again
                                 result = self._transmit(envelopes, _skip_rate_limit=True)
+                                retry_after_delay_seconds = self._retry_after_delay_seconds
                         else:
                             if not self._is_stats_exporter():
                                 if self._should_collect_customer_sdkstats():
