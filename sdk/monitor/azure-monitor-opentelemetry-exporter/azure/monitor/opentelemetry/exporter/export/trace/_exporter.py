@@ -147,7 +147,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     def __init__(self, **kwargs: Any):
         self._tracer_provider = kwargs.pop("tracer_provider", None)
         super().__init__(**kwargs)
-        self.application_id = self._connection_string_parser.application_id
+        self.application_id: Optional[str] = self._connection_string_parser.application_id
 
     def export(self, spans: Sequence[ReadableSpan], **_kwargs: Any) -> SpanExportResult:
         """Export span data.
