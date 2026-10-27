@@ -30,6 +30,9 @@
 
 ### Bugs Fixed
 
+- Reject live session GUID changes before rotating lease identity, prevent
+  steering dispatch across shutdown bookkeeping, and defer queued/promoted
+  steering callers without removing their recoverable inputs.
 - Include agent identity and the resolved default task directory in runtime
   compatibility, preventing rollback from retaining incompatible lease owners
   or providers rooted in an overridden home directory.

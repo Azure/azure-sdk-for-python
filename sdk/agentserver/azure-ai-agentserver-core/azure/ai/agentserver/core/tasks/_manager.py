@@ -1031,6 +1031,18 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             retained.update(self._retain_shutdown_workers())
         return retained
 
+    def _defer_steering_futures(self) -> None:
+        """Release old-lifetime waiters without removing their durable inputs."""
+        from ._exceptions import TaskDeferred  # pylint: disable=import-outside-toplevel
+
+        futures = set(self._active_generation_future.values())
+        futures.update(future for pending in self._pending_steering_futures.values() for future in pending)
+        for future in futures:
+            if not future.done():
+                future.set_exception(TaskDeferred())
+        self._pending_steering_futures.clear()
+        self._active_generation_future.clear()
+
     async def shutdown(self, *, wait_for_workers: bool = False, preserve_recoverable_tasks: bool = False) -> None:
         """Signal shutdown on all active tasks and force-expire leases.
 
@@ -1137,6 +1149,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if not preserve_recoverable_tasks:
             await self._cancel_workers(wait=wait_for_workers)
 
+        self._defer_steering_futures()
         self._active_tasks.clear()
         self._timeout_watchdogs.clear()
         self._pending_shutdown_tasks.clear()
@@ -2137,6 +2150,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         while True:
             ctx.retry_attempt = attempt
             try:
+                if self._shutdown_event.is_set():
+                    raise asyncio.CancelledError
                 ambient_request_context = get_request_context()
                 request_context_token = set_request_context(
                     FoundryAgentRequestContext(
@@ -2814,6 +2829,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             )
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to clear drain_in_progress for %s", task_id)
+
+        if self._shutdown_event.is_set():
+            return None
 
         logger.info(
             "Steering drain: task %s drained next input",

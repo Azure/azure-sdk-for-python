@@ -955,15 +955,26 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 )
                 or ""
             )
+            session_guid = (
+                effective_environment.get(
+                    _SESSION_GUID_ENV, captured_environment.get(_SESSION_GUID_ENV, os.environ.get(_SESSION_GUID_ENV))
+                )
+                or ""
+            )
             if (
                 self._task_manager is not None
                 and self._task_manager_binding is not None
-                and self._task_manager_binding[2] != agent_name
+                and (self._task_manager_binding[1] != session_guid or self._task_manager_binding[2] != agent_name)
                 and self._task_manager._has_live_workers  # pylint: disable=protected-access
             ):
+                guid_changed = self._task_manager_binding[1] != session_guid
                 return create_error_response(
-                    "agent_mismatch",
-                    "Cannot change agent identity while task workers are running.",
+                    "session_guid_mismatch" if guid_changed else "agent_mismatch",
+                    (
+                        "Cannot change session incarnation while task workers are running."
+                        if guid_changed
+                        else "Cannot change agent identity while task workers are running."
+                    ),
                     status_code=409,
                 )
             previous_session_id, previous_session_guid = (

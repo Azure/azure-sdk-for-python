@@ -236,9 +236,10 @@ inventing a platform restore event.
 - An inactive manager whose construction-time provider configuration no longer
   matches hydrated settings is disposed and rebuilt. Provider changes while
   workers are live fail explicitly instead of sending work to a stale endpoint.
-- Runtime identity includes agent name as well as session ID/GUID. A live
-  agent-name change is rejected before environment/configuration mutation;
-  incompatible inactive runtimes are rebuilt.
+- Runtime identity includes agent name as well as session ID/GUID. Live
+  agent-name and session-GUID changes are rejected before environment,
+  configuration, or lease-instance mutation; incompatible inactive runtimes
+  are rebuilt.
 - Local provider comparison uses `resolve_state_subdir("tasks")`, including
   the default home directory when the root variable is unset or empty.
 
@@ -278,6 +279,11 @@ including renewals whose handlers completed before cleanup began.
 No new steering turn executes during cleanup. If the current turn finishes
 normally, the next queued input is durably staged as `in_progress` for recovery,
 without invoking its handler; the next activation resumes that input.
+Shutdown is checked after awaited steering bookkeeping and immediately before
+handler dispatch, including after watchdog setup. Before disposing a manager,
+unfinished queued and promoted steering futures receive `TaskDeferred`; their
+in-memory registrations are cleared, not their persisted inputs. Existing
+completed or cancelled futures retain their outcomes.
 After workers stop, rollback reconciles any suspended steering chain whose
 next-input transition was interrupted. Reconciliation uses the same fenced
 drain path with an explicit lease claim before that lease is expired for retry.

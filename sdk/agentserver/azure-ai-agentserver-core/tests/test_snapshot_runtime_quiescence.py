@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.tasks import TaskContext, task
+from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task, task
 from azure.ai.agentserver.core.tasks import _manager
 from azure.ai.agentserver.core.tasks._exceptions import TaskDeferred
 from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
@@ -123,6 +123,238 @@ async def test_live_agent_override_is_rejected_before_mutation(provider_factory)
             assert stored.lease.owner == manager._lease_owner
         finally:
             finish.set()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("guid", ["b" * 32, "", None], ids=["changed", "cleared", "captured-baseline"])
+async def test_live_guid_override_preserves_manager_and_worker_lease_identity(provider_factory, monkeypatch, guid):
+    provider, _ = provider_factory
+    running, finish = asyncio.Event(), asyncio.Event()
+    callbacks, renewal_identities, runs = [], [], []
+    original_renewal = _manager.lease_renewal_loop
+    app = host()
+
+    async def renewal(*args, **kwargs):
+        renewal_identities.append((kwargs["lease_owner"], kwargs["lease_instance_id"]))
+        await original_renewal(*args, **kwargs)
+
+    monkeypatch.setattr(_manager, "lease_renewal_loop", renewal)
+
+    @task(name="live_guid_startup")
+    async def startup(ctx: TaskContext[str]) -> str:
+        running.set()
+        await finish.wait()
+        return ctx.input
+
+    @app.after_restore_handler
+    async def initialize(context):
+        callbacks.append(context.restore_id)
+        runs.append(await startup.start(task_id="live-guid-startup", input=context.session_id))
+        await asyncio.wait_for(running.wait(), 2)
+
+    async with app.router.lifespan_context(app), client(app) as http:
+        try:
+            assert (await http.post("/_agent/after-restore", json=payload())).status_code == 200
+            manager = get_task_manager()
+            identity = (manager._lease_owner, manager._instance_id)
+            worker = manager._active_tasks["live-guid-startup"]
+            changed = payload(restore_id="restore-2")
+            overrides = changed["session_context"]["session_env_overrides"]
+            if guid is None:
+                overrides.pop("FOUNDRY_AGENT_SESSION_GUID")
+            else:
+                overrides["FOUNDRY_AGENT_SESSION_GUID"] = guid
+            response = await http.post("/_agent/after-restore", json=changed)
+            assert response.status_code == 409, response.text
+            assert response.json()["error"]["code"] == "session_guid_mismatch"
+            assert get_task_manager() is manager
+            assert callbacks == ["restore-1"]
+            assert manager._materialization_restore_id == "restore-1"
+            assert (manager._lease_owner, manager._instance_id) == identity
+            assert renewal_identities == [identity]
+            assert manager._active_tasks["live-guid-startup"] is worker
+            assert not worker.execution_task.done()
+            assert not worker.renewal_task.done()
+            assert os.environ["FOUNDRY_AGENT_SESSION_GUID"] == app.config.session_guid == "a" * 32
+            stored = await provider.get("live-guid-startup")
+            assert (stored.lease.owner, stored.lease.instance_id) == identity
+        finally:
+            finish.set()
+            await asyncio.wait_for(asyncio.gather(*(run.result() for run in runs), return_exceptions=True), 2)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("boundary", ["final-patch", "watchdog"])
+async def test_shutdown_after_steering_promotion_does_not_dispatch_handler(provider_factory, monkeypatch, boundary):
+    provider, _ = provider_factory
+    manager = TaskManager(config=host().config, provider=provider, shutdown_grace_seconds=1)
+    _manager.set_task_manager(manager)
+    running, finish_turn, blocked, release = (asyncio.Event() for _ in range(4))
+    observed = []
+    original_update = manager._provider_update_locked
+    original_watchdog = manager._spawn_watchdog_for_turn
+
+    async def update(task_id, patch):
+        steering = (patch.payload or {}).get("steering", {})
+        if (
+            boundary == "final-patch"
+            and steering.get("drain_in_progress") is False
+            and (patch.payload or {}).get("input") == "next"
+        ):
+            blocked.set()
+            await release.wait()
+        return await original_update(task_id, patch)
+
+    async def watchdog(*, task_id, opts, ctx):
+        if boundary == "watchdog" and ctx.is_steered_turn:
+            blocked.set()
+            await release.wait()
+        await original_watchdog(task_id=task_id, opts=opts, ctx=ctx)
+
+    monkeypatch.setattr(manager, "_provider_update_locked", update)
+    monkeypatch.setattr(manager, "_spawn_watchdog_for_turn", watchdog)
+
+    @multi_turn_task(name="steering_dispatch_boundary", steerable=True)
+    async def step(ctx: TaskContext[str]) -> str:
+        observed.append(ctx.input)
+        if ctx.input == "first":
+            running.set()
+            await finish_turn.wait()
+        return ctx.input
+
+    shutdown = None
+    try:
+        first = await step.start(task_id="dispatch-boundary", input="first")
+        await asyncio.wait_for(running.wait(), 2)
+        queued = await step.start(task_id="dispatch-boundary", input="next")
+        finish_turn.set()
+        await asyncio.wait_for(blocked.wait(), 2)
+        shutdown = asyncio.create_task(manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=True))
+        await asyncio.wait_for(manager._shutdown_event.wait(), 2)
+        release.set()
+        await asyncio.wait_for(shutdown, 2)
+        assert observed == ["first"]
+        assert await first.result() == "first"
+        with pytest.raises(TaskDeferred):
+            await asyncio.wait_for(queued.result(), 2)
+        stored = await provider.get("dispatch-boundary")
+        assert stored.status == "in_progress"
+        assert stored.payload["input"] == "next"
+        assert stored.payload["steering"]["pending_inputs"] == []
+        assert datetime.fromisoformat(stored.lease.expires_at) <= datetime.now(timezone.utc)
+        assert not manager._pending_steering_futures
+        assert not manager._active_generation_future
+        assert not manager._has_live_workers
+    finally:
+        finish_turn.set()
+        release.set()
+        if shutdown is not None:
+            await asyncio.gather(shutdown, return_exceptions=True)
+        await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=True)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("failure", ["exception", "cancel"])
+@pytest.mark.parametrize("api", ["handle", "run"])
+async def test_failed_restore_defers_queued_steering_callers_before_retry(provider_factory, monkeypatch, failure, api):
+    provider, _ = provider_factory
+    monkeypatch.setenv("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", "0.5")
+    app = host()
+    running, queued, failing, recovered = (asyncio.Event() for _ in range(4))
+    managers, waiters, observed = [], [], []
+    original_update = provider.update
+
+    async def update(task_id, patch):
+        result = await original_update(task_id, patch)
+        if (patch.payload or {}).get("steering", {}).get("pending_inputs"):
+            queued.set()
+        return result
+
+    monkeypatch.setattr(provider, "update", update)
+
+    @multi_turn_task(name="rollback_queued_caller", steerable=True)
+    async def step(ctx: TaskContext[str]) -> str:
+        observed.append(ctx.input)
+        if ctx.input == "first":
+            running.set()
+            await ctx.shutdown.wait()
+        else:
+            recovered.set()
+        return ctx.input
+
+    @app.after_restore_handler
+    async def initialize(context):
+        managers.append(get_task_manager())
+        if len(managers) != 1:
+            return
+        await step.start(task_id="queued-caller", input="first")
+        await asyncio.wait_for(running.wait(), 2)
+        if api == "handle":
+            run = await step.start(task_id="queued-caller", input="next")
+            waiters.append(asyncio.create_task(run.result()))
+        else:
+            waiters.append(asyncio.create_task(step.run(task_id="queued-caller", input="next")))
+        await asyncio.wait_for(queued.wait(), 2)
+        failing.set()
+        if failure == "exception":
+            raise RuntimeError("Fail restore after accepting a queued steering input")
+        await asyncio.Event().wait()
+
+    async with app.router.lifespan_context(app), client(app) as http:
+        request = asyncio.create_task(http.post("/_agent/after-restore", json=payload()))
+        try:
+            await asyncio.wait_for(failing.wait(), 2)
+            if failure == "cancel":
+                request.cancel()
+                with pytest.raises(asyncio.CancelledError):
+                    await request
+            else:
+                assert (await request).status_code == 500
+            with pytest.raises(TaskDeferred):
+                await asyncio.wait_for(waiters[0], 2)
+            assert observed == ["first"]
+            assert not managers[0]._pending_steering_futures
+            assert not managers[0]._active_generation_future
+            stored = await provider.get("queued-caller")
+            assert stored.status == "in_progress"
+            assert stored.payload["input"] == "next"
+            assert datetime.fromisoformat(stored.lease.expires_at) <= datetime.now(timezone.utc)
+            response = await http.post("/_agent/after-restore", json=payload())
+            assert response.status_code == 200, response.text
+            await asyncio.wait_for(recovered.wait(), 2)
+            assert managers[0] is not managers[1]
+            assert observed == ["first", "next"]
+        finally:
+            if not request.done():
+                request.cancel()
+            for waiter in waiters:
+                if not waiter.done():
+                    waiter.cancel()
+            await asyncio.gather(request, *waiters, return_exceptions=True)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("preserve", [False, True])
+async def test_shutdown_settles_only_unfinished_steering_futures(provider_factory, preserve):
+    provider, _ = provider_factory
+    manager = TaskManager(config=host().config, provider=provider, shutdown_grace_seconds=0)
+    queued = manager._register_steering_future("queued")
+    completed = manager._register_steering_future("queued")
+    completed.set_result("already completed")
+    cancelled = manager._register_steering_future("queued")
+    cancelled.cancel()
+    promoted = asyncio.get_running_loop().create_future()
+    manager._active_generation_future["promoted"] = promoted
+    manager._active_generation_future["queued"] = queued
+    await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=preserve)
+    for future in (queued, promoted):
+        assert future.done()
+        with pytest.raises(TaskDeferred):
+            await future
+    assert await completed == "already completed"
+    assert cancelled.cancelled()
+    assert not manager._pending_steering_futures
+    assert not manager._active_generation_future
 
 
 @pytest.mark.asyncio
