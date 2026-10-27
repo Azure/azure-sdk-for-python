@@ -36,6 +36,13 @@ pip install -r requirements.txt
 python app.py            # listens on http://localhost:8088
 ```
 
+For hosted Python deployments, set `PYTHONNOUSERSITE` to `"1"` in the agent
+definition's `environment_variables` map, or add `ENV PYTHONNOUSERSITE=1` to its
+Dockerfile. This disables Python user-site package loading. Install dependencies
+in a virtual environment or image, not with `pip install --user`. See
+[Configure hosted agent environment variables](https://learn.microsoft.com/azure/foundry/agents/how-to/configure-hosted-agent-env-variables)
+for deployment configuration.
+
 Pass the same `?agent_session_id=` on every call so poll/cancel hit the same
 session-scoped store:
 
