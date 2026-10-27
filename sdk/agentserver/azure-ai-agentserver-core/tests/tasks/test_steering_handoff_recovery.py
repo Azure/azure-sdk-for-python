@@ -918,3 +918,84 @@ async def test_cancel_after_committed_queue_removal_reply_is_cancelled(tmp_path,
         if cancelling is not None:
             await asyncio.gather(cancelling, return_exceptions=True)
         set_task_manager(None)
+
+
+@pytest.mark.asyncio
+async def test_lost_queued_claim_reply_keeps_claimed_caller_future(tmp_path, monkeypatch):
+    entered_first, finish_first, entered_second, finish_second = (asyncio.Event() for _ in range(4))
+    observed = []
+
+    @multi_turn_task(name="handoff", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        value = ctx.input["value"]
+        observed.append(value)
+        if value == 1:
+            entered_first.set()
+            await finish_first.wait()
+        if value == 2:
+            entered_second.set()
+            await finish_second.wait()
+        return value
+
+    provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    set_task_manager(manager)
+    queued_second = queued_third = None
+    try:
+        await manager.startup()
+        first = await worker.start(task_id="chain", input={"value": 1})
+        await asyncio.wait_for(entered_first.wait(), 5)
+        queued_second = await worker.start(task_id="chain", input={"value": 2})
+        queued_third = await worker.start(task_id="chain", input={"value": 3})
+        execution = manager._active_tasks["chain"].execution_task
+        drain = manager._try_drain_steering
+        interrupt_once = True
+
+        async def interrupt_drain(*args, **kwargs):
+            nonlocal interrupt_once
+            if interrupt_once:
+                interrupt_once = False
+                raise RuntimeError("interrupt completion-to-drain handoff")
+            return await drain(*args, **kwargs)
+
+        monkeypatch.setattr(manager, "_try_drain_steering", interrupt_drain)
+        finish_first.set()
+        assert await asyncio.wait_for(first.result(), 5) == 1
+        await asyncio.wait_for(execution, 5)
+        suspended = await provider.get("chain")
+        assert suspended.status == "suspended"
+        assert suspended.payload["steering"]["pending_inputs"] == [{"value": 2}, {"value": 3}]
+
+        update = provider.update
+        lose_reply = True
+
+        async def committed_claim_without_reply(task_id, patch):
+            nonlocal lose_reply
+            result = await update(task_id, patch)
+            if lose_reply and patch.status == "in_progress":
+                lose_reply = False
+                raise OSError("committed claim response lost")
+            return result
+
+        monkeypatch.setattr(provider, "update", committed_claim_without_reply)
+        await manager._recover_queued_steering_tasks()
+        claimed = await provider.get("chain")
+        assert claimed.status == "in_progress"
+        assert claimed.payload["input"] == {"value": 2}
+        assert claimed.payload["steering"]["pending_inputs"] == [{"value": 3}]
+        assert "chain" not in manager._active_tasks
+
+        await manager._recover_stale_tasks()
+        await asyncio.wait_for(entered_second.wait(), 5)
+        finish_second.set()
+        assert await asyncio.wait_for(queued_second.result(), 5) == 2
+        assert await asyncio.wait_for(queued_third.result(), 5) == 3
+        assert observed == [1, 2, 3]
+    finally:
+        finish_first.set()
+        finish_second.set()
+        await manager.shutdown()
+        for queued in (queued_second, queued_third):
+            if queued is not None:
+                await asyncio.gather(asyncio.wait_for(queued.result(), 1), return_exceptions=True)
+        set_task_manager(None)

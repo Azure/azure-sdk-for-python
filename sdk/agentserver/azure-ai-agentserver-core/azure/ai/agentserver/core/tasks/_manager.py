@@ -1617,8 +1617,19 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         loop = asyncio.get_running_loop()
         steering_futures = self._pending_steering_futures.get(task_id, [])
         queued_future = steering_futures.pop(0) if _resume_queued and steering_futures else None
+        claimed_queued_input = _resume_queued
+        if entry_mode == "recovered" and not _resume_queued:
+            pending_count = len(steering.get("pending_inputs") or [])
+            while len(steering_futures) > pending_count and steering_futures[-1] is None:
+                steering_futures.pop()
+            if len(steering_futures) > pending_count:
+                if len(steering_futures) != pending_count + 1:
+                    raise RuntimeError(f"Local steering futures are misaligned for task {task_id!r}")
+                # The queued claim committed, but its reply failed before binding the caller.
+                queued_future = steering_futures.pop(0)
+                claimed_queued_input = True
         result_future = queued_future if queued_future is not None else loop.create_future()
-        if _resume_queued:
+        if claimed_queued_input:
             self._active_generation_future[task_id] = result_future
 
         renewal_cancel = asyncio.Event()
