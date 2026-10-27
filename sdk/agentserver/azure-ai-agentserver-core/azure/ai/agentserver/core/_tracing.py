@@ -353,7 +353,11 @@ def _resolve_instrumentation_options(
 
 
 def _get_otel_disabled_instrumentations() -> set[str]:
-    """Return instrumentation names disabled through the standard OTel environment variable."""
+    """Return instrumentation names disabled through the standard OTel environment variable.
+
+    :return: The disabled instrumentation names.
+    :rtype: set[str]
+    """
     disabled = os.environ.get(_OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, "")
     return {name.strip() for name in disabled.split(",") if name.strip()}
 
