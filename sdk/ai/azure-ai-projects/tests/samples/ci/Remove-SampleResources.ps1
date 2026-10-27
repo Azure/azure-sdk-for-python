@@ -3,7 +3,11 @@
 #Requires -Version 7.2
 
 [CmdletBinding(SupportsShouldProcess)]
-param([Parameter(Mandatory)] [string] $StatePath, [switch] $ConfirmCleanup)
+param(
+    [Parameter(Mandatory)] [string] $StatePath,
+    [Parameter(Mandatory)] [ValidateSet('q1', 'q2', 'q3', 'q4')] [string] $QueueName,
+    [switch] $ConfirmCleanup
+)
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'SampleCiHelpers.ps1')
@@ -12,7 +16,7 @@ if (-not (Test-Path -LiteralPath $StatePath)) {
     return
 }
 $state = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json -AsHashtable
-Assert-SampleRunPlan -Plan $state.plan
+Assert-SampleRunPlan -Plan $state.plan -QueueName $QueueName
 $expectedDeployment = 'sample-ci-rg-' + $state.plan.ownerToken
 if ($state['resourceGroupDeployment'] -cne $expectedDeployment -or $state['subscriptionId'] -ine $state.plan.subscriptionId -or
     $state['tenantId'] -ine $state.plan.tenantId) {

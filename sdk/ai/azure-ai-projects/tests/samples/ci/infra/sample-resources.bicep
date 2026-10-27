@@ -16,9 +16,6 @@ type ModelDeployment = {
 param accountName string
 @minLength(2)
 param projectName string
-@minLength(36)
-@maxLength(36)
-param runnerPrincipalId string
 @minLength(1)
 param agentName string
 param sampleModel ModelDeployment
@@ -51,35 +48,6 @@ resource sampleDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025
       version: sampleModel.version
     }
     versionUpgradeOption: 'NoAutoUpgrade'
-  }
-}
-
-var foundryUserRole = subscriptionResourceId(
-  'Microsoft.Authorization/roleDefinitions',
-  '53ca6127-db72-4b80-b1b0-d745d6d5456d'
-)
-var openaiUserRole = subscriptionResourceId(
-  'Microsoft.Authorization/roleDefinitions',
-  '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
-)
-
-resource runnerProjectAccess 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(project.id, runnerPrincipalId, foundryUserRole)
-  scope: project
-  properties: {
-    principalId: runnerPrincipalId
-    principalType: 'ServicePrincipal'
-    roleDefinitionId: foundryUserRole
-  }
-}
-
-resource runnerModelAccess 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(account.id, runnerPrincipalId, openaiUserRole)
-  scope: account
-  properties: {
-    principalId: runnerPrincipalId
-    principalType: 'ServicePrincipal'
-    roleDefinitionId: openaiUserRole
   }
 }
 

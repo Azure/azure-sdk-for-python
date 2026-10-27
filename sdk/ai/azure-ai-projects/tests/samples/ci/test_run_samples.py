@@ -22,6 +22,7 @@ def ready_state():
         "subscriptionId": "00000000-0000-0000-0000-000000000000",
         "tenantId": "22222222-2222-2222-2222-222222222222",
         "plan": {
+            "queueName": "q1",
             "subscriptionId": "00000000-0000-0000-0000-000000000000",
             "tenantId": "22222222-2222-2222-2222-222222222222",
             "selectedTests": [
@@ -243,6 +244,8 @@ def test_external_validation_endpoint_is_env_only_in_real_runner_invocation(tmp_
     monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", endpoint)
     monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", state["subscriptionId"])
     monkeypatch.setenv("AZURE_TENANT_ID", state["tenantId"])
+    monkeypatch.setenv("SAMPLE_QUEUE_NAME", "q1")
+    monkeypatch.setenv("SYSTEM_ACCESSTOKEN", "unit-test-ado-token")
     monkeypatch.setenv("MCP_GITHUB_PAT", "github_pat_unit_test_placeholder")
     monkeypatch.setattr(run_samples.sys, "argv", ["run_samples.py", "--state", str(state_path), "--junit", str(junit)])
     monkeypatch.setattr(run_samples, "wait_for_project", Mock())
@@ -258,6 +261,7 @@ def test_external_validation_endpoint_is_env_only_in_real_runner_invocation(tmp_
     assert environment["AZURE_TOKEN_CREDENTIALS"] == "AzureCliCredential"
     assert environment["PYTHON_DOTENV_DISABLED"] == "true"
     assert "MCP_GITHUB_PAT" not in environment
+    assert "SYSTEM_ACCESSTOKEN" not in environment
     assert all(endpoint not in argument and "llm-validation-project-endpoint" not in argument for argument in command)
     assert endpoint not in state_path.read_text(encoding="utf-8")
     assert state["environment"] == ready_state()["environment"]
@@ -293,6 +297,7 @@ def test_runner_rejects_task_target_change_before_readiness(tmp_path, monkeypatc
     monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", "https://example.services.ai.azure.com/api/projects/test")
     monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", state["subscriptionId"])
     monkeypatch.setenv("AZURE_TENANT_ID", state["tenantId"])
+    monkeypatch.setenv("SAMPLE_QUEUE_NAME", "q1")
     monkeypatch.setenv(variable, "11111111-1111-1111-1111-111111111111")
     monkeypatch.setattr(
         run_samples.sys, "argv", ["run_samples.py", "--state", str(state_path), "--junit", str(tmp_path / "result.xml")]
@@ -302,6 +307,26 @@ def test_runner_rejects_task_target_change_before_readiness(tmp_path, monkeypatc
     monkeypatch.setattr(run_samples, "wait_for_project", readiness)
     monkeypatch.setattr(run_samples.subprocess, "run", process)
     with pytest.raises(ValueError, match=f"task {variable}"):
+        run_samples.main()
+    readiness.assert_not_called()
+    process.assert_not_called()
+
+
+@pytest.mark.parametrize("queue", ["q2", "", "$(QueueName)", "q5"])
+def test_runner_rejects_sibling_queue_before_readiness(tmp_path, monkeypatch, queue):
+    state = ready_state()
+    state_path = tmp_path / "state.json"
+    state_path.write_text(json.dumps(state), encoding="utf-8")
+    monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", "https://example.services.ai.azure.com/api/projects/test")
+    monkeypatch.setenv("SAMPLE_QUEUE_NAME", queue)
+    monkeypatch.setattr(
+        run_samples.sys, "argv", ["run_samples.py", "--state", str(state_path), "--junit", str(tmp_path / "result.xml")]
+    )
+    readiness = Mock()
+    process = Mock()
+    monkeypatch.setattr(run_samples, "wait_for_project", readiness)
+    monkeypatch.setattr(run_samples.subprocess, "run", process)
+    with pytest.raises(ValueError, match="SAMPLE_QUEUE_NAME"):
         run_samples.main()
     readiness.assert_not_called()
     process.assert_not_called()

@@ -2,11 +2,13 @@
 # Licensed under the MIT License.
 """Offline tests. Run with --confcutdir=tests/samples/ci to avoid service fixtures."""
 
+import json
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
+import select_samples
 from select_samples import SampleCollector, SampleTest, matches, normalize, select_tests
 
 SYNC = SampleTest(
@@ -114,3 +116,62 @@ def test_collector_uses_real_sample_parameter_not_test_name(tmp_path: Path):
     )
     collector.pytest_collection_finish(session)
     assert collector.tests == [SYNC]
+
+
+@pytest.mark.parametrize("count", [1, 2, 3, 4, 5, 9])
+@pytest.mark.parametrize("requested", [1, 2, 3, 4])
+def test_round_robin_runs_every_selected_case_once(count, requested):
+    tests = [SampleTest(f"node-{index}", f"sample-{index}.py", str(index)) for index in range(count)]
+    queues = select_samples.partition_tests(tests, requested)
+    active = min(count, requested)
+    assert list(queues) == [f"q{number}" for number in range(1, active + 1)]
+    for index, shard in enumerate(queues.values()):
+        assert shard == tests[index::active]
+        assert shard
+    all_nodes = [test.node_id for shard in queues.values() for test in shard]
+    assert len(all_nodes) == len(set(all_nodes)) == count
+    assert max(map(len, queues.values())) - min(map(len, queues.values())) <= 1
+
+
+@pytest.mark.parametrize("requested", [0, 5, -1, True, 1.5])
+def test_round_robin_rejects_invalid_worker_count(requested):
+    with pytest.raises(ValueError, match="one to four"):
+        select_samples.partition_tests([SYNC], requested)
+
+
+@pytest.mark.parametrize("tests", [[], [SYNC, SYNC]])
+def test_round_robin_rejects_empty_or_duplicate_selection(tests):
+    with pytest.raises(ValueError, match="nonempty.*unique"):
+        select_samples.partition_tests(tests, 4)
+
+
+def test_default_pair_creates_two_nonempty_shards_and_dynamic_matrix(tmp_path, monkeypatch):
+    monkeypatch.setattr(select_samples, "collect_tests", lambda root: [ASYNC, SYNC])
+    output = tmp_path / "plan" / "selected-tests.json"
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "select_samples.py",
+            "--selection-kind",
+            "sample-path",
+            "--selection",
+            "*",
+            "--queue-count",
+            "4",
+            "--output",
+            str(output),
+        ],
+    )
+    assert select_samples.main() == 0
+    matrix = json.loads((output.parent / "queue-matrix.json").read_text())
+    assert matrix == {"q1": {"QueueName": "q1"}, "q2": {"QueueName": "q2"}}
+    manifest = json.loads(output.read_text())
+    assert [test["node_id"] for test in manifest["tests"]] == [SYNC.node_id, ASYNC.node_id]
+    for queue, expected in (("q1", SYNC), ("q2", ASYNC)):
+        shard = json.loads((output.parent / queue / "selected-tests.json").read_text())
+        assert [test["node_id"] for test in shard["tests"]] == [expected.node_id]
+    assert not (output.parent / "q3").exists()
+    assert not (output.parent / "q4").exists()
+    with pytest.raises(SystemExit):
+        select_samples.main()
+    assert json.loads(output.read_text()) == manifest

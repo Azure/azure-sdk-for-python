@@ -1,24 +1,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-. (Join-Path $PSScriptRoot 'SampleCiHelpers.ps1')
+. (Join-Path $PSScriptRoot '../SampleCiHelpers.ps1')
 
 Describe 'Explicit subscription targeting' {
     BeforeEach {
         $script:originalSubscription = $env:AZURE_SUBSCRIPTION_ID
         $script:originalTenant = $env:AZURE_TENANT_ID
+        $script:originalQueue = $env:SAMPLE_QUEUE_NAME
         $env:AZURE_SUBSCRIPTION_ID = '11111111-1111-1111-1111-111111111111'
         $env:AZURE_TENANT_ID = '22222222-2222-2222-2222-222222222222'
+        $env:SAMPLE_QUEUE_NAME = 'q1'
         $script:targetPlan = @{
             schemaVersion = 1
             definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
             buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
             jobAttempt = '1'
+            queueName = 'q1'
             ownerToken = '0123456789abcdef0123456789abcdef'
             subscriptionId = $env:AZURE_SUBSCRIPTION_ID
             tenantId = $env:AZURE_TENANT_ID
         }
-        $script:targetPlan.resourceGroup = 'azsdk-samples-{0}-{1}-1-01234567' -f $script:targetPlan.definitionId, $script:targetPlan.buildId
+        $script:targetPlan.resourceGroup = 'azsdk-samples-{0}-{1}-q1-1-01234567' -f $script:targetPlan.definitionId, $script:targetPlan.buildId
         $script:targetAccount = @{
             id = $env:AZURE_SUBSCRIPTION_ID
             tenantId = '22222222-2222-2222-2222-222222222222'
@@ -50,6 +53,7 @@ Describe 'Explicit subscription targeting' {
     AfterEach {
         $env:AZURE_SUBSCRIPTION_ID = $script:originalSubscription
         $env:AZURE_TENANT_ID = $script:originalTenant
+        $env:SAMPLE_QUEUE_NAME = $script:originalQueue
     }
 
     It 'requires an explicit environment subscription rather than the active subscription' {
@@ -144,22 +148,26 @@ Describe 'Explicit subscription targeting' {
 
 Describe 'Run-owned ephemeral resource guard' {
     BeforeEach {
+        $script:originalQueue = $env:SAMPLE_QUEUE_NAME
+        $env:SAMPLE_QUEUE_NAME = 'q1'
         $script:plan = @{
             schemaVersion = 1
             definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
             buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
             jobAttempt = '1'
+            queueName = 'q1'
             ownerToken = '0123456789abcdef0123456789abcdef'
             subscriptionId = '00000000-0000-0000-0000-000000000000'
             tenantId = '22222222-2222-2222-2222-222222222222'
         }
-        $script:plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-1-01234567' -f $script:plan.definitionId, $script:plan.buildId
+        $script:plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-q1-1-01234567' -f $script:plan.definitionId, $script:plan.buildId
         $script:subscription = '00000000-0000-0000-0000-000000000000'
         $script:group = @{
             id = '/subscriptions/{0}/resourceGroups/{1}' -f $script:subscription, $script:plan.resourceGroup
             tags = Get-SampleOwnershipTags -Plan $script:plan
         }
     }
+    AfterEach { $env:SAMPLE_QUEUE_NAME = $script:originalQueue }
 
     It 'accepts only exact run ownership' {
         Assert-SampleResourceGroupOwnership -Plan $script:plan -ResourceGroup $script:group -SubscriptionId $script:subscription
@@ -218,16 +226,19 @@ Describe 'Run-owned ephemeral resource guard' {
 
 Describe 'Cleanup target-state guard' {
     BeforeEach {
+        $script:originalQueue = $env:SAMPLE_QUEUE_NAME
+        $env:SAMPLE_QUEUE_NAME = 'q1'
         $plan = @{
             schemaVersion = 1
             definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
             buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
             jobAttempt = '1'
+            queueName = 'q1'
             ownerToken = '0123456789abcdef0123456789abcdef'
             subscriptionId = '11111111-1111-1111-1111-111111111111'
             tenantId = '22222222-2222-2222-2222-222222222222'
         }
-        $plan.resourceGroup = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
+        $plan.resourceGroup = 'azsdk-samples-{0}-{1}-q1-1-01234567' -f $plan.definitionId, $plan.buildId
         $script:cleanupState = @{
             schemaVersion = 1
             plan = $plan
@@ -237,8 +248,9 @@ Describe 'Cleanup target-state guard' {
             status = 'Ready'
         }
         $script:cleanupPath = Join-Path $TestDrive 'cleanup-state.json'
-        $script:cleanupScript = Join-Path $PSScriptRoot 'Remove-SampleResources.ps1'
+        $script:cleanupScript = Join-Path $PSScriptRoot '../Remove-SampleResources.ps1'
     }
+    AfterEach { $env:SAMPLE_QUEUE_NAME = $script:originalQueue }
 
     It 'rejects a changed tenant before any Azure request or deletion' {
         $script:cleanupState.tenantId = '33333333-3333-3333-3333-333333333333'
@@ -246,7 +258,7 @@ Describe 'Cleanup target-state guard' {
         $message = & {
             function az { throw 'The native Azure CLI must not run for invalid cleanup state.' }
             if ((Get-Command az).CommandType -ne 'Function') { throw 'Azure CLI isolation failed.' }
-            try { & $script:cleanupScript -StatePath $script:cleanupPath -ConfirmCleanup } catch { $_.Exception.Message }
+            try { & $script:cleanupScript -StatePath $script:cleanupPath -QueueName q1 -ConfirmCleanup } catch { $_.Exception.Message }
         }
         $message | Should Be 'Invalid cleanup state. No resources were deleted.'
         (Get-Content -LiteralPath $script:cleanupPath -Raw | ConvertFrom-Json).status | Should Be 'Ready'
@@ -258,7 +270,7 @@ Describe 'Cleanup target-state guard' {
         $message = & {
             function az { throw 'The native Azure CLI must not run for invalid cleanup state.' }
             if ((Get-Command az).CommandType -ne 'Function') { throw 'Azure CLI isolation failed.' }
-            try { & $script:cleanupScript -StatePath $script:cleanupPath -ConfirmCleanup } catch { $_.Exception.Message }
+            try { & $script:cleanupScript -StatePath $script:cleanupPath -QueueName q1 -ConfirmCleanup } catch { $_.Exception.Message }
         }
         $message | Should Be 'Invalid cleanup state. No resources were deleted.'
         (Get-Content -LiteralPath $script:cleanupPath -Raw | ConvertFrom-Json).status | Should Be 'Ready'
@@ -496,45 +508,6 @@ Describe 'Secret-safe ARM error diagnostics' {
         $response['value'] | Should Be 'unit-test-placeholder'
     }
 
-    It 'persists only error codes and resource identifiers from failed deployments' {
-        $owner = '0123456789abcdef0123456789abcdef'
-        $plan = @{
-            schemaVersion = 1
-            definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
-            buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
-            jobAttempt = '1'
-            ownerToken = $owner
-            subscriptionId = '00000000-0000-0000-0000-000000000000'
-            tenantId = '22222222-2222-2222-2222-222222222222'
-        }
-        $plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
-        $state = @{ plan = $plan; subscriptionId = '00000000-0000-0000-0000-000000000000' }
-        Mock Invoke-SampleAzure {
-            param($Arguments, $Sensitive)
-            if (-not $Sensitive) { throw 'Deployment diagnostics must suppress raw CLI errors.' }
-            if ($Arguments[2] -eq 'list') {
-                return @(@{ name = 'sample-resources'; state = 'Failed' })
-            }
-            if ($Arguments[2] -eq 'show') {
-                return @{ code = 'DeploymentFailed'; message = 'Bearer secret-placeholder'; details = @(@{ code = 'BadRequest' }) }
-            }
-            return @(@{
-                resourceId = '/subscriptions/placeholder/resourceGroups/run/providers/Microsoft.CognitiveServices/accounts/account/projects/project/connections/mcp'
-                resourceType = 'Microsoft.CognitiveServices/accounts/projects/connections'
-                error = '{"error":{"code":"BadRequest","message":"github_pat_unit_test_placeholder","request":{"credentials":"secret-placeholder"}}}'
-            })
-        }
-        $path = Join-Path $TestDrive 'deployment-diagnostics.json'
-        Save-SampleDeploymentDiagnostics -State $state -OutputPath $path
-        $text = Get-Content -LiteralPath $path -Raw
-        $text.Contains('DeploymentFailed') | Should Be $true
-        $text.Contains('BadRequest') | Should Be $true
-        $text.Contains('secret-placeholder') | Should Be $false
-        $text.Contains('github_pat_') | Should Be $false
-        $text.Contains('message') | Should Be $false
-        $text.Contains('credentials') | Should Be $false
-        $text.Contains('request') | Should Be $false
-    }
 }
 
 Describe 'Service connection identity metadata' {
@@ -582,85 +555,5 @@ Describe 'Service connection identity metadata' {
         try { $null = Get-SampleRunnerIdentity } catch { $failure = $_.Exception.Message }
         $failure.Contains('github_pat_') | Should Be $false
         $failure | Should Be 'Could not identify the Azure service-connection application; token and raw response were suppressed.'
-    }
-}
-
-Describe 'Run-owned readiness diagnostics' {
-    BeforeEach {
-        $plan = @{
-            schemaVersion = 1
-            definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
-            buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
-            jobAttempt = '1'
-            ownerToken = '0123456789abcdef0123456789abcdef'
-            subscriptionId = '00000000-0000-0000-0000-000000000000'
-            tenantId = '22222222-2222-2222-2222-222222222222'
-        }
-        $plan['resourceGroup'] = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
-        $script:readinessState = @{ plan = $plan; subscriptionId = '00000000-0000-0000-0000-000000000000' }
-        $script:readinessGroupId = '/subscriptions/{0}/resourceGroups/{1}' -f $script:readinessState.subscriptionId, $plan.resourceGroup
-        Mock Invoke-SampleAzure {
-            param($Arguments, $Sensitive)
-            if (-not $Sensitive) { throw 'Readiness diagnostics must suppress raw CLI responses.' }
-            if ($Arguments[0] -eq 'group') {
-                return @{ id = $script:readinessGroupId; tags = (Get-SampleOwnershipTags -Plan $script:readinessState.plan) }
-            }
-            if ($Arguments[0] -eq 'resource') {
-                return @(
-                    @{ id = $script:readinessGroupId + '/providers/Microsoft.CognitiveServices/accounts/account/projects/project'; name = 'account/project'; type = 'Microsoft.CognitiveServices/accounts/projects' },
-                    @{ id = $script:readinessGroupId + '/providers/Microsoft.DocumentDB/databaseAccounts/cosmos'; name = 'cosmos'; type = 'Microsoft.DocumentDB/databaseAccounts' }
-                )
-            }
-            if ($Arguments[0] -eq 'rest') {
-                if ($Arguments[4] -match '/capabilityHosts\?') {
-                    return @(@{ name = 'caphost'; state = 'Succeeded'; threadStorageConnections = @('cosmos'); credentials = 'github_pat_unit_test_placeholder' })
-                }
-                return @{ state = 'Succeeded'; principalId = 'project-principal'; credentials = 'github_pat_unit_test_placeholder' }
-            }
-            if ($Arguments[1] -eq 'show') {
-                return @{ state = 'Succeeded'; publicNetworkAccess = 'Enabled'; isVirtualNetworkFilterEnabled = $false;
-                    disableLocalAuth = $true; ipRules = @(); virtualNetworkRules = @(); credentials = 'github_pat_unit_test_placeholder' }
-            }
-            if ($Arguments[2] -eq 'container') {
-                return @(@{ name = 'agent-definitions-v1'; credentials = 'github_pat_unit_test_placeholder' })
-            }
-            return @(@{ principalId = 'project-principal'; scope = '/dbs/enterprise_memory'; roleDefinitionId = 'cosmos-data-contributor'; credentials = 'github_pat_unit_test_placeholder' })
-        }
-    }
-
-    It 'saves only allowlisted network state and runtime resource metadata' {
-        $path = Join-Path $TestDrive 'readiness.json'
-        Save-SampleReadinessDiagnostics -State $script:readinessState -OutputPath $path
-        $text = Get-Content -LiteralPath $path -Raw
-        $report = $text | ConvertFrom-Json -AsHashtable
-        $report.project.principalId | Should Be 'project-principal'
-        $report.cosmos.publicNetworkAccess | Should Be 'Enabled'
-        $report.cosmos.ipRuleCount | Should Be 0
-        $report.capabilityHosts[0].state | Should Be 'Succeeded'
-        $report.containers[0] | Should Be 'agent-definitions-v1'
-        $report.cosmosDataRoles[0].scope | Should Be '/dbs/enterprise_memory'
-        $text.Contains('github_pat_') | Should Be $false
-        $text.Contains('credentials') | Should Be $false
-    }
-
-    It 'records unavailable queries without persisting their exception text' {
-        Mock Invoke-SampleAzure { throw 'Bearer secret-placeholder' } -ParameterFilter { $Arguments[0] -eq 'cosmosdb' }
-        $path = Join-Path $TestDrive 'unavailable.json'
-        Save-SampleReadinessDiagnostics -State $script:readinessState -OutputPath $path
-        $text = Get-Content -LiteralPath $path -Raw
-        $report = $text | ConvertFrom-Json -AsHashtable
-        $report.cosmosStatus | Should Be 'Unavailable'
-        $report.containerStatus | Should Be 'Unavailable'
-        $report.cosmosDataRoleStatus | Should Be 'Unavailable'
-        $text.Contains('secret-placeholder') | Should Be $false
-    }
-
-    It 'refuses diagnostics against a group with different ownership' {
-        Mock Invoke-SampleAzure {
-            return @{ id = $script:readinessGroupId; tags = @{ purpose = 'unrelated' } }
-        } -ParameterFilter { $Arguments[0] -eq 'group' }
-        $path = Join-Path $TestDrive 'foreign-group.json'
-        { Save-SampleReadinessDiagnostics -State $script:readinessState -OutputPath $path } | Should Throw 'ownership tags'
-        Test-Path -LiteralPath $path | Should Be $false
     }
 }

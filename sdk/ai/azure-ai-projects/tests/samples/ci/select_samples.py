@@ -57,6 +57,16 @@ def select_tests(tests: list[SampleTest], selection_kind: str, query: str) -> li
     return sorted(selected.values(), key=lambda test: test.node_id)
 
 
+def partition_tests(tests: list[SampleTest], queue_count: int) -> dict[str, list[SampleTest]]:
+    """Assign each selected case once, preserving manifest order within each queue."""
+    if type(queue_count) is not int or not 1 <= queue_count <= 4:
+        raise ValueError("Request one to four test queues.")
+    if not tests or len({test.node_id for test in tests}) != len(tests):
+        raise ValueError("Queue assignment requires a nonempty selection of unique test nodes.")
+    active = min(queue_count, len(tests))
+    return {f"q{index + 1}": tests[index::active] for index in range(active)}
+
+
 class SampleCollector:
     def __init__(self, package_root: Path):
         self.package_root = package_root.resolve()
@@ -117,9 +127,13 @@ def main() -> int:
     parser.add_argument("--selection", required=True, help="* and ? wildcards; separate OR patterns with semicolons.")
     parser.add_argument("--package-root", type=Path, default=Path(__file__).resolve().parents[3])
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--queue-count", type=int, choices=range(1, 5), default=1)
     arguments = parser.parse_args()
+    if arguments.output.exists() or any((arguments.output.parent / f"q{number}").exists() for number in range(1, 5)):
+        parser.error("Use a fresh output directory; previous queue plans must not be reused or overwritten.")
     try:
         selected = select_tests(collect_tests(arguments.package_root), arguments.selection_kind, arguments.selection)
+        queues = partition_tests(selected, arguments.queue_count)
     except ValueError as error:
         parser.error(str(error))
 
@@ -131,6 +145,15 @@ def main() -> int:
     }
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
     arguments.output.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    matrix = {}
+    for queue, tests in queues.items():
+        directory = arguments.output.parent / queue
+        directory.mkdir()
+        shard = {**manifest, "tests": [asdict(test) for test in tests]}
+        (directory / "selected-tests.json").write_text(json.dumps(shard, indent=2) + "\n", encoding="utf-8")
+        matrix[queue] = {"QueueName": queue}
+        print(f"{queue}: {len(tests)} assigned sample test(s).")
+    (arguments.output.parent / "queue-matrix.json").write_text(json.dumps(matrix) + "\n", encoding="utf-8")
     print(f"\nSelected {len(selected)} sample test(s):")
     for test in selected:
         print(f"  {test.sample_path}\n    {test.node_id}")

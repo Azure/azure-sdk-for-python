@@ -38,6 +38,8 @@ def require_validation_endpoint() -> str:
 def build_command(state: dict, junit_path: Path) -> list[str]:
     if state.get("schemaVersion") != 1 or state.get("status") != "Ready":
         raise ValueError("Bicep provisioning must complete before tests can run.")
+    if state.get("plan", {}).get("queueName") not in {"q1", "q2", "q3", "q4"}:
+        raise ValueError("Deployment state must identify one of the four test queues.")
     environment = state.get("environment", {})
     required = ENVIRONMENT_NAMES - {"MCP_PROJECT_CONNECTION_ID"}
     if set(environment) - ENVIRONMENT_NAMES or any(not environment.get(name) for name in required):
@@ -157,6 +159,8 @@ def main() -> int:
         parser.error("--state and --junit are required when running samples")
     state = json.loads(arguments.state.read_text(encoding="utf-8-sig"))
     command = build_command(state, arguments.junit)
+    if os.environ.get("SAMPLE_QUEUE_NAME", "") != state["plan"]["queueName"]:
+        raise ValueError("The task SAMPLE_QUEUE_NAME does not match the deployment state; sample not started.")
     for environment_name, state_key in (("AZURE_SUBSCRIPTION_ID", "subscriptionId"), ("AZURE_TENANT_ID", "tenantId")):
         if os.environ.get(environment_name, "").lower() != state[state_key].lower():
             raise ValueError(f"The task {environment_name} does not match the deployment state; sample not started.")
@@ -172,6 +176,7 @@ def main() -> int:
         PYTHONIOENCODING="utf-8",
     )
     environment.pop("MCP_GITHUB_PAT", None)
+    environment.pop("SYSTEM_ACCESSTOKEN", None)
     environment["PYTHONPATH"] = os.pathsep.join(
         (str(arguments.package_root), str(Path(__file__).resolve().parent), environment.get("PYTHONPATH", ""))
     )

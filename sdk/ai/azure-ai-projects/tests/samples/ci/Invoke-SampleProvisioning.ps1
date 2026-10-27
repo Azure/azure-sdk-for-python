@@ -2,25 +2,40 @@
 # Licensed under the MIT License.
 #Requires -Version 7.2
 
-[CmdletBinding()]
+[CmdletBinding(DefaultParameterSetName = 'Provision')]
 param(
-    [Parameter(Mandatory)] [string] $PlanPath,
-    [Parameter(Mandatory)] [string] $StatePath,
-    [Parameter(Mandatory)] [string] $StandardTemplatePath,
-    [switch] $ConfirmProvisioning
+    [Parameter(Mandatory, ParameterSetName = 'Provision')] [string] $PlanPath,
+    [Parameter(Mandatory, ParameterSetName = 'Provision')] [string] $StatePath,
+    [Parameter(Mandatory, ParameterSetName = 'Provision')] [ValidateSet('q1', 'q2', 'q3', 'q4')] [string] $QueueName,
+    [Parameter(ParameterSetName = 'Provision')] [switch] $ConfirmProvisioning,
+    [Parameter(Mandatory, ParameterSetName = 'Admission')] [string] $BatchPlanDirectory
 )
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'SampleCiHelpers.ps1')
+if ($PSCmdlet.ParameterSetName -eq 'Admission') {
+    $files = @(Get-ChildItem -LiteralPath $BatchPlanDirectory -Filter 'deployment-plan.json' -Recurse -File)
+    if ($files.Count -lt 1 -or $files.Count -gt 4) { throw 'Expected one to four fresh queue plans.' }
+    $plans = @(foreach ($file in $files) {
+        $queue = Split-Path -Leaf (Split-Path -Parent $file.FullName)
+        $item = Get-Content -LiteralPath $file.FullName -Raw | ConvertFrom-Json -AsHashtable
+        Assert-SampleRunPlan -Plan $item -QueueName $queue
+        $item
+    })
+    $runner = Set-SampleSubscriptionContext -Plan $plans[0]
+    $identities = Get-SampleSharedIdentities -Plan $plans[0]
+    Assert-SampleSharedIdentityGrants -Plan $plans[0] -Identities $identities -RunnerPrincipalId $runner.principalId
+    Assert-SampleBatchCapacity -Plans $plans
+    return
+}
 if (-not $ConfirmProvisioning) { throw 'Provisioning is disabled by default. Use -ConfirmProvisioning only for an explicitly requested live run.' }
 $plan = Get-Content -LiteralPath $PlanPath -Raw | ConvertFrom-Json -AsHashtable
-Assert-SampleRunPlan -Plan $plan
+Assert-SampleRunPlan -Plan $plan -QueueName $QueueName
 if (Test-Path -LiteralPath $StatePath) { throw 'Deployment state already exists. Do not adopt or overwrite a previous attempt.' }
 if ($plan.provisionMcp) { Assert-SampleMcpPat }
 
 $runnerIdentity = Set-SampleSubscriptionContext -Plan $plan
 $subscription = Get-SampleSubscriptionId
-$runnerPrincipalId = $runnerIdentity.principalId
 $exists = Invoke-SampleAzure -Arguments @('group', 'exists', '--name', $plan.resourceGroup, '--subscription', $subscription)
 if ($exists) { throw 'The generated resource group already exists. No existing group will be reused, retagged, or deleted.' }
 
@@ -32,6 +47,8 @@ foreach ($namespace in @('Microsoft.CognitiveServices', 'Microsoft.Storage', 'Mi
     }
 }
 Assert-SampleRegionAvailability -SubscriptionId $subscription -Location $plan.location
+$identities = Get-SampleSharedIdentities -Plan $plan
+Assert-SampleSharedIdentityGrants -Plan $plan -Identities $identities -RunnerPrincipalId $runnerIdentity.principalId
 
 $catalog = @(Invoke-SampleAzure -Arguments @('cognitiveservices', 'model', 'list', '--location', $plan.location, '--subscription', $subscription))
 $sampleModel = Resolve-SampleModel -Catalog $catalog -Name $plan.sampleModel.name -Version $plan.sampleModel.version `
@@ -46,11 +63,13 @@ $groupDeploymentName = 'sample-ci-rg-' + $plan.ownerToken
 $groupArguments = @('--name', $groupDeploymentName, '--location', $plan.location, '--subscription', $subscription,
     '--template-file', (Join-Path $PSScriptRoot 'infra/resource-group.bicep'), '--parameters',
     "location=$($plan.location)", "resourceGroupName=$($plan.resourceGroup)",
-    ('runId={0}-{1}-{2}' -f $plan.definitionId, $plan.buildId, $plan.jobAttempt),
+    ('runId={0}-{1}-{2}-{3}' -f $plan.definitionId, $plan.buildId, $plan.queueName, $plan.jobAttempt),
+    "queueName=$($plan.queueName)",
     "ownerToken=$($plan.ownerToken)", "expiresUtc=$($plan.expiresUtc)")
 Write-Host 'Validating Bicep resource-group deployment before any resource changes.'
 $null = Invoke-SampleAzure -Arguments (@('deployment', 'sub', 'validate') + $groupArguments)
 
+$standardTemplatePath = Join-Path $PSScriptRoot 'infra/standard-shared-identities.bicep'
 $state = @{
     schemaVersion = 1
     plan = $plan
@@ -70,17 +89,20 @@ try {
     $group = Invoke-SampleAzure -Arguments @('group', 'show', '--name', $plan.resourceGroup, '--subscription', $subscription)
     Assert-SampleResourceGroupOwnership -Plan $plan -ResourceGroup $group -SubscriptionId $subscription
 
-    # All resource creation is performed by Bicep, including the official Standard setup.
+    # Reviewed local Standard variant: no worker ARM IAM writes or per-run identities.
     $state['provisioningStep'] = 'StandardSetup'
-    Write-Host 'Deploying official Standard setup Bicep (capability hosts can take 10-20 minutes).'
+    Write-Host 'Deploying the shared-UAMI Standard variant (capability hosts can take 10-20 minutes).'
     $standard = Invoke-SampleAzure -Arguments @('deployment', 'group', 'create', '--name', 'standard-setup',
-        '--resource-group', $plan.resourceGroup, '--subscription', $subscription, '--template-file', $StandardTemplatePath,
-        '--parameters', "location=$($plan.location)", "aiFoundryName=$($plan.accountPrefix)", 'foundryProjectName=project',
-        'displayName=SDK sample CI', 'projectDescription=Temporary azure-ai-projects sample test project',
-        "deploymentTimestamp=$($plan.deploymentTimestamp)", 'deployApplicationInsights=false')
+        '--resource-group', $plan.resourceGroup, '--subscription', $subscription, '--template-file', $standardTemplatePath,
+        '--parameters', "location=$($plan.location)", "accountPrefix=$($plan.accountPrefix)", 'projectPrefix=project',
+        "deploymentTimestamp=$($plan.deploymentTimestamp)",
+        "sharedProjectIdentityResourceId=$($identities.project.resourceId)",
+        "sharedAccountIdentityResourceId=$($identities.account.resourceId)",
+        "sharedSearchIdentityResourceId=$($identities.search.resourceId)",
+        "sharedProjectPrincipalId=$($identities.project.principalId)")
     if ($standard.properties.provisioningState -ne 'Succeeded') { throw 'Standard setup Bicep deployment did not succeed.' }
     Save-SampleInventory -State $state -OutputPath (Join-Path $stateDirectory 'inventory-standard.json')
-    Write-Host 'Official Standard setup Bicep completed successfully.'
+    Write-Host 'Shared-UAMI Standard setup completed successfully; bootstrap identities and grants were not changed.'
 
     $accounts = @(Invoke-SampleAzure -Arguments @('resource', 'list', '--resource-group', $plan.resourceGroup,
         '--subscription', $subscription, '--resource-type', 'Microsoft.CognitiveServices/accounts', '--query', '[].{name:name,id:id}'))
@@ -99,7 +121,6 @@ try {
     $parameterEnvironment = @{
         SAMPLE_CI_ACCOUNT_NAME = [string] $accounts[0].name
         SAMPLE_CI_PROJECT_NAME = $projectName
-        SAMPLE_CI_RUNNER_PRINCIPAL_ID = $runnerPrincipalId
         SAMPLE_CI_AGENT_NAME = [string] $plan.agentName
         SAMPLE_CI_MODEL_NAME = [string] $sampleModel.name
         SAMPLE_CI_MODEL_VERSION = [string] $sampleModel.version
@@ -122,7 +143,7 @@ try {
         }
         # readEnvironmentVariable supplies the secret to @secure() without putting it on a command line or in a file.
         $state['provisioningStep'] = 'SampleResources'
-        Write-Host 'Deploying the sample model, runner roles and MCP connection; secret-bearing deployment output is suppressed.'
+        Write-Host 'Deploying the sample model and MCP connection; Azure IAM roles are preconfigured and secret-bearing output is suppressed.'
         $sampleResources = Invoke-SampleAzure -Arguments @('deployment', 'group', 'create', '--name', 'sample-resources',
             '--resource-group', $plan.resourceGroup, '--subscription', $subscription,
             '--parameters', (Join-Path $PSScriptRoot 'infra/sample-resources.bicepparam')) -Sensitive
@@ -139,14 +160,9 @@ try {
     $state['status'] = 'Ready'
     $state['provisioningStep'] = 'Complete'
 } catch {
-    $failure = $_
+    $state['status'] = 'Failed'
     Write-Host ('Provisioning failed during step: {0}.' -f $state.provisioningStep)
-    try {
-        Save-SampleDeploymentDiagnostics -State $state -OutputPath (Join-Path $stateDirectory 'deployment-diagnostics.json')
-    } catch {
-        Write-Warning 'ARM error-code diagnostics could not be captured. Raw deployment errors remain suppressed to protect secrets.'
-    }
-    throw $failure
+    throw
 } finally {
     $state | ConvertTo-Json -Depth 15 | Set-Content -LiteralPath $StatePath -Encoding utf8
     try {

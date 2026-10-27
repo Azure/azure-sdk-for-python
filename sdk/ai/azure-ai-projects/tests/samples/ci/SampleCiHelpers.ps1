@@ -34,6 +34,34 @@ function Invoke-SampleAzure {
     }
 }
 
+function Get-SampleStandardTemplate {
+    param([Parameter(Mandatory)] [string] $OutputDirectory)
+
+    $sourceLock = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'infra/standard-setup.lock.json') -Raw | ConvertFrom-Json -AsHashtable
+    if ($sourceLock.repository -cne 'microsoft-foundry/foundry-samples' -or $sourceLock.commit -notmatch '^[a-f0-9]{40}$') {
+        throw 'Invalid official Standard setup source pin.'
+    }
+    $baseUri = 'https://raw.githubusercontent.com/{0}/{1}/{2}/' -f $sourceLock.repository, $sourceLock.commit, $sourceLock.path
+    $client = [Net.Http.HttpClient]::new()
+    try {
+        foreach ($entry in $sourceLock.files.GetEnumerator()) {
+            if ($entry.Key -notmatch '^(main\.bicep|modules-standard/[a-z-]+\.bicep)$' -or $entry.Value -notmatch '^[a-f0-9]{64}$') {
+                throw 'Invalid Bicep source path or checksum in the source pin.'
+            }
+            $bytes = $client.GetByteArrayAsync($baseUri + $entry.Key).GetAwaiter().GetResult()
+            $checksum = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($bytes)).ToLowerInvariant()
+            if ($checksum -cne $entry.Value) { throw "Official Bicep source checksum mismatch: $($entry.Key)" }
+            $destination = Join-Path $OutputDirectory $entry.Key
+            $null = New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force
+            [IO.File]::WriteAllBytes($destination, $bytes)
+        }
+    } finally {
+        $client.Dispose()
+    }
+    Write-Host ('Verified {0} official Standard setup Bicep files at commit {1}.' -f $sourceLock.files.Count, $sourceLock.commit)
+    return (Join-Path $OutputDirectory 'main.bicep')
+}
+
 function Read-SampleManifest {
     param([Parameter(Mandatory)] [string] $Path, [Parameter(Mandatory)] [string] $PackageRoot)
 
@@ -118,13 +146,17 @@ function Set-SampleSubscriptionContext {
 }
 
 function Assert-SampleRunPlan {
-    param([Parameter(Mandatory)] [hashtable] $Plan)
+    param([Parameter(Mandatory)] [hashtable] $Plan, [string] $QueueName = $env:SAMPLE_QUEUE_NAME)
 
     if ($Plan['schemaVersion'] -ne 1 -or $Plan['definitionId'] -notmatch '^\d+$' -or $Plan['buildId'] -notmatch '^\d+$' -or
-        $Plan['jobAttempt'] -notmatch '^\d+$' -or $Plan['ownerToken'] -notmatch '^[a-f0-9]{32}$') {
+        $Plan['jobAttempt'] -notmatch '^\d+$' -or $Plan['ownerToken'] -notmatch '^[a-f0-9]{32}$' -or
+        $Plan['queueName'] -cnotmatch '^q[1-4]$') {
         throw 'Invalid CI run ownership metadata.'
     }
-    $expectedName = 'azsdk-samples-{0}-{1}-{2}-{3}' -f $Plan.definitionId, $Plan.buildId, $Plan.jobAttempt, $Plan.ownerToken.Substring(0, 8)
+    if ($QueueName -and $QueueName -cne $Plan.queueName) {
+        throw 'The deployment plan belongs to a different test queue; no resources were changed.'
+    }
+    $expectedName = 'azsdk-samples-{0}-{1}-{2}-{3}-{4}' -f $Plan.definitionId, $Plan.buildId, $Plan.queueName, $Plan.jobAttempt, $Plan.ownerToken.Substring(0, 8)
     if ($Plan['resourceGroup'] -cne $expectedName) {
         throw 'Resource group does not match the run-owned ephemeral naming convention.'
     }
@@ -144,8 +176,9 @@ function Get-SampleOwnershipTags {
     Assert-SampleRunPlan -Plan $Plan
     return @{
         'purpose' = 'azure-ai-projects-sample-ci'
-        'sample-ci-run' = '{0}-{1}-{2}' -f $Plan.definitionId, $Plan.buildId, $Plan.jobAttempt
+        'sample-ci-run' = '{0}-{1}-{2}-{3}' -f $Plan.definitionId, $Plan.buildId, $Plan.queueName, $Plan.jobAttempt
         'sample-ci-owner' = $Plan.ownerToken
+        'sample-ci-queue' = $Plan.queueName
     }
 }
 
@@ -174,6 +207,138 @@ function Assert-SampleMcpPat {
     if ([string] $env:MCP_GITHUB_PAT -notmatch '^(github_pat_[A-Za-z0-9_]+|ghp_[A-Za-z0-9]+)$') {
         throw 'Set MCP_GITHUB_PAT as an ADO secret containing the complete GitHub PAT (github_pat_... or ghp_...).'
     }
+}
+
+function Get-SampleSharedIdentityIds {
+    param([Parameter(Mandatory)] [string] $SubscriptionId)
+
+    $subscription = Get-SampleSubscriptionId -SubscriptionId $SubscriptionId
+    $root = "/subscriptions/$subscription/resourceGroups/rg-azsdk-sample-identities-wus3/providers/Microsoft.ManagedIdentity/userAssignedIdentities"
+    $identities = @{}
+    foreach ($purpose in @('project', 'account', 'search', 'function')) {
+        $identities[$purpose] = "$root/mi-azsdk-sample-$purpose-wus3"
+    }
+    return $identities
+}
+
+function Get-SampleBlobOwnerCondition {
+    # One-time, explicitly approved shared-subscription variant of the pinned workspace condition.
+    return "((!(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/read'})  AND  !(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/filter/action'}) AND  !(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/write'}) ) OR (@Resource[Microsoft.Storage/storageAccounts/blobServices/containers:name] StringLikeIgnoreCase '*-azureml-agent'))"
+}
+
+function Get-SampleProjectRoleIds {
+    return @('53ca6127-db72-4b80-b1b0-d745d6d5456d', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe',
+        'b7e6dc6d-f1e8-4753-8033-0f276bb0955b', '230815da-be43-4aae-9cb4-875f7bd000aa',
+        '7ca78c08-252a-4471-8644-bb5ff32d4ba0', '8ebe5a00-799e-43f5-93ac-243d3dce84a7')
+}
+
+function Get-SampleSubscriptionAssignments {
+    param([Parameter(Mandatory)] [string] $SubscriptionId)
+
+    $uri = 'https://management.azure.com/subscriptions/' + (Get-SampleSubscriptionId -SubscriptionId $SubscriptionId) +
+        '/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01'
+    $assignments = @()
+    do {
+        if ($uri -notmatch '^https://management\.azure\.com/') { throw 'Unexpected authorization metadata host.' }
+        $page = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--subscription', $SubscriptionId, '--url', $uri) -Sensitive
+        $assignments += @($page['value'])
+        $uri = [string] $page['nextLink']
+    } while ($uri)
+    return $assignments
+}
+
+function Get-SampleSharedIdentities {
+    param([Parameter(Mandatory)] [hashtable] $Plan)
+
+    Assert-SampleRunPlan -Plan $Plan
+    $expected = Get-SampleSharedIdentityIds -SubscriptionId $Plan.subscriptionId
+    if ($Plan['sharedIdentities'] -isnot [System.Collections.IDictionary] -or $Plan.sharedIdentities.Count -ne 4) {
+        throw 'The deployment plan must bind the four bootstrap-owned shared identities.'
+    }
+    $identities = @{}
+    foreach ($purpose in $expected.Keys) {
+        if ($Plan.sharedIdentities[$purpose] -cne $expected[$purpose]) { throw 'Unexpected shared identity binding.' }
+        $identity = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--subscription', $Plan.subscriptionId, '--url',
+            ('https://management.azure.com{0}?api-version=2023-01-31' -f $expected[$purpose])) -Sensitive
+        if ($identity['id'] -ine $expected[$purpose] -or $identity['properties']['tenantId'] -ine $Plan.tenantId -or
+            $identity['properties']['principalId'] -notmatch '^[a-fA-F0-9-]{36}$' -or
+            $identity['tags']['purpose'] -cne 'azsdk-sample-identities' -or
+            $identity['tags']['sample-ci-retention'] -cne 'permanent' -or
+            $identity['tags']['sample-ci-identity'] -cne $purpose) {
+            throw 'Cannot verify the bootstrap-owned shared identity; no resources were changed.'
+        }
+        $identities[$purpose] = @{ resourceId = $identity.id; principalId = $identity.properties.principalId }
+    }
+    return $identities
+}
+
+function Assert-SampleSharedIdentityGrants {
+    param([Parameter(Mandatory)] [hashtable] $Plan, [Parameter(Mandatory)] [hashtable] $Identities,
+        [Parameter(Mandatory)] [string] $RunnerPrincipalId)
+
+    $scope = '/subscriptions/' + $Plan.subscriptionId
+    $assignments = @(Get-SampleSubscriptionAssignments -SubscriptionId $Plan.subscriptionId)
+    foreach ($role in @(Get-SampleProjectRoleIds)) {
+        $matching = @($assignments | Where-Object {
+            $_['properties']['principalId'] -ieq $Identities.project.principalId -and
+            $_['properties']['scope'] -ieq $scope -and $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/$role"
+        })
+        $condition = if ($role -eq 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b') { Get-SampleBlobOwnerCondition } else { '' }
+        if ($matching.Count -ne 1 -or [string] $matching[0]['properties']['condition'] -cne $condition -or
+            ($condition -and $matching[0]['properties']['conditionVersion'] -cne '2.0')) {
+            throw 'The approved shared project-identity service grants are missing or differ; no resources were changed.'
+        }
+    }
+    $callerAccess = @($assignments | Where-Object {
+        $_['properties']['principalId'] -ieq $RunnerPrincipalId -and $_['properties']['scope'] -ieq $scope -and
+        $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/53ca6127-db72-4b80-b1b0-d745d6d5456d" -and
+        -not $_['properties']['condition']
+    })
+    if ($callerAccess.Count -ne 1) { throw 'Preconfigure the pipeline Foundry User grant; workers never create Azure IAM assignments.' }
+}
+
+function Assert-SampleBatchCapacity {
+    param([Parameter(Mandatory)] [hashtable[]] $Plans)
+
+    if ($Plans.Count -lt 1 -or $Plans.Count -gt 4 -or @($Plans.queueName | Sort-Object -Unique).Count -ne $Plans.Count -or
+        @($Plans.resourceGroup | Sort-Object -Unique).Count -ne $Plans.Count) {
+        throw 'A test batch must contain one to four distinct queue plans.'
+    }
+    $first = $Plans[0]
+    $nodes = @()
+    foreach ($plan in $Plans) {
+        Assert-SampleRunPlan -Plan $plan -QueueName $plan.queueName
+        $selected = @($plan['selectedTests'] | Where-Object { $null -ne $_ })
+        if ($selected.Count -eq 0 -or @($selected | Where-Object { [string]::IsNullOrWhiteSpace($_['node_id']) }).Count -gt 0) {
+            throw 'Each test queue must contain a nonempty selection of unique test nodes.'
+        }
+        $nodes += @($selected | ForEach-Object { $_['node_id'] })
+        foreach ($key in @('subscriptionId', 'tenantId', 'definitionId', 'buildId', 'location')) {
+            if ($plan[$key] -cne $first[$key]) { throw 'Test queues must share one explicit target and pipeline run.' }
+        }
+        if (($plan.sampleModel | ConvertTo-Json -Compress) -cne ($first.sampleModel | ConvertTo-Json -Compress)) {
+            # Compare fields, not Hashtable property ordering.
+            foreach ($key in @('name', 'version', 'sku', 'capacity')) {
+                if ($plan.sampleModel[$key] -cne $first.sampleModel[$key]) { throw 'Test queues must use the same sample model configuration.' }
+            }
+        }
+    }
+    if (@($nodes | Sort-Object -Unique -CaseSensitive).Count -ne $nodes.Count) {
+        throw 'Test queues must partition unique test nodes without repeats.'
+    }
+    $leftovers = @(Invoke-SampleAzure -Arguments @('group', 'list', '--subscription', $first.subscriptionId,
+        '--query', "[?tags.purpose=='azure-ai-projects-sample-ci'].{id:id,name:name}" ) -Sensitive)
+    if ($leftovers.Count -gt 0) { throw 'Temporary sample RGs from another attempt still exist; reconcile cleanup before admitting another batch.' }
+    Assert-SampleRegionAvailability -SubscriptionId $first.subscriptionId -Location $first.location
+    $usages = @(Invoke-SampleAzure -Arguments @('cognitiveservices', 'usage', 'list', '--location', $first.location, '--subscription', $first.subscriptionId))
+    $null = Get-SampleQuotaAvailable -Usages $usages -UsageName 'AccountCount' -Unit 'Count' -RequiredCapacity $Plans.Count -Description 'batch Foundry account quota'
+    $searchUsage = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--subscription', $first.subscriptionId, '--url',
+        ('https://management.azure.com/subscriptions/{0}/providers/Microsoft.Search/locations/{1}/usages?api-version=2025-05-01' -f $first.subscriptionId, $first.location)) -Sensitive
+    $null = Get-SampleQuotaAvailable -Usages @($searchUsage['value']) -UsageName 'standard' -Unit 'Count' -RequiredCapacity $Plans.Count -Description 'batch Search S1 quota'
+    $catalog = @(Invoke-SampleAzure -Arguments @('cognitiveservices', 'model', 'list', '--location', $first.location, '--subscription', $first.subscriptionId))
+    $model = Resolve-SampleModel -Catalog $catalog -Name $first.sampleModel.name -Version $first.sampleModel.version -Sku $first.sampleModel.sku -Capacity $first.sampleModel.capacity
+    $null = Get-SampleQuotaAvailable -Usages $usages -UsageName $model.usageName -RequiredCapacity ($Plans.Count * $model.capacity) -Description 'batch sample-model quota'
+    Write-Host ('Admission passed for {0} fresh RGs. No cross-run lock or capacity reservation: wait for all cleanup before another run.' -f $Plans.Count)
 }
 
 function Resolve-SampleModel {
@@ -383,101 +548,4 @@ function Get-SampleAzureCliErrorCodes {
         }
     }
     return @($codes | Sort-Object -Unique)
-}
-
-function Save-SampleDeploymentDiagnostics {
-    param([Parameter(Mandatory)] [hashtable] $State, [Parameter(Mandatory)] [string] $OutputPath)
-
-    Assert-SampleRunPlan -Plan $State.plan
-    $records = @()
-    $deployments = @(Invoke-SampleAzure -Arguments @('deployment', 'group', 'list', '--resource-group', $State.plan.resourceGroup,
-        '--subscription', $State.subscriptionId, '--query', '[].{name:name,state:properties.provisioningState}') -Sensitive)
-    foreach ($deployment in @($deployments | Where-Object { $_['state'] -in @('Failed', 'Canceled') })) {
-        $errorDetails = Invoke-SampleAzure -Arguments @('deployment', 'group', 'show', '--name', $deployment.name,
-            '--resource-group', $State.plan.resourceGroup, '--subscription', $State.subscriptionId, '--query', 'properties.error') -Sensitive
-        $operations = @(Invoke-SampleAzure -Arguments @('deployment', 'operation', 'group', 'list', '--name', $deployment.name,
-            '--resource-group', $State.plan.resourceGroup, '--subscription', $State.subscriptionId, '--query',
-            "[?properties.provisioningState=='Failed'].{resourceId:properties.targetResource.id,resourceType:properties.targetResource.resourceType,error:properties.statusMessage}") -Sensitive)
-        $safeOperations = @(foreach ($operation in $operations) {
-            $details = $operation['error']
-            if ($details -is [string]) {
-                try { $details = $details | ConvertFrom-Json -AsHashtable -ErrorAction Stop } catch { $details = $null }
-            }
-            @{
-                resourceId = $operation['resourceId']
-                resourceType = $operation['resourceType']
-                errorCodes = @(Get-SampleAzureErrorCodes -ErrorDetails $details)
-            }
-        })
-        $codes = @(Get-SampleAzureErrorCodes -ErrorDetails $errorDetails)
-        $records += @{ deployment = $deployment.name; state = $deployment.state; errorCodes = $codes; operations = $safeOperations }
-        Write-Host ('Deployment diagnostic: {0}, ARM error codes: {1}.' -f $deployment.name, ($codes -join ', '))
-        foreach ($operation in $safeOperations) {
-            Write-Host ('Failed resource type: {0}, ARM error codes: {1}.' -f $operation.resourceType, ($operation.errorCodes -join ', '))
-        }
-    }
-    # Messages and bodies can echo secure parameters. Persist only the explicit code/ID/type projection above.
-    ConvertTo-Json -InputObject @{ schemaVersion = 1; deployments = $records } -Depth 10 |
-        Set-Content -LiteralPath $OutputPath -Encoding utf8
-}
-
-function Save-SampleReadinessDiagnostics {
-    param([Parameter(Mandatory)] [hashtable] $State, [Parameter(Mandatory)] [string] $OutputPath)
-
-    Assert-SampleRunPlan -Plan $State.plan
-    $group = Invoke-SampleAzure -Arguments @('group', 'show', '--name', $State.plan.resourceGroup,
-        '--subscription', $State.subscriptionId) -Sensitive
-    Assert-SampleResourceGroupOwnership -Plan $State.plan -ResourceGroup $group -SubscriptionId $State.subscriptionId
-    $resources = @(Invoke-SampleAzure -Arguments @('resource', 'list', '--resource-group', $State.plan.resourceGroup,
-        '--subscription', $State.subscriptionId, '--query', '[].{id:id,name:name,type:type}') -Sensitive)
-    $projects = @($resources | Where-Object { $_['type'] -eq 'Microsoft.CognitiveServices/accounts/projects' })
-    $cosmosAccounts = @($resources | Where-Object { $_['type'] -eq 'Microsoft.DocumentDB/databaseAccounts' })
-    if ($projects.Count -ne 1 -or $cosmosAccounts.Count -ne 1) { throw 'Cannot identify the run-owned Standard project and Cosmos DB account.' }
-    foreach ($resource in @($projects[0], $cosmosAccounts[0])) {
-        if (-not $resource.id.StartsWith($group.id + '/providers/', [StringComparison]::OrdinalIgnoreCase)) {
-            throw 'Refusing diagnostics for resources outside the run-owned group.'
-        }
-    }
-    $report = @{ schemaVersion = 1; resourceGroup = $State.plan.resourceGroup }
-    $projectUrl = 'https://management.azure.com' + $projects[0].id
-    try {
-        $project = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--url', ($projectUrl + '?api-version=2025-10-01-preview'),
-            '--query', '{state:properties.provisioningState,principalId:identity.principalId}') -Sensitive
-        $hosts = @(Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--url', ($projectUrl + '/capabilityHosts?api-version=2025-04-01-preview'),
-            '--query', 'value[].{name:name,state:properties.provisioningState,threadStorageConnections:properties.threadStorageConnections}') -Sensitive)
-        $report['project'] = @{ resourceId = $projects[0].id; state = $project['state']; principalId = $project['principalId'] }
-        $report['capabilityHosts'] = @($hosts | ForEach-Object {
-            @{ name = $_['name']; state = $_['state']; threadStorageConnections = $_['threadStorageConnections'] }
-        })
-    } catch { $report['projectStatus'] = 'Unavailable' }
-
-    $cosmosArguments = @('--account-name', $cosmosAccounts[0].name, '--resource-group', $State.plan.resourceGroup,
-        '--subscription', $State.subscriptionId)
-    try {
-        $cosmos = Invoke-SampleAzure -Arguments @('cosmosdb', 'show', '--name', $cosmosAccounts[0].name,
-            '--resource-group', $State.plan.resourceGroup, '--subscription', $State.subscriptionId, '--query',
-            '{state:provisioningState,publicNetworkAccess:publicNetworkAccess,isVirtualNetworkFilterEnabled:isVirtualNetworkFilterEnabled,ipRules:ipRules,virtualNetworkRules:virtualNetworkRules,disableLocalAuth:disableLocalAuth}') -Sensitive
-        $report['cosmos'] = @{ resourceId = $cosmosAccounts[0].id }
-        foreach ($key in @('state', 'publicNetworkAccess', 'isVirtualNetworkFilterEnabled', 'disableLocalAuth')) {
-            $report.cosmos[$key] = $cosmos[$key]
-        }
-        # Counts suffice to detect unexpected restrictions without recording address lists.
-        $report.cosmos['ipRuleCount'] = @($cosmos['ipRules'] | Where-Object { $null -ne $_ }).Count
-        $report.cosmos['virtualNetworkRuleCount'] = @($cosmos['virtualNetworkRules'] | Where-Object { $null -ne $_ }).Count
-    } catch { $report['cosmosStatus'] = 'Unavailable' }
-    try {
-        $containers = @(Invoke-SampleAzure -Arguments (@('cosmosdb', 'sql', 'container', 'list', '--database-name', 'enterprise_memory') +
-            $cosmosArguments + @('--query', '[].{name:name}')) -Sensitive)
-        $report['containers'] = @($containers | ForEach-Object { $_['name'] })
-    } catch { $report['containerStatus'] = 'Unavailable' }
-    try {
-        $roles = @(Invoke-SampleAzure -Arguments (@('cosmosdb', 'sql', 'role', 'assignment', 'list') + $cosmosArguments +
-            @('--query', '[].{principalId:principalId,scope:scope,roleDefinitionId:roleDefinitionId}')) -Sensitive)
-        $report['cosmosDataRoles'] = @($roles | ForEach-Object {
-            @{ principalId = $_['principalId']; scope = $_['scope']; roleDefinitionId = $_['roleDefinitionId'] }
-        })
-    } catch { $report['cosmosDataRoleStatus'] = 'Unavailable' }
-    # No connection credentials, keys, document contents, request bodies or error messages are queried or saved.
-    $report | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $OutputPath -Encoding utf8
-    Write-Host 'Saved run-owned readiness diagnostics (Cosmos networking, container names, role scopes and capability-host state only).'
 }

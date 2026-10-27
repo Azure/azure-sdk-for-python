@@ -6,23 +6,26 @@ Describe 'Provisioning rejects ineligible regions before mutation' {
     It 'creates neither deployment state nor resources when Search S1 is unavailable' {
         $previousSubscription = $env:AZURE_SUBSCRIPTION_ID
         $previousTenant = $env:AZURE_TENANT_ID
+        $previousQueue = $env:SAMPLE_QUEUE_NAME
         try {
             $env:AZURE_SUBSCRIPTION_ID = '11111111-1111-1111-1111-111111111111'
             $env:AZURE_TENANT_ID = '22222222-2222-2222-2222-222222222222'
+            $env:SAMPLE_QUEUE_NAME = 'q1'
             $plan = @{
                 schemaVersion = 1
                 definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
                 buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
                 jobAttempt = '1'; ownerToken = '0123456789abcdef0123456789abcdef'
+                queueName = 'q1'
                 subscriptionId = $env:AZURE_SUBSCRIPTION_ID; tenantId = $env:AZURE_TENANT_ID
                 location = 'westus3'; provisionMcp = $false
             }
-            $plan.resourceGroup = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
+            $plan.resourceGroup = 'azsdk-samples-{0}-{1}-q1-1-01234567' -f $plan.definitionId, $plan.buildId
             $planPath = Join-Path $TestDrive 'plan.json'
             $statePath = Join-Path $TestDrive 'state.json'
             $plan | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $planPath -Encoding utf8
             $calls = [Collections.Generic.List[string]]::new()
-            $provisioningScript = Join-Path $PSScriptRoot 'Invoke-SampleProvisioning.ps1'
+            $provisioningScript = Join-Path $PSScriptRoot '../Invoke-SampleProvisioning.ps1'
             $failure = & {
                 function az {
                     $global:LASTEXITCODE = 0
@@ -49,7 +52,7 @@ Describe 'Provisioning rejects ineligible regions before mutation' {
                 }
                 if ((Get-Command az).CommandType -ne 'Function') { throw 'Azure CLI isolation failed.' }
                 try {
-                    & $provisioningScript -PlanPath $planPath -StatePath $statePath -StandardTemplatePath 'unused.bicep' -ConfirmProvisioning
+                    & $provisioningScript -PlanPath $planPath -StatePath $statePath -QueueName q1 -ConfirmProvisioning
                 } catch { $_.Exception.Message }
             }
             $failure | Should Match 'AI Search S1 is not offered'
@@ -58,6 +61,7 @@ Describe 'Provisioning rejects ineligible regions before mutation' {
         } finally {
             $env:AZURE_SUBSCRIPTION_ID = $previousSubscription
             $env:AZURE_TENANT_ID = $previousTenant
+            $env:SAMPLE_QUEUE_NAME = $previousQueue
         }
     }
 }

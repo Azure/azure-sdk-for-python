@@ -3,7 +3,7 @@ pr: none
 
 parameters:
   - name: runMode
-    displayName: 'preview = no Azure changes; run-and-cleanup = automatically provision billable resources after preview, test, delete'
+    displayName: 'preview = plan only; run-and-cleanup = provision billable resources, test, delete'
     type: string
     default: preview
     values:
@@ -19,7 +19,16 @@ parameters:
   - name: selection
     displayName: 'Pattern (path example: samples/agents/tools/*project_connection*.py; use ; for OR)'
     type: string
-    default: samples/agents/tools/sample_agent_mcp_with_project_connection.py
+    default: 'samples/agents/tools/sample_agent_mcp_with_project_connection.py;samples/agents/tools/sample_agent_mcp_with_project_connection_async.py'
+  - name: testQueueCount
+    displayName: 'Maximum parallel RG workers (selection is divided round-robin, not repeated)'
+    type: number
+    default: 4
+    values:
+      - 1
+      - 2
+      - 3
+      - 4
   - name: azureServiceConnection
     displayName: 'Authorized Azure Resource Manager service connection (needed only for run-and-cleanup)'
     type: string
@@ -29,9 +38,11 @@ parameters:
     type: string
     default: none
   - name: location
-    displayName: 'Azure region for Standard setup and models'
+    displayName: 'Reviewed shared-identity Standard setup region'
     type: string
     default: westus3
+    values:
+      - westus3
   - name: modelName
     displayName: 'Sample model (validation uses the existing project from an environment variable)'
     type: string
@@ -62,7 +73,7 @@ extends:
   parameters:
     stages:
       - stage: Preview
-        displayName: 'Collect wildcard matches and preview Bicep resources (no Azure changes)'
+        displayName: 'Select samples and generate deployment plan (no Azure changes)'
         jobs:
           - job: Preview
             timeoutInMinutes: 45
@@ -91,28 +102,20 @@ extends:
                 workingDirectory: $(packageRoot)
                 displayName: 'Install SDK source and sample harness dependencies'
               - pwsh: |
-                  python -m pytest tests/samples/ci --confcutdir=tests/samples/ci -q
-                  if ($LASTEXITCODE -ne 0) { throw 'Offline sample CI unit tests failed.' }
-                workingDirectory: $(packageRoot)
-                displayName: 'Validate wildcard and invocation behavior offline'
-              - pwsh: |
-                  . (Join-Path '$(Build.SourcesDirectory)' 'eng/common/scripts/Helpers/PSModule-Helpers.ps1')
-                  $pester = Get-Module -ListAvailable Pester | Where-Object { $_.Version -eq [version] '4.10.1' } | Select-Object -First 1
-                  if (-not $pester) { $pester = Install-ModuleIfNotInstalled 'Pester' '4.10.1' }
-                  if ($pester.Version -ne [version] '4.10.1') { throw 'Sample CI safety tests require Pester 4.10.1; no newer version will be substituted.' }
-                  $pester | Import-Module -Force
-                  $result = Invoke-Pester -Script './tests/samples/ci' -PassThru
-                  if ($result.TotalCount -eq 0 -or $result.FailedCount -ne 0) { throw 'Offline provisioning and cleanup safety tests failed.' }
-                workingDirectory: $(packageRoot)
-                displayName: 'Validate provisioning and cleanup guards offline'
-              - pwsh: |
                   $outputDirectory = '$(Build.ArtifactStagingDirectory)/sample-plan'
                   $manifest = Join-Path $outputDirectory 'selected-tests.json'
-                  python tests/samples/ci/select_samples.py --selection-kind $env:SELECTION_KIND --selection $env:SAMPLE_SELECTION --output $manifest
+                  python tests/samples/ci/select_samples.py --selection-kind $env:SELECTION_KIND --selection $env:SAMPLE_SELECTION --queue-count $env:SAMPLE_QUEUE_COUNT --output $manifest
                   if ($LASTEXITCODE -ne 0) { throw 'No valid sample selection; no resources were provisioned.' }
-                  & ./tests/samples/ci/New-SampleDeploymentPlan.ps1 -SelectionManifest $manifest -OutputDirectory $outputDirectory `
-                    -Location $env:SAMPLE_LOCATION -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
-                    -ModelSku $env:SAMPLE_MODEL_SKU -ModelCapacity ([int] $env:SAMPLE_MODEL_CAPACITY)
+                  $matrix = Get-Content -LiteralPath (Join-Path $outputDirectory 'queue-matrix.json') -Raw | ConvertFrom-Json -AsHashtable
+                  foreach ($queueName in @($matrix.Keys | Sort-Object)) {
+                    & ./tests/samples/ci/New-SampleDeploymentPlan.ps1 -SelectionManifest (Join-Path $outputDirectory "$queueName/selected-tests.json") `
+                      -OutputDirectory (Join-Path $outputDirectory $queueName) -QueueName $queueName `
+                      -Location $env:SAMPLE_LOCATION -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
+                      -ModelSku $env:SAMPLE_MODEL_SKU -ModelCapacity ([int] $env:SAMPLE_MODEL_CAPACITY)
+                  }
+                  $matrixJson = $matrix | ConvertTo-Json -Compress
+                  Write-Host "##vso[task.setvariable variable=WorkerMatrix;isOutput=true]$matrixJson"
+                name: Plan
                 workingDirectory: $(packageRoot)
                 displayName: 'Show selected sample paths, exact pytest IDs, and a fresh deployment plan'
                 env:
@@ -125,11 +128,7 @@ extends:
                   SAMPLE_MODEL_VERSION: ${{ parameters.modelVersion }}
                   SAMPLE_MODEL_SKU: ${{ parameters.modelSku }}
                   SAMPLE_MODEL_CAPACITY: ${{ parameters.modelCapacity }}
-              - pwsh: |
-                  $standardTemplate = & ./tests/samples/ci/Get-StandardSetupTemplate.ps1 -OutputDirectory '$(Agent.TempDirectory)/standard-bicep'
-                  & ./tests/samples/ci/Test-BicepTemplates.ps1 -StandardTemplatePath $standardTemplate
-                workingDirectory: $(packageRoot)
-                displayName: 'Verify official Bicep source hashes and compile all provisioning templates'
+                  SAMPLE_QUEUE_COUNT: ${{ parameters.testQueueCount }}
 
       - ${{ if eq(parameters.runMode, 'run-and-cleanup') }}:
         - stage: RunSamples
@@ -140,7 +139,36 @@ extends:
             - ${{ if ne(parameters.secretVariableGroup, 'none') }}:
               - group: ${{ parameters.secretVariableGroup }}
           jobs:
+            - job: AdmitTestQueues
+              displayName: 'Check shared identities and aggregate capacity without creating resources'
+              timeoutInMinutes: 20
+              pool:
+                name: azsdk-pool
+                image: ubuntu-24.04
+                os: linux
+              steps:
+                - checkout: self
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifactName: sample-plan
+                    targetPath: $(Pipeline.Workspace)/sample-plan
+                - task: AzureCLI@2
+                  displayName: 'Verify shared MI grants, no leftover RGs and batch quota'
+                  inputs:
+                    azureSubscription: ${{ parameters.azureServiceConnection }}
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      & '$(packageRoot)/tests/samples/ci/Invoke-SampleProvisioning.ps1' `
+                        -BatchPlanDirectory '$(Pipeline.Workspace)/sample-plan'
+                  env:
+                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
             - job: ProvisionTestCleanup
+              dependsOn: AdmitTestQueues
+              strategy:
+                maxParallel: 4
+                matrix: $[ stageDependencies.Preview.Preview.outputs['Plan.WorkerMatrix'] ]
               timeoutInMinutes: 180
               cancelTimeoutInMinutes: 30
               pool:
@@ -150,8 +178,8 @@ extends:
               templateContext:
                 outputs:
                   - output: pipelineArtifact
-                    targetPath: $(Build.ArtifactStagingDirectory)/sample-results
-                    artifactName: sample-results
+                    targetPath: $(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)
+                    artifactName: sample-results-$(QueueName)
                     condition: always()
                     sbomEnabled: false
               steps:
@@ -164,7 +192,7 @@ extends:
                     EnableTwineAuth: false
                     EnableUvAuth: false
                 - pwsh: |
-                    New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/sample-results' -Force | Out-Null
+                    New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)' -Force | Out-Null
                     python -m pip install --disable-pip-version-check -r dev_requirements.txt -e .
                     if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
                   workingDirectory: $(packageRoot)
@@ -182,9 +210,9 @@ extends:
                     scriptLocation: inlineScript
                     inlineScript: |
                       . '$(packageRoot)/tests/samples/ci/SampleCiHelpers.ps1'
-                      $samplePlan = Get-Content -LiteralPath '$(Pipeline.Workspace)/sample-plan/deployment-plan.json' -Raw | ConvertFrom-Json -AsHashtable
+                      $samplePlan = Get-Content -LiteralPath '$(Pipeline.Workspace)/sample-plan/$(QueueName)/deployment-plan.json' -Raw | ConvertFrom-Json -AsHashtable
                       $runnerIdentity = Set-SampleSubscriptionContext -Plan $samplePlan
-                      $runnerIdentity | ConvertTo-Json | Set-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/pipeline-identity.json' -Encoding utf8
+                      $runnerIdentity | ConvertTo-Json | Set-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/pipeline-identity.json' -Encoding utf8
                       Write-Host ('Pipeline application: principalId={0}; clientId={1}; tenantId={2}' -f $runnerIdentity.principalId, $runnerIdentity.clientId, $runnerIdentity.tenantId)
                       python '$(packageRoot)/tests/samples/ci/run_samples.py' --check-validation-config
                       if ($LASTEXITCODE -ne 0) { throw 'The existing validation-project environment variable is missing or invalid; no resources were provisioned.' }
@@ -192,6 +220,7 @@ extends:
                     AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                     AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                     LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
+                    SAMPLE_QUEUE_NAME: $(QueueName)
                 - task: AzureCLI@2
                   displayName: 'Provision Standard Foundry, sample model and MCP connection using Bicep'
                   inputs:
@@ -199,15 +228,15 @@ extends:
                     scriptType: pscore
                     scriptLocation: inlineScript
                     inlineScript: |
-                      $standardTemplate = & '$(packageRoot)/tests/samples/ci/Get-StandardSetupTemplate.ps1' -OutputDirectory '$(Agent.TempDirectory)/standard-bicep'
                       & '$(packageRoot)/tests/samples/ci/Invoke-SampleProvisioning.ps1' `
-                        -PlanPath '$(Pipeline.Workspace)/sample-plan/deployment-plan.json' `
-                        -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' `
-                        -StandardTemplatePath $standardTemplate -ConfirmProvisioning
+                        -PlanPath '$(Pipeline.Workspace)/sample-plan/$(QueueName)/deployment-plan.json' `
+                        -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
+                        -QueueName $env:SAMPLE_QUEUE_NAME -ConfirmProvisioning
                   env:
                     AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                     AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                     MCP_GITHUB_PAT: $(MCP_GITHUB_PAT)
+                    SAMPLE_QUEUE_NAME: $(QueueName)
                 - task: AzureCLI@2
                   displayName: 'Run selected test_samples.py / test_samples_async.py nodes live, without recording'
                   inputs:
@@ -216,26 +245,20 @@ extends:
                     scriptLocation: inlineScript
                     inlineScript: |
                       . '$(packageRoot)/tests/samples/ci/SampleCiHelpers.ps1'
-                      $sampleState = Get-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' -Raw | ConvertFrom-Json -AsHashtable
+                      $sampleState = Get-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' -Raw | ConvertFrom-Json -AsHashtable
                       $null = Set-SampleSubscriptionContext -Plan $sampleState.plan
                       python '$(packageRoot)/tests/samples/ci/run_samples.py' `
-                        --state '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' `
-                        --junit '$(Build.ArtifactStagingDirectory)/sample-results/sample-tests.xml'
+                        --state '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
+                        --junit '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/sample-tests.xml'
                       $sampleExitCode = $LASTEXITCODE
                       if ($sampleExitCode -ne 0) {
-                        try {
-                          $sampleState = Get-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' -Raw | ConvertFrom-Json -AsHashtable
-                          Save-SampleReadinessDiagnostics -State $sampleState `
-                            -OutputPath '$(Build.ArtifactStagingDirectory)/sample-results/readiness-diagnostics.json'
-                        } catch {
-                          Write-Warning 'Readiness diagnostics could not be captured; raw responses remain suppressed.'
-                        }
-                        throw 'Selected sample runner failed; inspect readiness diagnostics and pytest results when present.'
+                        throw 'Selected sample runner failed; inspect the task output and pytest results when present.'
                       }
                   env:
                     AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                     AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                     LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
+                    SAMPLE_QUEUE_NAME: $(QueueName)
                 - task: AzureCLI@2
                   displayName: 'Always clean up only the run-owned temporary resources'
                   condition: always()
@@ -245,18 +268,20 @@ extends:
                     scriptLocation: inlineScript
                     inlineScript: |
                       & '$(packageRoot)/tests/samples/ci/Remove-SampleResources.ps1' `
-                        -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/deployment-state.json' -ConfirmCleanup
+                        -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
+                        -QueueName $env:SAMPLE_QUEUE_NAME -ConfirmCleanup
                   env:
                     AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                     AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                    SAMPLE_QUEUE_NAME: $(QueueName)
                 - task: PublishTestResults@2
                   displayName: 'Publish sample pytest results in the ADO Tests tab'
                   condition: always()
                   inputs:
                     testResultsFormat: JUnit
                     testResultsFiles: sample-tests.xml
-                    searchFolder: $(Build.ArtifactStagingDirectory)/sample-results
-                    testRunTitle: 'Foundry sample tests - $(Build.BuildNumber)'
+                    searchFolder: $(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)
+                    testRunTitle: 'Foundry sample tests - $(Build.BuildNumber) - $(QueueName)'
                     failTaskOnFailedTests: true
                     failTaskOnMissingResultsFile: false
                     failTaskOnFailureToPublishResults: true

@@ -2,27 +2,30 @@
 # Licensed under the MIT License.
 #Requires -Version 7.2
 
-. (Join-Path $PSScriptRoot 'SampleCiHelpers.ps1')
+. (Join-Path $PSScriptRoot '../SampleCiHelpers.ps1')
 
 Describe 'Cleanup script behavior with an isolated Azure CLI' {
     BeforeEach {
         $script:originalSubscription = $env:AZURE_SUBSCRIPTION_ID
         $script:originalTenant = $env:AZURE_TENANT_ID
+        $script:originalQueue = $env:SAMPLE_QUEUE_NAME
         $env:AZURE_SUBSCRIPTION_ID = '11111111-1111-1111-1111-111111111111'
         $env:AZURE_TENANT_ID = '22222222-2222-2222-2222-222222222222'
+        $env:SAMPLE_QUEUE_NAME = 'q1'
         $plan = @{
             schemaVersion = 1
             definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
             buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
             jobAttempt = '1'
+            queueName = 'q1'
             ownerToken = '0123456789abcdef0123456789abcdef'
             subscriptionId = $env:AZURE_SUBSCRIPTION_ID
             tenantId = $env:AZURE_TENANT_ID
         }
-        $plan.resourceGroup = 'azsdk-samples-{0}-{1}-1-01234567' -f $plan.definitionId, $plan.buildId
+        $plan.resourceGroup = 'azsdk-samples-{0}-{1}-q1-1-01234567' -f $plan.definitionId, $plan.buildId
         $script:fixture = @{
             statePath = Join-Path $TestDrive 'cleanup.json'
-            scriptPath = Join-Path $PSScriptRoot 'Remove-SampleResources.ps1'
+            scriptPath = Join-Path $PSScriptRoot '../Remove-SampleResources.ps1'
             state = @{
                 schemaVersion = 1; plan = $plan; subscriptionId = $plan.subscriptionId; tenantId = $plan.tenantId
                 resourceGroupDeployment = 'sample-ci-rg-' + $plan.ownerToken; status = 'Ready'
@@ -40,6 +43,7 @@ Describe 'Cleanup script behavior with an isolated Azure CLI' {
     AfterEach {
         $env:AZURE_SUBSCRIPTION_ID = $script:originalSubscription
         $env:AZURE_TENANT_ID = $script:originalTenant
+        $env:SAMPLE_QUEUE_NAME = $script:originalQueue
     }
 
     function Invoke-IsolatedCleanup {
@@ -72,7 +76,7 @@ Describe 'Cleanup script behavior with an isolated Azure CLI' {
             }
             if ((Get-Command az).CommandType -ne 'Function') { throw 'Azure CLI isolation failed.' }
             $failure = $null
-            try { & $fixture.scriptPath -StatePath $fixture.statePath -ConfirmCleanup:$Apply -WhatIf:$Preview }
+            try { & $fixture.scriptPath -StatePath $fixture.statePath -QueueName q1 -ConfirmCleanup:$Apply -WhatIf:$Preview }
             catch { $failure = $_.Exception.Message }
             return [pscustomobject]@{
                 failure = $failure

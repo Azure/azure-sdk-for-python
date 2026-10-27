@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 #Requires -Version 7.2
 
-. (Join-Path $PSScriptRoot 'SampleCiHelpers.ps1')
+. (Join-Path $PSScriptRoot '../SampleCiHelpers.ps1')
 
 Describe 'Strict model and dependency quota values' {
     BeforeEach {
