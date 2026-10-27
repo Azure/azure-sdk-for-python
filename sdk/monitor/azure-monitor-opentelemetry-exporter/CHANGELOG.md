@@ -3,6 +3,7 @@
 ## 1.0.0b59 (Unreleased)
 
 ### Features Added
+
 - Add support for experimental features flag
   ([#49682](https://github.com/Azure/azure-sdk-for-python/pull/49682))
 - Increase the custom properties truncation limit for `gen_ai.input.messages` and
@@ -12,17 +13,9 @@
   ([#49648](https://github.com/Azure/azure-sdk-for-python/pull/49648))
 - Defer SDK Stats initialization until the first asynchronous OneSettings request completes, so startup telemetry
   uses the configured connection string when available and falls back to the built-in Breeze route only when the
-  request fails or returns no valid SDK Stats connection string.
-  ([#49072](https://github.com/Azure/azure-sdk-for-python/pull/49072))
-
-- Use OneSettings to route SDK Stats with the configured default or EU connection string, while retaining the
+  request fails or returns no valid SDK Stats connection string. Use OneSettings to route SDK Stats with the configured default or EU connection string, while retaining the
   existing Breeze connection string when the setting is missing or invalid.
-  ([#49072](https://github.com/Azure/azure-sdk-for-python/pull/49072))
-
-- Defer SDK Stats initialization until the first asynchronous OneSettings request completes, so startup telemetry
-  uses the configured connection string when available and falls back to the built-in Breeze route only when the
-  request fails or returns no valid SDK Stats connection string.
-  ([#49072](https://github.com/Azure/azure-sdk-for-python/pull/49072))
+  ([#49730](https://github.com/Azure/azure-sdk-for-python/pull/49730))
 
 ### Breaking Changes
 
