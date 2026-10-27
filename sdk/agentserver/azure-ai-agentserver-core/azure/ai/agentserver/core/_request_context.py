@@ -200,10 +200,10 @@ class FoundryAgentRequestContext:
                 result[_FOUNDRY_BAGGAGE_HEADER] = ",".join(baggage)
             return result
         members = []
-        for name, value in (("oid", subject.oid), ("tid", subject.tid), ("idtype", subject.idtype)):
-            if not value or any(character < "!" or character > "~" for character in value):
+        for name, subject_value in (("oid", subject.oid), ("tid", subject.tid), ("idtype", subject.idtype)):
+            if not subject_value or any(character < "!" or character > "~" for character in subject_value):
                 raise ValueError("Original-subject attribution requires a complete, HTTP-safe tuple.")
-            escaped = value.replace("\\", "\\\\").replace('"', '\\"')
+            escaped = subject_value.replace("\\", "\\\\").replace('"', '\\"')
             members.append(f'{name}="{escaped}"')
         value = ", ".join(members)
         if len(value) > _MAX_ORIGINAL_SUBJECT_LENGTH:
