@@ -195,7 +195,9 @@ def download_blob(
     Iterating yields one chunk of up to ``max_chunk_size`` bytes at a time. A background task keeps
     up to ``max_concurrency`` ranged requests in flight and prefetches completed chunks (about
     ``max_concurrency * max_chunk_size`` bytes) ahead of consumption, so peak memory stays
-    bounded regardless of blob size.
+    bounded regardless of blob size. Calling ``readall()`` on the returned object instead copies
+    the remaining chunks directly into a single preallocated ``bytes`` object as they arrive, with
+    the GIL released.
 
     :param str url: The fully-qualified blob URL
         (e.g. https://account.blob.core.windows.net/container/blob). Must be correctly
@@ -229,12 +231,13 @@ def download_blob(
         Defaults to 4 MiB when not specified. Each iteration yields one chunk of this size (the
         final chunk may be smaller).
     :returns: A lazy iterator yielding the blob content one chunk at a time. The object also
-        exposes ``size`` (total bytes to be delivered).
+        exposes ``size`` (total bytes to be delivered) and ``readall()`` (returns all remaining
+        content as a single ``bytes`` object).
     :rtype: Iterator[bytes]
     :raises ValueError: If the native module is not available.
-    :raises NativeTransferError: If starting the download or consuming a later chunk fails.
-        Contains Rust-normalized service diagnostics and original response headers/body. Python
-        callback exceptions are propagated unchanged.
+    :raises NativeTransferError: If starting the download, consuming a later chunk, or
+        ``readall()`` fails. Contains Rust-normalized service diagnostics and original response
+        headers/body. Python callback exceptions are propagated unchanged.
     """
     if not _NATIVE_AVAILABLE:
         raise ValueError(
