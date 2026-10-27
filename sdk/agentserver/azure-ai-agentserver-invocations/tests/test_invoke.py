@@ -126,25 +126,31 @@ async def test_concurrent_invocations_keep_baggage_bound_to_each_body(stream):
     @app.invoke_handler
     async def handler(_request):
         if stream:
+
             async def body():
                 yield json.dumps(await current_headers())
+
             return StreamingResponse(body(), media_type="application/json")
         return JSONResponse(await current_headers())
 
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:
+
         async def invoke(oid):
             subject = f'oid="{oid}", tid="tenant-{oid}", idtype="user"'
-            response = await client.post("/invocations", headers={
-                "x-ms-original-subject": subject,
-                "x-agent-foundry-call-id": f"call-{oid}",
-            })
+            response = await client.post(
+                "/invocations",
+                headers={
+                    "x-ms-original-subject": subject,
+                    "x-agent-foundry-call-id": f"call-{oid}",
+                },
+            )
             assert response.status_code == 200
             forwarded = response.json()
             assert forwarded["x-ms-original-subject"] == subject
             assert forwarded["x-agent-foundry-call-id"] == f"call-{oid}"
             members = forwarded["x-ms-foundry-baggage"].split(",")
-            assert members[0] == "application=shared"
-            assert unquote(members[1].split("=", 1)[1]) == subject
+            assert members[1] == "application=shared"
+            assert unquote(members[0].split("=", 1)[1]) == subject
 
         await asyncio.gather(invoke("alice"), invoke("bob"))
     assert get_request_context().original_subject is None

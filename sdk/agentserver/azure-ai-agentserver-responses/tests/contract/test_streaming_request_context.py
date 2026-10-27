@@ -16,6 +16,7 @@ Regression test for: request context not re-established for the streaming body.
 
 from __future__ import annotations
 
+import asyncio
 import json
 from importlib.metadata import requires
 from pathlib import Path
@@ -23,7 +24,7 @@ from typing import Any
 from urllib.parse import quote, unquote
 
 import httpx
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, AsyncStream
 import pytest
 from packaging.requirements import Requirement
 from starlette.testclient import TestClient
@@ -53,9 +54,7 @@ def test_original_subject_core_dependency_floor() -> None:
 @pytest.mark.parametrize("value", ["malformed", 'oid="one", oid="two"', 'unknown="value"'])
 def test_malformed_original_subject_ends_span_without_running_handler(value: str) -> None:
     hook = InMemoryCreateSpanHook()
-    app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(create_span_hook=hook), configure_observability=None
-    )
+    app = ResponsesAgentServerHost(options=ResponsesServerOptions(create_span_hook=hook), configure_observability=None)
 
     async def handler(_request: Any, _context: Any, _cancellation_signal: Any) -> Any:
         pytest.fail("Malformed attribution must not reach a handler.")
@@ -79,21 +78,26 @@ async def test_model_sdk_extra_headers_preserve_the_dictionary_and_independent_j
 
     def receive(request: httpx.Request) -> httpx.Response:
         observed.append(request)
-        return httpx.Response(200, json={
-            "id": "resp_test",
-            "object": "response",
-            "created_at": 0,
-            "status": "completed",
-            "model": "test",
-            "output": [],
-        })
+        return httpx.Response(
+            200,
+            json={
+                "id": "resp_test",
+                "object": "response",
+                "created_at": 0,
+                "status": "completed",
+                "model": "test",
+                "output": [],
+            },
+        )
 
     subject_value = 'oid="original-oid", tid="original-tid", idtype="user"'
-    token = set_request_context(FoundryAgentRequestContext(
-        original_subject=FoundryOriginalSubject.from_headers({"x-ms-original-subject": subject_value}),
-        call_id="call-current",
-        user_id="different-state-key",
-    ))
+    token = set_request_context(
+        FoundryAgentRequestContext(
+            original_subject=FoundryOriginalSubject.from_headers({"x-ms-original-subject": subject_value}),
+            call_id="call-current",
+            user_id="different-state-key",
+        )
+    )
     independent_json = json.dumps({"application_id": "example"}, separators=(",", ":"), ensure_ascii=True)
     try:
         async with AsyncOpenAI(
@@ -104,11 +108,13 @@ async def test_model_sdk_extra_headers_preserve_the_dictionary_and_independent_j
             response = await client.responses.create(
                 model="test",
                 input="Hello",
-                extra_headers=get_request_context().model_attribution_headers({
-                    "x-example-context": independent_json,
-                    "X-MS-Foundry-Baggage": "application=example,Foundry.Original_Subject=stale",
-                    "X-MS-Original-Subject": "stale",
-                }),
+                extra_headers=get_request_context().model_attribution_headers(
+                    {
+                        "x-example-context": independent_json,
+                        "X-MS-Foundry-Baggage": "application=example,Foundry.Original_Subject=stale",
+                        "X-MS-Original-Subject": "stale",
+                    }
+                ),
             )
         assert response.id == "resp_test"
     finally:
@@ -117,8 +123,8 @@ async def test_model_sdk_extra_headers_preserve_the_dictionary_and_independent_j
     assert len(observed) == 1
     assert observed[0].headers["x-ms-original-subject"] == subject_value
     baggage = observed[0].headers["x-ms-foundry-baggage"].split(",")
-    assert baggage[0] == "application=example"
-    assert unquote(baggage[1].split("=", 1)[1]) == subject_value
+    assert baggage[1] == "application=example"
+    assert unquote(baggage[0].split("=", 1)[1]) == subject_value
     assert len(baggage) == 2
     assert observed[0].headers["x-agent-foundry-call-id"] == "call-current"
     assert observed[0].headers["x-example-context"] == independent_json
@@ -126,6 +132,134 @@ async def test_model_sdk_extra_headers_preserve_the_dictionary_and_independent_j
     assert "x-agent-user-id" not in observed[0].headers
     assert "x-ms-original-subject-oid" not in observed[0].headers
     assert get_request_context().original_subject is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("stream", [False, True])
+async def test_reused_model_sdk_isolates_concurrent_invocations_streams_and_retries(stream: bool) -> None:
+    observed: list[tuple[str, dict[str, str]]] = []
+    attempts: dict[str, int] = {}
+    arrivals: set[str] = set()
+    concurrent = asyncio.Event()
+
+    async def receive(request: httpx.Request) -> httpx.Response:
+        body = json.loads(request.content)
+        invocation = body["input"]
+        observed.append((invocation, dict(request.headers)))
+        attempts[invocation] = attempts.get(invocation, 0) + 1
+        if attempts[invocation] == 1:
+            if invocation != "without-subject":
+                arrivals.add(invocation)
+                if len(arrivals) == 3:
+                    concurrent.set()
+                await asyncio.wait_for(concurrent.wait(), timeout=5)
+            return httpx.Response(
+                503,
+                headers={"retry-after-ms": "1"},
+                json={"error": {"message": "Retry this synthetic request.", "type": "server_error"}},
+            )
+        response = {
+            "id": "resp_test",
+            "object": "response",
+            "created_at": 0,
+            "status": "completed",
+            "model": "test",
+            "output": [],
+        }
+        if stream:
+            event = {"type": "response.completed", "sequence_number": 0, "response": response}
+            return httpx.Response(
+                200,
+                headers={"content-type": "text/event-stream"},
+                content=f"event: response.completed\ndata: {json.dumps(event)}\n\n",
+            )
+        return httpx.Response(200, json=response)
+
+    existing = {
+        "X-MS-Original-Subject": "stale",
+        "X-AGENT-FOUNDRY-CALL-ID": "stale-call",
+        "X-MS-Foundry-Baggage": (
+            "foundry.agent.name=example,Foundry.Original_Subject;stale=1,foundry.original_subject.oid=stale"
+        ),
+        "x-example-context": json.dumps({"application_id": "example"}),
+    }
+    original_headers = existing.copy()
+    parent = get_request_context()
+    http_client: Any = httpx.AsyncClient(
+        transport=httpx.MockTransport(receive), headers={"x-transport-default": "unchanged"}
+    )
+    transport_defaults = dict(http_client.headers)
+    async with AsyncOpenAI(
+        api_key="test-model-key",
+        base_url="https://model.test",
+        max_retries=1,
+        organization="test-organization",
+        project="test-project",
+        default_headers={"x-shared-client": "unchanged"},
+        http_client=http_client,
+    ) as client:
+        client_defaults = dict(client.default_headers)
+        authentication = dict(client.auth_headers)
+
+        async def invoke(invocation: str, subject: FoundryOriginalSubject | None) -> None:
+            context = FoundryAgentRequestContext(
+                original_subject=subject, call_id=f"call-{invocation}", user_id="independent-state-key"
+            )
+            token = set_request_context(context)
+            try:
+                await asyncio.sleep(0)
+                result = await client.responses.create(
+                    model="test",
+                    input=invocation,
+                    stream=stream,
+                    extra_headers=get_request_context().model_attribution_headers(existing),
+                )
+                if stream:
+                    assert isinstance(result, AsyncStream)
+                    events = [event async for event in result]
+                    assert len(events) == 1
+                    event = events[0]
+                    assert event.type == "response.completed"
+                    assert event.response.id == "resp_test"
+                else:
+                    assert not isinstance(result, AsyncStream)
+                    assert result.id == "resp_test"
+                assert get_request_context() is context
+            finally:
+                reset_request_context(token)
+
+        subjects = {
+            f"invocation-{index}": FoundryOriginalSubject(oid=f'subject-{index}%2C+;/\\"', tid="tenant", idtype=idtype)
+            for index, idtype in enumerate(("user", "app", "future"))
+        }
+        await asyncio.gather(*(invoke(invocation, subject) for invocation, subject in subjects.items()))
+        await invoke("without-subject", None)
+        assert dict(client.default_headers) == client_defaults
+        assert dict(client.auth_headers) == authentication
+        assert dict(http_client.headers) == transport_defaults
+
+    assert get_request_context() is parent
+    assert existing == original_headers
+    assert attempts == {**dict.fromkeys(subjects, 2), "without-subject": 2}
+    for invocation, headers in observed:
+        assert headers["authorization"] == authentication["Authorization"]
+        assert headers["x-shared-client"] == "unchanged"
+        assert headers["x-transport-default"] == "unchanged"
+        assert headers["x-example-context"] == existing["x-example-context"]
+        assert "x-agent-user-id" not in headers
+        assert not any(name.startswith("x-ms-original-subject-") for name in headers)
+        if invocation == "without-subject":
+            assert "x-ms-original-subject" not in headers
+            assert "x-agent-foundry-call-id" not in headers
+            assert headers["x-ms-foundry-baggage"] == "foundry.agent.name=example"
+        else:
+            assert FoundryOriginalSubject.from_headers(headers) == subjects[invocation]
+            assert headers["x-agent-foundry-call-id"] == f"call-{invocation}"
+            members = headers["x-ms-foundry-baggage"].split(",")
+            assert members[1] == "foundry.agent.name=example"
+            assert len(members) == 2
+            assert members[0].startswith("foundry.original_subject=")
+            assert unquote(members[0].split("=", 1)[1]) == headers["x-ms-original-subject"]
 
 
 def _build_capturing_client(
@@ -163,13 +297,9 @@ class TestStreamingRequestContext:
 
     @pytest.mark.parametrize("stream", [False, True])
     @pytest.mark.parametrize("stored", [False, True])
-    def test_original_subject_survives_handler_rebinding(
-        self, stream: bool, stored: bool, tmp_path: Path
-    ) -> None:
+    def test_original_subject_survives_handler_rebinding(self, stream: bool, stored: bool, tmp_path: Path) -> None:
         captured: dict[str, Any] = {}
-        client = _build_capturing_client(
-            captured, resilient=stored, storage_dir=tmp_path / "store" if stored else None
-        )
+        client = _build_capturing_client(captured, resilient=stored, storage_dir=tmp_path / "store" if stored else None)
         subject = {
             "x-ms-original-subject": 'oid="original-oid", tid="original-tid", idtype="user"',
         }
@@ -182,8 +312,7 @@ class TestStreamingRequestContext:
         assert captured["model_headers"] == {
             **subject,
             "x-agent-foundry-call-id": "call-current",
-            "x-ms-foundry-baggage": "foundry.original_subject="
-            + quote(subject["x-ms-original-subject"], safe=""),
+            "x-ms-foundry-baggage": "foundry.original_subject=" + quote(subject["x-ms-original-subject"], safe=""),
         }
         assert captured["platform_headers"] == {"x-agent-foundry-call-id": "call-current"}
         assert captured["user_id"] == "state-key"

@@ -10,6 +10,15 @@
   per-call headers, preserving unrelated dimensions without mutating defaults
   and replacing or clearing competing subject assertions.
 
+### Bugs Fixed
+
+- Remove stale subject baggage even when a malformed member has properties before
+  its value, while preserving unrelated baggage order, encoding, and duplicates.
+- Reject subject tuples over 256 characters and merged baggage over 1024
+  characters rather than forwarding inconsistent model-attribution carriers.
+- Place the subject before unrelated baggage so bounded transport normalization
+  cannot displace the attribution member.
+
 ## 2.3.0b2 (2026-10-26)
 
 ### Features Added

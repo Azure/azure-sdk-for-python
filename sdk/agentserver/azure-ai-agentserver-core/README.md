@@ -140,15 +140,17 @@ Pass any existing per-call header dictionary into the helper to merge safely:
 
 ```python
 extra_headers = get_request_context().model_attribution_headers(
-    {"x-ms-foundry-baggage": "application=example", "x-example-context": "value"}
+    {"x-ms-foundry-baggage": "foundry.agent.name=example", "x-example-context": "value"}
 )
 ```
 
 Each call returns a fresh mapping. Unrelated headers and baggage values keep
 their encoding. Case-insensitive competing subject headers, reserved subject
 baggage members (including retired scalar dimensions), and stale call IDs are
-removed before the current invocation assertions are added. Duplicate baggage
-keys are collapsed case-insensitively, with the last value retained. Neither the
+removed before the current invocation assertions are added. Unrelated baggage
+members keep their relative order and duplicates. The subject member comes first
+so bounded transport normalization cannot displace it. The helper does not choose
+between competing caller or project assertions. Neither the
 input dictionary, shared client defaults, nor the context is mutated. Always
 merge before sending, not by overlaying the result onto stale headers.
 
@@ -158,8 +160,13 @@ result at its supported per-call model boundary, including streaming calls;
 calling the helper alone does not integrate an external framework.
 Absent metadata returns only unrelated supplied headers, or an empty mapping
 when none remain; partial, empty, or HTTP-unsafe metadata raises `ValueError` rather
-than silently forwarding an incomplete tuple. Non-user and unknown
-classifications are preserved for receiver-side policy, not treated as users.
+than silently forwarding an incomplete tuple. A supplied subject also requires
+the serialized, quoted dictionary to fit 256 characters and the final merged
+baggage header to fit 1024 characters. Oversized output raises `ValueError`
+instead of allowing the two attribution carriers to diverge during transport.
+These limits do not truncate unrelated baggage or apply to subject-free calls.
+Non-user and unknown classifications are preserved for receiver-side policy,
+not treated as users.
 Header assertions are not identity proof: receiver provenance validation,
 invocation binding, wire names, and missing-metadata policy still require
 owner agreement. Durable restore and detached execution are not supported by

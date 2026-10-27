@@ -144,7 +144,8 @@ def _session_start_frame() -> dict[str, object]:
     }
 
 
-def test_voice_original_subject_is_invocation_local():
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+def test_voice_original_subject_is_invocation_local(path):
     app = VoiceAgentServerHost(configure_observability=None)
     observed = []
 
@@ -156,7 +157,7 @@ def test_voice_original_subject_is_invocation_local():
     subject = {"x-ms-original-subject": 'oid="voice-user", tid="tenant", idtype="user"'}
     client = TestClient(app)
     for headers in (subject, {}):
-        with client.websocket_connect("/invocations_ws", headers=dict(headers)) as websocket:
+        with client.websocket_connect(path, headers=dict(headers)) as websocket:
             websocket.send_json(_session_start_frame())
             assert websocket.receive_json()["type"] == "session.ready"
     assert len(observed) == 2
@@ -164,6 +165,45 @@ def test_voice_original_subject_is_invocation_local():
     assert unquote(observed[0]["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
     assert len(observed[0]) == 2
     assert observed[1] == {}
+    assert get_request_context().original_subject is None
+
+
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+def test_overlapping_voice_sessions_keep_subject_baggage_isolated(path):
+    app = VoiceAgentServerHost(configure_observability=None)
+    ready = asyncio.Event()
+    observed = []
+    arrivals = 0
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        nonlocal arrivals
+        context = get_request_context()
+        arrivals += 1
+        if arrivals == 2:
+            ready.set()
+        await asyncio.wait_for(ready.wait(), timeout=5)
+        assert get_request_context() is context
+        observed.append(context.model_attribution_headers())
+        await session.send(SessionReady())
+
+    alice = 'oid="alice", tid="tenant-alice", idtype="user"'
+    bob = 'oid="bob", tid="tenant-bob", idtype="app"'
+    with TestClient(app) as client:
+        with client.websocket_connect(path, headers={"x-ms-original-subject": alice}) as first:
+            with client.websocket_connect(path, headers={"x-ms-original-subject": bob}) as second:
+                first.send_json(_session_start_frame())
+                second.send_json(_session_start_frame())
+                assert first.receive_json()["type"] == "session.ready"
+                assert second.receive_json()["type"] == "session.ready"
+        with client.websocket_connect(path) as without_subject:
+            without_subject.send_json(_session_start_frame())
+            assert without_subject.receive_json()["type"] == "session.ready"
+    assert len(observed) == 3
+    assert {headers["x-ms-original-subject"] for headers in observed[:2]} == {alice, bob}
+    for headers in observed[:2]:
+        assert unquote(headers["x-ms-foundry-baggage"].split("=", 1)[1]) == headers["x-ms-original-subject"]
+    assert observed[2] == {}
     assert get_request_context().original_subject is None
 
 

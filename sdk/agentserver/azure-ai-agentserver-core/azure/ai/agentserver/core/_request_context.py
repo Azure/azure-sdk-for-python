@@ -47,6 +47,8 @@ __all__ = [
 _ORIGINAL_SUBJECT_HEADER = "x-ms-original-subject"
 _FOUNDRY_BAGGAGE_HEADER = "x-ms-foundry-baggage"
 _ORIGINAL_SUBJECT_BAGGAGE = "foundry.original_subject"
+_MAX_ORIGINAL_SUBJECT_LENGTH = 256
+_MAX_FOUNDRY_BAGGAGE_LENGTH = 1024
 _ORIGINAL_SUBJECT_MEMBER = re.compile(r'(oid|tid|idtype)="((?:[\x20-\x21\x23-\x5b\x5d-\x7e]|\\["\\])*)"')
 
 
@@ -157,8 +159,9 @@ class FoundryAgentRequestContext:
         invocation has no subject. The baggage member contains the full quoted
         dictionary, percent-encoded once, matching the standalone header.
 
-        Partial, empty, or HTTP-unsafe tuples raise instead of silently becoming
-        an unattributed model call. Values,
+        Partial, empty, HTTP-unsafe, or oversized tuples raise instead of silently
+        becoming an unattributed model call. The quoted tuple is limited to 256
+        characters and merged baggage to 1024 when a subject is supplied. Values,
         including non-user/unknown classifications, are not normalized here.
         Durable restore and detached work have no attribution support in this draft.
 
@@ -166,23 +169,24 @@ class FoundryAgentRequestContext:
         :type headers: Mapping[str, str] or None
         :return: A fresh per-call header mapping; model credentials are unchanged.
         :rtype: dict[str, str]
-        :raises ValueError: The supplied tuple is incomplete or HTTP-unsafe.
+        :raises ValueError: The supplied tuple is incomplete, HTTP-unsafe, or
+            exceeds the subject or merged baggage transport limit.
         """
         result: dict[str, str] = {}
-        baggage: dict[str, str] = {}
+        baggage: list[str] = []
         for name, value in (headers or {}).items():
             lowered = name.lower()
             if lowered == _FOUNDRY_BAGGAGE_HEADER:
                 for member in value.split(","):
                     member = member.strip()
-                    key = unquote(member.split("=", 1)[0].strip()).lower()
+                    key = unquote(member.split(";", 1)[0].split("=", 1)[0].strip()).lower()
                     if (
                         not member
                         or key == _ORIGINAL_SUBJECT_BAGGAGE
                         or key.startswith(_ORIGINAL_SUBJECT_BAGGAGE + ".")
                     ):
                         continue
-                    baggage[key] = member
+                    baggage.append(member)
             elif (
                 lowered != _ORIGINAL_SUBJECT_HEADER
                 and not lowered.startswith(_ORIGINAL_SUBJECT_HEADER + "-")
@@ -192,7 +196,7 @@ class FoundryAgentRequestContext:
         subject = self.original_subject
         if subject is None:
             if baggage:
-                result[_FOUNDRY_BAGGAGE_HEADER] = ",".join(baggage.values())
+                result[_FOUNDRY_BAGGAGE_HEADER] = ",".join(baggage)
             return result
         members = []
         for name, value in (("oid", subject.oid), ("tid", subject.tid), ("idtype", subject.idtype)):
@@ -201,9 +205,15 @@ class FoundryAgentRequestContext:
             escaped = value.replace("\\", "\\\\").replace('"', '\\"')
             members.append(f'{name}="{escaped}"')
         value = ", ".join(members)
+        if len(value) > _MAX_ORIGINAL_SUBJECT_LENGTH:
+            raise ValueError("Original-subject attribution requires a quoted tuple of at most 256 characters.")
         result[_ORIGINAL_SUBJECT_HEADER] = value
-        baggage[_ORIGINAL_SUBJECT_BAGGAGE] = f"{_ORIGINAL_SUBJECT_BAGGAGE}={quote(value, safe='')}"
-        result[_FOUNDRY_BAGGAGE_HEADER] = ",".join(baggage.values())
+        # Reserve attribution space before unrelated members can expand during normalization.
+        baggage.insert(0, f"{_ORIGINAL_SUBJECT_BAGGAGE}={quote(value, safe='')}")
+        merged_baggage = ",".join(baggage)
+        if len(merged_baggage) > _MAX_FOUNDRY_BAGGAGE_LENGTH:
+            raise ValueError("Original-subject attribution requires merged baggage of at most 1024 characters.")
+        result[_FOUNDRY_BAGGAGE_HEADER] = merged_baggage
         if self.call_id is not None:
             result[FOUNDRY_CALL_ID] = self.call_id
         return result
