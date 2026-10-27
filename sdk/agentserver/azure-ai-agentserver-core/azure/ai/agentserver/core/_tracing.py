@@ -95,6 +95,7 @@ _OTLP_METRICS_PROTOCOL = "OTEL_EXPORTER_OTLP_METRICS_PROTOCOL"
 _OTLP_LOGS_ENDPOINT = "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT"
 _OTLP_LOGS_PROTOCOL = "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL"
 _OTEL_TRACES_SAMPLER = "OTEL_TRACES_SAMPLER"
+_OTEL_PYTHON_DISABLED_INSTRUMENTATIONS = "OTEL_PYTHON_DISABLED_INSTRUMENTATIONS"
 _OTLP_ENV_VARS = (
     _OTLP_ENDPOINT,
     _OTLP_PROTOCOL,
@@ -152,9 +153,12 @@ def configure_observability(
         instrumentation. Defaults to False.
     :paramtype enable_sensitive_data: bool
     :keyword instrumentation_options: Per-library OpenTelemetry instrumentation
-        options. Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation
-        are disabled by default; set a library's ``enabled`` option to ``True``
-        to enable it.
+        options. HTTPX, Requests, urllib, and urllib3 instrumentation are
+        disabled by default. Azure SDK dependency tracing is also disabled by
+        default for Azure Monitor, but is enabled automatically for plain OTLP
+        export. Set ``{"azure_sdk": {"enabled": False}}`` to opt out of that
+        plain-OTLP default; ``OTEL_PYTHON_DISABLED_INSTRUMENTATIONS=azure_sdk``
+        also disables it unless an explicit ``enabled`` option is supplied.
     :paramtype instrumentation_options: dict[str, dict[str, Any]] or None
     """
     # Console logging on the root logger so user logs are also visible.
@@ -259,6 +263,14 @@ def _configure_tracing(
                 enable_sensitive_data=enable_sensitive_data,
                 instrumentation_options=instrumentation_options,
             )
+        azure_sdk_options = (instrumentation_options or {}).get("azure_sdk", {})
+        azure_sdk_enabled = azure_sdk_options.get(
+            "enabled", "azure_sdk" not in _get_otel_disabled_instrumentations()
+        )
+        if _is_otlp_enabled() and not connection_string and azure_sdk_enabled:
+            # Azure Monitor configures this bridge through its instrumentation
+            # setup. Plain OTLP uses the same provider but needs it explicitly.
+            _configure_azure_core_opentelemetry()
         logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
     except ImportError:
         logger.warning("microsoft-opentelemetry is not installed — tracing export disabled.")
@@ -338,6 +350,24 @@ def _resolve_instrumentation_options(
     for name, options in (instrumentation_options or {}).items():
         resolved.setdefault(name, {}).update(options)
     return resolved
+
+
+def _get_otel_disabled_instrumentations() -> set[str]:
+    """Return instrumentation names disabled through the standard OTel environment variable.
+
+    :return: The disabled instrumentation names.
+    :rtype: set[str]
+    """
+    disabled = os.environ.get(_OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, "")
+    return {name.strip() for name in disabled.split(",") if name.strip()}
+
+
+def _configure_azure_core_opentelemetry() -> None:
+    """Enable Azure Core spans when Agent Server exports through plain OTLP."""
+    from azure.core.settings import settings
+    from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+
+    settings.tracing_implementation = OpenTelemetrySpan
 
 
 def _append_managed_otlp_components(

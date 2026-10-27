@@ -17,6 +17,10 @@
 
 ### Bugs Fixed
 
+- Configure the Azure Core OpenTelemetry bridge for plain OTLP export so Azure
+  SDK dependency spans are emitted by default when no Azure Monitor connection
+  string is configured. Applications can opt out with `azure_sdk.enabled` or
+  `OTEL_PYTHON_DISABLED_INSTRUMENTATIONS`.
 - Preserve host-owned recovery callbacks and task options when loading
   process-wide task descriptors at startup.
 - Exclude protocol-disabled task functions before startup, periodic or inline

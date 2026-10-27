@@ -313,9 +313,17 @@ sampling configuration through `OTEL_TRACES_SAMPLER` and
 sampling only; exporter queues, process termination, and transport or ingestion
 failures can still prevent trace delivery.
 
-Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation are disabled by
-default to avoid automatically tracing every outbound HTTP request. To enable
-selected instrumentations, configure the host's observability callback:
+HTTPX, Requests, urllib, and urllib3 instrumentation are disabled by default to
+avoid automatically tracing every outbound HTTP request. Azure SDK dependency
+spans are also disabled by default for Azure Monitor. For plain OTLP export,
+Azure SDK dependency spans are enabled automatically so traces include outbound
+Azure SDK calls.
+
+To opt out of the plain-OTLP Azure SDK default, configure the host's
+observability callback with `{"azure_sdk": {"enabled": False}}` or set
+`OTEL_PYTHON_DISABLED_INSTRUMENTATIONS=azure_sdk`. An explicit
+`instrumentation_options` value takes precedence over the environment setting.
+To enable selected instrumentations, configure the host's observability callback:
 
 ```python
 from functools import partial
