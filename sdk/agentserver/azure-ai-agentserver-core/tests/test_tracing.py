@@ -208,6 +208,19 @@ class TestSetupDistroExport:
 
         mock_bridge.assert_not_called()
 
+    def test_plain_otlp_respects_explicit_azure_sdk_opt_out(self) -> None:
+        with (
+            mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export"),
+            mock.patch("azure.ai.agentserver.core._tracing._configure_azure_core_opentelemetry") as mock_bridge,
+            mock.patch.dict(os.environ, {"OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318"}, clear=True),
+        ):
+            _tracing._configure_tracing(
+                connection_string=None,
+                instrumentation_options={"azure_sdk": {"enabled": False}},
+            )
+
+        mock_bridge.assert_not_called()
+
     def test_no_telemetry_does_not_configure_azure_core_opentelemetry(self) -> None:
         with (
             mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export"),

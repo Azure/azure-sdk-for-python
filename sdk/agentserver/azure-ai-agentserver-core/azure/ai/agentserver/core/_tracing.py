@@ -259,7 +259,12 @@ def _configure_tracing(
                 enable_sensitive_data=enable_sensitive_data,
                 instrumentation_options=instrumentation_options,
             )
-        if _is_otlp_enabled() and not connection_string:
+        azure_sdk_options = (instrumentation_options or {}).get("azure_sdk", {})
+        if (
+            _is_otlp_enabled()
+            and not connection_string
+            and azure_sdk_options.get("enabled") is not False
+        ):
             # Azure Monitor configures this bridge through its instrumentation
             # setup. Plain OTLP uses the same provider but needs it explicitly.
             _configure_azure_core_opentelemetry()
