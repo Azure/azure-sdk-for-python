@@ -22,7 +22,7 @@ BeforeAll {
     $script:idExpression = '${{ parameters.ReleasePlanId }}'
     $script:templateGuard = '${{ if eq(parameters.ServiceDirectory, ''template'') }}'
     $script:autoGuard = '${{ if and(eq(variables[''Build.Reason''], ''IndividualCI''), eq(variables[''Build.SourceBranch''], ''refs/heads/main'')) }}'
-    $script:bindingGuard = '${{ if and(eq(parameters.ServiceDirectory, ''template''), eq(variables[''Build.Reason''], ''IndividualCI''), eq(variables[''Build.SourceBranch''], ''refs/heads/main'')) }}'
+    $script:autoReleaseOutput = '$[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs[''resolve.AutoReleaseSdkPullRequestUrl''] ]'
 
     function Find-YamlMap {
         param([object]$Node, [string]$Key, [string]$Value)
@@ -73,49 +73,32 @@ Describe 'Python template completion correlation' {
         $parameter.displayName | Should -BeExactly 'Release plan ID (0 uses package name based lookup)'
     }
 
-    It 'always forwards completion arguments without a service directory guard' {
-        @($completion.parameters.Keys | Sort-Object) | Should -Be @('ConfigFileDir', 'PackageArtifactName', 'ReleasePlanId', 'SdkPullRequest' | Sort-Object)
+    It 'always forwards the optional ID and leaves the SDK PR default to the shared template' {
+        @($completion.parameters.Keys | Sort-Object) | Should -Be @('ConfigFileDir', 'PackageArtifactName', 'ReleasePlanId' | Sort-Object)
         $completion.parameters.ReleasePlanId | Should -BeExactly $idExpression
-        $completion.parameters.SdkPullRequest | Should -BeExactly '$(AutoReleaseSdkPullRequestUrl)'
+        $completion.parameters.Contains('SdkPullRequest') | Should -BeFalse
     }
 
-    It 'binds the automatic output only in the completion job with an explicit empty default' {
-        @($stage.variables | Where-Object { $_.Contains($bindingGuard) -or $_['name'] -eq 'AutoReleaseSdkPullRequestUrl' }).Count | Should -Be 0
+    It 'binds the automatic output only in the completion job without service-specific defaults' {
+        @($stage.variables | Where-Object { $_['name'] -eq 'AutoReleaseSdkPullRequestUrl' }).Count | Should -Be 0
         $binding = @(Find-YamlMap $stage.jobs name AutoReleaseSdkPullRequestUrl)
         $binding.Count | Should -Be 1
         @($completionJob.variables).Count | Should -Be 1
         $completionJob.variables[0].name | Should -BeExactly 'AutoReleaseSdkPullRequestUrl'
         $variable = $completionJob.variables[0]
-        @($variable.Keys | Sort-Object) | Should -Be @($bindingGuard, '${{ else }}', 'name' | Sort-Object)
-        $variable[$bindingGuard].value | Should -BeExactly '$[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs[''resolve.AutoReleaseSdkPullRequestUrl''] ]'
-        $variable['${{ else }}'].Contains('value') | Should -BeTrue
-        $variable['${{ else }}'].value | Should -BeExactly ''
+        @($variable.Keys | Sort-Object) | Should -Be @('name', 'value')
+        $variable.value | Should -BeExactly $autoReleaseOutput
         $stage.dependsOn[1][$autoGuard] | Should -Be @('AutoReleasePrepare')
     }
 
-    It 'keeps completion inputs safe for <Service>/<Reason>/<Branch>' -TestCases @(
-        @{ Service = 'template'; Reason = 'Manual'; Branch = 'refs/heads/main'; Automatic = $false },
-        @{ Service = 'template'; Reason = 'Manual'; Branch = 'refs/heads/release/test'; Automatic = $false },
-        @{ Service = 'template'; Reason = 'IndividualCI'; Branch = 'refs/heads/main'; Automatic = $true },
-        @{ Service = 'template'; Reason = 'IndividualCI'; Branch = 'refs/heads/feature/test'; Automatic = $false },
-        @{ Service = 'template'; Reason = 'PullRequest'; Branch = 'refs/pull/49390/merge'; Automatic = $false },
-        @{ Service = 'template'; Reason = 'Schedule'; Branch = 'refs/heads/main'; Automatic = $false },
-        @{ Service = 'storage'; Reason = 'Manual'; Branch = 'refs/heads/main'; Automatic = $false },
-        @{ Service = 'storage'; Reason = 'IndividualCI'; Branch = 'refs/heads/main'; Automatic = $false }
-    ) {
-        param([string]$Service, [string]$Reason, [string]$Branch, [bool]$Automatic)
-        # Assert the parsed branch contract, not a replacement Azure Pipelines evaluator.
-        $isPilotAutoRelease = $Service -eq 'template' -and $Reason -eq 'IndividualCI' -and $Branch -eq 'refs/heads/main'
-        $isPilotAutoRelease | Should -Be $Automatic
-        $variable = $completionJob.variables[0]
-        if ($isPilotAutoRelease) {
-            $variable[$bindingGuard].value | Should -BeExactly '$[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs[''resolve.AutoReleaseSdkPullRequestUrl''] ]'
-        } else {
-            $variable['${{ else }}'].value | Should -BeExactly ''
-            $variable['${{ else }}'].value | Should -Not -Match '\$\(|stageDependencies'
-        }
-        $completion.parameters.ReleasePlanId | Should -BeExactly $idExpression
-        $completion.parameters.SdkPullRequest | Should -BeExactly '$(AutoReleaseSdkPullRequestUrl)'
+    It 'uses the shared empty-value initializer when no explicit SDK PR is supplied' {
+        $common = ConvertFrom-Yaml (Get-Content -LiteralPath (Join-Path $root 'eng/common/pipelines/templates/steps/mark-release-completion.yml') -Raw)
+        $initializerKey = '${{ if eq(parameters.SdkPullRequest, '''') }}'
+        $initializer = @($common.steps | Where-Object { $_.Contains($initializerKey) })
+        $initializer.Count | Should -Be 1
+        $initializer[0][$initializerKey][0].condition | Should -BeExactly 'and(succeeded(), ne(variables[''Skip.MarkReleaseCompletion''], ''true''), eq(variables[''AutoReleaseSdkPullRequestUrl''], ''''))'
+        $output = @(& ([scriptblock]::Create($initializer[0][$initializerKey][0].pwsh)) 6>&1 | ForEach-Object { $_.ToString() })
+        $output | Should -Contain '##vso[task.setvariable variable=AutoReleaseSdkPullRequestUrl]'
     }
 
     It 'preserves signed and unsigned artifact sources and dependencies' {
@@ -320,7 +303,7 @@ Describe 'Python template completion correlation' {
         $mark[0].continueOnError | Should -BeTrue
         $mark[0].inputs.scriptPath | Should -BeExactly '${{ parameters.SourceRootPath }}/eng/common/scripts/Mark-ReleasePlanCompletion.ps1'
         ($mark[0].inputs.arguments -replace '\s+', ' ').Trim() | Should -BeExactly ('-PackageInfoFilePath ''${{ parameters.ConfigFileDir }}/${{ parameters.PackageArtifactName }}.json'' -AzsdkExePath ''$(AZSDK)'' ' +
-            '-ReleasePlanId ''${{ parameters.ReleasePlanId }}'' -SdkPullRequest ''${{ parameters.SdkPullRequest }}'' ' +
+            '-ReleasePlanId ''${{ parameters.ReleasePlanId }}'' -SdkPullRequest ''${{ coalesce(parameters.SdkPullRequest, ''$(AutoReleaseSdkPullRequestUrl)'') }}'' ' +
             '-PipelineUrl "$(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"')
         $common = ConvertFrom-Yaml (Get-Content -LiteralPath (Join-Path $root 'eng/common/pipelines/templates/stages/archetype-auto-release-prepare.yml') -Raw)
         $prepare = @(Find-YamlMap $common stage AutoReleasePrepare)
@@ -343,6 +326,6 @@ Describe 'Python template completion correlation' {
             $value | Should -BeExactly $Id
         }
         $completion.parameters.ReleasePlanId.Replace($idExpression, $value) | Should -BeExactly $Id
-        $completion.parameters.SdkPullRequest | Should -BeExactly '$(AutoReleaseSdkPullRequestUrl)'
+        $completion.parameters.Contains('SdkPullRequest') | Should -BeFalse
     }
 }
