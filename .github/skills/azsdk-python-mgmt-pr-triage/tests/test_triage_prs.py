@@ -33,6 +33,7 @@ PR = {
     "user": {"login": "author"},
     "labels": [],
 }
+SUMMARY = {"number": 42, "title": PR["title"], "isDraft": False, "updatedAt": WHEN}
 FILE = {
     "filename": "sdk/example/azure-mgmt-example/azure/mgmt/example/_version.py",
     "status": "modified",
@@ -133,7 +134,7 @@ class FakeGitHub:
         if "/actions/workflows/" in endpoint:
             if self.activity_error:
                 raise triage.CollectionError("HTTP 403")
-            return [deepcopy(item) for item in self.workflow_runs if f"status={item['status']}" in endpoint]
+            return deepcopy(self.workflow_runs)
         if "/reviews?" in endpoint:
             return deepcopy(self.reviews)
         if "/issues/" in endpoint:
@@ -300,12 +301,47 @@ class ActivityTests(unittest.TestCase):
                 triage.classify(item, FakeGitHub(), 9, [], [])
                 self.assertIn("Remove and reapply" if labeled else "Add", item["queues"][1])
 
-    def test_status_requests_paginate_once_each(self):
+    def test_status_independent_request_filters_completed_runs(self):
         client = FakeGitHub()
-        client.workflow_runs = [run("in_progress")]
-        runs, issues = triage.active_reviews(client)
+        client.workflow_runs = [run("in_progress"), dict(run(), id=101)]
+        with patch.object(client, "pages", wraps=client.pages) as pages:
+            runs, issues = triage.active_reviews(client)
+            pages.assert_called_once_with(
+                f"repos/{REPO}/actions/workflows/{triage.WORKFLOW}/runs?per_page=100", "workflow_runs"
+            )
         self.assertEqual(len(runs), 1)
         self.assertFalse(issues)
+
+    def test_waiting_to_in_progress_transition_cannot_hide_active_run(self):
+        client = FakeGitHub()
+        active = run("waiting")
+
+        def transition(endpoint, key=None):
+            if "?status=waiting&" in endpoint or "?status=" not in endpoint:
+                active["status"] = "in_progress"
+            if "?status=" not in endpoint or f"status={active['status']}&" in endpoint:
+                return [deepcopy(active)]
+            return []
+
+        with patch.object(client, "pages", side_effect=transition):
+            runs, issues = triage.active_reviews(client)
+        item = row()
+        triage.classify(item, client, 9, runs, issues)
+        self.assertFalse(issues)
+        self.assertEqual(runs[0]["status"], "in_progress")
+        self.assertIn(2, item["queues"])
+        self.assertNotIn(1, item["queues"])
+
+    def test_active_run_on_later_page_is_found(self):
+        client = triage.GitHub(REPO)
+        pages = [
+            {"total_count": 2, "workflow_runs": [run()]},
+            {"total_count": 2, "workflow_runs": [run("queued")]},
+        ]
+        with patch.object(triage, "gh", return_value=pages):
+            runs, issues = triage.active_reviews(client)
+        self.assertFalse(issues)
+        self.assertEqual([item["status"] for item in runs], ["queued"])
 
 
 class FreshnessTests(unittest.TestCase):
@@ -354,7 +390,7 @@ class CollectionTests(unittest.TestCase):
         client.skipped_team = True
         client.reviews = [review(commit=OLD)]
         client.comments.append(comment())
-        item = triage.collect_pr(client, {"number": 42, "reviewDecision": "APPROVED"})
+        item = triage.collect_pr(client, dict(SUMMARY, reviewDecision="APPROVED"))
         triage.classify(item, client, 9, [], [])
         self.assertIsNotNone(item["approval"])
         self.assertFalse(item["issues"])
@@ -368,7 +404,7 @@ class CollectionTests(unittest.TestCase):
                 client = FakeGitHub()
                 client.skipped_team = True
                 client.reviews = [review(login="team-only-reviewer")]
-                item = triage.collect_pr(client, {"number": 42, "reviewDecision": decision})
+                item = triage.collect_pr(client, dict(SUMMARY, reviewDecision=decision))
                 triage.classify(item, client, 9, [], [])
                 self.assertFalse(item["issues"])
                 if decision == "APPROVED":
@@ -380,7 +416,7 @@ class CollectionTests(unittest.TestCase):
         client = FakeGitHub()
         client.skipped_team = True
         client.reviews = []
-        item = triage.collect_pr(client, {"number": 42})
+        item = triage.collect_pr(client, SUMMARY)
         self.assertIn("GitHub review decision unavailable", item["issues"][0])
 
     def test_first_beta_and_author_followups_in_all_comment_channels(self):
@@ -390,7 +426,7 @@ class CollectionTests(unittest.TestCase):
         author_review = review("COMMENTED", "author", LATER, 4)
         author_review["body"] = "Ready now?"
         client.reviews.append(author_review)
-        item = triage.collect_pr(client, {"number": 42, "reviewDecision": "APPROVED"})
+        item = triage.collect_pr(client, dict(SUMMARY, reviewDecision="APPROVED"))
         self.assertEqual(item["version"], "1.0.0b1")
         self.assertEqual(len(item["followups"]), 3)
         triage.classify(item, client, 9, [], [])
@@ -400,7 +436,7 @@ class CollectionTests(unittest.TestCase):
     def test_comments_before_approval_or_by_other_people_not_followups(self):
         client = FakeGitHub()
         client.comments += [comment(when=WHEN), comment(login="other")]
-        item = triage.collect_pr(client, {"number": 42})
+        item = triage.collect_pr(client, SUMMARY)
         self.assertFalse(item["followups"])
 
     def test_old_commit_timestamps_cannot_hide_changed_head(self):
@@ -417,7 +453,7 @@ class CollectionTests(unittest.TestCase):
     def test_ownership_failure_is_not_missing_approval(self):
         client = FakeGitHub()
         client.ownership_error = True
-        item = triage.collect_pr(client, {"number": 42})
+        item = triage.collect_pr(client, SUMMARY)
         triage.classify(item, client, 9, [], [])
         self.assertNotIn(3, item["queues"])
         self.assertIn("Approval verification incomplete", item["issues"][0])
@@ -433,19 +469,37 @@ class CollectionTests(unittest.TestCase):
         client.last_details = deepcopy(PR)
         client.last_details["head"]["sha"] = OLD
         with self.assertRaises(triage.CollectionError):
-            triage.collect_pr(client, {"number": 42})
+            triage.collect_pr(client, SUMMARY)
+
+    def test_changes_requested_since_listing_rejects_stale_approval(self):
+        client = FakeGitHub()
+        client.details["updated_at"] = LATER
+        client.reviews = [review(), review("CHANGES_REQUESTED", "second", LATER, 2)]
+        with self.assertRaisesRegex(triage.CollectionError, "changed since initial listing"):
+            triage.collect_pr(client, dict(SUMMARY, reviewDecision="APPROVED"))
+        self.assertEqual(client.get_count, 1)
+
+    def test_missing_listing_timestamp_cannot_bypass_snapshot_guard(self):
+        with self.assertRaisesRegex(triage.CollectionError, "changed since initial listing"):
+            triage.collect_pr(FakeGitHub(), {"number": 42, "reviewDecision": "APPROVED"})
+
+    def test_timestamp_change_during_collection_rejects_snapshot(self):
+        client = FakeGitHub()
+        client.last_details = dict(PR, updated_at=LATER)
+        with self.assertRaisesRegex(triage.CollectionError, "changed during collection"):
+            triage.collect_pr(client, SUMMARY)
 
     def test_newly_closed_or_draft_pr_skipped(self):
         for changes in ({"state": "closed"}, {"draft": True}):
             client = FakeGitHub()
             client.details.update(changes)
-            self.assertIsNone(triage.collect_pr(client, {"number": 42}))
+            self.assertIsNone(triage.collect_pr(client, SUMMARY))
 
     def test_truncated_files_not_treated_as_complete(self):
         client = FakeGitHub()
         client.details["changed_files"] = 3001
         with self.assertRaises(triage.CollectionError):
-            triage.collect_pr(client, {"number": 42})
+            triage.collect_pr(client, SUMMARY)
 
     def test_version_changelog_fallback(self):
         file = dict(FILE, filename="sdk/example/azure-mgmt-example/CHANGELOG.md", patch="+## 2.0.0 (Unreleased)")
@@ -480,7 +534,7 @@ class ReportAndCliTests(unittest.TestCase):
                 client.pages("endpoint", "workflow_runs")
 
     def test_cli_default_includes_first_beta(self):
-        listing = [{"number": 42, "title": PR["title"], "isDraft": False, "reviewDecision": "APPROVED"}]
+        listing = [dict(SUMMARY, reviewDecision="APPROVED")]
         with patch.object(triage, "gh", return_value=listing), patch.object(
             triage, "GitHub", return_value=FakeGitHub()
         ), patch("sys.stdout", new_callable=io.StringIO) as output:
@@ -488,8 +542,20 @@ class ReportAndCliTests(unittest.TestCase):
             self.assertIn("Scanned 1", output.getvalue())
             self.assertIn("No PRs need action", output.getvalue())
 
+    def test_cli_stale_listing_never_claims_no_action(self):
+        listing = [dict(SUMMARY, reviewDecision="APPROVED")]
+        client = FakeGitHub()
+        client.details["updated_at"] = LATER
+        client.reviews = [review(), review("CHANGES_REQUESTED", "second", LATER, 2)]
+        with patch.object(triage, "gh", return_value=listing), patch.object(
+            triage, "GitHub", return_value=client
+        ), patch("sys.stdout", new_callable=io.StringIO) as output:
+            self.assertEqual(triage.main([]), 2)
+            self.assertIn("changed since initial listing", output.getvalue())
+            self.assertNotIn("No PRs need action", output.getvalue())
+
     def test_cli_limit_marks_partial(self):
-        listing = [{"number": 42, "title": PR["title"], "isDraft": False}]
+        listing = [dict(SUMMARY)]
         with patch.object(triage, "gh", return_value=listing), patch.object(
             triage, "GitHub", return_value=FakeGitHub()
         ), patch("sys.stdout", new_callable=io.StringIO) as output:
@@ -499,9 +565,9 @@ class ReportAndCliTests(unittest.TestCase):
 
     def test_cli_exact_package_filter_and_drafts(self):
         listing = [
-            {"number": 42, "title": PR["title"], "isDraft": False},
-            {"number": 43, "title": "[AutoPR azure-mgmt-other]-generated", "isDraft": False},
-            {"number": 44, "title": PR["title"], "isDraft": True},
+            dict(SUMMARY),
+            dict(SUMMARY, number=43, title="[AutoPR azure-mgmt-other]-generated"),
+            dict(SUMMARY, number=44, isDraft=True),
         ]
         client = FakeGitHub()
         with patch.object(triage, "gh", return_value=listing), patch.object(
@@ -511,7 +577,7 @@ class ReportAndCliTests(unittest.TestCase):
             self.assertIn("Scanned 1", output.getvalue())
 
     def test_cli_unknown_version_cannot_silently_match_filter(self):
-        listing = [{"number": 42, "title": PR["title"], "isDraft": False}]
+        listing = [dict(SUMMARY)]
         client = FakeGitHub()
         client.files[0]["patch"] = ""
         with patch.object(triage, "gh", return_value=listing), patch.object(
@@ -521,7 +587,7 @@ class ReportAndCliTests(unittest.TestCase):
             self.assertIn("cannot apply --version", output.getvalue())
 
     def test_cli_collection_failure_reports_partial(self):
-        listing = [{"number": 42, "title": PR["title"], "isDraft": False}]
+        listing = [dict(SUMMARY)]
         with patch.object(triage, "gh", return_value=listing), patch.object(
             triage, "collect_pr", side_effect=triage.CollectionError("HTTP 403")
         ), patch("sys.stdout", new_callable=io.StringIO) as output:

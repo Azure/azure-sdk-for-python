@@ -201,17 +201,15 @@ def run_pr(run, number):
 def active_reviews(client):
     runs = {}
     issues = []
-    for status in ACTIVE_STATUSES:
-        try:
-            for run in client.pages(
-                f"repos/{client.repo}/actions/workflows/{WORKFLOW}/runs?status={status}&per_page=100",
-                "workflow_runs",
-            ):
-                # A run can finish between status-filtered requests.
-                if run["status"] != "completed":
-                    runs[run["id"]] = run
-        except CollectionError as error:
-            issues.append(f"Review activity unknown: {error}")
+    try:
+        for run in client.pages(
+            f"repos/{client.repo}/actions/workflows/{WORKFLOW}/runs?per_page=100",
+            "workflow_runs",
+        ):
+            if run["status"] != "completed":
+                runs[run["id"]] = run
+    except CollectionError as error:
+        issues.append(f"Review activity unknown: {error}")
     for run in runs.values():
         if not run.get("pull_requests"):
             issues.append(f"Review activity unknown: active run has no PR association: {run['html_url']}")
@@ -252,6 +250,8 @@ def collect_pr(client, summary):
     pr = client.get(endpoint)
     if pr["state"] != "open" or pr["draft"]:
         return None
+    if summary.get("updatedAt") != pr["updated_at"]:
+        raise CollectionError(f"PR #{number} changed since initial listing; rerun before acting.")
     match = PACKAGE.match(pr["title"])
     if not match:
         return None
@@ -423,7 +423,7 @@ def main(argv=None):
             "--limit",
             str(args.limit),
             "--json",
-            "number,title,isDraft,reviewDecision",
+            "number,title,isDraft,reviewDecision,updatedAt",
         )
         if len(prs) >= args.limit:
             issues.append(f"PR listing reached --limit {args.limit}; increase it for a complete scan.")

@@ -3,7 +3,7 @@
 This runbook is for SDK maintainers covering the Go/JavaScript/Python release
 rotation who are unfamiliar with Python SDK releases. It explains how to find a
 release PR, use the bot's review, decide the next action, and follow the release.
-Follow Steps 1-4 in order for each PR.
+Follow Steps 1-3 in order for each PR; Step 4 explains the handoff.
 You do not need a local
 Python environment or detailed knowledge of generated Python code for routine cases.
 The reviewer on duty is the directly responsible individual (**DRI**). Ask the
@@ -98,7 +98,12 @@ event alone does not prove approval is current.
 Read new PR-author comments even when approval remains valid. Respond to the
 request or route it to the Python owner; do not add a duplicate approval.
 
-## Step 4. Hand off merge and follow the release
+## Step 4. Hand off merge and release follow-up
+
+After approval and handoff, the service team owns merge and release follow-up.
+The guidance below explains what happens next; it is not an additional mandatory
+rotator step. Rotators assist when the service team requests help or a release
+problem is escalated to them.
 
 Tell the service team when review is complete and point to its release plan's
 next action. The service team normally merges; an authorized DRI may help only
@@ -112,15 +117,17 @@ uses internal post-merge CI on `main` to select changed, declared package artifa
 This automatic path does **not** wait for the manual `package-publish` approval
 gate. Do not merge early assuming another approval will stop publication.
 
-After merge, locate `python - <service-directory>` in the
+For post-merge follow-up, the service team (or a rotator helping with an
+escalation) locates `python - <service-directory>` in the
 [internal Python pipelines](https://dev.azure.com/azure-sdk/internal/_build?view=folders)
-and find the run for the merged commit. Check `AutoReleasePrepare` and the target
+and finds the run for the merged commit. Check `AutoReleasePrepare` and the target
 package's `Release: <artifact>` stage. Confirm the exact version is available on
 [PyPI](https://pypi.org/) and check the linked release plan's status.
 Release-plan completion can fail separately from publication; do not republish
 an existing version to repair tracking.
 
-If publishing is absent, skipped, failed, or unclear, investigate the release run.
+If publishing is absent, skipped, failed, or unclear, the service team
+investigates the release run and requests help when needed.
 For release pipeline failures, seek engineering team support in the
 [Engineering System Teams channel](https://teams.microsoft.com/l/channel/19%3A59dbfadafb5e41c4890e2cd3d74cc7ba%40thread.skype/Engineering%20System%20%F0%9F%9B%A0%EF%B8%8F?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
 Include the PR, package/version, merged commit, pipeline link, failed/skipped stage,

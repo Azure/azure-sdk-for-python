@@ -82,6 +82,11 @@ Other team errors and API failures still produce verification warnings.
 - Query the management review workflow, not generic CI. Use its run's explicit
   `pull_requests` associations, not timestamps, title guesses, or `head_sha`
   alone (`pull_request_target` can use a base revision).
+- Fetch workflow runs with status-independent pagination and filter completed
+  runs locally, so transitions between active statuses do not hide a run.
+- Compare the initial listing's `updatedAt` with the first PR read, then check
+  for changes again after collecting evidence. Reject changed snapshots rather
+  than combine an old review decision with newer reviews.
 - Active runs without a PR association make activity verification incomplete.
   Show **Review activity unknown** and the run links; never recommend
   retriggering while activity cannot be verified.
