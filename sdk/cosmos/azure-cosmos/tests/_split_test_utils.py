@@ -11,6 +11,7 @@ import time
 import traceback
 import unittest
 import uuid
+from collections import Counter
 from contextlib import contextmanager
 
 from azure.cosmos import _base
@@ -22,11 +23,30 @@ _CONTEXT_FIELDS = (
     "actual_count",
     "missing_count",
     "unexpected_count",
+    "duplicate_count",
+    "order_matches",
     "ids_match",
     "token_matches",
     "lsn_not_regressed",
     "expected_range_present",
 )
+
+
+def assert_change_feed_ids(actual_ids, expected_ids, diagnostics):
+    """Check all expected changes exactly once, without cross-partition ordering."""
+    actual = Counter(actual_ids)
+    expected = Counter(expected_ids)
+    diagnostics.update(
+        expected_count=len(expected_ids),
+        actual_count=len(actual_ids),
+        missing_count=sum((expected - actual).values()),
+        unexpected_count=sum((actual - expected).values()),
+        duplicate_count=sum(count - 1 for count in actual.values() if count > 1),
+        ids_match=actual == expected,
+        order_matches=actual_ids == expected_ids,
+    )
+    if actual != expected:
+        raise AssertionError("Change feed IDs differ from the expected multiset")
 
 
 def create_item(hpk):

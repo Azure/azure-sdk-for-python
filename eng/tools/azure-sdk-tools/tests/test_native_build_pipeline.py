@@ -44,6 +44,15 @@ def run_powershell(script, **environment):
     )
 
 
+def test_analysis_checkout_has_history_for_api_comparison():
+    jobs = load_template("jobs/ci.yml")
+    analyze = next(job for job in jobs["jobs"] if job.get("job") == "Analyze")
+    assert analyze["steps"][0] == {
+        "checkout": "self",
+        "${{ if eq(variables['Build.Reason'], 'PullRequest') }}": {"fetchDepth": 0, "fetchTags": False},
+    }
+
+
 def test_rust_support_is_disabled_by_default_and_forwarded():
     archetype = load_template("stages/archetype-sdk-client.yml")
     jobs = load_template("jobs/ci.yml")
