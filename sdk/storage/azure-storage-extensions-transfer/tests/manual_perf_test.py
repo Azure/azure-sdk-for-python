@@ -35,6 +35,11 @@ transfer throughput.
 Each case runs a number of warmup iterations (to account for connection setup / credential
 caching) followed by the measured iterations. Results are reported as min / mean / median
 wall-clock time and throughput (MiB/s), plus the native speedup.
+
+Downloads are consumed with readinto() into a discarding sink by default. Use --download-method
+readall to materialize the blob with readall(), or --download-method read to call
+read(--read-size) repeatedly until the blob is exhausted (a --read-size of -1, the default, makes
+a single read() call).
 """
 
 import argparse
@@ -65,7 +70,7 @@ _NATIVE_UPLOAD_MARKER = "Used native Rust extension for blob upload."
 _MIB = 1024 * 1024
 
 _DEFAULT_SIZES = "10KiB,1MiB,100MiB,1GiB"
-_DEFAULT_ITERATIONS = 20
+_DEFAULT_ITERATIONS = 10
 _DEFAULT_WARMUPS = 3
 _DEFAULT_MAX_CONCURRENCY = 32
 _DEFAULT_CONTAINER = "transfer-ext-perf"
@@ -98,6 +103,17 @@ def parse_size(text):
             f"Unknown size unit in {text!r}. Use one of: B, KiB, MiB, GiB, KB, MB, GB."
         )
     return int(float(value) * _SIZE_UNITS[unit])
+
+
+def parse_read_size(text):
+    """Parse --read-size: ``-1`` for a single ``read()`` of the whole blob, otherwise a size."""
+    if text.strip() == "-1":
+        return -1
+    return parse_size(text)
+
+
+def _read_size_label(read_size):
+    return "-1 (read all)" if read_size < 0 else format_size(read_size)
 
 
 def format_size(num_bytes):
@@ -333,34 +349,54 @@ def bench_upload(blob_client, payload, enabled, iterations, warmups, max_concurr
     return times
 
 
-def _download_once(blob_client, max_concurrency, method):
+def _download_once(blob_client, max_concurrency, method, read_size=-1):
     """Download the whole blob once with the given consumption method; return the byte count."""
     downloader = blob_client.download_blob(max_concurrency=max_concurrency)
     if method == "readall":
         return len(downloader.readall())
+    if method == "read":
+        if read_size < 0:
+            return len(downloader.read())
+        total = 0
+        while True:
+            data = downloader.read(read_size)
+            if not data:
+                return total
+            total += len(data)
     sink = _CountingSink()
     downloader.readinto(sink)
     return sink.total
 
 
-def bench_download(blob_client, expected_len, enabled, iterations, warmups, max_concurrency, method="readinto"):
-    """Time repeated full downloads (download_blob + readinto/readall) on the selected path.
+def bench_download(
+    blob_client,
+    expected_len,
+    enabled,
+    iterations,
+    warmups,
+    max_concurrency,
+    method="readinto",
+    read_size=-1,
+):
+    """Time repeated full downloads (download_blob + readinto/readall/read) on the selected path.
 
     With ``method="readinto"`` (the default) data is written into a discarding sink, so timing
     reflects transfer cost rather than materializing the blob. ``method="readall"`` measures
     downloading the whole blob into a single ``bytes`` object, which uses the native ``readall``
-    fast path when the extension is active. Timing spans the whole operation, including the
+    fast path when the extension is active. ``method="read"`` calls ``read(read_size)`` until the
+    blob is exhausted; a ``read_size`` of -1 makes a single ``read()`` call for the whole blob.
+    Timing spans the whole operation, including the
     native path's initial request, so both paths are compared end-to-end.
     Returns per-iteration seconds.
     """
     times = []
     with native_path(enabled):
         for _ in range(warmups):
-            total = _download_once(blob_client, max_concurrency, method)
+            total = _download_once(blob_client, max_concurrency, method, read_size)
             assert total == expected_len, "Download length mismatch during warmup!"
         for _ in range(iterations):
             start = time.perf_counter()
-            total = _download_once(blob_client, max_concurrency, method)
+            total = _download_once(blob_client, max_concurrency, method, read_size)
             times.append(time.perf_counter() - start)
             assert total == expected_len, "Download length mismatch during measurement!"
     return times
@@ -392,6 +428,7 @@ def run_benchmarks(auth, args):
         f"max_block_size={format_size(args.max_block_size) if args.max_block_size else 'SDK default'}  "
         f"auth={'user-delegation-SAS' if args.sas else 'AAD'}  "
         f"download_method={args.download_method}"
+        + (f"  read_size={_read_size_label(args.read_size)}" if args.download_method == "read" else "")
     )
     summary = []
     for size_bytes in args.sizes:
@@ -422,6 +459,7 @@ def run_benchmarks(auth, args):
                     args.warmups,
                     args.max_concurrency,
                     args.download_method,
+                    args.read_size,
                 ),
                 size_bytes,
             )
@@ -434,6 +472,7 @@ def run_benchmarks(auth, args):
                     args.warmups,
                     args.max_concurrency,
                     args.download_method,
+                    args.read_size,
                 ),
                 size_bytes,
             )
@@ -517,10 +556,18 @@ def parse_args(argv=None):
     )
     parser.add_argument(
         "--download-method",
-        choices=("readinto", "readall"),
+        choices=("readinto", "readall", "read"),
         default="readinto",
         help="How downloads are consumed: 'readinto' streams into a discarding sink; 'readall' "
-        "materializes the whole blob as bytes (exercises the native readall fast path).",
+        "materializes the whole blob as bytes (exercises the native readall fast path); 'read' "
+        "calls read(--read-size) repeatedly until the blob is exhausted.",
+    )
+    parser.add_argument(
+        "--read-size",
+        type=parse_read_size,
+        default=-1,
+        help="Bytes requested per read() call with --download-method read, e.g. '64KiB' or "
+        "'4MiB'. -1 makes a single read() call for the whole blob.",
     )
     parser.add_argument(
         "--sas",
@@ -548,6 +595,8 @@ def parse_args(argv=None):
         parser.error("--max-block-size must be at least 1 byte.")
     if args.max_single_put_size is not None and args.max_single_put_size < 1:
         parser.error("--max-single-put-size must be at least 1 byte.")
+    if args.read_size == 0:
+        parser.error("--read-size must be -1 or at least 1 byte.")
     if args.sas and args.sas_expiry_hours <= 0:
         parser.error("--sas-expiry-hours must be greater than 0.")
 
