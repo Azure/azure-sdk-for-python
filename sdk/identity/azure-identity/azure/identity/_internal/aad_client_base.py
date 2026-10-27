@@ -191,7 +191,9 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
     def _build_pipeline(self, **kwargs):
         pass
 
-    def _process_response(self, response: PipelineResponse, request_time: int, **kwargs) -> AccessTokenInfo:
+    def _process_response(
+        self, response: PipelineResponse, request_time: int, token_endpoint: str, **kwargs
+    ) -> AccessTokenInfo:
         content = response.context.get(
             ContentDecodePolicy.CONTEXT_NAME
         ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
@@ -264,7 +266,8 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
                 "client_id": self._get_cache_client_id(**kwargs),
                 "response": content,
                 "scope": response.http_request.body["scope"].split(),
-                "token_endpoint": response.http_request.url,
+                # A proxy may have rewritten the request URL. MSAL derives the cache realm from this endpoint.
+                "token_endpoint": token_endpoint,
             },
             now=request_time,
         )

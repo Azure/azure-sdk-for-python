@@ -3,7 +3,7 @@
 # cSpell:disable
 
 from enum import Enum
-from typing import Union
+from typing import Dict, FrozenSet, Union
 from opentelemetry.semconv.metrics import MetricInstruments
 from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
@@ -16,11 +16,19 @@ _EXPORTER_DOMAIN_SCHEMA_VERSION = 2
 
 # Environment variables
 
+_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES"
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
 _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = (
     "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
 )
 _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN"
+
+# Add feature names only when their implementations are available.
+_SUPPORTED_EXPERIMENTAL_FEATURES: FrozenSet[str] = frozenset(
+    {
+        "gen_ai_input_output_limit_increase",
+    }
+)
 
 # SDK version
 _AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
@@ -383,16 +391,37 @@ _DEFAULT_LOG_MESSAGE = "n/a"
 # Resource attribute applicationId
 _APPLICATION_ID_RESOURCE_KEY = "microsoft.applicationId"
 
-# Gen AI attributes whose value should be exempt from truncation
-_GEN_AI_ATTRIBUTES = (
+# Custom properties (customDimensions) value length limits, in characters
+_CUSTOM_PROPERTY_MAX_LENGTH = 8 * 1024
+_GEN_AI_ATTRIBUTE_MAX_LENGTH = 256 * 1024
+# gen_ai.input.messages / gen_ai.output.messages may contain multimodal
+# blob parts (e.g. base64 images/audio), so they get a larger limit when the
+# "gen_ai_input_output_limit_increase" experimental feature is enabled.
+_GEN_AI_MESSAGES_ATTRIBUTE_MAX_LENGTH = 4 * 1024 * 1024
+
+_GEN_AI_MESSAGES_ATTRIBUTES = (
     "gen_ai.input.messages",
     "gen_ai.output.messages",
+)
+
+# Gen AI attributes whose value has a larger truncation limit than regular custom properties
+_GEN_AI_ATTRIBUTES = _GEN_AI_MESSAGES_ATTRIBUTES + (
     "gen_ai.system_instructions",
     "gen_ai.tool.definitions",
     "gen_ai.tool.call.arguments",
     "gen_ai.tool.call.result",
     "gen_ai.evaluation.explanation",
 )
+
+# Per-attribute max length overrides; keys not present use _CUSTOM_PROPERTY_MAX_LENGTH
+_GEN_AI_ATTRIBUTE_MAX_LENGTHS: Dict[str, int] = {key: _GEN_AI_ATTRIBUTE_MAX_LENGTH for key in _GEN_AI_ATTRIBUTES}
+
+# Per-attribute max length overrides used when the "gen_ai_input_output_limit_increase"
+# experimental feature is enabled
+_GEN_AI_ATTRIBUTE_INCREASED_MAX_LENGTHS: Dict[str, int] = {
+    **_GEN_AI_ATTRIBUTE_MAX_LENGTHS,
+    **{key: _GEN_AI_MESSAGES_ATTRIBUTE_MAX_LENGTH for key in _GEN_AI_MESSAGES_ATTRIBUTES},
+}
 
 # Gen AI main-agent attribution constants
 # Attribute mapping for main-agent propagation in OnStart
