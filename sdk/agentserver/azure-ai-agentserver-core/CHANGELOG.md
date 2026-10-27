@@ -20,6 +20,9 @@
 
 ### Bugs Fixed
 
+- Keep the lease instance consistent with live task workers and accepted
+  submissions across compatible in-place restores with a new restore ID.
+  Idle runtimes without owned task work still rotate their lease instance.
 - Validate live provider overrides before publishing restored configuration or
   rotating lease identity, and defer accepted task callers cancelled during
   initial watchdog setup before their handlers start.

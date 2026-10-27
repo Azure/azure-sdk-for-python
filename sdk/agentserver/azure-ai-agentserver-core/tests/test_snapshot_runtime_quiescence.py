@@ -185,6 +185,137 @@ async def test_live_guid_override_preserves_manager_and_worker_lease_identity(pr
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("work", ["running", "admitted"])
+@pytest.mark.parametrize("duplicate", [False, True])
+async def test_compatible_restore_preserves_owned_task_lease_identity(provider_factory, monkeypatch, work, duplicate):
+    provider, factory = provider_factory
+    app = host()
+    written, release, running, finish = (asyncio.Event() for _ in range(4))
+    callbacks, renewal_identities = [], []
+    original_create = provider.create
+    original_renewal = _manager.lease_renewal_loop
+
+    async def create(request):
+        stored = await original_create(request)
+        if work == "admitted":
+            written.set()
+            await release.wait()
+        return stored
+
+    async def renewal(*args, **kwargs):
+        renewal_identities.append((kwargs["lease_owner"], kwargs["lease_instance_id"]))
+        await original_renewal(*args, **kwargs)
+
+    monkeypatch.setattr(provider, "create", create)
+    monkeypatch.setattr(_manager, "lease_renewal_loop", renewal)
+
+    @task(name="compatible_restore")
+    async def startup(ctx: TaskContext[str]) -> str:
+        running.set()
+        await finish.wait()
+        return ctx.input
+
+    @app.after_restore_handler
+    async def initialize(context):
+        callbacks.append(context.restore_id)
+
+    producer = None
+    run = None
+    async with app.router.lifespan_context(app), client(app) as http:
+        try:
+            assert (await http.post("/_agent/after-restore", json=payload())).status_code == 200
+            manager = get_task_manager()
+            identity = (manager._lease_owner, manager._instance_id)
+            scanner = manager._periodic_recovery_task
+            producer = asyncio.create_task(startup.start(task_id="compatible-restore", input="saved"))
+            if work == "admitted":
+                await asyncio.wait_for(written.wait(), 2)
+                assert manager._active_admissions
+                assert manager._admitted_task_ids["compatible-restore"] > 0
+                assert not manager._active_tasks
+            else:
+                run = await asyncio.wait_for(producer, 2)
+                await asyncio.wait_for(running.wait(), 2)
+            changed = payload(restore_id="restore-2")
+            requests = [http.post("/_agent/after-restore", json=changed)]
+            if duplicate:
+                requests.append(http.post("/_agent/after-restore", json=changed))
+            responses = await asyncio.gather(*requests)
+            assert all(response.status_code == 200 for response in responses)
+            assert get_task_manager() is manager
+            assert factory.call_count == 1
+            assert callbacks == ["restore-1", "restore-2"]
+            assert manager._materialization_restore_id == "restore-2"
+            assert (manager._lease_owner, manager._instance_id) == identity
+            assert manager._periodic_recovery_task is scanner
+            release.set()
+            run = await asyncio.wait_for(producer, 2)
+            await asyncio.wait_for(running.wait(), 2)
+            assert not manager._admitted_task_ids
+            assert renewal_identities == [identity]
+            await manager._provider_update_locked(
+                "compatible-restore",
+                TaskPatchRequest(
+                    payload={"probe": "after-compatible-restore"},
+                    **manager._lease_ext_kwargs("compatible-restore"),
+                ),
+            )
+            stored = await provider.get("compatible-restore")
+            assert (stored.lease.owner, stored.lease.instance_id) == identity
+            assert stored.payload["input"] == "saved"
+            assert stored.payload["probe"] == "after-compatible-restore"
+        finally:
+            release.set()
+            finish.set()
+            if producer is not None:
+                result = await asyncio.wait_for(asyncio.gather(producer, return_exceptions=True), 2)
+                if run is None and not isinstance(result[0], BaseException):
+                    run = result[0]
+            if run is not None:
+                await asyncio.wait_for(asyncio.gather(run.result(), return_exceptions=True), 2)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("inner_id", ["outer", "inner"])
+async def test_task_registration_admission_cleans_up_nested_failure(provider_factory, inner_id):
+    provider, _ = provider_factory
+    manager = TaskManager(config=host().config, provider=provider, shutdown_grace_seconds=0)
+    with manager._task_admission(task_id="outer"):
+        with pytest.raises(RuntimeError, match="nested failure"):
+            with manager._task_admission(task_id=inner_id):
+                assert manager._admitted_task_ids == ({"outer": 2} if inner_id == "outer" else {"outer": 1, "inner": 1})
+                raise RuntimeError("nested failure")
+        assert manager._admitted_task_ids == {"outer": 1}
+        assert not manager._admissions_drained.is_set()
+    assert not manager._admitted_task_ids
+    assert not manager._active_admissions
+    assert manager._admissions_drained.is_set()
+    await manager.shutdown(wait_for_workers=True)
+
+
+@pytest.mark.asyncio
+async def test_compatible_restore_without_owned_task_work_rotates_lease_identity(provider_factory):
+    _, factory = provider_factory
+    app = host()
+    async with app.router.lifespan_context(app), client(app) as http:
+        assert (await http.post("/_agent/after-restore", json=payload())).status_code == 200
+        manager = get_task_manager()
+        await asyncio.wait_for(manager._admissions_drained.wait(), 2)
+        instance = manager._instance_id
+        scanner = manager._periodic_recovery_task
+        assert scanner is not None and not scanner.done()
+        assert not manager._active_tasks
+        assert all(worker is scanner or worker.done() for worker in manager._owned_workers)
+        response = await http.post("/_agent/after-restore", json=payload(restore_id="restore-2"))
+        assert response.status_code == 200, response.text
+        assert get_task_manager() is manager
+        assert manager._instance_id != instance
+        assert manager._materialization_restore_id == "restore-2"
+        assert manager._periodic_recovery_task is scanner
+        assert factory.call_count == 1
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("provider_change", ["endpoint", "backend", "state_root", "home"])
 async def test_live_provider_override_preserves_manager_and_worker_lease_identity(
     provider_factory, monkeypatch, tmp_path, provider_change

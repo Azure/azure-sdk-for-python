@@ -245,6 +245,14 @@ inventing a platform restore event.
   are rebuilt.
 - Local provider comparison uses `resolve_state_subdir("tasks")`, including
   the default home directory when the root variable is unset or empty.
+- A new restore ID with compatible session/provider identity preserves the lease
+  instance while task workers or accepted submissions are still owned. Existing
+  renewal workers and later task writes keep the same identity; the restore ID
+  still advances. With no owned task work, the lease instance rotates as before,
+  even if the periodic recovery scanner remains alive. Golden capture creates
+  no manager, so separate session clones still initialize independent instances.
+  Recovery also excludes task IDs whose accepted submission or resume is still
+  registering its active handle, avoiding duplicate dispatch during that gap.
 
 This is not a general retained-memory reconciliation framework. Changes to
 session-incarnation binding require explicit lifecycle treatment rather than

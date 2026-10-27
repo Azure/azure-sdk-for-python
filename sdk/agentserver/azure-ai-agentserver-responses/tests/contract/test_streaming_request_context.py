@@ -41,10 +41,11 @@ from azure.ai.agentserver.responses.streaming import ResponseEventStream
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 
 
-def test_original_subject_core_dependency_floor() -> None:
+def test_original_subject_and_snapshot_core_dependency_floor() -> None:
     requirements = (Requirement(value) for value in requires("azure-ai-agentserver-responses") or [])
     core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
-    assert "2.3.0b2" in core.specifier
+    assert "2.3.0b3" in core.specifier
+    assert "2.3.0b2" not in core.specifier
     assert "2.3.0b1" not in core.specifier
     assert callable(FoundryAgentRequestContext.model_attribution_headers)
 

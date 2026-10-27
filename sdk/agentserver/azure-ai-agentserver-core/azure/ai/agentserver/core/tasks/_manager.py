@@ -445,7 +445,12 @@ def _with_task_admission(
 ) -> Callable[Concatenate[TaskManager, _AdmissionP], Awaitable[_AdmissionR]]:
     @wraps(method)
     async def admitted(manager: TaskManager, *args: _AdmissionP.args, **kwargs: _AdmissionP.kwargs) -> _AdmissionR:
-        with _task_manager_scope(lambda: manager), manager._task_admission():  # pylint: disable=protected-access
+        task_id = kwargs.get("task_id")
+        if task_id is None:
+            task_id = getattr(kwargs.get("task_info"), "id", None)
+        with _task_manager_scope(lambda: manager), manager._task_admission(  # pylint: disable=protected-access
+            task_id=task_id if isinstance(task_id, str) else None
+        ):
             return await method(manager, *args, **kwargs)
 
     return admitted
@@ -503,6 +508,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._materialization_restore_id: str | None = None
         self._shutdown_event = shutdown_event or asyncio.Event()
         self._active_admissions: dict[asyncio.Task[Any], int] = {}
+        self._admitted_task_ids: dict[str, int] = {}
         self._admissions_drained = asyncio.Event()
         self._admissions_drained.set()
         self._preserve_recoverable_tasks_on_shutdown = False
@@ -540,7 +546,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             self._config.session_id or "local",
         )
         if restore_id is not None and restore_id != self._materialization_restore_id:
-            self._instance_id = generate_instance_id()
+            if not self._has_live_task_work:
+                self._instance_id = generate_instance_id()
             self._materialization_restore_id = restore_id
 
     @staticmethod
@@ -556,9 +563,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         return self._provider_binding == (self._provider_configuration() if configuration is None else configuration)
 
     @contextmanager
-    def _task_admission(self) -> Iterator[None]:
+    def _task_admission(self, *, task_id: str | None = None) -> Iterator[None]:
         """Track producers without granting admission to inherited child tasks.
 
+        :keyword task_id: Task whose registration must not be reclaimed by recovery.
+        :paramtype task_id: str or None
         :return: Scope for one accepted submission.
         :rtype: Iterator[None]
         """
@@ -569,10 +578,18 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if depth == 0 and self._shutdown_event.is_set():
             raise _TaskAdmissionClosed("Cannot submit tasks while the TaskManager is shutting down")
         self._active_admissions[caller] = depth + 1
+        if task_id is not None:
+            self._admitted_task_ids[task_id] = self._admitted_task_ids.get(task_id, 0) + 1
         self._admissions_drained.clear()
         try:
             yield
         finally:
+            if task_id is not None:
+                remaining = self._admitted_task_ids[task_id] - 1
+                if remaining:
+                    self._admitted_task_ids[task_id] = remaining
+                else:
+                    del self._admitted_task_ids[task_id]
             if depth:
                 self._active_admissions[caller] = depth
             else:
@@ -866,13 +883,18 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             future.set_exception(TaskCancelled())
 
     @property
-    def _has_live_workers(self) -> bool:
+    def _has_live_task_work(self) -> bool:
         return (
             bool(self._active_admissions)
             or bool(self._active_tasks)
-            or any(not worker.done() for worker in self._owned_workers)
-            or (self._periodic_recovery_task is not None and not self._periodic_recovery_task.done())
+            or any(worker is not self._periodic_recovery_task and not worker.done() for worker in self._owned_workers)
             or any(not worker.done() for worker in self._timeout_watchdogs.values())
+        )
+
+    @property
+    def _has_live_workers(self) -> bool:
+        return self._has_live_task_work or (
+            self._periodic_recovery_task is not None and not self._periodic_recovery_task.done()
         )
 
     def _create_worker_task(self, coroutine: Coroutine[Any, Any, None]) -> asyncio.Task[None]:
@@ -3279,8 +3301,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         for task_info in takewhile(lambda _: not self._shutdown_event.is_set(), stale_tasks):
             # Check owning-host authorization before any recovery writes.
-            if task_info.id in self._active_tasks or not self._recovery_is_authorized(
-                self._find_resume_callback_name(task_info)
+            if (
+                task_info.id in self._active_tasks
+                or task_info.id in self._admitted_task_ids
+                or not self._recovery_is_authorized(self._find_resume_callback_name(task_info))
             ):
                 continue
 
