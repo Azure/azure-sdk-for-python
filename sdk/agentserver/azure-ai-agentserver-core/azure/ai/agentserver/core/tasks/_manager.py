@@ -1265,7 +1265,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     # Resume happens via .start()/.run() against a suspended task; the lifecycle
     # state machine in _lifecycle_start_inner handles the resume transition.
 
-    async def get_active_run(self, task_id: str) -> TaskRun[Any] | None:  # pylint: disable=too-many-return-statements
+    async def get_active_run(self, task_id: str) -> TaskRun[Any] | None:
         """Return a TaskRun handle for an active (in-progress) task.
 
         : consults the store, not only
@@ -1285,7 +1285,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         async with self._get_task_admission_lock(task_id):
             return await self._get_active_run_under_admission(task_id)
 
-    async def _get_active_run_under_admission(self, task_id: str) -> TaskRun[Any] | None:
+    async def _get_active_run_under_admission(  # pylint: disable=too-many-return-statements
+        self, task_id: str
+    ) -> TaskRun[Any] | None:
         # Fast path: locally-tracked active execution.
         active = self._active_tasks.get(task_id)
         if active is not None:
@@ -1412,7 +1414,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             ),
         )
 
-    async def _start_existing_task(  # pylint: disable=too-many-locals,too-many-statements
+    async def _start_existing_task(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
         self,
         *,
         fn: Callable[..., Awaitable[Any]],
