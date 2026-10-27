@@ -6,8 +6,10 @@ release PR, use the bot's review, decide the next action, and follow the release
 Follow Steps 1-3 in order for each PR; Step 4 explains the handoff.
 You do not need a local
 Python environment or detailed knowledge of generated Python code for routine cases.
-The reviewer on duty is the directly responsible individual (**DRI**). Ask the
-Python owner to review handwritten SDK or code-generation tool changes.
+The reviewer on duty is the directly responsible individual (**DRI**) for routine
+review and handoff. The DRI routes Python-specific decisions, including handwritten
+SDK or code-generation tool changes, to the Python owner. The DRI and Python owner
+can be the same person.
 
 Python management SDKs manage Azure resources and use package names such as
 `azure-mgmt-network`. An **AutoPR** contains automatically generated SDK changes.
@@ -60,8 +62,9 @@ For routine review, focus on the bot comment and current CI:
 1. Read the latest **Management SDK PR review** bot comment. If it is missing or
    outdated, add `mgmt-review-needed`. This label triggers
    the [review workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/workflows/mgmt-sdk-pr-review.md).
-   If the label is already present, remove and reapply it only when no review is
-   active. Wait for the updated comment; ask the Python owner if none appears.
+   If the label is already present, remove and reapply it only when no management
+   SDK review workflow run is active. Wait for the updated comment; ask the Python
+   owner if none appears.
 2. Follow the comment's findings and next actions. Ask the service team to resolve
    reported source/configuration issues. Send incomplete or unverified results,
    unclear breaking changes, and Python-specific decisions to the Python owner.
@@ -88,7 +91,8 @@ readiness, current required CI passes, review findings have justified
 dispositions, and no unresolved review, evidence gap, or hold remains.
 The automated comment is advisory; it never grants human approval.
 
-After new commits, inspect the changes since approval and request an updated bot
+After new commits, inspect the changes since the latest applicable approval,
+using that approval's commit as the comparison baseline. Request an updated bot
 result when the previous result is outdated. Wait for current CI and resolve any
 new findings. Ask the Python owner about API-version changes or unclear generated
 changes. Re-approve only after reviewing the new changes and only if required by
@@ -136,7 +140,10 @@ A missing `auto-release` label or artifact mapping can leave no automatic releas
 Adding the label after the run is not a reliable recovery. Check for an active run
 or an already published version before any retry.
 
-For an intentional manual release, let the Python owner coordinate the
+The service team must confirm intentional manual-release plans in the PR or
+release plan. A missing `auto-release` label does not prove manual-release intent;
+the bot cannot infer that intent from the label's absence. For a confirmed manual
+release, let the Python owner coordinate the
 [unified release process](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/release.md#releasing-through-unified-pipelines).
 Only authorized release approvers validate and approve the intended package's
 artifacts. Do not queue a second release by default, approve unrelated packages,
