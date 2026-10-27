@@ -89,8 +89,8 @@ Ubuntu, and macOS task logs request `2026-11-01-preview` while their matching
 recordings use `2026-08-01-preview`. These recordings must be refreshed against
 an authorized service, not edited to impersonate new service responses.
 
-Follow the repository [testing guide](../../../../doc/dev/tests.md) and the
-package's [environment template](../.github/skills/azure-search-documents/scripts/Set-LiveTestEnvironment.sample.ps1).
+Follow the repository [testing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md) and the
+package's [environment template](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/.github/skills/azure-search-documents/scripts/Set-LiveTestEnvironment.sample.ps1).
 Before recording, confirm:
 
 - A dedicated disposable Search service supports the November preview, semantic
@@ -99,7 +99,7 @@ Before recording, confirm:
   data sources, and skillsets; do not point it at a shared or production service.
 - `SEARCH_SERVICE_ENDPOINT` and `SEARCH_SERVICE_NAME` identify that service.
   The signed-in principal needs Search Service Contributor and Search Index Data
-  Contributor, as in the [test-resource template](../../test-resources.bicep).
+  Contributor, as in the [test-resource template](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/test-resources.bicep).
 - `SEARCH_STORAGE_CONNECTION_STRING` and `SEARCH_STORAGE_CONTAINER_NAME` identify
   existing Blob fixtures for indexer tests. Keep the connection string in an
   approved local secret store/environment, never in chat or committed files.
