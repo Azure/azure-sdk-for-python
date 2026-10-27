@@ -39,11 +39,22 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class GcpTemplateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """GCP template format."""
+
+    TERRAFORM = "terraform"
+    """Terraform template format."""
+    SHELL_SCRIPT = "shellscript"
+    """Shell script template format."""
+
+
 class HostType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum of host cloud the public cloud connector is referencing."""
 
     AWS = "AWS"
-    """AWS state"""
+    """AWS state."""
+    GCP = "GCP"
+    """GCP state."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -63,10 +74,15 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource provisioning state."""
 
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     CREATING = "Creating"
+    """CREATING."""
     UPDATING = "Updating"
+    """UPDATING."""
     FAILED = "Failed"
+    """FAILED."""
     CANCELED = "Canceled"
+    """CANCELED."""
 
 
 class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -84,24 +100,28 @@ class ServiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of the service."""
 
     SSH = "SSH"
+    """SSH."""
     WAC = "WAC"
+    """WAC."""
 
 
 class SolutionConfigurationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Solution Configuration Status."""
 
     NEW = "New"
-    """New status"""
+    """New status."""
     IN_PROGRESS = "InProgress"
-    """InProgress status"""
+    """InProgress status."""
     COMPLETED = "Completed"
-    """Canceled status"""
+    """Canceled status."""
     FAILED = "Failed"
-    """Failed status"""
+    """Failed status."""
 
 
 class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of endpoint."""
 
     DEFAULT = "default"
+    """DEFAULT."""
     CUSTOM = "custom"
+    """CUSTOM."""
