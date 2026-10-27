@@ -741,7 +741,7 @@ async def test_delete_waits_for_recovery_claim_and_dispatch(tmp_path, monkeypatc
 
 
 @pytest.mark.asyncio
-async def test_legacy_writer_changes_tokened_queue_without_misbinding(tmp_path):
+async def test_legacy_writer_changes_tokened_queue_without_wrong_binding(tmp_path):
     entered, finish, processed = (asyncio.Event() for _ in range(3))
     observed = []
 
