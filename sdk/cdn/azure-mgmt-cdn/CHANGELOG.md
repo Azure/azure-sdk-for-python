@@ -1,6 +1,6 @@
 # Release History
 
-## 14.1.0 (2026-10-23)
+## 14.1.0 (2026-10-27)
 
 ### Features Added
 

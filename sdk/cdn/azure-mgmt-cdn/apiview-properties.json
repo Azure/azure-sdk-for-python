@@ -621,5 +621,5 @@
         "azure.mgmt.cdn.CdnManagementClient.validate_probe": "Microsoft.Cdn.validateProbe",
         "azure.mgmt.cdn.aio.CdnManagementClient.validate_probe": "Microsoft.Cdn.validateProbe"
     },
-    "CrossLanguageVersion": "ef225dce02db"
+    "CrossLanguageVersion": "418a05da43b2"
 }
