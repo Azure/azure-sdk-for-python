@@ -1,15 +1,31 @@
 # Release History
 
-## 1.3.0b1 (Unreleased)
+## 1.3.0b2 (Unreleased)
 
 ### Features Added
 
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.3.0b1 (2026-10-26)
+
+### Features Added
+
+- Capture invocation-local original-subject assertions for HTTP, WebSocket and
+  typed Voice handlers. Model-header propagation is an explicit per-call opt-in.
 - Added immutable `InputDataPart` and `ResponseOutputDataDone` for structured application data in Bridge protocol `1.0`. Existing callbacks and explicit `ResponseNone` silent completion remain application-owned.
 - Added a standalone `/voice_conversation_engine` WebSocket route to the experimental `VoiceAgentServerHost`, reusing the existing typed Bridge event relay alongside `/invocations_ws`. Existing `invocations_ws` behavior and generic `InvocationAgentServerHost` raw WebSocket handlers are unchanged.
 - Aligned the experimental Voice caller-interruption contract with `user.barge_in`, `UserBargeIn`, `UserBargeInCallback`, and `VoiceAgentServerHost.on_user_barge_in`, preserving playback snapshots and application-owned cancellation/history. Voice Live senders must use the same event contract.
 
 ### Bugs Fixed
 
+- Reject malformed platform attribution before binding HTTP context, and
+  finalize WebSocket connections with a classified error on invalid metadata.
+- Upgrade both typed Voice WebSocket endpoints before closing with code `1011`
+  on malformed platform attribution, instead of rejecting the HTTP handshake.
 - Apply the Invocations task-runtime switch to both typed Voice WebSocket
   endpoints, including composed Voice/Responses hosts where Responses
   independently enables the task manager.
@@ -17,7 +33,8 @@
 ### Other Changes
 
 - Raised the minimum `azure-ai-agentserver-core` dependency to `2.3.0b2` for
-  protocol-scoped task-runtime support.
+  protocol-scoped task-runtime support and original-subject attribution.
+  Publish that Core version before this package.
 - Invocations continues to opt into resilient tasks with
   `set_resilient_tasks_enabled(True)` before host startup. Responses
   protocol-scoped task-runtime activation does not change that global switch,

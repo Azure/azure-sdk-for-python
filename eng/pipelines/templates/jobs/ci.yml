@@ -273,6 +273,12 @@ jobs:
       os: linux
 
     steps:
+    # APIView compares the PR source with origin/<target>, including their merge base.
+    - checkout: self
+      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+        fetchDepth: 0
+        fetchTags: false
+
     - task: UsePythonVersion@0
       displayName: "Use Python $(PythonVersion)"
       condition: succeededOrFailed()
