@@ -1907,6 +1907,7 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429)
         self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
         worker = exporter._route_retry_task
+        route = next(iter(exporter._route_exporters.values()))
         self.assertTrue(worker.is_alive())
         delivered = threading.Event()
 
@@ -1916,7 +1917,7 @@ class TestMultiEndpointRouting(unittest.TestCase):
 
         self.transport.send.side_effect = respond
         self.assertTrue(delivered.wait(5), "Background retry did not transmit stored telemetry.")
-        with exporter._route_lock:
+        with route._transmit_lock:
             self.assertFalse(list(Path(self.directory.name).rglob("*.blob")))
             self.assertFalse(list(Path(self.directory.name).rglob("*.lock")))
         exporter.shutdown()
