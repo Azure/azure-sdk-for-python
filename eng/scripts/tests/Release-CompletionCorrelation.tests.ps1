@@ -23,6 +23,7 @@ BeforeAll {
     $script:templateGuard = '${{ if eq(parameters.ServiceDirectory, ''template'') }}'
     $script:autoGuard = '${{ if and(eq(variables[''Build.Reason''], ''IndividualCI''), eq(variables[''Build.SourceBranch''], ''refs/heads/main'')) }}'
     $script:autoReleaseOutput = '$[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs[''resolve.AutoReleaseSdkPullRequestUrl''] ]'
+    $script:pilotGuard = '${{ if eq(parameters.TestPipeline, true) }}'
 
     function Find-YamlMap {
         param([object]$Node, [string]$Key, [string]$Value)
@@ -79,15 +80,20 @@ Describe 'Python template completion correlation' {
         $completion.parameters.Contains('SdkPullRequest') | Should -BeFalse
     }
 
-    It 'binds the automatic output only in the completion job without service-specific defaults' {
+    It 'uses the existing test-pipeline flag to limit the job output binding to the template pilot' {
         @($stage.variables | Where-Object { $_['name'] -eq 'AutoReleaseSdkPullRequestUrl' }).Count | Should -Be 0
         $binding = @(Find-YamlMap $stage.jobs name AutoReleaseSdkPullRequestUrl)
         $binding.Count | Should -Be 1
         @($completionJob.variables).Count | Should -Be 1
-        $completionJob.variables[0].name | Should -BeExactly 'AutoReleaseSdkPullRequestUrl'
-        $variable = $completionJob.variables[0]
+        @($completionJob.variables[0].Keys) | Should -Be @($pilotGuard)
+        @($completionJob.variables[0][$pilotGuard]).Count | Should -Be 1
+        $variable = $completionJob.variables[0][$pilotGuard][0]
+        $variable.name | Should -BeExactly 'AutoReleaseSdkPullRequestUrl'
         @($variable.Keys | Sort-Object) | Should -Be @('name', 'value')
         $variable.value | Should -BeExactly $autoReleaseOutput
+        $clientRelay.parameters.Contains('TestPipeline') | Should -BeFalse
+        $clientRelay.parameters[$templateGuard].TestPipeline | Should -BeTrue
+        $artifactRelay.parameters.TestPipeline | Should -BeExactly '${{ parameters.TestPipeline }}'
         $stage.dependsOn[1][$autoGuard] | Should -Be @('AutoReleasePrepare')
     }
 

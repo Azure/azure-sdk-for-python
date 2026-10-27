@@ -246,8 +246,9 @@ stages:
         displayName: "Mark package release completion"
         dependsOn: PublishPackage
         variables:
-          - name: AutoReleaseSdkPullRequestUrl
-            value: $[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs['resolve.AutoReleaseSdkPullRequestUrl'] ]
+          - ${{ if eq(parameters.TestPipeline, true) }}:
+            - name: AutoReleaseSdkPullRequestUrl
+              value: $[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs['resolve.AutoReleaseSdkPullRequestUrl'] ]
 
         pool:
           image: ubuntu-24.04

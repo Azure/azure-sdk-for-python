@@ -5,5 +5,5 @@
 ### Fixed
 
 - Forward the optional `ReleasePlanId` to release completion for every caller; the default `0` preserves the existing package-name lookup when no SDK PR is supplied.
-- Bind the prepare-stage SDK PR output once in the completion job without service-directory-specific conditions or empty defaults, and use the shared completion template's optional SDK PR fallback and initializer.
+- Use the existing test-pipeline flag for the template pilot's prepare-stage SDK PR binding, without service-directory-specific conditions or duplicate empty defaults. Normal service releases retain the shared template's empty SDK PR fallback and package-name lookup unless an explicit plan ID is supplied.
 - Clarify the template pipeline's release-plan ID label and retain existing signing, publishing, approval, and release eligibility behavior.
