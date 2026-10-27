@@ -130,17 +130,21 @@ function Get-BootstrapGrantPlan {
 
 function Get-BootstrapParameters {
     param([string] $OwnerToken, [string] $PipelineMode, [string] $AssignmentId)
-    return @{ identityResourceGroup = @{ value = $identityGroup }; namePrefix = @{ value = $namePrefix };
+    $parameters = @{ identityResourceGroup = @{ value = $identityGroup };
         location = @{ value = $Location }; ownerToken = @{ value = $OwnerToken }; pipelinePrincipalId = @{ value = $PipelinePrincipalId };
         pipelineRoleAssignmentId = @{ value = $AssignmentId }; createPipelineGrant = @{ value = ($PipelineMode -ceq 'Create') } }
+    if ($schemaVersion -eq 2) { $parameters['namePrefix'] = @{ value = $namePrefix } }
+    else { $parameters['identityNamePattern'] = @{ value = $IdentityNamePattern } }
+    return $parameters
 }
 
 function Assert-BootstrapState {
     param($State)
-    $extra = if ($legacy) { @() } else { @('location', 'setName', 'pipelineMode', 'existingPipelineAssignmentId', 'parameters', 'prediction', 'validation') }
+    $extra = if ($legacy) { @() } else { @('location', 'pipelineMode', 'existingPipelineAssignmentId', 'parameters', 'prediction', 'validation') +
+        @($(if ($schemaVersion -eq 2) { 'setName' } else { 'identityNamePattern' })) }
     Assert-BootstrapKeys -Value $State -Required (@('schemaVersion', 'status', 'subscriptionId', 'tenantId', 'identityResourceGroup', 'ownerToken',
         'pipelinePrincipalId', 'pipelineClientId', 'expectedCallerPrincipalId', 'deploymentName', 'identityResourceIds', 'templateHash') + $extra) -Optional @('outputs', 'identities')
-    if (($State['schemaVersion'] -isnot [int] -and $State['schemaVersion'] -isnot [long]) -or $State['schemaVersion'] -ne $(if ($legacy) { 1 } else { 2 }) -or
+    if (($State['schemaVersion'] -isnot [int] -and $State['schemaVersion'] -isnot [long]) -or $State['schemaVersion'] -ne $schemaVersion -or
         $State['status'] -isnot [string] -or $State['status'] -cnotin @('Previewed', 'Applying', 'Failed', 'Created', 'Verified') -or
         $State['ownerToken'] -isnot [string] -or $State['ownerToken'] -cnotmatch '^[a-f0-9]{32}$' -or
         $State['templateHash'] -isnot [string] -or $State['templateHash'] -cnotmatch '^[a-f0-9]{64}$') { throw 'Invalid bootstrap state schema or status.' }
@@ -161,7 +165,8 @@ function Assert-BootstrapState {
     }
     if (-not $legacy) {
         Assert-BootstrapEqual -Actual $State['location'] -Expected $Location
-        Assert-BootstrapEqual -Actual $State['setName'] -Expected $SetName
+        if ($schemaVersion -eq 2) { Assert-BootstrapEqual -Actual $State['setName'] -Expected $SetName }
+        else { Assert-BootstrapEqual -Actual $State['identityNamePattern'] -Expected $IdentityNamePattern }
         if ($State['pipelineMode'] -isnot [string] -or $State['pipelineMode'] -cnotin @('None', 'Create', 'Reuse') -or
             $State['existingPipelineAssignmentId'] -isnot [string]) { throw 'Invalid pipeline grant mode.' }
         if (($PipelinePrincipalId -and $State['pipelineMode'] -ceq 'None') -or (-not $PipelinePrincipalId -and $State['pipelineMode'] -cne 'None')) { throw 'Pipeline mode differs from the approved inputs.' }
@@ -190,7 +195,7 @@ function Assert-BootstrapState {
 
 function Save-BootstrapState {
     param([System.Collections.IDictionary] $State)
-    if ($legacy) { throw 'Legacy bootstrap state is immutable; no save or upgrade is permitted.' }
+    if ($readonlyLegacy) { throw 'Legacy bootstrap state is immutable; no save or upgrade is permitted.' }
     Assert-BootstrapState -State $State
     $directory = Split-Path -Parent $StatePath; $null = [IO.Directory]::CreateDirectory($directory)
     $temporary = Join-Path $directory ([guid]::NewGuid().ToString('N') + '.tmp'); $lock = $null
@@ -222,6 +227,43 @@ function Get-BootstrapGroupExists {
     $exists = Invoke-BootstrapAzure -Arguments @('group', 'exists', '--name', $identityGroup, '--subscription', $subscription) -Sensitive
     if ($exists -isnot [bool]) { throw 'The group-exists response must be an actual JSON boolean.' }
     return $exists
+}
+
+function Assert-BootstrapIdentityNamesAbsent {
+    # Subscription-wide exact-name lookup, not just the new hashed RG. Never
+    # adopt an old/default set elsewhere, trust a filtered result, or follow a
+    # pagination link outside the explicit protected ARM collection.
+    $path = "$scope/providers/Microsoft.ManagedIdentity/userAssignedIdentities"
+    $uri = 'https://management.azure.com' + $path + '?api-version=2023-01-31'
+    $pages = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    $ids = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    $wanted = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    foreach ($name in $naming.names.Values) { if (-not $wanted.Add($name)) { throw 'Duplicate expanded MI names.' } }
+    do {
+        $parsed = $null
+        if (-not [uri]::TryCreate($uri, [UriKind]::Absolute, [ref] $parsed) -or $parsed.Scheme -cne 'https' -or
+            $parsed.Host -ine 'management.azure.com' -or $parsed.Port -ne 443 -or $parsed.UserInfo -or $parsed.Fragment -or
+            $parsed.AbsolutePath -ine $path -or -not $pages.Add($uri) -or $pages.Count -gt 1000) { throw 'Unexpected identity-name pagination target.' }
+        $query = @{}
+        foreach ($part in $parsed.Query.TrimStart('?').Split('&')) {
+            $pair = $part.Split('=', 2); $key = [uri]::UnescapeDataString($pair[0])
+            if ($pair.Count -ne 2 -or $key -cnotin @('api-version', '$skiptoken', 'skiptoken') -or $query.ContainsKey($key)) { throw 'Unexpected identity-name pagination query.' }
+            $query[$key] = [uri]::UnescapeDataString($pair[1])
+        }
+        if ($query['api-version'] -cne '2023-01-31') { throw 'Identity-name pagination changed API version.' }
+        $page = Invoke-BootstrapAzure -Arguments @('rest', '--method', 'get', '--subscription', $subscription, '--url', $uri) -Sensitive
+        if ($page -isnot [System.Collections.IDictionary] -or $page['value'] -isnot [System.Collections.IList] -or
+            ($page.Contains('error') -and $null -ne $page['error']) -or ($null -ne $page['nextLink'] -and $page['nextLink'] -isnot [string])) { throw 'Invalid protected identity-name list response.' }
+        foreach ($identity in $page['value']) {
+            if ($identity -isnot [System.Collections.IDictionary] -or $identity['id'] -isnot [string] -or
+                $identity['id'] -inotmatch ('\A' + [regex]::Escape($scope) + '/resourceGroups/[^/]+/providers/Microsoft\.ManagedIdentity/userAssignedIdentities/[A-Za-z0-9][A-Za-z0-9_-]{2,127}\z') -or
+                -not (Test-BootstrapText -Value $identity['type'] -Expected 'Microsoft.ManagedIdentity/userAssignedIdentities' -IgnoreCase) -or
+                -not (Test-BootstrapText -Value $identity['name'] -Expected $identity['id'].Split('/')[-1] -IgnoreCase) -or
+                -not $ids.Add($identity['id'])) { throw 'Ambiguous, duplicate or invalid identity-name metadata.' }
+            if ($wanted.Contains($identity['name'])) { throw 'An expanded MI name already exists in this subscription; refusing adoption or duplicate names across resource groups.' }
+        }
+        $uri = $page['nextLink']
+    } while ($uri)
 }
 
 function Get-BootstrapAssignmentSignature {

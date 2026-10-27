@@ -21,15 +21,15 @@ type BootstrapRoleAssignments = {
   pipeline: RoleAssignmentMetadata?
 }
 
-// The guarded entry point derives these names from the explicit set and canonical
-// region and rejects existing resources. ARM declarations alone are NOT create-only.
+// The guarded entry point binds the literal pattern independently of the explicit
+// canonical region and rejects existing names subscription-wide. ARM is upsert.
 @minLength(1)
 @maxLength(90)
 param identityResourceGroup string
 
 @minLength(1)
-@maxLength(33)
-param namePrefix string
+@maxLength(130)
+param identityNamePattern string
 
 @minLength(1)
 @maxLength(30)
@@ -45,8 +45,6 @@ param pipelinePrincipalId string
 param pipelineRoleAssignmentId string
 param createPipelineGrant bool
 
-var locationSuffix = location
-
 resource identityResources 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   name: identityResourceGroup
   location: location
@@ -58,12 +56,11 @@ resource identityResources 'Microsoft.Resources/resourceGroups@2024-03-01' = {
 }
 
 module sharedIdentities './identities.bicep' = {
-  name: 'shared-identities-${uniqueString(identityResources.id, namePrefix, locationSuffix)}'
+  name: 'shared-identities-${uniqueString(identityResources.id, identityNamePattern, location)}'
   scope: identityResources
   params: {
-    namePrefix: namePrefix
+    identityNamePattern: identityNamePattern
     location: location
-    locationSuffix: locationSuffix
     ownerToken: ownerToken
   }
 }
@@ -94,7 +91,7 @@ var projectIdentityResourceId = resourceId(
   subscription().subscriptionId,
   identityResourceGroup,
   'Microsoft.ManagedIdentity/userAssignedIdentities',
-  '${namePrefix}-project-${locationSuffix}'
+  replace(identityNamePattern, '{resource}', 'project')
 )
 
 resource projectRoleAssignments 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for grant in projectServiceGrants: {

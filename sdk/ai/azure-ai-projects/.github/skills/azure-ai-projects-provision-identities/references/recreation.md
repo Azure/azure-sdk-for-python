@@ -3,19 +3,23 @@
 This is the default **agent-operated provisioning workflow**, not a script switch
 or an automatic delete on failure. On each provisioning invocation, create four
 new UAMIs and the six project service-role assignments. Keep the requested
-subscription, region, set name, RG name and identity resource names unchanged.
+subscription, explicit region, literal MI name pattern, RG name and identity
+resource names unchanged. For schema 3 the RG is bound to the pattern's UTF-8
+SHA256 first 12 lowercase hex characters and the explicit region, not parsed names.
 If the set does not yet exist, follow the normal creation workflow directly.
 Explicit verify-only requests do not re-create anything.
 
 ## Before any deletion
 
-1. Require the exact subscription, tenant, canonical region, stable set name and
-   original external **schema-2** state. Verify its deployment outputs, owner tags,
+1. Require the exact subscription, tenant, canonical region, literal name pattern and
+   original external **schema-3** state. Verify its deployment outputs, owner tags,
    immutable identity IDs and exact role assignments using the guarded script's
    `-VerifyOnly`. Preserve an immutable copy of the old state outside Git. A missing,
    failed, partial or ambiguous baseline must be reconciled before replacement;
    names/tags alone never authorize adoption or deletion. Legacy schema-1 CI state
-   remains verification-only: stop rather than applying generic names to that set.
+   and original schema-2 state remain verification-only: stop rather than applying,
+   upgrading, rewriting or deleting either legacy set. Obsolete schema-2 previews
+   cannot authorize a replacement; require a fresh separately reviewed plan.
 2. Verify the same authorized caller's effective create/delete and role-assignment
    permissions, including conditions and denies. Never switch identities or use
    alternate roles to evade a denial. Follow Azure tooling/best-practice guidance.
@@ -61,9 +65,10 @@ Explicit verify-only requests do not re-create anything.
    recorded targets and stop if the result cannot be established. Do not delete the
    old subscription deployment record or the original state file.
 4. Record phase `Deleted`. Use a **new external state path**, fresh owner token and
-   deployment name for the same set name/region through the guarded create entry
+   deployment name for the same literal pattern/explicit region through the guarded create entry
    point. Never delete or reset the old state to bypass replay protection. Run the
-   normal ARM validation and full-payload what-if against the now-absent targets.
+   subscription-bound absence check for all four names across every RG, normal
+   ARM validation and full-payload what-if against the now-absent targets.
    Compare the exact scope/resources/role condition/template to the approved plan;
    require new approval on any material drift. Save a separate preview before apply.
 5. Record phase `Creating`, then invoke the guarded create once with the approved

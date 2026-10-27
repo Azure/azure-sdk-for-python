@@ -37,15 +37,14 @@ function New-BootstrapCompiledFixture {
             condition = $(if ($index -eq 2) { "[variables('storageBlobOwnerCondition')]" } else { '' }) }
     }
     $nestedParameters = @{}
-    foreach ($entry in @{ namePrefix = 33; location = 30; locationSuffix = 30 }.GetEnumerator()) { $nestedParameters[$entry.Key] = @{ type = 'string'; minLength = 1; maxLength = $entry.Value } }
+    foreach ($entry in @{ identityNamePattern = 130; location = 30 }.GetEnumerator()) { $nestedParameters[$entry.Key] = @{ type = 'string'; minLength = 1; maxLength = $entry.Value } }
     $nestedParameters['ownerToken'] = @{ type = 'string'; minLength = 32; maxLength = 32 }
     $moduleParameters = @{}
-    foreach ($name in @('namePrefix', 'location', 'ownerToken')) { $moduleParameters[$name] = @{ value = "[parameters('$name')]" } }
-    $moduleParameters['locationSuffix'] = @{ value = "[variables('locationSuffix')]" }
+    foreach ($name in @('identityNamePattern', 'location', 'ownerToken')) { $moduleParameters[$name] = @{ value = "[parameters('$name')]" } }
     $identityOutput = @{}; $purposes = @('project', 'account', 'search', 'function')
     for ($index = 0; $index -lt 4; $index++) {
         $identityOutput[$purposes[$index]] = @{
-            resourceId = "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-{1}-{2}', parameters('namePrefix'), variables('identityPurposes')[$index], parameters('locationSuffix')))]"
+            resourceId = "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', replace(parameters('identityNamePattern'), '{resource}', variables('identityPurposes')[$index]))]"
             principalId = "[reference('managedIdentities[$index]').principalId]"; clientId = "[reference('managedIdentities[$index]').clientId]"; tenantId = "[reference('managedIdentities[$index]').tenantId]"
         }
     }
@@ -53,7 +52,7 @@ function New-BootstrapCompiledFixture {
         languageVersion = '2.0'; parameters = $nestedParameters; variables = @{ identityPurposes = $purposes }
         resources = @{ managedIdentities = @{
             type = 'Microsoft.ManagedIdentity/userAssignedIdentities'; apiVersion = '2023-01-31'
-            name = "[format('{0}-{1}-{2}', parameters('namePrefix'), variables('identityPurposes')[copyIndex()], parameters('locationSuffix'))]"
+            name = "[replace(parameters('identityNamePattern'), '{resource}', variables('identityPurposes')[copyIndex()])]"
             location = "[parameters('location')]"; copy = @{ name = 'managedIdentities'; count = "[length(variables('identityPurposes'))]" }
             tags = @{ purpose = 'azsdk-sample-identities'; 'sample-ci-owner' = "[parameters('ownerToken')]";
                 'sample-ci-retention' = 'permanent'; 'sample-ci-identity' = "[variables('identityPurposes')[copyIndex()]]" }
@@ -61,19 +60,19 @@ function New-BootstrapCompiledFixture {
     }
     return @{
         languageVersion = '2.0'; parameters = @{
-            identityResourceGroup = @{ type = 'string'; minLength = 1; maxLength = 90 }; namePrefix = @{ type = 'string'; minLength = 1; maxLength = 33 }
+            identityResourceGroup = @{ type = 'string'; minLength = 1; maxLength = 90 }; identityNamePattern = @{ type = 'string'; minLength = 1; maxLength = 130 }
             location = @{ type = 'string'; minLength = 1; maxLength = 30 }; ownerToken = @{ type = 'string'; minLength = 32; maxLength = 32 }
             pipelinePrincipalId = @{ type = 'string' }; pipelineRoleAssignmentId = @{ type = 'string' }; createPipelineGrant = @{ type = 'bool' }
         }; variables = @{
-            locationSuffix = "[parameters('location')]"; approvedRoleDefinitionIds = $definitions; storageBlobOwnerCondition = $Fixture.condition; projectServiceGrants = $serviceGrants
-            projectIdentityResourceId = "[resourceId(subscription().subscriptionId, parameters('identityResourceGroup'), 'Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-project-{1}', parameters('namePrefix'), variables('locationSuffix')))]"
+            approvedRoleDefinitionIds = $definitions; storageBlobOwnerCondition = $Fixture.condition; projectServiceGrants = $serviceGrants
+            projectIdentityResourceId = "[resourceId(subscription().subscriptionId, parameters('identityResourceGroup'), 'Microsoft.ManagedIdentity/userAssignedIdentities', replace(parameters('identityNamePattern'), '{resource}', 'project'))]"
         }; resources = @{
             identityResources = @{
                 type = 'Microsoft.Resources/resourceGroups'; apiVersion = '2024-03-01'; name = "[parameters('identityResourceGroup')]"; location = "[parameters('location')]"
                 tags = @{ purpose = 'azsdk-sample-identities'; 'sample-ci-owner' = "[parameters('ownerToken')]"; 'sample-ci-retention' = 'permanent' }
             }; sharedIdentities = @{
                 type = 'Microsoft.Resources/deployments'; apiVersion = '2025-04-01'
-                name = "[format('shared-identities-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('identityResourceGroup')), parameters('namePrefix'), variables('locationSuffix')))]"
+                name = "[format('shared-identities-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('identityResourceGroup')), parameters('identityNamePattern'), parameters('location')))]"
                 resourceGroup = "[parameters('identityResourceGroup')]"
                 properties = @{ expressionEvaluationOptions = @{ scope = 'inner' }; mode = 'Incremental'; parameters = $moduleParameters; template = $nested }
             }; projectRoleAssignments = @{
@@ -111,7 +110,7 @@ function New-BootstrapFixtureAssignment {
 }
 
 function New-BootstrapCliFixture {
-    param([switch] $Legacy, [switch] $NoPipeline, [string] $Region = 'uksouth', [string] $Set = 'unit-test')
+    param([switch] $Legacy, [switch] $LegacySchema2, [switch] $NoPipeline, [string] $Region = 'uksouth', [string] $Set = 'unit-test', [string] $Pattern = '')
     $fixture = @{
         subscriptionId = '11111111-1111-1111-1111-111111111111'; tenantId = '22222222-2222-2222-2222-222222222222'
         pipelinePrincipalId = '88888888-8888-8888-8888-888888888888'; pipelineClientId = '99999999-9999-9999-9999-999999999999'
@@ -120,14 +119,18 @@ function New-BootstrapCliFixture {
         validation = @{ properties = @{ provisioningState = 'Succeeded' }; error = $null }; prediction = @{ status = 'Succeeded'; changes = @(); error = $null }
         stateDuringWhatIf = $null; ids = @{}; identities = @{}; live = @{}; grants = @(); recorded = $null; legacy = [bool] $Legacy
         location = $Region; setName = $Set; sourceDirectory = $PSScriptRoot; createResponse = $null; createFailure = $false; createObservedStatus = $null
-        cliOverride = $null; inputOverride = @{}; omitTargetInputs = $false; noTemplates = $false
+        cliOverride = $null; inputOverride = @{}; omitTargetInputs = $false; noTemplates = $false; useDefaultPattern = $false
+        schemaVersion = $(if ($Legacy) { 1 } elseif ($LegacySchema2) { 2 } else { 3 })
+        identityList = @{ value = @(); nextLink = $null }; identityResponses = $null; identityListCalls = 0
         condition = "((!(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/read'})  AND  !(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/filter/action'}) AND  !(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/write'}) ) OR (@Resource[Microsoft.Storage/storageAccounts/blobServices/containers:name] StringLikeIgnoreCase '*-azureml-agent'))"
     }
     if ($NoPipeline) { $fixture.pipelinePrincipalId = ''; $fixture.pipelineClientId = '' }
     if ($Legacy) { $fixture.location = 'westus3'; $fixture.setName = '' }
     $fixture.scope = '/subscriptions/' + $fixture.subscriptionId
-    $fixture.groupName = if ($Legacy) { 'rg-azsdk-sample-identities-wus3' } else { "rg-azsdk-identities-$Set-$Region" }
     $fixture.namePrefix = if ($Legacy) { 'mi-azsdk-sample' } else { "mi-azsdk-$Set" }; $suffix = if ($Legacy) { 'wus3' } else { $Region }
+    $fixture.pattern = if ($Pattern) { $Pattern } else { $fixture.namePrefix + '-{resource}-' + $suffix }
+    $patternHash = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes($fixture.pattern))).ToLowerInvariant().Substring(0, 12)
+    $fixture.groupName = if ($Legacy) { 'rg-azsdk-sample-identities-wus3' } elseif ($LegacySchema2) { "rg-azsdk-identities-$Set-$Region" } else { "rg-azsdk-identities-$patternHash-$Region" }
     $fixture.groupId = $fixture.scope + '/resourceGroups/' + $fixture.groupName
     $fixture.locations = @(@{ name = $fixture.location; displayName = 'Not the canonical name' })
     $principals = @('44444444-4444-4444-4444-444444444444', '55555555-5555-5555-5555-555555555555', '66666666-6666-6666-6666-666666666666', '77777777-7777-7777-7777-777777777777')
@@ -135,7 +138,7 @@ function New-BootstrapCliFixture {
     $fixture.prediction.changes += @{ resourceId = $fixture.groupId; changeType = 'Create'; after = @{ type = 'Microsoft.Resources/resourceGroups' } }
     $purposes = @('project', 'account', 'search', 'function')
     for ($index = 0; $index -lt 4; $index++) {
-        $purpose = $purposes[$index]; $id = $fixture.groupId + '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/' + $fixture.namePrefix + '-' + $purpose + '-' + $suffix
+        $purpose = $purposes[$index]; $id = $fixture.groupId + '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/' + $fixture.pattern.Replace('{resource}', $purpose)
         $fixture.ids[$purpose] = $id; $fixture.identities[$purpose] = @{ resourceId = $id; principalId = $principals[$index]; clientId = $clients[$index]; tenantId = $fixture.tenantId }
         $fixture.live[$purpose] = @{ id = $id; type = 'Microsoft.ManagedIdentity/userAssignedIdentities'; location = $fixture.location
             properties = @{ principalId = $principals[$index]; clientId = $clients[$index]; tenantId = $fixture.tenantId }
@@ -163,16 +166,20 @@ function New-BootstrapCliFixture {
 function Set-BootstrapRecordedFixture {
     param($Fixture, [string] $Status = 'Created', [string] $PipelineMode = '')
     if (-not $PipelineMode) { $PipelineMode = if ($Fixture.pipelinePrincipalId) { 'Create' } else { 'None' } }
-    $Fixture.state = @{ schemaVersion = $(if ($Fixture.legacy) { 1 } else { 2 }); status = $Status; subscriptionId = $Fixture.subscriptionId; tenantId = $Fixture.tenantId
+    $Fixture.state = @{ schemaVersion = $Fixture.schemaVersion; status = $Status; subscriptionId = $Fixture.subscriptionId; tenantId = $Fixture.tenantId
         pipelinePrincipalId = $Fixture.pipelinePrincipalId; pipelineClientId = $Fixture.pipelineClientId; expectedCallerPrincipalId = $Fixture.callerId
         identityResourceGroup = $Fixture.groupName; ownerToken = $Fixture.ownerToken
         deploymentName = ($(if ($Fixture.legacy) { 'sample-ci-shared-identities-' } else { 'azsdk-identities-' }) + $Fixture.ownerToken.Substring(0, 12)); identityResourceIds = $Fixture.ids
         templateHash = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes((ConvertTo-BootstrapFixtureCanonicalValue -Value $Fixture.compiled | ConvertTo-Json -Depth 100 -Compress)))).ToLowerInvariant() }
-    $parameters = @{ identityResourceGroup = @{ value = $Fixture.groupName }; namePrefix = @{ value = $Fixture.namePrefix }; location = @{ value = $Fixture.location };
+    $parameters = @{ identityResourceGroup = @{ value = $Fixture.groupName }; location = @{ value = $Fixture.location };
         ownerToken = @{ value = $Fixture.ownerToken }; pipelinePrincipalId = @{ value = $Fixture.pipelinePrincipalId } }
+    if ($Fixture.schemaVersion -in @(1, 2)) { $parameters.namePrefix = @{ value = $Fixture.namePrefix } }
+    else { $parameters.identityNamePattern = @{ value = $Fixture.pattern } }
     if (-not $Fixture.legacy) {
         $parameters.pipelineRoleAssignmentId = @{ value = $(if ($Fixture.pipelinePrincipalId) { $Fixture.grants[6].roleAssignmentId } else { '' }) }; $parameters.createPipelineGrant = @{ value = ($PipelineMode -ceq 'Create') }
-        $Fixture.state.location = $Fixture.location; $Fixture.state.setName = $Fixture.setName; $Fixture.state.pipelineMode = $PipelineMode
+        $Fixture.state.location = $Fixture.location; $Fixture.state.pipelineMode = $PipelineMode
+        if ($Fixture.schemaVersion -eq 2) { $Fixture.state.setName = $Fixture.setName }
+        else { $Fixture.state.identityNamePattern = $Fixture.pattern }
         $Fixture.state.existingPipelineAssignmentId = if ($PipelineMode -ceq 'Reuse') { $Fixture.grants[6].roleAssignmentId } else { '' }
         $Fixture.state.parameters = $parameters
         $Fixture.state.prediction = $Fixture.prediction | ConvertTo-Json -Depth 100 | ConvertFrom-Json -AsHashtable
@@ -212,13 +219,13 @@ function Set-BootstrapPreviewFixture {
 function Invoke-IsolatedBootstrap {
     param([switch] $Apply, [switch] $VerifyOnly, [switch] $Preview)
     $fixture = $script:bootstrapFixture; $sandbox = Join-Path $TestDrive ([guid]::NewGuid().ToString('N'))
-    $scriptsDirectory = Join-Path $sandbox 'scripts'; $assetsDirectory = Join-Path $sandbox 'assets'
-    $null = New-Item -ItemType Directory -Path $scriptsDirectory, $assetsDirectory -Force
-    foreach ($name in @('Initialize-SharedSampleIdentities.ps1', 'BootstrapHelpers.ps1', 'BootstrapTemplateContract.ps1')) {
+    $scriptsDirectory = Join-Path $sandbox 'scripts'; $infraDirectory = Join-Path $sandbox 'infra'
+    $null = New-Item -ItemType Directory -Path $scriptsDirectory, $infraDirectory -Force
+    foreach ($name in @('Initialize-SharedSampleIdentities.ps1', 'BootstrapHelpers.ps1', 'BootstrapTemplateContract.ps1', 'IdentityNaming.ps1')) {
         Copy-Item -LiteralPath (Join-Path $fixture.sourceDirectory ('../scripts/' + $name)) -Destination $scriptsDirectory
     }
     if (-not $fixture.noTemplates) {
-        foreach ($name in @('bootstrap.bicep', 'identities.bicep')) { Copy-Item -LiteralPath (Join-Path $fixture.sourceDirectory ('../assets/' + $name)) -Destination $assetsDirectory }
+        foreach ($name in @('bootstrap.bicep', 'identities.bicep')) { Copy-Item -LiteralPath (Join-Path $fixture.sourceDirectory ('../infra/' + $name)) -Destination $infraDirectory }
     } else { Remove-Item -LiteralPath (Join-Path $scriptsDirectory 'BootstrapTemplateContract.ps1') }
     $fixture.statePath = Join-Path $sandbox 'bootstrap-state.json'
     if ($null -ne $fixture.state) {
@@ -269,6 +276,13 @@ function Invoke-IsolatedBootstrap {
             }
             if (($args[0..2] -join ' ') -ceq 'rest --method get') {
                 $url = $args[[Array]::IndexOf($args, '--url') + 1]
+                $identityBase = 'https://management.azure.com' + $fixture.scope + '/providers/Microsoft.ManagedIdentity/userAssignedIdentities?api-version=2023-01-31'
+                if ($url.StartsWith($identityBase, [StringComparison]::Ordinal)) {
+                    $response = $fixture.identityList
+                    if ($null -ne $fixture.identityResponses) { $response = $fixture.identityResponses[$fixture.identityListCalls] }
+                    $fixture.identityListCalls++
+                    return (ConvertTo-Json -InputObject $response -Depth 20)
+                }
                 $base = 'https://management.azure.com' + $fixture.scope + '/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01'
                 if ($url -ceq $base) { return (@{ value = @($fixture.descendants); nextLink = $null } | ConvertTo-Json -Depth 20) }
                 if ($url -ceq ($base + '&$filter=atScope()')) { return (@{ value = @($fixture.parents); nextLink = $null } | ConvertTo-Json -Depth 20) }
@@ -284,7 +298,11 @@ function Invoke-IsolatedBootstrap {
         $inputs = @{ StatePath = $fixture.statePath; PipelinePrincipalId = $fixture.pipelinePrincipalId; PipelineClientId = $fixture.pipelineClientId;
             ExpectedCallerPrincipalId = $fixture.callerId; Apply = $Apply; VerifyOnly = $VerifyOnly; WhatIf = $Preview; Confirm = $false }
         if (-not $fixture.omitTargetInputs) { $inputs.SubscriptionId = $fixture.subscriptionId; $inputs.TenantId = $fixture.tenantId }
-        if (-not $fixture.legacy) { $inputs.Location = $fixture.location; $inputs.SetName = $fixture.setName }
+        if (-not $fixture.legacy) {
+            $inputs.Location = $fixture.location
+            if ($fixture.schemaVersion -eq 2) { $inputs.SetName = $fixture.setName }
+            elseif (-not $fixture.useDefaultPattern) { $inputs.IdentityNamePattern = $fixture.pattern }
+        }
         foreach ($key in $fixture.inputOverride.Keys) { $inputs[$key] = $fixture.inputOverride[$key] }
         try { $null = & (Join-Path $scriptsDirectory 'Initialize-SharedSampleIdentities.ps1') @inputs }
         catch { $failure = $_.Exception.Message }

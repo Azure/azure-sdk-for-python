@@ -38,8 +38,11 @@ Describe 'Offline deployment-plan defaults' {
             & $script:planScript @script:planArguments
         }
         $plan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
-        $plan.location | Should Be 'westus3'
+        $plan.location | Should BeExactly ''
+        $plan.identityResolution | Should BeExactly 'Pending'
+        $plan.sharedIdentities.Count | Should Be 0
         $plan.projectIdentityName | Should Be 'mi-azsdk-sample-project-wus3'
+        $plan.identityNamePattern | Should BeExactly 'mi-azsdk-sample-{resource}-wus3'
         $plan.sampleModel.name | Should Be 'gpt-5.2'
         $plan.sampleModel.version | Should Be '2025-12-11'
         $plan.sampleModel.sku | Should Be 'GlobalStandard'
@@ -54,31 +57,50 @@ Describe 'Offline deployment-plan defaults' {
         $plan.sampleModel.version | Should Be 'auto'
     }
 
-    It 'selects a skill-managed identity set and its region by project MI name without contacting Azure' {
+    It 'accepts arbitrary MI pattern names without inventing Azure IDs or location' {
         & {
             function az { throw 'Offline planning must not contact Azure.' }
-            & $script:planScript @script:planArguments -ProjectIdentityName mi-azsdk-unit-test-project-uksouth
+            & $script:planScript @script:planArguments -IdentityNamePattern 'custom_{resource}_blue'
         }
         $plan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
-        $plan.location | Should Be 'uksouth'
-        $plan.projectIdentityName | Should Be 'mi-azsdk-unit-test-project-uksouth'
+        $plan.location | Should BeExactly ''
+        $plan.identityResolution | Should BeExactly 'Pending'
+        $plan.sharedIdentities.Count | Should Be 0
+        $plan.projectIdentityName | Should Be 'custom_project_blue'
+        $plan.identityNamePattern | Should BeExactly 'custom_{resource}_blue'
         foreach ($purpose in @('project', 'account', 'search', 'function')) {
-            $plan.sharedIdentities[$purpose] | Should BeExactly "/subscriptions/$env:AZURE_SUBSCRIPTION_ID/resourceGroups/rg-azsdk-identities-unit-test-uksouth/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mi-azsdk-unit-test-$purpose-uksouth"
+            $plan.sharedIdentityNames[$purpose] | Should BeExactly "custom_${purpose}_blue"
         }
     }
 
-    It 'rejects invalid project MI names before saving a plan: <Label>' -TestCases @(
+    It 'retains the old concrete project-name argument for existing local callers' {
+        & $script:planScript @script:planArguments -ProjectIdentityName mi-azsdk-unit-test-project-uksouth
+        $plan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
+        $plan.identityNamePattern | Should BeExactly 'mi-azsdk-unit-test-{resource}-uksouth'
+        $plan.projectIdentityName | Should BeExactly 'mi-azsdk-unit-test-project-uksouth'
+    }
+
+    It 'rejects a conflicting concrete project name and pattern before saving a plan' {
+        { & $script:planScript @script:planArguments -ProjectIdentityName mi-azsdk-unit-project-westus3 -IdentityNamePattern 'mi-azsdk-other-{resource}-westus3' } |
+            Should Throw 'differs from the selected MI name pattern'
+        Test-Path -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') | Should Be $false
+    }
+
+    It 'rejects invalid MI name patterns before saving a plan: <Label>' -TestCases @(
         @{ Label = 'empty'; Name = '' }, @{ Label = 'whitespace'; Name = ' ' },
-        @{ Label = 'account MI'; Name = 'mi-azsdk-unit-account-westus3' },
+        @{ Label = 'concrete MI'; Name = 'mi-azsdk-unit-project-westus3' },
         @{ Label = 'resource ID'; Name = '/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/elsewhere/providers/Microsoft.ManagedIdentity/userAssignedIdentities/example' },
-        @{ Label = 'macro'; Name = '$(projectIdentityName)' }, @{ Label = 'shell text'; Name = 'example;Write-Host bad' },
-        @{ Label = 'uppercase'; Name = 'MI-azsdk-unit-project-westus3' }, @{ Label = 'missing set'; Name = 'mi-azsdk--project-westus3' },
-        @{ Label = 'newline'; Name = "mi-azsdk-unit-project-uksouth`n" }
+        @{ Label = 'macro'; Name = '$(identityNamePattern)' }, @{ Label = 'shell text'; Name = 'mi-azsdk-{resource}-uksouth;Write-Host bad' },
+        @{ Label = 'illegal punctuation'; Name = 'MI.test-{resource}-blue' },
+        @{ Label = 'newline'; Name = "mi-azsdk-unit-{resource}-uksouth`n" },
+        @{ Label = 'duplicate placeholder'; Name = 'mi-azsdk-{resource}-{resource}-uksouth' },
+        @{ Label = 'unknown placeholder'; Name = 'mi-azsdk-unit-{Resource}-uksouth' },
+        @{ Label = 'unknown extra placeholder'; Name = 'mi-azsdk-{set}-{resource}-uksouth' }
     ) {
         param($Label, $Name)
         & {
             function az { throw 'Offline planning must not contact Azure.' }
-            { & $script:planScript @script:planArguments -ProjectIdentityName $Name } | Should Throw 'project MI name'
+            { & $script:planScript @script:planArguments -IdentityNamePattern $Name } | Should Throw 'MI name pattern'
         }
         Test-Path -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') | Should Be $false
     }

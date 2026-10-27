@@ -46,7 +46,9 @@ def test_manual_run_requires_successful_internal_planning_without_a_preview_choi
 def test_run_form_uses_project_mi_without_connection_group_or_region_fields(pipeline):
     parameters = {parameter["name"]: parameter for parameter in pipeline["parameters"]}
     assert {"runMode", "azureServiceConnection", "secretVariableGroup", "location"}.isdisjoint(parameters)
-    assert parameters["projectIdentityName"]["default"] == "mi-azsdk-sample-project-wus3"
+    assert "projectIdentityName" not in parameters
+    assert parameters["identityNamePattern"]["default"] == "mi-azsdk-sample-{resource}-wus3"
+    assert "{resource}" in parameters["identityNamePattern"]["displayName"]
     assert pipeline["variables"]["azureServiceConnection"] == "azure-sdk-tests"
     stages = pipeline["extends"]["parameters"]["stages"]
     assert all("variables" not in stage for stage in stages)
@@ -147,7 +149,7 @@ def test_target_ids_are_explicit_in_plan_and_every_live_azure_task(pipeline, var
 
 def test_default_model_and_region_use_verified_gpt5_configuration(pipeline):
     parameters = {parameter["name"]: parameter for parameter in pipeline["parameters"]}
-    assert parameters["projectIdentityName"]["default"] == "mi-azsdk-sample-project-wus3"
+    assert parameters["identityNamePattern"]["default"] == "mi-azsdk-sample-{resource}-wus3"
     assert parameters["modelName"]["default"] == "gpt-5.2"
     assert parameters["modelVersion"]["default"] == "2025-12-11"
     assert parameters["modelSku"]["default"] == "GlobalStandard"
@@ -162,9 +164,10 @@ def test_internal_plan_only_collects_and_plans_without_test_framework_bootstrap(
     assert len(scripts) == 2  # Dependency installation, then collection and plan generation.
     assert "select_samples.py" in scripts[1]
     assert "New-SampleDeploymentPlan.ps1" in scripts[1]
-    assert "-ProjectIdentityName $env:SAMPLE_PROJECT_IDENTITY_NAME" in scripts[1]
+    assert "-IdentityNamePattern $env:SAMPLE_MI_NAME_PATTERN" in scripts[1]
     assert "-Location" not in scripts[1]
-    assert steps[-1]["env"]["SAMPLE_PROJECT_IDENTITY_NAME"] == "${{ parameters.projectIdentityName }}"
+    assert steps[-1]["env"]["SAMPLE_MI_NAME_PATTERN"] == "${{ parameters.identityNamePattern }}"
+    assert "SAMPLE_PROJECT_IDENTITY_NAME" not in steps[-1]["env"]
     assert "SAMPLE_LOCATION" not in steps[-1]["env"]
     for script in scripts:
         assert not any(
@@ -239,11 +242,15 @@ def test_round_robin_workers_are_isolated_without_an_environment_dependency(pipe
     steps = admission["steps"]
     preflight = next(step for step in steps if step.get("task") == "AzureCLI@2")
     assert "-BatchPlanDirectory" in preflight["inputs"]["inlineScript"]
+    assert "-ResolvedPlanDirectory" in preflight["inputs"]["inlineScript"]
+    assert admission["templateContext"]["outputs"][0]["artifactName"] == "resolved-sample-plan"
     assert preflight["env"] == {
         "AZURE_SUBSCRIPTION_ID": "$(AZURE_SUBSCRIPTION_ID)",
         "AZURE_TENANT_ID": "$(AZURE_TENANT_ID)",
     }
     job = worker(pipeline)
+    download = next(step for step in job["steps"] if step.get("task") == "DownloadPipelineArtifact@2")
+    assert download["inputs"]["artifactName"] == "resolved-sample-plan"
     assert job["dependsOn"] == "AdmitTestQueues"
     assert job["strategy"]["maxParallel"] == 4
     assert job["strategy"]["matrix"] == "$[ stageDependencies.Plan.Plan.outputs['Plan.WorkerMatrix'] ]"

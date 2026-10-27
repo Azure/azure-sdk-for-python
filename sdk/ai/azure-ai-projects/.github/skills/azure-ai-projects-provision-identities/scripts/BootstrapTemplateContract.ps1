@@ -18,16 +18,15 @@ function Assert-BootstrapTemplate {
     if ($Compiled -isnot [System.Collections.IDictionary] -or -not (Test-BootstrapText -Value $Compiled['languageVersion'] -Expected '2.0') -or
         $Compiled.Contains('functions') -or $Compiled.Contains('extensions')) { throw 'Unsupported compiled bootstrap schema.' }
     Assert-BootstrapKeys -Value $Compiled -Required @('languageVersion', 'parameters', 'variables', 'resources', 'outputs') -Optional @('$schema', 'contentVersion', 'metadata', 'definitions')
-    Assert-BootstrapKeys -Value $Compiled['parameters'] -Required @('identityResourceGroup', 'namePrefix', 'location', 'ownerToken', 'pipelinePrincipalId', 'pipelineRoleAssignmentId', 'createPipelineGrant')
-    foreach ($binding in @(@('identityResourceGroup', 1, 90), @('namePrefix', 1, 33), @('location', 1, 30), @('ownerToken', 32, 32))) {
+    Assert-BootstrapKeys -Value $Compiled['parameters'] -Required @('identityResourceGroup', 'identityNamePattern', 'location', 'ownerToken', 'pipelinePrincipalId', 'pipelineRoleAssignmentId', 'createPipelineGrant')
+    foreach ($binding in @(@('identityResourceGroup', 1, 90), @('identityNamePattern', 1, 130), @('location', 1, 30), @('ownerToken', 32, 32))) {
         Assert-BootstrapStringParameter -Value $Compiled['parameters'][$binding[0]] -Minimum $binding[1] -Maximum $binding[2]
     }
     foreach ($name in @('pipelinePrincipalId', 'pipelineRoleAssignmentId', 'createPipelineGrant')) {
         Assert-BootstrapEqual -Actual $Compiled['parameters'][$name] -Expected @{ type = $(if ($name -ceq 'createPipelineGrant') { 'bool' } else { 'string' }) }
     }
     $variables = $Compiled['variables']
-    Assert-BootstrapKeys -Value $variables -Required @('locationSuffix', 'approvedRoleDefinitionIds', 'storageBlobOwnerCondition', 'projectServiceGrants', 'projectIdentityResourceId')
-    Assert-BootstrapExpression -Actual $variables['locationSuffix'] -Expected "[parameters('location')]"
+    Assert-BootstrapKeys -Value $variables -Required @('approvedRoleDefinitionIds', 'storageBlobOwnerCondition', 'projectServiceGrants', 'projectIdentityResourceId')
     Assert-BootstrapEqual -Actual $variables['storageBlobOwnerCondition'] -Expected $grants[2].condition
     $roleNames = @('foundryUser', 'storageBlobDataContributor', 'storageBlobDataOwner', 'cosmosDbOperator', 'searchServiceContributor', 'searchIndexDataContributor')
     Assert-BootstrapKeys -Value $variables['approvedRoleDefinitionIds'] -Required $roleNames
@@ -39,7 +38,7 @@ function Assert-BootstrapTemplate {
         Assert-BootstrapExpression -Actual $grant['roleDefinitionId'] -Expected "[variables('approvedRoleDefinitionIds').$($roleNames[$index])]"
         Assert-BootstrapEqual -Actual $grant['condition'] -Expected $(if ($index -eq 2) { "[variables('storageBlobOwnerCondition')]" } else { '' })
     }
-    Assert-BootstrapExpression -Actual $variables['projectIdentityResourceId'] -Expected "[resourceId(subscription().subscriptionId, parameters('identityResourceGroup'), 'Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-project-{1}', parameters('namePrefix'), variables('locationSuffix')))]"
+    Assert-BootstrapExpression -Actual $variables['projectIdentityResourceId'] -Expected "[resourceId(subscription().subscriptionId, parameters('identityResourceGroup'), 'Microsoft.ManagedIdentity/userAssignedIdentities', replace(parameters('identityNamePattern'), '{resource}', 'project'))]"
     $resources = $Compiled['resources']
     Assert-BootstrapKeys -Value $resources -Required @('identityResources', 'sharedIdentities', 'projectRoleAssignments', 'pipelineFoundryUser')
     foreach ($name in $resources.Keys) {
@@ -75,21 +74,20 @@ function Assert-BootstrapTemplate {
     $module = $resources['sharedIdentities']
     if ($module['type'] -cne 'Microsoft.Resources/deployments' -or $module['apiVersion'] -cnotin @('2022-09-01', '2024-03-01', '2025-04-01') -or
         $module.Contains('copy') -or $module.Contains('location') -or $module.Contains('tags')) { throw 'Unexpected compiled identity module.' }
-    Assert-BootstrapExpression -Actual $module['name'] -Expected "[format('shared-identities-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('identityResourceGroup')), parameters('namePrefix'), variables('locationSuffix')))]"
+    Assert-BootstrapExpression -Actual $module['name'] -Expected "[format('shared-identities-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('identityResourceGroup')), parameters('identityNamePattern'), parameters('location')))]"
     Assert-BootstrapExpression -Actual $module['resourceGroup'] -Expected "[parameters('identityResourceGroup')]"
     $properties = $module['properties']; Assert-BootstrapKeys -Value $properties -Required @('expressionEvaluationOptions', 'mode', 'parameters', 'template')
     Assert-BootstrapEqual -Actual $properties['mode'] -Expected 'Incremental'
     Assert-BootstrapEqual -Actual $properties['expressionEvaluationOptions'] -Expected @{ scope = 'inner' }
     $parameters = @{}
-    foreach ($name in @('namePrefix', 'location', 'ownerToken')) { $parameters[$name] = @{ value = "[parameters('$name')]" } }
-    $parameters['locationSuffix'] = @{ value = "[variables('locationSuffix')]" }
+    foreach ($name in @('identityNamePattern', 'location', 'ownerToken')) { $parameters[$name] = @{ value = "[parameters('$name')]" } }
     Assert-BootstrapEqual -Actual $properties['parameters'] -Expected $parameters
     $nested = $properties['template']
     Assert-BootstrapKeys -Value $nested -Required @('languageVersion', 'parameters', 'variables', 'resources', 'outputs') -Optional @('$schema', 'contentVersion', 'metadata', 'definitions')
     Assert-BootstrapEqual -Actual $nested['languageVersion'] -Expected '2.0'
     Assert-BootstrapEqual -Actual $nested['variables'] -Expected @{ identityPurposes = @('project', 'account', 'search', 'function') }
-    Assert-BootstrapKeys -Value $nested['parameters'] -Required @('namePrefix', 'location', 'locationSuffix', 'ownerToken')
-    foreach ($binding in @(@('namePrefix', 1, 33), @('location', 1, 30), @('locationSuffix', 1, 30), @('ownerToken', 32, 32))) {
+    Assert-BootstrapKeys -Value $nested['parameters'] -Required @('identityNamePattern', 'location', 'ownerToken')
+    foreach ($binding in @(@('identityNamePattern', 1, 130), @('location', 1, 30), @('ownerToken', 32, 32))) {
         Assert-BootstrapStringParameter -Value $nested['parameters'][$binding[0]] -Minimum $binding[1] -Maximum $binding[2]
     }
     Assert-BootstrapKeys -Value $nested['resources'] -Required @('managedIdentities'); $identity = $nested['resources']['managedIdentities']
@@ -97,7 +95,7 @@ function Assert-BootstrapTemplate {
     if (-not (Test-BootstrapText -Value $identity['type'] -Expected 'Microsoft.ManagedIdentity/userAssignedIdentities') -or
         -not (Test-BootstrapText -Value $identity['apiVersion'] -Expected '2023-01-31')) { throw 'Unexpected compiled identity type.' }
     Assert-BootstrapEqual -Actual $identity['copy'] -Expected @{ name = 'managedIdentities'; count = "[length(variables('identityPurposes'))]" }
-    Assert-BootstrapExpression -Actual $identity['name'] -Expected "[format('{0}-{1}-{2}', parameters('namePrefix'), variables('identityPurposes')[copyIndex()], parameters('locationSuffix'))]"
+    Assert-BootstrapExpression -Actual $identity['name'] -Expected "[replace(parameters('identityNamePattern'), '{resource}', variables('identityPurposes')[copyIndex()])]"
     Assert-BootstrapExpression -Actual $identity['location'] -Expected "[parameters('location')]"
     Assert-BootstrapEqual -Actual $identity['tags'] -Expected @{ purpose = 'azsdk-sample-identities'; 'sample-ci-owner' = "[parameters('ownerToken')]";
         'sample-ci-retention' = 'permanent'; 'sample-ci-identity' = "[variables('identityPurposes')[copyIndex()]]" }
@@ -113,7 +111,7 @@ function Assert-BootstrapTemplate {
     Assert-BootstrapKeys -Value $metadata -Required $purposes
     for ($index = 0; $index -lt 4; $index++) {
         $entry = $metadata[$purposes[$index]]; Assert-BootstrapKeys -Value $entry -Required @('resourceId', 'principalId', 'clientId', 'tenantId')
-        $resourceId = "resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-{1}-{2}', parameters('namePrefix'), variables('identityPurposes')[$index], parameters('locationSuffix')))"
+        $resourceId = "resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', replace(parameters('identityNamePattern'), '{resource}', variables('identityPurposes')[$index]))"
         Assert-BootstrapExpression -Actual $entry['resourceId'] -Expected @("[$resourceId]", "[resourceInfo('managedIdentities[$index]').id]", "[resourceInfo(format('managedIdentities[{0}]', $index)).id]")
         foreach ($field in @('principalId', 'clientId', 'tenantId')) {
             Assert-BootstrapExpression -Actual $entry[$field] -Expected @("[reference('managedIdentities[$index]').$field]", "[reference(format('managedIdentities[{0}]', $index)).$field]", "[reference($resourceId, '2023-01-31').$field]")

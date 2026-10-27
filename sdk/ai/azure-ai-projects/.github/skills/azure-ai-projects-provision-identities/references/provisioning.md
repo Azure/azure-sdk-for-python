@@ -9,24 +9,40 @@ choose another identity, fall back to another subscription/region, or read `.env
 Verify `region` is an exact canonical `name` from the target subscription's location
 metadata. This verifies an MI/RG location, not Foundry, model or Search availability.
 
-Validate `setName` with `^[a-z0-9](?:[a-z0-9-]{0,22}[a-z0-9])?$` and region with
-`^[a-z][a-z0-9]{0,29}$`. Use nonzero canonical GUIDs for all identity inputs. Derive:
+Validate explicit region with `^[a-z][a-z0-9]{0,29}$`. Accept any literal MI name
+pattern with exactly one case-sensitive `{resource}` token, provided all four
+expanded names match `^[A-Za-z0-9][A-Za-z0-9_-]{2,127}$`. Use string replacement,
+never expression evaluation. `mi-azsdk-sample-{resource}-wus3` is the default, NOT
+a naming restriction or a legacy-state lookup. `custom_{resource}_blue` in
+`westus3`, `{resource}`, and names without hyphens or region suffixes are valid.
+Never derive the explicit region from a name or require a `SetName` input.
+Use nonzero canonical GUIDs for all identity inputs. Derive:
 
-- RG: `rg-azsdk-identities-{setName}-{region}`.
-- UAMIs: `mi-azsdk-{setName}-{project|account|search|function}-{region}`.
+- New RG: `rg-azsdk-identities-<first12 lowercase SHA256(UTF8(literal pattern))>-<region>`.
+- UAMIs: literal substitution of `project`, `account`, `search`, `function` into
+  the requested pattern, with no added prefix, hyphens or suffix.
 - Owner: a fresh 32-character GUID without hyphens; not a secret or credential.
 - Subscription deployment: `azsdk-identities-{first 12 characters of ownerToken}`.
 
 On a provisioning invocation, the default is to **re-create the same named MI/RBAC
 set**. Follow [the replacement workflow](./recreation.md) for a recorded skill-managed
-set that exists; do not silently reuse identities or change `setName`. No deletion
+schema-3 set that exists; do not silently reuse identities or change the pattern. No deletion
 is authorized until that workflow's checks, fresh dry run and exact approval pass.
 
-The guarded creation script still rejects an existing RG, existing deployment name,
+The guarded creation script rejects an existing RG,
 prior apply record or ambiguous existence response. Bicep is an **upsert**, not a
 create-only ownership boundary. Re-creation is agent-orchestrated before creation;
 there is no script `-Recreate` bypass. Preserve old state; a new generation uses a
 new state path only after the old set's deletion is fully verified.
+
+Before a new preview and immediately before create, enumerate the target
+subscription's UAMIs through protected paginated ARM GETs. Bind every page to the
+same subscription collection, API version and host; reject malformed/duplicate
+metadata, pagination loops or scope/filter changes. All four expanded names must
+be absent across **every RG**, case-insensitively. In particular, default names
+already present in the original legacy RG must never be recreated under a hashed
+RG. An absence check is not a distributed lock: the operator must keep the
+subscription's identity provisioning quiescent through the approved create.
 
 ## Role contract and approval
 
@@ -67,7 +83,7 @@ a denial. Preserve all existing Contributor grants and protected-resource checks
 ## Preview, apply, reconcile
 
 After CLI guidance, use explicit `--subscription <subscription>` on Azure CLI calls.
-Use `az bicep build --file <skill>/assets/bootstrap.bicep --stdout` for compilation.
+Use `az bicep build --file <skill>/infra/bootstrap.bicep --stdout` for compilation.
 Keep the reviewed compiled bytes and non-secret parameter file outside Git; never
 print token responses or authorization headers. Bound HTTP requests, disallow credential
 redirects and suppress raw authentication/error bodies.
@@ -94,22 +110,31 @@ pipeline roles remain untouched. Save `Verified` only after all checks pass.
 
 Retain state outside Git. Creating this set does **not** retarget the existing CI:
 its default identity selection remains unchanged. An operator must explicitly
-select the verified project MI name to use a different skill-managed set; live
+select the verified MI name pattern to use a different skill-managed set; live
 preflight verifies its actual metadata and regional workload eligibility.
 This skill never updates pipeline configuration or queues a test run. No automatic cleanup.
 
 ## Single entry point and legacy verification
 
 Use [the guarded script](../scripts/Initialize-SharedSampleIdentities.ps1) for both
-new schema-2 sets and verification. New sets require explicit `SubscriptionId`,
-`TenantId`, `Location`, `SetName`, `ExpectedCallerPrincipalId` and external `StatePath`;
+new schema-3 sets and verification. New sets require explicit `SubscriptionId`,
+`TenantId`, `Location`, `ExpectedCallerPrincipalId` and external `StatePath`;
+`IdentityNamePattern` defaults as above. Schema 3 saves the exact pattern, hashed
+group, explicit canonical region, four immutable resource IDs, parameters and
+compiled hash. Reject target/pattern/group/region drift before Azure or state writes;
 optional pipeline object/client IDs must be supplied together. The agent resolves
 and confirms metadata and approval before invoking the corresponding script mode.
 
-Existing schema-1 CI state is **verification-only**. Supply the original state and
+Existing schema-1 CI state and original schema-2 state are **verification-only**.
+Supply the original state and
 matching caller/pipeline/target identifiers with `-VerifyOnly`. Only in this legacy
-mode may subscription/tenant come from the original environment variables. Fixed
-West US 3 names are retained; no new set name or region is accepted. GETs reconcile
+schema-1 mode may subscription/tenant come from the original environment variables.
+Schema 1 retains fixed West US 3 names; schema 2 retains its original recorded
+set-name, group, region, four IDs and compiled parameters. Schema 2 requires
+explicit matching subscription/tenant/region, not inferred naming conventions.
+An optional pattern must expand to its original exact names. GETs reconcile
 the original recorded deployment if needed; no templates or removed bootstrap
 files are required. Preserve every original state byte, hash and status, including
-on failure; never upgrade, rewrite, reapply or recreate the legacy set.
+on failure; never upgrade, rewrite, reapply or recreate either legacy set. Reject
+obsolete schema-2 `Previewed` apply before any calls/writes; preserve that preview
+and require a fresh schema-3 dry run at a new path and a new exact approval.

@@ -105,7 +105,7 @@ $standard = Invoke-BicepCompilation -Path (Join-Path $infra 'standard-shared-ide
 $sample = Invoke-BicepCompilation -Path (Join-Path $infra 'sample-resources.bicep')
 $group = Invoke-BicepCompilation -Path (Join-Path $infra 'resource-group.bicep')
 foreach ($name in @('bootstrap.bicep', 'identities.bicep')) {
-    $null = Invoke-BicepCompilation -Path (Join-Path $identitySkill "assets/$name")
+    $null = Invoke-BicepCompilation -Path (Join-Path $identitySkill "infra/$name")
 }
 # Bootstrap intentionally owns six project service grants plus an optional pipeline grant.
 # Never apply the worker zero-IAM assertion to either bootstrap template or the official reference.

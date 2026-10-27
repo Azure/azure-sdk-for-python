@@ -22,10 +22,10 @@ parameters:
       - 2
       - 3
       - 4
-  - name: projectIdentityName
-    displayName: 'Name of project MI (selects the existing shared identity set and region)'
+  - name: identityNamePattern
+    displayName: 'MI name pattern (keep {resource}; any valid prefix/suffix, region resolved from Azure)'
     type: string
-    default: mi-azsdk-sample-project-wus3
+    default: 'mi-azsdk-sample-{resource}-wus3'
   - name: modelName
     displayName: 'Sample model (validation uses the existing project from an environment variable)'
     type: string
@@ -95,7 +95,7 @@ extends:
                   foreach ($queueName in @($matrix.Keys | Sort-Object)) {
                     & ./tests/samples/ci/New-SampleDeploymentPlan.ps1 -SelectionManifest (Join-Path $outputDirectory "$queueName/selected-tests.json") `
                       -OutputDirectory (Join-Path $outputDirectory $queueName) -QueueName $queueName `
-                      -ProjectIdentityName $env:SAMPLE_PROJECT_IDENTITY_NAME -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
+                      -IdentityNamePattern $env:SAMPLE_MI_NAME_PATTERN -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
                       -ModelSku $env:SAMPLE_MODEL_SKU -ModelCapacity ([int] $env:SAMPLE_MODEL_CAPACITY)
                   }
                   $matrixJson = $matrix | ConvertTo-Json -Compress
@@ -108,7 +108,7 @@ extends:
                   AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                   SELECTION_KIND: ${{ parameters.selectionKind }}
                   SAMPLE_SELECTION: ${{ parameters.selection }}
-                  SAMPLE_PROJECT_IDENTITY_NAME: ${{ parameters.projectIdentityName }}
+                  SAMPLE_MI_NAME_PATTERN: ${{ parameters.identityNamePattern }}
                   SAMPLE_MODEL: ${{ parameters.modelName }}
                   SAMPLE_MODEL_VERSION: ${{ parameters.modelVersion }}
                   SAMPLE_MODEL_SKU: ${{ parameters.modelSku }}
@@ -127,6 +127,12 @@ extends:
               name: azsdk-pool
               image: ubuntu-24.04
               os: linux
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)/resolved-sample-plan
+                  artifactName: resolved-sample-plan
+                  sbomEnabled: false
             steps:
               - checkout: self
               - task: DownloadPipelineArtifact@2
@@ -141,7 +147,8 @@ extends:
                   scriptLocation: inlineScript
                   inlineScript: |
                     & '$(packageRoot)/tests/samples/ci/Invoke-SampleProvisioning.ps1' `
-                      -BatchPlanDirectory '$(Pipeline.Workspace)/sample-plan'
+                      -BatchPlanDirectory '$(Pipeline.Workspace)/sample-plan' `
+                      -ResolvedPlanDirectory '$(Build.ArtifactStagingDirectory)/resolved-sample-plan'
                 env:
                   AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                   AZURE_TENANT_ID: $(AZURE_TENANT_ID)
@@ -180,7 +187,7 @@ extends:
                 displayName: 'Install SDK source and live sample dependencies'
               - task: DownloadPipelineArtifact@2
                 inputs:
-                  artifactName: sample-plan
+                  artifactName: resolved-sample-plan
                   targetPath: $(Pipeline.Workspace)/sample-plan
                 displayName: 'Use this run''s collected sample selection and deployment plan'
               - task: AzureCLI@2

@@ -9,6 +9,7 @@ param(
     [string] $TenantId = '',
     [string] $Location = '',
     [string] $SetName = '',
+    [Alias('MiName', 'IdentityName')] [AllowNull()] [AllowEmptyString()] [string] $IdentityNamePattern = 'mi-azsdk-sample-{resource}-wus3',
     [string] $ExpectedCallerPrincipalId = '',
     [string] $PipelinePrincipalId = '',
     [string] $PipelineClientId = '',
@@ -18,6 +19,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'BootstrapHelpers.ps1')
+. (Join-Path $PSScriptRoot 'IdentityNaming.ps1')
 # This entry point never logs in, switches identity, repairs grants, or deploys workloads.
 if ($Apply -and $VerifyOnly) { throw '-Apply and -VerifyOnly are mutually exclusive.' }
 $StatePath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($StatePath)
@@ -27,18 +29,44 @@ if (Test-Path -LiteralPath $StatePath) {
     catch { throw 'Cannot parse bootstrap state; no request or write attempted.' }
     if ($previous -isnot [System.Collections.IDictionary]) { throw 'Invalid bootstrap state schema.' }
 }
-$legacy = $null -ne $previous -and ($previous['schemaVersion'] -is [int] -or $previous['schemaVersion'] -is [long]) -and $previous['schemaVersion'] -eq 1
-if ($legacy -and -not $VerifyOnly) { throw 'Legacy schema 1 is verification-only; an attempt is already recorded. No preview, apply, compilation or state upgrade is permitted.' }
+$schemaVersion = 3
+if ($null -ne $previous) {
+    if (($previous['schemaVersion'] -isnot [int] -and $previous['schemaVersion'] -isnot [long]) -or $previous['schemaVersion'] -notin @(1, 2, 3)) { throw 'Invalid bootstrap state schema.' }
+    $schemaVersion = $previous['schemaVersion']
+}
+$legacy = $schemaVersion -eq 1
+$readonlyLegacy = $schemaVersion -in @(1, 2)
+if ($readonlyLegacy -and -not $VerifyOnly) {
+    if ($schemaVersion -eq 2 -and $previous['status'] -ceq 'Previewed') { throw 'Obsolete schema 2 preview: the compiler contract changed. Preserve it and obtain a fresh reviewed schema 3 dry run at a new state path.' }
+    throw "Legacy schema $schemaVersion is verification-only; an attempt is already recorded. No preview, apply, compilation or state upgrade is permitted."
+}
 if ($legacy) {
     # Compatibility ONLY for the explicitly selected legacy state; never discover
     # another state or infer an active account. These are the old environment inputs.
     if (-not $SubscriptionId) { $SubscriptionId = $env:AZURE_SUBSCRIPTION_ID }
     if (-not $TenantId) { $TenantId = $env:AZURE_TENANT_ID }
-    if (($Location -and $Location -cne 'westus3') -or $SetName) { throw 'Legacy state has fixed westus3 CI names; generic inputs are not permitted.' }
-    $Location = 'westus3'; $identityGroup = 'rg-azsdk-sample-identities-wus3'; $namePrefix = 'mi-azsdk-sample'; $suffix = 'wus3'
+    if (($Location -and $Location -cne 'westus3') -or $SetName -or $IdentityNamePattern -cne 'mi-azsdk-sample-{resource}-wus3') { throw 'Legacy state has fixed westus3 CI names; generic inputs are not permitted.' }
+    $Location = 'westus3'
+    $identityGroup = 'rg-azsdk-sample-identities-wus3'; $namePrefix = 'mi-azsdk-sample'
+} elseif ($schemaVersion -eq 2) {
+    # The old compiler's exact names/parameters are used ONLY for an explicitly
+    # selected immutable generation. The shared naming helper never infers legacy.
+    if ($previous['setName'] -isnot [string] -or $previous['setName'] -cnotmatch '\A[a-z0-9](?:[a-z0-9-]{0,22}[a-z0-9])?\z' -or
+        ($SetName -and $SetName -cne $previous['setName'])) { throw 'Legacy schema 2 set binding differs.' }
+    $SetName = $previous['setName']
+    $recordedPattern = "mi-azsdk-$SetName-{resource}-$Location"
+    if ($PSBoundParameters.ContainsKey('IdentityNamePattern') -and $IdentityNamePattern -cne $recordedPattern) { throw 'Legacy schema 2 MI name pattern binding differs.' }
+    $IdentityNamePattern = $recordedPattern
+    $identityGroup = "rg-azsdk-identities-$SetName-$Location"; $namePrefix = "mi-azsdk-$SetName"
 } else {
-    if ($Location -cnotmatch '^[a-z][a-z0-9]{0,29}$' -or $SetName -cnotmatch '^[a-z0-9](?:[a-z0-9-]{0,22}[a-z0-9])?$') { throw 'Supply an explicit canonical Location and lowercase SetName (1-24 characters).' }
-    $identityGroup = "rg-azsdk-identities-$SetName-$Location"; $namePrefix = "mi-azsdk-$SetName"; $suffix = $Location
+    if ($SetName) { throw 'SetName is a legacy verification input; supply an MI name pattern for new generations.' }
+}
+if ($Location -cnotmatch '\A[a-z][a-z0-9]{0,29}\z') { throw 'Supply an explicit canonical Location independently of the MI name pattern.' }
+$naming = Resolve-IdentityNamePattern -IdentityNamePattern $IdentityNamePattern
+$IdentityNamePattern = $naming.identityNamePattern
+if (-not $readonlyLegacy) {
+    $patternHash = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes($IdentityNamePattern))).ToLowerInvariant().Substring(0, 12)
+    $identityGroup = "rg-azsdk-identities-$patternHash-$Location"
 }
 foreach ($guid in @($SubscriptionId, $TenantId, $ExpectedCallerPrincipalId)) { Assert-BootstrapGuid -Value $guid }
 if ([bool] $PipelinePrincipalId -ne [bool] $PipelineClientId) { throw 'PipelinePrincipalId and PipelineClientId must be supplied together.' }
@@ -46,7 +74,7 @@ if ($legacy -or $PipelinePrincipalId) { foreach ($guid in @($PipelinePrincipalId
 $subscription = $SubscriptionId.ToLowerInvariant(); $tenant = $TenantId.ToLowerInvariant()
 $PipelinePrincipalId = $PipelinePrincipalId.ToLowerInvariant(); $PipelineClientId = $PipelineClientId.ToLowerInvariant(); $ExpectedCallerPrincipalId = $ExpectedCallerPrincipalId.ToLowerInvariant()
 $scope = '/subscriptions/' + $subscription; $identityGroupId = "$scope/resourceGroups/$identityGroup"; $expectedIds = @{}
-foreach ($purpose in @('project', 'account', 'search', 'function')) { $expectedIds[$purpose] = "$identityGroupId/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$namePrefix-$purpose-$suffix" }
+foreach ($purpose in @('project', 'account', 'search', 'function')) { $expectedIds[$purpose] = "$identityGroupId/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$($naming.names[$purpose])" }
 $grants = @(Get-BootstrapGrantPlan)
 if ($previous) {
     Assert-BootstrapState -State $previous
@@ -140,22 +168,23 @@ try {
             if ($pipeline.Count -ne 1) { throw 'The exact approved pipeline Foundry User grant is missing or duplicated.' }
             Assert-BootstrapGrant -Assignment $pipeline[0] -Grant $grants[6] -PrincipalId $PipelinePrincipalId
         }
-        if (-not $legacy) {
+        if (-not $readonlyLegacy) {
             $previous['outputs'] = $outputs; $previous['identities'] = $identities; $previous['status'] = 'Verified'
             Save-BootstrapState -State $previous
         }
-        [pscustomobject]@{ status = 'Verified'; legacyStateUnchanged = $legacy; subscriptionId = $subscription; tenantId = $tenant; identities = $identities;
+        [pscustomobject]@{ status = 'Verified'; legacyStateUnchanged = $readonlyLegacy; subscriptionId = $subscription; tenantId = $tenant; identityNamePattern = $IdentityNamePattern; identities = $identities;
             projectServiceGrants = 6; pipelineFoundryUserGrant = [bool] $PipelinePrincipalId; iamAdministrationGranted = $false } | ConvertTo-Json -Depth 8
         return
     }
-    # Only new schema-2 preview/apply may compile or validate a region. Never
+    # Only schema-3 preview/apply may compile or validate a region. Never
     # register providers or accept display names / alternate regional fallbacks.
     $locations = Invoke-BootstrapAzure -Arguments @('account', 'list-locations', '--subscription', $subscription) -Sensitive
     if ($locations -isnot [System.Collections.IList] -or @($locations | Where-Object { $_ -is [System.Collections.IDictionary] -and (Test-BootstrapText -Value $_['name'] -Expected $Location) }).Count -ne 1) { throw 'Location is not a canonical region of the explicit subscription.' }
     $provider = Invoke-BootstrapAzure -Arguments @('provider', 'show', '--subscription', $subscription, '--namespace', 'Microsoft.ManagedIdentity', '--query', '{registrationState:registrationState}') -Sensitive
     if ($provider -isnot [System.Collections.IDictionary] -or -not (Test-BootstrapText -Value $provider['registrationState'] -Expected 'Registered')) { throw 'Microsoft.ManagedIdentity must already be registered.' }
+    Assert-BootstrapIdentityNamesAbsent
     . (Join-Path $PSScriptRoot 'BootstrapTemplateContract.ps1')
-    $compiled = Invoke-BootstrapAzure -Arguments @('bicep', 'build', '--file', (Join-Path $PSScriptRoot '../assets/bootstrap.bicep'), '--stdout') -Sensitive
+    $compiled = Invoke-BootstrapAzure -Arguments @('bicep', 'build', '--file', (Join-Path $PSScriptRoot '../infra/bootstrap.bicep'), '--stdout') -Sensitive
     Assert-BootstrapTemplate -Compiled $compiled
     $compiledText = ConvertTo-BootstrapCanonicalValue -Value $compiled | ConvertTo-Json -Depth 100 -Compress
     $templateHash = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes($compiledText))).ToLowerInvariant()
@@ -184,13 +213,13 @@ try {
     $prediction = Invoke-BootstrapAzure -Arguments (@('deployment', 'sub', 'what-if') + $arguments + @('--no-pretty-print', '--result-format', 'FullResourcePayloads')) -Sensitive
     Assert-BootstrapPrediction -Prediction $prediction -Validation $validation -PipelineGrantExists $pipelineGrantExists
     if ($previous) { Assert-BootstrapEqual -Actual $prediction -Expected $previous['prediction'] }
-    $state = @{ schemaVersion = 2; status = 'Previewed'; subscriptionId = $subscription; tenantId = $tenant; location = $Location; setName = $SetName;
+    $state = @{ schemaVersion = 3; status = 'Previewed'; subscriptionId = $subscription; tenantId = $tenant; location = $Location; identityNamePattern = $IdentityNamePattern;
         identityResourceGroup = $identityGroup; ownerToken = $ownerToken; pipelinePrincipalId = $PipelinePrincipalId; pipelineClientId = $PipelineClientId;
         expectedCallerPrincipalId = $ExpectedCallerPrincipalId; deploymentName = $deploymentName; identityResourceIds = $expectedIds; templateHash = $templateHash;
         pipelineMode = $pipelineMode; existingPipelineAssignmentId = $existingPipelineId; parameters = $parameters; prediction = $prediction;
         validation = $(if ($previous) { $previous['validation'] } else { $validation }) }
     Save-BootstrapState -State $state
-    [pscustomobject]@{ mode = 'DRY RUN'; subscriptionId = $subscription; tenantId = $tenant; location = $Location; setName = $SetName;
+    [pscustomobject]@{ mode = 'DRY RUN'; subscriptionId = $subscription; tenantId = $tenant; location = $Location; identityNamePattern = $IdentityNamePattern;
         identityResourceGroup = $identityGroup; identities = $expectedIds; pipelineMode = $pipelineMode; parameters = $parameters; templateHash = $templateHash;
         changes = @($prediction['changes'] | ForEach-Object { @{ resourceId = $_.resourceId; type = $_['after']['type']; changeType = $_.changeType } });
         note = 'New RG, four UAMIs, six project service grants and optional pipeline Foundry User only; reuse is GET-only. No IAM administration, deletes, repairs or workloads.' } | ConvertTo-Json -Depth 10
@@ -198,6 +227,7 @@ try {
     # -Apply alone cannot manufacture a separate Previewed state.
     if (-not $Apply -or -not $PSCmdlet.ShouldProcess($scope, 'Create four permanent UAMIs and the exact reviewed service-role grants')) { return }
     if (Get-BootstrapGroupExists) { throw 'The identity RG appeared after preview; no create attempted.' }
+    Assert-BootstrapIdentityNamesAbsent
     $latestPipelineId = Get-BootstrapExistingPipelineGrant -Assignments @(Get-BootstrapAllAssignments -SubscriptionId $subscription)
     if ($latestPipelineId -cne $existingPipelineId) { throw 'The pipeline grant changed after preview; no create attempted.' }
     $state['status'] = 'Applying'; Save-BootstrapState -State $state

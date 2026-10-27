@@ -12,13 +12,13 @@ Describe 'Shared identity bootstrap fails closed through the real entry point' {
     }
     AfterEach { $env:AZURE_SUBSCRIPTION_ID = $script:bootstrapOriginalSubscription; $env:AZURE_TENANT_ID = $script:bootstrapOriginalTenant }
 
-    # Original 75 regression cases, adapted to the generic schema-2 plan. Reuse now
+    # Original 75 regression cases, adapted to the literal schema-3 plan. Reuse now
     # excludes the pipeline resource altogether (stronger than the old NoChange).
     It 'previews the exact twelve IDs and independent RFC4122 UUIDv5 grant names in uksouth' {
         $result = Invoke-IsolatedBootstrap
-        $result.failure | Should BeNullOrEmpty; $result.state.status | Should Be 'Previewed'; $result.state.schemaVersion | Should Be 2
-        $result.state.location | Should Be 'uksouth'; $result.state.setName | Should Be 'unit-test'
-        $result.state.identityResourceGroup | Should Be 'rg-azsdk-identities-unit-test-uksouth'
+        $result.failure | Should BeNullOrEmpty; $result.state.status | Should Be 'Previewed'; $result.state.schemaVersion | Should Be 3
+        $result.state.location | Should Be 'uksouth'; $result.state.identityNamePattern | Should BeExactly 'mi-azsdk-unit-test-{resource}-uksouth'
+        $result.state.identityResourceGroup | Should Be $script:bootstrapFixture.groupName
         @($result.state.prediction.changes).Count | Should Be 12
         @($result.calls | Where-Object { $_ -match '^deployment sub what-if .*--no-pretty-print .*--result-format FullResourcePayloads' }).Count | Should Be 1
         $result.mutations.Count | Should Be 0
@@ -36,7 +36,7 @@ Describe 'Shared identity bootstrap fails closed through the real entry point' {
         $result.failure | Should Match 'already recorded'; $result.calls.Count | Should Be 0; $result.bytes | Should Be $result.originalBytes
     }
     It 'rejects malformed state <Label> before any CLI invocation' -TestCases @(
-        @{ Label = 'schema number as a string'; Field = 'schemaVersion'; Value = '2' }, @{ Label = 'schema boolean'; Field = 'schemaVersion'; Value = $true },
+        @{ Label = 'schema number as a string'; Field = 'schemaVersion'; Value = '3' }, @{ Label = 'schema boolean'; Field = 'schemaVersion'; Value = $true },
         @{ Label = 'unknown status'; Field = 'status'; Value = 'Retryable' }, @{ Label = 'status array'; Field = 'status'; Value = @('Previewed') },
         @{ Label = 'foreign deployment'; Field = 'deploymentName'; Value = 'another-deployment' }
     ) {
@@ -222,7 +222,7 @@ Describe 'Shared identity bootstrap fails closed through the real entry point' {
 
     # New consolidation, generic parameter/state, legacy immutability and create lifecycle coverage.
     It 'requires explicit new <Field> and does not fall back to environment or active account' -TestCases @(
-        @{ Field = 'SubscriptionId' }, @{ Field = 'TenantId' }, @{ Field = 'Location' }, @{ Field = 'SetName' }, @{ Field = 'ExpectedCallerPrincipalId' }
+        @{ Field = 'SubscriptionId' }, @{ Field = 'TenantId' }, @{ Field = 'Location' }, @{ Field = 'IdentityNamePattern' }, @{ Field = 'ExpectedCallerPrincipalId' }
     ) {
         param($Field)
         $script:bootstrapFixture.inputOverride[$Field] = ''; $result = Invoke-IsolatedBootstrap
@@ -239,7 +239,7 @@ Describe 'Shared identity bootstrap fails closed through the real entry point' {
         $result.failure | Should Not BeNullOrEmpty; $result.calls.Count | Should Be 0; $result.bytes | Should Be $result.originalBytes
     }
     It 'rejects persisted parameter drift for <Name>' -TestCases @(
-        @{ Name = 'identityResourceGroup' }, @{ Name = 'namePrefix' }, @{ Name = 'location' }, @{ Name = 'ownerToken' },
+        @{ Name = 'identityResourceGroup' }, @{ Name = 'identityNamePattern' }, @{ Name = 'location' }, @{ Name = 'ownerToken' },
         @{ Name = 'pipelinePrincipalId' }, @{ Name = 'pipelineRoleAssignmentId' }, @{ Name = 'createPipelineGrant' }
     ) {
         param($Name)
@@ -248,7 +248,7 @@ Describe 'Shared identity bootstrap fails closed through the real entry point' {
     }
     It 'supports a different canonical region and set' {
         $script:bootstrapFixture = New-BootstrapCliFixture -Region australiaeast -Set another-set; $result = Invoke-IsolatedBootstrap
-        $result.failure | Should BeNullOrEmpty; $result.state.identityResourceGroup | Should Be 'rg-azsdk-identities-another-set-australiaeast'; $result.mutations.Count | Should Be 0
+        $result.failure | Should BeNullOrEmpty; $result.state.identityResourceGroup | Should Be $script:bootstrapFixture.groupName; $result.mutations.Count | Should Be 0
     }
     It 'rejects noncanonical or malformed region metadata <Label>' -TestCases @(
         @{ Label = 'wrong canonical region'; Value = @(@{ name = 'eastus2'; displayName = 'uksouth' }) }, @{ Label = 'object instead of array'; Value = @{ name = 'uksouth' } },
@@ -512,6 +512,106 @@ Describe 'Shared identity bootstrap fails closed through the real entry point' {
         $fixture.prediction.changes += @{ resourceId = $moduleId; changeType = 'Create'; after = @{ type = 'Microsoft.Resources/deployments' } }
         Set-BootstrapPreviewFixture -Fixture $fixture; $result = Invoke-IsolatedBootstrap -Apply
         $result.failure | Should BeNullOrEmpty; $result.state.status | Should Be 'Created'; $result.state.validation.properties.validatedResources[0].id | Should Be $moduleId; $result.mutations.Count | Should Be 1
+    }
+}
+
+Describe 'Original schema-2 generations remain immutable and verification-only' {
+    BeforeEach { $script:bootstrapFixture = New-BootstrapCliFixture -LegacySchema2 }
+
+    It 'verifies original <Status> IDs, names and parameters without a compiler or rewriting state' -TestCases @(
+        @{ Status = 'Verified' }, @{ Status = 'Created' }, @{ Status = 'Applying' }, @{ Status = 'Failed' }
+    ) {
+        param($Status)
+        $fixture = $script:bootstrapFixture; Set-BootstrapRecordedFixture -Fixture $fixture -Status $Status
+        $fixture.state.templateHash = ('b' * 64); $fixture.noTemplates = $true
+        $result = Invoke-IsolatedBootstrap -VerifyOnly
+        $result.failure | Should BeNullOrEmpty; $result.state.schemaVersion | Should Be 2; $result.state.status | Should Be $Status
+        $result.state.identityResourceGroup | Should BeExactly 'rg-azsdk-identities-unit-test-uksouth'
+        $result.state.parameters.namePrefix.value | Should BeExactly 'mi-azsdk-unit-test'
+        $result.bytes | Should Be $result.originalBytes; $result.lockExists | Should Be $false; $result.mutations.Count | Should Be 0
+        @($result.calls | Where-Object { $_ -match '^(bicep|deployment sub|account list-locations|provider)' }).Count | Should Be 0
+    }
+
+    It 'rejects obsolete schema-2 preview <Mode> before calls or writes and requires fresh review' -TestCases @(
+        @{ Mode = 'Apply' }, @{ Mode = 'Preview' }, @{ Mode = 'VerifyOnly' }
+    ) {
+        param($Mode)
+        $fixture = $script:bootstrapFixture; Set-BootstrapPreviewFixture -Fixture $fixture
+        $result = Invoke-IsolatedBootstrap -Apply:($Mode -ceq 'Apply') -VerifyOnly:($Mode -ceq 'VerifyOnly')
+        $result.failure | Should Match $(if ($Mode -ceq 'VerifyOnly') { 'recorded bootstrap attempt' } else { 'fresh reviewed schema 3 dry run' })
+        $result.calls.Count | Should Be 0; $result.bytes | Should Be $result.originalBytes; $result.lockExists | Should Be $false
+    }
+
+    It 'never applies schema-2 <Status>, even if its old group is absent' -TestCases @(
+        @{ Status = 'Applying' }, @{ Status = 'Failed' }, @{ Status = 'Created' }, @{ Status = 'Verified' }
+    ) {
+        param($Status)
+        $fixture = $script:bootstrapFixture; Set-BootstrapRecordedFixture -Fixture $fixture -Status $Status; $fixture.groupExists = $false
+        $result = Invoke-IsolatedBootstrap -Apply
+        $result.failure | Should Match 'verification-only'; $result.calls.Count | Should Be 0; $result.bytes | Should Be $result.originalBytes
+    }
+
+    It 'binds legacy verification input <Field> before Azure' -TestCases @(
+        @{ Field = 'SubscriptionId'; Value = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee' },
+        @{ Field = 'TenantId'; Value = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee' },
+        @{ Field = 'Location'; Value = 'eastus2' }, @{ Field = 'Location'; Value = '' },
+        @{ Field = 'SetName'; Value = 'different' }, @{ Field = 'IdentityNamePattern'; Value = 'custom_{resource}_blue' },
+        @{ Field = 'ExpectedCallerPrincipalId'; Value = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee' }
+    ) {
+        param($Field, $Value)
+        $fixture = $script:bootstrapFixture; Set-BootstrapRecordedFixture -Fixture $fixture -Status Verified
+        $fixture.inputOverride[$Field] = $Value
+        $result = Invoke-IsolatedBootstrap -VerifyOnly
+        $result.failure | Should Not BeNullOrEmpty; $result.calls.Count | Should Be 0; $result.bytes | Should Be $result.originalBytes
+    }
+
+    It 'retains exact recorded schema-2 deployment parameter reconciliation: <Name>' -TestCases @(
+        @{ Name = 'identityResourceGroup' }, @{ Name = 'namePrefix' }, @{ Name = 'location' }, @{ Name = 'ownerToken' },
+        @{ Name = 'pipelinePrincipalId' }, @{ Name = 'pipelineRoleAssignmentId' }, @{ Name = 'createPipelineGrant' }
+    ) {
+        param($Name)
+        $fixture = $script:bootstrapFixture; Set-BootstrapRecordedFixture -Fixture $fixture -Status Failed
+        $fixture.recorded.properties.parameters[$Name].value = 'foreign'
+        $result = Invoke-IsolatedBootstrap -VerifyOnly
+        $result.failure | Should Match 'contract value differs'; $result.bytes | Should Be $result.originalBytes; $result.mutations.Count | Should Be 0
+    }
+
+    It 'retains immutable identity/grant/ownership checks for schema 2: <Fault>' -TestCases @(
+        @{ Fault = 'principal replacement' }, @{ Fault = 'client replacement' }, @{ Fault = 'owner tag' }, @{ Fault = 'saved metadata' },
+        @{ Fault = 'missing grant' }, @{ Fault = 'extra reserved grant' }, @{ Fault = 'grant condition' }, @{ Fault = 'recorded failure' }
+    ) {
+        param($Fault)
+        $fixture = $script:bootstrapFixture
+        Set-BootstrapRecordedFixture -Fixture $fixture -Status $(if ($Fault -ceq 'recorded failure') { 'Failed' } else { 'Verified' })
+        switch ($Fault) {
+            'principal replacement' { $fixture.live.project.properties.principalId = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee' }
+            'client replacement' { $fixture.live.function.properties.clientId = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee' }
+            'owner tag' { $fixture.live.search.tags['sample-ci-owner'] = 'foreign' }
+            'saved metadata' { $fixture.state.identities.account.clientId = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee' }
+            'missing grant' { $fixture.descendants = @($fixture.descendants[1..6]); $fixture.parents = @($fixture.descendants) }
+            'extra reserved grant' { $fixture.descendants += New-BootstrapFixtureAssignment -Grant $fixture.grants[0] -PrincipalId $fixture.identities.function.principalId }
+            'grant condition' { $fixture.descendants[2].properties.condition = ''; $fixture.parents = @($fixture.descendants) }
+            'recorded failure' { $fixture.recorded.properties.provisioningState = 'Failed' }
+        }
+        $result = Invoke-IsolatedBootstrap -VerifyOnly
+        $result.failure | Should Not BeNullOrEmpty; $result.bytes | Should Be $result.originalBytes
+        $result.lockExists | Should Be $false; $result.mutations.Count | Should Be 0
+    }
+
+    It 'verifies recorded schema-2 None without requiring a set-name question' {
+        $fixture = New-BootstrapCliFixture -LegacySchema2 -NoPipeline; $script:bootstrapFixture = $fixture
+        Set-BootstrapRecordedFixture -Fixture $fixture -Status Verified; $fixture.inputOverride.SetName = ''
+        $result = Invoke-IsolatedBootstrap -VerifyOnly
+        $result.failure | Should BeNullOrEmpty; $result.bytes | Should Be $result.originalBytes; $result.mutations.Count | Should Be 0
+    }
+
+    It 'verifies the exact old reused pipeline grant while preserving its original assignment ID' {
+        $fixture = $script:bootstrapFixture
+        $fixture.grants[6].roleAssignmentId = $fixture.scope + '/providers/Microsoft.Authorization/roleAssignments/eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee'
+        $fixture.prediction.changes = @($fixture.prediction.changes[0..10]); Set-BootstrapRecordedFixture -Fixture $fixture -Status Verified -PipelineMode Reuse
+        $fixture.noTemplates = $true
+        $result = Invoke-IsolatedBootstrap -VerifyOnly
+        $result.failure | Should BeNullOrEmpty; $result.bytes | Should Be $result.originalBytes; $result.mutations.Count | Should Be 0
     }
 }
 

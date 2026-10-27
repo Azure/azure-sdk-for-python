@@ -39,7 +39,7 @@ function Invoke-QueueTestEnvironment {
 
 function New-OfflineQueuePlan {
     param([Parameter(Mandatory)] [string] $OutputDirectory, [string] $QueueName = 'q1',
-        [string] $ProjectIdentityName = 'mi-azsdk-sample-project-wus3')
+        [string] $IdentityNamePattern = 'mi-azsdk-sample-{resource}-wus3')
 
     $null = New-Item -ItemType Directory -Path $OutputDirectory -Force
     $manifest = Join-Path $OutputDirectory 'selection.json'
@@ -49,8 +49,18 @@ function New-OfflineQueuePlan {
     }) } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $manifest -Encoding utf8
     $planScript = Join-Path $PSScriptRoot '../New-SampleDeploymentPlan.ps1'
     & $planScript -SelectionManifest $manifest -OutputDirectory $OutputDirectory -QueueName $QueueName `
-        -DefinitionId $env:SYSTEM_DEFINITIONID -BuildId $env:BUILD_BUILDID -JobAttempt $env:SYSTEM_JOBATTEMPT -ProjectIdentityName $ProjectIdentityName
-    return (Get-Content -LiteralPath (Join-Path $OutputDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable)
+        -DefinitionId $env:SYSTEM_DEFINITIONID -BuildId $env:BUILD_BUILDID -JobAttempt $env:SYSTEM_JOBATTEMPT -IdentityNamePattern $IdentityNamePattern
+    $plan = Get-Content -LiteralPath (Join-Path $OutputDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
+    # Explicit fixture admission only: never infer a live location from names.
+    $historic = Get-SampleHistoricIdentityConfiguration -SubscriptionId $plan.subscriptionId -ProjectIdentityName $plan.projectIdentityName
+    $plan.identityResolution = 'Resolved'; $plan.location = $historic.location
+    $plan.sharedIdentities = $historic.sharedIdentities; $plan.identityOwner = '0123456789abcdef0123456789abcdef'
+    $plan.identityPrincipalIds = @{
+        project = '44444444-4444-4444-4444-444444444444'; account = '55555555-5555-5555-5555-555555555555'
+        search = '66666666-6666-6666-6666-666666666666'; function = '77777777-7777-7777-7777-777777777777'
+    }
+    $plan | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath (Join-Path $OutputDirectory 'deployment-plan.json') -Encoding utf8
+    return $plan
 }
 
 function New-OfflineQueuePlans {
@@ -284,7 +294,7 @@ Describe 'Bootstrap-owned shared identity bindings and existing grants' {
 
     It 'verifies the selected skill-managed set in its own region with no ARM writes' {
         Invoke-QueueTestEnvironment {
-            $plan = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'generic-set') -ProjectIdentityName mi-azsdk-unit-test-project-uksouth
+            $plan = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'generic-set') -IdentityNamePattern 'mi-azsdk-unit-test-{resource}-uksouth'
             foreach ($purpose in @('project', 'account', 'search', 'function')) {
                 $script:sharedIdentityFixture.ids[$purpose] = "/subscriptions/$env:AZURE_SUBSCRIPTION_ID/resourceGroups/rg-azsdk-identities-unit-test-uksouth/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mi-azsdk-unit-test-$purpose-uksouth"
             }
@@ -323,17 +333,42 @@ Describe 'Bootstrap-owned shared identity bindings and existing grants' {
         }
     }
 
-    It 'rejects a region changed independently of the selected MI before contacting Azure' {
+    It 'rejects a changed admitted region when rechecking live identity metadata' {
         Invoke-QueueTestEnvironment {
             $plan = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'forged-region')
             $plan.location = 'uksouth'
-            { Get-SampleSharedIdentities -Plan $plan } | Should Throw 'planned region'
+            { Get-SampleSharedIdentities -Plan $plan } | Should Throw 'Cannot verify the bootstrap-owned shared identity'
+            Assert-MockCalled Invoke-SampleAzure -Times 1 -Exactly -Scope It
+        }
+    }
+
+    It 'rejects a pattern changed independently of expanded identity IDs before Azure calls' {
+        Invoke-QueueTestEnvironment {
+            $plan = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'forged-pattern')
+            $plan.identityNamePattern = 'mi-azsdk-other-set-{resource}-westus3'
+            { Get-SampleSharedIdentities -Plan $plan } | Should Throw 'saved project MI name differs'
             Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
         }
     }
 
+    It 'still verifies older concrete-name queue states without rewriting them' {
+        Invoke-QueueTestEnvironment {
+            $plan = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'older-plan')
+            $plan.Remove('identityNamePattern')
+            $plan.Remove('identityResolution')
+            $plan.Remove('sharedIdentityNames')
+            $plan.Remove('identityPrincipalIds')
+            $plan.Remove('identityOwner')
+            $before = $plan | ConvertTo-Json -Depth 20 -Compress
+            $identities = Get-SampleSharedIdentities -Plan $plan
+            $identities.Count | Should Be 4
+            ($plan | ConvertTo-Json -Depth 20 -Compress) | Should BeExactly $before
+            Assert-MockCalled Invoke-SampleAzure -Times 4 -Exactly -Scope It
+        }
+    }
+
     It 'rejects nonexact shared identity bindings before any metadata request: <Label>' -TestCases @(
-        @{ Label = 'resource ID case mismatch'; Mode = 'case' },
+        @{ Label = 'malformed resource ID'; Mode = 'case' },
         @{ Label = 'swapped identity purposes'; Mode = 'swap' },
         @{ Label = 'another subscription'; Mode = 'subscription' }
     ) {
@@ -344,7 +379,7 @@ Describe 'Bootstrap-owned shared identity bindings and existing grants' {
             for ($index = 0; $index -lt $purposes.Count; $index++) {
                 $purpose = $purposes[$index]
                 if ($Mode -eq 'case') {
-                    $plan.sharedIdentities[$purpose] = $plan.sharedIdentities[$purpose].Replace('rg-azsdk', 'RG-azsdk')
+                    $plan.sharedIdentities[$purpose] = $plan.sharedIdentities[$purpose].Replace('/resourceGroups/', '/resourceGroups//')
                 } elseif ($Mode -eq 'swap') {
                     $plan.sharedIdentities[$purpose] = $script:sharedIdentityFixture.ids[$purposes[($index + 1) % $purposes.Count]]
                 } else {
@@ -576,7 +611,7 @@ Describe 'Aggregate four-queue capacity admission' {
             $plans = @(New-OfflineQueuePlans -OutputDirectory (Join-Path $TestDrive 'batch-target'))
             $plans[3][$Field] = $Value
             $expectedError = switch ($Field) {
-                'location' { 'planned region' }
+                'location' { 'one explicit target and pipeline run' }
                 'subscriptionId' { 'Unexpected shared identity binding' }
                 default { 'one explicit target and pipeline run' }
             }
@@ -605,7 +640,7 @@ Describe 'Aggregate four-queue capacity admission' {
     It 'rejects a different valid identity set in one worker before checking batch capacity' {
         Invoke-QueueTestEnvironment {
             $plans = @(New-OfflineQueuePlans -OutputDirectory (Join-Path $TestDrive 'mixed-identity-sets'))
-            $plans[1] = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'other-set') -QueueName q2 -ProjectIdentityName mi-azsdk-unit-test-project-westus3
+            $plans[1] = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'other-set') -QueueName q2 -IdentityNamePattern 'mi-azsdk-unit-test-{resource}-westus3'
             { Assert-SampleBatchCapacity -Plans $plans } | Should Throw 'one explicit target and pipeline run'
             Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
         }

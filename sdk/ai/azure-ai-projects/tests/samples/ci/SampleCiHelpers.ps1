@@ -3,6 +3,7 @@
 #Requires -Version 7.2
 
 Set-StrictMode -Version Latest
+. (Join-Path $PSScriptRoot '../../../.github/skills/azure-ai-projects-provision-identities/scripts/IdentityNaming.ps1')
 
 function Invoke-SampleAzure {
     [CmdletBinding()]
@@ -162,14 +163,32 @@ function Assert-SampleRunPlan {
     }
     $null = Get-SampleSubscriptionId -SubscriptionId $Plan['subscriptionId']
     $null = Get-SampleTenantId -TenantId $Plan['tenantId']
-    if ($Plan.ContainsKey('projectIdentityName')) {
-        $configuration = Get-SampleSharedIdentityConfiguration -SubscriptionId $Plan.subscriptionId -ProjectIdentityName $Plan['projectIdentityName']
-        if ($Plan['location'] -cne $configuration.location) { throw 'The planned region does not match the selected project MI name.' }
-        if ($Plan['sharedIdentities'] -isnot [System.Collections.IDictionary] -or $Plan.sharedIdentities.Count -ne 4) {
-            throw 'The deployment plan must bind the four bootstrap-owned shared identities.'
-        }
-        foreach ($purpose in $configuration.sharedIdentities.Keys) {
-            if ($Plan.sharedIdentities[$purpose] -cne $configuration.sharedIdentities[$purpose]) { throw 'Unexpected shared identity binding.' }
+    if ($Plan.ContainsKey('identityNamePattern') -or $Plan.ContainsKey('projectIdentityName')) {
+        $configuration = Get-SamplePlanIdentityConfiguration -Plan $Plan
+        if ($Plan.ContainsKey('identityResolution')) {
+            if ($Plan['identityResolution'] -cnotin @('Pending', 'Resolved') -or
+                $Plan['sharedIdentityNames'] -isnot [System.Collections.IDictionary] -or $Plan.sharedIdentityNames.Count -ne 4) {
+                throw 'Invalid MI name pattern resolution metadata.'
+            }
+            foreach ($purpose in $configuration.names.Keys) {
+                if ($Plan.sharedIdentityNames[$purpose] -cne $configuration.names[$purpose]) { throw 'Unexpected shared identity binding.' }
+            }
+            if ($Plan['identityResolution'] -ceq 'Pending') {
+                if ($Plan['location'] -cne '' -or $Plan['sharedIdentities'] -isnot [System.Collections.IDictionary] -or
+                    $Plan.sharedIdentities.Count -ne 0) { throw 'Pending identity selection must not invent resource IDs or a region.' }
+            } else {
+                Assert-SampleResolvedIdentityBindings -Plan $Plan -Names $configuration.names
+            }
+        } else {
+            # Preserve the exact historic naming bindings for old saved states.
+            $historic = Get-SampleHistoricIdentityConfiguration -SubscriptionId $Plan.subscriptionId -ProjectIdentityName $configuration.projectIdentityName
+            if ($Plan['location'] -cne $historic.location) { throw 'The planned region does not match the selected MI name pattern.' }
+            if ($Plan['sharedIdentities'] -isnot [System.Collections.IDictionary] -or $Plan.sharedIdentities.Count -ne 4) {
+                throw 'The deployment plan must bind the four bootstrap-owned shared identities.'
+            }
+            foreach ($purpose in $historic.sharedIdentities.Keys) {
+                if ($Plan.sharedIdentities[$purpose] -cne $historic.sharedIdentities[$purpose]) { throw 'Unexpected shared identity binding.' }
+            }
         }
     }
     foreach ($binding in @(@('SYSTEM_DEFINITIONID', 'definitionId'), @('BUILD_BUILDID', 'buildId'))) {
@@ -221,39 +240,136 @@ function Assert-SampleMcpPat {
 
 function Get-SampleSharedIdentityConfiguration {
     param([Parameter(Mandatory)] [string] $SubscriptionId,
-        [AllowNull()] [AllowEmptyString()] [string] $ProjectIdentityName = 'mi-azsdk-sample-project-wus3')
+        [AllowNull()] [AllowEmptyString()] [string] $IdentityNamePattern = 'mi-azsdk-sample-{resource}-wus3',
+        [AllowNull()] [AllowEmptyString()] [string] $ProjectIdentityName)
 
     $subscription = Get-SampleSubscriptionId -SubscriptionId $SubscriptionId
-    if ($ProjectIdentityName -ceq 'mi-azsdk-sample-project-wus3') {
-        $groupName = 'rg-azsdk-sample-identities-wus3'
-        $prefix = 'mi-azsdk-sample'
-        $suffix = 'wus3'
-        $location = 'westus3'
-    } else {
-        # Only the skill's explicit naming contract is accepted. Never search all
-        # subscriptions or guess which of several same-named identities to use.
-        $nameMatch = [regex]::Match([string] $ProjectIdentityName,
-            '\Ami-azsdk-(?<set>[a-z0-9](?:[a-z0-9-]{0,22}[a-z0-9])?)-project-(?<region>[a-z][a-z0-9]{0,29})\z')
-        if (-not $nameMatch.Success) { throw 'Supply the existing project MI name from the identity skill, not a client ID, resource ID or account/Search MI.' }
-        $setName = $nameMatch.Groups['set'].Value
-        $location = $nameMatch.Groups['region'].Value
-        $groupName = "rg-azsdk-identities-$setName-$location"
-        $prefix = "mi-azsdk-$setName"
-        $suffix = $location
+    if ($PSBoundParameters.ContainsKey('ProjectIdentityName')) {
+        if ($PSBoundParameters.ContainsKey('IdentityNamePattern')) {
+            $expanded = Resolve-IdentityNamePattern -IdentityNamePattern $IdentityNamePattern
+            if ($expanded.names.project -cne $ProjectIdentityName) { throw 'The saved project MI name differs from the selected MI name pattern.' }
+        } else {
+            $IdentityNamePattern = ConvertTo-IdentityNamePattern -ProjectIdentityName $ProjectIdentityName
+        }
     }
-    $root = "/subscriptions/$subscription/resourceGroups/$groupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities"
-    $identities = @{}
-    foreach ($purpose in @('project', 'account', 'search', 'function')) {
-        $identities[$purpose] = "$root/$prefix-$purpose-$suffix"
-    }
-    return @{ projectIdentityName = $ProjectIdentityName; location = $location; sharedIdentities = $identities }
+    $naming = Resolve-IdentityNamePattern -IdentityNamePattern $IdentityNamePattern
+    return @{ identityNamePattern = $naming.identityNamePattern; projectIdentityName = $naming.names.project;
+        names = $naming.names; subscriptionId = $subscription }
+}
+
+function Get-SamplePlanIdentityConfiguration {
+    param([Parameter(Mandatory)] [hashtable] $Plan)
+
+    # Older saved queue states retain their exact concrete project name; plans
+    # predating selection retain the original fixed set. Neither is rewritten.
+    $bindings = @{ SubscriptionId = $Plan.subscriptionId }
+    if ($Plan.ContainsKey('identityNamePattern')) { $bindings.IdentityNamePattern = $Plan['identityNamePattern'] }
+    if ($Plan.ContainsKey('projectIdentityName')) { $bindings.ProjectIdentityName = $Plan['projectIdentityName'] }
+    return Get-SampleSharedIdentityConfiguration @bindings
 }
 
 function Get-SampleSharedIdentityIds {
     param([Parameter(Mandatory)] [string] $SubscriptionId,
-        [string] $ProjectIdentityName = 'mi-azsdk-sample-project-wus3')
+        [string] $IdentityNamePattern = 'mi-azsdk-sample-{resource}-wus3')
 
-    return (Get-SampleSharedIdentityConfiguration -SubscriptionId $SubscriptionId -ProjectIdentityName $ProjectIdentityName).sharedIdentities
+    $names = Resolve-IdentityNamePattern -IdentityNamePattern $IdentityNamePattern
+    return (Get-SampleHistoricIdentityConfiguration -SubscriptionId $SubscriptionId -ProjectIdentityName $names.names.project).sharedIdentities
+}
+
+function Get-SampleHistoricIdentityConfiguration {
+    param([string] $SubscriptionId, [string] $ProjectIdentityName)
+
+    # This compatibility path is ONLY for pre-resolution saved plans. New input
+    # is resolved from Azure metadata, never this original naming convention.
+    if ($ProjectIdentityName -ceq 'mi-azsdk-sample-project-wus3') {
+        $group = 'rg-azsdk-sample-identities-wus3'; $prefix = 'mi-azsdk-sample'; $suffix = 'wus3'; $location = 'westus3'
+    } else {
+        $match = [regex]::Match($ProjectIdentityName, '\Ami-azsdk-(?<set>[a-z0-9](?:[a-z0-9-]{0,22}[a-z0-9])?)-project-(?<region>[a-z][a-z0-9]{0,29})\z')
+        if (-not $match.Success) { throw 'Unsupported historic project MI binding.' }
+        $location = $match.Groups['region'].Value; $set = $match.Groups['set'].Value
+        $group = "rg-azsdk-identities-$set-$location"; $prefix = "mi-azsdk-$set"; $suffix = $location
+    }
+    $ids = @{}
+    foreach ($purpose in @('project', 'account', 'search', 'function')) {
+        $ids[$purpose] = "/subscriptions/$SubscriptionId/resourceGroups/$group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$prefix-$purpose-$suffix"
+    }
+    return @{ location = $location; sharedIdentities = $ids }
+}
+
+function Assert-SampleResolvedIdentityBindings {
+    param([hashtable] $Plan, [System.Collections.IDictionary] $Names)
+
+    if ($Plan['location'] -cnotmatch '\A[a-z][a-z0-9]{0,29}\z' -or
+        $Plan['identityOwner'] -cnotmatch '\A[a-f0-9]{32}\z' -or
+        $Plan['sharedIdentities'] -isnot [System.Collections.IDictionary] -or $Plan.sharedIdentities.Count -ne 4 -or
+        $Plan['identityPrincipalIds'] -isnot [System.Collections.IDictionary] -or $Plan.identityPrincipalIds.Count -ne 4) {
+        throw 'The deployment plan must bind the four bootstrap-owned shared identities and verified region.'
+    }
+    $groupPrefix = $null
+    foreach ($purpose in @('project', 'account', 'search', 'function')) {
+        $id = $Plan.sharedIdentities[$purpose]
+        $binding = [regex]::Match([string]$id, '\A/subscriptions/(?<sub>[a-fA-F0-9-]{36})/resourceGroups/(?<rg>[^/]+)/providers/Microsoft.ManagedIdentity/userAssignedIdentities/(?<name>[^/]+)\z')
+        if (-not $binding.Success -or $binding.Groups['sub'].Value -ine $Plan.subscriptionId -or
+            $binding.Groups['name'].Value -cne $Names[$purpose] -or
+            $Plan.identityPrincipalIds[$purpose] -notmatch '\A[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}\z' -or
+            $Plan.identityPrincipalIds[$purpose] -eq '00000000-0000-0000-0000-000000000000') { throw 'Unexpected shared identity binding.' }
+        if ($groupPrefix -and $groupPrefix -cne $binding.Groups['rg'].Value) { throw 'All shared identities must belong to one verified resource group.' }
+        $groupPrefix = $binding.Groups['rg'].Value
+    }
+}
+
+function Resolve-SampleIdentitySelection {
+    param([Parameter(Mandatory)] [hashtable] $Plan)
+
+    Assert-SampleRunPlan -Plan $Plan
+    if ($Plan['identityResolution'] -cne 'Pending') { throw 'Identity selection has already been resolved; do not overwrite its bindings.' }
+    $configuration = Get-SamplePlanIdentityConfiguration -Plan $Plan
+    $path = '/subscriptions/' + $Plan.subscriptionId + '/providers/Microsoft.ManagedIdentity/userAssignedIdentities'
+    $uri = 'https://management.azure.com' + $path + '?api-version=2023-01-31'
+    $all = @(); $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    do {
+        $parsed = [uri] $uri
+        if ($parsed.Scheme -cne 'https' -or $parsed.Host -ine 'management.azure.com' -or $parsed.Port -ne 443 -or
+            $parsed.UserInfo -or $parsed.Fragment -or $parsed.AbsolutePath -ine $path -or -not $seen.Add($uri) -or $seen.Count -gt 1000) {
+            throw 'Unexpected identity metadata pagination target.'
+        }
+        $query = @{}
+        foreach ($part in $parsed.Query.TrimStart('?').Split('&')) {
+            $pair = $part.Split('=',2); $key = [uri]::UnescapeDataString($pair[0])
+            if ($pair.Count -ne 2 -or $key -cnotin @('api-version','$skiptoken','skiptoken') -or $query.ContainsKey($key)) {
+                throw 'Unexpected identity metadata pagination query.'
+            }
+            $query[$key] = [uri]::UnescapeDataString($pair[1])
+        }
+        if ($query['api-version'] -cne '2023-01-31') { throw 'Unexpected identity metadata pagination API version.' }
+        $page = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--subscription', $Plan.subscriptionId, '--url', $uri) -Sensitive
+        if ($page -isnot [System.Collections.IDictionary] -or $page['value'] -isnot [System.Collections.IList] -or
+            ($page.Contains('error') -and $null -ne $page['error']) -or
+            ($null -ne $page['nextLink'] -and $page['nextLink'] -isnot [string])) { throw 'Cannot verify identity metadata listing.' }
+        $all += @($page.value); $uri = [string] $page['nextLink']
+    } while ($uri)
+    $ids = @{}; $principals = @{}; $location = $null; $owner = $null
+    foreach ($purpose in @('project', 'account', 'search', 'function')) {
+        $candidates = @($all | Where-Object { $_ -is [System.Collections.IDictionary] -and $_['name'] -ieq $configuration.names[$purpose] })
+        if ($candidates.Count -ne 1) { throw 'Each expanded MI name must identify exactly one existing identity in the explicit subscription; missing or duplicate matches are not allowed.' }
+        $identity = $candidates[0]
+        if ($identity['name'] -cne $configuration.names[$purpose] -or $identity['properties'] -isnot [System.Collections.IDictionary] -or
+            $identity['tags'] -isnot [System.Collections.IDictionary] -or $identity['type'] -ine 'Microsoft.ManagedIdentity/userAssignedIdentities' -or
+            $identity['properties']['tenantId'] -ine $Plan.tenantId -or $identity['location'] -cnotmatch '\A[a-z][a-z0-9]{0,29}\z' -or
+            $identity['tags']['purpose'] -cne 'azsdk-sample-identities' -or $identity['tags']['sample-ci-retention'] -cne 'permanent' -or
+            $identity['tags']['sample-ci-identity'] -cne $purpose -or $identity['tags']['sample-ci-owner'] -cnotmatch '\A[a-f0-9]{32}\z') {
+            throw 'Cannot verify the bootstrap-owned shared identity metadata.'
+        }
+        if ($location -and $location -cne $identity.location) { throw 'All shared identities must have one verified region.' }
+        if ($owner -and $owner -cne $identity.tags['sample-ci-owner']) { throw 'All shared identities must belong to one bootstrap-owned set.' }
+        $location = $identity.location; $owner = $identity.tags['sample-ci-owner']
+        $ids[$purpose] = $identity.id; $principals[$purpose] = $identity.properties.principalId
+    }
+    $resolved = @{} + $Plan
+    $resolved.identityResolution = 'Resolved'; $resolved.location = $location
+    $resolved.sharedIdentities = $ids; $resolved.identityPrincipalIds = $principals; $resolved.identityOwner = $owner
+    Assert-SampleRunPlan -Plan $resolved
+    return $resolved
 }
 
 function Get-SampleBlobOwnerCondition {
@@ -286,11 +402,15 @@ function Get-SampleSharedIdentities {
     param([Parameter(Mandatory)] [hashtable] $Plan)
 
     Assert-SampleRunPlan -Plan $Plan
-    # Older saved queue states retain their exact original identity selection.
-    $projectName = if ($Plan.ContainsKey('projectIdentityName')) { $Plan['projectIdentityName'] } else { 'mi-azsdk-sample-project-wus3' }
-    $configuration = Get-SampleSharedIdentityConfiguration -SubscriptionId $Plan.subscriptionId -ProjectIdentityName $projectName
-    if ($Plan['location'] -cne $configuration.location) { throw 'The planned region does not match the selected project MI name.' }
-    $expected = $configuration.sharedIdentities
+    $configuration = Get-SamplePlanIdentityConfiguration -Plan $Plan
+    if ($Plan.ContainsKey('identityResolution')) {
+        if ($Plan.identityResolution -cne 'Resolved') { throw 'Resolve the MI names to verified Azure metadata before provisioning.' }
+        $expected = $Plan.sharedIdentities
+    } else {
+        $historic = Get-SampleHistoricIdentityConfiguration -SubscriptionId $Plan.subscriptionId -ProjectIdentityName $configuration.projectIdentityName
+        if ($Plan['location'] -cne $historic.location) { throw 'The planned region does not match the selected MI name pattern.' }
+        $expected = $historic.sharedIdentities
+    }
     if ($Plan['sharedIdentities'] -isnot [System.Collections.IDictionary] -or $Plan.sharedIdentities.Count -ne 4) {
         throw 'The deployment plan must bind the four bootstrap-owned shared identities.'
     }
@@ -303,7 +423,7 @@ function Get-SampleSharedIdentities {
         if ($identity -isnot [System.Collections.IDictionary] -or
             $identity['properties'] -isnot [System.Collections.IDictionary] -or $identity['tags'] -isnot [System.Collections.IDictionary] -or
             $identity['id'] -ine $expected[$purpose] -or $identity['type'] -ine 'Microsoft.ManagedIdentity/userAssignedIdentities' -or
-            $identity['location'] -cne $configuration.location -or $identity['properties']['tenantId'] -ine $Plan.tenantId -or
+            $identity['location'] -cne $Plan.location -or $identity['properties']['tenantId'] -ine $Plan.tenantId -or
             $identity['properties']['principalId'] -notmatch '^[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}$' -or
             $identity['properties']['principalId'] -eq '00000000-0000-0000-0000-000000000000' -or
             $identity['tags']['purpose'] -cne 'azsdk-sample-identities' -or
@@ -316,6 +436,8 @@ function Get-SampleSharedIdentities {
             throw 'The four shared identities do not belong to one bootstrap-owned set.'
         }
         $identityOwner = $identity.tags['sample-ci-owner']
+        if ($Plan.ContainsKey('identityResolution') -and ($Plan.identityOwner -cne $identityOwner -or
+            $Plan.identityPrincipalIds[$purpose] -ine $identity.properties.principalId)) { throw 'The resolved identity generation changed; no resources were changed.' }
         $identities[$purpose] = @{ resourceId = $identity.id; principalId = $identity.properties.principalId }
     }
     return $identities
@@ -362,14 +484,17 @@ function Assert-SampleBatchCapacity {
             throw 'Each test queue must contain a nonempty selection of unique test nodes.'
         }
         $nodes += @($selected | ForEach-Object { $_['node_id'] })
-        foreach ($key in @('subscriptionId', 'tenantId', 'definitionId', 'buildId', 'location', 'projectIdentityName')) {
+        foreach ($key in @('subscriptionId', 'tenantId', 'definitionId', 'buildId', 'location', 'identityNamePattern', 'projectIdentityName')) {
             if ($plan[$key] -cne $first[$key]) { throw 'Test queues must share one explicit target and pipeline run.' }
         }
         foreach ($purpose in @('project', 'account', 'search', 'function')) {
             if ($plan['sharedIdentities'][$purpose] -cne $first['sharedIdentities'][$purpose]) {
                 throw 'All test queues must use the same shared identity set.'
             }
+            if ($plan.ContainsKey('identityPrincipalIds') -and
+                $plan.identityPrincipalIds[$purpose] -cne $first.identityPrincipalIds[$purpose]) { throw 'All test queues must use the same verified identity generation.' }
         }
+        if ($plan.ContainsKey('identityOwner') -and $plan.identityOwner -cne $first.identityOwner) { throw 'All test queues must use the same verified identity generation.' }
         if (($plan.sampleModel | ConvertTo-Json -Compress) -cne ($first.sampleModel | ConvertTo-Json -Compress)) {
             # Compare fields, not Hashtable property ordering.
             foreach ($key in @('name', 'version', 'sku', 'capacity')) {

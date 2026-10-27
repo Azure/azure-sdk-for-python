@@ -22,16 +22,12 @@ type SharedIdentities = {
 }
 
 @minLength(1)
-@maxLength(33)
-param namePrefix string
+@maxLength(130)
+param identityNamePattern string
 
 @minLength(1)
 @maxLength(30)
 param location string
-
-@minLength(1)
-@maxLength(30)
-param locationSuffix string
 
 @minLength(32)
 @maxLength(32)
@@ -46,7 +42,7 @@ var identityPurposes = [
 
 // Reserved identities receive no grants.
 resource managedIdentities 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = [for identityPurpose in identityPurposes: {
-  name: '${namePrefix}-${identityPurpose}-${locationSuffix}'
+  name: replace(identityNamePattern, '{resource}', identityPurpose)
   location: location
   tags: {
     purpose: 'azsdk-sample-identities'

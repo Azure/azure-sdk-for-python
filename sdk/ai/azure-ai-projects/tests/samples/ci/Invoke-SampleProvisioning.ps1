@@ -8,7 +8,8 @@ param(
     [Parameter(Mandatory, ParameterSetName = 'Provision')] [string] $StatePath,
     [Parameter(Mandatory, ParameterSetName = 'Provision')] [ValidateSet('q1', 'q2', 'q3', 'q4')] [string] $QueueName,
     [Parameter(ParameterSetName = 'Provision')] [switch] $ConfirmProvisioning,
-    [Parameter(Mandatory, ParameterSetName = 'Admission')] [string] $BatchPlanDirectory
+    [Parameter(Mandatory, ParameterSetName = 'Admission')] [string] $BatchPlanDirectory,
+    [Parameter(ParameterSetName = 'Admission')] [string] $ResolvedPlanDirectory
 )
 
 $ErrorActionPreference = 'Stop'
@@ -23,14 +24,32 @@ if ($PSCmdlet.ParameterSetName -eq 'Admission') {
         $item
     })
     $runner = Set-SampleSubscriptionContext -Plan $plans[0]
+    # Resolve each immutable offline name intent before any capacity check/write.
+    # No unresolved artifact is ever used by provisioning workers.
+    $resolvedPlans = @()
+    foreach ($item in $plans) {
+        $resolvedPlans += $(if ($item.ContainsKey('identityResolution') -and $item.identityResolution -ceq 'Pending') {
+            Resolve-SampleIdentitySelection -Plan $item
+        } else { $item })
+    }
+    $plans = $resolvedPlans
     $identities = Get-SampleSharedIdentities -Plan $plans[0]
     Assert-SampleSharedIdentityGrants -Plan $plans[0] -Identities $identities -RunnerPrincipalId $runner.principalId
     Assert-SampleBatchCapacity -Plans $plans
+    if ($ResolvedPlanDirectory) {
+        if (Test-Path -LiteralPath $ResolvedPlanDirectory) { throw 'Resolved plan output already exists; refusing to overwrite an earlier admission.' }
+        foreach ($item in $plans) {
+            $directory = Join-Path $ResolvedPlanDirectory $item.queueName
+            $null = New-Item -ItemType Directory -Path $directory -Force
+            $item | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath (Join-Path $directory 'deployment-plan.json') -Encoding utf8
+        }
+    }
     return
 }
 if (-not $ConfirmProvisioning) { throw 'Provisioning is disabled by default. Use -ConfirmProvisioning only for an explicitly requested live run.' }
 $plan = Get-Content -LiteralPath $PlanPath -Raw | ConvertFrom-Json -AsHashtable
 Assert-SampleRunPlan -Plan $plan -QueueName $QueueName
+if ($plan.ContainsKey('identityResolution') -and $plan.identityResolution -cne 'Resolved') { throw 'Only an admitted, resolved identity plan may provision resources.' }
 if (Test-Path -LiteralPath $StatePath) { throw 'Deployment state already exists. Do not adopt or overwrite a previous attempt.' }
 if ($plan.provisionMcp) { Assert-SampleMcpPat }
 
