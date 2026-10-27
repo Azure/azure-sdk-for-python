@@ -1007,3 +1007,63 @@ async def test_crash_after_claim_before_dispatch_recovers_canonical_input(tmp_pa
     finally:
         await replacement.shutdown()
         set_task_manager(None)
+
+
+@pytest.mark.asyncio
+async def test_other_manager_completed_backlog_rejects_stranded_local_callers(tmp_path, monkeypatch):
+    entered, finish, processed = (asyncio.Event() for _ in range(3))
+    observed = []
+
+    @multi_turn_task(name="repro-cross-manager-results", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        value = ctx.input["value"]
+        observed.append(value)
+        if value == 1:
+            entered.set()
+            await finish.wait()
+        if value == 3:
+            processed.set()
+        return value
+
+    provider = LocalFileTaskProvider(tmp_path)
+    original = _manager(provider)
+    replacement = None
+    set_task_manager(original)
+    try:
+        await original.startup()
+        first = await worker.start(task_id="sequence", input={"value": 1})
+        await asyncio.wait_for(entered.wait(), 5)
+        second = await worker.start(task_id="sequence", input={"value": 2})
+        third = await worker.start(task_id="sequence", input={"value": 3})
+        execution = original._active_tasks["sequence"].execution_task
+        fail_once = True
+        actual_drain = original._try_drain_steering
+
+        async def fail_original_drain(**kwargs):
+            nonlocal fail_once
+            if fail_once:
+                fail_once = False
+                raise OSError("handoff unavailable")
+            return await actual_drain(**kwargs)
+
+        monkeypatch.setattr(original, "_try_drain_steering", fail_original_drain)
+        finish.set()
+        assert await asyncio.wait_for(first.result(), 5) == 1
+        await asyncio.wait_for(execution, 5)
+        replacement = _manager(provider)
+        set_task_manager(replacement)
+        await replacement.startup()
+        await asyncio.wait_for(processed.wait(), 5)
+        assert observed == [1, 2, 3]
+        assert (await provider.get("sequence")).payload["steering"]["pending_inputs"] == []
+
+        await original._recover_stale_tasks()
+        for queued in (second, third):
+            with pytest.raises(TaskConflictError):
+                await asyncio.wait_for(queued.result(), 2)
+    finally:
+        finish.set()
+        await original.shutdown()
+        if replacement is not None:
+            await replacement.shutdown()
+        set_task_manager(None)

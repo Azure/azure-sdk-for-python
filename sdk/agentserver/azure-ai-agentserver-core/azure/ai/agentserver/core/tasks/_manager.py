@@ -3220,6 +3220,26 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             await self._recover_one_stale_task(task_info)
 
         await self._recover_queued_steering_tasks()
+        await self._reconcile_displaced_steering_futures()
+
+    async def _reconcile_displaced_steering_futures(self) -> None:
+        """Settle local callers whose queued inputs ran in another manager."""
+        for task_id in tuple(self._pending_steering_futures):
+            async with self._get_task_admission_lock(task_id):
+                try:
+                    info = await self._provider_get_tracked(task_id)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to reconcile queued callers for task %s", task_id, exc_info=True)
+                    continue
+                if info is None:
+                    _resolve_queued_steerers_on_terminal(
+                        self._pending_steering_futures, task_id, current_status="completed"
+                    )
+                    continue
+                steering = (info.payload or {}).get("steering") or {}
+                if info.status == "in_progress" and info.lease and info.lease.instance_id != self._instance_id:
+                    steering = {**steering, "active_input_id": None}
+                self._reconcile_steering_futures(task_id, steering, info.status)
 
     async def _recover_one_stale_task(self, task_info: TaskInfo) -> None:  # pylint: disable=too-many-return-statements
         """Reclaim and dispatch one stale task under its admission lock.
