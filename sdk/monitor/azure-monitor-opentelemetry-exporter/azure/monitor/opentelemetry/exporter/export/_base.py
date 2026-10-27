@@ -120,13 +120,7 @@ class ExportResult(Enum):
 class BaseExporter:
     """Azure Monitor base exporter for OpenTelemetry."""
 
-    def __init__(
-        self,
-        *,
-        _route: Optional[tuple[str, bool]] = None,
-        _connection_string_parser: Optional[ConnectionStringParser] = None,
-        **kwargs: Any,
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """Azure Monitor base exporter for OpenTelemetry.
 
         :keyword str api_version: The service API version used. Defaults to latest.
@@ -137,15 +131,17 @@ class BaseExporter:
         :keyword int max_envelopes_per_second: Maximum number of telemetry envelopes sent per second. Acts as a client-side safety cap to prevent overloading shared ingestion infrastructure during telemetry bursts. Defaults to 10000. Set to 0 to disable rate limiting.
         :rtype: None
         """
+        route: Optional[tuple[str, bool]] = kwargs.pop("_route", None)
+        connection_string_parser: Optional[ConnectionStringParser] = kwargs.pop("_connection_string_parser", None)
         self._enable_multi_endpoint_routing = self._is_experimental_feature_enabled("multi_endpoint_routing")
-        self._route = _route
+        self._route = route
         self._route_exporters: Dict[tuple[str, bool], BaseExporter] = {}
         self._route_lock = threading.RLock()
         self._routing_shutdown = False
         self._route_retry_task: Optional[PeriodicTask] = None
         self._route_options = kwargs.copy()
         self._local_storage_enabled: Optional[bool] = None
-        parsed_connection_string = _connection_string_parser or ConnectionStringParser(
+        parsed_connection_string = connection_string_parser or ConnectionStringParser(
             kwargs.get("connection_string"), _allow_missing=self._enable_multi_endpoint_routing
         )
         self._connection_string_parser = parsed_connection_string
@@ -160,7 +156,7 @@ class BaseExporter:
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
         self._connection_string = parsed_connection_string._connection_string
-        self._endpoint = _route[0].rstrip("/") if _route is not None else parsed_connection_string.endpoint
+        self._endpoint = route[0].rstrip("/") if route is not None else parsed_connection_string.endpoint
         self._region = parsed_connection_string.region
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._aad_audience = parsed_connection_string.aad_audience
