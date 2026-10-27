@@ -28,7 +28,7 @@ BAGGAGE_HEADER = "x-ms-foundry-baggage"
 
 
 def model_headers(value: str) -> dict[str, str]:
-    return {SUBJECT_HEADER: value, BAGGAGE_HEADER: f"foundry.original_subject={quote(value, safe='')}"}
+    return {BAGGAGE_HEADER: f"foundry.original_subject={quote(value, safe='')}"}
 
 
 class TestOriginalSubject:
@@ -52,8 +52,13 @@ class TestOriginalSubject:
         }
         assert context.platform_headers() == {FOUNDRY_CALL_ID: "opaque-call"}
         copied = context.model_attribution_headers()
-        copied[SUBJECT_HEADER] = "changed"
-        assert context.model_attribution_headers()[SUBJECT_HEADER] == expected[SUBJECT_HEADER]
+        assert not any(name.lower().startswith(SUBJECT_HEADER) for name in copied)
+        assert unquote(copied[BAGGAGE_HEADER].split("=", 1)[1]) == expected[SUBJECT_HEADER]
+        copied[BAGGAGE_HEADER] = "changed"
+        assert (
+            context.model_attribution_headers()[BAGGAGE_HEADER]
+            == model_headers(expected[SUBJECT_HEADER])[BAGGAGE_HEADER]
+        )
 
     @pytest.mark.parametrize(
         "value,oid,tid,idtype",
@@ -147,6 +152,8 @@ class TestOriginalSubject:
             "X-MS-Original-Subject": "stale",
             "x-ms-original-subject": "also-stale",
             "X-MS-Original-Subject-Oid": "stale",
+            "X-MS-Original-Subject-Tid": "stale",
+            "X-MS-Original-Subject-Idtype": "stale",
             "X-AGENT-FOUNDRY-CALL-ID": "stale-call",
             "X-MS-Foundry-Baggage": (
                 "app=example,Foundry.Original_Subject=stale,"
@@ -171,10 +178,10 @@ class TestOriginalSubject:
         keys = [member.split("=", 1)[0].lower() for member in members]
         assert keys.count("foundry.original_subject") == int(present)
         assert not any(key.startswith("foundry.original_subject.") for key in keys)
-        assert all(name in {"Authorization", BAGGAGE_HEADER, SUBJECT_HEADER, FOUNDRY_CALL_ID} for name in result)
+        assert all(name in {"Authorization", BAGGAGE_HEADER, FOUNDRY_CALL_ID} for name in result)
+        assert not any(name.lower().startswith(SUBJECT_HEADER) for name in result)
         if present:
-            assert unquote(members[0].split("=", 1)[1]) == result[SUBJECT_HEADER]
-            assert FoundryOriginalSubject.from_headers(result) == context.original_subject
+            assert unquote(members[0].split("=", 1)[1]) == 'oid="current", tid="tenant", idtype="app"'
             assert result[FOUNDRY_CALL_ID] == "current-call"
         else:
             assert result == {"Authorization": "test-key", BAGGAGE_HEADER: ",".join(members[:3])}
@@ -244,8 +251,11 @@ class TestOriginalSubject:
                 context.model_attribution_headers()
         else:
             result = context.model_attribution_headers()
-            assert len(result[SUBJECT_HEADER]) == length
-            assert unquote(result[BAGGAGE_HEADER].split("=", 1)[1]) == result[SUBJECT_HEADER]
+            value = unquote(result[BAGGAGE_HEADER].split("=", 1)[1])
+            escaped_oid = oid.replace("\\", "\\\\").replace('"', '\\"')
+            assert len(value) == length
+            assert value == f'oid="{escaped_oid}", tid="tenant", idtype="user"'
+            assert not any(name.lower().startswith(SUBJECT_HEADER) for name in result)
 
     @pytest.mark.parametrize("length", [1024, 1025])
     def test_merged_baggage_transport_bound_without_mutating_headers(self, length: int) -> None:
@@ -288,8 +298,8 @@ class TestOriginalSubject:
         result = FoundryAgentRequestContext(original_subject=subject).model_attribution_headers()
         encoded = result[BAGGAGE_HEADER].split("=", 1)[1]
         assert "%252C" in encoded
-        assert unquote(encoded) == result[SUBJECT_HEADER]
-        assert FoundryOriginalSubject.from_headers({SUBJECT_HEADER: unquote(encoded)}) == subject
+        assert unquote(encoded) == r'oid="a%2C\\\",=b", tid="tenant", idtype="user"'
+        assert not any(name.lower().startswith(SUBJECT_HEADER) for name in result)
         assert len(result[BAGGAGE_HEADER].split(",")) == 1
 
     def test_typical_complete_tuple_fits_existing_carrier_limits(self) -> None:
@@ -327,9 +337,7 @@ class TestOriginalSubject:
 
         def receive(request: httpx.Request) -> httpx.Response:
             observed.append(request.headers.copy())
-            subject = FoundryOriginalSubject.from_headers(request.headers)
-            assert subject is not None and subject.oid is not None
-            oid = subject.oid
+            oid = request.headers[FOUNDRY_CALL_ID].removeprefix("call-")
             attempts[oid] = attempts.get(oid, 0) + 1
             return httpx.Response(503 if attempts[oid] == 1 else 200)
 
@@ -369,14 +377,12 @@ class TestOriginalSubject:
 
         assert attempts == {"alice": 2, "bob": 2}
         for headers in observed:
-            subject = FoundryOriginalSubject.from_headers(headers)
-            assert subject is not None
-            user = subject.oid
-            assert subject.tid == f"tenant-{user}"
+            user = headers[FOUNDRY_CALL_ID].removeprefix("call-")
             assert headers[FOUNDRY_CALL_ID] == f"call-{user}"
             baggage = headers[BAGGAGE_HEADER].split(",")
             assert baggage[1] == "application=shared"
-            assert unquote(baggage[0].split("=", 1)[1]) == headers[SUBJECT_HEADER]
+            assert unquote(baggage[0].split("=", 1)[1]) == f'oid="{user}", tid="tenant-{user}", idtype="user"'
+            assert not any(name.lower().startswith(SUBJECT_HEADER) for name in headers)
             assert headers["authorization"] == "Bearer model-agent-token"
             assert USER_ID not in headers
         assert get_request_context().original_subject is None

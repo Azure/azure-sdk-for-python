@@ -87,8 +87,10 @@ async def test_invoke_original_subject_is_available_during_body_iteration(stream
     @app.invoke_handler
     async def handler(_request):
         if stream:
+
             async def body():
                 yield json.dumps(get_request_context().model_attribution_headers())
+
             return StreamingResponse(body(), media_type="application/json")
         return JSONResponse(get_request_context().model_attribution_headers())
 
@@ -99,9 +101,9 @@ async def test_invoke_original_subject_is_available_during_body_iteration(stream
         response = await client.post("/invocations", headers={**subject, "x-agent-user-id": "state-key"})
         assert response.status_code == 200
         forwarded = response.json()
-        assert forwarded["x-ms-original-subject"] == subject["x-ms-original-subject"]
+        assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
         assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
-        assert len(forwarded) == 2
+        assert len(forwarded) == 1
         response = await client.post("/invocations")
         assert response.status_code == 200
         assert response.json() == {}
@@ -146,7 +148,7 @@ async def test_concurrent_invocations_keep_baggage_bound_to_each_body(stream):
             )
             assert response.status_code == 200
             forwarded = response.json()
-            assert forwarded["x-ms-original-subject"] == subject
+            assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
             assert forwarded["x-agent-foundry-call-id"] == f"call-{oid}"
             members = forwarded["x-ms-foundry-baggage"].split(",")
             assert members[1] == "application=shared"

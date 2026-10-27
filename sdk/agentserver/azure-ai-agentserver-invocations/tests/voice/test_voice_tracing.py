@@ -161,9 +161,9 @@ def test_voice_original_subject_is_invocation_local(path):
             websocket.send_json(_session_start_frame())
             assert websocket.receive_json()["type"] == "session.ready"
     assert len(observed) == 2
-    assert observed[0]["x-ms-original-subject"] == subject["x-ms-original-subject"]
+    assert not any(name.lower().startswith("x-ms-original-subject") for name in observed[0])
     assert unquote(observed[0]["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
-    assert len(observed[0]) == 2
+    assert len(observed[0]) == 1
     assert observed[1] == {}
     assert get_request_context().original_subject is None
 
@@ -200,9 +200,9 @@ def test_overlapping_voice_sessions_keep_subject_baggage_isolated(path):
             without_subject.send_json(_session_start_frame())
             assert without_subject.receive_json()["type"] == "session.ready"
     assert len(observed) == 3
-    assert {headers["x-ms-original-subject"] for headers in observed[:2]} == {alice, bob}
+    assert {unquote(headers["x-ms-foundry-baggage"].split("=", 1)[1]) for headers in observed[:2]} == {alice, bob}
     for headers in observed[:2]:
-        assert unquote(headers["x-ms-foundry-baggage"].split("=", 1)[1]) == headers["x-ms-original-subject"]
+        assert not any(name.lower().startswith("x-ms-original-subject") for name in headers)
     assert observed[2] == {}
     assert get_request_context().original_subject is None
 

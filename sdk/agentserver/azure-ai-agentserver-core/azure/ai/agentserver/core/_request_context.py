@@ -156,8 +156,9 @@ class FoundryAgentRequestContext:
 
         Existing headers and unrelated baggage are copied, not mutated. Reserved
         subject assertions are replaced case-insensitively, or removed when the
-        invocation has no subject. The baggage member contains the full quoted
-        dictionary, percent-encoded once, matching the standalone header.
+        invocation has no subject. The full quoted dictionary is emitted only
+        in one baggage member, percent-encoded once. Standalone subject headers
+        are inbound platform metadata and are not forwarded to the model.
 
         Partial, empty, HTTP-unsafe, or oversized tuples raise instead of silently
         becoming an unattributed model call. The quoted tuple is limited to 256
@@ -207,7 +208,6 @@ class FoundryAgentRequestContext:
         value = ", ".join(members)
         if len(value) > _MAX_ORIGINAL_SUBJECT_LENGTH:
             raise ValueError("Original-subject attribution requires a quoted tuple of at most 256 characters.")
-        result[_ORIGINAL_SUBJECT_HEADER] = value
         # Reserve attribution space before unrelated members can expand during normalization.
         baggage.insert(0, f"{_ORIGINAL_SUBJECT_BAGGAGE}={quote(value, safe='')}")
         merged_baggage = ",".join(baggage)

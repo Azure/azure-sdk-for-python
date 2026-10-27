@@ -68,16 +68,19 @@ async def test_original_subject_comes_from_headers_not_activity_payload(asgi_cli
     }
     async with asgi_client(app) as client:
         response = await client.post(
-            "/activity/messages", json=payload,
+            "/activity/messages",
+            json=payload,
             headers={**subject, "Authorization": "Bearer bot-token", "x-agent-user-id": "state-key"},
         )
         assert response.status_code == 200
         forwarded = response.json()
-        assert forwarded["x-ms-original-subject"] == subject["x-ms-original-subject"]
+        assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
         assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
-        assert len(forwarded) == 2
+        assert len(forwarded) == 1
         response = await client.post(
-            "/activity/messages", json=payload, headers={"Authorization": "Bearer bot-token"},
+            "/activity/messages",
+            json=payload,
+            headers={"Authorization": "Bearer bot-token"},
         )
         assert response.status_code == 200
         assert response.json() == {}

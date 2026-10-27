@@ -121,7 +121,7 @@ async def test_model_sdk_extra_headers_preserve_the_dictionary_and_independent_j
         reset_request_context(token)
 
     assert len(observed) == 1
-    assert observed[0].headers["x-ms-original-subject"] == subject_value
+    assert not any(name.lower().startswith("x-ms-original-subject") for name in observed[0].headers)
     baggage = observed[0].headers["x-ms-foundry-baggage"].split(",")
     assert baggage[1] == "application=example"
     assert unquote(baggage[0].split("=", 1)[1]) == subject_value
@@ -130,7 +130,6 @@ async def test_model_sdk_extra_headers_preserve_the_dictionary_and_independent_j
     assert observed[0].headers["x-example-context"] == independent_json
     assert observed[0].headers["authorization"] == "Bearer test-model-key"
     assert "x-agent-user-id" not in observed[0].headers
-    assert "x-ms-original-subject-oid" not in observed[0].headers
     assert get_request_context().original_subject is None
 
 
@@ -177,6 +176,9 @@ async def test_reused_model_sdk_isolates_concurrent_invocations_streams_and_retr
 
     existing = {
         "X-MS-Original-Subject": "stale",
+        "X-MS-Original-Subject-Oid": "stale",
+        "X-MS-Original-Subject-Tid": "stale",
+        "X-MS-Original-Subject-Idtype": "stale",
         "X-AGENT-FOUNDRY-CALL-ID": "stale-call",
         "X-MS-Foundry-Baggage": (
             "foundry.agent.name=example,Foundry.Original_Subject;stale=1,foundry.original_subject.oid=stale"
@@ -247,19 +249,19 @@ async def test_reused_model_sdk_isolates_concurrent_invocations_streams_and_retr
         assert headers["x-transport-default"] == "unchanged"
         assert headers["x-example-context"] == existing["x-example-context"]
         assert "x-agent-user-id" not in headers
-        assert not any(name.startswith("x-ms-original-subject-") for name in headers)
+        assert not any(name.lower().startswith("x-ms-original-subject") for name in headers)
         if invocation == "without-subject":
-            assert "x-ms-original-subject" not in headers
             assert "x-agent-foundry-call-id" not in headers
             assert headers["x-ms-foundry-baggage"] == "foundry.agent.name=example"
         else:
-            assert FoundryOriginalSubject.from_headers(headers) == subjects[invocation]
             assert headers["x-agent-foundry-call-id"] == f"call-{invocation}"
             members = headers["x-ms-foundry-baggage"].split(",")
             assert members[1] == "foundry.agent.name=example"
             assert len(members) == 2
             assert members[0].startswith("foundry.original_subject=")
-            assert unquote(members[0].split("=", 1)[1]) == headers["x-ms-original-subject"]
+            index = invocation.removeprefix("invocation-")
+            expected = rf'oid="subject-{index}%2C+;/\\\"", tid="tenant", idtype="{subjects[invocation].idtype}"'
+            assert unquote(members[0].split("=", 1)[1]) == expected
 
 
 def _build_capturing_client(
@@ -310,10 +312,13 @@ class TestStreamingRequestContext:
         )
         assert response.status_code == 200
         assert captured["model_headers"] == {
-            **subject,
             "x-agent-foundry-call-id": "call-current",
             "x-ms-foundry-baggage": "foundry.original_subject=" + quote(subject["x-ms-original-subject"], safe=""),
         }
+        assert (
+            unquote(captured["model_headers"]["x-ms-foundry-baggage"].split("=", 1)[1])
+            == subject["x-ms-original-subject"]
+        )
         assert captured["platform_headers"] == {"x-agent-foundry-call-id": "call-current"}
         assert captured["user_id"] == "state-key"
         assert get_request_context().original_subject is None

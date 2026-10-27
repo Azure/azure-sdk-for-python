@@ -61,9 +61,9 @@ def test_ws_original_subject_is_invocation_local():
     client = TestClient(app)
     with client.websocket_connect("/invocations_ws", headers=dict(subject)) as websocket:
         forwarded = websocket.receive_json()
-        assert forwarded["x-ms-original-subject"] == subject["x-ms-original-subject"]
+        assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
         assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
-        assert len(forwarded) == 2
+        assert len(forwarded) == 1
     with client.websocket_connect("/invocations_ws") as websocket:
         assert websocket.receive_json() == {}
     assert get_request_context().original_subject is None
@@ -86,7 +86,7 @@ def test_overlapping_websockets_keep_subject_baggage_isolated():
                 second.send_text("ready")
                 for websocket, subject in ((first, alice), (second, bob)):
                     forwarded = websocket.receive_json()
-                    assert forwarded["x-ms-original-subject"] == subject
+                    assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
                     assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject
     assert get_request_context().original_subject is None
 
