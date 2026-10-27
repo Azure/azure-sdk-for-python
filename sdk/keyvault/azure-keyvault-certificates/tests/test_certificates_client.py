@@ -226,9 +226,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @CertificatesClientPreparer()
     @recorded_by_proxy
     def test_create_certificate_with_platform_managed(self, client, **kwargs):
-        # PlatformManaged is only available on the 2026-03-01-preview API and is for
-        # Azure Key Vault internal usage. Verifies the SDK sends the request shape the
-        # service accepts and round-trips the policy back. We intentionally do not wait
+        # PlatformManaged is for Azure Key Vault internal usage. Verifies the SDK sends the
+        # request shape the service accepts and round-trips the policy back. We intentionally do not wait
         # for completion: OneCert backend issuance is asynchronous service behavior, not
         # SDK behavior, and the issuer registration is not always available in test
         # environments.

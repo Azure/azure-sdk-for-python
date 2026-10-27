@@ -18,6 +18,12 @@
 
 - Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
 
+### Breaking Changes
+
+> These changes do not impact stable versions such as 4.11.3. Only code written against 4.12.0 beta versions may be affected.
+
+- Removed `ApiVersion.V2026_03_01_PREVIEW`. Use `ApiVersion.V2026_04_01` for the stable service API. Custom `api_version` string overrides remain accepted.
+
 ### Other Changes
 
 - Regenerated the package with stable Key Vault API version `2026-04-01`.
