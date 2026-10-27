@@ -17,8 +17,6 @@ RRF_CONSTANT = 60
 _FULL_TEXT_SCORE_SCOPE_KEY = "fullTextScoreScope"
 _FULL_TEXT_SCORE_SCOPE_LOCAL = "Local"
 _FULL_TEXT_SCORE_SCOPE_DEFAULT = "Global"
-_USE_COMPETITION_RANKING_KEY = "hybridSearchUseCompetitionRanking"
-_USE_COMPETITION_RANKING_ENV = "AZURE_COSMOS_HYBRID_SEARCH_USE_COMPETITION_RANKING"
 
 
 class _Placeholders:
@@ -67,10 +65,11 @@ def _compute_ranks(component_scores, use_competition_ranking=False):
     return ranks
 
 
-def _use_competition_ranking(options):
-    if _USE_COMPETITION_RANKING_KEY in options:
-        return options[_USE_COMPETITION_RANKING_KEY]
-    return os.environ.get(_USE_COMPETITION_RANKING_ENV, "").strip().lower() == "true"
+def _use_competition_ranking():
+    return os.environ.get(
+        Constants.HS_USE_COMPETITION_RANKING_CONFIG,
+        Constants.HS_USE_COMPETITION_RANKING_CONFIG_DEFAULT,
+    ).strip().lower() == "true"
 
 
 def _get_document_rid(rid):
@@ -247,7 +246,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 else getattr(query_execution_info, "parameters", None)
             )
         self._hybrid_search_query_info = hybrid_search_query_info
-        self._use_competition_ranking = _use_competition_ranking(options)
+        self._use_competition_ranking = _use_competition_ranking()
         self._final_results = []
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None

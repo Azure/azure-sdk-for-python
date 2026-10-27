@@ -10,6 +10,7 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 
 from azure.cosmos.aio import CosmosClient  # noqa: F401 - needed to resolve circular imports
+from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._execution_context import hybrid_search_aggregator as sync_aggregator
 from azure.cosmos._execution_context.aio import hybrid_search_aggregator as async_aggregator
 from azure.cosmos._execution_context.hybrid_search_aggregator import (
@@ -17,8 +18,6 @@ from azure.cosmos._execution_context.hybrid_search_aggregator import (
     _compute_rrf_scores,
     _get_document_rid,
     _rank_results,
-    _USE_COMPETITION_RANKING_ENV,
-    _USE_COMPETITION_RANKING_KEY,
 )
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -127,7 +126,7 @@ def test_final_rrf_ties_are_numeric_rid_descending(competition, expected):
 @pytest.mark.asyncio
 async def test_query_snapshots_ranking_mode_and_preserves_dedup_payload_and_window(module, competition, monkeypatch):
     is_async = module is async_aggregator
-    monkeypatch.setenv(_USE_COMPETITION_RANKING_ENV, "TrUe" if competition else "false")
+    monkeypatch.setenv(Constants.HS_USE_COMPETITION_RANKING_CONFIG, "TrUe" if competition else "false")
     info = {
         "requiresGlobalStatistics": False,
         "componentQueryInfos": [
@@ -150,7 +149,7 @@ async def test_query_snapshots_ranking_mode_and_preserves_dedup_payload_and_wind
     context = module._HybridSearchContextAggregator(client, "colls/test", {}, None, info, None, None)
     context._get_target_partition_key_range = AsyncMock(return_value=[{}]) if is_async else Mock(return_value=[{}])
     # Changing the environment after query initialization must not change this query's mode.
-    monkeypatch.setenv(_USE_COMPETITION_RANKING_ENV, "false" if competition else "true")
+    monkeypatch.setenv(Constants.HS_USE_COMPETITION_RANKING_CONFIG, "false" if competition else "true")
     assert context._use_competition_ranking is competition
     if is_async:
         await context._run_hybrid_search()
@@ -190,8 +189,8 @@ async def test_query_uses_plan_component_count_for_empty_scores(module, second_s
     ]
     monkeypatch.setattr(module.document_producer, "_DocumentProducer", Mock(side_effect=producers))
     client = SimpleNamespace(_routing_map_provider=None)
-    options = {_USE_COMPETITION_RANKING_KEY: False}
-    context = module._HybridSearchContextAggregator(client, "colls/test", options, None, info, None, None)
+    monkeypatch.delenv(Constants.HS_USE_COMPETITION_RANKING_CONFIG, raising=False)
+    context = module._HybridSearchContextAggregator(client, "colls/test", {}, None, info, None, None)
     context._get_target_partition_key_range = AsyncMock(return_value=[{}]) if is_async else Mock(return_value=[{}])
     if is_async:
         await context._run_hybrid_search()
@@ -209,14 +208,15 @@ async def test_query_uses_plan_component_count_for_empty_scores(module, second_s
 
 
 @pytest.mark.parametrize("module", [sync_aggregator, async_aggregator], ids=["sync", "async"])
-def test_ranking_option_overrides_environment_without_mutating_options(module, monkeypatch):
+def test_ranking_mode_uses_environment_not_options(module, monkeypatch):
     client = SimpleNamespace(_routing_map_provider=None)
-    monkeypatch.delenv(_USE_COMPETITION_RANKING_ENV, raising=False)
-    default = module._HybridSearchContextAggregator(client, "colls/test", {}, None, {}, None, None)
+    monkeypatch.delenv(Constants.HS_USE_COMPETITION_RANKING_CONFIG, raising=False)
+    options = {"hybridSearchUseCompetitionRanking": True}
+    default = module._HybridSearchContextAggregator(client, "colls/test", options, None, {}, None, None)
     assert default._use_competition_ranking is False
-    for value in (True, False):
-        monkeypatch.setenv(_USE_COMPETITION_RANKING_ENV, str(not value))
-        options = {_USE_COMPETITION_RANKING_KEY: value}
+    for value, expected in (("TrUe", True), ("false", False), ("1", False), ("", False)):
+        monkeypatch.setenv(Constants.HS_USE_COMPETITION_RANKING_CONFIG, value)
+        options = {"hybridSearchUseCompetitionRanking": not expected}
         context = module._HybridSearchContextAggregator(client, "colls/test", options, None, {}, None, None)
-        assert context._use_competition_ranking is value
-        assert options == {_USE_COMPETITION_RANKING_KEY: value}
+        assert context._use_competition_ranking is expected
+        assert options == {"hybridSearchUseCompetitionRanking": not expected}

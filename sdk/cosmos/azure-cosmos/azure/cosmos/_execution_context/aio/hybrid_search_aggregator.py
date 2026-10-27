@@ -63,7 +63,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 else getattr(query_execution_info, "parameters", None)
             )
         self._hybrid_search_query_info = hybrid_search_query_info
-        self._use_competition_ranking = _use_competition_ranking(options)
+        self._use_competition_ranking = _use_competition_ranking()
         self._final_results = []
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
