@@ -166,6 +166,8 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
             "Unexpected error getting stats connection string for region '%s': %s", target_region, str(ex)
         )
         return None
+
+
 def _get_additional_observations(metric_name: str, options: CallbackOptions) -> List[Observation]:
     """Return observations contributed by extra callbacks registered on :class:`StatsbeatManager`.
 
