@@ -2622,11 +2622,26 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             task_info = await self._provider_get_tracked(task_id)
             if task_info is None:
                 return None
+            steering_state = (task_info.payload or {}).get("steering") or {}
+            if (
+                task_info.status == "in_progress"
+                and task_info.lease is not None
+                and task_info.lease.instance_id == self._instance_id
+            ):
+                logger.warning("Turn suspension has not committed for task %s; retaining queued callers", task_id)
+                return None
+            if (
+                task_info.status == "suspended"
+                and task_info.suspension_reason == "run_completion"
+                and self._completed_handoffs.get(task_id) is None
+                and steering_state.get("pending_inputs")
+            ):
+                logger.warning("Turn suspension outcome is uncertain for task %s; deferring queued claim", task_id)
+                return None
             if (
                 task_info.status != "suspended"
                 or task_info.suspension_reason != "run_completion"
-                or ((task_info.payload or {}).get("steering") or {}).get("handoff_id")
-                != self._completed_handoffs.get(task_id)
+                or steering_state.get("handoff_id") != self._completed_handoffs.get(task_id)
             ):
                 _resolve_queued_steerers_on_terminal(
                     self._pending_steering_futures, task_id, current_status=task_info.status
@@ -2834,6 +2849,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if steering_patch:
             payload_patch["steering"] = steering_patch
 
+        self._completed_handoffs.pop(task_id, None)
         try:
             await self._terminal_write_locked(
                 task_id,
@@ -2978,6 +2994,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if steering_patch:
             payload_patch["steering"] = steering_patch
 
+        self._completed_handoffs.pop(task_id, None)
         try:
             await self._terminal_write_locked(
                 task_id,

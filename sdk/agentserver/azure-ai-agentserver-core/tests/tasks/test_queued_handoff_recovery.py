@@ -4,13 +4,13 @@
 """Failure boundaries for queued multi-turn input recovery."""
 
 import asyncio
+from dataclasses import dataclass
 from datetime import timedelta
 
 import pytest
-from pydantic import BaseModel
 
 from azure.ai.agentserver.core.tasks import RetryPolicy, TaskConflictError, TaskContext, TaskDeferred, multi_turn_task
-from azure.ai.agentserver.core.tasks._exceptions import TaskCancelled
+from azure.ai.agentserver.core.tasks._exceptions import TaskCancelled, TaskFailed
 from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.tasks._manager import TaskManager, set_task_manager
 from azure.ai.agentserver.core.tasks._models import TaskCreateRequest, TaskPatchRequest
@@ -382,8 +382,12 @@ async def test_unknown_removal_response_does_not_shift_queued_callers(tmp_path, 
         set_task_manager(None)
 
 
-class TurnInput(BaseModel):
+@dataclass
+class TurnInput:
     value: int
+
+    def model_dump(self) -> dict[str, int]:
+        return {"value": self.value}
 
 
 @pytest.mark.asyncio
@@ -1066,4 +1070,60 @@ async def test_other_manager_completed_backlog_rejects_stranded_local_callers(tm
         await original.shutdown()
         if replacement is not None:
             await replacement.shutdown()
+        set_task_manager(None)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("committed", [False, True], ids=["uncommitted", "lost-reply"])
+async def test_failed_suspension_keeps_admitted_caller_binding(tmp_path, monkeypatch, committed):
+    entered, finish, processed = (asyncio.Event() for _ in range(3))
+
+    @multi_turn_task(name="repro-failed-suspend", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        value = ctx.input["value"]
+        if value == 1 and ctx.entry_mode == "fresh":
+            entered.set()
+            await finish.wait()
+            raise OSError("original handler failed")
+        if value == 2:
+            processed.set()
+        return value
+
+    provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    set_task_manager(manager)
+    try:
+        await manager.startup()
+        first = await worker.start(task_id="sequence", input={"value": 1})
+        await asyncio.wait_for(entered.wait(), 5)
+        queued = await worker.start(task_id="sequence", input={"value": 2})
+        execution = manager._active_tasks["sequence"].execution_task
+        original_update = provider.update
+        fail_once = True
+
+        async def unknown_suspension(task_id, patch):
+            nonlocal fail_once
+            if patch.status == "suspended" and fail_once:
+                fail_once = False
+                if committed:
+                    await original_update(task_id, patch)
+                raise OSError("suspend reply lost" if committed else "suspend not committed")
+            return await original_update(task_id, patch)
+
+        monkeypatch.setattr(provider, "update", unknown_suspension)
+        finish.set()
+        with pytest.raises(TaskFailed):
+            await asyncio.wait_for(first.result(), 5)
+        await asyncio.wait_for(execution, 5)
+        saved = await provider.get("sequence")
+        assert saved.status == ("suspended" if committed else "in_progress")
+        assert saved.payload["steering"]["pending_inputs"] == [{"value": 2}]
+        assert not queued._result_future.done()
+
+        await manager._recover_stale_tasks()
+        await asyncio.wait_for(processed.wait(), 5)
+        assert await asyncio.wait_for(queued.result(), 5) == 2
+    finally:
+        finish.set()
+        await manager.shutdown()
         set_task_manager(None)

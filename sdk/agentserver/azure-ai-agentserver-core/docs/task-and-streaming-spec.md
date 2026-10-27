@@ -1641,6 +1641,10 @@ promotes exactly the FIFO head into the canonical input, and dispatches
 that turn with `entry_mode="resumed"` without replaying the completed
 turn. A competing claim abandons its stale ETag; ordinary in-progress
 recovery handles a claim whose write committed but reply was lost.
+If the preceding terminal suspension write did not commit, or its
+reply was lost, the live drain retains admitted caller bindings and
+defers the claim to recovery instead of rejecting inputs that remain
+persisted.
 
 ---
 
