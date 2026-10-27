@@ -43,6 +43,9 @@ extends:
                   versionSpec: '${{ parameters.PythonVersion }}'
 
               - pwsh: |
+                  $ErrorActionPreference = 'Stop'
+                  $PSNativeCommandUseErrorActionPreference = $true
+                  python "$(Build.SourcesDirectory)/eng/tools/azure-sdk-tools/ci_tools/bootstrap.py"
                   python -m pip install -r eng/ci_tools.txt
                 displayName: 'Install Python Tools'
                 condition: succeededOrFailed()
@@ -52,6 +55,10 @@ extends:
                   python -m build  --outdir $(Build.ArtifactStagingDirectory)
                 displayName: 'Build ${{ parameters.PackageName }}'
                 workingDirectory: $(Build.SourcesDirectory)/${{ parameters.PackagePath }}
+
+              - pwsh: |
+                  Copy-Item -LiteralPath "$(Build.SourcesDirectory)/eng/tools/azure-sdk-tools/ci_tools/bootstrap.py" -Destination "$(Build.ArtifactStagingDirectory)/bootstrap.py" -ErrorAction Stop
+                displayName: Stage installer bootstrap
 
               - task: 1ES.PublishPipelineArtifact@1
                 inputs:
@@ -94,9 +101,12 @@ extends:
             - checkout: none
             - download: current
             - task: UsePythonVersion@0
+              inputs:
+                versionSpec: '3.11'
 
             - script: |
                 set -e
+                python "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/bootstrap.py"
                 python -m pip install twine
               displayName: Install Twine
 

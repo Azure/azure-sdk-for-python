@@ -25,6 +25,8 @@ param (
   $SeedDirectory
 )
 
+$ErrorActionPreference = 'Stop'
+$bootstrap = "$PSScriptRoot/../tools/azure-sdk-tools/ci_tools/bootstrap.py"
 $attempts = 0
 
 # virtualenv --download shells out to pip, which reads PIP_INDEX_URL. Prefer whatever the pipeline
@@ -34,6 +36,11 @@ if (-not $env:PIP_INDEX_URL) {
   Write-Host "PIP_INDEX_URL was not set; defaulting to the public azure-sdk-for-python feed."
 } else {
   Write-Host "PIP_INDEX_URL is already set; preserving existing value."
+}
+
+python $bootstrap
+if ($LASTEXITCODE -ne 0) {
+  throw "Unable to bootstrap pip before downloading virtualenv seed wheels."
 }
 
 while ($attempts -lt 3) {
@@ -52,4 +59,13 @@ while ($attempts -lt 3) {
 if ($LASTEXITCODE -ne 0) {
   Write-Error "Unable to successfully populate an app data directory."
   exit $LASTEXITCODE
+}
+
+$venvPython = Join-Path $SeedDirectory "Scripts/python.exe"
+if (!(Test-Path $venvPython)) {
+  $venvPython = Join-Path $SeedDirectory "bin/python"
+}
+python $bootstrap --python $venvPython
+if ($LASTEXITCODE -ne 0) {
+  throw "Unable to bootstrap pip in the virtualenv seed environment."
 }

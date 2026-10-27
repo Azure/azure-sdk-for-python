@@ -11,10 +11,8 @@ from ci_tools.variables import str_to_bool
 #         common_root: uamqp
 #         in_batch: true
 #         conda_py_versions:
-#         - "38"
-#         - "39"
-#         - "310"
 #         - "311"
+#         - "312"
 #         checkout:
 #         - package: uamqp
 #         download_uri: https://files.pythonhosted.org/packages/0b/d8/fc24d95e6f6c80851ae6738c78da081cd535c924b02c5a4928b108b9ed42/uamqp-1.6.5.tar.gz

@@ -1,5 +1,8 @@
 steps:
   - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      python "$(Build.SourcesDirectory)/eng/tools/azure-sdk-tools/ci_tools/bootstrap.py"
       Write-Host "python -m pip install -r eng/scripts/docs/py2docfx_requirements.txt"
       python -m pip install -r eng/scripts/docs/py2docfx_requirements.txt
       # After install py2docfx,
