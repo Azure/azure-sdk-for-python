@@ -153,9 +153,12 @@ def configure_observability(
         instrumentation. Defaults to False.
     :paramtype enable_sensitive_data: bool
     :keyword instrumentation_options: Per-library OpenTelemetry instrumentation
-        options. Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation
-        are disabled by default; set a library's ``enabled`` option to ``True``
-        to enable it.
+        options. HTTPX, Requests, urllib, and urllib3 instrumentation are
+        disabled by default. Azure SDK dependency tracing is also disabled by
+        default for Azure Monitor, but is enabled automatically for plain OTLP
+        export. Set ``{"azure_sdk": {"enabled": False}}`` to opt out of that
+        plain-OTLP default; ``OTEL_PYTHON_DISABLED_INSTRUMENTATIONS=azure_sdk``
+        also disables it unless an explicit ``enabled`` option is supplied.
     :paramtype instrumentation_options: dict[str, dict[str, Any]] or None
     """
     # Console logging on the root logger so user logs are also visible.
