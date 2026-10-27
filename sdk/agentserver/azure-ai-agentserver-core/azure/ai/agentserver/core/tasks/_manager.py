@@ -189,7 +189,7 @@ def _parse_turn_started_at(value: Any) -> float | None:
 
 
 def _resolve_queued_steerers_on_terminal(
-    pending_steering_futures: dict[str, list["asyncio.Future[Any]"]],
+    pending_steering_futures: dict[str, list["asyncio.Future[Any] | None"]],
     task_id: str,
     *,
     current_status: str,
@@ -208,7 +208,7 @@ def _resolve_queued_steerers_on_terminal(
 
     :param pending_steering_futures: Per-task list of pending steerer
         futures (mutated in-place — emptied for the given ``task_id``).
-    :type pending_steering_futures: dict[str, list[asyncio.Future[Any]]]
+    :type pending_steering_futures: dict[str, list[asyncio.Future[Any] | None]]
     :param task_id: The task whose queued steerers should be resolved.
     :type task_id: str
     :keyword current_status: Status string to carry on
@@ -219,7 +219,7 @@ def _resolve_queued_steerers_on_terminal(
 
     queued = pending_steering_futures.pop(task_id, [])
     for fut in queued:
-        if not fut.done():
+        if fut is not None and not fut.done():
             fut.set_exception(TaskConflictError(task_id, current_status))
 
 
@@ -471,7 +471,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._shutdown_event = shutdown_event or asyncio.Event()
         self._shutdown_grace_seconds = shutdown_grace_seconds
         self._active_generation_future: dict[str, asyncio.Future[Any]] = {}
-        self._pending_steering_futures: dict[str, list[asyncio.Future[Any]]] = {}
+        self._pending_steering_futures: dict[str, list[asyncio.Future[Any] | None]] = {}
         self._task_admission_locks: WeakValueDictionary[str, asyncio.Lock] = WeakValueDictionary()
         #   Layer 2: periodic recovery scan task. Created
         # at startup() time; cancelled at shutdown().
@@ -677,31 +677,38 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 raise RuntimeError("Task list did not converge after retryable conflict") from exc
             raise translated from exc
 
-    def _register_steering_future(self, task_id: str) -> asyncio.Future[Any]:
+    def _register_steering_future(self, task_id: str, pending_count: int) -> asyncio.Future[Any]:
         """Create and register a future for a queued steering input.
 
         Must be called BEFORE ``_append_steering_input()`` to avoid a race
         where the drain pops the queue before the future exists.
+        Recovered inputs and committed appends whose callers were cancelled
+        have no local future; their slots remain as ``None``.
 
         :param task_id: The task identifier.
         :type task_id: str
+        :param pending_count: Number of inputs already queued in the store.
+        :type pending_count: int
         :return: The registered future.
         :rtype: asyncio.Future[Any]
         """
         loop = asyncio.get_running_loop()
         future: asyncio.Future[Any] = loop.create_future()
-        if task_id not in self._pending_steering_futures:
-            self._pending_steering_futures[task_id] = []
-        self._pending_steering_futures[task_id].append(future)
+        pending = self._pending_steering_futures.setdefault(task_id, [])
+        while len(pending) > pending_count and pending[-1] is None:
+            pending.pop()
+        if len(pending) > pending_count:
+            detail = f"Local steering futures exceed the persisted queue for task {task_id!r}"
+            raise RuntimeError(detail)
+        pending.extend([None] * (pending_count - len(pending)))
+        pending.append(future)
         return future
 
-    async def _cancel_queued_steering_input(  # pylint: disable=unused-argument
+    async def _cancel_queued_steering_input(
         self,
         *,
         task_id: str,
         future: asyncio.Future[Any],
-        input_id: str | None,
-        input_val: Any,
     ) -> None:
         """Remove a queued steering input from the chain's pending queue.
 
@@ -714,81 +721,55 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         :keyword task_id: The chain task identifier.
         :keyword future: The queued steerer's result_future.
-        :keyword input_id: The input_id of the queued slot (used for the
-            future-list cleanup; the queue entry itself is identified by
-            ``input_val``).
-        :keyword input_val: The raw queued value used to identify which
-            ``pending_inputs`` entry to remove.
         """
         from ._attachments import _is_ref, _ref_key  # pylint: disable=import-outside-toplevel
         from ._exceptions import TaskCancelled  # pylint: disable=import-outside-toplevel
 
         async with self._get_task_admission_lock(task_id), self._get_task_write_lock(task_id):
-            try:
-                task_info = await self._provider_get_tracked(task_id)
-            except Exception:  # pylint: disable=broad-exception-caught
-                task_info = None
-            if task_info is None or not task_info.payload:
-                # Chain already gone — just resolve the future.
+            pending_list = self._pending_steering_futures.get(task_id, [])
+            if future not in pending_list:
                 if not future.done():
                     future.set_exception(TaskCancelled())
+                return
+            index = pending_list.index(future)
+
+            def finish_cancel() -> None:
+                pending_list.pop(index)
+                if not pending_list:
+                    self._pending_steering_futures.pop(task_id, None)
+                if not future.done():
+                    future.set_exception(TaskCancelled())
+
+            task_info = await self._provider_get_tracked(task_id)
+            if task_info is None or not task_info.payload:
+                finish_cancel()
                 return
             steering = dict(task_info.payload.get("steering") or {})
             pending = list(steering.get("pending_inputs") or [])
             attachments_patch: dict[str, Any] = {}
-            # Drop the first queue entry whose raw value matches ``input_val``.
-            removed = False
-            new_pending: list[Any] = []
-            for entry in pending:
-                if not removed:
-                    raw = entry
-                    if _is_ref(entry):
-                        # For ref-shaped entries, resolve via attachment to
-                        # compare against input_val. If the attachment is
-                        # missing, fall back to ref identity (unlikely).
-                        key = _ref_key(entry)
-                        raw = (task_info.attachments or {}).get(key, entry)
-                    if raw == input_val:
-                        removed = True
-                        if _is_ref(entry):
-                            attachments_patch[_ref_key(entry)] = None
-                        continue
-                new_pending.append(entry)
-            if not removed:
-                # Queue entry already drained or never landed; just resolve.
-                if not future.done():
-                    future.set_exception(TaskCancelled())
+            if index >= len(pending):
+                finish_cancel()
                 return
-            steering["pending_inputs"] = new_pending
-            steering["cancel_requested"] = len(new_pending) > 0
+            entry = pending.pop(index)
+            if _is_ref(entry):
+                attachments_patch[_ref_key(entry)] = None
+            steering["pending_inputs"] = pending
+            steering["cancel_requested"] = bool(pending)
             payload_patch: dict[str, Any] = {"steering": steering}
-            try:
-                # Spec 031 / FR-005a+b: the outer lock is already held, so use
-                # the lock-held update primitive (avoids re-entrant lock
-                # acquisition) which carries the tracked ``if_match`` — no blind
-                # writes (SOT §25.1). ``task_info`` was read inside this same
-                # lock above, so the tracked etag is current.
-                await self._provider_update_lock_held(
-                    task_id,
-                    TaskPatchRequest(
-                        payload=payload_patch,
-                        attachments=attachments_patch or None,
-                        **self._lease_ext_kwargs(task_id),
-                    ),
-                )
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Failed to remove queued steering input from task %s; "
-                    "future will still be resolved with TaskCancelled",
-                    task_id,
-                    exc_info=True,
-                )
-        # Remove the future from the registered pending list and resolve it.
-        pending_list = self._pending_steering_futures.get(task_id) or []
-        if future in pending_list:
-            pending_list.remove(future)
-        if not future.done():
-            future.set_exception(TaskCancelled())
+            lease_kwargs: dict[str, Any] = {}
+            if task_info.status == "in_progress":
+                lease_kwargs = self._lease_ext_kwargs(task_id)
+            updated = await self._provider_update_lock_held(
+                task_id,
+                TaskPatchRequest(
+                    payload=payload_patch,
+                    attachments=attachments_patch or None,
+                    **lease_kwargs,
+                ),
+            )
+            if updated is None:
+                raise TaskNotFound(task_id)
+            finish_cancel()
 
     async def startup(self) -> None:
         """Initialize the manager and recover stale tasks.
@@ -1286,6 +1267,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     or ``None`` if not active / terminal / evicted.
                 :rtype: TaskRun[Any] | None
         """
+        async with self._get_task_admission_lock(task_id):
+            return await self._get_active_run_under_admission(task_id)
+
+    async def _get_active_run_under_admission(self, task_id: str) -> TaskRun[Any] | None:
         # Fast path: locally-tracked active execution.
         active = self._active_tasks.get(task_id)
         if active is not None:
@@ -1616,7 +1601,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         loop = asyncio.get_running_loop()
         steering_futures = self._pending_steering_futures.get(task_id, [])
-        result_future = steering_futures.pop(0) if _resume_queued and steering_futures else loop.create_future()
+        queued_future = steering_futures.pop(0) if _resume_queued and steering_futures else None
+        result_future = queued_future if queued_future is not None else loop.create_future()
         if _resume_queued:
             self._active_generation_future[task_id] = result_future
 

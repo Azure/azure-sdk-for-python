@@ -999,7 +999,9 @@ class Task(Generic[Input, Output]):
         :rtype: TaskRun[Output]
         """
         # pylint: disable=protected-access
-        future = manager._register_steering_future(task_id)
+        steering = (existing.payload or {}).get("steering") or {}
+        pending_count = len(steering.get("pending_inputs") or [])
+        future = manager._register_steering_future(task_id, pending_count)
         try:
             await self._append_steering_input(
                 manager,
@@ -1012,14 +1014,15 @@ class Task(Generic[Input, Output]):
         except BaseException:
             pending = manager._pending_steering_futures.get(task_id, [])
             if future in pending:
-                pending.remove(future)
+                # The append may have committed before its response was cancelled.
+                pending[pending.index(future)] = None
             future.cancel()
             raise
         active = manager._active_tasks.get(task_id)
         if active:
             active.context.cancel.set()
         # pylint: enable=protected-access
-        return self._create_steering_ack_run(manager, task_id, future, input_id=input_id, input_val=input_val)
+        return self._create_steering_ack_run(manager, task_id, future, input_id=input_id)
 
     def _create_steering_ack_run(
         self,
@@ -1027,7 +1030,6 @@ class Task(Generic[Input, Output]):
         task_id: str,
         future: Any,
         input_id: str | None = None,
-        input_val: Any = None,
     ) -> TaskRun[Output]:
         """Create a TaskRun for a queued steering input.
 
@@ -1039,9 +1041,6 @@ class Task(Generic[Input, Output]):
         :type future: Any
         :param input_id: The input_id stamped on the queued input (if any).
         :type input_id: str | None
-        :param input_val: The raw queued input value (used to identify the
-            slot when ``cancel()`` is invoked on the returned handle).
-        :type input_val: Any
         :return: A :class:`TaskRun` whose result resolves with the queued turn.
         :rtype: TaskRun[Output]
         """
@@ -1050,8 +1049,6 @@ class Task(Generic[Input, Output]):
             await manager._cancel_queued_steering_input(  # pylint: disable=protected-access
                 task_id=task_id,
                 future=future,
-                input_id=input_id,
-                input_val=input_val,
             )
 
         return TaskRun(
@@ -1818,7 +1815,7 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
         # 2. Resolve all queued steerer futures with TaskCancelled.
         pending = getattr(mgr, "_pending_steering_futures", {}).pop(task_id, [])
         for queued_fut in pending:
-            if not queued_fut.done():
+            if queued_fut is not None and not queued_fut.done():
                 queued_fut.set_exception(TaskCancelled())
 
         # 3. Force-delete the record (idempotent — only swallow the

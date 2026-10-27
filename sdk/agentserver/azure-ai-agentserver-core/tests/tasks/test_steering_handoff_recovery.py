@@ -19,6 +19,7 @@ from azure.ai.agentserver.core.tasks._attachments import (
     _make_ref,
     _read_input_value,
 )
+from azure.ai.agentserver.core.tasks._exceptions import TaskCancelled
 from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.tasks._manager import TaskManager, set_task_manager
 from azure.ai.agentserver.core.tasks._models import TaskCreateRequest, TaskPatchRequest
@@ -592,3 +593,212 @@ async def test_raced_queue_append_is_not_overwritten(tmp_path, monkeypatch):
         assert observed == [{"value": 2}, {"value": 3}]
     finally:
         await manager.shutdown()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("committed_before_cancel", [False, True], ids=["before-commit", "after-commit"])
+async def test_cancelled_append_reply_keeps_committed_queue_slot(tmp_path, monkeypatch, committed_before_cancel):
+    entered, finish, paused, reply = (asyncio.Event() for _ in range(4))
+    observed = []
+
+    @multi_turn_task(name="handoff", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        value = ctx.input["value"]
+        observed.append(value)
+        if value == 1:
+            entered.set()
+            await finish.wait()
+        return value
+
+    provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    set_task_manager(manager)
+    try:
+        await manager.startup()
+        first = await worker.start(task_id="chain", input={"value": 1})
+        await asyncio.wait_for(entered.wait(), 5)
+        update = provider.update
+        delayed = True
+
+        async def delayed_append(task_id, patch):
+            nonlocal delayed
+            if delayed and len(((patch.payload or {}).get("steering") or {}).get("pending_inputs") or []) == 1:
+                delayed = False
+                if not committed_before_cancel:
+                    paused.set()
+                    await reply.wait()
+                result = await update(task_id, patch)
+                if committed_before_cancel:
+                    paused.set()
+                await reply.wait()
+                return result
+            return await update(task_id, patch)
+
+        monkeypatch.setattr(provider, "update", delayed_append)
+        append = asyncio.create_task(worker.start(task_id="chain", input={"value": 2}))
+        await asyncio.wait_for(paused.wait(), 5)
+        append.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await append
+        reply.set()
+
+        third = await worker.start(task_id="chain", input={"value": 3})
+        finish.set()
+        assert await asyncio.wait_for(first.result(), 5) == 1
+        assert await asyncio.wait_for(third.result(), 5) == 3
+        assert observed == ([1, 2, 3] if committed_before_cancel else [1, 3])
+    finally:
+        reply.set()
+        finish.set()
+        await manager.shutdown()
+        set_task_manager(None)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("cancel_queued", [False, True])
+async def test_replacement_backlog_keeps_new_caller_aligned(tmp_path, cancel_queued):
+    entered, finish = asyncio.Event(), asyncio.Event()
+    observed = []
+
+    @multi_turn_task(name="handoff", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        value = ctx.input["value"]
+        observed.append(value)
+        if value == 2:
+            entered.set()
+            await finish.wait()
+        return value
+
+    provider = LocalFileTaskProvider(tmp_path)
+    await _seed(provider, pending=[{"value": 2}, {"value": 3}])
+    manager = _manager(provider)
+    set_task_manager(manager)
+    try:
+        await manager.startup()
+        await asyncio.wait_for(entered.wait(), 5)
+        fourth = await worker.start(task_id="chain", input={"value": 4})
+        target = fourth
+        if cancel_queued:
+            await fourth.cancel()
+            with pytest.raises(TaskCancelled):
+                await fourth.result()
+            target = await worker.start(task_id="chain", input={"value": 5})
+        finish.set()
+        assert await asyncio.wait_for(target.result(), 5) == (5 if cancel_queued else 4)
+        assert observed == ([2, 3, 5] if cancel_queued else [2, 3, 4])
+    finally:
+        finish.set()
+        await manager.shutdown()
+        set_task_manager(None)
+
+
+@pytest.mark.asyncio
+async def test_cancel_queued_after_suspended_completion_reply(tmp_path, monkeypatch):
+    entered, finish, committed, reply = (asyncio.Event() for _ in range(4))
+
+    @multi_turn_task(name="handoff", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        if ctx.input["value"] == 1:
+            entered.set()
+            await finish.wait()
+        return ctx.input["value"]
+
+    provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    set_task_manager(manager)
+    first = None
+    try:
+        await manager.startup()
+        first = await worker.start(task_id="chain", input={"value": 1})
+        await asyncio.wait_for(entered.wait(), 5)
+        queued = await worker.start(task_id="chain", input={"value": 2})
+        update = provider.update
+
+        async def delayed_completion(task_id, patch):
+            result = await update(task_id, patch)
+            if patch.status == "suspended" and patch.suspension_reason == "run_completion":
+                committed.set()
+                await reply.wait()
+            return result
+
+        monkeypatch.setattr(provider, "update", delayed_completion)
+        info = await provider.get("chain")
+        transition = asyncio.create_task(
+            provider.update(
+                "chain",
+                TaskPatchRequest(status="suspended", suspension_reason="run_completion", if_match=info.etag),
+            )
+        )
+        await asyncio.wait_for(committed.wait(), 5)
+        assert (await provider.get("chain")).status == "suspended"
+        assert "chain" in manager._active_tasks
+        await queued.cancel()
+        assert (await provider.get("chain")).payload["steering"]["pending_inputs"] == []
+        reply.set()
+        await asyncio.wait_for(transition, 5)
+        with pytest.raises(TaskCancelled):
+            await queued.result()
+    finally:
+        reply.set()
+        finish.set()
+        await manager.shutdown()
+        if first is not None:
+            await asyncio.gather(first.result(), return_exceptions=True)
+        set_task_manager(None)
+
+
+@pytest.mark.asyncio
+async def test_active_lookup_waits_for_queued_recovery_claim(tmp_path, monkeypatch):
+    entered, finish, committed, reply, lookup_locked = (asyncio.Event() for _ in range(5))
+    observed = []
+
+    @multi_turn_task(name="handoff", steerable=True)
+    async def worker(ctx: TaskContext[dict]) -> int:
+        observed.append(ctx.input["value"])
+        entered.set()
+        await finish.wait()
+        return ctx.input["value"]
+
+    provider = LocalFileTaskProvider(tmp_path)
+    manager = _manager(provider)
+    set_task_manager(manager)
+    recovery = lookup = None
+    try:
+        await manager.startup()
+        await _seed(provider)
+        update = provider.update
+        delayed = True
+
+        async def delayed_claim(task_id, patch):
+            nonlocal delayed
+            result = await update(task_id, patch)
+            if delayed and patch.status == "in_progress":
+                delayed = False
+                committed.set()
+                await reply.wait()
+            return result
+
+        monkeypatch.setattr(provider, "update", delayed_claim)
+        get_lock = manager._get_task_admission_lock
+
+        def observed_lock(task_id):
+            if asyncio.current_task() is lookup:
+                lookup_locked.set()
+            return get_lock(task_id)
+
+        monkeypatch.setattr(manager, "_get_task_admission_lock", observed_lock)
+        recovery = asyncio.create_task(manager._recover_queued_steering_tasks())
+        await asyncio.wait_for(committed.wait(), 5)
+        lookup = asyncio.create_task(manager.get_active_run("chain"))
+        await asyncio.wait_for(lookup_locked.wait(), 5)
+        reply.set()
+        await asyncio.wait_for(recovery, 5)
+        assert await asyncio.wait_for(lookup, 5) is not None
+        await asyncio.wait_for(entered.wait(), 5)
+        assert observed == [2]
+    finally:
+        reply.set()
+        finish.set()
+        await manager.shutdown()
+        await asyncio.gather(*(task for task in (recovery, lookup) if task is not None), return_exceptions=True)
+        set_task_manager(None)
