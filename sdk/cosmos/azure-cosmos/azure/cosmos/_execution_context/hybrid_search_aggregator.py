@@ -28,11 +28,9 @@ class _Placeholders:
     formattable_order_by = "{documentdb-formattableorderbyquery-filter}"
 
 
-def _retrieve_component_scores(drained_results):
-    component_scores_list = []
-    for _ in drained_results[0]['payload']['componentScores']:
-        component_scores_list.append([])
-    undefined_components = [-999999] * len(component_scores_list)
+def _retrieve_component_scores(drained_results, component_count):
+    component_scores_list = [[] for _ in range(component_count)]
+    undefined_components = [-999999] * component_count
     for index, result in enumerate(drained_results):
         component_scores = result['payload']['componentScores']
         # Another small fix while backend changes are released to deal with empty component score scenarios
@@ -91,8 +89,9 @@ def _rank_results(drained_results, hybrid_search_query_info, use_competition_ran
     # Parse once per result, retaining the full RID for identity and deduplication.
     document_rids = {result['_rid']: _get_document_rid(result['_rid']) for result in drained_results}
 
+    # Size components from the plan because the first result may have no scores.
     # Build (score, result index) lists so component ranks map back to the original results.
-    component_scores = _retrieve_component_scores(drained_results)
+    component_scores = _retrieve_component_scores(drained_results, len(component_query_infos))
 
     # Sort each component by score, breaking ties by numeric RID in the same direction.
     for index, score_tuples in enumerate(component_scores):

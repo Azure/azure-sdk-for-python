@@ -165,6 +165,50 @@ async def test_query_snapshots_ranking_mode_and_preserves_dedup_payload_and_wind
 
 
 @pytest.mark.parametrize("module", [sync_aggregator, async_aggregator], ids=["sync", "async"])
+@pytest.mark.parametrize("second_scores", [[5, 0.2], []], ids=["empty-first", "all-empty"])
+@pytest.mark.asyncio
+async def test_query_uses_plan_component_count_for_empty_scores(module, second_scores, monkeypatch):
+    is_async = module is async_aggregator
+    info = {
+        "requiresGlobalStatistics": False,
+        "componentQueryInfos": [
+            {"orderBy": ["Descending"], "rewrittenQuery": "first"},
+            {"orderBy": ["Ascending"], "rewrittenQuery": "second"},
+        ],
+        "componentWeights": [1, 2],
+        "skip": 0,
+        "take": 2,
+    }
+    empty = _result(255, [], {"id": "empty"})
+    second = _result(256, second_scores, {"id": "second"})
+    producers = [
+        SimpleNamespace(
+            peek=AsyncMock(return_value=row) if is_async else Mock(return_value=row),
+            _ex_context=SimpleNamespace(_buffer=[]),
+        )
+        for row in (empty, second)
+    ]
+    monkeypatch.setattr(module.document_producer, "_DocumentProducer", Mock(side_effect=producers))
+    client = SimpleNamespace(_routing_map_provider=None)
+    options = {_USE_COMPETITION_RANKING_KEY: False}
+    context = module._HybridSearchContextAggregator(client, "colls/test", options, None, info, None, None)
+    context._get_target_partition_key_range = AsyncMock(return_value=[{}]) if is_async else Mock(return_value=[{}])
+    if is_async:
+        await context._run_hybrid_search()
+        actual = [item async for item in context]
+    else:
+        context._run_hybrid_search()
+        actual = list(context)
+    # The existing -999999 fallback sorts last descending and first ascending;
+    # when all scores are empty, numeric RID ties give the same ordinal ranks.
+    assert empty["Score"] == pytest.approx(1 / 62 + 2 / 61)
+    assert second["Score"] == pytest.approx(1 / 61 + 2 / 62)
+    assert actual == [{"id": "empty"}, {"id": "second"}]
+    assert empty["payload"]["componentScores"] == []
+    assert second["payload"]["componentScores"] == second_scores
+
+
+@pytest.mark.parametrize("module", [sync_aggregator, async_aggregator], ids=["sync", "async"])
 def test_ranking_option_overrides_environment_without_mutating_options(module, monkeypatch):
     client = SimpleNamespace(_routing_map_provider=None)
     monkeypatch.delenv(_USE_COMPETITION_RANKING_ENV, raising=False)
