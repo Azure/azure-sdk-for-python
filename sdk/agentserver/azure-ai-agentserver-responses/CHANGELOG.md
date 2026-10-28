@@ -13,6 +13,8 @@
 ### Other Changes
 
 - Removed the duplicated experimental decorator compatibility fallback.
+- Updated the minimum `azure-ai-agentserver-core` dependency to `2.3.0b3`
+  for the shared experimental decorator without the broken documentation link.
 
 ## 2.4.0b2 (2026-10-27)
 
