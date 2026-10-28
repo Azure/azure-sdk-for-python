@@ -10,77 +10,86 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
+    only APIs.
+    """
+
+    INTERNAL = "Internal"
+    """Actions are for internal-only APIs."""
+
+
 class AttestBootIntegrityPropertyEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of whether the list of boot integrity properties is validated."""
 
     VALID = "Valid"
-    """Boot integrity properties are valid"""
+    """Boot integrity properties are valid."""
     INVALID = "Invalid"
-    """Boot integrity properties are invalid"""
+    """Boot integrity properties are invalid."""
     UNKNOWN = "Unknown"
-    """Boot integrity properties status is unknown"""
+    """Boot integrity properties status is unknown."""
 
 
 class AttestCertPropertyEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of whether attestation certificate is validated."""
 
     VALID = "Valid"
-    """Attestation certificate is valid"""
+    """Attestation certificate is valid."""
     INVALID = "Invalid"
-    """Attestation certificate is invalid"""
+    """Attestation certificate is invalid."""
     UNKNOWN = "Unknown"
-    """Attestation certificate status is unknown"""
+    """Attestation certificate status is unknown."""
 
 
 class AttestDiskSecurityEncryptionTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines type of managed disk security encryption type from attestation token."""
 
     NON_PERSISTED_TPM = "NonPersistedTPM"
-    """Disk security encryption type is non-persisted Trusted Platform Module (TPM)"""
+    """Disk security encryption type is non-persisted Trusted Platform Module (TPM)."""
     UNKNOWN = "Unknown"
-    """Disk security encryption type is unknown"""
+    """Disk security encryption type is unknown."""
 
 
 class AttestHealthStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The health status of attestation validation and parsing."""
 
     PENDING = "Pending"
-    """Attestation validation and parsing pending"""
+    """Attestation validation and parsing pending."""
     HEALTHY = "Healthy"
-    """Attestation validation and parsing healthy"""
+    """Attestation validation and parsing healthy."""
     UNHEALTHY = "Unhealthy"
-    """Attestation validation and parsing unhealthy"""
+    """Attestation validation and parsing unhealthy."""
     UNKNOWN = "Unknown"
-    """Attestation validation and parsing status is unknown"""
+    """Attestation validation and parsing status is unknown."""
 
 
 class AttestHWPlatformEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines type of hardware platform from attestation token."""
 
     SEVSNP = "SEVSNP"
-    """AttestHWPlatform is Secure Encrypted Virtualization Secure Nested Paging (SEVSNP)"""
+    """AttestHWPlatform is Secure Encrypted Virtualization Secure Nested Paging (SEVSNP)."""
     UNKNOWN = "Unknown"
-    """AttestHWPlatform is unknown"""
+    """AttestHWPlatform is unknown."""
 
 
 class AttestSecureBootPropertyEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of whether secure boot is enabled."""
 
     ENABLED = "Enabled"
-    """Secure boot enabled"""
+    """Secure boot enabled."""
     DISABLED = "Disabled"
-    """Secure boot disabled"""
+    """Secure boot disabled."""
     UNKNOWN = "Unknown"
-    """Secure boot status is unknown"""
+    """Secure boot status is unknown."""
 
 
 class CloudInitDataSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Datasource for the gallery image when provisioning with cloud-init [NoCloud, Azure]."""
 
     NO_CLOUD = "NoCloud"
-    """NoCloud is used as the datasource"""
+    """NoCloud is used as the datasource."""
     AZURE = "Azure"
-    """Azure is used as the datasource"""
+    """Azure is used as the datasource."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -96,38 +105,95 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Disk creation option values [Copy, Empty]."""
+
+    COPY = "Copy"
+    """Create a disk by copying from a source resource."""
+    EMPTY = "Empty"
+    """Create an empty disk."""
+
+
 class DiskFileFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The format of the actual VHD file [vhd, vhdx]."""
 
     VHDX = "vhdx"
-    """VHDX file format"""
+    """VHDX file format."""
     VHD = "vhd"
-    """VHD file format"""
+    """VHD file format."""
 
 
 class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of extendedLocation."""
 
     CUSTOM_LOCATION = "CustomLocation"
-    """Custom extended location type"""
+    """Custom extended location type."""
+
+
+class FabricConnectionHealthEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Fabric connection health state type."""
+
+    HEALTHY = "Healthy"
+    """Fabric connection health state - healthy type."""
+    WARNING = "Warning"
+    """Fabric connection health state - warning type."""
+    ERROR = "Error"
+    """Fabric connection health state - error type."""
+    UNKNOWN = "Unknown"
+    """Fabric connection health state - unknown type."""
+
+
+class FabricIntegrationStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Fabric integration state type."""
+
+    CONNECTED = "Connected"
+    """Fabric integration state - connected type."""
+    DISCONNECTED = "Disconnected"
+    """Fabric integration state - disconnected type."""
+    MISCONFIGURED = "Misconfigured"
+    """Fabric integration state - misconfigured type."""
+    NOT_APPLICABLE = "NotApplicable"
+    """Fabric integration state - notapplicable type."""
+    CONNECTING = "Connecting"
+    """Fabric integration state - connecting type."""
+
+
+class FabricResourceTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Fabric resource type."""
+
+    L2_ISOLATION_DOMAIN = "L2IsolationDomain"
+    """Fabric resource of L2IsolationDomain type."""
+    L3_INTERNAL_NETWORK = "L3InternalNetwork"
+    """Fabric resource of L3InternalNetwork type."""
 
 
 class GpuAssignmentTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gpu Assignment types."""
 
     GPU_DDA = "GpuDDA"
-    """Attach Graphics Processing Unit (GPU) using Discrete Device Assignment (DDA)"""
+    """Attach Graphics Processing Unit (GPU) using Discrete Device Assignment (DDA)."""
     GPU_P = "GpuP"
-    """Attach Graphics Processing Unit (GPU) using GPU Partitioning"""
+    """Attach Graphics Processing Unit (GPU) using GPU Partitioning."""
 
 
 class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The hypervisor generation of the Virtual Machine [V1, V2]."""
 
     V1 = "V1"
-    """Generation 1 (V1) hypervisor"""
+    """Generation 1 (V1) hypervisor."""
     V2 = "V2"
-    """Generation 2 (V2) hypervisor"""
+    """Generation 2 (V2) hypervisor."""
+    NA = "NA"
+    """Not applicable/determined by platform."""
+
+
+class InboundNATRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Protocol for inbound NAT rules."""
+
+    TCP = "Tcp"
+    """TCP - load balance only tcp traffic."""
+    UDP = "Udp"
+    """Udp - load balance only UDP traffic."""
 
 
 class IpAllocationMethodEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -136,27 +202,67 @@ class IpAllocationMethodEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     DYNAMIC = "Dynamic"
-    """Dynamic IP allocation method"""
+    """Dynamic IP allocation method."""
     STATIC = "Static"
-    """Static IP allocation method"""
+    """Static IP allocation method."""
 
 
 class IPPoolTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the IP Pool [vm, vippool]."""
 
     VM = "vm"
-    """Virtual Machine IP Pool"""
+    """Virtual Machine IP Pool."""
     VIPPOOL = "vippool"
-    """VIP Pool"""
+    """VIP Pool."""
+
+
+class LoadBalancerBackendAddressAdminState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Backend Address Admin states."""
+
+    UP = "Up"
+    """Up - forced admin state up."""
+    DOWN = "Down"
+    """Down - forced admin state down."""
+
+
+class LoadBalancerProbeProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Protocol for health probes."""
+
+    TCP = "Tcp"
+    """TCP - TCP port checking."""
+    HTTP = "Http"
+    """HTTP - HTTP request."""
+
+
+class LoadBalancerRuleSessionPersistenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of session persistence [Default, SourceIP, SourceIPProtocol]."""
+
+    DEFAULT = "Default"
+    """Default - 5-tuple hashing."""
+    SOURCE_IP = "SourceIP"
+    """Source IP - 2-tuple hashing looking at src-dst ip."""
+    SOURCE_IP_PROTOCOL = "SourceIPProtocol"
+    """SourceIPProtocol - 3-tuple hashing looking at src-dst ip and ip protocol."""
+
+
+class LoadBalancerRuleTransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Protocol for load balancing rules."""
+
+    TCP = "Tcp"
+    """TCP - load balance only tcp traffic."""
+    UDP = "Udp"
+    """Udp - load balance only UDP traffic."""
+    ALL = "All"
+    """All - load balance all UDP and TCP traffic."""
 
 
 class LogicalNetworkTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of Logical Network."""
 
     WORKLOAD = "Workload"
-    """Logical Network of type Workload"""
+    """Logical Network of type Workload."""
     INFRASTRUCTURE = "Infrastructure"
-    """Logical Network of type Infrastructure"""
+    """Logical Network of type Infrastructure."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -178,76 +284,98 @@ class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operating system type that the gallery image uses [Windows, Linux]."""
 
     WINDOWS = "Windows"
-    """Windows operating system"""
+    """Windows operating system."""
     LINUX = "Linux"
-    """Linux operating system"""
+    """Linux operating system."""
+
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is \"user,system\".
+    """
+
+    USER = "user"
+    """Indicates the operation is initiated by a user."""
+    SYSTEM = "system"
+    """Indicates the operation is initiated by a system."""
+    USER_SYSTEM = "user,system"
+    """Indicates the operation is initiated by a user or system."""
 
 
 class PowerStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The power state of the virtual machine instance."""
 
     DEALLOCATED = "Deallocated"
-    """Virtual machine deallocated"""
+    """Virtual machine deallocated."""
     DEALLOCATING = "Deallocating"
-    """Virtual machine deallocating"""
+    """Virtual machine deallocating."""
     RUNNING = "Running"
-    """Virtual machine running"""
+    """Virtual machine running."""
     STARTING = "Starting"
-    """Virtual machine starting"""
+    """Virtual machine starting."""
     STOPPED = "Stopped"
-    """Virtual machine stopped"""
+    """Virtual machine stopped."""
     STOPPING = "Stopping"
-    """Virtual machine stopping"""
+    """Virtual machine stopping."""
     PAUSED = "Paused"
-    """Virtual machine paused"""
+    """Virtual machine paused."""
     SAVED = "Saved"
-    """Virtual machine Saved,"""
+    """Virtual machine Saved,."""
     UNKNOWN = "Unknown"
-    """Power state of the virtual machine is unknown"""
+    """Power state of the virtual machine is unknown."""
 
 
 class ProvisioningAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the different types of operations for guest agent."""
 
     INSTALL = "install"
-    """Install guest agent"""
+    """Install guest agent."""
     UNINSTALL = "uninstall"
-    """Uninstall guest agent"""
+    """Uninstall guest agent."""
     REPAIR = "repair"
-    """Repair guest agent"""
+    """Repair guest agent."""
 
 
 class ProvisioningStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the resource."""
 
     SUCCEEDED = "Succeeded"
-    """Provisioning has succeeded"""
+    """Provisioning has succeeded."""
     FAILED = "Failed"
-    """Provisioning has failed"""
+    """Provisioning has failed."""
     IN_PROGRESS = "InProgress"
-    """Provisioning is in progress"""
+    """Provisioning is in progress."""
     ACCEPTED = "Accepted"
-    """Provisioning has been accepted"""
+    """Provisioning has been accepted."""
     DELETING = "Deleting"
-    """Deletion of the resource is in progress"""
+    """Deletion of the resource is in progress."""
     CANCELED = "Canceled"
-    """Provisioning has been canceled"""
+    """Provisioning has been canceled."""
+
+
+class PublicIPAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of public IP addresses."""
+
+    I_PV4 = "IPv4"
+    """IPv4 IP Address."""
+    I_PV6 = "IPv6"
+    """IPv6 IP Address."""
 
 
 class SecurityEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Encryption type of the managed disk enum."""
 
     NON_PERSISTED_TPM = "NonPersistedTPM"
-    """Non-persisted TPM encryption type"""
+    """Non-persisted TPM encryption type."""
 
 
 class SecurityRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether network traffic is allowed or denied."""
 
     ALLOW = "Allow"
-    """Network traffic is allowed"""
+    """Network traffic is allowed."""
     DENY = "Deny"
-    """Network traffic is denied"""
+    """Network traffic is denied."""
 
 
 class SecurityRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -256,22 +384,22 @@ class SecurityRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     INBOUND = "Inbound"
-    """Rule is evaluated on incoming traffic"""
+    """Rule is evaluated on incoming traffic."""
     OUTBOUND = "Outbound"
-    """Rule is evaluated on outgoing traffic"""
+    """Rule is evaluated on outgoing traffic."""
 
 
 class SecurityRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network protocol this rule applies to."""
 
     TCP = "Tcp"
-    """Transmission Control Protocol"""
+    """Transmission Control Protocol."""
     UDP = "Udp"
-    """User Datagram Protocol"""
+    """User Datagram Protocol."""
     ICMP = "Icmp"
-    """Internet Control Message Protocol"""
+    """Internet Control Message Protocol."""
     ASTERISK = "*"
-    """Wildcard rule for all protocols"""
+    """Wildcard rule for all protocols."""
 
 
 class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -280,90 +408,90 @@ class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     TRUSTED_LAUNCH = "TrustedLaunch"
-    """Trusted Launch security type"""
+    """Trusted Launch security type."""
     CONFIDENTIAL_VM = "ConfidentialVM"
-    """Confidential VM security type"""
+    """Confidential VM security type."""
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the operation performed on the resource [Succeeded, Failed, InProgress]."""
 
     SUCCEEDED = "Succeeded"
-    """Operation succeeded"""
+    """Operation succeeded."""
     FAILED = "Failed"
-    """Operation failed"""
+    """Operation failed."""
     IN_PROGRESS = "InProgress"
-    """Operation is in progress"""
+    """Operation is in progress."""
 
 
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The level code."""
 
     INFO = "Info"
-    """Informational status level"""
+    """Informational status level."""
     WARNING = "Warning"
-    """Warning status level"""
+    """Warning status level."""
     ERROR = "Error"
-    """Error status level"""
+    """Error status level."""
 
 
 class StatusTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The installation status of the hybrid machine agent installation."""
 
     SUCCEEDED = "Succeeded"
-    """Installation succeeded"""
+    """Installation succeeded."""
     IN_PROGRESS = "InProgress"
-    """Installation in progress"""
+    """Installation in progress."""
     FAILED = "Failed"
-    """Installation failed"""
+    """Installation failed."""
 
 
 class VmSizeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VM Sizes."""
 
     DEFAULT = "Default"
-    """Default virtual machine size"""
+    """Default virtual machine size."""
     STANDARD_A2_V2 = "Standard_A2_v2"
-    """Standard A2 v2 virtual machine size"""
+    """Standard A2 v2 virtual machine size."""
     STANDARD_A4_V2 = "Standard_A4_v2"
-    """Standard A4 v2 virtual machine size"""
+    """Standard A4 v2 virtual machine size."""
     STANDARD_D2_S_V3 = "Standard_D2s_v3"
-    """Standard D2s v3 virtual machine size"""
+    """Standard D2s v3 virtual machine size."""
     STANDARD_D4_S_V3 = "Standard_D4s_v3"
-    """Standard D4s v3 virtual machine size"""
+    """Standard D4s v3 virtual machine size."""
     STANDARD_D8_S_V3 = "Standard_D8s_v3"
-    """Standard D8s v3 virtual machine size"""
+    """Standard D8s v3 virtual machine size."""
     STANDARD_D16_S_V3 = "Standard_D16s_v3"
-    """Standard D16s v3 virtual machine size"""
+    """Standard D16s v3 virtual machine size."""
     STANDARD_D32_S_V3 = "Standard_D32s_v3"
-    """Standard D32s v3 virtual machine size"""
+    """Standard D32s v3 virtual machine size."""
     STANDARD_DS2_V2 = "Standard_DS2_v2"
-    """Standard DS2 v2 virtual machine size"""
+    """Standard DS2 v2 virtual machine size."""
     STANDARD_DS3_V2 = "Standard_DS3_v2"
-    """Standard DS3 v2 virtual machine size"""
+    """Standard DS3 v2 virtual machine size."""
     STANDARD_DS4_V2 = "Standard_DS4_v2"
-    """Standard DS4 v2 virtual machine size"""
+    """Standard DS4 v2 virtual machine size."""
     STANDARD_DS5_V2 = "Standard_DS5_v2"
-    """Standard DS5 v2 virtual machine size"""
+    """Standard DS5 v2 virtual machine size."""
     STANDARD_DS13_V2 = "Standard_DS13_v2"
-    """Standard DS13 v2 virtual machine size"""
+    """Standard DS13 v2 virtual machine size."""
     STANDARD_K8_S_V1 = "Standard_K8S_v1"
-    """Standard K8S v1 virtual machine size"""
+    """Standard K8S v1 virtual machine size."""
     STANDARD_K8_S2_V1 = "Standard_K8S2_v1"
-    """Standard K8S2 v1 virtual machine size"""
+    """Standard K8S2 v1 virtual machine size."""
     STANDARD_K8_S3_V1 = "Standard_K8S3_v1"
-    """Standard K8S3 v1 virtual machine size"""
+    """Standard K8S3 v1 virtual machine size."""
     STANDARD_K8_S4_V1 = "Standard_K8S4_v1"
-    """Standard K8S4 v1 virtual machine size"""
+    """Standard K8S4 v1 virtual machine size."""
     STANDARD_NK6 = "Standard_NK6"
-    """Standard NK6 virtual machine size"""
+    """Standard NK6 virtual machine size."""
     STANDARD_NK12 = "Standard_NK12"
-    """Standard NK12 virtual machine size"""
+    """Standard NK12 virtual machine size."""
     STANDARD_NV6 = "Standard_NV6"
-    """Standard NV6 virtual machine size"""
+    """Standard NV6 virtual machine size."""
     STANDARD_NV12 = "Standard_NV12"
-    """Standard NV12 virtual machine size"""
+    """Standard NV12 virtual machine size."""
     STANDARD_K8_S5_V1 = "Standard_K8S5_v1"
-    """Standard K8S5 v1 virtual machine size"""
+    """Standard K8S5 v1 virtual machine size."""
     CUSTOM = "Custom"
-    """Custom virtual machine size"""
+    """Custom virtual machine size."""

@@ -61,7 +61,12 @@ class TestAzureStackHCIVmVirtualMachineInstancesOperations(AzureMgmtRecordedTest
                         "vmUuid": "str",
                     },
                     "hardwareProfile": {
-                        "dynamicMemoryConfig": {"maximumMemoryMB": 0, "minimumMemoryMB": 0, "targetMemoryBuffer": 0},
+                        "dynamicMemoryConfig": {
+                            "enabled": bool,
+                            "maximumMemoryMB": 0,
+                            "minimumMemoryMB": 0,
+                            "targetMemoryBuffer": 0,
+                        },
                         "memoryMB": 0,
                         "processors": 0,
                         "virtualMachineGPUs": [{"assignmentType": "str", "gpuName": "str", "partitionSizeMB": 0}],
@@ -90,6 +95,7 @@ class TestAzureStackHCIVmVirtualMachineInstancesOperations(AzureMgmtRecordedTest
                             "vmConfigAgentVersion": "str",
                         }
                     },
+                    "localVmName": "str",
                     "networkProfile": {"networkInterfaces": [{"id": "str"}]},
                     "osProfile": {
                         "adminPassword": "str",
@@ -120,6 +126,9 @@ class TestAzureStackHCIVmVirtualMachineInstancesOperations(AzureMgmtRecordedTest
                     "status": {
                         "errorCode": "str",
                         "errorMessage": "str",
+                        "operationDetails": [
+                            {"name": "str", "status": "str", "completedTime": "2020-02-20 00:00:00", "message": "str"}
+                        ],
                         "powerState": "str",
                         "provisioningStatus": {"operationId": "str", "status": "str"},
                     },
@@ -159,6 +168,12 @@ class TestAzureStackHCIVmVirtualMachineInstancesOperations(AzureMgmtRecordedTest
                 "identity": {"principalId": "str", "tenantId": "str", "type": "SystemAssigned"},
                 "properties": {
                     "hardwareProfile": {
+                        "dynamicMemoryConfig": {
+                            "enabled": bool,
+                            "maximumMemoryMB": 0,
+                            "minimumMemoryMB": 0,
+                            "targetMemoryBuffer": 0,
+                        },
                         "memoryMB": 0,
                         "processors": 0,
                         "virtualMachineGPUs": [{"assignmentType": "str", "gpuName": "str", "partitionSizeMB": 0}],
@@ -243,6 +258,17 @@ class TestAzureStackHCIVmVirtualMachineInstancesOperations(AzureMgmtRecordedTest
     def test_virtual_machine_instances_begin_save(self, resource_group):
         response = self.client.virtual_machine_instances.begin_save(
             resource_uri="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_instances_begin_power_off(self, resource_group):
+        response = self.client.virtual_machine_instances.begin_power_off(
+            resource_uri="str",
+            body={"skipShutdown": bool},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

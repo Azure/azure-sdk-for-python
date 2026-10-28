@@ -42,11 +42,27 @@ class TestAzureStackHCIVmLogicalNetworksOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "properties": {
                     "dhcpOptions": {"dnsServers": ["str"]},
+                    "fabricNetworkConfiguration": {"resourceId": "str"},
                     "networkType": "str",
                     "provisioningState": "str",
                     "status": {
                         "errorCode": "str",
                         "errorMessage": "str",
+                        "fabricIntegration": {
+                            "health": "str",
+                            "issues": [
+                                {
+                                    "code": "str",
+                                    "message": "str",
+                                    "severity": "str",
+                                    "target": "str",
+                                    "timestamp": "2020-02-20 00:00:00",
+                                }
+                            ],
+                            "lastChecked": "2020-02-20 00:00:00",
+                            "resourceType": "str",
+                            "state": "str",
+                        },
                         "provisioningStatus": {"operationId": "str", "status": "str"},
                     },
                     "subnets": [
@@ -67,6 +83,7 @@ class TestAzureStackHCIVmLogicalNetworksOperations(AzureMgmtRecordedTestCase):
                                     }
                                 ],
                                 "networkSecurityGroup": {"id": "str"},
+                                "provisioningState": "str",
                                 "routeTable": {
                                     "etag": "str",
                                     "name": "str",

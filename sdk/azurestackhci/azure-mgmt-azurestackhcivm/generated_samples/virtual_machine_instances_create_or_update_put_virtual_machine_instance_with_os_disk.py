@@ -60,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/VirtualMachineInstances_CreateOrUpdate_Put_Virtual_Machine_Instance_With_Os_Disk.json
+# x-ms-original-file: 2026-07-01-preview/VirtualMachineInstances_CreateOrUpdate_Put_Virtual_Machine_Instance_With_Os_Disk.json
 if __name__ == "__main__":
     main()
