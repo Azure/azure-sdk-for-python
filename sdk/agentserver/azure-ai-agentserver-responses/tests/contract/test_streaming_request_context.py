@@ -44,7 +44,8 @@ from azure.ai.agentserver.responses.hosting._observability import InMemoryCreate
 def test_original_subject_core_dependency_floor() -> None:
     requirements = (Requirement(value) for value in requires("azure-ai-agentserver-responses") or [])
     core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
-    assert "2.3.0b2" in core.specifier
+    assert "2.3.0" in core.specifier
+    assert "2.3.0b2" not in core.specifier
     assert "2.3.0b1" not in core.specifier
     assert callable(FoundryAgentRequestContext.model_attribution_headers)
 

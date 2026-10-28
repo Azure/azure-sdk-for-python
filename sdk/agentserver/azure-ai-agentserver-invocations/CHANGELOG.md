@@ -1,14 +1,12 @@
 # Release History
 
-## 1.3.0b2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.3.0 (2026-10-28)
 
 ### Other Changes
+
+- Stable release of the 1.3.0 preview series.
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable
+  `2.3.0` release. Publish that Core version before this package.
 
 ## 1.3.0b1 (2026-10-26)
 

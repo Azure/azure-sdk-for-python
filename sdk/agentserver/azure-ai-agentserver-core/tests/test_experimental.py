@@ -234,7 +234,7 @@ def test_original_subject_is_experimental(caplog) -> None:
     assert (subject.oid, subject.tid, subject.idtype) == ("subject", "tenant", "user")
     assert FoundryOriginalSubject.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_CLASS_MESSAGE in FoundryOriginalSubject.__doc__
-    assert EXPERIMENTAL_LINK_MESSAGE in FoundryOriginalSubject.__doc__
+    assert "https://" not in FoundryOriginalSubject.__doc__
     assert len(caplog.records) == 1
     assert "FoundryOriginalSubject" in caplog.records[0].message
     assert EXPERIMENTAL_CLASS_MESSAGE in caplog.records[0].message
@@ -250,7 +250,7 @@ def test_model_attribution_headers_is_experimental(caplog) -> None:
     method = FoundryAgentRequestContext.model_attribution_headers
     assert method.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_METHOD_MESSAGE in method.__doc__
-    assert EXPERIMENTAL_LINK_MESSAGE in method.__doc__
+    assert "https://" not in method.__doc__
     assert len(caplog.records) == 1
     assert "FoundryAgentRequestContext.model_attribution_headers" in caplog.records[0].message
     assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message
