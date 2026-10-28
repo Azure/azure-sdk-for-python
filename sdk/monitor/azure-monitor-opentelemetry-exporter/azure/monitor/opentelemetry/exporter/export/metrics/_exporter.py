@@ -47,6 +47,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._routing import (
+    _get_cloud_role,
     _get_ingestion_endpoint,
     _get_instrumentation_key,
     _is_aad_route,
@@ -211,6 +212,9 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                 if self._enable_multi_endpoint_routing
                 else self._instrumentation_key
             )
+            if self._enable_multi_endpoint_routing:
+                assert envelope.tags is not None
+                envelope.tags[ContextTagKeys.AI_CLOUD_ROLE] = _get_cloud_role(point.attributes)
             # Only set SentToAMW on AKS Attach
             if _utils._is_on_aks() and _utils._is_attach_enabled() and not self._is_stats_exporter():
                 if OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ and "otlp" in os.environ.get(

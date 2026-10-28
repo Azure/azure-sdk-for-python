@@ -16,6 +16,8 @@
   explicit per-route authentication, and destination-isolated retry storage.
   Enable it with `multi_endpoint_routing` through `APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES`.
   Span events follow their parent span's route; metrics use each data point's route.
+  Routed cloud role names come from `microsoft.multi_endpoint_cloud_role`; missing
+  or invalid values use `unknown_service`, while role instances remain resource-derived.
   Routing-enabled exporters can be created without a host connection string.
   Custom transports and scalar retry settings remain supported, but complete custom
   pipelines and mutable custom HTTP policies are rejected because routed destinations

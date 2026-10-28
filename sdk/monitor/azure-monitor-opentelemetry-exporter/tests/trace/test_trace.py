@@ -2460,7 +2460,14 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.addCleanup(exporter.shutdown)
         return exporter
 
-    def _span(self, endpoint="https://one.example/proxy/", key="customer-key", auth="ikey", kind=SpanKind.CLIENT):
+    def _span(
+        self,
+        endpoint="https://one.example/proxy/",
+        key="customer-key",
+        auth="ikey",
+        kind=SpanKind.CLIENT,
+        cloud_role="not-the-resource-role",
+    ):
         return ReadableSpan(
             name="operation",
             context=SpanContext(trace_id=1, span_id=2, is_remote=False),
@@ -2471,7 +2478,7 @@ class TestMultiEndpointRouting(unittest.TestCase):
                 "microsoft.instrumentation_key": key,
                 "microsoft.ingestion_endpoint": endpoint,
                 "microsoft.ingestion_auth": auth,
-                "microsoft.multi_endpoint_cloud_role": "not-the-resource-role",
+                "microsoft.multi_endpoint_cloud_role": cloud_role,
                 "custom": "span-value",
             },
             resource=Resource({"service.name": "resource-role", "service.instance.id": "resource-instance"}),
@@ -2511,7 +2518,7 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.assertEqual([item["iKey"] for item in json.loads(requests[1].body)], ["key-two"] * 3)
         for request in requests:
             for item in json.loads(request.body):
-                self.assertEqual(item["tags"]["ai.cloud.role"], "resource-role")
+                self.assertEqual(item["tags"]["ai.cloud.role"], "not-the-resource-role")
                 self.assertEqual(item["tags"]["ai.cloud.roleInstance"], "resource-instance")
                 self.assertEqual(item["tags"]["ai.operation.id"], "{:032x}".format(1))
                 properties = item["data"]["baseData"]["properties"]
@@ -2531,8 +2538,17 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.assertTrue(request.url.startswith("https://host.example/"))
         items = json.loads(request.body)
         self.assertEqual([item["iKey"] for item in items], ["1234abcd-5678-4efa-8abc-1234567890ab"] * 6)
+        self.assertEqual([item["tags"]["ai.cloud.role"] for item in items], ["resource-role"] * 6)
         self.assertEqual(items[0]["data"]["baseData"]["properties"]["microsoft.instrumentation_key"], "customer-key")
         self.assertEqual(items[2]["data"]["baseData"]["properties"]["microsoft.instrumentation_key"], "event-key")
+
+    def test_missing_and_invalid_cloud_roles_use_unknown_service(self):
+        exporter = self._exporter()
+        spans = [self._span(cloud_role=value) for value in (None, " \t\n", 42)]
+        self.assertEqual(exporter.export(spans), SpanExportResult.SUCCESS)
+        items = json.loads(self.transport.send.call_args.args[0].body)
+        self.assertEqual([item["tags"]["ai.cloud.role"] for item in items], ["unknown_service"] * 9)
+        self.assertEqual([item["tags"]["ai.cloud.roleInstance"] for item in items], ["resource-instance"] * 9)
 
     def test_empty_and_invalid_batches_do_not_transmit(self):
         exporter = self._exporter()
