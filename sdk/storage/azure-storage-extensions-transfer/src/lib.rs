@@ -19,33 +19,105 @@ mod upload;
 mod test_support;
 
 use std::num::NonZero;
+use std::sync::atomic::{AtomicPtr, Ordering};
 use std::sync::Arc;
 
 use azure_core::credentials::TokenCredential;
 use azure_core::http::{new_http_client, HttpClientOptions, Transport, Url};
 use azure_storage_blob::{BlobClient, BlobClientOptions};
-use once_cell::sync::{Lazy, OnceCell};
+use once_cell::sync::OnceCell;
 use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use tokio::runtime::Runtime;
 
-use credentials::get_cached_credential;
+use credentials::{get_cached_credential, CredentialCache};
 use download::{download_blob, NativeDownloadStream};
 use errors::{AzureError, NativeTransferError};
 use upload::upload_blob;
 
-/// Shared tokio runtime — created once, reused across all calls to avoid
-/// per-call overhead of spawning a new runtime.
-static RUNTIME: OnceCell<Runtime> = OnceCell::new();
-
-fn get_runtime() -> PyResult<&'static Runtime> {
-    RUNTIME.get_or_try_init(|| {
-        Runtime::new()
-            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create tokio runtime: {e}")))
-    })
+struct ProcessState {
+    pid: u32,
+    runtime: OnceCell<Runtime>,
+    transport: OnceCell<Transport>,
+    credentials: CredentialCache,
 }
 
-/// Shared HTTP transport — a single connection pool reused by every `BlobClient` we build.
+impl ProcessState {
+    fn new(pid: u32) -> Self {
+        Self {
+            pid,
+            runtime: OnceCell::new(),
+            transport: OnceCell::new(),
+            credentials: CredentialCache::default(),
+        }
+    }
+
+    fn runtime(&self) -> PyResult<&Runtime> {
+        self.runtime.get_or_try_init(|| {
+            Runtime::new().map_err(|e| {
+                PyRuntimeError::new_err(format!("Failed to create tokio runtime: {e}"))
+            })
+        })
+    }
+
+    fn transport(&self) -> &Transport {
+        self.transport.get_or_init(|| {
+            Transport::new(new_http_client(Some(HttpClientOptions {
+                automatic_decompression: false,
+            })))
+        })
+    }
+}
+
+/// Published states are never freed, including inherited states replaced in a child.
+/// Dropping inherited runtimes, pools, or credentials could touch locks owned by vanished threads.
+struct ProcessStateSlot(AtomicPtr<ProcessState>);
+
+impl ProcessStateSlot {
+    const fn new() -> Self {
+        Self(AtomicPtr::new(std::ptr::null_mut()))
+    }
+
+    fn get(&self, pid: u32) -> &ProcessState {
+        let mut current = self.0.load(Ordering::Acquire);
+        loop {
+            // SAFETY: every published pointer refers to a fully initialized, permanently
+            // allocated ProcessState. Acquire pairs with publication, and pid is immutable.
+            if let Some(state) = unsafe { current.as_ref() } {
+                if state.pid == pid {
+                    return state;
+                }
+            }
+
+            let candidate = Box::into_raw(Box::new(ProcessState::new(pid)));
+            match self
+                .0
+                .compare_exchange(current, candidate, Ordering::AcqRel, Ordering::Acquire)
+            {
+                // SAFETY: publication succeeded; this state will never be freed or moved.
+                Ok(_) => return unsafe { &*candidate },
+                Err(actual) => {
+                    // SAFETY: this candidate was never published or used to initialize
+                    // resources, and this thread still exclusively owns its allocation.
+                    unsafe { drop(Box::from_raw(candidate)) };
+                    current = actual;
+                }
+            }
+        }
+    }
+}
+
+static PROCESS_STATE: ProcessStateSlot = ProcessStateSlot::new();
+
+fn get_process_state() -> &'static ProcessState {
+    PROCESS_STATE.get(std::process::id())
+}
+
+fn get_runtime() -> PyResult<&'static Runtime> {
+    get_process_state().runtime()
+}
+
+/// Shared HTTP transport - one connection pool per process, reused by every `BlobClient`.
 ///
 /// Each `BlobClient` otherwise constructs its own HTTP client (and therefore its own
 /// connection pool), so building a fresh client per transfer would repeat TLS handshakes and
@@ -53,11 +125,9 @@ fn get_runtime() -> PyResult<&'static Runtime> {
 ///
 /// Automatic decompression is disabled to guarantee the crate receives raw bytes for
 /// partitioned/ranged downloads (matching the storage default for range requests).
-static SHARED_TRANSPORT: Lazy<Transport> = Lazy::new(|| {
-    Transport::new(new_http_client(Some(HttpClientOptions {
-        automatic_decompression: false,
-    })))
-});
+fn get_transport() -> &'static Transport {
+    get_process_state().transport()
+}
 
 /// Build a `BlobClient` from a fully-qualified blob URL and optional token provider.
 ///
@@ -79,7 +149,7 @@ fn build_blob_client(
     credential_id: Option<usize>,
 ) -> PyResult<BlobClient> {
     let mut options = BlobClientOptions::default();
-    options.client_options.transport = Some(SHARED_TRANSPORT.clone());
+    options.client_options.transport = Some(get_transport().clone());
     build_blob_client_with_options(blob_url, token_provider, credential_id, options)
 }
 
@@ -136,6 +206,10 @@ fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<NativeDownloadStream>()?;
     Ok(())
 }
+
+#[cfg(test)]
+#[path = "../tests/rust/process_state.rs"]
+mod process_state_tests;
 
 #[cfg(test)]
 mod tests {

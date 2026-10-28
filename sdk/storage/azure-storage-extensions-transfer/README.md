@@ -26,8 +26,8 @@ This ensures you get compatible versions of both the SDK and the extensions pack
 
 ## Rust source layout
 
-- `src/lib.rs`: Python module registration, shared runtime/transport, client construction, and transfer defaults.
-- `src/credentials.rs`: Python token callback credential and process-wide credential cache.
+- `src/lib.rs`: Python module registration, PID-owned runtime/transport/cache state, client construction, and transfer defaults.
+- `src/credentials.rs`: Python token callback credential and per-process credential cache.
 - `src/upload.rs`: Upload bindings, zero-copy Python buffer ownership, and upload response conversion.
 - `src/download.rs`: Download bindings, the prefetching download stream, and the `readall` fast path.
 - `src/errors.rs`: SDK-independent native error carrier and Rust error conversion.
