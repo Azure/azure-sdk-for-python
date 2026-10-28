@@ -65,15 +65,6 @@ class Capabilities(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DeviceManagement."""
 
 
-class ConnectionProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The connection profile that the IoT hub uses for device connections."""
-
-    CLASSIC = "Classic"
-    """Classic connection profile."""
-    MQTT_V5 = "MqttV5"
-    """MQTT v5 connection profile."""
-
-
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -147,6 +138,13 @@ class EventStreamAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
     IDENTITY_BASED = "identityBased"
     """identityBased authentication."""
+
+
+class FallbackRouteSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The source to which the fallback route is applied."""
+
+    DEVICE_MESSAGES = "DeviceMessages"
+    """Device-to-cloud messages sent by devices."""
 
 
 class GatewayVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -229,17 +227,6 @@ class IpFilterActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reject."""
 
 
-class IpVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This property specifies the IP Version the hub is currently utilizing."""
-
-    IPV4 = "ipv4"
-    """ipv4."""
-    IPV6 = "ipv6"
-    """ipv6."""
-    IPV4_IPV6 = "ipv4ipv6"
-    """ipv4ipv6."""
-
-
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the job."""
 
@@ -280,15 +267,6 @@ class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """factoryResetDevice."""
     FIRMWARE_UPDATE = "firmwareUpdate"
     """firmwareUpdate."""
-
-
-class MessagePayloadFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The supported formats for message payloads delivered to routing endpoints."""
-
-    DO_OBSERVATION_V1 = "DOObservationV1"
-    """Formats the message as a com.do.telemetry.observation.v1 payload."""
-    NONE = "None"
-    """Preserves the original message payload."""
 
 
 class NetworkRuleIPAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -358,12 +336,8 @@ class RoutingSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DeviceLifecycleEvents."""
     DEVICE_JOB_LIFECYCLE_EVENTS = "DeviceJobLifecycleEvents"
     """DeviceJobLifecycleEvents."""
-    DIGITAL_TWIN_CHANGE_EVENTS = "DigitalTwinChangeEvents"
-    """DigitalTwinChangeEvents."""
     DEVICE_CONNECTION_STATE_EVENTS = "DeviceConnectionStateEvents"
     """DeviceConnectionStateEvents."""
-    MQTT_BROKER_MESSAGES = "MqttBrokerMessages"
-    """MqttBrokerMessages."""
 
 
 class RoutingStorageContainerPropertiesEncoding(  # pylint: disable=name-too-long

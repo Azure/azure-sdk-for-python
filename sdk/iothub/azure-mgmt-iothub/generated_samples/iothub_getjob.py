@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01-preview/iothub_getjob.json
+# x-ms-original-file: 2026-11-01/iothub_getjob.json
 if __name__ == "__main__":
     main()
