@@ -303,5 +303,5 @@
         "azure.mgmt.servicefabricmanagedclusters.operations.OperationStatusOperations.get": "Microsoft.ServiceFabric.OperationStatus.get",
         "azure.mgmt.servicefabricmanagedclusters.aio.operations.OperationStatusOperations.get": "Microsoft.ServiceFabric.OperationStatus.get"
     },
-    "CrossLanguageVersion": "b8ac014fcadd"
+    "CrossLanguageVersion": "dbb81d38c53d"
 }
