@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.fabric_agent.list(
-        resource_group_name="rgswagger_2024-09-01",
-        fabric_name="wPR",
+        resource_group_name="rgrecoveryservicesdatareplication",
+        fabric_name="efgaafeyvvdeegktw",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2024-09-01/FabricAgent_List.json
+# x-ms-original-file: 2026-05-01/FabricAgent_List.json
 if __name__ == "__main__":
     main()

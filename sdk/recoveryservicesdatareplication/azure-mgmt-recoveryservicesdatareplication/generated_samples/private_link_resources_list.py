@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservicesdatareplication import RecoveryServicesDataRepli
     pip install azure-identity
     pip install azure-mgmt-recoveryservicesdatareplication
 # USAGE
-    python recovery_points_get.py
+    python private_link_resources_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.recovery_point.get(
+    response = client.private_link_resources.list(
         resource_group_name="rgrecoveryservicesdatareplication",
-        vault_name="4",
-        protected_item_name="d",
-        recovery_point_name="1X",
+        vault_name="lftqijwwzmqhexnl",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2024-09-01/RecoveryPoints_Get.json
+# x-ms-original-file: 2026-05-01/PrivateLinkResources_List.json
 if __name__ == "__main__":
     main()

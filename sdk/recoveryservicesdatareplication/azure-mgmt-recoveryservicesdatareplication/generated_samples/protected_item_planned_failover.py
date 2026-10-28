@@ -32,13 +32,13 @@ def main():
 
     response = client.protected_item.begin_planned_failover(
         resource_group_name="rgrecoveryservicesdatareplication",
-        vault_name="4",
-        protected_item_name="d",
+        vault_name="lftqijwwzmqhexnl",
+        protected_item_name="ybdaqrrypdozdgxrvmvv",
         body={"properties": {"customProperties": {"instanceType": "PlannedFailoverModelCustomProperties"}}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/ProtectedItem_PlannedFailover.json
+# x-ms-original-file: 2026-05-01/ProtectedItem_PlannedFailover.json
 if __name__ == "__main__":
     main()

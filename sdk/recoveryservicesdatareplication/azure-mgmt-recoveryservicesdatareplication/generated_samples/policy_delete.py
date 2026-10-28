@@ -32,11 +32,11 @@ def main():
 
     client.policy.begin_delete(
         resource_group_name="rgrecoveryservicesdatareplication",
-        vault_name="4",
-        policy_name="wqfscsdv",
+        vault_name="fooVault",
+        policy_name="fooPolicy",
     ).result()
 
 
-# x-ms-original-file: 2024-09-01/Policy_Delete.json
+# x-ms-original-file: 2026-05-01/Policy_Delete.json
 if __name__ == "__main__":
     main()

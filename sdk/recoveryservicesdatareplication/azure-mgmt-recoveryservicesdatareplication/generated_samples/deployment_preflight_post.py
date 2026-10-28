@@ -31,12 +31,12 @@ def main():
     )
 
     response = client.deployment_preflight.post(
-        resource_group_name="rgswagger_2024-09-01",
-        deployment_id="lnfcwsmlowbwkndkztzvaj",
+        resource_group_name="rgrecoveryservicesdatareplication",
+        deployment_id="rhxqeiwqdxngdcpw",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/DeploymentPreflight_Post.json
+# x-ms-original-file: 2026-05-01/DeploymentPreflight_Post.json
 if __name__ == "__main__":
     main()
