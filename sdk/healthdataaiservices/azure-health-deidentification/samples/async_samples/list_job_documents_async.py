@@ -22,6 +22,7 @@ USAGE:
 
 
 import asyncio
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncLROPoller
 from azure.health.deidentification.aio import DeidentificationClient
 from azure.health.deidentification.models import (
@@ -54,9 +55,19 @@ async def list_job_documents_async():
     )
 
     print(f"Creating job with name: {jobname}")
-    async with client:
+    async with credential, client:
         poller: AsyncLROPoller = await client.begin_deidentify_documents(jobname, job)
-        job = await poller.result()
+        try:
+            job = await poller.result()
+        except HttpResponseError:
+            # A failed or canceled job surfaces as a generic polling error; the job's own error explains why.
+            # The lookup is best-effort so the original error is always re-raised.
+            try:
+                failed_job = await client.get_job(jobname)
+                print(f"Job {jobname} ended with status {failed_job.status}: {failed_job.error}")
+            except Exception as lookup_error:
+                print(f"Could not retrieve job {jobname} for diagnostics: {lookup_error}")
+            raise
         print(f"Job Status: {job.status}")
 
         files = client.list_job_documents(jobname)
@@ -69,8 +80,6 @@ async def list_job_documents_async():
             filesToLookThrough -= 1
             if filesToLookThrough <= 0:
                 break
-
-        await credential.close()
 
 
 async def main():

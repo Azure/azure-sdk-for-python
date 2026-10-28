@@ -1436,7 +1436,7 @@ class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ``minimal``, ``low``, ``medium``, ``high``, ``xhigh``, and ``max``. Reducing reasoning effort
     can result in faster responses and fewer tokens used on reasoning in a response. Not all
     reasoning models support every value. See the `reasoning guide
-    <https://platform.openai.com/docs/guides/reasoning>`_ for model-specific support.
+    <https://developers.openai.com/api/docs/guides/reasoning>`_ for model-specific support.
     """
 
     NONE = "none"
@@ -2203,8 +2203,6 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WEB_IQ_PREVIEW."""
     BROWSER_AUTOMATION = "browser_automation"
     """BROWSER_AUTOMATION."""
-    CLOUD_COMPUTER_USE_PREVIEW = "cloud_computer_use_preview"
-    """CLOUD_COMPUTER_USE_PREVIEW."""
 
 
 class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2335,8 +2333,6 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OPENAPI."""
     MICROSOFT_COPILOT_TOOLSET_PREVIEW = "microsoft_copilot_toolset_preview"
     """MICROSOFT_COPILOT_TOOLSET_PREVIEW."""
-    CLOUD_COMPUTER_USE_PREVIEW = "cloud_computer_use_preview"
-    """CLOUD_COMPUTER_USE_PREVIEW."""
 
 
 class TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2512,6 +2508,17 @@ class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """FAR_FIELD."""
     AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
     """Azure deep noise suppression."""
+
+
+class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported input-transcript profanity filtering modes."""
+
+    MASKED = "masked"
+    """Masks recognized profanity in the transcript."""
+    UNFILTERED = "unfiltered"
+    """Includes recognized profanity in the transcript, subject to mandatory service masking policies."""
+    REMOVED = "removed"
+    """Removes recognized profanity from the transcript."""
 
 
 class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):

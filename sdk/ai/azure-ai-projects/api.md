@@ -5825,35 +5825,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.CloudComputerUsePreviewTool(Tool, discriminator='cloud_computer_use_preview'):
-        type: Literal[ToolType.CLOUD_COMPUTER_USE_PREVIEW]
-
-        @overload
-        def __init__(self) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.CloudComputerUsePreviewToolboxTool(ToolboxTool, discriminator='cloud_computer_use_preview'):
-        description: str
-        name: str
-        tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.CLOUD_COMPUTER_USE_PREVIEW]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.ClusterInsightResult(_Model):
         clusters: list[InsightCluster]
         coordinates: Optional[dict[str, ChartCoordinate]]
@@ -8451,13 +8422,13 @@ namespace azure.ai.projects.models
         description: Optional[str]
         input_fidelity: Optional[Union[str, InputFidelity]]
         input_image_mask: Optional[ImageGenToolInputImageMask]
-        model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], Literal["gpt-image-2"], Literal["gpt-image-2-2026-04-21"], str]]
+        model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], Literal["gpt-image-2"], Literal["gpt-image-2-2026-04-21"], Literal["gpt-image-5-sunburst"], Literal["gpt-image-5-sunburst-2026-09-08"], Literal["gpt-image-5-flare"], Literal["gpt-image-5-flare-2026-09-08"], str]]
         moderation: Optional[Literal["auto", "low"]]
         name: Optional[str]
         output_compression: Optional[int]
         output_format: Optional[Literal["png", "webp", "jpeg"]]
         partial_images: Optional[int]
-        quality: Optional[Literal["low", "medium", "high", "auto"]]
+        quality: Optional[Literal["low", "medium", "high", "xhigh", "max", "auto"]]
         size: Optional[Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]]
         tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.IMAGE_GENERATION]
@@ -8471,13 +8442,13 @@ namespace azure.ai.projects.models
                 description: Optional[str] = ..., 
                 input_fidelity: Optional[Union[str, InputFidelity]] = ..., 
                 input_image_mask: Optional[ImageGenToolInputImageMask] = ..., 
-                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], Literal[gpt-image-2], Literal[gpt-image-2-2026-04-21], str]] = ..., 
+                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], Literal[gpt-image-2], Literal[gpt-image-2-2026-04-21], Literal[gpt-image-5-sunburst], Literal[gpt-image-5-sunburst-2026-09-08], Literal[gpt-image-5-flare], Literal[gpt-image-5-flare-2026-09-08], str]] = ..., 
                 moderation: Optional[Literal[auto, low]] = ..., 
                 name: Optional[str] = ..., 
                 output_compression: Optional[int] = ..., 
                 output_format: Optional[Literal[png, webp, jpeg]] = ..., 
                 partial_images: Optional[int] = ..., 
-                quality: Optional[Literal[low, medium, high, auto]] = ..., 
+                quality: Optional[Literal[low, medium, high, xhigh, max, auto]] = ..., 
                 size: Optional[Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]] = ..., 
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
@@ -14541,7 +14512,6 @@ namespace azure.ai.projects.models
         BROWSER_AUTOMATION = "browser_automation"
         BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
         CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
-        CLOUD_COMPUTER_USE_PREVIEW = "cloud_computer_use_preview"
         CODE_INTERPRETER = "code_interpreter"
         COMPUTER = "computer"
         COMPUTER_USE_PREVIEW = "computer_use_preview"
@@ -14774,7 +14744,6 @@ namespace azure.ai.projects.models
         AZURE_AI_SEARCH = "azure_ai_search"
         BROWSER_AUTOMATION = "browser_automation"
         BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
-        CLOUD_COMPUTER_USE_PREVIEW = "cloud_computer_use_preview"
         CODE_INTERPRETER = "code_interpreter"
         FABRIC_IQ_PREVIEW = "fabric_iq_preview"
         FILE_SEARCH = "file_search"
@@ -15893,6 +15862,7 @@ namespace azure.ai.projects.models
         languages: Optional[list[str]]
         model: Union[str, VoiceAgentInputTranscriptionModel]
         phrase_list: Optional[list[str]]
+        profanity_filter: Optional[Union[str, VoiceAgentProfanityFilterMode]]
         prompt: Optional[str]
 
         @overload
@@ -15906,6 +15876,7 @@ namespace azure.ai.projects.models
                 languages: Optional[list[str]] = ..., 
                 model: Union[str, VoiceAgentInputTranscriptionModel], 
                 phrase_list: Optional[list[str]] = ..., 
+                profanity_filter: Optional[Union[str, VoiceAgentProfanityFilterMode]] = ..., 
                 prompt: Optional[str] = ...
             ) -> None: ...
 
@@ -16043,6 +16014,12 @@ namespace azure.ai.projects.models
         AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
         FAR_FIELD = "far_field"
         NEAR_FIELD = "near_field"
+
+
+    class azure.ai.projects.models.VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MASKED = "masked"
+        REMOVED = "removed"
+        UNFILTERED = "unfiltered"
 
 
     class azure.ai.projects.models.VoiceAgentRealtimeResponse(_Model):

@@ -13,14 +13,27 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._operations import Operations  # type: ignore
-from ._operations import HorizonDbClustersOperations  # type: ignore
-from ._operations import HorizonDbPoolsOperations  # type: ignore
-from ._operations import HorizonDbReplicasOperations  # type: ignore
-from ._operations import HorizonDbFirewallRulesOperations  # type: ignore
-from ._operations import HorizonDbPrivateEndpointConnectionsOperations  # type: ignore
-from ._operations import HorizonDbPrivateLinkResourcesOperations  # type: ignore
-from ._operations import HorizonDbParameterGroupsOperations  # type: ignore
-from ._operations import HorizonDbAdministratorsOperations  # type: ignore
+from ._operations import CapabilitiesOperations  # type: ignore
+from ._operations import ClustersOperations  # type: ignore
+from ._operations import PoolsOperations  # type: ignore
+from ._operations import FirewallRulesOperations  # type: ignore
+from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
+from ._operations import PrivateLinkResourcesOperations  # type: ignore
+from ._operations import ParameterGroupsOperations  # type: ignore
+from ._operations import DefaultParameterGroupsOperations  # type: ignore
+from ._operations import MicrosoftEntraAdministratorsOperations  # type: ignore
+from ._operations import AuthenticationsOperations  # type: ignore
+from ._operations import PasswordAuthenticationsOperations  # type: ignore
+from ._operations import MicrosoftEntraAuthenticationsOperations  # type: ignore
+from ._operations import ChangeDataCaptureCapabilitiesOperations  # type: ignore
+from ._operations import ChangeDataCaptureDestinationsOperations  # type: ignore
+from ._operations import IdentityAssignmentsOperations  # type: ignore
+from ._operations import ChangeDataCaptureConfigurationsOperations  # type: ignore
+from ._operations import EndpointsOperations  # type: ignore
+from ._operations import MaintenanceEventsOperations  # type: ignore
+from ._operations import NodesOperations  # type: ignore
+from ._operations import LogCaptureConfigurationsOperations  # type: ignore
+from ._operations import LogFilesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -28,14 +41,27 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Operations",
-    "HorizonDbClustersOperations",
-    "HorizonDbPoolsOperations",
-    "HorizonDbReplicasOperations",
-    "HorizonDbFirewallRulesOperations",
-    "HorizonDbPrivateEndpointConnectionsOperations",
-    "HorizonDbPrivateLinkResourcesOperations",
-    "HorizonDbParameterGroupsOperations",
-    "HorizonDbAdministratorsOperations",
+    "CapabilitiesOperations",
+    "ClustersOperations",
+    "PoolsOperations",
+    "FirewallRulesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "ParameterGroupsOperations",
+    "DefaultParameterGroupsOperations",
+    "MicrosoftEntraAdministratorsOperations",
+    "AuthenticationsOperations",
+    "PasswordAuthenticationsOperations",
+    "MicrosoftEntraAuthenticationsOperations",
+    "ChangeDataCaptureCapabilitiesOperations",
+    "ChangeDataCaptureDestinationsOperations",
+    "IdentityAssignmentsOperations",
+    "ChangeDataCaptureConfigurationsOperations",
+    "EndpointsOperations",
+    "MaintenanceEventsOperations",
+    "NodesOperations",
+    "LogCaptureConfigurationsOperations",
+    "LogFilesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

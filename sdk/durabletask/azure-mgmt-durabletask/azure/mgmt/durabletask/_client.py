@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -19,24 +19,47 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import DurableTaskMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import Operations, RetentionPoliciesOperations, SchedulersOperations, TaskHubsOperations
+from .operations import (
+    DetectorsOperations,
+    FailoverInstancesOperations,
+    Operations,
+    RetentionPoliciesOperations,
+    SchedulersOperations,
+    TaskHubsOperations,
+    TaskQueuesOperations,
+    TransparentDataEncryptionsOperations,
+)
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class DurableTaskMgmtClient:
+class DurableTaskMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """DurableTaskMgmtClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.durabletask.operations.Operations
+    :ivar detectors: DetectorsOperations operations
+    :vartype detectors: azure.mgmt.durabletask.operations.DetectorsOperations
     :ivar schedulers: SchedulersOperations operations
     :vartype schedulers: azure.mgmt.durabletask.operations.SchedulersOperations
     :ivar task_hubs: TaskHubsOperations operations
     :vartype task_hubs: azure.mgmt.durabletask.operations.TaskHubsOperations
+    :ivar task_queues: TaskQueuesOperations operations
+    :vartype task_queues: azure.mgmt.durabletask.operations.TaskQueuesOperations
     :ivar retention_policies: RetentionPoliciesOperations operations
     :vartype retention_policies: azure.mgmt.durabletask.operations.RetentionPoliciesOperations
+    :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
+    :vartype transparent_data_encryptions:
+     azure.mgmt.durabletask.operations.TransparentDataEncryptionsOperations
+    :ivar failover_instances: FailoverInstancesOperations operations
+    :vartype failover_instances: azure.mgmt.durabletask.operations.FailoverInstancesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -46,9 +69,10 @@ class DurableTaskMgmtClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-02-01"
-     and None. Default value is "2026-02-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-07-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -102,9 +126,17 @@ class DurableTaskMgmtClient:
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.detectors = DetectorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schedulers = SchedulersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.task_hubs = TaskHubsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.task_queues = TaskQueuesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.retention_policies = RetentionPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.failover_instances = FailoverInstancesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

@@ -176,12 +176,11 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     A2ATool, A2APreviewTool, ApplyPatchToolParam, AzureAISearchTool, AzureFunctionTool,
     BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationTool,
-    BrowserAutomationPreviewTool, CaptureStructuredOutputsTool, CloudComputerUsePreviewTool,
-    CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool, CustomToolParam,
-    MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
-    GitHubCopilotToolsetPreview, ImageGenTool, LocalShellToolParam, MCPTool,
-    MemorySearchPreviewTool, MicrosoftCopilotToolsetPreview, NamespaceToolParam, OpenApiTool,
-    ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
+    BrowserAutomationPreviewTool, CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool,
+    ComputerUsePreviewTool, CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool,
+    FileSearchTool, FunctionTool, GitHubCopilotToolsetPreview, ImageGenTool, LocalShellToolParam,
+    MCPTool, MemorySearchPreviewTool, MicrosoftCopilotToolsetPreview, NamespaceToolParam,
+    OpenApiTool, ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
     ToolSearchToolParam, WebIQPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
@@ -191,8 +190,8 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      "browser_automation_preview", "fabric_dataagent_preview", "sharepoint_grounding_preview",
      "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
      "web_iq_preview", "github_copilot_toolset_preview", "a2a", "azure_ai_search", "azure_function",
-     "bing_grounding", "browser_automation", "capture_structured_outputs", "openapi",
-     "microsoft_copilot_toolset_preview", and "cloud_computer_use_preview".
+     "bing_grounding", "browser_automation", "capture_structured_outputs", "openapi", and
+     "microsoft_copilot_toolset_preview".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -206,8 +205,8 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      \"sharepoint_grounding_preview\", \"memory_search_preview\", \"work_iq_preview\",
      \"fabric_iq_preview\", \"toolbox_search_preview\", \"web_iq_preview\",
      \"github_copilot_toolset_preview\", \"a2a\", \"azure_ai_search\", \"azure_function\",
-     \"bing_grounding\", \"browser_automation\", \"capture_structured_outputs\", \"openapi\",
-     \"microsoft_copilot_toolset_preview\", and \"cloud_computer_use_preview\"."""
+     \"bing_grounding\", \"browser_automation\", \"capture_structured_outputs\", \"openapi\", and
+     \"microsoft_copilot_toolset_preview\"."""
 
     @overload
     def __init__(
@@ -290,17 +289,15 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     A2AToolboxTool, A2APreviewToolboxTool, AzureAISearchToolboxTool, BrowserAutomationToolboxTool,
-    BrowserAutomationPreviewToolboxTool, CloudComputerUsePreviewToolboxTool,
-    CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool, FileSearchToolboxTool, MCPToolboxTool,
-    OpenApiToolboxTool, ReminderPreviewToolboxTool, ShellToolboxTool, ToolSearchToolboxTool,
-    ToolboxSearchPreviewToolboxTool, WebIQPreviewToolboxTool, WebSearchToolboxTool,
-    WorkIQPreviewToolboxTool
+    BrowserAutomationPreviewToolboxTool, CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool,
+    FileSearchToolboxTool, MCPToolboxTool, OpenApiToolboxTool, ReminderPreviewToolboxTool,
+    ShellToolboxTool, ToolSearchToolboxTool, ToolboxSearchPreviewToolboxTool,
+    WebIQPreviewToolboxTool, WebSearchToolboxTool, WorkIQPreviewToolboxTool
 
     :ivar type: The type of tool. Required. Known values are: "code_interpreter", "file_search",
      "web_search", "mcp", "azure_ai_search", "openapi", "a2a_preview", "browser_automation_preview",
      "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search",
-     "toolbox_search_preview", "a2a", "shell", "web_iq_preview", "browser_automation", and
-     "cloud_computer_use_preview".
+     "toolbox_search_preview", "a2a", "shell", "web_iq_preview", and "browser_automation".
     :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -318,7 +315,7 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
      \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a_preview\",
      \"browser_automation_preview\", \"reminder_preview\", \"work_iq_preview\",
      \"fabric_iq_preview\", \"toolbox_search\", \"toolbox_search_preview\", \"a2a\", \"shell\",
-     \"web_iq_preview\", \"browser_automation\", and \"cloud_computer_use_preview\"."""
+     \"web_iq_preview\", and \"browser_automation\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6035,6 +6032,9 @@ class BrowserAutomationPreviewTool(
     Tool, discriminator="browser_automation_preview"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input definition information for a Browser Automation Tool, as used to configure an Agent.
+    BrowserAutomationPreviewTool is deprecated. Please use BrowserAutomationTool instead. See
+    `https://aka.ms/bat/docs <https://aka.ms/bat/docs>`_ for more information on Browser automation
+    tool.
 
     :ivar type: The object type, which is always 'browser_automation_preview'. Required.
      BROWSER_AUTOMATION_PREVIEW.
@@ -6073,7 +6073,9 @@ class BrowserAutomationPreviewTool(
 class BrowserAutomationPreviewToolboxTool(
     ToolboxTool, discriminator="browser_automation_preview"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A browser automation tool stored in a toolbox.
+    """A browser automation tool stored in a toolbox. BrowserAutomationPreviewToolboxTool is
+    deprecated. Please use BrowserAutomationToolboxTool instead. See `https://aka.ms/bat/docs
+    <https://aka.ms/bat/docs>`_ for more information on Browser automation tool.
 
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -6495,76 +6497,6 @@ class ChatSummaryMemoryItem(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = MemoryItemKind.CHAT_SUMMARY  # type: ignore
-
-
-class CloudComputerUsePreviewTool(Tool, discriminator="cloud_computer_use_preview"):
-    """The input definition information for a cloud computer use tool, as used to configure an agent.
-
-    :ivar type: The object type, which is always ``cloud_computer_use_preview``. Required.
-     CLOUD_COMPUTER_USE_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.CLOUD_COMPUTER_USE_PREVIEW
-    """
-
-    type: Literal[ToolType.CLOUD_COMPUTER_USE_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always ``cloud_computer_use_preview``. Required.
-     CLOUD_COMPUTER_USE_PREVIEW."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.CLOUD_COMPUTER_USE_PREVIEW  # type: ignore
-
-
-class CloudComputerUsePreviewToolboxTool(
-    ToolboxTool, discriminator="cloud_computer_use_preview"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A cloud computer use tool stored in a toolbox.
-
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    :ivar type: Required. CLOUD_COMPUTER_USE_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.CLOUD_COMPUTER_USE_PREVIEW
-    """
-
-    type: Literal[ToolboxToolType.CLOUD_COMPUTER_USE_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. CLOUD_COMPUTER_USE_PREVIEW."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolboxToolType.CLOUD_COMPUTER_USE_PREVIEW  # type: ignore
 
 
 class ClusterInsightResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -11768,9 +11700,9 @@ class FunctionObject(_Model):  # pylint: disable=docstring-keyword-should-match-
 
 class FunctionParameters(_Model):
     """The parameters the functions accepts, described as a JSON Schema object. See the `guide
-    </docs/guides/function-calling>`_ for examples, and the `JSON Schema reference
-    <https://json-schema.org/understanding-json-schema/>`_ for documentation about the format.
-    Omitting ``parameters`` defines a function with an empty parameter list.
+    <https://developers.openai.com/api/docs/guides/function-calling>`_ for examples, and the `JSON
+    Schema reference <https://json-schema.org/understanding-json-schema/>`_ for documentation about
+    the format. Omitting ``parameters`` defines a function with an empty parameter list.
 
     """
 
@@ -12638,23 +12570,28 @@ class ImageGenTool(
     :vartype type: str or ~azure.ai.projects.models.IMAGE_GENERATION
     :ivar model: Is one of the following types: Literal["gpt-image-1"],
      Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], Literal["gpt-image-2"],
-     Literal["gpt-image-2-2026-04-21"], str
-    :vartype model: str or str or str or str or str or str
-    :ivar quality: The quality of the generated image. One of ``low``, ``medium``, ``high``, or
-     ``auto``. Default: ``auto``. Is one of the following types: Literal["low"], Literal["medium"],
-     Literal["high"], Literal["auto"]
-    :vartype quality: str or str or str or str
-    :ivar size: The size of the generated images. For ``gpt-image-2`` and
-     ``gpt-image-2-2026-04-21``, arbitrary resolutions are supported as ``WIDTHxHEIGHT`` strings,
-     for example ``1536x864``. Width and height must both be divisible by 16 and the requested
-     aspect ratio must be between 1:3 and 3:1. Resolutions above ``2560x1440`` are experimental, and
-     the maximum supported resolution is ``3840x2160``. The requested size must also satisfy the
-     model's current pixel and edge limits. The standard sizes ``1024x1024``, ``1536x1024``, and
-     ``1024x1536`` are supported by the GPT image models; ``auto`` is supported for models that
-     allow automatic sizing. For ``dall-e-2``, use one of ``256x256``, ``512x512``, or
-     ``1024x1024``. For ``dall-e-3``, use one of ``1024x1024``, ``1792x1024``, or ``1024x1792``. Is
-     one of the following types: Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"],
-     Literal["auto"], str
+     Literal["gpt-image-2-2026-04-21"], Literal["gpt-image-2.5-sunburst"],
+     Literal["gpt-image-2.5-sunburst-2026-09-08"], Literal["gpt-image-2.5-flare"],
+     Literal["gpt-image-2.5-flare-2026-09-08"], str
+    :vartype model: str or str or str or str or str or str or str or str or str or str
+    :ivar quality: The quality of the generated image. The GPT image models support ``low``,
+     ``medium``, and ``high``. ``gpt-image-2.5-sunburst`` and ``gpt-image-2.5-flare``, including
+     their ``2026-09-08`` snapshots, also support ``xhigh`` and ``max``. Default: ``auto``. Is one
+     of the following types: Literal["low"], Literal["medium"], Literal["high"], Literal["xhigh"],
+     Literal["max"], Literal["auto"]
+    :vartype quality: str or str or str or str or str or str
+    :ivar size: The size of the generated images. For ``gpt-image-2``, ``gpt-image-2-2026-04-21``,
+     ``gpt-image-2.5-sunburst``, ``gpt-image-2.5-sunburst-2026-09-08``, ``gpt-image-2.5-flare``, and
+     ``gpt-image-2.5-flare-2026-09-08``, arbitrary resolutions are supported as ``WIDTHxHEIGHT``
+     strings, for example ``1536x864``. Width and height must both be divisible by 16 and the
+     requested aspect ratio must be between 1:3 and 3:1. Resolutions above ``2560x1440`` are
+     experimental, and the maximum supported resolution is ``3840x2160``. The requested size must
+     also satisfy the model's current pixel and edge limits. The standard sizes ``1024x1024``,
+     ``1536x1024``, and ``1024x1536`` are supported by the GPT image models; ``auto`` is supported
+     for models that allow automatic sizing. For ``dall-e-2``, use one of ``256x256``, ``512x512``,
+     or ``1024x1024``. For ``dall-e-3``, use one of ``1024x1024``, ``1792x1024``, or ``1024x1792``.
+     Is one of the following types: Literal["1024x1024"], Literal["1024x1536"],
+     Literal["1536x1024"], Literal["auto"], str
     :vartype size: str or str or str or str or str
     :ivar output_format: The output format of the generated image. One of ``png``, ``webp``, or
      ``jpeg``. Default: ``png``. Is one of the following types: Literal["png"], Literal["webp"],
@@ -12666,10 +12603,12 @@ class ImageGenTool(
      Literal["auto"] type or a Literal["low"] type.
     :vartype moderation: str or str
     :ivar background: Set the background of the generated image. One of ``transparent``,
-     ``opaque``, or ``auto``. Transparent backgrounds are available for supported GPT Image models.
-     For ``gpt-image-2`` and ``gpt-image-2-2026-04-21``, this support is in preview. When using
-     ``transparent``, set the output format to ``png`` or ``webp``. Default: ``auto``. Is one of the
-     following types: Literal["transparent"], Literal["opaque"], Literal["auto"]
+     ``opaque``, or ``auto``. ``gpt-image-2.5-sunburst`` and ``gpt-image-2.5-flare``, including
+     their ``2026-09-08`` snapshots, support ``opaque`` and ``transparent`` backgrounds. Transparent
+     backgrounds are available for supported GPT Image models. For ``gpt-image-2`` and
+     ``gpt-image-2-2026-04-21``, this support is in preview. When using ``transparent``, set the
+     output format to ``png`` or ``webp``. Default: ``auto``. Is one of the following types:
+     Literal["transparent"], Literal["opaque"], Literal["auto"]
     :vartype background: str or str or str
     :ivar input_fidelity: Known values are: "high" and "low".
     :vartype input_fidelity: str or ~azure.ai.projects.models.InputFidelity
@@ -12701,30 +12640,40 @@ class ImageGenTool(
             Literal["gpt-image-1.5"],
             Literal["gpt-image-2"],
             Literal["gpt-image-2-2026-04-21"],
+            Literal["gpt-image-2.5-sunburst"],
+            Literal["gpt-image-2.5-sunburst-2026-09-08"],
+            Literal["gpt-image-2.5-flare"],
+            Literal["gpt-image-2.5-flare-2026-09-08"],
             str,
         ]
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is one of the following types: Literal[\"gpt-image-1\"], Literal[\"gpt-image-1-mini\"],
-     Literal[\"gpt-image-1.5\"], Literal[\"gpt-image-2\"], Literal[\"gpt-image-2-2026-04-21\"], str"""
-    quality: Optional[Literal["low", "medium", "high", "auto"]] = rest_field(
+     Literal[\"gpt-image-1.5\"], Literal[\"gpt-image-2\"], Literal[\"gpt-image-2-2026-04-21\"],
+     Literal[\"gpt-image-2.5-sunburst\"], Literal[\"gpt-image-2.5-sunburst-2026-09-08\"],
+     Literal[\"gpt-image-2.5-flare\"], Literal[\"gpt-image-2.5-flare-2026-09-08\"], str"""
+    quality: Optional[Literal["low", "medium", "high", "xhigh", "max", "auto"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The quality of the generated image. One of ``low``, ``medium``, ``high``, or ``auto``. Default:
-     ``auto``. Is one of the following types: Literal[\"low\"], Literal[\"medium\"],
-     Literal[\"high\"], Literal[\"auto\"]"""
+    """The quality of the generated image. The GPT image models support ``low``, ``medium``, and
+     ``high``. ``gpt-image-2.5-sunburst`` and ``gpt-image-2.5-flare``, including their
+     ``2026-09-08`` snapshots, also support ``xhigh`` and ``max``. Default: ``auto``. Is one of the
+     following types: Literal[\"low\"], Literal[\"medium\"], Literal[\"high\"], Literal[\"xhigh\"],
+     Literal[\"max\"], Literal[\"auto\"]"""
     size: Optional[Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]] = (
         rest_field(visibility=["read", "create", "update", "delete", "query"])
     )
-    """The size of the generated images. For ``gpt-image-2`` and ``gpt-image-2-2026-04-21``, arbitrary
-     resolutions are supported as ``WIDTHxHEIGHT`` strings, for example ``1536x864``. Width and
-     height must both be divisible by 16 and the requested aspect ratio must be between 1:3 and 3:1.
-     Resolutions above ``2560x1440`` are experimental, and the maximum supported resolution is
-     ``3840x2160``. The requested size must also satisfy the model's current pixel and edge limits.
-     The standard sizes ``1024x1024``, ``1536x1024``, and ``1024x1536`` are supported by the GPT
-     image models; ``auto`` is supported for models that allow automatic sizing. For ``dall-e-2``,
-     use one of ``256x256``, ``512x512``, or ``1024x1024``. For ``dall-e-3``, use one of
-     ``1024x1024``, ``1792x1024``, or ``1024x1792``. Is one of the following types:
-     Literal[\"1024x1024\"], Literal[\"1024x1536\"], Literal[\"1536x1024\"], Literal[\"auto\"], str"""
+    """The size of the generated images. For ``gpt-image-2``, ``gpt-image-2-2026-04-21``,
+     ``gpt-image-2.5-sunburst``, ``gpt-image-2.5-sunburst-2026-09-08``, ``gpt-image-2.5-flare``, and
+     ``gpt-image-2.5-flare-2026-09-08``, arbitrary resolutions are supported as ``WIDTHxHEIGHT``
+     strings, for example ``1536x864``. Width and height must both be divisible by 16 and the
+     requested aspect ratio must be between 1:3 and 3:1. Resolutions above ``2560x1440`` are
+     experimental, and the maximum supported resolution is ``3840x2160``. The requested size must
+     also satisfy the model's current pixel and edge limits. The standard sizes ``1024x1024``,
+     ``1536x1024``, and ``1024x1536`` are supported by the GPT image models; ``auto`` is supported
+     for models that allow automatic sizing. For ``dall-e-2``, use one of ``256x256``, ``512x512``,
+     or ``1024x1024``. For ``dall-e-3``, use one of ``1024x1024``, ``1792x1024``, or ``1024x1792``.
+     Is one of the following types: Literal[\"1024x1024\"], Literal[\"1024x1536\"],
+     Literal[\"1536x1024\"], Literal[\"auto\"], str"""
     output_format: Optional[Literal["png", "webp", "jpeg"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12741,10 +12690,12 @@ class ImageGenTool(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Set the background of the generated image. One of ``transparent``, ``opaque``, or ``auto``.
-     Transparent backgrounds are available for supported GPT Image models. For ``gpt-image-2`` and
-     ``gpt-image-2-2026-04-21``, this support is in preview. When using ``transparent``, set the
-     output format to ``png`` or ``webp``. Default: ``auto``. Is one of the following types:
-     Literal[\"transparent\"], Literal[\"opaque\"], Literal[\"auto\"]"""
+     ``gpt-image-2.5-sunburst`` and ``gpt-image-2.5-flare``, including their ``2026-09-08``
+     snapshots, support ``opaque`` and ``transparent`` backgrounds. Transparent backgrounds are
+     available for supported GPT Image models. For ``gpt-image-2`` and ``gpt-image-2-2026-04-21``,
+     this support is in preview. When using ``transparent``, set the output format to ``png`` or
+     ``webp``. Default: ``auto``. Is one of the following types: Literal[\"transparent\"],
+     Literal[\"opaque\"], Literal[\"auto\"]"""
     input_fidelity: Optional[Union[str, "_models.InputFidelity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12781,10 +12732,14 @@ class ImageGenTool(
                 Literal["gpt-image-1.5"],
                 Literal["gpt-image-2"],
                 Literal["gpt-image-2-2026-04-21"],
+                Literal["gpt-image-2.5-sunburst"],
+                Literal["gpt-image-2.5-sunburst-2026-09-08"],
+                Literal["gpt-image-2.5-flare"],
+                Literal["gpt-image-2.5-flare-2026-09-08"],
                 str,
             ]
         ] = None,
-        quality: Optional[Literal["low", "medium", "high", "auto"]] = None,
+        quality: Optional[Literal["low", "medium", "high", "xhigh", "max", "auto"]] = None,
         size: Optional[
             Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]
         ] = None,
@@ -13799,7 +13754,10 @@ class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-s
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service
-     connectors `here </docs/guides/tools-remote-mcp#connectors>`_. Currently supported
+     connectors `here
+     <https://developers.openai.com/api/docs/guides/tools-connectors-mcp#connectors>`_. This field
+     is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
+     remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
      ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
@@ -13866,7 +13824,10 @@ class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-s
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
       ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
-      </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
+      <https://developers.openai.com/api/docs/guides/tools-connectors-mcp#connectors>`_. This field
+      is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
+      remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
+      ``connector_id`` values are:
  
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
@@ -13973,7 +13934,10 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docst
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service
-     connectors `here </docs/guides/tools-remote-mcp#connectors>`_. Currently supported
+     connectors `here
+     <https://developers.openai.com/api/docs/guides/tools-connectors-mcp#connectors>`_. This field
+     is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
+     remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
      ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
@@ -14037,7 +14001,10 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docst
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
       ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
-      </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
+      <https://developers.openai.com/api/docs/guides/tools-connectors-mcp#connectors>`_. This field
+      is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
+      remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
+      ``connector_id`` values are:
  
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
@@ -17369,8 +17336,9 @@ class RealtimeClientEventConversationItemCreate(
     """Add a new Item to the Conversation's context, including messages, function calls, and function
     call responses. This event can be used both to populate a "history" of the conversation and to
     add new items mid-stream, but has the current limitation that it cannot populate assistant
-    audio messages. If successful, the server will respond with a ``conversation.item.created``
-    event, otherwise an ``error`` event will be sent.
+    audio messages. If successful, the server will emit a ``conversation.item.added`` event and,
+    when the item is finalized, a ``conversation.item.done`` event. Otherwise, an ``error`` event
+    will be sent.
 
     :ivar event_id: Optional client-generated ID used to identify this event.
     :vartype event_id: str
@@ -17708,7 +17676,7 @@ class RealtimeClientEventOutputAudioBufferClear(
     to stop generating audio and emit a ``output_audio_buffer.cleared`` event. This event should be
     preceded by a ``response.cancel`` client event to stop the generation of the current response.
     `Learn more
-    </docs/guides/realtime-conversations#client-and-server-events-for-audio-in-webrtc>`_.
+    <https://developers.openai.com/api/docs/guides/realtime-conversations#client-and-server-events-for-audio-in-webrtc>`_.
 
     :ivar event_id: The unique ID of the client event used for error handling.
     :vartype event_id: str
@@ -20355,7 +20323,7 @@ class RealtimeServerEventOutputAudioBufferCleared(
     VAD mode when the user has interrupted (``input_audio_buffer.speech_started``), or when the
     client has emitted the ``output_audio_buffer.clear`` event to manually cut off the current
     audio response. `Learn more
-    </docs/guides/realtime-conversations#client-and-server-events-for-audio-in-webrtc>`_.
+    <https://developers.openai.com/api/docs/guides/realtime-conversations#client-and-server-events-for-audio-in-webrtc>`_.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -25465,11 +25433,12 @@ class TelephonyTransferTargets(_Model):  # pylint: disable=docstring-keyword-sho
 class TextResponseFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object specifying the format that the model must output. Configuring ``{ "type":
     "json_schema" }`` enables Structured Outputs, which ensures the model will match your supplied
-    JSON schema. Learn more in the `Structured Outputs guide </docs/guides/structured-outputs>`_.
-    The default format is ``{ "type": "text" }`` with no additional options. *Not recommended for
-    gpt-4o and newer models:** Setting to ``{ "type": "json_object" }`` enables the older JSON
-    mode, which ensures the message the model generates is valid JSON. Using ``json_schema`` is
-    preferred for models that support it.
+    JSON schema. Learn more in the `Structured Outputs guide
+    <https://developers.openai.com/api/docs/guides/structured-outputs>`_. The default format is ``{
+    "type": "text" }`` with no additional options. *Not recommended for gpt-4o and newer models:**
+    Setting to ``{ "type": "json_object" }`` enables the older JSON mode, which ensures the message
+    the model generates is valid JSON. Using ``json_schema`` is preferred for models that support
+    it.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     TextResponseFormatJsonObject, TextResponseFormatJsonSchema, TextResponseFormatText
@@ -29328,8 +29297,8 @@ class VoiceAgentGreetingConfig(_Model):  # pylint: disable=docstring-keyword-sho
 
 
 class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Asynchronous input-audio transcription configuration. Extends the OpenAI Realtime transcription
-    options with the Azure and MAI transcription models, custom speech models, and phrase hints.
+    """Settings for transcribing input audio, including the transcription model, Custom Speech
+    deployments, and phrase hints.
 
     :ivar language: The language of the input audio. Supplying the input language in `ISO-639-1
      <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ (e.g. ``en``) format will improve
@@ -29343,10 +29312,11 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
      ``gpt-transcribe`` and ``gpt-live-transcribe``.
     :vartype keywords: list[str]
     :ivar prompt: An optional text to guide the model's style or continue a previous audio segment.
-     For ``whisper-1``, the `prompt is a list of keywords </docs/guides/speech-to-text#prompting>`_.
-     For ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a
-     free text string, for example "expect words related to technology". Prompt is not supported
-     with ``gpt-realtime-whisper`` in GA Realtime sessions.
+     For ``whisper-1``, the `prompt is a list of keywords
+     <https://developers.openai.com/api/docs/guides/speech-to-text#prompting>`_. For
+     ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a free
+     text string, for example "expect words related to technology". Prompt is not supported with
+     ``gpt-realtime-whisper`` in GA Realtime sessions.
     :vartype prompt: str
     :ivar delay: Controls how long the model waits before emitting transcription text. Higher
      values can improve transcription accuracy at the cost of latency. Only supported with
@@ -29362,6 +29332,14 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
     :vartype custom_speech: dict[str, str]
     :ivar phrase_list: Optional phrase hints that bias recognition toward domain terms.
     :vartype phrase_list: list[str]
+    :ivar profanity_filter: Controls how profanity is handled in input transcripts. Supported only
+     with managed Azure Speech (``azure-speech``), including Custom Speech. Set this property before
+     the session starts. If omitted, the transcription provider's default applies. You cannot change
+     the mode during a session. Filtering affects transcript events and the text sent to cascaded
+     models. It does not change input audio, voice activity detection, or assistant speech;
+     audio-native models still receive the original audio. Mandatory service masking policies apply
+     even when you select ``unfiltered``. Known values are: "masked", "unfiltered", and "removed".
+    :vartype profanity_filter: str or ~azure.ai.projects.models.VoiceAgentProfanityFilterMode
     """
 
     language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -29377,7 +29355,8 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
      ``gpt-live-transcribe``."""
     prompt: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An optional text to guide the model's style or continue a previous audio segment. For
-     ``whisper-1``, the `prompt is a list of keywords </docs/guides/speech-to-text#prompting>`_. For
+     ``whisper-1``, the `prompt is a list of keywords
+     <https://developers.openai.com/api/docs/guides/speech-to-text#prompting>`_. For
      ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a free
      text string, for example \"expect words related to technology\". Prompt is not supported with
      ``gpt-realtime-whisper`` in GA Realtime sessions."""
@@ -29399,6 +29378,16 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
     """Optional customer custom speech deployment configuration, keyed by locale."""
     phrase_list: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional phrase hints that bias recognition toward domain terms."""
+    profanity_filter: Optional[Union[str, "_models.VoiceAgentProfanityFilterMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls how profanity is handled in input transcripts. Supported only with managed Azure
+     Speech (``azure-speech``), including Custom Speech. Set this property before the session
+     starts. If omitted, the transcription provider's default applies. You cannot change the mode
+     during a session. Filtering affects transcript events and the text sent to cascaded models. It
+     does not change input audio, voice activity detection, or assistant speech; audio-native models
+     still receive the original audio. Mandatory service masking policies apply even when you select
+     ``unfiltered``. Known values are: \"masked\", \"unfiltered\", and \"removed\"."""
 
     @overload
     def __init__(
@@ -29412,6 +29401,7 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
         delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]] = None,
         custom_speech: Optional[dict[str, str]] = None,
         phrase_list: Optional[list[str]] = None,
+        profanity_filter: Optional[Union[str, "_models.VoiceAgentProfanityFilterMode"]] = None,
     ) -> None: ...
 
     @overload

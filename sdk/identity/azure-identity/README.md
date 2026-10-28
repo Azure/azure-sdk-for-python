@@ -21,7 +21,7 @@ pip install azure-identity
 ### Prerequisites
 
 - An [Azure subscription](https://azure.microsoft.com/free/python)
-- Python 3.9 or a recent version of Python 3 (this library doesn't support end-of-life versions)
+- Python 3.10 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 
 ### Use with AI tools
 
@@ -101,6 +101,21 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 - [Azure Service Fabric](https://learn.microsoft.com/azure/service-fabric/concepts-managed-identity)
 - [Azure Virtual Machines](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-to-use-vm-token)
 - [Azure Virtual Machines Scale Sets](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/qs-configure-powershell-windows-vmss)
+
+## AKS identity bindings
+
+[`WorkloadIdentityCredential`][workload_id_cred_ref] supports [AKS identity bindings](https://learn.microsoft.com/azure/aks/identity-bindings), which allow multiple clusters to share a federated identity credential for a user-assigned managed identity.
+
+After configuring an identity binding and authorizing the pod's Kubernetes service account, construct `WorkloadIdentityCredential` directly with `enable_azure_proxy=True`:
+
+```python
+from azure.identity import WorkloadIdentityCredential
+
+with WorkloadIdentityCredential(enable_azure_proxy=True) as credential:
+    token = credential.get_token("https://management.azure.com/.default")
+```
+
+AKS supplies the pod's identity, projected-token, proxy, SNI, and CA configuration. Identity binding mode isn't supported through `DefaultAzureCredential`. The asynchronous `WorkloadIdentityCredential` in `azure.identity.aio` supports the same option.
 
 ## Cloud configuration
 
