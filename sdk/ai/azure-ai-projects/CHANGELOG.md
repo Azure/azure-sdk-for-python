@@ -1,5 +1,15 @@
 # Release History
 
+## 2.10.0 (Unreleased)
+
+### Features Added
+
+* Added preview models for `session.handoff.started`, `session.handoff.completed`, and `session.handoff.aborted` events.
+
+### Bugs Fixed
+
+* Fixed synchronous and asynchronous Voice Agent realtime clients to return typed Handoff lifecycle events instead of dictionaries, preserving the existing fallback for unknown events.
+
 ## 2.9.0 (2026-10-16)
 
 ### Features Added

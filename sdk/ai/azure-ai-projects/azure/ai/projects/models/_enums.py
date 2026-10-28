@@ -1429,6 +1429,12 @@ class RealtimeServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSE_ANIMATION_VISEME_DONE."""
     RESPONSE_VIDEO_DELTA = "response.video.delta"
     """RESPONSE_VIDEO_DELTA."""
+    SESSION_HANDOFF_STARTED = "session.handoff.started"
+    """SESSION_HANDOFF_STARTED."""
+    SESSION_HANDOFF_COMPLETED = "session.handoff.completed"
+    """SESSION_HANDOFF_COMPLETED."""
+    SESSION_HANDOFF_ABORTED = "session.handoff.aborted"
+    """SESSION_HANDOFF_ABORTED."""
 
 
 class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2461,6 +2467,15 @@ class VoiceAgentEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiv
     """The high sensitivity threshold."""
     DEFAULT = "default"
     """The service-selected sensitivity threshold."""
+
+
+class VoiceAgentHandoffAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Why a server-managed handoff ended before target commit."""
+
+    USER_INTERRUPTION = "user_interruption"
+    """USER_INTERRUPTION."""
+    ERROR = "error"
+    """ERROR."""
 
 
 class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):

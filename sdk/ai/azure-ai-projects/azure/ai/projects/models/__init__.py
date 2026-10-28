@@ -682,6 +682,9 @@ from ._models import (  # type: ignore
     WorkIQPreviewTool,
     WorkIQPreviewToolboxTool,
     WorkflowAgentDefinition,
+    VoiceAgentServerEventSessionHandoffAborted,
+    VoiceAgentServerEventSessionHandoffCompleted,
+    VoiceAgentServerEventSessionHandoffStarted,
 )
 
 from ._enums import (  # type: ignore
@@ -859,6 +862,7 @@ from ._enums import (  # type: ignore
     VoiceModelType,
     VoiceOutputModality,
     VoiceType,
+    VoiceAgentHandoffAbortReason,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -1706,6 +1710,10 @@ __all__ = [
     "VoiceModelType",
     "VoiceOutputModality",
     "VoiceType",
+    "VoiceAgentServerEventSessionHandoffAborted",
+    "VoiceAgentServerEventSessionHandoffCompleted",
+    "VoiceAgentServerEventSessionHandoffStarted",
+    "VoiceAgentHandoffAbortReason",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

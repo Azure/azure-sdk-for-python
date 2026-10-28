@@ -1,4 +1,4 @@
-apiHash: bb1ea6eb387aed40913818d64b40f39438c2e7800793c097bd7fea2fb0f4c3f3
-packageVersion: 2.9.0
+apiHash: ea113dbafe7b8742cbea8a4c27bda7d26412e3600f9d93dc79929c812a220f2d
+packageVersion: 2.10.0
 parserVersion: 0.3.31
-pythonVersion: 3.12.10
+pythonVersion: 3.12.3

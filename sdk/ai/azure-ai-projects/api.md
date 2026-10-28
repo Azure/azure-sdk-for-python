@@ -12226,6 +12226,9 @@ namespace azure.ai.projects.models
         SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
         SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
         SESSION_CREATED = "session.created"
+        SESSION_HANDOFF_ABORTED = "session.handoff.aborted"
+        SESSION_HANDOFF_COMPLETED = "session.handoff.completed"
+        SESSION_HANDOFF_STARTED = "session.handoff.started"
         SESSION_SUBAGENT_ABORTED = "session.subagent.aborted"
         SESSION_SUBAGENT_COMPLETED = "session.subagent.completed"
         SESSION_SUBAGENT_STARTED = "session.subagent.started"
@@ -15852,6 +15855,11 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentHandoffAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ERROR = "error"
+        USER_INTERRUPTION = "user_interruption"
+
+
     class azure.ai.projects.models.VoiceAgentInputTranscription(_Model):
         custom_speech: Optional[dict[str, str]]
         delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]]
@@ -16380,6 +16388,107 @@ namespace azure.ai.projects.models
                 *, 
                 event_id: str, 
                 turn_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSessionHandoffAborted(RealtimeServerEvent, discriminator='session.handoff.aborted'):
+        edge_id: str
+        error: Optional[RealtimeServerEventErrorError]
+        event_id: str
+        from_model: str
+        from_node_id: str
+        handoff_id: str
+        node_generation: int
+        reason: Union[str, VoiceAgentHandoffAbortReason]
+        to_model: str
+        to_node_id: str
+        tool_call_id: str
+        type: Literal[RealtimeServerEventType.SESSION_HANDOFF_ABORTED]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                edge_id: str,
+                error: Optional[RealtimeServerEventErrorError] = ...,
+                event_id: str,
+                from_model: str,
+                from_node_id: str,
+                handoff_id: str,
+                node_generation: int,
+                reason: Union[str, VoiceAgentHandoffAbortReason],
+                to_model: str,
+                to_node_id: str,
+                tool_call_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSessionHandoffCompleted(RealtimeServerEvent, discriminator='session.handoff.completed'):
+        duration_ms: timedelta
+        edge_id: str
+        event_id: str
+        from_model: str
+        from_node_id: str
+        handoff_id: str
+        node_generation: int
+        prepare_duration_ms: timedelta
+        to_model: str
+        to_node_id: str
+        tool_call_id: str
+        type: Literal[RealtimeServerEventType.SESSION_HANDOFF_COMPLETED]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                duration_ms: timedelta,
+                edge_id: str,
+                event_id: str,
+                from_model: str,
+                from_node_id: str,
+                handoff_id: str,
+                node_generation: int,
+                prepare_duration_ms: timedelta,
+                to_model: str,
+                to_node_id: str,
+                tool_call_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSessionHandoffStarted(RealtimeServerEvent, discriminator='session.handoff.started'):
+        edge_id: str
+        event_id: str
+        from_model: str
+        from_node_id: str
+        handoff_id: str
+        node_generation: int
+        to_model: str
+        to_node_id: str
+        tool_call_id: str
+        type: Literal[RealtimeServerEventType.SESSION_HANDOFF_STARTED]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                edge_id: str,
+                event_id: str,
+                from_model: str,
+                from_node_id: str,
+                handoff_id: str,
+                node_generation: int,
+                to_model: str,
+                to_node_id: str,
+                tool_call_id: str
             ) -> None: ...
 
         @overload

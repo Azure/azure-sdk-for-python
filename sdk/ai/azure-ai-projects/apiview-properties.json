@@ -997,7 +997,11 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete": "Azure.AI.Projects.Toolboxes.deleteToolbox",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete": "Azure.AI.Projects.Toolboxes.deleteToolbox",
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
-        "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
+        "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
+        "azure.ai.projects.models.VoiceAgentServerEventSessionHandoffAborted": "Azure.AI.Projects.VoiceAgentServerEventSessionHandoffAborted",
+        "azure.ai.projects.models.VoiceAgentServerEventSessionHandoffCompleted": "Azure.AI.Projects.VoiceAgentServerEventSessionHandoffCompleted",
+        "azure.ai.projects.models.VoiceAgentServerEventSessionHandoffStarted": "Azure.AI.Projects.VoiceAgentServerEventSessionHandoffStarted",
+        "azure.ai.projects.models.VoiceAgentHandoffAbortReason": "Azure.AI.Projects.VoiceAgentHandoffAbortReason"
     },
     "CrossLanguageVersion": "05e1b80a337b"
 }
