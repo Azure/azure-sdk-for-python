@@ -91,13 +91,24 @@ extends:
                   python tests/samples/ci/select_samples.py --selection-kind $env:SELECTION_KIND --selection $env:SAMPLE_SELECTION --queue-count $env:SAMPLE_QUEUE_COUNT --output $manifest
                   if ($LASTEXITCODE -ne 0) { throw 'No valid sample selection; no resources were provisioned.' }
                   $matrix = Get-Content -LiteralPath (Join-Path $outputDirectory 'queue-matrix.json') -Raw | ConvertFrom-Json -AsHashtable
+                  $runnable = [ordered]@{}
                   foreach ($queueName in @($matrix.Keys | Sort-Object)) {
                     & ./tests/samples/ci/New-SampleDeploymentPlan.ps1 -SelectionManifest (Join-Path $outputDirectory "$queueName/selected-tests.json") `
                       -OutputDirectory (Join-Path $outputDirectory $queueName) -QueueName $queueName `
                       -IdentityResourceGroup $env:SAMPLE_IDENTITY_RESOURCE_GROUP -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
                       -ModelSku $env:SAMPLE_MODEL_SKU -ModelCapacity ([int] $env:SAMPLE_MODEL_CAPACITY)
+                    # A queue whose samples were all rejected has no plan and gets no billable worker.
+                    if (Test-Path -LiteralPath (Join-Path $outputDirectory "$queueName/deployment-plan.json")) { $runnable[$queueName] = $matrix[$queueName] }
                   }
-                  $matrixJson = $matrix | ConvertTo-Json -Compress
+                  $rejected = @(Get-ChildItem -LiteralPath $outputDirectory -Filter 'rejected-tests.json' -Recurse -File |
+                    ForEach-Object { Get-Content -LiteralPath $_.FullName -Raw | ConvertFrom-Json } | ForEach-Object { $_ })
+                  foreach ($item in $rejected) {
+                    Write-Host "##vso[task.logissue type=error]Sample test rejected during planning (unsupported environment: $($item.unsupported -join ', ')): $($item.node_id)"
+                  }
+                  if ($runnable.Count -eq 0) { throw 'No selected sample test can run; no resources were provisioned.' }
+                  if ($rejected.Count -gt 0) { Write-Host '##vso[task.complete result=SucceededWithIssues;]Some selected samples were rejected; the rest continue.' }
+                  Write-Host "##vso[task.setvariable variable=RejectedTestCount;isOutput=true]$($rejected.Count)"
+                  $matrixJson = $runnable | ConvertTo-Json -Compress
                   Write-Host "##vso[task.setvariable variable=WorkerMatrix;isOutput=true]$matrixJson"
                 name: Plan
                 workingDirectory: $(packageRoot)
@@ -273,4 +284,24 @@ extends:
                   failTaskOnMissingResultsFile: false
                   failTaskOnFailureToPublishResults: true
                   publishRunAttachments: true
+          - job: ReportRejectedSamples
+            displayName: 'Fail the run for samples rejected during planning'
+            dependsOn: ProvisionTestCleanup
+            condition: succeededOrFailed()
+            timeoutInMinutes: 5
+            variables:
+              rejectedCount: $[ stageDependencies.Plan.Plan.outputs['Plan.RejectedTestCount'] ]
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+            steps:
+              - checkout: none
+              - pwsh: |
+                  if ([int] $env:REJECTED_COUNT -gt 0) {
+                    throw "$env:REJECTED_COUNT selected sample test(s) were rejected during planning for unsupported environment variables; see the Plan stage errors. The remaining samples were run."
+                  }
+                displayName: 'Fail if any selected sample could not be planned'
+                env:
+                  REJECTED_COUNT: $(rejectedCount)
 

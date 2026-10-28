@@ -25,13 +25,36 @@ $tenant = Get-SampleTenantId
 $identityGroup = Get-SampleIdentityResourceGroup -Name $IdentityResourceGroup
 $manifest = Read-SampleManifest -Path $SelectionManifest -PackageRoot $PackageRoot
 $scanner = Join-Path $PackageRoot '.github/skills/azure-ai-projects-record-sample/scripts/GetSampleRequiredEnvironmentVariables.ps1'
-$samplePaths = @($manifest.tests | ForEach-Object { $_.sample_path } | Sort-Object -Unique)
-$required = @(& $scanner -SamplePath $samplePaths -PackageRoot $PackageRoot)
-$provided = @('FOUNDRY_PROJECT_ENDPOINT', 'FOUNDRY_MODEL_NAME', 'FOUNDRY_AGENT_NAME', 'MCP_PROJECT_CONNECTION_ID',
-    'LLM_VALIDATION_PROJECT_ENDPOINT', 'AZURE_SUBSCRIPTION_ID', 'AZURE_TENANT_ID', 'AZURE_RESOURCE_GROUP')
-$unsupported = @($required | Where-Object { $_ -notin $provided })
-if ($unsupported.Count -gt 0) {
-    throw "Selected samples require additional provisioners or inputs: $($unsupported -join ', '). No Azure changes were made."
+$required = @()
+$runnable = @()
+$rejected = @()
+# Bicep outputs plus values the provisioning script adds; the validation endpoint is a pipeline variable and never enters state.
+$stateBindings = @(@(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $PSScriptRoot 'infra/sample-resources.bicep')) +
+    @('AZURE_SUBSCRIPTION_ID', 'AZURE_TENANT_ID', 'AZURE_RESOURCE_GROUP') | Sort-Object -Unique)
+$provided = @($stateBindings + 'LLM_VALIDATION_PROJECT_ENDPOINT')
+foreach ($test in @($manifest.tests)) {
+    $names = @(& $scanner -SamplePath @($test.sample_path) -PackageRoot $PackageRoot)
+    $unsupported = @($names | Where-Object { $_ -notin $provided })
+    if ($unsupported.Count -gt 0) {
+        $rejected += @{ node_id = $test.node_id; sample_path = $test.sample_path; unsupported = $unsupported }
+    } else {
+        $runnable += $test
+        $required += $names
+    }
+}
+$required = @($required | Sort-Object -Unique)
+
+$null = New-Item -ItemType Directory -Path $OutputDirectory -Force
+if ($rejected.Count -gt 0) {
+    # Only these samples fail; the rest of the selection still runs.
+    ConvertTo-Json -InputObject $rejected -Depth 5 | Set-Content -LiteralPath (Join-Path $OutputDirectory 'rejected-tests.json') -Encoding utf8
+    foreach ($item in $rejected) {
+        Write-Host ('REJECTED {0}: requires unsupported environment variable(s) {1}. No Azure changes were made.' -f $item.node_id, ($item.unsupported -join ', '))
+    }
+}
+if ($runnable.Count -eq 0) {
+    Write-Host ('Queue {0} has no runnable sample; no plan was written.' -f $QueueName)
+    return
 }
 
 $ownerToken = [guid]::NewGuid().ToString('N')
@@ -55,10 +78,10 @@ $plan = @{
     expiresUtc = [DateTime]::UtcNow.AddDays(1).ToString('o')
     sampleModel = @{ name = $ModelName; version = $ModelVersion; sku = $ModelSku; capacity = $ModelCapacity }
     requiredEnvironment = $required
-    selectedTests = @($manifest.tests)
+    environmentBindings = $stateBindings
+    selectedTests = @($runnable)
 }
 Assert-SampleRunPlan -Plan $plan -QueueName $QueueName
-$null = New-Item -ItemType Directory -Path $OutputDirectory -Force
 $plan | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $OutputDirectory 'deployment-plan.json') -Encoding utf8
 
 Write-Host 'DRY RUN: no Azure resources, role assignments, or project connections were changed.'

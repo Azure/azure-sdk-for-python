@@ -13,15 +13,22 @@ import subprocess
 import sys
 import time
 
-ENVIRONMENT_NAMES = {
-    "FOUNDRY_PROJECT_ENDPOINT",
-    "FOUNDRY_MODEL_NAME",
-    "FOUNDRY_AGENT_NAME",
-    "MCP_PROJECT_CONNECTION_ID",
-    "AZURE_SUBSCRIPTION_ID",
-    "AZURE_TENANT_ID",
-    "AZURE_RESOURCE_GROUP",
-}
+REQUIRED_BINDINGS = {"AZURE_SUBSCRIPTION_ID", "AZURE_TENANT_ID", "AZURE_RESOURCE_GROUP"}
+SECRET_NAME_SEGMENTS = {"PAT", "SECRET", "KEY", "TOKEN", "PASSWORD", "CREDENTIAL", "CREDENTIALS"}
+
+
+def allowed_environment_names(plan: dict) -> set[str]:
+    """Names the plan declared for the saved state; they become pytest CLI options."""
+    names = plan.get("environmentBindings")
+    if (
+        not isinstance(names, list)
+        or not REQUIRED_BINDINGS <= set(names)
+        or any(not isinstance(name, str) or not re.fullmatch(r"[A-Z][A-Z0-9_]*", name) for name in names)
+    ):
+        raise ValueError("The deployment plan must list its environment bindings.")
+    if any(SECRET_NAME_SEGMENTS & set(name.split("_")) for name in names):
+        raise ValueError("The deployment plan must not list secret-looking environment bindings.")
+    return set(names)
 
 
 def require_validation_endpoint() -> str:
@@ -41,8 +48,8 @@ def build_command(state: dict, junit_path: Path) -> list[str]:
     if state.get("plan", {}).get("queueName") not in {"q1", "q2", "q3", "q4"}:
         raise ValueError("Deployment state must identify one of the four test queues.")
     environment = state.get("environment", {})
-    required = ENVIRONMENT_NAMES - {"MCP_PROJECT_CONNECTION_ID"}
-    if set(environment) - ENVIRONMENT_NAMES or any(not environment.get(name) for name in required):
+    allowed = allowed_environment_names(state.get("plan", {}))
+    if set(environment) - allowed or any(not environment.get(name) for name in allowed):
         raise ValueError("Deployment state must contain only the expected non-secret environment bindings.")
     for environment_name, state_key, label in (
         ("AZURE_SUBSCRIPTION_ID", "subscriptionId", "subscription"),
@@ -60,8 +67,6 @@ def build_command(state: dict, junit_path: Path) -> list[str]:
             or environment_value.lower() != value.lower()
         ):
             raise ValueError(f"Deployment state, plan and {environment_name} must identify the same explicit {label}.")
-    if state.get("plan", {}).get("provisionMcp") and not environment.get("MCP_PROJECT_CONNECTION_ID"):
-        raise ValueError("MCP provisioning requires a nonempty MCP_PROJECT_CONNECTION_ID output.")
     tests = state.get("plan", {}).get("selectedTests", [])
     nodes = [test["node_id"] for test in tests]
     if not nodes or any(

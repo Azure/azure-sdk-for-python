@@ -6,6 +6,7 @@
 param([ValidateNotNullOrEmpty()] [string] $StandardTemplatePath)
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot '../SampleCiHelpers.ps1')
 $infra = Join-Path $PSScriptRoot '../infra'
 
 function Invoke-BicepCompilation {
@@ -159,6 +160,15 @@ if ($connections.Count -ne 3 -or @($connections | Where-Object { $_.Definition['
 
 if ($sample['parameters']['mcpPat']['type'] -ine 'secureString') {
     throw 'The MCP PAT must compile to an ARM secureString parameter.'
+}
+# Planning reads these names from the Bicep text; they must match what the compiled template really outputs.
+$compiledNames = @($sample['outputs']['environment']['value'].Keys | Sort-Object)
+$planNames = @(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $infra 'sample-resources.bicep') | Sort-Object)
+if (($compiledNames -join ',') -cne ($planNames -join ',')) {
+    throw 'The environment output names read from the Bicep text differ from the compiled template.'
+}
+if (@($compiledNames | Where-Object { @($_.Split('_') | Where-Object { $_ -in @('PAT', 'SECRET', 'KEY', 'TOKEN', 'PASSWORD', 'CREDENTIAL', 'CREDENTIALS') }).Count -gt 0 }).Count -gt 0) {
+    throw 'The environment output must not contain secret-looking names; its values become pytest command-line options.'
 }
 $models = @($sampleResources | Where-Object { $_.Type -ieq 'Microsoft.CognitiveServices/accounts/deployments' })
 if ($models.Count -ne 1 -or $sample['parameters'].Contains('validationModel') -or

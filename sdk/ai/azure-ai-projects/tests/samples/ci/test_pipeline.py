@@ -119,6 +119,21 @@ def test_external_validator_is_env_only_and_checked_before_provisioning(pipeline
     assert "MCP_GITHUB_PAT" not in preflight.get("env", {})
 
 
+def test_rejected_samples_skip_only_themselves_then_fail_the_run(pipeline):
+    stages = pipeline["extends"]["parameters"]["stages"]
+    planning = next(stage for stage in stages if stage.get("stage") == "Plan")
+    plan = next(step for step in planning["jobs"][0]["steps"] if "New-SampleDeploymentPlan.ps1" in str(step))
+    assert "deployment-plan.json" in plan["pwsh"]
+    assert "RejectedTestCount;isOutput=true" in plan["pwsh"]
+    assert "task.complete result=SucceededWithIssues" in plan["pwsh"]
+    report = next(job for job in live_stages(pipeline)[0]["jobs"] if job.get("job") == "ReportRejectedSamples")
+    assert report["dependsOn"] == "ProvisionTestCleanup"
+    assert report["condition"] == "succeededOrFailed()"
+    assert "Plan.RejectedTestCount" in report["variables"]["rejectedCount"]
+    assert report["steps"][0] == {"checkout": "none"}
+    assert "REJECTED_COUNT" in report["steps"][1]["pwsh"]
+
+
 def test_validator_model_is_absent_from_plan_and_provisioning_sources():
     directory = Path(__file__).resolve().parent
     for name in ("New-SampleDeploymentPlan.ps1", "Invoke-SampleProvisioning.ps1", "infra/sample-resources.bicepparam"):

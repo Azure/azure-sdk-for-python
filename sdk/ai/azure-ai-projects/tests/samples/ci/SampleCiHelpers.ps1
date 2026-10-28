@@ -83,6 +83,20 @@ function Read-SampleManifest {
     return $manifest
 }
 
+function Get-SampleBicepEnvironmentNames {
+    param([Parameter(Mandatory)] [string] $BicepPath)
+
+    # Text scan keeps planning offline; Test-BicepTemplates.ps1 asserts parity with the compiled template.
+    $block = [regex]::Match((Get-Content -LiteralPath $BicepPath -Raw), '(?ms)^output environment object = \{\s*\r?\n(?<body>.*?)^\}')
+    $names = @()
+    if ($block.Success) {
+        $names = @([regex]::Matches($block.Groups['body'].Value, '(?m)^  (?<name>[A-Z][A-Z0-9_]*):') |
+            ForEach-Object { $_.Groups['name'].Value })
+    }
+    if ($names.Count -eq 0) { throw "Cannot read the 'environment' output names from '$BicepPath'." }
+    return $names
+}
+
 function Get-SampleSubscriptionId {
     param([AllowNull()] [AllowEmptyString()] [string] $SubscriptionId = $env:AZURE_SUBSCRIPTION_ID)
 

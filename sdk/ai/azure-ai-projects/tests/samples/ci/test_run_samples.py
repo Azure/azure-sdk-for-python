@@ -25,6 +25,15 @@ def ready_state():
             "queueName": "q1",
             "subscriptionId": "00000000-0000-0000-0000-000000000000",
             "tenantId": "22222222-2222-2222-2222-222222222222",
+            "environmentBindings": [
+                "AZURE_RESOURCE_GROUP",
+                "AZURE_SUBSCRIPTION_ID",
+                "AZURE_TENANT_ID",
+                "FOUNDRY_AGENT_NAME",
+                "FOUNDRY_MODEL_NAME",
+                "FOUNDRY_PROJECT_ENDPOINT",
+                "MCP_PROJECT_CONNECTION_ID",
+            ],
             "selectedTests": [
                 {"node_id": "tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_mcp]"}
             ],
@@ -104,17 +113,41 @@ def test_unexpected_or_secret_bindings_cannot_become_cli_options(key):
         build_command(state, Path("results.xml"))
 
 
-def test_optional_mcp_binding_can_be_absent():
+def test_binding_declared_by_the_plan_becomes_a_cli_option():
     state = ready_state()
-    del state["environment"]["MCP_PROJECT_CONNECTION_ID"]
-    assert not any("mcp-project-connection-id" in argument for argument in build_command(state, Path("results.xml")))
+    state["plan"]["environmentBindings"].append("NEW_RESOURCE_ENDPOINT")
+    state["environment"]["NEW_RESOURCE_ENDPOINT"] = "https://example.invalid/new"
+    assert "--new-resource-endpoint=https://example.invalid/new" in build_command(state, Path("results.xml"))
 
 
-def test_mcp_selection_requires_connection_output():
+@pytest.mark.parametrize("name", ["MCP_PROJECT_CONNECTION_ID", "FOUNDRY_MODEL_NAME"])
+def test_every_declared_binding_must_be_produced(name):
     state = ready_state()
-    state["plan"]["provisionMcp"] = True
-    state["environment"]["MCP_PROJECT_CONNECTION_ID"] = ""
-    with pytest.raises(ValueError, match="nonempty MCP_PROJECT_CONNECTION_ID"):
+    state["environment"][name] = ""
+    with pytest.raises(ValueError, match="only the expected non-secret"):
+        build_command(state, Path("results.xml"))
+
+
+@pytest.mark.parametrize(
+    "bindings",
+    [None, [], ["FOUNDRY_MODEL_NAME"], "FOUNDRY_MODEL_NAME", ["lowercase", "AZURE_SUBSCRIPTION_ID"]],
+)
+def test_plan_must_declare_valid_bindings(bindings):
+    state = ready_state()
+    if bindings is None:
+        del state["plan"]["environmentBindings"]
+    else:
+        state["plan"]["environmentBindings"] = bindings
+    with pytest.raises(ValueError, match="must list its environment bindings"):
+        build_command(state, Path("results.xml"))
+
+
+@pytest.mark.parametrize("name", ["MCP_GITHUB_PAT", "PROJ_CONN_MCP_KEY", "ACCESS_TOKEN", "DB_PASSWORD"])
+def test_plan_cannot_declare_secret_looking_bindings(name):
+    state = ready_state()
+    state["plan"]["environmentBindings"].append(name)
+    state["environment"][name] = "do-not-log-this"
+    with pytest.raises(ValueError, match="secret-looking"):
         build_command(state, Path("results.xml"))
 
 

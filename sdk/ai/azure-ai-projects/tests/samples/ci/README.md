@@ -89,7 +89,7 @@ To verify repeatability, wait for all queues to pass and finish verified cleanup
 | `test-id` | `*test_samples_async.py::*[sample_agent_mcp_with_project_connection_async]` |
 | `test-id` | `sample_agent_basic;sample_agent_mcp_with_project_connection` (OR) |
 
-`*` and `?` are wildcards; brackets in pytest IDs are literal. Matching is case-insensitive, slash-normalized and deduplicated. Semicolons/newlines separate OR patterns. Zero matches fail; selection never falls back to all tests. Harness exclusions remain excluded. Unsupported required sample inputs fail during planning instead of inventing resources or values.
+`*` and `?` are wildcards; brackets in pytest IDs are literal. Matching is case-insensitive, slash-normalized and deduplicated. Semicolons/newlines separate OR patterns. Zero matches fail; selection never falls back to all tests. Harness exclusions remain excluded. A selected sample that needs an environment variable nothing supplies is rejected during planning, before any resource is created: it is logged as an error and skipped, the other samples still run, and the run fails at the end in `ReportRejectedSamples`. The supported names are the keys of the `environment` output in [infra/sample-resources.bicep](infra/sample-resources.bicep) plus `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_RESOURCE_GROUP` and the pipeline-supplied `LLM_VALIDATION_PROJECT_ENDPOINT`. To support a new variable, add it to that output (never a secret) and define its `--<name>` option in `conftest.py`. The plan saves the Bicep-derived names as `environmentBindings`, which `run_samples.py` enforces. A queue whose samples were all rejected gets no worker.
 
 ## Safety and results
 

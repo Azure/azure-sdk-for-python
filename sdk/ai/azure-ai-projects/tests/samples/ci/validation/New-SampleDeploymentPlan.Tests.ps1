@@ -100,3 +100,71 @@ Describe 'Offline deployment-plan defaults' {
         Test-Path -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') | Should Be $false
     }
 }
+
+Describe 'Per-sample rejection of unsupported environment variables' {
+    BeforeEach {
+        $script:originalSubscription = $env:AZURE_SUBSCRIPTION_ID
+        $script:originalTenant = $env:AZURE_TENANT_ID
+        $env:AZURE_SUBSCRIPTION_ID = '11111111-1111-1111-1111-111111111111'
+        $env:AZURE_TENANT_ID = '22222222-2222-2222-2222-222222222222'
+        $script:planDirectory = Join-Path $TestDrive ([guid]::NewGuid().ToString('N'))
+        $script:packageRoot = Join-Path $TestDrive 'package'
+        $scannerDirectory = Join-Path $script:packageRoot '.github/skills/azure-ai-projects-record-sample/scripts'
+        $null = New-Item -ItemType Directory -Path $scannerDirectory, (Join-Path $script:packageRoot 'samples') -Force
+        Copy-Item -LiteralPath (Join-Path $PSScriptRoot '../../../../.github/skills/azure-ai-projects-record-sample/scripts/GetSampleRequiredEnvironmentVariables.ps1') -Destination $scannerDirectory
+        Set-Content -LiteralPath (Join-Path $script:packageRoot 'samples/supported.py') -Value @('import os', 'endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]')
+        Set-Content -LiteralPath (Join-Path $script:packageRoot 'samples/validated.py') -Value @('import os', 'endpoint = os.environ["LLM_VALIDATION_PROJECT_ENDPOINT"]')
+        Set-Content -LiteralPath (Join-Path $script:packageRoot 'samples/unsupported.py') -Value @('import os', 'value = os.environ["UNIT_UNSUPPORTED_SETTING"]')
+        $script:writeManifest = {
+            param([string[]] $Samples)
+            $path = Join-Path $TestDrive ([guid]::NewGuid().ToString('N') + '.json')
+            @{ schemaVersion = 1; tests = @($Samples | ForEach-Object { @{
+                node_id = "tests/samples/test_samples.py::TestSamples::test_agents_samples[$_]"; sample_path = "samples/$_.py" } }) } |
+                ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $path -Encoding utf8
+            return $path
+        }
+        $script:planScript = Join-Path $PSScriptRoot '../New-SampleDeploymentPlan.ps1'
+        $script:arguments = @{
+            OutputDirectory = $script:planDirectory; QueueName = 'q1'; PackageRoot = $script:packageRoot
+            DefinitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
+            BuildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' }); JobAttempt = '1'
+            IdentityResourceGroup = 'rg-azsdk-identities-westus3-102826_164519'
+        }
+    }
+    AfterEach {
+        $env:AZURE_SUBSCRIPTION_ID = $script:originalSubscription
+        $env:AZURE_TENANT_ID = $script:originalTenant
+    }
+
+    It 'rejects only the sample with an unsupported variable and keeps the rest' {
+        $manifest = & $script:writeManifest @('supported', 'unsupported', 'validated')
+        & $script:planScript -SelectionManifest $manifest @script:arguments
+        $plan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
+        @($plan.selectedTests).Count | Should Be 2
+        @($plan.selectedTests | ForEach-Object { $_.sample_path } | Sort-Object) -join ',' | Should Be 'samples/supported.py,samples/validated.py'
+        @($plan.requiredEnvironment) -join ',' | Should Be 'FOUNDRY_PROJECT_ENDPOINT,LLM_VALIDATION_PROJECT_ENDPOINT'
+        $rejected = @(Get-Content -LiteralPath (Join-Path $script:planDirectory 'rejected-tests.json') -Raw | ConvertFrom-Json -AsHashtable)
+        $rejected.Count | Should Be 1
+        $rejected[0].sample_path | Should Be 'samples/unsupported.py'
+        @($rejected[0].unsupported) -join ',' | Should Be 'UNIT_UNSUPPORTED_SETTING'
+    }
+
+    It 'derives the saved bindings from the Bicep output and excludes the validation endpoint' {
+        $manifest = & $script:writeManifest @('supported')
+        & $script:planScript -SelectionManifest $manifest @script:arguments
+        $plan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
+        foreach ($name in @('FOUNDRY_PROJECT_ENDPOINT', 'FOUNDRY_MODEL_NAME', 'FOUNDRY_AGENT_NAME', 'MCP_PROJECT_CONNECTION_ID',
+                'AZURE_SUBSCRIPTION_ID', 'AZURE_TENANT_ID', 'AZURE_RESOURCE_GROUP')) {
+            @($plan.environmentBindings) -contains $name | Should Be $true
+        }
+        @($plan.environmentBindings) -contains 'LLM_VALIDATION_PROJECT_ENDPOINT' | Should Be $false
+        Test-Path -LiteralPath (Join-Path $script:planDirectory 'rejected-tests.json') | Should Be $false
+    }
+
+    It 'writes no plan when every sample in the queue is rejected, without failing the script' {
+        $manifest = & $script:writeManifest @('unsupported')
+        & $script:planScript -SelectionManifest $manifest @script:arguments
+        Test-Path -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') | Should Be $false
+        Test-Path -LiteralPath (Join-Path $script:planDirectory 'rejected-tests.json') | Should Be $true
+    }
+}
