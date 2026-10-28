@@ -203,6 +203,9 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
             exclude_routing_attributes=self._enable_multi_endpoint_routing,
         )
+        if self._enable_multi_endpoint_routing:
+            assert envelope.tags is not None
+            envelope.tags[ContextTagKeys.AI_CLOUD_ROLE] = _get_cloud_role(point.attributes)
         # Note that Performance Counters are not counted as "Autocollected standard metrics"
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes)  # type: ignore
@@ -212,9 +215,6 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                 if self._enable_multi_endpoint_routing
                 else self._instrumentation_key
             )
-            if self._enable_multi_endpoint_routing:
-                assert envelope.tags is not None
-                envelope.tags[ContextTagKeys.AI_CLOUD_ROLE] = _get_cloud_role(point.attributes)
             # Only set SentToAMW on AKS Attach
             if _utils._is_on_aks() and _utils._is_attach_enabled() and not self._is_stats_exporter():
                 if OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ and "otlp" in os.environ.get(
