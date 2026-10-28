@@ -17,6 +17,8 @@
   Enable it with `multi_endpoint_routing` through `APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES`.
   Span events follow their parent span's route; metrics use each data point's route.
   Routing-enabled exporters can be created without a host connection string.
+  Custom transports remain supported, but complete custom pipelines are rejected
+  because routed destinations require exporter-managed policy chains.
   Cached routes and routed offline storage are limited to 64 endpoint/authentication
   pairs per exporter; additional destinations use short-lived clients without persistence.
   Routed destinations with available offline storage defer new transmissions

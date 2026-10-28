@@ -191,6 +191,29 @@ class TestBaseExporter(unittest.TestCase):
         for call in mock_client.call_args_list:
             self.assertNotIn("enable_multi_endpoint_routing", call.kwargs)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_rejects_custom_pipeline(self, mock_client):
+        with mock.patch.dict(
+            os.environ,
+            {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+        ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+            with self.assertRaisesRegex(
+                ValueError,
+                "Custom pipelines are not supported with multi-endpoint routing",
+            ):
+                BaseExporter(pipeline=mock.Mock())
+        mock_client.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_custom_pipeline_is_unchanged_without_routing(self, mock_client):
+        pipeline = mock.Mock()
+        BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab",
+            disable_offline_storage=True,
+            pipeline=pipeline,
+        )
+        self.assertIs(mock_client.call_args.kwargs["pipeline"], pipeline)
+
     @mock.patch.dict(os.environ)
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.LocalFileStorage")
