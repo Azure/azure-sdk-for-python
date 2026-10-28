@@ -8,6 +8,7 @@ from unittest import mock
 from datetime import datetime, timedelta, timezone
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
+from azure.core.pipeline.policies import HeadersPolicy, RetryPolicy
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
     _get_auth_policy,
@@ -213,6 +214,56 @@ class TestBaseExporter(unittest.TestCase):
             pipeline=pipeline,
         )
         self.assertIs(mock_client.call_args.kwargs["pipeline"], pipeline)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_rejects_custom_retry_policy(self, mock_client):
+        with mock.patch.dict(
+            os.environ,
+            {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+        ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+            with self.assertRaisesRegex(
+                ValueError,
+                "Custom retry policies are not supported with multi-endpoint routing",
+            ):
+                BaseExporter(retry_policy=mock.Mock())
+        mock_client.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_custom_retry_policy_is_unchanged_without_routing(self, mock_client):
+        retry_policy = mock.Mock()
+        BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab",
+            disable_offline_storage=True,
+            retry_policy=retry_policy,
+        )
+        self.assertIn(retry_policy, mock_client.call_args.kwargs["policies"])
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_rejects_http_policy_collections(self, mock_client):
+        for option in ("per_call_policies", "per_retry_policies"):
+            with self.subTest(option=option), mock.patch.dict(
+                os.environ,
+                {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+            ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+                with self.assertRaisesRegex(
+                    ValueError,
+                    "HTTPPolicy instances in per_call_policies or per_retry_policies are not supported",
+                ):
+                    BaseExporter(**{option: [RetryPolicy()]})
+        mock_client.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_allows_sans_io_policy_collections(self, mock_client):
+        with mock.patch.dict(
+            os.environ,
+            {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+        ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+            BaseExporter(
+                disable_offline_storage=True,
+                per_call_policies=[HeadersPolicy()],
+                per_retry_policies=[HeadersPolicy()],
+            )
+        mock_client.assert_called_once()
 
     @mock.patch.dict(os.environ)
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")

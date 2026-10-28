@@ -175,8 +175,11 @@ $env:APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "multi_endpoint_routing,gen_ai_
 Routing is disabled unless explicitly selected in this list. The selection is
 shared across log, trace, and metric exporters and is fixed at the first exporter
 construction, as described under [Experimental features](#experimental-features).
-Caller-supplied transports remain supported. Complete custom pipelines are rejected
-because routing must construct its own policy chain for each destination.
+Caller-supplied transports and scalar retry settings remain supported. Complete
+custom pipelines, custom `retry_policy` instances, and `HTTPPolicy` entries in
+`per_call_policies` or `per_retry_policies` are rejected because routing must
+construct an independent policy chain for each destination. `SansIOHTTPPolicy`
+entries remain supported.
 
 Items are grouped by normalized endpoint and authentication mode. Set
 `microsoft.ingestion_auth` to `"aad"` to use the exporter's configured credential;

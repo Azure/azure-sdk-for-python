@@ -22,8 +22,10 @@ from azure.core.exceptions import HttpResponseError, ServiceRequestError, Servic
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     HttpLoggingPolicy,
+    HTTPPolicy,
     RedirectPolicy,
     RequestIdPolicy,
+    SansIOHTTPPolicy,
 )
 from azure.identity import ManagedIdentityCredential
 from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorClient
@@ -145,6 +147,13 @@ class BaseExporter:
             raise ValueError(
                 "Custom pipelines are not supported with multi-endpoint routing. Pass a custom transport instead."
             )
+        if self._enable_multi_endpoint_routing and kwargs.get("retry_policy") is not None:
+            raise ValueError(
+                "Custom retry policies are not supported with multi-endpoint routing. "
+                "Configure retries with retry options instead."
+            )
+        if self._enable_multi_endpoint_routing:
+            _validate_routing_policy_options(kwargs)
         self._route = route
         self._route_exporters: Dict[tuple[str, bool], BaseExporter] = {}
         self._route_lock = threading.RLock()
@@ -152,6 +161,7 @@ class BaseExporter:
         self._routing_shutdown = False
         self._route_retry_task: Optional[PeriodicTask] = None
         self._route_options = kwargs.copy()
+        self._routes_share_http_state = any(kwargs.get(name) is not None for name in ("transport", "session"))
         self._local_storage_enabled: Optional[bool] = None
         parsed_connection_string = connection_string_parser or ConnectionStringParser(
             kwargs.get("connection_string"), _allow_missing=self._enable_multi_endpoint_routing
@@ -362,7 +372,10 @@ class BaseExporter:
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
         try:
             for exporter in exporters:
-                with exporter._transmit_lock:
+                with ExitStack() as locks:
+                    if self._routes_share_http_state:
+                        locks.enter_context(self._transmit_lock)
+                    locks.enter_context(exporter._transmit_lock)
                     if self._routing_shutdown:
                         return
                     if not exporter.storage or exporter._route_retry_at > time.monotonic():
@@ -391,8 +404,10 @@ class BaseExporter:
                     result = ExportResult.FAILED_NOT_RETRYABLE
         for exporter, envelopes, temporary in routes:
             try:
-                transmit_lock = self._transmit_lock if temporary else exporter._transmit_lock
-                with transmit_lock:
+                with ExitStack() as locks:
+                    if temporary or self._routes_share_http_state:
+                        locks.enter_context(self._transmit_lock)
+                    locks.enter_context(exporter._transmit_lock)
                     if self._routing_shutdown:
                         logger.error("Cannot export routed telemetry after shutdown.")
                         result = ExportResult.FAILED_NOT_RETRYABLE
@@ -1103,6 +1118,26 @@ def _get_authentication_credential(
             "Failed to get authentication credential and enable AAD: %s", e
         )
     return None
+
+
+def _validate_routing_policy_options(options: Dict[str, Any]) -> None:
+    for name in ("per_call_policies", "per_retry_policies"):
+        value = options.get(name)
+        if value is None or isinstance(value, SansIOHTTPPolicy):
+            continue
+        if isinstance(value, HTTPPolicy):
+            policies = (value,)
+        else:
+            try:
+                policies = tuple(value)
+            except TypeError:
+                continue
+            options[name] = policies
+        if any(isinstance(policy, HTTPPolicy) for policy in policies):
+            raise ValueError(
+                "HTTPPolicy instances in per_call_policies or per_retry_policies are not supported "
+                "with multi-endpoint routing. Use SansIOHTTPPolicy instances instead."
+            )
 
 
 def _get_storage_directory(instrumentation_key: str) -> str:
