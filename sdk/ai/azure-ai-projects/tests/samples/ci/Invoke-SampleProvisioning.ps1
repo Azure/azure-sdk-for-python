@@ -51,7 +51,7 @@ $plan = Get-Content -LiteralPath $PlanPath -Raw | ConvertFrom-Json -AsHashtable
 Assert-SampleRunPlan -Plan $plan -QueueName $QueueName
 if ($plan.ContainsKey('identityResolution') -and $plan.identityResolution -cne 'Resolved') { throw 'Only an admitted, resolved identity plan may provision resources.' }
 if (Test-Path -LiteralPath $StatePath) { throw 'Deployment state already exists. Do not adopt or overwrite a previous attempt.' }
-if ($plan.provisionMcp) { Assert-SampleMcpPat }
+Assert-SampleMcpPat
 
 $runnerIdentity = Set-SampleSubscriptionContext -Plan $plan
 $subscription = Get-SampleSubscriptionId
@@ -145,7 +145,6 @@ try {
         SAMPLE_CI_MODEL_VERSION = [string] $sampleModel.version
         SAMPLE_CI_MODEL_SKU = [string] $sampleModel.sku
         SAMPLE_CI_MODEL_CAPACITY = [string] $sampleModel.capacity
-        SAMPLE_CI_PROVISION_MCP = ([string] $plan.provisionMcp).ToLowerInvariant()
     }
     $originalEnvironment = @{}
     try {
@@ -155,10 +154,6 @@ try {
             }
             $originalEnvironment[$entry.Key] = [Environment]::GetEnvironmentVariable($entry.Key)
             [Environment]::SetEnvironmentVariable($entry.Key, $entry.Value)
-        }
-        if (-not $plan.provisionMcp) {
-            $originalEnvironment['MCP_GITHUB_PAT'] = $env:MCP_GITHUB_PAT
-            $env:MCP_GITHUB_PAT = ''
         }
         # readEnvironmentVariable supplies the secret to @secure() without putting it on a command line or in a file.
         $state['provisioningStep'] = 'SampleResources'

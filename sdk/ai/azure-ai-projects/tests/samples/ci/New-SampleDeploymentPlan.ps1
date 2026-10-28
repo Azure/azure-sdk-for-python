@@ -54,7 +54,6 @@ $plan = @{
     deploymentTimestamp = [DateTime]::UtcNow.ToString('yyyyMMddHHmmss')
     expiresUtc = [DateTime]::UtcNow.AddDays(1).ToString('o')
     sampleModel = @{ name = $ModelName; version = $ModelVersion; sku = $ModelSku; capacity = $ModelCapacity }
-    provisionMcp = ($required -contains 'MCP_PROJECT_CONNECTION_ID')
     requiredEnvironment = $required
     selectedTests = @($manifest.tests)
 }
@@ -71,6 +70,6 @@ Write-Host ('Test queue: {0}. Local shared-identity Standard variant: new accoun
 Write-Host 'Shared UAMIs and Azure service-role grants must already exist. Only native Cosmos data roles are created per run.'
 Write-Host ('Sample model: {0} ({1}).' -f $ModelName, $ModelVersion)
 Write-Host 'Output validation uses an existing project supplied by the LLM_VALIDATION_PROJECT_ENDPOINT environment variable; no validator is provisioned.'
-Write-Host ('GitHub MCP connection: {0}; the PAT is never stored in this plan.' -f $plan.provisionMcp)
+Write-Host 'GitHub MCP connection: always provisioned; the PAT is never stored in this plan.'
 Write-Host 'Public networking. Resources incur charges until cleanup completes.'
 Write-Host 'This offline preview is not ARM what-if. A live run checks identity, providers, regional dependency eligibility and model/account quota before provisioning.'

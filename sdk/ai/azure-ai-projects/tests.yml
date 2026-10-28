@@ -225,7 +225,7 @@ extends:
                   MCP_GITHUB_PAT: $(MCP_GITHUB_PAT)
                   SAMPLE_QUEUE_NAME: $(QueueName)
               - task: AzureCLI@2
-                displayName: 'Run selected test_samples.py / test_samples_async.py nodes live, without recording'
+                displayName: 'Run selected test and collect results'
                 inputs:
                   azureSubscription: ${{ variables.azureServiceConnection }}
                   scriptType: pscore

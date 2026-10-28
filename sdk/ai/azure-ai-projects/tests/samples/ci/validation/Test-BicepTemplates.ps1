@@ -7,7 +7,6 @@ param([ValidateNotNullOrEmpty()] [string] $StandardTemplatePath)
 
 $ErrorActionPreference = 'Stop'
 $infra = Join-Path $PSScriptRoot '../infra'
-$identitySkill = Join-Path $PSScriptRoot '../../../../.github/skills/azure-ai-projects-provision-identities'
 
 function Invoke-BicepCompilation {
     param([Parameter(Mandatory)] [string] $Path, [switch] $Parameters)
@@ -99,16 +98,11 @@ function Assert-SharedIdentity {
     }
 }
 
-# Compile the three worker templates and the single bootstrap owner's two assets.
-# Bootstrap IAM is intentional; only the worker graphs must contain zero ARM IAM.
+# Compile the three worker templates.
 $standard = Invoke-BicepCompilation -Path (Join-Path $infra 'standard-shared-identities.bicep')
 $sample = Invoke-BicepCompilation -Path (Join-Path $infra 'sample-resources.bicep')
 $group = Invoke-BicepCompilation -Path (Join-Path $infra 'resource-group.bicep')
-foreach ($name in @('bootstrap.bicep', 'identities.bicep')) {
-    $null = Invoke-BicepCompilation -Path (Join-Path $identitySkill "infra/$name")
-}
-# Bootstrap intentionally owns six project service grants plus an optional pipeline grant.
-# Never apply the worker zero-IAM assertion to either bootstrap template or the official reference.
+# Never apply the worker zero-IAM assertion to the official reference.
 $standardResources = @(Get-ArmResources -Template $standard)
 $sampleResources = @(Get-ArmResources -Template $sample)
 Assert-NoArmRoleAssignments -Resources $standardResources
@@ -173,7 +167,7 @@ if ($models.Count -ne 1 -or $sample['parameters'].Contains('validationModel') -o
     ($sample['outputs'] | ConvertTo-Json -Depth 100 -Compress) -match 'mcpPat|MCP_GITHUB_PAT') {
     throw 'Sample resources must contain one model, no runner IAM parameter, and no secret or validation endpoint output.'
 }
-Write-Host 'Three worker templates and two identity-skill assets compiled; shared identities, zero worker ARM IAM, native Cosmos grant, and secure single-model MCP contract verified.'
+Write-Host 'Three worker templates compiled; shared identities, zero worker ARM IAM, native Cosmos grant, and secure single-model MCP contract verified.'
 
 # Only fictional bindings are used to validate the dynamic .bicepparam file.
 $bindings = @{
@@ -184,7 +178,6 @@ $bindings = @{
     SAMPLE_CI_MODEL_VERSION = '2025-12-11'
     SAMPLE_CI_MODEL_SKU = 'GlobalStandard'
     SAMPLE_CI_MODEL_CAPACITY = '10'
-    SAMPLE_CI_PROVISION_MCP = 'false'
     MCP_GITHUB_PAT = ''
 }
 $original = @{}

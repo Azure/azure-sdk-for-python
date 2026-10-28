@@ -23,7 +23,7 @@ Configure a pipeline to use [../../../tests.yml](../../../tests.yml), authorize 
 | `AZURE_SUBSCRIPTION_ID` | Normal variable containing the target subscription GUID. |
 | `AZURE_TENANT_ID` | Normal variable containing the target tenant GUID. |
 | `LLM_VALIDATION_PROJECT_ENDPOINT` | Existing Foundry project endpoint. A normal variable is supported; secret storage is optional. |
-| `MCP_GITHUB_PAT` | **Secret** containing the complete GitHub PAT, including `github_pat_` or `ghp_`. Required for the MCP sample. |
+| `MCP_GITHUB_PAT` | **Secret** containing the complete GitHub PAT, including `github_pat_` or `ghp_`. Required on every run: the MCP connection is always provisioned. |
 
 The target IDs must be available to **both** Plan and RunSamples. Save runtime variables directly in the pipeline; there is no Library-group runtime parameter. Do not put secrets in YAML, chat, runtime parameters, command-line arguments, plans or artifacts.
 

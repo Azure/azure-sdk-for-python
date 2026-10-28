@@ -19,7 +19,6 @@ param projectName string
 @minLength(1)
 param agentName string
 param sampleModel ModelDeployment
-param provisionMcp bool = false
 
 @secure()
 @description('Complete GitHub PAT, including its prefix. Supplied only through an ADO secret.')
@@ -52,7 +51,7 @@ resource sampleDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025
 }
 
 // Same contract as foundry-project-pool/provisions/provision-mcp-connection.ps1.
-resource mcpConnection 'Microsoft.CognitiveServices/accounts/projects/connections@2025-10-01-preview' = if (provisionMcp) {
+resource mcpConnection 'Microsoft.CognitiveServices/accounts/projects/connections@2025-10-01-preview' = {
   parent: project
   name: 'mcp'
   properties: {
@@ -75,5 +74,5 @@ output environment object = {
   FOUNDRY_PROJECT_ENDPOINT: 'https://${accountName}.services.ai.azure.com/api/projects/${projectName}'
   FOUNDRY_MODEL_NAME: sampleDeployment.name
   FOUNDRY_AGENT_NAME: agentName
-  MCP_PROJECT_CONNECTION_ID: provisionMcp ? mcpConnection!.id : ''
+  MCP_PROJECT_CONNECTION_ID: mcpConnection.id
 }

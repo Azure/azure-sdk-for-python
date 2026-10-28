@@ -10,5 +10,4 @@ param sampleModel = {
   sku: readEnvironmentVariable('SAMPLE_CI_MODEL_SKU', 'GlobalStandard')
   capacity: int(readEnvironmentVariable('SAMPLE_CI_MODEL_CAPACITY', '1'))
 }
-param provisionMcp = bool(readEnvironmentVariable('SAMPLE_CI_PROVISION_MCP', 'false'))
 param mcpPat = readEnvironmentVariable('MCP_GITHUB_PAT', '')

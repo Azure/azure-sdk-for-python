@@ -7,7 +7,9 @@ Describe 'Provisioning rejects ineligible regions before mutation' {
         $previousSubscription = $env:AZURE_SUBSCRIPTION_ID
         $previousTenant = $env:AZURE_TENANT_ID
         $previousQueue = $env:SAMPLE_QUEUE_NAME
+        $previousPat = $env:MCP_GITHUB_PAT
         try {
+            $env:MCP_GITHUB_PAT = 'github_pat_' + 'unit_test_placeholder'
             $env:AZURE_SUBSCRIPTION_ID = '11111111-1111-1111-1111-111111111111'
             $env:AZURE_TENANT_ID = '22222222-2222-2222-2222-222222222222'
             $env:SAMPLE_QUEUE_NAME = 'q1'
@@ -18,7 +20,7 @@ Describe 'Provisioning rejects ineligible regions before mutation' {
                 jobAttempt = '1'; ownerToken = '0123456789abcdef0123456789abcdef'
                 queueName = 'q1'
                 subscriptionId = $env:AZURE_SUBSCRIPTION_ID; tenantId = $env:AZURE_TENANT_ID
-                location = 'westus3'; provisionMcp = $false
+                location = 'westus3'
             }
             $plan.resourceGroup = 'azsdk-samples-{0}-{1}-q1-1-01234567' -f $plan.definitionId, $plan.buildId
             $planPath = Join-Path $TestDrive 'plan.json'
@@ -62,6 +64,7 @@ Describe 'Provisioning rejects ineligible regions before mutation' {
             $env:AZURE_SUBSCRIPTION_ID = $previousSubscription
             $env:AZURE_TENANT_ID = $previousTenant
             $env:SAMPLE_QUEUE_NAME = $previousQueue
+            $env:MCP_GITHUB_PAT = $previousPat
         }
     }
 }

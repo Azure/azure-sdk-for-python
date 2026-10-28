@@ -104,7 +104,7 @@ Describe 'Offline queue ownership and deployment plans' {
                 $plan.resourceGroup | Should Be $expectedGroup
                 $plan.subscriptionId | Should Be $env:AZURE_SUBSCRIPTION_ID
                 $plan.tenantId | Should Be $env:AZURE_TENANT_ID
-                $plan.provisionMcp | Should Be $true
+                $plan.ContainsKey('provisionMcp') | Should Be $false
                 @($plan.selectedTests).Count | Should Be 1
                 $plan.selectedTests[0].sample_path | Should Be 'samples/agents/tools/sample_agent_mcp_with_project_connection.py'
                 $plan.sharedIdentities.Count | Should Be 4
