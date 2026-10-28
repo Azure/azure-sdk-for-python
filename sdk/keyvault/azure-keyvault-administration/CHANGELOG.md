@@ -4,25 +4,19 @@
 
 ### Features Added
 
-- Added support for service API version `2026-04-01`.
+- Added support for service API version `2026-04-01` [#49752](https://github.com/Azure/azure-sdk-for-python/pull/49752).
 - (From 4.8.0b1) Added `KeyVaultEkmClient` for managing Managed HSM External Key Manager (EKM) connections. This new client exposes `get_ekm_connection`,
   `create_ekm_connection`, `update_ekm_connection`, `delete_ekm_connection`, `get_ekm_certificate`, and `check_ekm_connection`.
 - (From 4.8.0b1) Added `KeyVaultEkmConnection`, `KeyVaultEkmProxyClientCertificateInfo`, and `KeyVaultEkmProxyInfo` models supporting the EKM client.
 
 ### Breaking Changes
 
-> These changes do not impact the API of stable versions such as 4.7.2. Only code written against a beta version such as 4.8.0b3 may be affected.
+> These changes do not impact the API of stable versions such as 4.7.2. Only code written against a beta version such as 4.8.0b2 may be affected.
 
-- Removed `ApiVersion.V2026_01_01_PREVIEW` and `ApiVersion.V2026_07_01_PREVIEW`; use `ApiVersion.V2026_04_01` instead.
-- Removed the EKM proxy private endpoint support added in 4.8.0b3 for service API version `2026-07-01-preview`: the
-  `KeyVaultEkmClient` methods `begin_create_ekm_private_endpoint`, `begin_delete_ekm_private_endpoint`,
-  `get_ekm_private_endpoint`, `list_ekm_private_endpoints`, and `get_ekm_private_endpoint_operation_status`, the
-  `KeyVaultEkmPrivateEndpoint*` models and enums, the `KeyVaultEkmConnectivityMode` enum, and the `connectivity_mode`
-  keyword argument and attribute of `KeyVaultEkmConnection`.
+- Removed `ApiVersion.V2026_01_01_PREVIEW`; use `ApiVersion.V2026_04_01` instead.
 
 ### Bugs Fixed
 
-- Includes all bug fixes from versions 4.7.1 and 4.7.2.
 - (From 4.8.0b2) Fixed a replay bug in challenge authentication policy. The original request is now stored at the request level instead of the client level. [#47742](https://github.com/Azure/azure-sdk-for-python/pull/47742)
 
 ### Other Changes
@@ -47,10 +41,6 @@
   resource verification is disabled.
 
 - Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
-
-### Other Changes
-
-- Key Vault API version `2026-07-01-preview` is now the default.
 
 ## 4.7.1 (2026-08-25)
 
