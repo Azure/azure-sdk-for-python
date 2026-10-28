@@ -11,9 +11,10 @@ Connection op group is new in API 2025-08-01+ and isn't in the .NET Scenario sui
 yet — this is the canonical Python port.
 
 Exercises Storage Mover Connection CRUD (create / get / list / update / delete)
-against the **real** shared PrivateLinkService `test-pls-wcs` in the
-XDataMove-Synthetics subscription / RG ``E2E-Management-RGsyn``. The PLS lives in
-``westcentralus``, so the storage mover must too.
+against an approved shared PrivateLinkService in the XDataMove-Synthetics
+subscription / RG ``E2E-Management-RGsyn``. Set
+``STORAGEMOVER_PRIVATE_LINK_SERVICE_NAME`` for live runs; recordings use
+``test-pls-wcs``. The PLS must live in ``westcentralus``, like the storage mover.
 
 Intentionally does NOT assert on ``properties.connection_status``: it'll be
 ``Pending`` immediately after create because the PLS-side PE provisioning is
@@ -27,7 +28,12 @@ import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from azure.mgmt.storagemover import StorageMoverMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import (
+    AzureMgmtRecordedTestCase,
+    EnvironmentVariableLoader,
+    RandomNameResourceGroupPreparer,
+    recorded_by_proxy,
+)
 
 # PrivateLinkService lives in westcentralus, so storage mover must too.
 AZURE_LOCATION = "westcentralus"
@@ -40,24 +46,25 @@ AZURE_LOCATION = "westcentralus"
 SYNTHETICS_SUBSCRIPTION_ID = (
     os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID") or "00000000-0000-0000-0000-000000000000"
 )
-REAL_PRIVATE_LINK_SERVICE_ID = (
+PRIVATE_LINK_SERVICE_ID_PREFIX = (
     f"/subscriptions/{SYNTHETICS_SUBSCRIPTION_ID}"
     "/resourceGroups/E2E-Management-RGsyn"
-    "/providers/Microsoft.Network/privateLinkServices/test-pls-wcs"
+    "/providers/Microsoft.Network/privateLinkServices/"
 )
 
 
-@pytest.mark.live_test_only
 class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient)
 
+    @EnvironmentVariableLoader("storagemover", storagemover_private_link_service_name="test-pls-wcs")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_get_list_update_delete(self, resource_group):
+    def test_create_get_list_update_delete(self, resource_group, storagemover_private_link_service_name):
         rg = resource_group.name
         sm_name = "testsm-conn"
         connection_name = "testconn1"
+        private_link_service_id = PRIVATE_LINK_SERVICE_ID_PREFIX + storagemover_private_link_service_name
 
         self.client.storage_movers.create_or_update(
             resource_group_name=rg,
@@ -72,7 +79,7 @@ class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
             connection_name=connection_name,
             connection={
                 "properties": {
-                    "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
+                    "privateLinkServiceId": private_link_service_id,
                     "description": "ConnectionDesc",
                 }
             },
@@ -80,7 +87,7 @@ class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
         # Playback note: the test runner's subscription ID is sanitized to all-zeros
         # in recordings, so we assert by PLS name suffix (resource-path-stable across
         # sanitization) rather than full ARM-ID equality.
-        pls_id_suffix = "/providers/Microsoft.Network/privateLinkServices/test-pls-wcs"
+        pls_id_suffix = "/providers/Microsoft.Network/privateLinkServices/" + storagemover_private_link_service_name
         assert created.name == connection_name
         assert created.properties.private_link_service_id.endswith(pls_id_suffix)
         assert created.properties.description == "ConnectionDesc"
@@ -118,7 +125,7 @@ class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
             connection_name=connection_name,
             connection={
                 "properties": {
-                    "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
+                    "privateLinkServiceId": private_link_service_id,
                     "description": "ConnectionDescUpdate",
                 }
             },

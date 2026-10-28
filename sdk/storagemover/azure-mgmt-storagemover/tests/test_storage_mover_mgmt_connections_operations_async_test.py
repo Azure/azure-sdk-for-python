@@ -15,7 +15,7 @@ import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from azure.mgmt.storagemover.aio import StorageMoverMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, EnvironmentVariableLoader, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
 # PrivateLinkService lives in westcentralus, so storage mover must too.
@@ -26,24 +26,25 @@ AZURE_LOCATION = "westcentralus"
 SYNTHETICS_SUBSCRIPTION_ID = (
     os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID") or "00000000-0000-0000-0000-000000000000"
 )
-REAL_PRIVATE_LINK_SERVICE_ID = (
+PRIVATE_LINK_SERVICE_ID_PREFIX = (
     f"/subscriptions/{SYNTHETICS_SUBSCRIPTION_ID}"
     "/resourceGroups/E2E-Management-RGsyn"
-    "/providers/Microsoft.Network/privateLinkServices/test-pls-wcs"
+    "/providers/Microsoft.Network/privateLinkServices/"
 )
 
 
-@pytest.mark.live_test_only
 class TestStorageMoverMgmtConnectionsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
 
+    @EnvironmentVariableLoader("storagemover", storagemover_private_link_service_name="test-pls-wcs")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_get_list_update_delete(self, resource_group):
+    async def test_create_get_list_update_delete(self, resource_group, storagemover_private_link_service_name):
         rg = resource_group.name
         sm_name = "testsm-conn"
         connection_name = "testconn1"
+        private_link_service_id = PRIVATE_LINK_SERVICE_ID_PREFIX + storagemover_private_link_service_name
 
         await self.client.storage_movers.create_or_update(
             resource_group_name=rg,
@@ -58,13 +59,13 @@ class TestStorageMoverMgmtConnectionsOperationsAsync(AzureMgmtRecordedTestCase):
             connection_name=connection_name,
             connection={
                 "properties": {
-                    "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
+                    "privateLinkServiceId": private_link_service_id,
                     "description": "ConnectionDesc",
                 }
             },
         )
         # See sync sibling for why we compare by PLS name suffix instead of full ARM ID.
-        pls_id_suffix = "/providers/Microsoft.Network/privateLinkServices/test-pls-wcs"
+        pls_id_suffix = "/providers/Microsoft.Network/privateLinkServices/" + storagemover_private_link_service_name
         assert created.name == connection_name
         assert created.properties.private_link_service_id.endswith(pls_id_suffix)
         assert created.properties.description == "ConnectionDesc"
@@ -98,7 +99,7 @@ class TestStorageMoverMgmtConnectionsOperationsAsync(AzureMgmtRecordedTestCase):
             connection_name=connection_name,
             connection={
                 "properties": {
-                    "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
+                    "privateLinkServiceId": private_link_service_id,
                     "description": "ConnectionDescUpdate",
                 }
             },

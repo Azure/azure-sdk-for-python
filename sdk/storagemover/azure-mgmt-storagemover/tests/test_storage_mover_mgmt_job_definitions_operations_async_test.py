@@ -34,12 +34,13 @@ pytest.importorskip("azure.mgmt.network.aio")
 pytest.importorskip("azure.mgmt.storage.aio")
 pytest.importorskip("azure.mgmt.authorization.v2022_04_01.aio")
 
+from azure.core.exceptions import HttpResponseError
 from azure.mgmt.authorization.v2022_04_01.aio import AuthorizationManagementClient
 from azure.mgmt.network.aio import NetworkManagementClient
 from azure.mgmt.storage.aio import StorageManagementClient
 from azure.mgmt.storagemover.aio import StorageMoverMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, EnvironmentVariableLoader, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
@@ -61,14 +62,12 @@ SYNTHETICS_SUBSCRIPTION_ID = (
 )
 
 PLS_RESOURCE_GROUP = "E2E-Management-RGsyn"
-PLS_NAME = "test-pls-wcs"
-REAL_PRIVATE_LINK_SERVICE_ID = (
+PRIVATE_LINK_SERVICE_ID_PREFIX = (
     "/subscriptions/"
     + SYNTHETICS_SUBSCRIPTION_ID
     + "/resourceGroups/"
     + PLS_RESOURCE_GROUP
     + "/providers/Microsoft.Network/privateLinkServices/"
-    + PLS_NAME
 )
 
 STORAGE_ACCOUNT_RG = "CP_Mover_IN_WCUS"
@@ -103,8 +102,28 @@ AWS_PUBLIC_S3_BUCKET_ID = (
 
 STORAGE_BLOB_DATA_CONTRIBUTOR_ROLE_DEF_GUID = "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
 
+# Hourly schedules (matrix row #35) are only deployed in eastus2euap so far.
+EUAP_LOCATION = "eastus2euap"
 
-@pytest.mark.live_test_only
+# Persistent PLS that the RP's own agentless E2E tests use in eastus2euap (matrix row #39).
+ECY_PRIVATE_LINK_SERVICE_ID = PRIVATE_LINK_SERVICE_ID_PREFIX + "E2E-VPC-PLS-E2ETest.Test.ECY"
+
+# Placeholder partner tenant for the cross-tenant validation cases (matrix row #43).
+PARTNER_TENANT_ID = "11111111-2222-3333-4444-555555555555"
+PARTNER_SUBSCRIPTION_ID = "22222222-2222-2222-2222-222222222222"
+PARTNER_STORAGE_ACCOUNT_ID = (
+    f"/subscriptions/{PARTNER_SUBSCRIPTION_ID}/resourceGroups/partner-rg"
+    "/providers/Microsoft.Storage/storageAccounts/partnersa"
+)
+
+
+def _endpoint_id(subscription_id, rg, sm_name, endpoint_name):
+    return (
+        f"/subscriptions/{subscription_id}/resourceGroups/{rg}"
+        f"/providers/Microsoft.StorageMover/storageMovers/{sm_name}/endpoints/{endpoint_name}"
+    )
+
+
 class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
@@ -537,10 +556,15 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
     # See the sync sibling file for the full step-by-step description; this is the
     # async mirror.
 
+    @EnvironmentVariableLoader("storagemover", storagemover_private_link_service_name="test-pls-wcs")
     @RandomNameResourceGroupPreparer(location=WCUS_LOCATION)
     @recorded_by_proxy_async
-    async def test_start_c2c_job_with_private_source(self, resource_group, **kwargs):
+    async def test_start_c2c_job_with_private_source(
+        self, resource_group, storagemover_private_link_service_name, **kwargs
+    ):
         rg = resource_group.name
+        pls_name = storagemover_private_link_service_name
+        private_link_service_id = PRIVATE_LINK_SERVICE_ID_PREFIX + pls_name
         sm_name = "testsm-c2cpvt"
         project_name = "testproj-c2cpvt"
         connection_name = "testconn-pvt"
@@ -597,7 +621,7 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
                 connection_name=connection_name,
                 connection={
                     "properties": {
-                        "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
+                        "privateLinkServiceId": private_link_service_id,
                         "description": "ConnectionForPrivateBucketJobRun",
                     }
                 },
@@ -610,7 +634,7 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
             for _ in range(10):
                 async for pec in network_client.private_link_services.list_private_endpoint_connections(
                     resource_group_name=PLS_RESOURCE_GROUP,
-                    service_name=PLS_NAME,
+                    service_name=pls_name,
                 ):
                     pec_pe_id = (pec.private_endpoint.id if pec.private_endpoint else "") or ""
                     if pec_pe_id.lower() == pe_resource_id.lower():
@@ -622,12 +646,12 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
                     await asyncio.sleep(15)
             assert pe_connection_name, "PE-connection for {} did not appear on PLS {} within 150s".format(
                 pe_resource_id,
-                PLS_NAME,
+                pls_name,
             )
 
             await network_client.private_link_services.update_private_endpoint_connection(
                 resource_group_name=PLS_RESOURCE_GROUP,
-                service_name=PLS_NAME,
+                service_name=pls_name,
                 pe_connection_name=pe_connection_name,
                 parameters={
                     "properties": {
@@ -810,3 +834,349 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
                     pass
 
         return variables
+
+    # ----- Matrix row #35: JobDefinitionScheduleTests.CreateJobDefinitionWithHourlyScheduleTest (API 2026-05-01) -----
+    # See the sync sibling file; this is the async mirror.
+
+    @RandomNameResourceGroupPreparer(location=EUAP_LOCATION)
+    @recorded_by_proxy_async
+    async def test_create_with_hourly_schedule(self, resource_group, **kwargs):
+        rg = resource_group.name
+        sm_name = "testsm-jdhr"
+        project_name = "testproj-jdhr"
+        source_endpoint = "testsrcfsendpoint"
+        target_endpoint = "testtgtfsendpoint"
+        jd_name = "jobdef-sched-hourly"
+
+        await self.client.storage_movers.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            storage_mover={"location": EUAP_LOCATION},
+        )
+        await self.client.projects.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
+            project={},
+        )
+        for endpoint_name, endpoint_kind, file_share_name in (
+            (source_endpoint, "Source", "srcshare"),
+            (target_endpoint, "Target", "tgtshare"),
+        ):
+            await self.client.endpoints.create_or_update(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=endpoint_name,
+                endpoint={
+                    "properties": {
+                        "endpointType": "AzureStorageSmbFileShare",
+                        "storageAccountResourceId": FAKE_STORAGE_ACCOUNT_ID,
+                        "fileShareName": file_share_name,
+                        "endpointKind": endpoint_kind,
+                    }
+                },
+            )
+
+        variables = kwargs.pop("variables", {})
+        now = datetime.now(timezone.utc)
+        start_date = variables.setdefault("schedule_start", (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"))
+        end_date = variables.setdefault("schedule_end", (now + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ"))
+
+        def job_definition(repeat_interval):
+            return {
+                "properties": {
+                    "copyMode": "Additive",
+                    "jobType": "CloudToCloud",
+                    "sourceName": source_endpoint,
+                    "targetName": target_endpoint,
+                    "sourceSubpath": "/",
+                    "targetSubpath": "/",
+                    "description": "Job definition with hourly schedule",
+                    "schedule": {
+                        "frequency": "Hourly",
+                        "repeatInterval": repeat_interval,
+                        "isActive": True,
+                        "executionTime": {"hour": 9, "minute": 0},
+                        "startDate": start_date,
+                        "endDate": end_date,
+                    },
+                }
+            }
+
+        jd = await self.client.job_definitions.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
+            job_definition_name=jd_name,
+            job_definition=job_definition("4h"),
+        )
+        assert jd.name == jd_name
+        assert jd.properties.schedule.frequency == "Hourly"
+        assert jd.properties.schedule.repeat_interval == "4h"
+        assert jd.properties.schedule.is_active is True
+
+        jd = await self.client.job_definitions.get(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
+            job_definition_name=jd_name,
+        )
+        assert jd.properties.schedule.frequency == "Hourly"
+        assert jd.properties.schedule.repeat_interval == "4h"
+
+        # A partial schedule PATCH is merged with the stored schedule.
+        jd = await self.client.job_definitions.update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
+            job_definition_name=jd_name,
+            job_definition={"properties": {"schedule": {"repeatInterval": "6h"}}},
+        )
+        assert jd.properties.schedule.frequency == "Hourly"
+        assert jd.properties.schedule.repeat_interval == "6h"
+        assert jd.properties.schedule.is_active is True
+
+        jd = await self.client.job_definitions.update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
+            job_definition_name=jd_name,
+            job_definition={"properties": {"schedule": {"isActive": False}}},
+        )
+        assert jd.properties.schedule.is_active is False
+        assert jd.properties.schedule.repeat_interval == "6h"
+
+        with pytest.raises(HttpResponseError) as exc_info:
+            await self.client.job_definitions.create_or_update(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
+                job_definition_name="jobdef-sched-hourly-bad",
+                job_definition=job_definition("5h"),
+            )
+        assert exc_info.value.status_code == 400
+        assert exc_info.value.error.code == "InvalidRequestPropertyValue"
+
+        poller = await self.client.job_definitions.begin_delete(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
+            job_definition_name=jd_name,
+        )
+        await poller.result()
+
+        return variables
+
+    # ----- Matrix row #43: CrossTenantTests.CrossTenantJobValidationTest (API 2026-05-01) -----
+    # See the sync sibling file; this is the async mirror.
+
+    @RandomNameResourceGroupPreparer(location=WCUS_LOCATION)
+    @recorded_by_proxy_async
+    async def test_cross_tenant_job_validation(self, resource_group):
+        rg = resource_group.name
+        sm_name = "testsm-xtval"
+        project_name = "testproj-xtval"
+        source_endpoint = "testsrcep-blob"
+        partner_endpoint = "partner-tgtep"
+
+        await self.client.storage_movers.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            storage_mover={"location": WCUS_LOCATION},
+        )
+        await self.client.projects.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
+            project={},
+        )
+        await self.client.endpoints.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=source_endpoint,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageBlobContainer",
+                    "storageAccountResourceId": FAKE_STORAGE_ACCOUNT_ID,
+                    "blobContainerName": "testcontainer",
+                    "endpointKind": "Source",
+                    "enableCrossTenantTransfer": True,
+                    "allowedStorageAccounts": [PARTNER_STORAGE_ACCOUNT_ID],
+                }
+            },
+        )
+
+        cross_tenant_job = {
+            "copyMode": "Additive",
+            "jobType": "CloudToCloud",
+            "sourceName": source_endpoint,
+            "targetName": partner_endpoint,
+            "isCrossTenantJob": True,
+            "crossTenantEndpointTenantId": PARTNER_TENANT_ID,
+            "crossTenantEndpointResourceId": _endpoint_id(
+                PARTNER_SUBSCRIPTION_ID, "partner-rg", "partner-sm", partner_endpoint
+            ),
+        }
+
+        def without(key):
+            return {k: v for k, v in cross_tenant_job.items() if k != key}
+
+        host_subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+        invalid_jobs = {
+            "jobdef-xt-no-tenant": without("crossTenantEndpointTenantId"),
+            "jobdef-xt-no-resource": without("crossTenantEndpointResourceId"),
+            "jobdef-xt-no-flag": without("isCrossTenantJob"),
+            "jobdef-xt-not-c2c": {**cross_tenant_job, "jobType": "OnPremToCloud"},
+            "jobdef-xt-same-sub": {
+                **cross_tenant_job,
+                "crossTenantEndpointResourceId": _endpoint_id(host_subscription_id, rg, sm_name, partner_endpoint),
+            },
+        }
+        for jd_name, properties in invalid_jobs.items():
+            with pytest.raises(HttpResponseError) as exc_info:
+                await self.client.job_definitions.create_or_update(
+                    resource_group_name=rg,
+                    storage_mover_name=sm_name,
+                    project_name=project_name,
+                    job_definition_name=jd_name,
+                    job_definition={"properties": properties},
+                )
+            assert exc_info.value.status_code == 400, jd_name
+            assert exc_info.value.error.code == "InvalidRequestPropertyValue", jd_name
+
+        # None of the rejected requests left a job definition behind.
+        remaining = [
+            jd
+            async for jd in self.client.job_definitions.list(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
+            )
+        ]
+        assert not remaining
+
+    # ----- Matrix row #39: JobDefinitionTests.CreateAgentlessJobDefinitionTest (API 2026-05-01) -----
+    # See the sync sibling file; this is the async mirror.
+
+    @RandomNameResourceGroupPreparer(location=EUAP_LOCATION)
+    @recorded_by_proxy_async
+    async def test_create_agentless_job_definition(self, resource_group):
+        rg = resource_group.name
+        sm_name = "testsm-agentless"
+        project_name = "testproj-agentless"
+        connection_name = "testconn-agentless"
+        source_endpoint = "testsrcep-smb"
+        target_endpoint = "testtgtep-smbfs"
+        jd_name = "jobdef-agentless"
+
+        await self.client.storage_movers.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            storage_mover={"location": EUAP_LOCATION},
+        )
+        await self.client.projects.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
+            project={},
+        )
+        await self.client.endpoints.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=source_endpoint,
+            endpoint={
+                "properties": {
+                    "endpointType": "SmbMount",
+                    "host": "10.0.0.1",
+                    "shareName": "testshare",
+                    "credentials": {
+                        "type": "AzureKeyVaultSmb",
+                        "usernameUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-username",
+                        "passwordUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-password",
+                    },
+                }
+            },
+        )
+        await self.client.endpoints.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=target_endpoint,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageSmbFileShare",
+                    "storageAccountResourceId": FAKE_STORAGE_ACCOUNT_ID,
+                    "fileShareName": "testfileshare",
+                }
+            },
+        )
+
+        job_properties = {
+            "copyMode": "Additive",
+            "jobType": "OnPremToCloudAgentLess",
+            "sourceName": source_endpoint,
+            "targetName": target_endpoint,
+            "sourceSubpath": "/",
+            "targetSubpath": "/",
+        }
+
+        # Agentless jobs must reference at least one connection.
+        with pytest.raises(HttpResponseError) as exc_info:
+            await self.client.job_definitions.create_or_update(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
+                job_definition_name=jd_name,
+                job_definition={"properties": job_properties},
+            )
+        assert exc_info.value.status_code == 400
+        assert exc_info.value.error.code == "InvalidRequestPropertyValue"
+
+        connection = await self.client.connections.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
+            connection={
+                "properties": {
+                    "privateLinkServiceId": ECY_PRIVATE_LINK_SERVICE_ID,
+                    "description": "ConnectionForAgentlessJob",
+                }
+            },
+        )
+        try:
+            assert connection.properties.connection_status in ("Pending", "Approved")
+
+            jd = await self.client.job_definitions.create_or_update(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
+                job_definition_name=jd_name,
+                job_definition={"properties": {**job_properties, "connections": [connection.id]}},
+            )
+            assert jd.name == jd_name
+            assert jd.properties.job_type == "OnPremToCloudAgentLess"
+            assert jd.properties.connections == [connection.id]
+            assert not jd.properties.agent_name
+
+            jd = await self.client.job_definitions.get(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
+                job_definition_name=jd_name,
+            )
+            assert jd.properties.job_type == "OnPremToCloudAgentLess"
+            assert jd.properties.connections == [connection.id]
+
+            poller = await self.client.job_definitions.begin_delete(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
+                job_definition_name=jd_name,
+            )
+            await poller.result()
+        finally:
+            poller = await self.client.connections.begin_delete(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                connection_name=connection_name,
+            )
+            await poller.result()
