@@ -8,25 +8,37 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex, RwLock};
 
 use azure_core::credentials::{AccessToken, Secret, TokenCredential, TokenRequestOptions};
-use once_cell::sync::Lazy;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
-/// Process-wide token credentials keyed by the identity of their Python credential.
-static CACHED_CREDENTIALS: Lazy<Mutex<HashMap<usize, Arc<PyCallbackCredential>>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+/// Token credentials owned by one process, keyed by their Python credential's identity.
+#[derive(Default)]
+pub(crate) struct CredentialCache(Mutex<HashMap<usize, Arc<PyCallbackCredential>>>);
+
+impl CredentialCache {
+    pub(crate) fn get(
+        &self,
+        provider: Py<PyAny>,
+        credential_id: usize,
+    ) -> Arc<dyn TokenCredential> {
+        let mut cached = self
+            .0
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        cached
+            .entry(credential_id)
+            .or_insert_with(|| Arc::new(PyCallbackCredential::new(provider)))
+            .clone()
+    }
+}
 
 pub(crate) fn get_cached_credential(
     provider: Py<PyAny>,
     credential_id: usize,
 ) -> Arc<dyn TokenCredential> {
-    let mut cached = CACHED_CREDENTIALS
-        .lock()
-        .unwrap_or_else(|poisoned| poisoned.into_inner());
-    cached
-        .entry(credential_id)
-        .or_insert_with(|| Arc::new(PyCallbackCredential::new(provider)))
-        .clone()
+    crate::get_process_state()
+        .credentials
+        .get(provider, credential_id)
 }
 
 /// A `TokenCredential` that delegates to a Python callable on every request.
@@ -147,18 +159,16 @@ mod tests {
     fn credential_cache_reuses_only_matching_ids() {
         Python::initialize();
         Python::attach(|py| {
+            let cache = CredentialCache::default();
             let first_provider = pyo3::types::PyDict::new(py).into_any().unbind();
             let second_provider = pyo3::types::PyDict::new(py).into_any().unbind();
             let first_id = first_provider.as_ptr() as usize;
             let second_id = second_provider.as_ptr() as usize;
-            let first = get_cached_credential(first_provider.clone_ref(py), first_id);
-            let same = get_cached_credential(second_provider.clone_ref(py), first_id);
-            let other = get_cached_credential(second_provider, second_id);
+            let first = cache.get(first_provider.clone_ref(py), first_id);
+            let same = cache.get(second_provider.clone_ref(py), first_id);
+            let other = cache.get(second_provider, second_id);
             assert!(Arc::ptr_eq(&first, &same));
             assert!(!Arc::ptr_eq(&first, &other));
-            let mut cache = CACHED_CREDENTIALS.lock().unwrap();
-            cache.remove(&first_id);
-            cache.remove(&second_id);
         });
     }
 
@@ -169,5 +179,14 @@ mod tests {
             let credential = PyCallbackCredential::new(py.None());
             assert!(credential.cache.read().unwrap().is_none());
         });
+    }
+
+    #[test]
+    fn new_process_state_does_not_lock_inherited_credentials() {
+        let slot = crate::ProcessStateSlot::new();
+        let parent = slot.get(1);
+        let _locked = parent.credentials.0.lock().unwrap();
+        let child = slot.get(2);
+        assert!(child.credentials.0.try_lock().unwrap().is_empty());
     }
 }
