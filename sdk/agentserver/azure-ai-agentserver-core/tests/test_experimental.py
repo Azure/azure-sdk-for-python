@@ -2,6 +2,7 @@
 # Licensed under the MIT license.
 
 import asyncio
+import importlib
 import inspect
 import logging
 
@@ -95,6 +96,28 @@ def test_experimental_decorator_on_class(caplog) -> None:
     assert EXPERIMENTAL_CLASS_MESSAGE in caplog.records[0].message
     assert caplog.records[0].message.endswith("This is an experimental class, and may change at any time.")
     assert "https://" not in ExperimentalClass.__doc__
+
+
+def test_legacy_responses_shim_can_use_core_decorator(caplog) -> None:
+    core_experimental = importlib.import_module("azure.ai.agentserver.core._experimental")
+    legacy_docstring = core_experimental.DOCSTRING_TEMPLATE.format(
+        core_experimental.EXPERIMENTAL_CLASS_MESSAGE,
+        core_experimental.EXPERIMENTAL_LINK_MESSAGE,
+    )
+    _warning_cache.clear()
+
+    @core_experimental.experimental
+    class LegacyExperimentalClass:
+        def __init__(self) -> None:
+            self.value = 1
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        assert LegacyExperimentalClass().value == 1
+
+    assert LegacyExperimentalClass.__doc__.startswith(legacy_docstring)
+    assert "https://" not in LegacyExperimentalClass.__doc__
+    assert len(caplog.records) == 1
+    assert caplog.records[0].message.endswith("This is an experimental class, and may change at any time.")
 
 
 def test_experimental_decorator_on_function(caplog) -> None:

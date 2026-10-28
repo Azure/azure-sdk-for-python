@@ -19,6 +19,8 @@ DOCSTRING_TEMPLATE = ".. note::    {0}\n\n"
 DOCSTRING_DEFAULT_INDENTATION = 8
 EXPERIMENTAL_CLASS_MESSAGE = "This is an experimental class, and may change at any time."
 EXPERIMENTAL_METHOD_MESSAGE = "This is an experimental method, and may change at any time."
+# Older Responses compatibility shims read this attribute during import.
+EXPERIMENTAL_LINK_MESSAGE = ""
 DISABLE_EXPERIMENTAL_WARNING_ENV_VAR = "AZURE_AI_AGENTSERVER_DISABLE_EXPERIMENTAL_WARNING"
 _EXPERIMENTAL_CACHE_KEY_ATTR = "_azure_agentserver_experimental_cache_key"
 _EXPERIMENTAL_MESSAGE_ATTR = "_azure_agentserver_experimental_message"

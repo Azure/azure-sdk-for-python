@@ -13,6 +13,7 @@
 ### Bugs Fixed
 
 - Removed the broken documentation link from experimental API warnings and docstrings.
+  Preserved compatibility with older Responses versions when upgrading Core independently.
 - Stop emitting standalone subject headers on outbound model calls while
   preserving platform-to-container ingress parsing.
 - Remove stale subject baggage even when a malformed member has properties before
