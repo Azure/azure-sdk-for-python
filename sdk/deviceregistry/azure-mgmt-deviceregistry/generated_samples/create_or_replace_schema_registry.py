@@ -39,7 +39,7 @@ def main():
                 "description": "This is a sample Schema Registry",
                 "displayName": "Schema Registry namespace 001",
                 "namespace": "sr-namespace-001",
-                "storageAccountContainerUrl": "my-blob-storage.blob.core.windows.net/my-container",
+                "storageAccountContainerUrl": "https://my-blob-storage.blob.core.windows.net/my-container",
             },
             "tags": {},
         },
@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_SchemaRegistry.json
+# x-ms-original-file: 2026-11-01/CreateOrReplace_SchemaRegistry.json
 if __name__ == "__main__":
     main()
