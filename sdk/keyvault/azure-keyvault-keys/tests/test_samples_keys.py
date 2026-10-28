@@ -6,7 +6,7 @@ import os
 import time
 
 import pytest
-from azure.keyvault.keys import KeyType
+from azure.keyvault.keys import ApiVersion, KeyType
 from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
@@ -17,7 +17,7 @@ from _keys_test_case import KeysTestCase
 all_api_versions = get_decorator(only_vault=True)
 default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 only_hsm = get_decorator(only_hsm=True)
-only_hsm_default = get_decorator(only_hsm=True, api_versions=[DEFAULT_VERSION])
+only_hsm_2026_04_01 = get_decorator(only_hsm=True, api_versions=[ApiVersion.V2026_04_01])
 
 
 def print(*args):
@@ -149,7 +149,8 @@ class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
         print(key.properties.key_size)
         # [END create_oct_key]
 
-    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
+    @pytest.mark.playback_test_only("Requires an EKM-connected HSM; plays back existing 2026-04-01 recordings.")
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_2026_04_01)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_example_create_external_key(self, key_client, **kwargs):

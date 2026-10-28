@@ -39,6 +39,7 @@ from _keys_test_case import KeysTestCase
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 only_hsm_default = get_decorator(only_hsm=True, is_async=True, api_versions=[DEFAULT_VERSION])
+only_hsm_2026_04_01 = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V2026_04_01])
 default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 only_hsm_7_4_plus = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 only_vault_7_4_plus = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
@@ -826,7 +827,8 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert response.json()["key"]["kid"] == key.id
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
+    @pytest.mark.playback_test_only("Requires an EKM-connected HSM; plays back existing 2026-04-01 recordings.")
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_2026_04_01)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_create_external_key(self, client, **kwargs):
