@@ -2033,7 +2033,7 @@ def build_fabric_mirroring_settings_list_by_server_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2143,7 +2143,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class AzureADAdministratorsOperations:
+class AzureADAdministratorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2742,7 +2742,7 @@ class AzureADAdministratorsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ServersOperations:  # pylint: disable=too-many-public-methods
+class ServersOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4871,7 +4871,7 @@ class ServersOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class BackupAndExportOperations:
+class BackupAndExportOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5209,7 +5209,7 @@ class BackupAndExportOperations:
         return deserialized  # type: ignore
 
 
-class LogFilesOperations:
+class LogFilesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5327,7 +5327,7 @@ class LogFilesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ServersMigrationOperations:
+class ServersMigrationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5484,7 +5484,7 @@ class ServersMigrationOperations:
         )
 
 
-class BackupsOperations:
+class BackupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5750,7 +5750,7 @@ class BackupsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class LongRunningBackupsOperations:
+class LongRunningBackupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5943,7 +5943,7 @@ class LongRunningBackupsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class LongRunningBackupOperations:
+class LongRunningBackupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6378,7 +6378,7 @@ class LongRunningBackupOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ConfigurationsOperations:
+class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7340,7 +7340,7 @@ class ConfigurationsOperations:
         )
 
 
-class DatabasesOperations:
+class DatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7911,7 +7911,7 @@ class DatabasesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FirewallRulesOperations:
+class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8484,7 +8484,7 @@ class FirewallRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-long
+class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9231,7 +9231,7 @@ class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-lo
         return ItemPaged(get_next, extract_data)
 
 
-class LocationBasedCapabilitySetOperations:
+class LocationBasedCapabilitySetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9414,7 +9414,7 @@ class LocationBasedCapabilitySetOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MaintenancesOperations:
+class MaintenancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9865,7 +9865,7 @@ class MaintenancesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10419,7 +10419,7 @@ class PrivateEndpointConnectionsOperations:
         return deserialized  # type: ignore
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10615,7 +10615,7 @@ class PrivateLinkResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class LocationBasedCapabilitiesOperations:
+class LocationBasedCapabilitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10730,7 +10730,7 @@ class LocationBasedCapabilitiesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CheckVirtualNetworkSubnetUsageOperations:
+class CheckVirtualNetworkSubnetUsageOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10903,7 +10903,7 @@ class CheckVirtualNetworkSubnetUsageOperations:
         return deserialized  # type: ignore
 
 
-class CheckNameAvailabilityOperations:
+class CheckNameAvailabilityOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11077,7 +11077,7 @@ class CheckNameAvailabilityOperations:
         return deserialized  # type: ignore
 
 
-class CheckNameAvailabilityWithoutLocationOperations:  # pylint: disable=name-too-long
+class CheckNameAvailabilityWithoutLocationOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11234,7 +11234,7 @@ class CheckNameAvailabilityWithoutLocationOperations:  # pylint: disable=name-to
         return deserialized  # type: ignore
 
 
-class OperationResultsOperations:
+class OperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11324,7 +11324,7 @@ class OperationResultsOperations:
         return deserialized  # type: ignore
 
 
-class OperationProgressOperations:
+class OperationProgressOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11413,7 +11413,7 @@ class OperationProgressOperations:
         return deserialized  # type: ignore
 
 
-class GetPrivateDnsZoneSuffixOperations:
+class GetPrivateDnsZoneSuffixOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11494,7 +11494,7 @@ class GetPrivateDnsZoneSuffixOperations:
         return deserialized  # type: ignore
 
 
-class ReplicasOperations:
+class ReplicasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11612,7 +11612,7 @@ class ReplicasOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FabricMirroringSettingsOperations:
+class FabricMirroringSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

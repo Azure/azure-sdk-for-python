@@ -49,16 +49,16 @@ if TYPE_CHECKING:
 class AdministratorProperties(TypedDict, total=False):
     """The properties of an administrator.
 
-    :ivar administrator_type: Type of the sever administrator. "ActiveDirectory"
-    :vartype administrator_type: Union[str, "AdministratorType"]
+    :ivar administratorType: Type of the sever administrator. "ActiveDirectory"
+    :vartype administratorType: Union[str, "AdministratorType"]
     :ivar login: Login name of the server administrator.
     :vartype login: str
     :ivar sid: SID (object ID) of the server administrator.
     :vartype sid: str
-    :ivar tenant_id: Tenant ID of the administrator.
-    :vartype tenant_id: str
-    :ivar identity_resource_id: The resource id of the identity used for AAD Authentication.
-    :vartype identity_resource_id: str
+    :ivar tenantId: Tenant ID of the administrator.
+    :vartype tenantId: str
+    :ivar identityResourceId: The resource id of the identity used for AAD Authentication.
+    :vartype identityResourceId: str
     """
 
     administratorType: Union[str, "AdministratorType"]
@@ -84,9 +84,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -112,9 +112,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -129,9 +129,9 @@ class AdvancedThreatProtection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Resource properties.
     :vartype properties: "AdvancedThreatProtectionProperties"
     """
@@ -154,15 +154,15 @@ class AdvancedThreatProtectionForUpdate(TypedDict, total=False):
 class AdvancedThreatProtectionProperties(TypedDict, total=False):
     """Properties of an Advanced Threat Protection setting.
 
-    :ivar creation_time: Specifies the UTC creation time of the policy.
-    :vartype creation_time: str
+    :ivar creationTime: Specifies the UTC creation time of the policy.
+    :vartype creationTime: str
     :ivar state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
      disabled or a state has not been applied yet on the specific database or server. Known values
      are: "Enabled" and "Disabled".
     :vartype state: Union[str, "AdvancedThreatProtectionState"]
-    :ivar provisioning_state: Provisioning state of the Threat Protection. Known values are:
+    :ivar provisioningState: Provisioning state of the Threat Protection. Known values are:
      "Succeeded", "Updating", "Canceled", and "Failed".
-    :vartype provisioning_state: Union[str, "AdvancedThreatProtectionProvisioningState"]
+    :vartype provisioningState: Union[str, "AdvancedThreatProtectionProvisioningState"]
     """
 
     creationTime: str
@@ -202,9 +202,9 @@ class AzureADAdministrator(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of an administrator.
     :vartype properties: "AdministratorProperties"
     """
@@ -216,15 +216,15 @@ class AzureADAdministrator(ProxyResource):
 class Backup(TypedDict, total=False):
     """Storage Profile properties of a server.
 
-    :ivar backup_retention_days: Backup retention days for the server.
-    :vartype backup_retention_days: int
-    :ivar backup_interval_hours: Backup interval hours for the server.
-    :vartype backup_interval_hours: int
-    :ivar geo_redundant_backup: Whether or not geo redundant backup is enabled. Known values are:
+    :ivar backupRetentionDays: Backup retention days for the server.
+    :vartype backupRetentionDays: int
+    :ivar backupIntervalHours: Backup interval hours for the server.
+    :vartype backupIntervalHours: int
+    :ivar geoRedundantBackup: Whether or not geo redundant backup is enabled. Known values are:
      "Enabled" and "Disabled".
-    :vartype geo_redundant_backup: Union[str, "EnableStatusEnum"]
-    :ivar earliest_restore_date: Earliest restore point creation time (ISO8601 format).
-    :vartype earliest_restore_date: str
+    :vartype geoRedundantBackup: Union[str, "EnableStatusEnum"]
+    :ivar earliestRestoreDate: Earliest restore point creation time (ISO8601 format).
+    :vartype earliestRestoreDate: str
     """
 
     backupRetentionDays: int
@@ -240,8 +240,8 @@ class Backup(TypedDict, total=False):
 class BackupRequestBase(TypedDict, total=False):
     """BackupRequestBase is the base for all backup request.
 
-    :ivar backup_settings: Backup Settings. Required.
-    :vartype backup_settings: "BackupSettings"
+    :ivar backupSettings: Backup Settings. Required.
+    :vartype backupSettings: "BackupSettings"
     """
 
     backupSettings: Required["BackupSettings"]
@@ -251,10 +251,10 @@ class BackupRequestBase(TypedDict, total=False):
 class BackupAndExportRequest(BackupRequestBase):
     """BackupAndExport API Request.
 
-    :ivar backup_settings: Backup Settings. Required.
-    :vartype backup_settings: "BackupSettings"
-    :ivar target_details: Backup Target Store Details. Required.
-    :vartype target_details: "BackupStoreDetails"
+    :ivar backupSettings: Backup Settings. Required.
+    :vartype backupSettings: "BackupSettings"
+    :ivar targetDetails: Backup Target Store Details. Required.
+    :vartype targetDetails: "BackupStoreDetails"
     """
 
     targetDetails: Required["BackupStoreDetails"]
@@ -264,11 +264,11 @@ class BackupAndExportRequest(BackupRequestBase):
 class BackupSettings(TypedDict, total=False):
     """Backup Settings.
 
-    :ivar backup_name: The name of the backup. Required.
-    :vartype backup_name: str
-    :ivar backup_format: Backup Format for the current backup. (CollatedFormat is INTERNAL – DO NOT
+    :ivar backupName: The name of the backup. Required.
+    :vartype backupName: str
+    :ivar backupFormat: Backup Format for the current backup. (CollatedFormat is INTERNAL – DO NOT
      USE). Known values are: "CollatedFormat" and "Raw".
-    :vartype backup_format: Union[str, "BackupFormat"]
+    :vartype backupFormat: Union[str, "BackupFormat"]
     """
 
     backupName: Required[str]
@@ -289,9 +289,9 @@ class Configuration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of a configuration.
     :vartype properties: "ConfigurationProperties"
     """
@@ -335,9 +335,9 @@ class ConfigurationListForBatchUpdate(TypedDict, total=False):
 
     :ivar value: The list of server configurations.
     :vartype value: list["ConfigurationForBatchUpdate"]
-    :ivar reset_all_to_default: Whether to reset all server parameters to default. Known values
-     are: "True" and "False".
-    :vartype reset_all_to_default: Union[str, "ResetAllToDefault"]
+    :ivar resetAllToDefault: Whether to reset all server parameters to default. Known values are:
+     "True" and "False".
+    :vartype resetAllToDefault: Union[str, "ResetAllToDefault"]
     """
 
     value: list["ConfigurationForBatchUpdate"]
@@ -351,28 +351,28 @@ class ConfigurationProperties(TypedDict, total=False):
 
     :ivar value: Value of the configuration.
     :vartype value: str
-    :ivar current_value: Current value of the configuration.
-    :vartype current_value: str
+    :ivar currentValue: Current value of the configuration.
+    :vartype currentValue: str
     :ivar description: Description of the configuration.
     :vartype description: str
-    :ivar documentation_link: The link used to get the document from community or Azure site.
-    :vartype documentation_link: str
-    :ivar default_value: Default value of the configuration.
-    :vartype default_value: str
-    :ivar data_type: Data type of the configuration.
-    :vartype data_type: str
-    :ivar allowed_values: Allowed values of the configuration.
-    :vartype allowed_values: str
+    :ivar documentationLink: The link used to get the document from community or Azure site.
+    :vartype documentationLink: str
+    :ivar defaultValue: Default value of the configuration.
+    :vartype defaultValue: str
+    :ivar dataType: Data type of the configuration.
+    :vartype dataType: str
+    :ivar allowedValues: Allowed values of the configuration.
+    :vartype allowedValues: str
     :ivar source: Source of the configuration. Known values are: "system-default" and
      "user-override".
     :vartype source: Union[str, "ConfigurationSource"]
-    :ivar is_read_only: If is the configuration read only. Known values are: "True" and "False".
-    :vartype is_read_only: Union[str, "IsReadOnly"]
-    :ivar is_config_pending_restart: If is the configuration pending restart or not. Known values
-     are: "True" and "False".
-    :vartype is_config_pending_restart: Union[str, "IsConfigPendingRestart"]
-    :ivar is_dynamic_config: If is the configuration dynamic. Known values are: "True" and "False".
-    :vartype is_dynamic_config: Union[str, "IsDynamicConfig"]
+    :ivar isReadOnly: If is the configuration read only. Known values are: "True" and "False".
+    :vartype isReadOnly: Union[str, "IsReadOnly"]
+    :ivar isConfigPendingRestart: If is the configuration pending restart or not. Known values are:
+     "True" and "False".
+    :vartype isConfigPendingRestart: Union[str, "IsConfigPendingRestart"]
+    :ivar isDynamicConfig: If is the configuration dynamic. Known values are: "True" and "False".
+    :vartype isDynamicConfig: Union[str, "IsDynamicConfig"]
     """
 
     value: str
@@ -410,9 +410,9 @@ class Database(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of a database.
     :vartype properties: "DatabaseProperties"
     """
@@ -439,16 +439,16 @@ class DatabaseProperties(TypedDict, total=False):
 class DataEncryption(TypedDict, total=False):
     """The date encryption for cmk.
 
-    :ivar primary_user_assigned_identity_id: Primary user identity resource id.
-    :vartype primary_user_assigned_identity_id: str
-    :ivar primary_key_uri: Primary key uri.
-    :vartype primary_key_uri: str
-    :ivar geo_backup_user_assigned_identity_id: Geo backup user identity resource id as identity
-     can't cross region, need identity in same region as geo backup.
-    :vartype geo_backup_user_assigned_identity_id: str
-    :ivar geo_backup_key_uri: Geo backup key uri as key vault can't cross region, need cmk in same
+    :ivar primaryUserAssignedIdentityId: Primary user identity resource id.
+    :vartype primaryUserAssignedIdentityId: str
+    :ivar primaryKeyURI: Primary key uri.
+    :vartype primaryKeyURI: str
+    :ivar geoBackupUserAssignedIdentityId: Geo backup user identity resource id as identity can't
+     cross region, need identity in same region as geo backup.
+    :vartype geoBackupUserAssignedIdentityId: str
+    :ivar geoBackupKeyURI: Geo backup key uri as key vault can't cross region, need cmk in same
      region as geo backup.
-    :vartype geo_backup_key_uri: str
+    :vartype geoBackupKeyURI: str
     :ivar type: The key type, AzureKeyVault for enable cmk, SystemManaged for disable cmk. Known
      values are: "AzureKeyVault" and "SystemManaged".
     :vartype type: Union[str, "DataEncryptionType"]
@@ -479,9 +479,9 @@ class FabricMirroringSetting(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "FabricMirroringSettingsProperties"
     """
@@ -496,12 +496,12 @@ class FabricMirroringSettingsProperties(TypedDict, total=False):
     :ivar state: State of Fabric Mirroring (Enabled or Disabled). Known values are: "Enabled" and
      "Disabled".
     :vartype state: Union[str, "FabricMirroringState"]
-    :ivar identity_resource_id: Resource ID of the user-assigned managed identity used for Fabric
+    :ivar identityResourceId: Resource ID of the user-assigned managed identity used for Fabric
      Mirroring. Required when state is Enabled.
-    :vartype identity_resource_id: str
-    :ivar provisioning_state: Provisioning state of Fabric Mirroring. Known values are:
-     "Succeeded", "Failed", "Canceled", and "Updating".
-    :vartype provisioning_state: Union[str, "FabricMirroringProvisioningState"]
+    :vartype identityResourceId: str
+    :ivar provisioningState: Provisioning state of Fabric Mirroring. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Updating".
+    :vartype provisioningState: Union[str, "FabricMirroringProvisioningState"]
     """
 
     state: Union[str, "FabricMirroringState"]
@@ -526,9 +526,9 @@ class FirewallRule(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of a firewall rule. Required.
     :vartype properties: "FirewallRuleProperties"
     """
@@ -540,12 +540,12 @@ class FirewallRule(ProxyResource):
 class FirewallRuleProperties(TypedDict, total=False):
     """The properties of a server firewall rule.
 
-    :ivar start_ip_address: The start IP address of the server firewall rule. Must be IPv4 format.
+    :ivar startIpAddress: The start IP address of the server firewall rule. Must be IPv4 format.
      Required.
-    :vartype start_ip_address: str
-    :ivar end_ip_address: The end IP address of the server firewall rule. Must be IPv4 format.
+    :vartype startIpAddress: str
+    :ivar endIpAddress: The end IP address of the server firewall rule. Must be IPv4 format.
      Required.
-    :vartype end_ip_address: str
+    :vartype endIpAddress: str
     """
 
     startIpAddress: Required[str]
@@ -558,12 +558,12 @@ class FullBackupStoreDetails(TypedDict, total=False):
     """FullBackupStoreDetails is used for scenarios where backup data is streamed/copied over to a
     storage destination.
 
-    :ivar sas_uri_list: SASUriList of storage containers where backup data is to be
-     streamed/copied. Required.
-    :vartype sas_uri_list: list[str]
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "FullBackupStoreDetails".
-    :vartype object_type: Literal["FullBackupStoreDetails"]
+    :ivar sasUriList: SASUriList of storage containers where backup data is to be streamed/copied.
+     Required.
+    :vartype sasUriList: list[str]
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "FullBackupStoreDetails".
+    :vartype objectType: Literal["FullBackupStoreDetails"]
     """
 
     sasUriList: Required[list[str]]
@@ -582,11 +582,11 @@ class HighAvailability(TypedDict, total=False):
     :ivar state: The state of server high availability. Known values are: "NotEnabled",
      "CreatingStandby", "Healthy", "FailingOver", and "RemovingStandby".
     :vartype state: Union[str, "HighAvailabilityState"]
-    :ivar standby_availability_zone: Availability zone of the standby server.
-    :vartype standby_availability_zone: str
-    :ivar replication_mode: HA Replication mode for a server. Known values are: "BinaryLog" and
+    :ivar standbyAvailabilityZone: Availability zone of the standby server.
+    :vartype standbyAvailabilityZone: str
+    :ivar replicationMode: HA Replication mode for a server. Known values are: "BinaryLog" and
      "RedoLog".
-    :vartype replication_mode: Union[str, "ReplicationMode"]
+    :vartype replicationMode: Union[str, "ReplicationMode"]
     """
 
     mode: Union[str, "HighAvailabilityMode"]
@@ -604,12 +604,12 @@ class HighAvailability(TypedDict, total=False):
 class HighAvailabilityValidationEstimation(TypedDict, total=False):
     """High availability validation properties of a server.
 
-    :ivar estimated_downtime: Estimated seconds of downtime for the deployment.
-    :vartype estimated_downtime: int
-    :ivar scheduled_standby_availability_zone: Scheduled Availability zone of the standby server.
-    :vartype scheduled_standby_availability_zone: str
-    :ivar expected_standby_availability_zone: Expected Availability zone of the standby server.
-    :vartype expected_standby_availability_zone: str
+    :ivar estimatedDowntime: Estimated seconds of downtime for the deployment.
+    :vartype estimatedDowntime: int
+    :ivar scheduledStandbyAvailabilityZone: Scheduled Availability zone of the standby server.
+    :vartype scheduledStandbyAvailabilityZone: str
+    :ivar expectedStandbyAvailabilityZone: Expected Availability zone of the standby server.
+    :vartype expectedStandbyAvailabilityZone: str
     """
 
     estimatedDowntime: int
@@ -623,15 +623,15 @@ class HighAvailabilityValidationEstimation(TypedDict, total=False):
 class ImportSourceProperties(TypedDict, total=False):
     """Import source related properties.
 
-    :ivar storage_type: Storage type of import source. "AzureBlob"
-    :vartype storage_type: Union[str, "ImportSourceStorageType"]
-    :ivar storage_url: Uri of the import source storage.
-    :vartype storage_url: str
-    :ivar sas_token: Sas token for accessing source storage. Read and list permissions are required
+    :ivar storageType: Storage type of import source. "AzureBlob"
+    :vartype storageType: Union[str, "ImportSourceStorageType"]
+    :ivar storageUrl: Uri of the import source storage.
+    :vartype storageUrl: str
+    :ivar sasToken: Sas token for accessing source storage. Read and list permissions are required
      for sas token.
-    :vartype sas_token: str
-    :ivar data_dir_path: Relative path of data directory in storage.
-    :vartype data_dir_path: str
+    :vartype sasToken: str
+    :ivar dataDirPath: Relative path of data directory in storage.
+    :vartype dataDirPath: str
     """
 
     storageType: Union[str, "ImportSourceStorageType"]
@@ -647,9 +647,9 @@ class ImportSourceProperties(TypedDict, total=False):
 class MaintenancePolicy(TypedDict, total=False):
     """Maintenance policy of a server.
 
-    :ivar patch_strategy: The patch strategy of this server. Known values are: "Regular" and
+    :ivar patchStrategy: The patch strategy of this server. Known values are: "Regular" and
      "VirtualCanary".
-    :vartype patch_strategy: Union[str, "PatchStrategy"]
+    :vartype patchStrategy: Union[str, "PatchStrategy"]
     """
 
     patchStrategy: Union[str, "PatchStrategy"]
@@ -659,8 +659,8 @@ class MaintenancePolicy(TypedDict, total=False):
 class MaintenancePropertiesForUpdate(TypedDict, total=False):
     """The properties of a maintenance update parameter.
 
-    :ivar maintenance_start_time: The start time for a maintenance.
-    :vartype maintenance_start_time: str
+    :ivar maintenanceStartTime: The start time for a maintenance.
+    :vartype maintenanceStartTime: str
     """
 
     maintenanceStartTime: str
@@ -681,17 +681,17 @@ class MaintenanceUpdate(TypedDict, total=False):
 class MaintenanceWindow(TypedDict, total=False):
     """Maintenance window of a server.
 
-    :ivar custom_window: indicates whether custom window is enabled or disabled.
-    :vartype custom_window: str
-    :ivar start_hour: start hour for maintenance window.
-    :vartype start_hour: int
-    :ivar start_minute: start minute for maintenance window.
-    :vartype start_minute: int
-    :ivar day_of_week: day of week for maintenance window.
-    :vartype day_of_week: int
-    :ivar batch_of_maintenance: The batch of maintenance when enabled the custom managed
-     maintenance window of a server. Known values are: "Default", "Batch1", and "Batch2".
-    :vartype batch_of_maintenance: Union[str, "BatchOfMaintenance"]
+    :ivar customWindow: indicates whether custom window is enabled or disabled.
+    :vartype customWindow: str
+    :ivar startHour: start hour for maintenance window.
+    :vartype startHour: int
+    :ivar startMinute: start minute for maintenance window.
+    :vartype startMinute: int
+    :ivar dayOfWeek: day of week for maintenance window.
+    :vartype dayOfWeek: int
+    :ivar batchOfMaintenance: The batch of maintenance when enabled the custom managed maintenance
+     window of a server. Known values are: "Default", "Batch1", and "Batch2".
+    :vartype batchOfMaintenance: Union[str, "BatchOfMaintenance"]
     """
 
     customWindow: str
@@ -710,14 +710,14 @@ class MaintenanceWindow(TypedDict, total=False):
 class MySQLServerIdentity(TypedDict, total=False):
     """Properties to configure Identity for Bring your Own Keys.
 
-    :ivar principal_id: ObjectId from the KeyVault.
-    :vartype principal_id: str
-    :ivar tenant_id: TenantId from the KeyVault.
-    :vartype tenant_id: str
+    :ivar principalId: ObjectId from the KeyVault.
+    :vartype principalId: str
+    :ivar tenantId: TenantId from the KeyVault.
+    :vartype tenantId: str
     :ivar type: Type of managed service identity. "UserAssigned"
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: Metadata of user assigned identity.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: Metadata of user assigned identity.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -765,15 +765,14 @@ class NameAvailabilityRequest(TypedDict, total=False):
 class Network(TypedDict, total=False):
     """Network related properties of a server.
 
-    :ivar public_network_access: Whether or not public network access is allowed for this server.
+    :ivar publicNetworkAccess: Whether or not public network access is allowed for this server.
      Value is 'Disabled' when server has VNet integration. Known values are: "Enabled" and
      "Disabled".
-    :vartype public_network_access: Union[str, "EnableStatusEnum"]
-    :ivar delegated_subnet_resource_id: Delegated subnet resource id used to setup vnet for a
-     server.
-    :vartype delegated_subnet_resource_id: str
-    :ivar private_dns_zone_resource_id: Private DNS zone resource id.
-    :vartype private_dns_zone_resource_id: str
+    :vartype publicNetworkAccess: Union[str, "EnableStatusEnum"]
+    :ivar delegatedSubnetResourceId: Delegated subnet resource id used to setup vnet for a server.
+    :vartype delegatedSubnetResourceId: str
+    :ivar privateDnsZoneResourceId: Private DNS zone resource id.
+    :vartype privateDnsZoneResourceId: str
     """
 
     publicNetworkAccess: Union[str, "EnableStatusEnum"]
@@ -807,9 +806,9 @@ class PrivateEndpointConnection(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Resource properties.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -821,16 +820,16 @@ class PrivateEndpointConnection(Resource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Properties of the private endpoint connection.
 
-    :ivar group_ids: The group ids for the private endpoint resource.
-    :vartype group_ids: list[str]
-    :ivar private_endpoint: The private endpoint resource.
-    :vartype private_endpoint: "PrivateEndpoint"
-    :ivar private_link_service_connection_state: A collection of information about the state of the
+    :ivar groupIds: The group ids for the private endpoint resource.
+    :vartype groupIds: list[str]
+    :ivar privateEndpoint: The private endpoint resource.
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar privateLinkServiceConnectionState: A collection of information about the state of the
      connection between service consumer and provider. Required.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionState"
-    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
+    :ivar provisioningState: The provisioning state of the private endpoint connection resource.
      Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
-    :vartype provisioning_state: Union[str, "PrivateEndpointConnectionProvisioningState"]
+    :vartype provisioningState: Union[str, "PrivateEndpointConnectionProvisioningState"]
     """
 
     groupIds: list[str]
@@ -854,9 +853,9 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
     :vartype status: Union[str, "PrivateEndpointServiceConnectionStatus"]
     :ivar description: The reason for approval/rejection of the connection.
     :vartype description: str
-    :ivar actions_required: A message indicating if changes on the service provider require any
+    :ivar actionsRequired: A message indicating if changes on the service provider require any
      updates on the consumer.
-    :vartype actions_required: str
+    :vartype actionsRequired: str
     """
 
     status: Union[str, "PrivateEndpointServiceConnectionStatus"]
@@ -879,9 +878,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -905,9 +904,9 @@ class Server(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -931,17 +930,17 @@ class Server(TrackedResource):
 class ServerBackupPropertiesV2(TypedDict, total=False):
     """The properties of a server backup.
 
-    :ivar backup_name_v2: Backup name.
-    :vartype backup_name_v2: str
-    :ivar backup_type: "FULL"
-    :vartype backup_type: Union[str, "BackupType"]
-    :ivar completed_time: Backup completed time (ISO8601 format).
-    :vartype completed_time: str
+    :ivar backupNameV2: Backup name.
+    :vartype backupNameV2: str
+    :ivar backupType: "FULL"
+    :vartype backupType: Union[str, "BackupType"]
+    :ivar completedTime: Backup completed time (ISO8601 format).
+    :vartype completedTime: str
     :ivar source: Backup source.
     :vartype source: str
-    :ivar provisioning_state: The provisioning state of backup resource. Known values are:
+    :ivar provisioningState: The provisioning state of backup resource. Known values are:
      "Succeeded", "Creating", "Deleting", "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     backupNameV2: str
@@ -968,9 +967,9 @@ class ServerBackupV2(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of a server backup.
     :vartype properties: "ServerBackupPropertiesV2"
     """
@@ -982,10 +981,10 @@ class ServerBackupV2(ProxyResource):
 class ServerDetachVNetParameter(TypedDict, total=False):
     """Parameters to detach Vnet.
 
-    :ivar public_network_access: Whether or not public network access is allowed for this server.
+    :ivar publicNetworkAccess: Whether or not public network access is allowed for this server.
      Value is 'Disabled' when server has VNet integration. Known values are: "Enabled" and
      "Disabled".
-    :vartype public_network_access: Union[str, "EnableStatusEnum"]
+    :vartype publicNetworkAccess: Union[str, "EnableStatusEnum"]
     """
 
     publicNetworkAccess: Union[str, "EnableStatusEnum"]
@@ -1019,8 +1018,8 @@ class ServerForUpdate(TypedDict, total=False):
 class ServerGtidSetParameter(TypedDict, total=False):
     """Server Gtid set parameters: Replication with Global Transaction Identifiers.
 
-    :ivar gtid_set: The Gtid set of server.
-    :vartype gtid_set: str
+    :ivar gtidSet: The Gtid set of server.
+    :vartype gtidSet: str
     """
 
     gtidSet: str
@@ -1030,63 +1029,62 @@ class ServerGtidSetParameter(TypedDict, total=False):
 class ServerProperties(TypedDict, total=False):
     """The properties of a server.
 
-    :ivar administrator_login: The administrator's login name of a server. Can only be specified
+    :ivar administratorLogin: The administrator's login name of a server. Can only be specified
      when the server is being created (and is required for creation).
-    :vartype administrator_login: str
-    :ivar administrator_login_password: The password of the administrator login (required for
-     server creation).
-    :vartype administrator_login_password: str
+    :vartype administratorLogin: str
+    :ivar administratorLoginPassword: The password of the administrator login (required for server
+     creation).
+    :vartype administratorLoginPassword: str
     :ivar version: Major version of MySQL. 8.0.21 stands for MySQL 8.0, 5.7.44 stands for MySQL
      5.7. Known values are: "5.7", "8.0.21", and "8.4".
     :vartype version: Union[str, "ServerVersion"]
-    :ivar full_version: Major version and actual engine version.
-    :vartype full_version: str
-    :ivar availability_zone: availability Zone information of the server.
-    :vartype availability_zone: str
-    :ivar create_mode: The mode to create a new MySQL server. Known values are: "Default",
+    :ivar fullVersion: Major version and actual engine version.
+    :vartype fullVersion: str
+    :ivar availabilityZone: availability Zone information of the server.
+    :vartype availabilityZone: str
+    :ivar createMode: The mode to create a new MySQL server. Known values are: "Default",
      "PointInTimeRestore", "Replica", "GeoRestore", and "Rename".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar source_server_resource_id: The source MySQL server id.
-    :vartype source_server_resource_id: str
-    :ivar restore_point_in_time: Restore point creation time (ISO8601 format), specifying the time
-     to restore from.
-    :vartype restore_point_in_time: str
-    :ivar replication_role: The replication role. Known values are: "None", "Source", and
-     "Replica".
-    :vartype replication_role: Union[str, "ReplicationRole"]
-    :ivar replica_capacity: The maximum number of replicas that a primary server can have.
-    :vartype replica_capacity: int
-    :ivar data_encryption: The Data Encryption for CMK.
-    :vartype data_encryption: "DataEncryption"
+    :vartype createMode: Union[str, "CreateMode"]
+    :ivar sourceServerResourceId: The source MySQL server id.
+    :vartype sourceServerResourceId: str
+    :ivar restorePointInTime: Restore point creation time (ISO8601 format), specifying the time to
+     restore from.
+    :vartype restorePointInTime: str
+    :ivar replicationRole: The replication role. Known values are: "None", "Source", and "Replica".
+    :vartype replicationRole: Union[str, "ReplicationRole"]
+    :ivar replicaCapacity: The maximum number of replicas that a primary server can have.
+    :vartype replicaCapacity: int
+    :ivar dataEncryption: The Data Encryption for CMK.
+    :vartype dataEncryption: "DataEncryption"
     :ivar state: The state of a server. Known values are: "Ready", "Dropping", "Disabled",
      "Starting", "Stopping", "Stopped", and "Updating".
     :vartype state: Union[str, "ServerState"]
-    :ivar fully_qualified_domain_name: The fully qualified domain name of a server.
-    :vartype fully_qualified_domain_name: str
-    :ivar database_port: The server database port. Can only be specified when the server is being
+    :ivar fullyQualifiedDomainName: The fully qualified domain name of a server.
+    :vartype fullyQualifiedDomainName: str
+    :ivar databasePort: The server database port. Can only be specified when the server is being
      created.
-    :vartype database_port: int
+    :vartype databasePort: int
     :ivar storage: Storage related properties of a server.
     :vartype storage: "Storage"
     :ivar backup: Backup related properties of a server.
     :vartype backup: "Backup"
-    :ivar high_availability: High availability related properties of a server.
-    :vartype high_availability: "HighAvailability"
+    :ivar highAvailability: High availability related properties of a server.
+    :vartype highAvailability: "HighAvailability"
     :ivar network: Network related properties of a server.
     :vartype network: "Network"
-    :ivar private_endpoint_connections: PrivateEndpointConnections related properties of a server.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar maintenance_policy: Maintenance policy of a server.
-    :vartype maintenance_policy: "MaintenancePolicy"
-    :ivar maintenance_window: Maintenance window of a server. Known issue: cannot be set during
+    :ivar privateEndpointConnections: PrivateEndpointConnections related properties of a server.
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar maintenancePolicy: Maintenance policy of a server.
+    :vartype maintenancePolicy: "MaintenancePolicy"
+    :ivar maintenanceWindow: Maintenance window of a server. Known issue: cannot be set during
      server creation or updated with other properties during server update; must be updated
      separately.
-    :vartype maintenance_window: "MaintenanceWindow"
-    :ivar import_source_properties: Source properties for import from storage.
-    :vartype import_source_properties: "ImportSourceProperties"
-    :ivar lower_case_table_names: The mysql parameter lower_case_table_names. Can only be specified
+    :vartype maintenanceWindow: "MaintenanceWindow"
+    :ivar importSourceProperties: Source properties for import from storage.
+    :vartype importSourceProperties: "ImportSourceProperties"
+    :ivar lowerCaseTableNames: The mysql parameter lower_case_table_names. Can only be specified
      when the server is being created. Allowed values 1 or 2.
-    :vartype lower_case_table_names: int
+    :vartype lowerCaseTableNames: int
     """
 
     administratorLogin: str
@@ -1146,25 +1144,25 @@ class ServerProperties(TypedDict, total=False):
 class ServerPropertiesForUpdate(TypedDict, total=False):
     """The properties that can be updated for a server.
 
-    :ivar administrator_login_password: The password of the administrator login.
-    :vartype administrator_login_password: str
+    :ivar administratorLoginPassword: The password of the administrator login.
+    :vartype administratorLoginPassword: str
     :ivar version: Server version. Known values are: "5.7", "8.0.21", and "8.4".
     :vartype version: Union[str, "ServerVersion"]
     :ivar storage: Storage related properties of a server.
     :vartype storage: "Storage"
     :ivar backup: Backup related properties of a server.
     :vartype backup: "Backup"
-    :ivar high_availability: High availability related properties of a server.
-    :vartype high_availability: "HighAvailability"
-    :ivar maintenance_policy: Maintenance policy of a server.
-    :vartype maintenance_policy: "MaintenancePolicy"
-    :ivar maintenance_window: Maintenance window of a server.
-    :vartype maintenance_window: "MaintenanceWindow"
-    :ivar replication_role: The replication role of the server. Known values are: "None", "Source",
+    :ivar highAvailability: High availability related properties of a server.
+    :vartype highAvailability: "HighAvailability"
+    :ivar maintenancePolicy: Maintenance policy of a server.
+    :vartype maintenancePolicy: "MaintenancePolicy"
+    :ivar maintenanceWindow: Maintenance window of a server.
+    :vartype maintenanceWindow: "MaintenanceWindow"
+    :ivar replicationRole: The replication role of the server. Known values are: "None", "Source",
      and "Replica".
-    :vartype replication_role: Union[str, "ReplicationRole"]
-    :ivar data_encryption: The Data Encryption for CMK.
-    :vartype data_encryption: "DataEncryption"
+    :vartype replicationRole: Union[str, "ReplicationRole"]
+    :ivar dataEncryption: The Data Encryption for CMK.
+    :vartype dataEncryption: "DataEncryption"
     :ivar network: Network related properties of a server.
     :vartype network: "Network"
     """
@@ -1194,11 +1192,11 @@ class ServerPropertiesForUpdate(TypedDict, total=False):
 class ServerRestartParameter(TypedDict, total=False):
     """Server restart parameters.
 
-    :ivar restart_with_failover: Whether or not failover to standby server when restarting a server
+    :ivar restartWithFailover: Whether or not failover to standby server when restarting a server
      with high availability enabled. Known values are: "Enabled" and "Disabled".
-    :vartype restart_with_failover: Union[str, "EnableStatusEnum"]
-    :ivar max_failover_seconds: The maximum allowed failover time in seconds.
-    :vartype max_failover_seconds: int
+    :vartype restartWithFailover: Union[str, "EnableStatusEnum"]
+    :ivar maxFailoverSeconds: The maximum allowed failover time in seconds.
+    :vartype maxFailoverSeconds: int
     """
 
     restartWithFailover: Union[str, "EnableStatusEnum"]
@@ -1211,22 +1209,21 @@ class ServerRestartParameter(TypedDict, total=False):
 class Storage(TypedDict, total=False):
     """Storage Profile properties of a server.
 
-    :ivar storage_size_gb: Max storage size allowed for a server.
-    :vartype storage_size_gb: int
+    :ivar storageSizeGB: Max storage size allowed for a server.
+    :vartype storageSizeGB: int
     :ivar iops: Storage IOPS for a server.
     :vartype iops: int
-    :ivar auto_grow: Enable Storage Auto Grow or not. Known values are: "Enabled" and "Disabled".
-    :vartype auto_grow: Union[str, "EnableStatusEnum"]
-    :ivar log_on_disk: Enable Log On Disk or not. Known values are: "Enabled" and "Disabled".
-    :vartype log_on_disk: Union[str, "EnableStatusEnum"]
-    :ivar storage_sku: The sku name of the server storage.
-    :vartype storage_sku: str
-    :ivar auto_io_scaling: Enable IO Auto Scaling or not. Known values are: "Enabled" and
-     "Disabled".
-    :vartype auto_io_scaling: Union[str, "EnableStatusEnum"]
-    :ivar storage_redundancy: The redundant type of the server storage. The parameter is used for
+    :ivar autoGrow: Enable Storage Auto Grow or not. Known values are: "Enabled" and "Disabled".
+    :vartype autoGrow: Union[str, "EnableStatusEnum"]
+    :ivar logOnDisk: Enable Log On Disk or not. Known values are: "Enabled" and "Disabled".
+    :vartype logOnDisk: Union[str, "EnableStatusEnum"]
+    :ivar storageSku: The sku name of the server storage.
+    :vartype storageSku: str
+    :ivar autoIoScaling: Enable IO Auto Scaling or not. Known values are: "Enabled" and "Disabled".
+    :vartype autoIoScaling: Union[str, "EnableStatusEnum"]
+    :ivar storageRedundancy: The redundant type of the server storage. The parameter is used for
      server creation. Known values are: "LocalRedundancy" and "ZoneRedundancy".
-    :vartype storage_redundancy: Union[str, "StorageRedundancyEnum"]
+    :vartype storageRedundancy: Union[str, "StorageRedundancyEnum"]
     """
 
     storageSizeGB: int
@@ -1249,20 +1246,20 @@ class Storage(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1284,10 +1281,10 @@ class SystemData(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """Metadata of user assigned identity.
 
-    :ivar principal_id: Principal Id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: Client Id of user assigned identity.
-    :vartype client_id: str
+    :ivar principalId: Principal Id of user assigned identity.
+    :vartype principalId: str
+    :ivar clientId: Client Id of user assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -1299,8 +1296,8 @@ class UserAssignedIdentity(TypedDict, total=False):
 class VirtualNetworkSubnetUsageParameter(TypedDict, total=False):
     """Virtual network subnet usage parameter.
 
-    :ivar virtual_network_resource_id: Virtual network resource id.
-    :vartype virtual_network_resource_id: str
+    :ivar virtualNetworkResourceId: Virtual network resource id.
+    :vartype virtualNetworkResourceId: str
     """
 
     virtualNetworkResourceId: str

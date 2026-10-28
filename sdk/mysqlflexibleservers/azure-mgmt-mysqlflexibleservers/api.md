@@ -4777,11 +4777,11 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "login": str
         key "sid": str
         key "tenantId": str
-        administrator_type: Union[str, AdministratorType]
-        identity_resource_id: str
+        administratorType: Union[str, AdministratorType]
+        identityResourceId: str
         login: str
         sid: str
-        tenant_id: str
+        tenantId: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.AdvancedThreatProtection(ProxyResource):
@@ -4793,7 +4793,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
         id: str
         name: str
         properties: AdvancedThreatProtectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4806,8 +4806,8 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "creationTime": str
         key "provisioningState": Union[str, AdvancedThreatProtectionProvisioningState]
         key "state": Union[str, AdvancedThreatProtectionState]
-        creation_time: str
-        provisioning_state: Union[str, AdvancedThreatProtectionProvisioningState]
+        creationTime: str
+        provisioningState: Union[str, AdvancedThreatProtectionProvisioningState]
         state: Union[str, AdvancedThreatProtectionState]
 
 
@@ -4825,7 +4825,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
         id: str
         name: str
         properties: AdministratorProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4834,36 +4834,36 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "backupRetentionDays": int
         key "earliestRestoreDate": str
         key "geoRedundantBackup": Union[str, EnableStatusEnum]
-        backup_interval_hours: int
-        backup_retention_days: int
-        earliest_restore_date: str
-        geo_redundant_backup: Union[str, EnableStatusEnum]
+        backupIntervalHours: int
+        backupRetentionDays: int
+        earliestRestoreDate: str
+        geoRedundantBackup: Union[str, EnableStatusEnum]
 
 
     class azure.mgmt.mysqlflexibleservers.types.BackupAndExportRequest(BackupRequestBase):
         key "backupSettings": Required[BackupSettings]
         key "targetDetails": Required[BackupStoreDetails]
-        backup_settings: BackupSettings
-        target_details: BackupStoreDetails
+        backupSettings: BackupSettings
+        targetDetails: BackupStoreDetails
 
 
     class azure.mgmt.mysqlflexibleservers.types.BackupRequestBase(TypedDict, total=False):
         key "backupSettings": Required[BackupSettings]
-        backup_settings: BackupSettings
+        backupSettings: BackupSettings
 
 
     class azure.mgmt.mysqlflexibleservers.types.BackupSettings(TypedDict, total=False):
         key "backupFormat": Union[str, BackupFormat]
         key "backupName": Required[str]
-        backup_format: Union[str, BackupFormat]
-        backup_name: str
+        backupFormat: Union[str, BackupFormat]
+        backupName: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.BackupStoreDetails(TypedDict, total=False):
         key "objectType": Required[Literal["FullBackupStoreDetails"]]
         key "sasUriList": Required[list[str]]
-        object_type: Literal[FullBackupStoreDetails]
-        sas_uri_list: list[str]
+        objectType: Literal[FullBackupStoreDetails]
+        sasUriList: list[str]
 
 
     class azure.mgmt.mysqlflexibleservers.types.Configuration(ProxyResource):
@@ -4875,7 +4875,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
         id: str
         name: str
         properties: ConfigurationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4895,7 +4895,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
 
     class azure.mgmt.mysqlflexibleservers.types.ConfigurationListForBatchUpdate(TypedDict, total=False):
         key "resetAllToDefault": Union[str, ResetAllToDefault]
-        reset_all_to_default: Union[str, ResetAllToDefault]
+        resetAllToDefault: Union[str, ResetAllToDefault]
         value: list[ConfigurationForBatchUpdate]
 
 
@@ -4911,15 +4911,15 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "isReadOnly": Union[str, IsReadOnly]
         key "source": Union[str, ConfigurationSource]
         key "value": str
-        allowed_values: str
-        current_value: str
-        data_type: str
-        default_value: str
+        allowedValues: str
+        currentValue: str
+        dataType: str
+        defaultValue: str
         description: str
-        documentation_link: str
-        is_config_pending_restart: Union[str, IsConfigPendingRestart]
-        is_dynamic_config: Union[str, IsDynamicConfig]
-        is_read_only: Union[str, IsReadOnly]
+        documentationLink: str
+        isConfigPendingRestart: Union[str, IsConfigPendingRestart]
+        isDynamicConfig: Union[str, IsDynamicConfig]
+        isReadOnly: Union[str, IsReadOnly]
         source: Union[str, ConfigurationSource]
         value: str
 
@@ -4930,10 +4930,10 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "primaryKeyURI": str
         key "primaryUserAssignedIdentityId": str
         key "type": Union[str, DataEncryptionType]
-        geo_backup_key_uri: str
-        geo_backup_user_assigned_identity_id: str
-        primary_key_uri: str
-        primary_user_assigned_identity_id: str
+        geoBackupKeyURI: str
+        geoBackupUserAssignedIdentityId: str
+        primaryKeyURI: str
+        primaryUserAssignedIdentityId: str
         type: Union[str, DataEncryptionType]
 
 
@@ -4946,7 +4946,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
         id: str
         name: str
         properties: DatabaseProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4966,7 +4966,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
         id: str
         name: str
         properties: FabricMirroringSettingsProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4974,8 +4974,8 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "identityResourceId": str
         key "provisioningState": Union[str, FabricMirroringProvisioningState]
         key "state": Union[str, FabricMirroringState]
-        identity_resource_id: str
-        provisioning_state: Union[str, FabricMirroringProvisioningState]
+        identityResourceId: str
+        provisioningState: Union[str, FabricMirroringProvisioningState]
         state: Union[str, FabricMirroringState]
 
 
@@ -4988,22 +4988,22 @@ namespace azure.mgmt.mysqlflexibleservers.types
         id: str
         name: str
         properties: FirewallRuleProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.FirewallRuleProperties(TypedDict, total=False):
         key "endIpAddress": Required[str]
         key "startIpAddress": Required[str]
-        end_ip_address: str
-        start_ip_address: str
+        endIpAddress: str
+        startIpAddress: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.FullBackupStoreDetails(TypedDict, total=False):
         key "objectType": Required[Literal["FullBackupStoreDetails"]]
         key "sasUriList": Required[list[str]]
-        object_type: Literal[FullBackupStoreDetails]
-        sas_uri_list: list[str]
+        objectType: Literal[FullBackupStoreDetails]
+        sasUriList: list[str]
 
 
     class azure.mgmt.mysqlflexibleservers.types.HighAvailability(TypedDict, total=False):
@@ -5012,8 +5012,8 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "standbyAvailabilityZone": str
         key "state": Union[str, HighAvailabilityState]
         mode: Union[str, HighAvailabilityMode]
-        replication_mode: Union[str, ReplicationMode]
-        standby_availability_zone: str
+        replicationMode: Union[str, ReplicationMode]
+        standbyAvailabilityZone: str
         state: Union[str, HighAvailabilityState]
 
 
@@ -5021,9 +5021,9 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "estimatedDowntime": int
         key "expectedStandbyAvailabilityZone": str
         key "scheduledStandbyAvailabilityZone": str
-        estimated_downtime: int
-        expected_standby_availability_zone: str
-        scheduled_standby_availability_zone: str
+        estimatedDowntime: int
+        expectedStandbyAvailabilityZone: str
+        scheduledStandbyAvailabilityZone: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.ImportSourceProperties(TypedDict, total=False):
@@ -5031,20 +5031,20 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "sasToken": str
         key "storageType": Union[str, ImportSourceStorageType]
         key "storageUrl": str
-        data_dir_path: str
-        sas_token: str
-        storage_type: Union[str, ImportSourceStorageType]
-        storage_url: str
+        dataDirPath: str
+        sasToken: str
+        storageType: Union[str, ImportSourceStorageType]
+        storageUrl: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.MaintenancePolicy(TypedDict, total=False):
         key "patchStrategy": Union[str, PatchStrategy]
-        patch_strategy: Union[str, PatchStrategy]
+        patchStrategy: Union[str, PatchStrategy]
 
 
     class azure.mgmt.mysqlflexibleservers.types.MaintenancePropertiesForUpdate(TypedDict, total=False):
         key "maintenanceStartTime": str
-        maintenance_start_time: str
+        maintenanceStartTime: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.MaintenanceUpdate(TypedDict, total=False):
@@ -5058,22 +5058,21 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "dayOfWeek": int
         key "startHour": int
         key "startMinute": int
-        batch_of_maintenance: Union[str, BatchOfMaintenance]
-        custom_window: str
-        day_of_week: int
-        start_hour: int
-        start_minute: int
+        batchOfMaintenance: Union[str, BatchOfMaintenance]
+        customWindow: str
+        dayOfWeek: int
+        startHour: int
+        startMinute: int
 
 
     class azure.mgmt.mysqlflexibleservers.types.MySQLServerIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Union[str, ManagedServiceIdentityType]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.mysqlflexibleservers.types.MySQLServerSku(TypedDict, total=False):
@@ -5094,9 +5093,9 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "delegatedSubnetResourceId": str
         key "privateDnsZoneResourceId": str
         key "publicNetworkAccess": Union[str, EnableStatusEnum]
-        delegated_subnet_resource_id: str
-        private_dns_zone_resource_id: str
-        public_network_access: Union[str, EnableStatusEnum]
+        delegatedSubnetResourceId: str
+        privateDnsZoneResourceId: str
+        publicNetworkAccess: Union[str, EnableStatusEnum]
 
 
     class azure.mgmt.mysqlflexibleservers.types.PrivateEndpoint(TypedDict, total=False):
@@ -5113,7 +5112,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5122,17 +5121,16 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
         key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
         groupIds: list[str]
-        group_ids: list[str]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, PrivateEndpointConnectionProvisioningState]
 
 
     class azure.mgmt.mysqlflexibleservers.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
         key "actionsRequired": str
         key "description": str
         key "status": Union[str, PrivateEndpointServiceConnectionStatus]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: Union[str, PrivateEndpointServiceConnectionStatus]
 
@@ -5144,7 +5142,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5155,7 +5153,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5174,7 +5172,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
         name: str
         properties: ServerProperties
         sku: MySQLServerSku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5185,10 +5183,10 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "completedTime": str
         key "provisioningState": Union[str, ProvisioningState]
         key "source": str
-        backup_name_v2: str
-        backup_type: Union[str, BackupType]
-        completed_time: str
-        provisioning_state: Union[str, ProvisioningState]
+        backupNameV2: str
+        backupType: Union[str, BackupType]
+        completedTime: str
+        provisioningState: Union[str, ProvisioningState]
         source: str
 
 
@@ -5201,13 +5199,13 @@ namespace azure.mgmt.mysqlflexibleservers.types
         id: str
         name: str
         properties: ServerBackupPropertiesV2
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.ServerDetachVNetParameter(TypedDict, total=False):
         key "publicNetworkAccess": Union[str, EnableStatusEnum]
-        public_network_access: Union[str, EnableStatusEnum]
+        publicNetworkAccess: Union[str, EnableStatusEnum]
 
 
     class azure.mgmt.mysqlflexibleservers.types.ServerForUpdate(TypedDict, total=False):
@@ -5222,7 +5220,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
 
     class azure.mgmt.mysqlflexibleservers.types.ServerGtidSetParameter(TypedDict, total=False):
         key "gtidSet": str
-        gtid_set: str
+        gtidSet: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.ServerProperties(TypedDict, total=False):
@@ -5248,27 +5246,26 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "state": Union[str, ServerState]
         key "storage": ForwardRef('Storage', module='types')
         key "version": Union[str, ServerVersion]
-        administrator_login: str
-        administrator_login_password: str
-        availability_zone: str
+        administratorLogin: str
+        administratorLoginPassword: str
+        availabilityZone: str
         backup: Backup
-        create_mode: Union[str, CreateMode]
-        data_encryption: DataEncryption
-        database_port: int
-        full_version: str
-        fully_qualified_domain_name: str
-        high_availability: HighAvailability
-        import_source_properties: ImportSourceProperties
-        lower_case_table_names: int
-        maintenance_policy: MaintenancePolicy
-        maintenance_window: MaintenanceWindow
+        createMode: Union[str, CreateMode]
+        dataEncryption: DataEncryption
+        databasePort: int
+        fullVersion: str
+        fullyQualifiedDomainName: str
+        highAvailability: HighAvailability
+        importSourceProperties: ImportSourceProperties
+        lowerCaseTableNames: int
+        maintenancePolicy: MaintenancePolicy
+        maintenanceWindow: MaintenanceWindow
         network: Network
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        replica_capacity: int
-        replication_role: Union[str, ReplicationRole]
-        restore_point_in_time: str
-        source_server_resource_id: str
+        replicaCapacity: int
+        replicationRole: Union[str, ReplicationRole]
+        restorePointInTime: str
+        sourceServerResourceId: str
         state: Union[str, ServerState]
         storage: Storage
         version: Union[str, ServerVersion]
@@ -5285,14 +5282,14 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "replicationRole": Union[str, ReplicationRole]
         key "storage": ForwardRef('Storage', module='types')
         key "version": Union[str, ServerVersion]
-        administrator_login_password: str
+        administratorLoginPassword: str
         backup: Backup
-        data_encryption: DataEncryption
-        high_availability: HighAvailability
-        maintenance_policy: MaintenancePolicy
-        maintenance_window: MaintenanceWindow
+        dataEncryption: DataEncryption
+        highAvailability: HighAvailability
+        maintenancePolicy: MaintenancePolicy
+        maintenanceWindow: MaintenanceWindow
         network: Network
-        replication_role: Union[str, ReplicationRole]
+        replicationRole: Union[str, ReplicationRole]
         storage: Storage
         version: Union[str, ServerVersion]
 
@@ -5300,8 +5297,8 @@ namespace azure.mgmt.mysqlflexibleservers.types
     class azure.mgmt.mysqlflexibleservers.types.ServerRestartParameter(TypedDict, total=False):
         key "maxFailoverSeconds": int
         key "restartWithFailover": Union[str, EnableStatusEnum]
-        max_failover_seconds: int
-        restart_with_failover: Union[str, EnableStatusEnum]
+        maxFailoverSeconds: int
+        restartWithFailover: Union[str, EnableStatusEnum]
 
 
     class azure.mgmt.mysqlflexibleservers.types.Storage(TypedDict, total=False):
@@ -5312,13 +5309,13 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "storageRedundancy": Union[str, StorageRedundancyEnum]
         key "storageSizeGB": int
         key "storageSku": str
-        auto_grow: Union[str, EnableStatusEnum]
-        auto_io_scaling: Union[str, EnableStatusEnum]
+        autoGrow: Union[str, EnableStatusEnum]
+        autoIoScaling: Union[str, EnableStatusEnum]
         iops: int
-        log_on_disk: Union[str, EnableStatusEnum]
-        storage_redundancy: Union[str, StorageRedundancyEnum]
-        storage_size_gb: int
-        storage_sku: str
+        logOnDisk: Union[str, EnableStatusEnum]
+        storageRedundancy: Union[str, StorageRedundancyEnum]
+        storageSizeGB: int
+        storageSku: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.SystemData(TypedDict, total=False):
@@ -5328,12 +5325,12 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.mysqlflexibleservers.types.TrackedResource(Resource):
@@ -5345,7 +5342,7 @@ namespace azure.mgmt.mysqlflexibleservers.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5353,13 +5350,13 @@ namespace azure.mgmt.mysqlflexibleservers.types
     class azure.mgmt.mysqlflexibleservers.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.VirtualNetworkSubnetUsageParameter(TypedDict, total=False):
         key "virtualNetworkResourceId": str
-        virtual_network_resource_id: str
+        virtualNetworkResourceId: str
 
 
 ```
