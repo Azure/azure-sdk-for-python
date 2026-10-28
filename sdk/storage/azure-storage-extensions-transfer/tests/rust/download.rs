@@ -9,6 +9,44 @@ use std::time::Duration;
 
 const ETAG_VALUE: &str = "\"stable\"";
 
+#[test]
+fn inherited_stream_reads_fail_without_touching_state() {
+    Python::initialize();
+    Python::attach(|py| {
+        let mock = mock_blob(b"abcdef");
+        let mut download = stream(py, &mock, 0, None, 1, 2).unwrap();
+        download.pid = std::process::id().wrapping_add(1);
+        for error in [
+            download.__next__(py).unwrap_err(),
+            download.readall(py).unwrap_err(),
+        ] {
+            assert!(error.is_instance_of::<PyRuntimeError>(py));
+            assert!(error.to_string().contains("different process"));
+        }
+        assert_eq!(mock.requests().len(), 1);
+        download.pid = std::process::id();
+        assert_eq!(read_all(&mut download, py).unwrap(), b"abcdef");
+    });
+}
+
+#[test]
+fn stream_drop_only_releases_resources_in_the_owning_process() {
+    Python::initialize();
+    Python::attach(|py| {
+        for inherited in [false, true] {
+            let mock = mock_blob(b"abcdef");
+            let weak = Arc::downgrade(&mock);
+            let mut download = stream(py, &mock, 0, None, 1, 2).unwrap();
+            if inherited {
+                download.pid = std::process::id().wrapping_add(1);
+            }
+            drop(mock);
+            drop(download);
+            assert_eq!(weak.upgrade().is_some(), inherited);
+        }
+    });
+}
+
 fn range(request: &RecordedRequest) -> Option<(usize, usize)> {
     let value = request
         .headers
