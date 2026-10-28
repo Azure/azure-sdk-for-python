@@ -149,12 +149,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 client.last_response_headers = {}
 
             # setting the throttle related response headers before returning the result
-            client.last_response_headers[
-                HttpHeaders.ThrottleRetryCount
-            ] = resourceThrottle_retry_policy.current_retry_attempt_count
-            client.last_response_headers[
-                HttpHeaders.ThrottleRetryWaitTimeInMs
-            ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
+            _set_throttle_response_headers(client, resourceThrottle_retry_policy, args)
             # TODO: It is better to raise Exceptions manually in the method related to the request,
             #  a rework of retry would be needed to be able to retry exceptions raised that way.
             #  for now raising a manual exception here should allow it to be retried.
@@ -262,12 +257,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             if not retry_policy.ShouldRetry(e):
                 if not client.last_response_headers:
                     client.last_response_headers = {}
-                client.last_response_headers[
-                    HttpHeaders.ThrottleRetryCount
-                ] = resourceThrottle_retry_policy.current_retry_attempt_count
-                client.last_response_headers[
-                    HttpHeaders.ThrottleRetryWaitTimeInMs
-                ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
+                _set_throttle_response_headers(client, resourceThrottle_retry_policy, args)
                 if args and args[0].should_clear_session_token_on_session_read_failure:
                     client.session.clear_session_token(client.last_response_headers)
                 raise
@@ -346,6 +336,29 @@ def _has_database_account_header(request_headers):
     if request_headers.get(HttpHeaders.ThinClientProxyResourceType) == ResourceType.DatabaseAccount:
         return True
     return False
+
+def _set_throttle_response_headers(client, resource_throttle_retry_policy, args):
+    """Sets the throttle related response headers on the client's last response headers.
+
+    Database account requests are skipped. The global endpoint manager issues them from its
+    background refresh and health check threads, while ``client.last_response_headers`` can be
+    the headers of a request running on another thread. Adding keys to it from the background
+    raised ``RuntimeError: OrderedDict mutated during iteration`` in a query that was iterating
+    those headers.
+
+    :param object client: Document client instance
+    :param resource_throttle_retry_policy: The resource throttle retry policy of this operation
+    :type resource_throttle_retry_policy: ~azure.cosmos._resource_throttle_retry_policy.ResourceThrottleRetryPolicy
+    :param list args: The arguments the retried function was called with
+    """
+    if args and getattr(args[0], "resource_type", None) == ResourceType.DatabaseAccount:
+        return
+    client.last_response_headers[
+        HttpHeaders.ThrottleRetryCount
+    ] = resource_throttle_retry_policy.current_retry_attempt_count
+    client.last_response_headers[
+        HttpHeaders.ThrottleRetryWaitTimeInMs
+    ] = resource_throttle_retry_policy.cumulative_wait_time_in_milliseconds
 
 def _handle_service_request_retries(
         client,

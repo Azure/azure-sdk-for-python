@@ -9,6 +9,9 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed an intermittent `RuntimeError: OrderedDict mutated during iteration` in sync queries. The background endpoint
+  refresh added throttle headers to `last_response_headers` while a query on another thread was iterating them.
+  See [PR TBD](https://github.com/Azure/azure-sdk-for-python/pull/TBD).
 
 #### Other Changes
 
