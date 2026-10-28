@@ -26,6 +26,7 @@
   during retry backoff, using the existing retry delay or minimum retry interval.
   Opened storage-backed routes also retry pending telemetry through one shared
   background worker per exporter, without requiring new telemetry.
+  ([#49706](https://github.com/Azure/azure-sdk-for-python/pull/49706))
 
 ### Breaking Changes
 
