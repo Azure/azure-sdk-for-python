@@ -23,22 +23,26 @@ from opentelemetry import (
 )
 from opentelemetry.propagators.textmap import Getter
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+from starlette.middleware import Middleware
 from starlette.routing import Host, Match, Mount, Router, WebSocketRoute
 from starlette.types import Receive, Scope, Send
 from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import (
     FoundryAgentRequestContext,
+    FoundryOriginalSubject,
     configure_observability as _CORE_CONFIGURE_OBSERVABILITY,
     experimental,
     set_request_context,
 )
+from azure.ai.agentserver.core._middleware import _task_access_middleware
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     FOUNDRY_CALL_ID,
     REQUEST_ID,
     SERVER_VERSION,
     USER_ID,
 )
+from azure.ai.agentserver.core.tasks import resilient_tasks_enabled
 
 from .._constants import InvocationsWSConstants, _classify_websocket_close_code
 from .._invocation import InvocationAgentServerHost
@@ -194,6 +198,8 @@ class _VoiceWebSocketRoute(WebSocketRoute):
     :paramtype path: str
     :keyword name: The typed Voice WebSocket route name.
     :paramtype name: str
+    :keyword middleware: Middleware applied to the Voice endpoint.
+    :paramtype middleware: list[~starlette.middleware.Middleware] | None
     """
 
     def __init__(
@@ -203,8 +209,9 @@ class _VoiceWebSocketRoute(WebSocketRoute):
         router: Router,
         path: str = InvocationsWSConstants.ROUTE_PATH,
         name: str = "invocations_ws",
+        middleware: list[Middleware] | None = None,
     ) -> None:
-        super().__init__(path, endpoint, name=name)
+        super().__init__(path, endpoint, name=name, middleware=middleware)
         self._router = router
 
     def matches(self, scope: Scope) -> tuple[Match, Scope]:
@@ -614,7 +621,11 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
     def _ensure_ws_route_registered(self) -> None:
         voice_route = self._voice_route
         if voice_route is None:
-            voice_route = _VoiceWebSocketRoute(self._ws_endpoint, router=self.router)
+            voice_route = _VoiceWebSocketRoute(
+                self._ws_endpoint,
+                router=self.router,
+                middleware=_task_access_middleware(self, resilient_tasks_enabled),
+            )
             self._voice_route = voice_route
         ce_route = self._conversation_engine_route
         if ce_route is None:
@@ -623,6 +634,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                 router=self.router,
                 path="/voice_conversation_engine",
                 name="voice_conversation_engine",
+                middleware=_task_access_middleware(self, resilient_tasks_enabled),
             )
             self._conversation_engine_route = ce_route
         routes = self.router.routes
@@ -646,6 +658,46 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         connection_trace = _SpanScope()
         scope = getattr(websocket, "scope", None)
         try:
+            try:
+                original_subject = FoundryOriginalSubject.from_headers(websocket.headers)
+            except ValueError:
+                logger.warning("Voice WebSocket rejected: invalid original-subject platform header.")
+                error_code = "invalid_original_subject"
+                try:
+                    # Accept before closing so the peer receives 1011, not an HTTP handshake rejection.
+                    accept_error = await self._accept_voice_websocket(websocket)
+                    error_code = "accept_failed" if accept_error is not None else "invalid_original_subject"
+                    if websocket.application_state == WebSocketState.CONNECTED:
+                        try:
+                            close_attempt = _session_transport._start_close_attempt(
+                                asyncio.Lock(),
+                                websocket,
+                                InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
+                                "Internal server error",
+                            )
+                            await Session._wait_close(close_attempt, _selected_voice_termination_deadline(websocket))
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            logger.debug("Voice WebSocket close failed")
+                    await _raise_pending_cancellation()
+                    if accept_error is not None:
+                        self._report_voice_accept_failure(
+                            session_id,
+                            start_ns,
+                            emit_event=False,
+                            connection_trace=connection_trace,
+                        )
+                except asyncio.CancelledError:
+                    error_code = "cancelled"
+                    raise
+                finally:
+                    self._emit_voice_close_event(
+                        session_id=session_id,
+                        start_ns=start_ns,
+                        close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
+                        error_code=error_code,
+                        connection_trace=connection_trace,
+                    )
+                return
             extracted_context = _extract_voice_websocket_context(websocket)
             parent_attachment = _attach_context(extracted_context)
             if parent_attachment is not None:
@@ -666,6 +718,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     call_id=websocket.headers.get(FOUNDRY_CALL_ID) or None,
                     user_id=websocket.headers.get(USER_ID) or None,
                     session_id=session_id,
+                    original_subject=original_subject,
                 )
             )
             try:

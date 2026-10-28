@@ -451,6 +451,7 @@ async def test_after_restore_rehydrates_task_manager_session_state_and_rolls_bac
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "captured-session")
     agent = AgentServerHost()
     task_manager = TaskManager(config=agent.config, provider=mock.Mock())
+    agent._task_manager = task_manager  # pylint: disable=protected-access
     set_task_manager(task_manager)
     captured_instance_id = task_manager._instance_id  # pylint: disable=protected-access
     restored_instance_ids: list[str] = []
@@ -464,9 +465,7 @@ async def test_after_restore_rehydrates_task_manager_session_state_and_rolls_bac
             "test-agent",
             context.session_id,
         )
-        restored_instance_ids.append(
-            task_manager._instance_id  # pylint: disable=protected-access
-        )
+        restored_instance_ids.append(task_manager._instance_id)  # pylint: disable=protected-access
         if callback_count == 1:
             raise RuntimeError("restore failed")
 
@@ -539,9 +538,7 @@ async def test_protocol_subclass_hooks_compose_through_super() -> None:
         transport=httpx.ASGITransport(app=agent),
         base_url="http://testserver",
     ) as lifecycle_client:
-        assert (
-            await lifecycle_client.post("/_agent/before-snapshot", json={})
-        ).status_code == 200
+        assert (await lifecycle_client.post("/_agent/before-snapshot", json={})).status_code == 200
         assert (
             await lifecycle_client.post(
                 "/_agent/after-restore",
@@ -867,12 +864,8 @@ async def test_before_snapshot_retries_once_and_resets_after_restore(
         transport=httpx.ASGITransport(app=agent),
         base_url="http://testserver",
     ) as lifecycle_client:
-        assert (
-            await lifecycle_client.post("/_agent/before-snapshot", json={})
-        ).status_code == 200
-        assert (
-            await lifecycle_client.post("/_agent/before-snapshot", json={})
-        ).status_code == 200
+        assert (await lifecycle_client.post("/_agent/before-snapshot", json={})).status_code == 200
+        assert (await lifecycle_client.post("/_agent/before-snapshot", json={})).status_code == 200
         assert callback_count == 1
 
         assert (
@@ -881,9 +874,7 @@ async def test_before_snapshot_retries_once_and_resets_after_restore(
                 json=_after_restore_payload(),
             )
         ).status_code == 200
-        assert (
-            await lifecycle_client.post("/_agent/before-snapshot", json={})
-        ).status_code == 200
+        assert (await lifecycle_client.post("/_agent/before-snapshot", json={})).status_code == 200
 
     assert callback_count == 2
 
@@ -1044,9 +1035,7 @@ async def test_lifecycle_hooks_are_serialized(monkeypatch: pytest.MonkeyPatch) -
         transport=httpx.ASGITransport(app=agent),
         base_url="http://testserver",
     ) as lifecycle_client:
-        before_task = asyncio.create_task(
-            lifecycle_client.post("/_agent/before-snapshot", json={})
-        )
+        before_task = asyncio.create_task(lifecycle_client.post("/_agent/before-snapshot", json={}))
         await before_started.wait()
         after_task = asyncio.create_task(
             lifecycle_client.post(

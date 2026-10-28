@@ -1,6 +1,6 @@
 # Release History
 
-## 1.18.10 (Unreleased)
+## 1.18.10 (2026-10-22)
 
 ### Features Added
 
@@ -11,8 +11,6 @@
 - Decision requests provide context-aware per-attempt and terminal execution observations with optional OpenTelemetry metrics. Validated shared and independent execution summaries and their distinct usage scopes are preserved in failed-row metadata.
 - Decision HTTP errors include the provider's nested `error.code` when it starts with an ASCII letter and contains only letters, digits, dots, underscores, or hyphens, up to 128 characters. This is provider-controlled diagnostic text, not a guarantee that the code is free of sensitive data. Messages, details, and raw response bodies are not exposed.
 - Decision native async HTTP supports overall deadlines and cancellation during response body reads. TLS uses Python/OpenSSL trust settings such as `SSL_CERT_FILE`, not `REQUESTS_CA_BUNDLE`; shared Prompty transport behavior is unchanged.
-
-### Breaking Changes
 
 ### Bugs Fixed
 

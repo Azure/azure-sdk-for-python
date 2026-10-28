@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0b5 (Unreleased)
+
+### Features Added
+
+- Capture invocation-local original-subject assertions from platform headers,
+  independently of Activity payload identity and user-state partition keys.
+
+### Bugs Fixed
+
+- Return a classified error for malformed platform attribution before binding
+  request context or invoking the Activity handler.
+
+### Other Changes
+
+- Require Core `2.3.0b2` or later. Publish that Core version before this package.
+
 ## 1.0.0b4 (2026-10-12)
 
 ### Bugs Fixed
