@@ -141,6 +141,10 @@ class BaseExporter:
             and not self._is_stats_exporter()
             and not self._is_customer_sdkstats_exporter()
         )
+        if self._enable_multi_endpoint_routing and kwargs.get("pipeline") is not None:
+            raise ValueError(
+                "Custom pipelines are not supported with multi-endpoint routing. Pass a custom transport instead."
+            )
         self._route = route
         self._route_exporters: Dict[tuple[str, bool], BaseExporter] = {}
         self._route_lock = threading.RLock()
@@ -341,7 +345,7 @@ class BaseExporter:
         return exporter, temporary
 
     def _close_temporary_route_exporter(self, exporter: "BaseExporter") -> None:
-        if not any(self._route_options.get(name) is not None for name in ("transport", "pipeline", "session")):
+        if not any(self._route_options.get(name) is not None for name in ("transport", "session")):
             exporter.client.close()
 
     def _transmit_routes_from_storage(self) -> None:
