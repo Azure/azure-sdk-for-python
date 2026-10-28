@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["azure", "azure sdk", "agent", "agentserver", "a2a"]
 
 dependencies = [
-    "a2a-sdk[http-server]>=1.0.0,<2.0.0",
+    "a2a-sdk[http-server]>=1.2.3,<2.0.0",
     # The SDK dev-version rewriter matches canonical requirement ordering.
     "azure-ai-agentserver-core<3.0.0,>=2.2.1",
     "opentelemetry-api>=1.43.0,<2.0.0",
@@ -31,7 +31,7 @@ dependencies = [
 [dependency-groups]
 # keep in sync with dev_requirements.txt
 dev = [
-    "a2a-sdk[http-server]>=1.0.0,<2.0.0",
+    "a2a-sdk[http-server]>=1.2.3,<2.0.0",
     "azure-ai-agentserver-invocations>=1.2.0,<2.0.0",
     "azure-sdk-tools==0.0.0",
     "httpx>=0.27.0,<1.0.0",

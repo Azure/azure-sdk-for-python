@@ -3,7 +3,8 @@
 The `azure-ai-agentserver-a2a` package hosts a native A2A v1.0
 [`a2a-sdk`](https://pypi.org/project/a2a-sdk/) handler in an Azure AI Hosted
 Agent container. It adds Foundry's hosting contract while leaving the agent
-card, executor, request handler, and task store in the native A2A SDK.
+card, executor, request handler, and protocol semantics in the native A2A SDK.
+It can also persist native Tasks using Core's existing Foundry state store.
 
 The package is optional: customers can implement the documented Foundry
 container contract themselves. It is the recommended convenience layer because
@@ -59,7 +60,9 @@ Agent Card metadata-preservation fix.
 ### Prerequisites
 
 - Python 3.10 or later
-- A native A2A v1.0 `AgentCard` and `RequestHandler`
+- `a2a-sdk>=1.2.3,<2.0.0`, which includes owner authorization on active-task
+  cache hits used by subscription and cancellation
+- A native A2A v1.0 `AgentCard` and either an `AgentExecutor` or `RequestHandler`
 
 ## Key concepts
 
@@ -77,6 +80,8 @@ Agent Card metadata-preservation fix.
   request-scoped Foundry context;
 - provides `/readiness`, port configuration, telemetry, and graceful shutdown
   through `azure-ai-agentserver-core`.
+- builds a native default request handler when given an executor, selecting
+  Foundry-backed task storage when hosted and native in-memory storage locally.
 
   Both POST routes execute the same native handler and semantic tracing wrapper.
   Both card routes use the same native card handler and `card_modifier`; the
@@ -142,9 +147,92 @@ host = A2AAgentServerHost(agent_card=card, request_handler=handler)
 host.run()
 ```
 
+To let the host construct the native handler and select default storage:
+
+```python
+host = A2AAgentServerHost(agent_card=card, agent_executor=executor)
+host.run()
+```
+
 The package intentionally does not replace the native A2A SDK. Continue using
 native A2A types for the agent card, executor, handler, task store, messages,
 artifacts, and tasks.
+
+### Task persistence
+
+Executor-based construction follows the Activity host's storage-selection
+pattern:
+
+| Configuration | Task storage |
+|---------------|--------------|
+| Explicit `task_store` | The supplied native store, unchanged |
+| Foundry-hosted, no explicit store | `FoundryTaskStore` backed by Core's generic state store |
+| Local, no explicit store | Native `InMemoryTaskStore` |
+| Existing `request_handler` | The handler and its storage are preserved; no replacement |
+
+Supply exactly one of `agent_executor` and `request_handler`. When supplying
+an existing handler, configure its storage directly instead of passing
+`task_store` to the host.
+
+`FoundryTaskStore` implements the native `save`, `get`, `list`, and `delete`
+operations. It stores complete protobuf Task snapshots, including history and
+artifacts, and delegates list filtering and pagination semantics to the native
+SDK. Foundry enforces its configured caller-isolation scope on hosted item
+operations using validated brokered context. Available platform-user, native
+user, and tenant scopes are layered into storage keys. A raw user-ID header is not required when the request
+has a brokered call ID; the opaque call ID is forwarded unchanged through Core,
+never parsed or used as a durable owner key. Hosted requests without usable
+identity or brokered context are rejected.
+
+Every operation verifies that the actual backing-store descriptor enables
+`user_isolation`, including reads of an existing store. A non-isolated or
+unverifiable store is rejected; creation arguments are not treated as proof of
+an existing store's configuration. Storage authorization failures are surfaced
+rather than selecting an anonymous/shared partition.
+
+The hosted default namespace uses the stable agent GUID (or agent name when a
+GUID is unavailable), not the process or hosted-session ID. The host drains
+its default native handler before shutdown callbacks and closes its default
+store afterward. Explicit stores and existing handlers remain caller-owned.
+
+To opt into persistence locally or choose a different named store:
+
+```python
+from azure.ai.agentserver.a2a import A2AAgentServerHost, FoundryTaskStore
+
+store = FoundryTaskStore("my-agent/a2a-tasks")
+host = A2AAgentServerHost(agent_card=card, agent_executor=executor, task_store=store)
+
+
+@host.shutdown_handler
+async def close_storage():
+    await store.aclose()
+```
+
+Locally this uses Core's existing file-backed state store under
+`AGENTSERVER_STATE_ROOT` (default `~/.agentserver`). Hosted operation uses the
+Foundry storage service and its identity/permission requirements. Storage is
+created lazily on the first save; reads do not create an empty store.
+Storage failures are surfaced rather than falling back to hosted in-memory
+storage. Store retention defaults to Core's 30 days and can be configured with
+`item_ttl_seconds`. Large outputs should use artifact references where needed
+to respect the state service's item-size limits.
+
+**Persistence is not execution recovery:** saving a Task marked `WORKING` does
+not restart its executor. This feature does not create Core resilient tasks,
+checkpoint workflows, or provide durable SSE replay or push-notification
+delivery. Those remain separate application choices.
+
+Hosted persistence also requires the A2A gateway to deliver the platform
+identity/brokered-context headers. A preview gateway may route native A2A
+requests successfully while omitting this handoff. In that case the SDK rejects
+storage access with a caller-context error; enabling the endpoint alone is not
+proof that managed persistence is available. Do not disable isolation or supply
+fabricated platform identity headers to work around a missing service handoff.
+
+These APIs require the updated source or an alpha built after this feature;
+previously published alpha wheels do not gain the new behavior automatically.
+See [the persistence example](samples/04-state-store/README.md) for a restart test.
 
 ### Call a Foundry service from an A2A handler
 

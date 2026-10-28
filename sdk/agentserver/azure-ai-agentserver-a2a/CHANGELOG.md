@@ -4,6 +4,13 @@
 
 ### Features Added
 
+- Added `FoundryTaskStore`, implementing native Task persistence with Core's
+  generic state store, caller isolation, and native list/filter/page semantics.
+- Added executor-based `A2AAgentServerHost` construction with hosted Foundry
+  storage/local in-memory defaults and explicit task-store overrides. Existing
+  caller-supplied request handlers keep their storage unchanged.
+- Added a state-store sample demonstrating Task retrieval after a server restart;
+  task persistence does not enable automatic execution recovery.
 - Initial preview release of `azure-ai-agentserver-a2a`.
 - Added `A2AAgentServerHost` for hosting native A2A v1.0 `AgentCard` and
   `RequestHandler` objects on the canonical Foundry container routes.
@@ -36,10 +43,18 @@
 
 ### Bugs Fixed
 
+- Use an identifier-safe owner tag for managed state-store queries so hosted
+  `ListTasks` succeeds as well as `GetTask`.
 - Add a deployment-aware `invoke_agent` parent for hosted A2A message sends so
   trace discovery does not depend on model calls or native implementation spans.
   Keep Agent Card metadata on the child A2A span and preserve streaming lifetime,
   Task-ID correlation, and error classification on both spans.
+- Support validated brokered storage context when the A2A gateway omits the
+  optional raw user-ID header; verify actual server-side user isolation before
+  every item operation and keep per-request call IDs out of storage keys.
+- Require native `a2a-sdk>=1.2.3` so active-task subscription/cancellation
+  cache hits authorize through the caller-scoped task store. Earlier native
+  implementations can bypass storage isolation on these paths.
 - Preserve shared request ID and server-version headers on exception-generated
   error responses.
 - Read telemetry identifiers only from A2A protocol fields,

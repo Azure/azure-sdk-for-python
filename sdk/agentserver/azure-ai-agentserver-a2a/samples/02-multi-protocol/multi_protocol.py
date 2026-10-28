@@ -6,7 +6,7 @@
 From the samples directory, run ``python 02-multi-protocol\\multi_protocol.py``.
 Use ``python sample_client.py`` for A2A, or POST JSON to ``/invocations``.
 
-The in-memory TaskStore is for demonstration only; tasks are lost on restart.
+Local task storage is in memory; hosted default storage uses Foundry.
 See the samples README for dependency setup and request examples.
 """
 
@@ -17,8 +17,7 @@ os.environ.setdefault("OTEL_INSTRUMENTATION_A2A_SDK_ENABLED", "false")
 from a2a.helpers import new_task_from_user_message, new_text_message, new_text_part
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
-from a2a.server.request_handlers import DefaultRequestHandler
-from a2a.server.tasks import InMemoryTaskStore, TaskUpdater
+from a2a.server.tasks import TaskUpdater
 from a2a.types import AgentCapabilities, AgentCard, AgentInterface, TaskState
 from a2a.utils.errors import TaskNotCancelableError
 from starlette.requests import Request
@@ -75,12 +74,7 @@ card = AgentCard(
     ],
     skills=[],
 )
-handler = DefaultRequestHandler(
-    agent_executor=HelloWorldExecutor(),
-    task_store=InMemoryTaskStore(),
-    agent_card=card,
-)
-host = MultiProtocolHost(agent_card=card, request_handler=handler)
+host = MultiProtocolHost(agent_card=card, agent_executor=HelloWorldExecutor())
 
 
 @host.invoke_handler

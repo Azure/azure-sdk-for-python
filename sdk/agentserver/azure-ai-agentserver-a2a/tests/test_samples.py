@@ -22,10 +22,12 @@ _EXAMPLES = [
 
 
 @pytest.fixture
-def load_sample(monkeypatch):
+def load_sample(monkeypatch, tmp_path):
     monkeypatch.setenv("OTEL_INSTRUMENTATION_A2A_SDK_ENABLED", "false")
     monkeypatch.delenv("A2A_AGENT_URL", raising=False)
     monkeypatch.setenv("PORT", "8088")
+    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
+    monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
 
     def load(relative_path):
         path = _SAMPLES / relative_path
@@ -167,6 +169,41 @@ async def test_new_sample_process_has_no_previous_tasks(load_sample, client_fact
         )
     assert response.status_code == 200
     assert response.json()["error"]["code"] == -32001
+
+
+@pytest.mark.asyncio
+async def test_state_store_sample_retrieves_task_after_host_recreation(load_sample, client_factory):
+    module = load_sample("04-state-store/state_store.py")
+    async with client_factory(module.host) as http_client:
+        client = await _native_client(http_client)
+        try:
+            responses = [
+                response
+                async for response in client.send_message(
+                    SendMessageRequest(message=new_text_message("remember this", role=Role.ROLE_USER))
+                )
+            ]
+            task = responses[0].task
+            assert task.status.state == TaskState.TASK_STATE_COMPLETED
+            assert _text(task) == "Persisted: remember this"
+        finally:
+            await client.close()
+    await module.host._dispatch_shutdown()
+
+    restarted = load_sample("04-state-store/state_store.py")
+    try:
+        async with client_factory(restarted.host) as http_client:
+            client = await _native_client(http_client)
+            try:
+                stored = await client.get_task(GetTaskRequest(id=task.id))
+                assert stored.id == task.id
+                assert stored.context_id == task.context_id
+                assert stored.status.state == TaskState.TASK_STATE_COMPLETED
+                assert _text(stored) == "Persisted: remember this"
+            finally:
+                await client.close()
+    finally:
+        await restarted.host._dispatch_shutdown()
 
 
 @pytest.mark.parametrize("relative_path,_expected", _EXAMPLES)

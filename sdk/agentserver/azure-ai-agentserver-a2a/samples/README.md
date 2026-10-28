@@ -5,7 +5,7 @@ languages:
 products:
 - azure
 name: azure-ai-agentserver-a2a samples for Python
-description: Native A2A hosting, multi-protocol composition, and streaming Tasks.
+description: Native A2A hosting, multi-protocol composition, streaming, and persistent Tasks.
 ---
 
 # Azure AI Agent Server A2A samples
@@ -27,6 +27,8 @@ The requirements install A2A, core, and Invocations from sibling source
 directories. Invocations is needed only for the multi-protocol example; it is
 not a runtime dependency of the A2A package. Keep the current source checkouts
 together, since the preview requires the core tracing fix in 2.2.1.
+The updated A2A package requires native `a2a-sdk>=1.2.3` for caller authorization
+on active-task cache lookups.
 
 Only run one sample at a time on the default port, 8088. Stop the server before
 switching examples.
@@ -38,6 +40,7 @@ switching examples.
 | [Hello world](01-hello-world/hello_world.py) | `.\.venv\Scripts\python 01-hello-world\hello_world.py` | A completed Task containing `Hello from Foundry`. |
 | [Multi-protocol](02-multi-protocol/multi_protocol.py) | `.\.venv\Scripts\python 02-multi-protocol\multi_protocol.py` | A2A and Invocations on the same server and port. |
 | [Streaming](03-streaming/streaming.py) | `.\.venv\Scripts\python 03-streaming\streaming.py` | A working Task, four incremental updates to one artifact, then a completed Task status. |
+| [State store](04-state-store/README.md) | `.\.venv\Scripts\python 04-state-store\state_store.py` | A completed Task can still be fetched after stopping and restarting the server. |
 
 Every sample also exposes `GET /readiness` and the native Agent Card at
 `GET /a2a/.well-known/agent-card.json`.
@@ -118,19 +121,21 @@ Task in that context; it is not a request to resume a completed Task.
 
 - **Task ID:** identifies a native A2A Task and is used for local task lookup.
 - **Context ID:** correlates related A2A messages/Tasks. Treat it as opaque.
-- **TaskStore:** these examples use `InMemoryTaskStore`, which stores Task
-  records only within this process. Restarting the server loses them; looking
-  up an old Task can return `TaskNotFoundError`.
+- **TaskStore:** the first three examples select native in-memory storage
+  locally, so restarting the server loses their Tasks. Executor-based hosts
+  default to Foundry-backed storage when hosted. The fourth example explicitly
+  uses `FoundryTaskStore` locally so Core's file-backed store can demonstrate
+  persistence across restarts.
 - **Application memory:** reusing a context ID does not automatically create
   conversational memory, restore model history, or replay business operations.
   The executors here always return a fixed greeting.
 - **Cancellation:** the examples do not implement cancellation; an attempted
   executor cancellation raises the native `TaskNotCancelableError`.
 
-For production, supply an appropriate durable implementation of the native
-`TaskStore` interface to `DefaultRequestHandler`. Persistence alone does not
-resume executor work after a process crash: recovery, cancellation, and
-application history need explicit application design.
+Custom stores and existing native request handlers are still supported and
+remain caller-owned. Persistence alone does not resume executor work after a
+process crash: recovery, cancellation, and application history need explicit
+application design. See [the fourth example's restart walkthrough](04-state-store/README.md).
 
 These are **local container** examples, not a claim that every native A2A
 method is available through Foundry's public endpoint. When deployed, the

@@ -6,7 +6,7 @@
 From the samples directory, run ``python 03-streaming\\streaming.py``
 and then ``python sample_client.py --stream`` in another terminal.
 
-The in-memory TaskStore is for demonstration only; tasks are lost on restart.
+Local task storage is in memory; hosted default storage uses Foundry.
 """
 
 import asyncio
@@ -18,8 +18,7 @@ os.environ.setdefault("OTEL_INSTRUMENTATION_A2A_SDK_ENABLED", "false")
 from a2a.helpers import new_task_from_user_message, new_text_message, new_text_part
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
-from a2a.server.request_handlers import DefaultRequestHandler
-from a2a.server.tasks import InMemoryTaskStore, TaskUpdater
+from a2a.server.tasks import TaskUpdater
 from a2a.types import AgentCapabilities, AgentCard, AgentInterface, AgentSkill, TaskState
 from a2a.utils.errors import TaskNotCancelableError
 
@@ -86,12 +85,7 @@ card = AgentCard(
         )
     ],
 )
-handler = DefaultRequestHandler(
-    agent_executor=StreamingGreetingExecutor(),
-    task_store=InMemoryTaskStore(),
-    agent_card=card,
-)
-host = A2AAgentServerHost(agent_card=card, request_handler=handler)
+host = A2AAgentServerHost(agent_card=card, agent_executor=StreamingGreetingExecutor())
 
 if __name__ == "__main__":
     host.run()

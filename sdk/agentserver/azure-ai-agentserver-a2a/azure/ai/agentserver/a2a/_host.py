@@ -15,7 +15,9 @@ from starlette.responses import JSONResponse
 from starlette.routing import Route
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from a2a.server.request_handlers import RequestHandler
+from a2a.server.agent_execution import AgentExecutor
+from a2a.server.request_handlers import DefaultRequestHandler, RequestHandler
+from a2a.server.tasks import InMemoryTaskStore, TaskStore
 from a2a.server.routes import (
     ServerCallContextBuilder,
     create_agent_card_routes,
@@ -41,6 +43,7 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
 )
 
 from ._tracing import trace_jsonrpc_endpoint
+from ._foundry_task_store import FoundryTaskStore
 from ._version import VERSION as _A2A_VERSION
 
 _A2A_RPC_PATH = "/a2a"
@@ -219,8 +222,16 @@ class A2AAgentServerHost(AgentServerHost):
 
     :param agent_card: Native A2A v1.0 agent card to serve to Foundry.
     :type agent_card: ~a2a.types.AgentCard
-    :param request_handler: Native A2A v1.0 request handler.
-    :type request_handler: ~a2a.server.request_handlers.RequestHandler
+    :param request_handler: Existing native handler, whose storage is preserved.
+        Mutually exclusive with ``agent_executor`` and ``task_store``.
+    :type request_handler: ~a2a.server.request_handlers.RequestHandler or None
+    :keyword agent_executor: Native executor used to build a default handler.
+        Supply exactly one of this or ``request_handler``.
+    :paramtype agent_executor: ~a2a.server.agent_execution.AgentExecutor or None
+    :keyword task_store: Explicit native task store for the built handler.
+        Defaults to Foundry persistence when hosted, otherwise native in-memory storage.
+        Caller-supplied stores remain caller-owned.
+    :paramtype task_store: ~a2a.server.tasks.TaskStore or None
     :param card_modifier: Optional async callback applied before serving the agent card.
     :type card_modifier: Optional[Callable[[AgentCard], Awaitable[AgentCard]]]
     :param context_builder: Optional native A2A server call-context builder.
@@ -231,15 +242,42 @@ class A2AAgentServerHost(AgentServerHost):
         self,
         *,
         agent_card: AgentCard,
-        request_handler: RequestHandler,
+        request_handler: Optional[RequestHandler] = None,
+        agent_executor: Optional[AgentExecutor] = None,
+        task_store: Optional[TaskStore] = None,
         card_modifier: Optional[Callable[[AgentCard], Awaitable[AgentCard]]] = None,
         context_builder: Optional[ServerCallContextBuilder] = None,
         **kwargs: Any,
     ) -> None:
+        if (request_handler is None) == (agent_executor is None):
+            raise ValueError("Supply exactly one of request_handler or agent_executor")
+        if request_handler is not None and task_store is not None:
+            raise ValueError("Configure storage on the supplied request_handler instead of passing task_store")
         self._agent_card = agent_card
-        self._request_handler = request_handler
+        self._owned_task_store: Optional[FoundryTaskStore] = None
+        self._owned_request_handler: Optional[DefaultRequestHandler] = None
         existing_routes = list(kwargs.pop("routes", None) or [])
+
         super().__init__(routes=existing_routes, **kwargs)
+        if request_handler is None:
+            if agent_executor is None:
+                raise ValueError("agent_executor is required to build a request handler")
+            if task_store is None:
+                if self.config.is_hosted:
+                    agent_identity = self.config.agent_guid or self.config.agent_name
+                    if not agent_identity:
+                        raise ValueError("Hosted default task storage requires a Foundry agent identity")
+                    self._owned_task_store = FoundryTaskStore(f"a2a/tasks/{agent_identity}")
+                    task_store = self._owned_task_store
+                else:
+                    task_store = InMemoryTaskStore()
+            request_handler = DefaultRequestHandler(
+                agent_executor=agent_executor,
+                task_store=task_store,
+                agent_card=agent_card,
+            )
+            self._owned_request_handler = request_handler
+        self._request_handler = request_handler
         a2a_routes = _get_a2a_routes(
             agent_card,
             request_handler,
@@ -251,6 +289,17 @@ class A2AAgentServerHost(AgentServerHost):
         self.add_middleware(_A2APlatformContextMiddleware)
         self.add_middleware(_A2ATransportErrorMiddleware)
         self.register_server_version(build_server_version("azure-ai-agentserver-a2a", _A2A_VERSION))
+
+    async def _dispatch_shutdown(self) -> None:
+        try:
+            if self._owned_request_handler is not None:
+                await self._owned_request_handler.aclose()
+        finally:
+            try:
+                await super()._dispatch_shutdown()
+            finally:
+                if self._owned_task_store is not None:
+                    await self._owned_task_store.aclose()
 
     @property
     def agent_card(self) -> AgentCard:

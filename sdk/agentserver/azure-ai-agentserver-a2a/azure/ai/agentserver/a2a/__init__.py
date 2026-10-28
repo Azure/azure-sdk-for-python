@@ -6,7 +6,8 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._host import A2AAgentServerHost
+from ._foundry_task_store import FoundryTaskStore
 from ._version import VERSION
 
-__all__ = ["A2AAgentServerHost"]
+__all__ = ["A2AAgentServerHost", "FoundryTaskStore"]
 __version__ = VERSION
