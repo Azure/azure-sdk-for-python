@@ -17,8 +17,8 @@
   Enable it with `multi_endpoint_routing` through `APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES`.
   Span events follow their parent span's route; metrics use each data point's route.
   Routing-enabled exporters can be created without a host connection string.
-  Routed offline storage is limited to 64 endpoint/authentication partitions per
-  exporter; additional destinations still transmit without persistence.
+  Cached routes and routed offline storage are limited to 64 endpoint/authentication
+  pairs per exporter; additional destinations use short-lived clients without persistence.
   Routed destinations with available offline storage defer new transmissions
   during retry backoff, using the existing retry delay or minimum retry interval.
   Opened storage-backed routes also retry pending telemetry through one shared

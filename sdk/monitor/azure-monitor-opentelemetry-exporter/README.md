@@ -200,9 +200,11 @@ until the retry window expires. The window uses the existing `Retry-After` handl
 or `storage_min_retry_interval` (60 seconds by default) when no valid delay is available.
 Other destinations continue transmitting. This does not add .NET's exponential
 backoff; export results retain the existing failure semantics.
-Each exporter supports up to 64 offline-storage partitions. Different keys using
-the same normalized endpoint and authentication mode share a partition.
-Additional destinations still transmit, but without offline persistence.
+Each exporter caches up to 64 endpoint/authentication routes. When storage is
+enabled, those cached routes also receive offline-storage partitions. Different
+keys using the same normalized endpoint and authentication mode share a route.
+Additional destinations still transmit through short-lived clients without
+offline persistence.
 Routing is disabled by default.
 
 ## Examples

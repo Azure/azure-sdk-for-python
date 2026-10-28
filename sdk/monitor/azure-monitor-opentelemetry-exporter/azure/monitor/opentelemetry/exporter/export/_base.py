@@ -104,6 +104,7 @@ _AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
 _MAX_ROUTE_STORAGE_PARTITIONS = 64
+_MAX_CACHED_ROUTE_EXPORTERS = _MAX_ROUTE_STORAGE_PARTITIONS
 
 _enabled_experimental_features: Optional[FrozenSet[str]] = None
 _experimental_features_lock = Lock()
@@ -293,13 +294,14 @@ class BaseExporter:
         # Return whether the named experimental feature was explicitly enabled at startup.
         return feature_name.strip().lower() in _get_experimental_features()
 
-    def _get_route_exporter(self, endpoint: str, is_aad: bool) -> "BaseExporter":
+    def _get_route_exporter(self, endpoint: str, is_aad: bool) -> tuple["BaseExporter", bool]:
         # pylint: disable=protected-access
         key = endpoint, is_aad
         if key in self._route_exporters:
-            return self._route_exporters[key]
+            return self._route_exporters[key], False
         if is_aad and self._credential is None:
             raise ValueError("An AAD route requires an exporter credential.")
+        temporary = len(self._route_exporters) >= _MAX_CACHED_ROUTE_EXPORTERS
         options = {
             **self._route_options,
             "connection_string": self._connection_string,
@@ -307,35 +309,40 @@ class BaseExporter:
             "authentication_policy": None,
             "max_envelopes_per_second": 0,
         }
-        if not self._disable_offline_storage:
-            if len(self._route_exporters) >= _MAX_ROUTE_STORAGE_PARTITIONS:
-                options["disable_offline_storage"] = True
+        if temporary:
+            options["disable_offline_storage"] = True
+            if not self._disable_offline_storage:
                 logger.warning(
-                    "The %s routed offline storage partition limit has been reached. "
-                    "This destination will transmit without offline storage.",
-                    _MAX_ROUTE_STORAGE_PARTITIONS,
+                    "The %s cached route and offline storage partition limit has been reached. "
+                    "This destination will transmit with a short-lived client and without offline storage.",
+                    _MAX_CACHED_ROUTE_EXPORTERS,
                 )
-            else:
-                if self._storage_directory is None:
-                    self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
-                options["storage_directory"] = os.path.join(
-                    os.path.abspath(self._storage_directory) + "-routes",
-                    _get_sha256_hash(f"{endpoint}|{is_aad}"),
-                )
+        elif not self._disable_offline_storage:
+            if self._storage_directory is None:
+                self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
+            options["storage_directory"] = os.path.join(
+                os.path.abspath(self._storage_directory) + "-routes",
+                _get_sha256_hash(f"{endpoint}|{is_aad}"),
+            )
         exporter = BaseExporter(_route=key, _connection_string_parser=self._connection_string_parser, **options)
         exporter._rate_limiter = self._rate_limiter
         if self._local_storage_enabled is False:
             exporter._disable_local_storage()
-        self._route_exporters[key] = exporter
-        if self._route_retry_task is None and exporter.storage and exporter.storage._enabled:
-            self._route_retry_task = PeriodicTask(
-                interval=self._storage_maintenance_period,
-                function=self._transmit_routes_from_storage,
-                name="{} Routed Retry".format(self.__class__.__name__),
-            )
-            self._route_retry_task.daemon = True
-            self._route_retry_task.start()
-        return exporter
+        if not temporary:
+            self._route_exporters[key] = exporter
+            if self._route_retry_task is None and exporter.storage and exporter.storage._enabled:
+                self._route_retry_task = PeriodicTask(
+                    interval=self._storage_maintenance_period,
+                    function=self._transmit_routes_from_storage,
+                    name="{} Routed Retry".format(self.__class__.__name__),
+                )
+                self._route_retry_task.daemon = True
+                self._route_retry_task.start()
+        return exporter, temporary
+
+    def _close_temporary_route_exporter(self, exporter: "BaseExporter") -> None:
+        if not any(self._route_options.get(name) is not None for name in ("transport", "pipeline", "session")):
+            exporter.client.close()
 
     def _transmit_routes_from_storage(self) -> None:
         # pylint: disable=protected-access,consider-using-with
@@ -373,20 +380,26 @@ class BaseExporter:
                 return ExportResult.FAILED_NOT_RETRYABLE
             for (endpoint, is_aad), envelopes in groups.items():
                 try:
-                    routes.append((self._get_route_exporter(endpoint, is_aad), envelopes))
+                    exporter, temporary = self._get_route_exporter(endpoint, is_aad)
+                    routes.append((exporter, envelopes, temporary))
                 except ValueError as error:
                     logger.error("Cannot initialize a routed exporter: %s", error)
                     result = ExportResult.FAILED_NOT_RETRYABLE
-        for exporter, envelopes in routes:
-            with exporter._transmit_lock:
-                if self._routing_shutdown:
-                    logger.error("Cannot export routed telemetry after shutdown.")
-                    result = ExportResult.FAILED_NOT_RETRYABLE
-                    continue
-                route_result = exporter._transmit(envelopes)
-                exporter._handle_transmit_from_storage(envelopes, route_result)
-                if route_result != ExportResult.SUCCESS:
-                    result = ExportResult.FAILED_NOT_RETRYABLE
+        for exporter, envelopes, temporary in routes:
+            try:
+                transmit_lock = self._transmit_lock if temporary else exporter._transmit_lock
+                with transmit_lock:
+                    if self._routing_shutdown:
+                        logger.error("Cannot export routed telemetry after shutdown.")
+                        result = ExportResult.FAILED_NOT_RETRYABLE
+                        continue
+                    route_result = exporter._transmit(envelopes)
+                    exporter._handle_transmit_from_storage(envelopes, route_result)
+                    if route_result != ExportResult.SUCCESS:
+                        result = ExportResult.FAILED_NOT_RETRYABLE
+            finally:
+                if temporary:
+                    self._close_temporary_route_exporter(exporter)
         return result
 
     def _shutdown_route_exporters(self) -> None:
@@ -399,6 +412,7 @@ class BaseExporter:
                 self._route_retry_task.cancel()
                 self._route_retry_task.join()
             with ExitStack() as cleanup:
+                cleanup.enter_context(self._transmit_lock)
                 cleanup.callback(self.client.close)
                 for exporter in self._route_exporters.values():
                     cleanup.enter_context(exporter._transmit_lock)
