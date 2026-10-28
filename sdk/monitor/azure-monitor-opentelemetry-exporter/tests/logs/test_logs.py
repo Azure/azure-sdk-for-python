@@ -1181,7 +1181,14 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.addCleanup(exporter.shutdown)
         return exporter
 
-    def _record(self, endpoint="https://one.example/proxy/", key="customer-key", auth="ikey", body="message"):
+    def _record(
+        self,
+        endpoint="https://one.example/proxy/",
+        key="customer-key",
+        auth="ikey",
+        body="message",
+        cloud_role="not-the-resource-role",
+    ):
         return ReadWriteLogRecord(
             LogRecord(
                 timestamp=1,
@@ -1190,7 +1197,7 @@ class TestMultiEndpointRouting(unittest.TestCase):
                     "microsoft.instrumentation_key": key,
                     "microsoft.ingestion_endpoint": endpoint,
                     "microsoft.ingestion_auth": auth,
-                    "microsoft.multi_endpoint_cloud_role": "not-the-resource-role",
+                    "microsoft.multi_endpoint_cloud_role": cloud_role,
                 },
             ),
             resource=Resource({"service.name": "resource-role", "service.instance.id": "resource-instance"}),
@@ -1212,7 +1219,7 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.assertEqual([item["iKey"] for item in json.loads(requests[1].body)], ["key-two"])
         for request in requests:
             for item in json.loads(request.body):
-                self.assertEqual(item["tags"]["ai.cloud.role"], "resource-role")
+                self.assertEqual(item["tags"]["ai.cloud.role"], "not-the-resource-role")
                 self.assertEqual(item["tags"]["ai.cloud.roleInstance"], "resource-instance")
         self.assertEqual(records[0].log_record.attributes["microsoft.instrumentation_key"], " key-one ")
 
@@ -1227,6 +1234,15 @@ class TestMultiEndpointRouting(unittest.TestCase):
             [item["iKey"] for item in json.loads(request.body)],
             ["1234abcd-5678-4efa-8abc-1234567890ab"] * 2,
         )
+        self.assertEqual([item["tags"]["ai.cloud.role"] for item in json.loads(request.body)], ["resource-role"] * 2)
+
+    def test_missing_and_invalid_cloud_roles_use_unknown_service(self):
+        exporter = self._exporter()
+        records = [self._record(cloud_role=value) for value in (None, " \t\n", 42)]
+        self.assertEqual(exporter.export(records), LogRecordExportResult.SUCCESS)
+        items = json.loads(self.transport.send.call_args.args[0].body)
+        self.assertEqual([item["tags"]["ai.cloud.role"] for item in items], ["unknown_service"] * 3)
+        self.assertEqual([item["tags"]["ai.cloud.roleInstance"] for item in items], ["resource-instance"] * 3)
 
     @mock.patch.dict(os.environ)
     def test_routing_without_host_connection_string(self):

@@ -1075,13 +1075,20 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.addCleanup(exporter.shutdown)
         return exporter
 
-    def _point(self, endpoint="https://one.example/proxy/", key="customer-key", auth="ikey", value=10):
+    def _point(
+        self,
+        endpoint="https://one.example/proxy/",
+        key="customer-key",
+        auth="ikey",
+        value=10,
+        cloud_role="not-the-resource-role",
+    ):
         return NumberDataPoint(
             attributes={
                 "microsoft.instrumentation_key": key,
                 "microsoft.ingestion_endpoint": endpoint,
                 "microsoft.ingestion_auth": auth,
-                "microsoft.multi_endpoint_cloud_role": "not-the-resource-role",
+                "microsoft.multi_endpoint_cloud_role": cloud_role,
                 "custom": "point-value",
             },
             start_time_unix_nano=1,
@@ -1142,7 +1149,7 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.assertTrue(requests[1].url.startswith("https://two.example/"))
         items = json.loads(requests[0].body)
         self.assertEqual([item["iKey"] for item in items], ["key-one", "key-three"])
-        self.assertEqual([item["tags"]["ai.cloud.role"] for item in items], ["resource-role", "another-resource"])
+        self.assertEqual([item["tags"]["ai.cloud.role"] for item in items], ["not-the-resource-role"] * 2)
         self.assertEqual([item["data"]["baseData"]["metrics"][0]["value"] for item in items], [1, 3])
         self.assertEqual(json.loads(requests[1].body)[0]["data"]["baseData"]["metrics"][0]["value"], 2)
         for request in requests:
@@ -1198,6 +1205,15 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.assertEqual([item["iKey"] for item in items], ["1234abcd-5678-4efa-8abc-1234567890ab"] * 2)
         for attribute in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES:
             self.assertIn(attribute, items[0]["data"]["baseData"]["properties"])
+        self.assertEqual([item["tags"]["ai.cloud.role"] for item in items], ["resource-role"] * 2)
+
+    def test_missing_and_invalid_cloud_roles_use_unknown_service(self):
+        exporter = self._exporter()
+        points = [self._point(cloud_role=value) for value in (None, " \t\n", 42)]
+        self.assertEqual(exporter.export(self._data(self._metric(points))), MetricExportResult.SUCCESS)
+        items = json.loads(self.transport.send.call_args.args[0].body)
+        self.assertEqual([item["tags"]["ai.cloud.role"] for item in items], ["unknown_service"] * 3)
+        self.assertEqual([item["tags"]["ai.cloud.roleInstance"] for item in items], ["resource-instance"] * 3)
 
     def test_none_empty_and_invalid_points_do_not_transmit(self):
         exporter = self._exporter()
@@ -1240,6 +1256,7 @@ class TestMultiEndpointRouting(unittest.TestCase):
         properties = items[0]["data"]["baseData"]["properties"]
         self.assertEqual(properties["_MS.MetricId"], "requests/duration")
         self.assertEqual(properties["cloud/roleName"], "resource-role")
+        self.assertEqual(items[0]["tags"]["ai.cloud.role"], "not-the-resource-role")
         for attribute in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES:
             self.assertNotIn(attribute, properties)
 
