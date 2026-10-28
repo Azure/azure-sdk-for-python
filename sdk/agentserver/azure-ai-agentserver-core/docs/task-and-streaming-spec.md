@@ -3083,9 +3083,10 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
      steering['pending_ack_ids']   = remaining IDs
  10. steering['drain_in_progress'] = True
  11. steering['cancel_requested']  = len(pending) > 0     # more pending => keep advisory
- 12. payload['steering']          = steering
- 13. payload['turn_started_at']   = utc_now_iso()        # fresh turn-start boundary
- 14. PATCH(task_id, status='in_progress', payload=payload,
+ 12. payload['input']             = active_input_value or its function-input ref
+ 13. payload['steering']          = steering
+ 14. payload['turn_started_at']   = utc_now_iso()        # fresh turn-start boundary
+ 15. PATCH(task_id, status='in_progress', payload=payload,
         attachments=attachments_patch, lease piggyback, if_match=etag)
 
      [NB: status MUST be set to 'in_progress' in this PATCH. The turn-end
@@ -3098,38 +3099,48 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
       of a suspended->in_progress *claim*. Omitting the status flip makes the
       Phase-1 PATCH 409 and the steered turn never runs.]
 
-     [NB: Phase 1 does NOT set payload['input'] or write a ref/attachment
-      for active_input. Only the in-memory ctx receives the value (Phase 2).
-      Recovery from a crash BETWEEN Phase 1 and Phase 3 reads
-      steering['active_input'] as the source of truth for the input,
-      via the race-recovery contract.
-       A retry that re-reads `drain_in_progress=true` MUST also reuse
-       `active_ack_id` and MUST NOT consume another pending queue entry.
-       No output co-clear is needed — the framework does not write
+     [NB: Phase 1 publishes the promoted turn as the canonical current
+      `payload['input']`, using the function-input attachment when required,
+      in the same PATCH that removes it from the steering queue. Recovery from
+      a crash BETWEEN Phase 1 and Phase 3 also retains `active_input` as the
+      steering-specific recovery source.
+      Only the recursive retry for that exact Phase-1 transition may reconcile
+      `drain_in_progress=true`, and only when its expected acknowledgment ID
+      matches `active_ack_id`. A later ordinary drain MUST NOT redispatch the
+      active turn or consume another pending queue entry.
+      No output co-clear is needed — the framework does not write
       payload['output'] / output attachments on any transition.]
 
 Phase 2 — Handler re-entry (in-memory only):
- 15. Construct a fresh TaskContext with:
+ 16. Construct a fresh TaskContext with:
        entry_mode='resumed', is_steered_turn=True,
        input=active_input_value (deserialized via input_type),
        metadata reused from previous ctx,
        cancel_event=fresh (re-set if cancel_requested still True),
        retry_attempt=0.
- 16. Update the in-process _ActiveTask.context pointer.
- 17. Invoke the handler with the new ctx.
+ 17. Update the in-process _ActiveTask.context pointer.
+ 18. Invoke the handler with the new ctx.
 
 Phase 3 — "Drain end" PATCH (after handler re-entered):
- 18. steering['drain_in_progress'] = False
- 19. payload['steering']          = steering
- 20. payload['retry_attempt']     = 0     # Drain resets retry budget
- 21. PATCH(task_id, payload=payload, lease piggyback)
+ 19. steering['drain_in_progress'] = False
+ 20. payload['steering']          = steering
+ 21. payload['retry_attempt']     = 0     # Drain resets retry budget
+ 22. PATCH(task_id, payload=payload, lease piggyback)
      (No attachments touched in Phase 3.)
 
 Phase 4 — On the next turn-end:
- 22. The handler returns/suspends/raises. The terminal handler clears
+ 23. The handler returns/suspends/raises. The terminal handler clears
      active_input, active_ack_id, and drain_in_progress together as part
      of its suspend/complete PATCH (§53).
 ```
+
+**Terminal-persistence barrier.** A turn result, failure, or cancellation is
+not acknowledged as final, and no queued successor is dispatched, until the
+turn-end PATCH succeeds. If that PATCH fails, the current caller receives the
+persistence error, local queued acknowledgment futures receive
+`TaskConflictError(current_status="in_progress")`, and the durable task remains
+available for recovery. This prevents a stale active turn from being executed
+again after its caller already received a definitive handler outcome.
 
 **Race-recovery contract.** If the process crashes:
 
