@@ -37,7 +37,7 @@ class TestRecoveryServicesDataReplicationMgmtProtectedItemOperations(AzureMgmtRe
             resource_group_name=resource_group.name,
             vault_name="str",
             protected_item_name="str",
-            resource={
+            body={
                 "id": "str",
                 "name": "str",
                 "properties": {
@@ -156,7 +156,7 @@ class TestRecoveryServicesDataReplicationMgmtProtectedItemOperations(AzureMgmtRe
             resource_group_name=resource_group.name,
             vault_name="str",
             protected_item_name="str",
-            properties={
+            body={
                 "id": "str",
                 "name": "str",
                 "properties": {"customProperties": "protected_item_model_custom_properties_update"},

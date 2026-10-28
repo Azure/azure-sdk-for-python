@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +8,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -31,7 +32,6 @@ from .operations import (
     OperationResultsOperations,
     Operations,
     PolicyOperations,
-    PrivateEndpointConnectionProxiesOperations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
     ProtectedItemOperations,
@@ -40,11 +40,17 @@ from .operations import (
     VaultOperations,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class RecoveryServicesDataReplicationMgmtClient:  # pylint: disable=too-many-instance-attributes,name-too-long
+class RecoveryServicesDataReplicationMgmtClient:  # pylint: disable=too-many-instance-attributes,name-too-long,docstring-keyword-should-match-keyword-only
     """A first party Azure service enabling the data replication.
 
     :ivar operations: Operations operations
@@ -68,10 +74,6 @@ class RecoveryServicesDataReplicationMgmtClient:  # pylint: disable=too-many-ins
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.recoveryservicesdatareplication.aio.operations.PrivateEndpointConnectionsOperations
-    :ivar private_endpoint_connection_proxies: PrivateEndpointConnectionProxiesOperations
-     operations
-    :vartype private_endpoint_connection_proxies:
-     azure.mgmt.recoveryservicesdatareplication.aio.operations.PrivateEndpointConnectionProxiesOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.recoveryservicesdatareplication.aio.operations.PrivateLinkResourcesOperations
@@ -102,7 +104,11 @@ class RecoveryServicesDataReplicationMgmtClient:  # pylint: disable=too-many-ins
     :type subscription_id: str
     :param base_url: Service host. Default value is None.
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2024-09-01".
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: The API version to use for this operation. Known values are "2024-09-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -110,10 +116,16 @@ class RecoveryServicesDataReplicationMgmtClient:  # pylint: disable=too-many-ins
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
@@ -122,6 +134,7 @@ class RecoveryServicesDataReplicationMgmtClient:  # pylint: disable=too-many-ins
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
+            cloud_setting=cloud_setting,
             credential_scopes=credential_scopes,
             **kwargs
         )
@@ -162,9 +175,6 @@ class RecoveryServicesDataReplicationMgmtClient:  # pylint: disable=too-many-ins
         self.job = JobOperations(self._client, self._config, self._serialize, self._deserialize)
         self.policy = PolicyOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.private_endpoint_connection_proxies = PrivateEndpointConnectionProxiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
