@@ -29,19 +29,11 @@
   - Added model `ProxyResource`
   - Added model `RoutingEventStreamProperties`
   - Added model `TrackedResource`
-  - Model `CertificatesOperations` added parameter `etag` in method `create_or_update`
-  - Model `CertificatesOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `CertificatesOperations` added parameter `etag` in method `delete`
-  - Model `CertificatesOperations` added parameter `match_condition` in method `delete`
-  - Model `CertificatesOperations` added parameter `etag` in method `generate_verification_code`
-  - Model `CertificatesOperations` added parameter `match_condition` in method `generate_verification_code`
-  - Model `CertificatesOperations` added parameter `etag` in method `verify`
-  - Model `CertificatesOperations` added parameter `match_condition` in method `verify`
-  - Model `IotHubResourceOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `IotHubResourceOperations` added parameter `match_condition` in method `begin_create_or_update`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `IotHubProperties` deleted or renamed its instance variable `device_streams`
   - Model `IotHubProperties` deleted or renamed its instance variable `encryption`
   - Model `IotHubProperties` deleted or renamed its instance variable `ip_version`
@@ -51,25 +43,17 @@
   - Model `Resource` deleted or renamed its instance variable `tags`
   - Deleted or renamed enum value `RoutingSource.DIGITAL_TWIN_CHANGE_EVENTS`
   - Deleted or renamed enum value `RoutingSource.MQTT_BROKER_MESSAGES`
-  - Deleted or renamed model `CertificateBodyDescription`
-  - Deleted or renamed model `EncryptionPropertiesDescription`
-  - Deleted or renamed model `EndpointHealthDataListResult`
-  - Deleted or renamed model `EventHubConsumerGroupsListResult`
-  - Deleted or renamed model `IotHubDescriptionListResult`
-  - Deleted or renamed model `IotHubPropertiesDeviceStreams`
-  - Deleted or renamed model `IotHubQuotaMetricInfoListResult`
-  - Deleted or renamed model `IotHubSkuDescriptionListResult`
-  - Deleted or renamed model `IpVersion`
-  - Deleted or renamed model `JobResponseListResult`
-  - Deleted or renamed model `KeyVaultKeyProperties`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `RootCertificateProperties`
-  - Deleted or renamed model `SharedAccessSignatureAuthorizationRuleListResult`
-  - Method `CertificatesOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CertificatesOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CertificatesOperations.generate_verification_code` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CertificatesOperations.verify` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `IotHubResourceOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `CertificatesOperations.create_or_update` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `CertificatesOperations.delete` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `CertificatesOperations.generate_verification_code` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `CertificatesOperations.verify` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `IotHubResourceOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+
+### Other Changes
+
+  - Deleted model `EndpointHealthDataListResult`/`EventHubConsumerGroupsListResult`/`IotHubDescriptionListResult`/`IotHubQuotaMetricInfoListResult`/`IotHubSkuDescriptionListResult`/`JobResponseListResult`/`OperationListResult`/`SharedAccessSignatureAuthorizationRuleListResult` which actually were not used by SDK users
+  - Deleted model `CertificateBodyDescription`/`EncryptionPropertiesDescription`/`IotHubPropertiesDeviceStreams`/`KeyVaultKeyProperties`/`RootCertificateProperties` which actually were not used by SDK users
+  - Deleted enum `IpVersion` which actually was not used by SDK users
 
 ## 5.0.0b5 (2026-10-09)
 
