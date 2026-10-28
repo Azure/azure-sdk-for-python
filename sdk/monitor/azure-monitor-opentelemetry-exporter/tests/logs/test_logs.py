@@ -1608,8 +1608,10 @@ class TestMultiEndpointRouting(unittest.TestCase):
         with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="WARNING") as logs:
             self.assertEqual(exporter.export(records), LogRecordExportResult.SUCCESS)
         self.assertIn("64", logs.output[0])
+        self.assertIn("cached route", logs.output[0])
         self.assertIn("offline storage", logs.output[0])
         self.assertEqual(self.transport.send.call_count, 65)
+        self.assertEqual(len(exporter._route_exporters), 64)
         partitions = list((Path(self.directory.name) / "host-routes").iterdir())
         self.assertEqual(len(partitions), 64)
         requests = [call.args[0] for call in self.transport.send.call_args_list]
@@ -1626,14 +1628,74 @@ class TestMultiEndpointRouting(unittest.TestCase):
         exporter._local_storage_configuration_callback({_ONE_SETTINGS_FEATURE_LOCAL_STORAGE: {"default": "disabled"}})
         exporter._local_storage_configuration_callback({_ONE_SETTINGS_FEATURE_LOCAL_STORAGE: {"default": "enabled"}})
         self.assertEqual(len(list((Path(self.directory.name) / "host-routes").iterdir())), 64)
-        self.assertIsNone(exporter._route_exporters[("https://overflow.example/", False)].storage)
+        self.assertNotIn(("https://overflow.example/", False), exporter._route_exporters)
 
     def test_disabled_offline_storage_does_not_create_partitions_past_limit(self):
         exporter = self._exporter()
         records = [self._record(endpoint=f"https://route-{index}.example/") for index in range(65)]
         self.assertEqual(exporter.export(records), LogRecordExportResult.SUCCESS)
         self.assertEqual(self.transport.send.call_count, 65)
+        self.assertEqual(len(exporter._route_exporters), 64)
+        self.assertNotIn(("https://route-64.example/", False), exporter._route_exporters)
+        self.transport.close.assert_not_called()
         self.assertFalse((Path(self.directory.name) / "host-routes").exists())
+        self.transport.send.reset_mock()
+        self.assertEqual(exporter.export([records[-1]]), LogRecordExportResult.SUCCESS)
+        self.transport.send.assert_called_once()
+        self.assertEqual(len(exporter._route_exporters), 64)
+        self.transport.close.assert_not_called()
+
+    def test_shutdown_waits_for_short_lived_route_using_shared_transport(self):
+        exporter = self._exporter()
+        records = [self._record(endpoint=f"https://route-{index}.example/") for index in range(64)]
+        self.assertEqual(exporter.export(records), LogRecordExportResult.SUCCESS)
+        send_started = threading.Event()
+        release_send = threading.Event()
+        shutdown_done = threading.Event()
+
+        def block_send(request, **kwargs):
+            send_started.set()
+            release_send.wait(2)
+            return _Response(request)
+
+        def shutdown():
+            exporter.shutdown()
+            shutdown_done.set()
+
+        self.transport.send.side_effect = block_send
+        export_thread = threading.Thread(
+            target=exporter.export,
+            args=([self._record(endpoint="https://overflow.example/")],),
+            daemon=True,
+        )
+        shutdown_thread = threading.Thread(target=shutdown, daemon=True)
+        try:
+            export_thread.start()
+            self.assertTrue(send_started.wait(2))
+            shutdown_thread.start()
+            self.assertFalse(shutdown_done.wait(0.1), "Shutdown closed a shared transport during an overflow send.")
+        finally:
+            release_send.set()
+            export_thread.join(timeout=2)
+            shutdown_thread.join(timeout=2)
+        self.assertTrue(shutdown_done.is_set())
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.BaseExporter._transmit")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient.close")
+    def test_short_lived_route_closes_owned_transport(self, close, transmit):
+        transmit.return_value = ExportResult.SUCCESS
+        options = {
+            "connection_string": "InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://host.example/",
+            "disable_offline_storage": True,
+            "retry_total": 0,
+        }
+        exporter = AzureMonitorLogExporter(**options)
+        self.addCleanup(exporter.shutdown)
+        records = [self._record(endpoint=f"https://route-{index}.example/") for index in range(65)]
+        self.assertEqual(exporter.export(records), LogRecordExportResult.SUCCESS)
+        self.assertEqual(len(exporter._route_exporters), 64)
+        close.assert_called_once()
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._rate_limiter.time.monotonic", return_value=0)
     def test_rate_limit_is_shared_by_routes(self, _monotonic):
