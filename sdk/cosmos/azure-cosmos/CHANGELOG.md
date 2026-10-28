@@ -10,6 +10,8 @@
 
 #### Bugs Fixed
 
+* Fixed `ORDER BY RANK` queries using `partition_key` returning unranked results in synchronous and asynchronous clients. Full-text and RRF queries now use the query-plan pipeline while retaining the partition key filter and respecting the full-text statistics scope. See [issue 42241](https://github.com/Azure/azure-sdk-for-python/issues/42241).
+
 #### Other Changes
 
 ### 4.17.1 (2026-09-16)

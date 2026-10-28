@@ -9,6 +9,7 @@ from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_c
     _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters, \
     _FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_LOCAL, _FULL_TEXT_SCORE_SCOPE_DEFAULT
 from azure.cosmos._routing import routing_range
+from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos import exceptions
 from ..._constants import _Constants as Constants
 
@@ -76,6 +77,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             # When "Global" (default), use all ranges.
             full_text_score_scope = self._options.get(_FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_DEFAULT)
             use_all_ranges = full_text_score_scope != _FULL_TEXT_SCORE_SCOPE_LOCAL
+            statistics_options = self._options.copy()
+            if use_all_ranges:
+                statistics_options.pop("partitionKey", None)
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=use_all_ranges)
             global_statistics_doc_producers = []
             global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
@@ -90,7 +94,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                         self._resource_link,
                         global_statistics_query,
                         self._document_producer_comparator,
-                        self._options,
+                        statistics_options,
                         self._response_hook,
                         self._raw_response_hook
                     )
@@ -106,7 +110,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                         # repairing document producer context on partition split
                         global_statistics_doc_producers = await self._repair_document_producer(
                             global_statistics_query,
-                            target_all_ranges=use_all_ranges
+                            target_all_ranges=use_all_ranges,
+                            options=statistics_options
                         )
                     else:
                         raise
@@ -261,7 +266,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
     async def fetch_next_block(self):
         raise NotImplementedError("You should use pipeline's fetch_next_block.")
 
-    async def _repair_document_producer(self, query, target_all_ranges=False):
+    async def _repair_document_producer(self, query, target_all_ranges=False, options=None):
         # refresh the routing provider to get the newly initialized one post-refresh
         self._routing_provider = self._client._routing_map_provider
         # will be a list of (partition_min, partition_max) tuples
@@ -277,7 +282,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                     self._resource_link,
                     query,
                     self._document_producer_comparator,
-                    self._options,
+                    self._options if options is None else options,
                     self._response_hook,
                     self._raw_response_hook
                 )
@@ -299,9 +304,22 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 feed_options[Constants.ContainerRID] = self._options[Constants.ContainerRID]
             return [item async for item in self._client._ReadPartitionKeyRanges(
                 collection_link=self._resource_link, feed_options=feed_options)]
-        query_ranges = self._partitioned_query_ex_info.get_query_ranges()
+        if "partitionKey" in self._options:
+            container_options = self._options.copy()
+            container_options.pop("partitionKey")
+            partition_key_definition = await self._client._get_partition_key_definition(self._resource_link,
+                                                                                        container_options)
+            if partition_key_definition is None:
+                raise ValueError("Could not find partition key definition for collection.")
+            partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
+            query_ranges = [partition_key._get_epk_range_for_partition_key(self._options["partitionKey"])]
+        else:
+            query_ranges = [
+                routing_range.Range.ParseFromDict(range_as_dict)
+                for range_as_dict in self._partitioned_query_ex_info.get_query_ranges()
+            ]
         return await self._routing_provider.get_overlapping_ranges(
             self._resource_link,
-            [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
+            query_ranges,
             self._options
         )
