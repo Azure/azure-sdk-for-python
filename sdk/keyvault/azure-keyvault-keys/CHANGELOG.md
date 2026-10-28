@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added support for service API version `2026-04-01`.
+- Added support for service API version `2026-04-01` [#49751](https://github.com/Azure/azure-sdk-for-python/pull/49751).
 - (From 4.12.0b1) Added `KeyProperties.key_size` read-only property.
 - (From 4.12.0b2) Added the `ExternalKey` model and the new `KeyClient.create_external_key` method
   for registering a Key Vault key whose material is held in an external HSM [#47200](https://github.com/Azure/azure-sdk-for-python/pull/47200).
@@ -21,7 +21,6 @@
 
 ### Bugs Fixed
 
-- Includes all bug fixes from versions 4.11.2 and 4.11.3.
 - (From 4.12.0b3) Fixed a replay bug in challenge authentication policy. The original request is now stored at the request level instead of the client level [#47742](https://github.com/Azure/azure-sdk-for-python/pull/47742).
 
 ### Other Changes
