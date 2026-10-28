@@ -69,7 +69,7 @@
   - Added model `ValidateConfigurationResponseProperties`
   - Added model `ValidateConfigurationResponseV2`
   - Added model `VmProfile`
-  - Model `NetworkFabricsOperations` added parameter `content_type` in method `begin_refresh_configuration`
+  - Operation group `NetworkFabricsOperations` added parameter `content_type` in method `begin_refresh_configuration`
   - Added operation group `EdgeConnectorsOperations`
   - Added operation group `FabricsOperations`
 
