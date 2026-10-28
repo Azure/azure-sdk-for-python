@@ -188,7 +188,9 @@ Span events follow their parent span's destination, instrumentation key, and
 authentication mode, not routing attributes on the events themselves.
 Metrics use routing attributes on each data point, not the resource or
 instrumentation scope. Points without valid routing attributes are dropped.
-Cloud-role tags continue to come from the telemetry's resource.
+Cloud-role names come from the item's `microsoft.multi_endpoint_cloud_role` attribute;
+missing, blank, or non-string values use `unknown_service`. Span events inherit their
+parent span's role name. Cloud-role instances remain resource-derived.
 
 Retry storage is separate from the host storage, partitioned by endpoint and
 authentication mode, and shares the configured storage capacity across routed
