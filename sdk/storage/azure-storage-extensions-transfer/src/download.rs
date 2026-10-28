@@ -4,6 +4,7 @@
 // license information.
 // --------------------------------------------------------------------------
 
+use std::mem::ManuallyDrop;
 use std::num::NonZero;
 use std::str::FromStr;
 use std::sync::{Arc, Mutex, PoisonError};
@@ -16,7 +17,7 @@ use azure_storage_blob::models::{BlobClientDownloadOptions, EncryptionAlgorithmT
 use azure_storage_blob::BlobClient;
 use futures::future::Either;
 use futures::{stream, StreamExt};
-use pyo3::exceptions::{PyMemoryError, PyValueError};
+use pyo3::exceptions::{PyMemoryError, PyRuntimeError, PyValueError};
 use pyo3::ffi;
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
@@ -376,6 +377,7 @@ fn drain_into(
 /// into a single preallocated `bytes` object with the GIL released.
 #[pyclass]
 pub(crate) struct NativeDownloadStream {
+    pid: u32,
     /// Total number of bytes this stream will deliver.
     size: u64,
     /// Absolute blob offset of the next byte to deliver.
@@ -384,7 +386,17 @@ pub(crate) struct NativeDownloadStream {
     end_offset: u64,
     // A Mutex makes the non-`Sync` response body safe to hold in a Python object; access always
     // goes through `&mut self`, so it is never contended.
-    state: Mutex<StreamState>,
+    state: ManuallyDrop<Mutex<StreamState>>,
+}
+
+impl Drop for NativeDownloadStream {
+    fn drop(&mut self) {
+        if self.pid == std::process::id() {
+            // SAFETY: this is the only explicit drop of state. In an inheriting child we
+            // deliberately retain it rather than touch parent-owned I/O and task handles.
+            unsafe { ManuallyDrop::drop(&mut self.state) };
+        }
+    }
 }
 
 impl NativeDownloadStream {
@@ -405,10 +417,11 @@ impl NativeDownloadStream {
             })
             .transpose()?;
         let mut stream = Self {
+            pid: std::process::id(),
             size: 0,
             next_offset: start,
             end_offset: start,
-            state: Mutex::new(StreamState::Done),
+            state: ManuallyDrop::new(Mutex::new(StreamState::Done)),
         };
         if length == Some(0) {
             return Ok(stream);
@@ -454,7 +467,7 @@ impl NativeDownloadStream {
             options.if_unmodified_since = None;
             options.if_tags = None;
         }
-        stream.state = Mutex::new(StreamState::NotStarted(Box::new(Pump {
+        *stream.state_mut() = StreamState::NotStarted(Box::new(Pump {
             client,
             options,
             first_body: response.body,
@@ -463,8 +476,18 @@ impl NativeDownloadStream {
             end_offset: stream.end_offset,
             partition_size,
             parallel,
-        })));
+        }));
         Ok(stream)
+    }
+
+    fn check_process(&self) -> PyResult<()> {
+        if self.pid != std::process::id() {
+            return Err(PyRuntimeError::new_err(
+                "This download stream was created in a different process. \
+                 Start a new download in the child process.",
+            ));
+        }
+        Ok(())
     }
 
     fn state_mut(&mut self) -> &mut StreamState {
@@ -516,6 +539,7 @@ impl NativeDownloadStream {
 
     /// Return the next partition as `bytes`, or `None` (StopIteration) when the blob is exhausted.
     fn __next__(&mut self, py: Python<'_>) -> PyResult<Option<Py<PyBytes>>> {
+        self.check_process()?;
         let (offset, remaining) = (self.next_offset, self.end_offset - self.next_offset);
         let Some(receiver) = self.receiver(py)? else {
             return Ok(None);
@@ -537,6 +561,7 @@ impl NativeDownloadStream {
     /// GIL released, so the copy overlaps with the remaining downloads and no intermediate `bytes`
     /// objects are created. Works on a fresh stream and after partial iteration.
     fn readall(&mut self, py: Python<'_>) -> PyResult<Py<PyBytes>> {
+        self.check_process()?;
         let offset = self.next_offset;
         let remaining = to_usize(self.end_offset - offset).map_err(AzureError::from)?;
         let Some(receiver) = self.receiver(py)? else {
