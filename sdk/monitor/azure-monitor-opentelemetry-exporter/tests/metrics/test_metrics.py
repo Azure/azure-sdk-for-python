@@ -1255,7 +1255,7 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.assertEqual(items[0]["iKey"], "customer-key")
         properties = items[0]["data"]["baseData"]["properties"]
         self.assertEqual(properties["_MS.MetricId"], "requests/duration")
-        self.assertEqual(properties["cloud/roleName"], "resource-role")
+        self.assertEqual(properties["cloud/roleName"], "not-the-resource-role")
         self.assertEqual(items[0]["tags"]["ai.cloud.role"], "not-the-resource-role")
         for attribute in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES:
             self.assertNotIn(attribute, properties)
