@@ -1,5 +1,13 @@
 # Release History
 
+## 2.3.0 (2026-10-28)
+
+### Other Changes
+
+- Stable release of the 2.3.0 preview series. No implementation changes since
+  2.3.0b2; the protocol-scoped task runtime and recovery protections are
+  described in the preview entries below.
+
 ## 2.3.0b2 (2026-10-26)
 
 ### Features Added

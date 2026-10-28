@@ -1,14 +1,14 @@
 # Release History
 
-## 2.4.0b3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 2.4.0 (2026-10-28)
 
 ### Other Changes
+
+- Stable release of the 2.4.0 preview series. No implementation changes since
+  2.4.0b2; the protocol-scoped task-runtime behavior and its breaking change
+  from earlier stable releases are documented in the preview entry below.
+- Require the stable `azure-ai-agentserver-core>=2.3.0` release. Publish Core
+  before Responses.
 
 ## 2.4.0b2 (2026-10-27)
 
