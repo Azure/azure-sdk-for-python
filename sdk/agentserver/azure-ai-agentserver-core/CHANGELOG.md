@@ -1,14 +1,10 @@
 # Release History
 
-## 2.3.0 (2026-10-28)
+## 2.3.0b3 (Unreleased)
 
 ### Bugs Fixed
 
 - Removed the broken documentation link from experimental API warnings and docstrings.
-
-### Other Changes
-
-- Stable release of the 2.3.0 preview series.
 
 ## 2.3.0b2 (2026-10-26)
 

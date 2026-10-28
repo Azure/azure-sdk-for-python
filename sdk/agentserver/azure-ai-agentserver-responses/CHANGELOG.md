@@ -1,6 +1,10 @@
 # Release History
 
-## 2.4.0 (2026-10-28)
+## 2.4.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
 
 ### Bugs Fixed
 
@@ -8,10 +12,7 @@
 
 ### Other Changes
 
-- Stable release of the 2.4.0 preview series.
 - Removed the duplicated experimental decorator compatibility fallback.
-- Updated the minimum `azure-ai-agentserver-core` dependency to the stable
-  `2.3.0` release. Publish that Core version before this package.
 
 ## 2.4.0b2 (2026-10-27)
 
