@@ -659,14 +659,14 @@ namespace azure.mgmt.chaos.aio.operations
                 **kwargs: Any
             ) -> PrivateEndpointConnection: ...
 
-        @distributed_trace_async
+        @distributed_trace
         @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        async def get_private_link_resources(
+        def get_private_link_resources(
                 self, 
                 resource_group_name: str, 
                 private_access_name: str, 
                 **kwargs: Any
-            ) -> PrivateLinkResourceListResult: ...
+            ) -> AsyncItemPaged[PrivateLinkResource]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
@@ -1582,14 +1582,12 @@ namespace azure.mgmt.chaos.models
     class azure.mgmt.chaos.models.ConnectionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AKS_EXTENSION = "AksExtension"
         CHAOS_AGENT = "ChaosAgent"
-        CSFI = "Csfi"
 
 
     class azure.mgmt.chaos.models.ConnectionProperties(_Model):
         certificate_issuer: Optional[str]
         certificate_subject_name: Optional[str]
         data_plane_endpoint: Optional[str]
-        dsts_principal: Optional[str]
         kind: Union[str, ConnectionKind]
         principal_id: Optional[str]
         provisioning_state: Optional[Union[str, ProvisioningState]]
@@ -1603,7 +1601,6 @@ namespace azure.mgmt.chaos.models
                 *, 
                 certificate_issuer: Optional[str] = ..., 
                 certificate_subject_name: Optional[str] = ..., 
-                dsts_principal: Optional[str] = ..., 
                 kind: Union[str, ConnectionKind], 
                 principal_id: Optional[str] = ..., 
                 target_resource_id: str, 
@@ -2228,22 +2225,6 @@ namespace azure.mgmt.chaos.models
                 location: str, 
                 properties: PrivateLinkResourceProperties, 
                 tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.chaos.models.PrivateLinkResourceListResult(_Model):
-        next_link: Optional[str]
-        value: list[PrivateLinkResource]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                next_link: Optional[str] = ..., 
-                value: list[PrivateLinkResource]
             ) -> None: ...
 
         @overload
@@ -3579,7 +3560,7 @@ namespace azure.mgmt.chaos.operations
                 resource_group_name: str, 
                 private_access_name: str, 
                 **kwargs: Any
-            ) -> PrivateLinkResourceListResult: ...
+            ) -> ItemPaged[PrivateLinkResource]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
@@ -4114,7 +4095,7 @@ namespace azure.mgmt.chaos.types
         key "onActionLifecycle": Union[str, ActionLifecycle]
         key "type": Required[Union[str, ActionDependencyType]]
         name: str
-        on_action_lifecycle: Union[str, ActionLifecycle]
+        onActionLifecycle: Union[str, ActionLifecycle]
         type: Union[str, ActionDependencyType]
 
 
@@ -4127,7 +4108,7 @@ namespace azure.mgmt.chaos.types
         id: str
         name: str
         properties: CapabilityProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4139,10 +4120,10 @@ namespace azure.mgmt.chaos.types
         key "targetType": str
         key "urn": str
         description: str
-        parameters_schema: str
-        provisioning_state: Union[str, ProvisioningState]
+        parametersSchema: str
+        provisioningState: Union[str, ProvisioningState]
         publisher: str
-        target_type: str
+        targetType: str
         urn: str
 
 
@@ -4186,8 +4167,8 @@ namespace azure.mgmt.chaos.types
         key "type": Required[Literal[SelectorType.QUERY]]
         filter: ChaosTargetFilter
         id: str
-        query_string: str
-        subscription_ids: list[str]
+        queryString: str
+        subscriptionIds: list[str]
         type: Literal[SelectorType.QUERY]
 
 
@@ -4211,7 +4192,7 @@ namespace azure.mgmt.chaos.types
         id: str
         name: str
         properties: ConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4219,23 +4200,21 @@ namespace azure.mgmt.chaos.types
         key "certificateIssuer": str
         key "certificateSubjectName": str
         key "dataPlaneEndpoint": str
-        key "dstsPrincipal": str
         key "kind": Required[Union[str, ConnectionKind]]
         key "principalId": str
         key "provisioningState": Union[str, ProvisioningState]
         key "status": Union[str, ConnectionStatus]
         key "targetResourceId": Required[str]
         key "tenantId": str
-        certificate_issuer: str
-        certificate_subject_name: str
-        data_plane_endpoint: str
-        dsts_principal: str
+        certificateIssuer: str
+        certificateSubjectName: str
+        dataPlaneEndpoint: str
         kind: Union[str, ConnectionKind]
-        principal_id: str
-        provisioning_state: Union[str, ProvisioningState]
+        principalId: str
+        provisioningState: Union[str, ProvisioningState]
         status: Union[str, ConnectionStatus]
-        target_resource_id: str
-        tenant_id: str
+        targetResourceId: str
+        tenantId: str
 
 
     class azure.mgmt.chaos.types.ContinuousAction(TypedDict, total=False):
@@ -4247,15 +4226,15 @@ namespace azure.mgmt.chaos.types
         duration: str
         name: str
         parameters: list[KeyValuePair]
-        selector_id: str
+        selectorId: str
         type: Literal[ExperimentActionType.CONTINUOUS]
 
 
     class azure.mgmt.chaos.types.CustomerDataStorageProperties(TypedDict, total=False):
         key "blobContainerName": str
         key "storageAccountResourceId": str
-        blob_container_name: str
-        storage_account_resource_id: str
+        blobContainerName: str
+        storageAccountResourceId: str
 
 
     class azure.mgmt.chaos.types.DelayAction(TypedDict, total=False):
@@ -4274,7 +4253,7 @@ namespace azure.mgmt.chaos.types
         key "type": Required[Literal[ExperimentActionType.DISCRETE]]
         name: str
         parameters: list[KeyValuePair]
-        selector_id: str
+        selectorId: str
         type: Literal[ExperimentActionType.DISCRETE]
 
 
@@ -4291,7 +4270,7 @@ namespace azure.mgmt.chaos.types
         location: str
         name: str
         properties: ExperimentProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4307,8 +4286,8 @@ namespace azure.mgmt.chaos.types
         key "provisioningState": Union[str, ProvisioningState]
         key "selectors": Required[list[ChaosTargetSelector]]
         key "steps": Required[list[ChaosExperimentStep]]
-        customer_data_storage: CustomerDataStorageProperties
-        provisioning_state: Union[str, ProvisioningState]
+        customerDataStorage: CustomerDataStorageProperties
+        provisioningState: Union[str, ProvisioningState]
         selectors: list[ChaosTargetSelector]
         steps: list[ChaosExperimentStep]
 
@@ -4321,7 +4300,7 @@ namespace azure.mgmt.chaos.types
 
     class azure.mgmt.chaos.types.ExternalResource(TypedDict, total=False):
         key "resourceId": str
-        resource_id: str
+        resourceId: str
 
 
     class azure.mgmt.chaos.types.FilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4330,7 +4309,7 @@ namespace azure.mgmt.chaos.types
 
     class azure.mgmt.chaos.types.FixResourcePermissionsRequest(TypedDict, total=False):
         key "whatIf": bool
-        what_if: bool
+        whatIf: bool
 
 
     class azure.mgmt.chaos.types.KeyValuePair(TypedDict, total=False):
@@ -4344,11 +4323,10 @@ namespace azure.mgmt.chaos.types
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.chaos.types.PrivateAccess(TrackedResource):
@@ -4362,7 +4340,7 @@ namespace azure.mgmt.chaos.types
         location: str
         name: str
         properties: PrivateAccessProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4375,9 +4353,8 @@ namespace azure.mgmt.chaos.types
         key "provisioningState": Union[str, ProvisioningState]
         key "publicNetworkAccess": Union[str, PublicNetworkAccessOption]
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: Union[str, ProvisioningState]
-        public_network_access: Union[str, PublicNetworkAccessOption]
+        provisioningState: Union[str, ProvisioningState]
+        publicNetworkAccess: Union[str, PublicNetworkAccessOption]
 
 
     class azure.mgmt.chaos.types.PrivateEndpoint(TypedDict, total=False):
@@ -4394,7 +4371,7 @@ namespace azure.mgmt.chaos.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4403,17 +4380,16 @@ namespace azure.mgmt.chaos.types
         key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
         key "provisioningState": Union[str, ProvisioningState]
         groupIds: list[str]
-        group_ids: list[str]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, ProvisioningState]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.chaos.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
         key "actionsRequired": str
         key "description": str
         key "status": Union[str, PrivateEndpointServiceConnectionStatus]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: Union[str, PrivateEndpointServiceConnectionStatus]
 
@@ -4425,15 +4401,15 @@ namespace azure.mgmt.chaos.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.chaos.types.Recommendation(TypedDict, total=False):
         key "evaluationRunAt": str
         key "recommendationStatus": Required[Union[str, RecommendationStatus]]
-        evaluation_run_at: str
-        recommendation_status: Union[str, RecommendationStatus]
+        evaluationRunAt: str
+        recommendationStatus: Union[str, RecommendationStatus]
 
 
     class azure.mgmt.chaos.types.Resource(TypedDict, total=False):
@@ -4443,7 +4419,7 @@ namespace azure.mgmt.chaos.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4457,7 +4433,6 @@ namespace azure.mgmt.chaos.types
     class azure.mgmt.chaos.types.ResourceTargetingCriteria(TypedDict, total=False):
         locations: list[str]
         physicalZones: list[str]
-        physical_zones: list[str]
         resources: list[str]
         tags: list[KeyValuePair]
         types: list[str]
@@ -4468,7 +4443,7 @@ namespace azure.mgmt.chaos.types
         key "behavior": Union[str, RunAfterBehavior]
         key "items": Required[list[ActionDependency]]
         behavior: Union[str, RunAfterBehavior]
-        items_property: list[ActionDependency]
+        items: list[ActionDependency]
 
 
     class azure.mgmt.chaos.types.Scenario(ProxyResource):
@@ -4480,7 +4455,7 @@ namespace azure.mgmt.chaos.types
         id: str
         name: str
         properties: ScenarioProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4493,15 +4468,15 @@ namespace azure.mgmt.chaos.types
         key "runAfter": ForwardRef('RunAfter', module='types')
         key "timeout": str
         key "waitBefore": str
-        action_id: str
+        actionId: str
         description: str
         duration: str
-        external_resource: ExternalResource
+        externalResource: ExternalResource
         name: str
         parameters: list[KeyValuePair]
-        run_after: RunAfter
+        runAfter: RunAfter
         timeout: str
-        wait_before: str
+        waitBefore: str
 
 
     class azure.mgmt.chaos.types.ScenarioConfiguration(ProxyResource):
@@ -4513,7 +4488,7 @@ namespace azure.mgmt.chaos.types
         id: str
         name: str
         properties: ScenarioConfigurationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4522,9 +4497,9 @@ namespace azure.mgmt.chaos.types
         key "resourceTargeting": ForwardRef('ResourceTargeting', module='types')
         key "scenarioId": Required[str]
         parameters: list[KeyValuePair]
-        provisioning_state: Union[str, ProvisioningState]
-        resource_targeting: ResourceTargeting
-        scenario_id: str
+        provisioningState: Union[str, ProvisioningState]
+        resourceTargeting: ResourceTargeting
+        scenarioId: str
 
 
     class azure.mgmt.chaos.types.ScenarioParameter(TypedDict, total=False):
@@ -4549,10 +4524,10 @@ namespace azure.mgmt.chaos.types
         key "recommendation": ForwardRef('Recommendation', module='types')
         key "version": str
         actions: list[ScenarioAction]
-        created_from: str
+        createdFrom: str
         description: str
         parameters: list[ScenarioParameter]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         recommendation: Recommendation
         version: str
 
@@ -4569,12 +4544,12 @@ namespace azure.mgmt.chaos.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.chaos.types.Target(ProxyResource):
@@ -4588,7 +4563,7 @@ namespace azure.mgmt.chaos.types
         location: str
         name: str
         properties: dict[str, Any]
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4608,7 +4583,7 @@ namespace azure.mgmt.chaos.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4616,8 +4591,8 @@ namespace azure.mgmt.chaos.types
     class azure.mgmt.chaos.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.chaos.types.Workspace(TrackedResource):
@@ -4633,7 +4608,7 @@ namespace azure.mgmt.chaos.types
         location: str
         name: str
         properties: WorkspaceProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4642,8 +4617,8 @@ namespace azure.mgmt.chaos.types
         key "communicationEndpoint": str
         key "provisioningState": Union[str, ProvisioningState]
         key "scopes": Required[list[str]]
-        communication_endpoint: str
-        provisioning_state: Union[str, ProvisioningState]
+        communicationEndpoint: str
+        provisioningState: Union[str, ProvisioningState]
         scopes: list[str]
 
 
