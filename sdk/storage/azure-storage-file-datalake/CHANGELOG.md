@@ -6,6 +6,7 @@
 - Changed the defualt `max_single_get_size` from 32 MiB to 4 MiB. This means the initial download request will now be 4 MiB rather than 32 MiB which may result in more requests than previous versions depending on file size. This also means some file downloads may use parallel requests when they were not previously, if `max_concurrency` is set greater than 1. To restore the previous behavior, pass `max_single_get_size = 32 * 1024 * 1024` when constructing the client.
 
 ### Features Added
+- Added opt-in client session-based authentication via the new `use_session` keyword argument. When enabled, eligible file read requests are authenticated with a short-lived, per-file-system session credential obtained from the service rather than the bearer token. Requires a `TokenCredential`. Sessions are managed by a session provider, which can be shared across clients via the `session_provider` keyword, and the account name used for signing can be set explicitly with `session_account_name`.
 
 ### Bugs Fixed
 - Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_file_system_sas`,
