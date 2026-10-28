@@ -12,8 +12,9 @@ name = "azure-storage-extensions-transfer"
 authors = [
   { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
 ]
-description = "Azure Storage Transfer Extensions (Rust-based acceleration)"
+description = "Native acceleration for Azure Storage Python SDKs transfer operations"
 license = "MIT"
+readme = "README.md"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
@@ -24,12 +25,11 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
-    "Programming Language :: Rust",
 ]
 requires-python = ">=3.10"
 dependencies = []
 keywords = ["azure", "azure sdk"]
-dynamic = ["version", "readme"]
+dynamic = ["version"]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensions-transfer"
@@ -38,10 +38,6 @@ repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storag
 features = ["pyo3/extension-module"]
 module-name = "azure.storage.extensions.transfer._native"
 python-source = "."
-
-[tool.setuptools.dynamic]
-version = { attr = "azure.storage.extensions.transfer._version.VERSION" }
-readme = { file = ["README.md"], content-type = "text/markdown" }
 
 [tool.azure-sdk-build]
 mypy = false
@@ -58,3 +54,16 @@ suppressed_skip_warnings = ["*"]
 
 [tool.azure-sdk-conda]
 in_bundle = false
+
+[tool.cibuildwheel]
+build = ["cp310*", "cp311*", "cp312*", "cp313*", "cp314*"]
+test-command = "cargo test --manifest-path {project}/Cargo.toml"
+
+[tool.cibuildwheel.linux]
+archs = "x86_64 aarch64"
+
+[tool.cibuildwheel.macos]
+archs = "arm64"
+
+[tool.cibuildwheel.windows]
+archs = "AMD64 ARM64"
