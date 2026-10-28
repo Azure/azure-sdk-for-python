@@ -7,8 +7,7 @@ param(
     [Parameter(Mandatory)] [string] $SelectionManifest,
     [Parameter(Mandatory)] [string] $OutputDirectory,
     [Parameter(Mandatory)] [ValidateSet('q1', 'q2', 'q3', 'q4')] [string] $QueueName,
-    [AllowEmptyString()] [string] $IdentityNamePattern = 'mi-azsdk-sample-{resource}-wus3',
-    [AllowEmptyString()] [string] $ProjectIdentityName,
+    [Parameter(Mandatory)] [AllowEmptyString()] [string] $IdentityResourceGroup,
     [ValidatePattern('^[A-Za-z0-9._-]+$')] [string] $ModelName = 'gpt-5.2',
     [ValidatePattern('^[A-Za-z0-9._-]+$')] [string] $ModelVersion = '2025-12-11',
     [ValidateSet('GlobalStandard', 'Standard')] [string] $ModelSku = 'GlobalStandard',
@@ -23,12 +22,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'SampleCiHelpers.ps1')
 $subscription = Get-SampleSubscriptionId
 $tenant = Get-SampleTenantId
-$identityBindings = @{ SubscriptionId = $subscription }
-if ($PSBoundParameters.ContainsKey('ProjectIdentityName')) { $identityBindings.ProjectIdentityName = $ProjectIdentityName }
-if ($PSBoundParameters.ContainsKey('IdentityNamePattern') -or -not $PSBoundParameters.ContainsKey('ProjectIdentityName')) {
-    $identityBindings.IdentityNamePattern = $IdentityNamePattern
-}
-$identityConfiguration = Get-SampleSharedIdentityConfiguration @identityBindings
+$identityGroup = Get-SampleIdentityResourceGroup -Name $IdentityResourceGroup
 $manifest = Read-SampleManifest -Path $SelectionManifest -PackageRoot $PackageRoot
 $scanner = Join-Path $PackageRoot '.github/skills/azure-ai-projects-record-sample/scripts/GetSampleRequiredEnvironmentVariables.ps1'
 $samplePaths = @($manifest.tests | ForEach-Object { $_.sample_path } | Sort-Object -Unique)
@@ -51,9 +45,7 @@ $plan = @{
     subscriptionId = $subscription
     tenantId = $tenant
     resourceGroup = 'azsdk-samples-{0}-{1}-{2}-{3}-{4}' -f $DefinitionId, $BuildId, $QueueName, $JobAttempt, $ownerToken.Substring(0, 8)
-    identityNamePattern = $identityConfiguration.identityNamePattern
-    projectIdentityName = $identityConfiguration.projectIdentityName
-    sharedIdentityNames = $identityConfiguration.names
+    identityResourceGroup = $identityGroup
     identityResolution = 'Pending'
     sharedIdentities = @{}
     location = ''
@@ -73,7 +65,7 @@ $plan | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $OutputDi
 Write-Host 'DRY RUN: no Azure resources, role assignments, or project connections were changed.'
 Write-Host ('Target subscription from AZURE_SUBSCRIPTION_ID: {0}.' -f $subscription)
 Write-Host ('Target tenant from AZURE_TENANT_ID: {0}.' -f $tenant)
-Write-Host ('MI name pattern: {0}; project MI: {1}. Metadata will be verified before provisioning.' -f $plan.identityNamePattern, $plan.projectIdentityName)
+Write-Host ('Shared identity resource group: {0}. Managed identities are looked up there by their -project-/-account-/-search-/-function- names before provisioning.' -f $plan.identityResourceGroup)
 Write-Host ('New resource group: {0}; identity resource IDs and region will be resolved by read-only admission.' -f $plan.resourceGroup)
 Write-Host ('Test queue: {0}. Local shared-identity Standard variant: new account/project, Storage, Cosmos DB, Search and capability hosts.' -f $QueueName)
 Write-Host 'Shared UAMIs and Azure service-role grants must already exist. Only native Cosmos data roles are created per run.'

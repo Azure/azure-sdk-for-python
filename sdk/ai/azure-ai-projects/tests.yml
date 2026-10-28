@@ -22,10 +22,9 @@ parameters:
       - 2
       - 3
       - 4
-  - name: identityNamePattern
-    displayName: 'MI name pattern (keep {resource}; any valid prefix/suffix, region resolved from Azure)'
+  - name: identityResourceGroup
+    displayName: 'Resource group with the shared identities (e.g. rg-azsdk-identities-westus3-102826_164519)'
     type: string
-    default: 'mi-azsdk-sample-{resource}-wus3'
   - name: modelName
     displayName: 'Sample model (validation uses the existing project from an environment variable)'
     type: string
@@ -95,7 +94,7 @@ extends:
                   foreach ($queueName in @($matrix.Keys | Sort-Object)) {
                     & ./tests/samples/ci/New-SampleDeploymentPlan.ps1 -SelectionManifest (Join-Path $outputDirectory "$queueName/selected-tests.json") `
                       -OutputDirectory (Join-Path $outputDirectory $queueName) -QueueName $queueName `
-                      -IdentityNamePattern $env:SAMPLE_MI_NAME_PATTERN -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
+                      -IdentityResourceGroup $env:SAMPLE_IDENTITY_RESOURCE_GROUP -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
                       -ModelSku $env:SAMPLE_MODEL_SKU -ModelCapacity ([int] $env:SAMPLE_MODEL_CAPACITY)
                   }
                   $matrixJson = $matrix | ConvertTo-Json -Compress
@@ -108,7 +107,7 @@ extends:
                   AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                   SELECTION_KIND: ${{ parameters.selectionKind }}
                   SAMPLE_SELECTION: ${{ parameters.selection }}
-                  SAMPLE_MI_NAME_PATTERN: ${{ parameters.identityNamePattern }}
+                  SAMPLE_IDENTITY_RESOURCE_GROUP: ${{ parameters.identityResourceGroup }}
                   SAMPLE_MODEL: ${{ parameters.modelName }}
                   SAMPLE_MODEL_VERSION: ${{ parameters.modelVersion }}
                   SAMPLE_MODEL_SKU: ${{ parameters.modelSku }}

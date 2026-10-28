@@ -23,6 +23,7 @@ Describe 'Offline deployment-plan defaults' {
             DefinitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
             BuildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
             JobAttempt = '1'
+            IdentityResourceGroup = 'rg-azsdk-identities-westus3-102826_164519'
         }
         $script:planScript = Join-Path $PSScriptRoot '../New-SampleDeploymentPlan.ps1'
     }
@@ -41,8 +42,9 @@ Describe 'Offline deployment-plan defaults' {
         $plan.location | Should BeExactly ''
         $plan.identityResolution | Should BeExactly 'Pending'
         $plan.sharedIdentities.Count | Should Be 0
-        $plan.projectIdentityName | Should Be 'mi-azsdk-sample-project-wus3'
-        $plan.identityNamePattern | Should BeExactly 'mi-azsdk-sample-{resource}-wus3'
+        $plan.identityResourceGroup | Should BeExactly 'rg-azsdk-identities-westus3-102826_164519'
+        $plan.ContainsKey('identityNamePattern') | Should Be $false
+        $plan.ContainsKey('projectIdentityName') | Should Be $false
         $plan.sampleModel.name | Should Be 'gpt-5.2'
         $plan.sampleModel.version | Should Be '2025-12-11'
         $plan.sampleModel.sku | Should Be 'GlobalStandard'
@@ -57,50 +59,43 @@ Describe 'Offline deployment-plan defaults' {
         $plan.sampleModel.version | Should Be 'auto'
     }
 
-    It 'accepts arbitrary MI pattern names without inventing Azure IDs or location' {
+    It 'requires the identity resource group instead of a name pattern' {
+        $arguments = @{} + $script:planArguments
+        $arguments.Remove('IdentityResourceGroup')
+        { & $script:planScript @arguments -IdentityNamePattern 'mi-azsdk-sample-{resource}-wus3' } | Should Throw
+        Test-Path -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') | Should Be $false
+    }
+
+    It 'accepts any existing resource group name without inventing Azure IDs or location: <Name>' -TestCases @(
+        @{ Name = 'rg-azsdk-identities-uksouth-010126_000000' }, @{ Name = 'Custom_RG.(blue)' }, @{ Name = 'a' }
+    ) {
+        param($Name)
+        $arguments = @{} + $script:planArguments
+        $arguments.IdentityResourceGroup = $Name
         & {
             function az { throw 'Offline planning must not contact Azure.' }
-            & $script:planScript @script:planArguments -IdentityNamePattern 'custom_{resource}_blue'
+            & $script:planScript @arguments
         }
         $plan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
         $plan.location | Should BeExactly ''
         $plan.identityResolution | Should BeExactly 'Pending'
         $plan.sharedIdentities.Count | Should Be 0
-        $plan.projectIdentityName | Should Be 'custom_project_blue'
-        $plan.identityNamePattern | Should BeExactly 'custom_{resource}_blue'
-        foreach ($purpose in @('project', 'account', 'search', 'function')) {
-            $plan.sharedIdentityNames[$purpose] | Should BeExactly "custom_${purpose}_blue"
-        }
+        $plan.identityResourceGroup | Should BeExactly $Name
     }
 
-    It 'retains the old concrete project-name argument for existing local callers' {
-        & $script:planScript @script:planArguments -ProjectIdentityName mi-azsdk-unit-test-project-uksouth
-        $plan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
-        $plan.identityNamePattern | Should BeExactly 'mi-azsdk-unit-test-{resource}-uksouth'
-        $plan.projectIdentityName | Should BeExactly 'mi-azsdk-unit-test-project-uksouth'
-    }
-
-    It 'rejects a conflicting concrete project name and pattern before saving a plan' {
-        { & $script:planScript @script:planArguments -ProjectIdentityName mi-azsdk-unit-project-westus3 -IdentityNamePattern 'mi-azsdk-other-{resource}-westus3' } |
-            Should Throw 'differs from the selected MI name pattern'
-        Test-Path -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') | Should Be $false
-    }
-
-    It 'rejects invalid MI name patterns before saving a plan: <Label>' -TestCases @(
+    It 'rejects an invalid identity resource group before saving a plan: <Label>' -TestCases @(
         @{ Label = 'empty'; Name = '' }, @{ Label = 'whitespace'; Name = ' ' },
-        @{ Label = 'concrete MI'; Name = 'mi-azsdk-unit-project-westus3' },
-        @{ Label = 'resource ID'; Name = '/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/elsewhere/providers/Microsoft.ManagedIdentity/userAssignedIdentities/example' },
-        @{ Label = 'macro'; Name = '$(identityNamePattern)' }, @{ Label = 'shell text'; Name = 'mi-azsdk-{resource}-uksouth;Write-Host bad' },
-        @{ Label = 'illegal punctuation'; Name = 'MI.test-{resource}-blue' },
-        @{ Label = 'newline'; Name = "mi-azsdk-unit-{resource}-uksouth`n" },
-        @{ Label = 'duplicate placeholder'; Name = 'mi-azsdk-{resource}-{resource}-uksouth' },
-        @{ Label = 'unknown placeholder'; Name = 'mi-azsdk-unit-{Resource}-uksouth' },
-        @{ Label = 'unknown extra placeholder'; Name = 'mi-azsdk-{set}-{resource}-uksouth' }
+        @{ Label = 'resource ID'; Name = '/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/elsewhere' },
+        @{ Label = 'macro'; Name = '$(identityResourceGroup)' }, @{ Label = 'shell text'; Name = 'rg-x;Write-Host bad' },
+        @{ Label = 'path'; Name = '../rg' }, @{ Label = 'trailing period'; Name = 'rg-x.' },
+        @{ Label = 'newline'; Name = "rg-x`n" }, @{ Label = 'oversized'; Name = ('a' * 91) }
     ) {
         param($Label, $Name)
+        $arguments = @{} + $script:planArguments
+        $arguments.IdentityResourceGroup = $Name
         & {
             function az { throw 'Offline planning must not contact Azure.' }
-            { & $script:planScript @script:planArguments -IdentityNamePattern $Name } | Should Throw 'MI name pattern'
+            { & $script:planScript @arguments } | Should Throw 'Invalid shared identity resource group'
         }
         Test-Path -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') | Should Be $false
     }

@@ -47,8 +47,10 @@ def test_run_form_uses_project_mi_without_connection_group_or_region_fields(pipe
     parameters = {parameter["name"]: parameter for parameter in pipeline["parameters"]}
     assert {"runMode", "azureServiceConnection", "secretVariableGroup", "location"}.isdisjoint(parameters)
     assert "projectIdentityName" not in parameters
-    assert parameters["identityNamePattern"]["default"] == "mi-azsdk-sample-{resource}-wus3"
-    assert "{resource}" in parameters["identityNamePattern"]["displayName"]
+    assert "identityNamePattern" not in parameters
+    # No default: ADO prompts for the resource group holding the shared identities.
+    assert "default" not in parameters["identityResourceGroup"]
+    assert "resource group" in parameters["identityResourceGroup"]["displayName"].lower()
     assert pipeline["variables"]["azureServiceConnection"] == "azure-sdk-tests"
     stages = pipeline["extends"]["parameters"]["stages"]
     assert all("variables" not in stage for stage in stages)
@@ -149,7 +151,6 @@ def test_target_ids_are_explicit_in_plan_and_every_live_azure_task(pipeline, var
 
 def test_default_model_and_region_use_verified_gpt5_configuration(pipeline):
     parameters = {parameter["name"]: parameter for parameter in pipeline["parameters"]}
-    assert parameters["identityNamePattern"]["default"] == "mi-azsdk-sample-{resource}-wus3"
     assert parameters["modelName"]["default"] == "gpt-5.2"
     assert parameters["modelVersion"]["default"] == "2025-12-11"
     assert parameters["modelSku"]["default"] == "GlobalStandard"
@@ -164,9 +165,10 @@ def test_internal_plan_only_collects_and_plans_without_test_framework_bootstrap(
     assert len(scripts) == 2  # Dependency installation, then collection and plan generation.
     assert "select_samples.py" in scripts[1]
     assert "New-SampleDeploymentPlan.ps1" in scripts[1]
-    assert "-IdentityNamePattern $env:SAMPLE_MI_NAME_PATTERN" in scripts[1]
+    assert "-IdentityResourceGroup $env:SAMPLE_IDENTITY_RESOURCE_GROUP" in scripts[1]
     assert "-Location" not in scripts[1]
-    assert steps[-1]["env"]["SAMPLE_MI_NAME_PATTERN"] == "${{ parameters.identityNamePattern }}"
+    assert steps[-1]["env"]["SAMPLE_IDENTITY_RESOURCE_GROUP"] == "${{ parameters.identityResourceGroup }}"
+    assert "SAMPLE_MI_NAME_PATTERN" not in steps[-1]["env"]
     assert "SAMPLE_PROJECT_IDENTITY_NAME" not in steps[-1]["env"]
     assert "SAMPLE_LOCATION" not in steps[-1]["env"]
     for script in scripts:
