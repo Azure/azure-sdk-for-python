@@ -30,7 +30,7 @@ from opentelemetry.sdk._logs.export import LogRecordExportResult
 from opentelemetry._logs.severity import SeverityNumber
 from opentelemetry.trace import set_span_in_context, SpanContext, NonRecordingSpan
 
-from azure.monitor.opentelemetry.exporter.export._base import ExportResult
+from azure.monitor.opentelemetry.exporter.export._base import BaseExporter, ExportResult
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline.transport import HttpResponse, HttpTransport
@@ -1915,7 +1915,7 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.transport.send.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
-    def test_background_retry_does_not_block_other_routes_and_shutdown_waits(self, worker):
+    def test_background_retry_serializes_shared_transport_and_shutdown_waits(self, worker):
         exporter = self._exporter(disable_offline_storage=False)
         first_record = self._record()
         second_record = self._record(endpoint="https://two.example/")
@@ -1950,17 +1950,74 @@ class TestMultiEndpointRouting(unittest.TestCase):
                 retry_thread.start()
                 self.assertTrue(retry_started.wait(2))
                 foreground_thread.start()
-                self.assertTrue(foreground_done.wait(2), "An unrelated route was blocked by retry I/O.")
-                self.assertEqual(foreground_result, [LogRecordExportResult.SUCCESS])
+                self.assertFalse(
+                    foreground_done.wait(0.1),
+                    "A route used a caller-supplied transport concurrently with background retry I/O.",
+                )
+            finally:
+                release_retry.set()
+                retry_thread.join(timeout=2)
+                foreground_thread.join(timeout=2)
+            self.assertTrue(foreground_done.is_set())
+            self.assertEqual(foreground_result, [LogRecordExportResult.SUCCESS])
+
+            retry_started.clear()
+            release_retry.clear()
+            retry_thread = threading.Thread(target=retry, daemon=True)
+            try:
+                retry_thread.start()
+                self.assertTrue(retry_started.wait(2))
                 shutdown_thread.start()
                 self.assertTrue(shutdown_started.wait(2))
                 self.assertFalse(shutdown_done.wait(0.1), "Shutdown closed a client during retry I/O.")
             finally:
                 release_retry.set()
                 retry_thread.join(timeout=2)
-                foreground_thread.join(timeout=2)
                 shutdown_thread.join(timeout=2)
         self.assertTrue(shutdown_done.is_set())
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    @mock.patch.object(BaseExporter, "_transmit", return_value=ExportResult.SUCCESS)
+    def test_background_retry_does_not_block_independent_route_transports(self, _transmit, worker):
+        exporter = AzureMonitorLogExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://host.example/",
+            disable_offline_storage=False,
+            storage_directory=str(Path(self.directory.name) / "independent"),
+            retry_total=0,
+        )
+        self.addCleanup(exporter.shutdown)
+        first_record = self._record()
+        second_record = self._record(endpoint="https://two.example/")
+        self.assertEqual(exporter.export([first_record, second_record]), LogRecordExportResult.SUCCESS)
+        first = next(iter(exporter._route_exporters.values()))
+        retry = worker.call_args.kwargs["function"]
+        retry_started = threading.Event()
+        release_retry = threading.Event()
+        foreground_done = threading.Event()
+        foreground_result = []
+
+        def block_retry():
+            retry_started.set()
+            release_retry.wait(2)
+
+        def export_healthy_route():
+            foreground_result.append(exporter.export([second_record]))
+            foreground_done.set()
+
+        with mock.patch.object(first, "_transmit_from_storage", side_effect=block_retry):
+            retry_thread = threading.Thread(target=retry, daemon=True)
+            foreground_thread = threading.Thread(target=export_healthy_route, daemon=True)
+            try:
+                retry_thread.start()
+                self.assertTrue(retry_started.wait(2))
+                foreground_thread.start()
+                self.assertTrue(foreground_done.wait(2), "An independently owned route transport was blocked.")
+            finally:
+                release_retry.set()
+                retry_thread.join(timeout=2)
+                foreground_thread.join(timeout=2)
+        self.assertEqual(foreground_result, [LogRecordExportResult.SUCCESS])
 
     def test_real_background_worker_retries_without_new_telemetry(self):
         exporter = self._exporter(
