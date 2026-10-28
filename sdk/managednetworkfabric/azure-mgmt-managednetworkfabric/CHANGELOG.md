@@ -45,13 +45,10 @@
   - Added model `InfrastructureNetworks`
   - Added model `InfrastructureServices`
   - Added enum `ManagementMode`
-  - Added model `ManagementNetworkConfigurationPatchableProperties`
-  - Added model `NetworkFabricPatchablePropertiesTerminalServerConfiguration`
   - Added enum `NetworkFabricRefreshDeviceTypes`
   - Added model `NetworkPacketBrokerPatchProperties`
   - Added enum `OperationPolicy`
   - Added enum `OperationalState`
-  - Added model `OptionBProperties`
   - Added model `PatchInfraNetwork`
   - Added model `PatchInfrastructureNetworks`
   - Added model `PatchInfrastructureServices`
@@ -75,10 +72,10 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed model `ManagementNetworkPatchConfiguration`
-  - Deleted or renamed model `TerminalServerPatchConfiguration`
+  - Renamed model `ManagementNetworkPatchConfiguration` to `ManagementNetworkConfigurationPatchableProperties`
+  - Renamed model `TerminalServerPatchConfiguration` to `NetworkFabricPatchablePropertiesTerminalServerConfiguration`
+  - Renamed model `VpnOptionBProperties` to `OptionBProperties`
   - Deleted or renamed model `ValidateConfigurationResponse`
-  - Deleted or renamed model `VpnOptionBProperties`
   - Method `AccessControlListsOperations.begin_validate_configuration` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[ValidateConfigurationResponseV2]`
   - Method `L2IsolationDomainsOperations.begin_validate_configuration` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[ValidateConfigurationResponseV2]`
   - Method `L3IsolationDomainsOperations.begin_validate_configuration` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[ValidateConfigurationResponseV2]`
