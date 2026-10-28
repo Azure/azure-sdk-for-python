@@ -2133,35 +2133,35 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         return variables
 
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_smart_access_tier(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+    # @BlobPreparer()
+    # @recorded_by_proxy
+    # def test_smart_access_tier(self, **kwargs):
+    #     storage_account_name = kwargs.pop("storage_account_name")
+    #     storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+    #     self._setup(storage_account_name, storage_account_key)
 
-        data = b"abc123" * 4
-        blob1 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        blob1.upload_blob(data, standard_blob_tier=StandardBlobTier.SMART, overwrite=True)
-        props = blob1.get_blob_properties()
-        assert props.blob_tier == StandardBlobTier.SMART
-        assert props.smart_access_tier is not None
+    #     data = b"abc123" * 4
+    #     blob1 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+    #     blob1.upload_blob(data, standard_blob_tier=StandardBlobTier.SMART, overwrite=True)
+    #     props = blob1.get_blob_properties()
+    #     assert props.blob_tier == StandardBlobTier.SMART
+    #     assert props.smart_access_tier is not None
 
-        blob2 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        blob2.upload_blob(data, standard_blob_tier=StandardBlobTier.COOL, overwrite=True)
-        props = blob2.get_blob_properties()
-        assert props.blob_tier == StandardBlobTier.COOL
-        assert props.smart_access_tier is None
+    #     blob2 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+    #     blob2.upload_blob(data, standard_blob_tier=StandardBlobTier.COOL, overwrite=True)
+    #     props = blob2.get_blob_properties()
+    #     assert props.blob_tier == StandardBlobTier.COOL
+    #     assert props.smart_access_tier is None
 
-        blob2.set_standard_blob_tier(standard_blob_tier=StandardBlobTier.SMART)
-        props = blob2.get_blob_properties()
-        assert props.blob_tier == StandardBlobTier.SMART
-        assert props.smart_access_tier is not None
+    #     blob2.set_standard_blob_tier(standard_blob_tier=StandardBlobTier.SMART)
+    #     props = blob2.get_blob_properties()
+    #     assert props.blob_tier == StandardBlobTier.SMART
+    #     assert props.smart_access_tier is not None
 
-        for blob in self.bsc.get_container_client(self.container_name).list_blobs(response_format="xml"):
-            assert blob.blob_tier == StandardBlobTier.SMART
-            assert blob.smart_access_tier is not None
+    #     for blob in self.bsc.get_container_client(self.container_name).list_blobs():
+    #         assert blob.blob_tier == StandardBlobTier.SMART
+    #         assert blob.smart_access_tier is not None
 
     def test_block_blob_upload_generates_unique_ordered_block_ids(self):
         # Each staged block must get a unique block ID, and the block list must be

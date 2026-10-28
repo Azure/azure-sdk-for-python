@@ -91,6 +91,92 @@ async def call_toolbox(query: str) -> str:
     return resp.text  # the toolbox resolved the caller from the call ID and acted as that user
 ```
 
+### Draft original-subject model attribution
+
+`get_request_context().original_subject` carries a separate immutable snapshot
+of the proposed original-subject `oid`, `tid`, and `idtype` fields. Responses,
+Invocations (HTTP, streaming, and WebSocket), and native Activity consume the
+same metadata. The existing user-state identifier and `platform_headers()`
+behavior are unchanged.
+
+This is a draft contract for owner review, not an enabled budget feature.
+The inbound original-subject header is an RFC 9651 Structured Fields dictionary:
+
+```text
+x-ms-original-subject: oid="<object-id>", tid="<tenant-id>", idtype="user"
+```
+
+This draft accepts only `oid`, `tid`, and `idtype` string members, in any
+order, without parameters. Strings use Structured Fields quoting and escaping,
+not JSON or positional CSV. Duplicate header fields or keys, unknown keys,
+malformed syntax, and non-string values raise `ValueError`. Missing keys are
+omitted, not encoded as spaces or literal `"null"`. A missing header means no
+subject; an empty string member remains distinct from a missing member.
+The retired three-header draft is not consumed as a fallback.
+
+For a supported model endpoint whose owner has enabled the contract, pass
+`get_request_context().model_attribution_headers()` as **per-call** headers
+(for example, `extra_headers` on a model SDK call). Keep the model's existing
+credential. Never put a user's tuple in shared client defaults or send it to
+external/BYO endpoints, arbitrary URLs, tools, or storage callbacks.
+
+```python
+from azure.ai.agentserver.core import get_request_context
+
+response = await model_client.responses.create(
+    model=model_deployment,
+    input="Hello",
+    extra_headers=get_request_context().model_attribution_headers(),
+)
+```
+
+The helper supplies the current call ID when available and one custom
+`x-ms-foundry-baggage` member, `foundry.original_subject`. That member contains
+the **entire quoted dictionary**, percent-encoded once, not three scalar
+dimensions. Outbound model attribution is baggage-only: the helper does not
+emit `x-ms-original-subject` or its retired aliases. The standalone header is
+still accepted on platform-to-container ingress. Do not `json.dumps` the
+original-subject value or pre-encode it.
+
+Pass any existing per-call header dictionary into the helper to merge safely:
+
+```python
+extra_headers = get_request_context().model_attribution_headers(
+    {"x-ms-foundry-baggage": "foundry.agent.name=example", "x-example-context": "value"}
+)
+```
+
+Each call returns a fresh mapping. Unrelated headers and baggage values keep
+their encoding. Case-insensitive competing subject headers, reserved subject
+baggage members (including retired scalar dimensions), and stale call IDs are
+removed before the current invocation assertions are added. Unrelated baggage
+members keep their relative order and duplicates. The subject member comes first
+so bounded transport normalization cannot displace it. The helper does not choose
+between competing caller or project assertions. Neither the
+input dictionary, shared client defaults, nor the context is mutated. Always
+merge before sending, not by overlaying the result onto stale headers.
+
+No model client is patched automatically. There is no Microsoft Agent Framework
+(MAF) adapter in this package tree. An integration must forward the helper's
+result at its supported per-call model boundary, including streaming calls;
+calling the helper alone does not integrate an external framework.
+Absent metadata returns only unrelated supplied headers, or an empty mapping
+when none remain; partial, empty, or HTTP-unsafe metadata raises `ValueError` rather
+than silently forwarding an incomplete tuple. A supplied subject also requires
+the serialized, quoted dictionary to fit 256 characters and the final merged
+baggage header to fit 1024 characters. Oversized output raises `ValueError`
+instead of forwarding attribution that exceeds the transport bounds.
+These limits do not truncate unrelated baggage or apply to subject-free calls.
+Non-user and unknown classifications are preserved for receiver-side policy,
+not treated as users.
+Header assertions are not identity proof: receiver provenance validation,
+invocation binding, wire names, and missing-metadata policy still require
+owner agreement. Durable restore and detached execution are not supported by
+this draft. It does not change authentication, billing, or enforcement.
+Supported model transport and billing adapters must accept baggage-only
+attribution before release or adoption. Keep receiver-side original-user
+selection disabled during rollout.
+
 ### Subclassing AgentServerHost
 
 For custom protocol implementations, subclass `AgentServerHost` and add routes:

@@ -134,12 +134,14 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_capacity_reservation_groups_delete(self, resource_group):
-        response = await self.client.capacity_reservation_groups.delete(
-            resource_group_name=resource_group.name,
-            capacity_reservation_group_name="str",
-            api_version="2026-04-01",
-        )
+    async def test_capacity_reservation_groups_begin_delete(self, resource_group):
+        response = await (
+            await self.client.capacity_reservation_groups.begin_delete(
+                resource_group_name=resource_group.name,
+                capacity_reservation_group_name="str",
+                api_version="2026-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

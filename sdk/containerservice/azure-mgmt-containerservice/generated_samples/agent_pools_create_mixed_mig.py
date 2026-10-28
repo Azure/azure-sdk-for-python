@@ -54,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-02-preview/AgentPoolsCreate_MixedMIG.json
+# x-ms-original-file: 2026-08-02-preview/AgentPoolsCreate_MixedMIG.json
 if __name__ == "__main__":
     main()

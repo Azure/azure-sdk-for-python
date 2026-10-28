@@ -1,14 +1,52 @@
 # Release History
 
-## 2.3.0b2 (Unreleased)
+## Unreleased
 
 ### Features Added
 
-### Breaking Changes
+- Add one percent-encoded `foundry.original_subject` member containing the full
+  quoted dictionary to custom Foundry baggage for baggage-only model attribution.
+  The experimental `model_attribution_headers` helper accepts optional existing
+  per-call headers, preserving unrelated dimensions without mutating defaults
+  and replacing or clearing competing subject assertions.
 
 ### Bugs Fixed
 
-### Other Changes
+- Stop emitting standalone subject headers on outbound model calls while
+  preserving platform-to-container ingress parsing.
+- Remove stale subject baggage even when a malformed member has properties before
+  its value, while preserving unrelated baggage order, encoding, and duplicates.
+- Reject subject tuples over 256 characters and merged baggage over 1024
+  characters rather than forwarding oversized model-attribution baggage.
+- Place the subject before unrelated baggage so bounded transport normalization
+  cannot displace the attribution member.
+
+## 2.3.0b2 (2026-10-26)
+
+### Features Added
+
+- Added immutable `FoundryOriginalSubject` assertions and invocation-local
+  `FoundryAgentRequestContext.original_subject` with an explicit, model-only
+  `model_attribution_headers()` helper for the proposed `x-ms-original-subject`
+  dictionary contract. The assertions do not establish identity proof or change
+  model authentication; model integration remains an explicit per-call opt-in.
+  Both the assertions class and header helper are marked experimental.
+- Added protocol-scoped task-runtime startup requests so protocol hosts can
+  obtain scoped `TaskManager` access without mutating the process-wide
+  resilient-task switch. This prevents one protocol's enablement from
+  activating another protocol in a mixed host.
+
+### Bugs Fixed
+
+- Preserve host-owned recovery callbacks and task options when loading
+  process-wide task descriptors at startup.
+- Exclude protocol-disabled task functions before startup, periodic or inline
+  recovery can reclaim their leases or dispatch their handlers.
+- Require explicit owning-host registration for protocol-internal recovery
+  callbacks instead of importing them into unrelated managers.
+- Treat a persisted task function identity as authoritative before recovery
+  cleanup or reclaim. Legacy callback fallback applies only when that
+  identity is absent.
 
 ## 2.3.0b1 (2026-10-15)
 

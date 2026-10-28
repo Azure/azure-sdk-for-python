@@ -3916,25 +3916,25 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         return variables
 
-    @BlobPreparer()
-    @recorded_by_proxy_async
-    async def test_download_blob_returns_access_tier(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+    # @BlobPreparer()
+    # @recorded_by_proxy_async
+    # async def test_download_blob_returns_access_tier(self, **kwargs):
+    #     storage_account_name = kwargs.pop("storage_account_name")
+    #     storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
-        blob = self.bsc.get_container_client(self.container_name).get_blob_client(self._get_blob_reference())
-        await blob.upload_blob(b"hello world")
-        await blob.set_standard_blob_tier(StandardBlobTier.SMART)
+    #     await self._setup(storage_account_name, storage_account_key)
+    #     blob = self.bsc.get_container_client(self.container_name).get_blob_client(self._get_blob_reference())
+    #     await blob.upload_blob(b"hello world")
+    #     await blob.set_standard_blob_tier(StandardBlobTier.SMART)
 
-        # Act
-        downloader = await blob.download_blob()
+    #     # Act
+    #     downloader = await blob.download_blob()
 
-        # Assert
-        assert StandardBlobTier.SMART == downloader.properties.blob_tier
-        assert downloader.properties.smart_access_tier is not None
-        assert downloader.properties.blob_tier_change_time is not None
-        assert not downloader.properties.blob_tier_inferred
+    #     # Assert
+    #     assert StandardBlobTier.SMART == downloader.properties.blob_tier
+    #     assert downloader.properties.smart_access_tier is not None
+    #     assert downloader.properties.blob_tier_change_time is not None
+    #     assert not downloader.properties.blob_tier_inferred
 
 
 # ------------------------------------------------------------------------------

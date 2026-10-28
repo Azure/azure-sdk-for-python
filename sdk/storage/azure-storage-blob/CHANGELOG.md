@@ -14,6 +14,7 @@
   `generate_blob_sas`, and `BlobServiceClient.get_user_delegation_key` (sync and async).
   Datetimes without timezone information continue to be treated as UTC.
 - Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
+- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
 
 ### Other Changes
 - Added `nanoarrow>=0.7.0` as a required dependency.

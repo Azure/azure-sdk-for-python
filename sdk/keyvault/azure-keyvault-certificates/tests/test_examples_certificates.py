@@ -269,8 +269,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
-            CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
-            CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
+            CertificateContact(email="admin@contoso.example.invalid", name="John Doe", phone="1111111111"),
+            CertificateContact(email="admin2@contoso.example.invalid", name="John Doe2", phone="2222222222"),
         ]
 
         contacts = certificate_client.set_contacts(contact_list)
@@ -308,7 +308,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # First we specify the AdministratorContact for a issuer.
         admin_contacts = [
-            AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+            AdministratorContact(
+                first_name="John", last_name="Doe", email="admin@microsoft.example.invalid", phone="4255555555"
+            )
         ]
 
         issuer = certificate_client.create_issuer(

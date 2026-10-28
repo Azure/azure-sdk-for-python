@@ -587,6 +587,8 @@ python scripts/devops_tasks/verify_autorest.py --service_directory <your_service
 
 The following checks run on a weekly cadence (not on every PR or nightly) via the `python-analyze-weekly` pipeline. They are exploratory/informational and use `continueOnError: true`, meaning failures are surfaced as warnings but do not block merges.
 
+Both the service-test and standalone templates restrict these checks to scheduled runs whose pipeline start time falls on Saturday or Sunday in UTC. A lightweight eligibility job evaluates that timestamp before the analysis job; weekday runs skip analysis, and manual and PR runs do not run these checks. Eligibility uses the pipeline start time, not the time the agent starts the job.
+
 ### Next-Generation Checks
 
 <a name="next-generation-checks"></a>

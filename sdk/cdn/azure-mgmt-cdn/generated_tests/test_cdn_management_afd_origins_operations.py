@@ -44,6 +44,8 @@ class TestCdnManagementAFDOriginsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "properties": {
                     "azureOrigin": {"id": "str"},
+                    "certificateNameCheckValidationMode": "str",
+                    "customCertificateSubjects": ["str"],
                     "deploymentStatus": "str",
                     "enabledState": "str",
                     "enforceCertificateNameCheck": bool,
@@ -89,6 +91,8 @@ class TestCdnManagementAFDOriginsOperations(AzureMgmtRecordedTestCase):
             origin_update_properties={
                 "properties": {
                     "azureOrigin": {"id": "str"},
+                    "certificateNameCheckValidationMode": "str",
+                    "customCertificateSubjects": ["str"],
                     "enabledState": "str",
                     "enforceCertificateNameCheck": bool,
                     "hostName": "str",

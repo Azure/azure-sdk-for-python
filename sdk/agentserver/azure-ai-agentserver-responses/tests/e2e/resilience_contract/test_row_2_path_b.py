@@ -36,6 +36,7 @@ async def test_row_2_path_b(make_harness: Callable[..., CrashHarness], stream: b
     """Row 2 Path B: graceful shutdown, grace exhausted, in-process marker fires."""
     harness = make_harness(
         resilient_background=False,
+        steerable_conversations=True,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=SHORT_GRACE_S,
     )
