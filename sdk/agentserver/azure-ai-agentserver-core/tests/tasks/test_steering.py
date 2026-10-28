@@ -1168,6 +1168,126 @@ class TestSteeringCrossProcessDrainRecovery:
 
         return DrainCommitThenConflictProvider()
 
+    @staticmethod
+    def _failed_turn_cleanup_provider(delegate):
+        from azure.core.exceptions import ServiceRequestError
+
+        class FailedTurnCleanupProvider:
+            def __init__(self):
+                self._delegate = delegate
+                self.phase3_failures = 0
+                self.terminal_failures = 0
+
+            async def create(self, request):
+                return await self._delegate.create(request)
+
+            async def get(self, task_id):
+                return await self._delegate.get(task_id)
+
+            async def list(self, **kwargs):
+                return await self._delegate.list(**kwargs)
+
+            async def delete(self, task_id, *, force=False, cascade=False):
+                await self._delegate.delete(task_id, force=force, cascade=cascade)
+
+            async def update(self, task_id, patch):
+                payload = getattr(patch, "payload", None) or {}
+                steering = payload.get("steering") or {}
+                is_phase3_clear = (
+                    getattr(patch, "status", None) is None
+                    and steering.get("drain_in_progress") is False
+                    and steering.get("active_input") is not None
+                )
+                is_terminal_suspend = (
+                    getattr(patch, "status", None) == "suspended"
+                    and steering.get("active_input") is None
+                    and self.phase3_failures == 1
+                )
+                if is_phase3_clear and self.phase3_failures == 0:
+                    self.phase3_failures += 1
+                    raise ServiceRequestError("injected Phase-3 cleanup failure")
+                if is_terminal_suspend and self.terminal_failures == 0:
+                    self.terminal_failures += 1
+                    raise ServiceRequestError("injected terminal persistence failure")
+                return await self._delegate.update(task_id, patch)
+
+        return FailedTurnCleanupProvider()
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("queue_next", [False, True])
+    @pytest.mark.parametrize("turn_outcome", ["return", "raise", "cancel"])
+    async def test_failed_phase3_and_terminal_write_do_not_redispatch_active_turn(
+        self, tmp_path, queue_next, turn_outcome
+    ):
+        from azure.core.exceptions import ServiceRequestError
+        from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
+
+        provider = self._failed_turn_cleanup_provider(LocalFileTaskProvider(Path(str(tmp_path))))
+        manager, mgr_mod = await self._setup_manager(provider)
+        first_release = asyncio.Event()
+        first_started = asyncio.Event()
+        second_release = asyncio.Event()
+        second_started = asyncio.Event()
+        seen: list[str] = []
+        task_id = f"t-double-cleanup-{turn_outcome}-{queue_next}"
+        try:
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                message = ctx.input["msg"]
+                seen.append(message)
+                if message == "A":
+                    first_started.set()
+                    await first_release.wait()
+                    return {"msg": message}
+                if message == "B":
+                    second_started.set()
+                    await second_release.wait()
+                    if turn_outcome == "return":
+                        return {"msg": message}
+                    if turn_outcome == "cancel":
+                        raise asyncio.CancelledError()
+                    raise RuntimeError("planned B failure")
+                return {"msg": message}
+
+            run_a = await chat.start(task_id=task_id, input={"msg": "A"})
+            await asyncio.wait_for(first_started.wait(), timeout=5.0)
+            run_b = await chat.start(task_id=task_id, input={"msg": "B"})
+            first_release.set()
+            await asyncio.wait_for(second_started.wait(), timeout=5.0)
+            run_c = await chat.start(task_id=task_id, input={"msg": "C"}) if queue_next else None
+            second_release.set()
+
+            assert await asyncio.wait_for(run_a.result(), timeout=5.0) == {"msg": "A"}
+            with pytest.raises(ServiceRequestError, match="terminal persistence failure"):
+                await asyncio.wait_for(run_b.result(), timeout=5.0)
+            if run_c is not None:
+                with pytest.raises(TaskConflictError) as exc_info:
+                    await asyncio.wait_for(run_c.result(), timeout=5.0)
+                assert exc_info.value.current_status == "in_progress"
+
+            for _ in range(100):
+                if task_id not in manager._active_tasks:
+                    break
+                await asyncio.sleep(0.01)
+
+            assert provider.phase3_failures == 1
+            assert provider.terminal_failures == 1
+            assert seen == ["A", "B"]
+            info = await manager.provider.get(task_id)
+            assert info is not None
+            assert info.status == "in_progress"
+            steering = info.payload["steering"]
+            assert steering["active_input"] == {"msg": "B"}
+            assert steering["drain_in_progress"] is True
+            expected_pending = [{"msg": "C"}] if queue_next else []
+            assert steering["pending_inputs"] == expected_pending
+        finally:
+            first_release.set()
+            second_release.set()
+            await manager.shutdown()
+            mgr_mod._manager = None
+
     @pytest.mark.asyncio
     async def test_committed_single_slot_drain_conflict_binds_accepted_future(self, tmp_path):
         from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
