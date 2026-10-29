@@ -58,7 +58,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MySQLManagementClient:  # pylint: disable=too-many-instance-attributes
+class MySQLManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """The Microsoft Azure management API provides create, read, update, and delete functionality for
     Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and
     configurations with new business model.

@@ -274,5 +274,5 @@
         "azure.mgmt.mysqlflexibleservers.operations.FabricMirroringSettingsOperations.list_by_server": "Microsoft.DBforMySQL.FabricMirroringSettings.listByServer",
         "azure.mgmt.mysqlflexibleservers.aio.operations.FabricMirroringSettingsOperations.list_by_server": "Microsoft.DBforMySQL.FabricMirroringSettings.listByServer"
     },
-    "CrossLanguageVersion": "3f2615245ad8"
+    "CrossLanguageVersion": "c458501b0ea6"
 }
